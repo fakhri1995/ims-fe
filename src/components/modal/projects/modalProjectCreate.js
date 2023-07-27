@@ -1,3 +1,4 @@
+import { CloseCircleOutlined } from "@ant-design/icons";
 import {
   DatePicker,
   Form,
@@ -19,11 +20,12 @@ import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { GROUPS_GET, USERS_GET } from "lib/features";
+import { GROUPS_GET, PROJECT_CATEGORIES_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
+import { CheckIconSvg, XIconSvg } from "../../icon";
 
 // Quill library for text editor has to be imported dynamically
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -39,6 +41,8 @@ const ModalProjectCreate = ({
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
+  const isAllowedToGetTagList = hasPermission(PROJECT_CATEGORIES_GET);
+
   const [form] = Form.useForm();
   const rt = useRouter();
   const searchTimeoutRef = useRef(null);
@@ -50,6 +54,7 @@ const ModalProjectCreate = ({
     end_date: "",
     project_staffs: [],
     description: "",
+    categories: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -58,6 +63,10 @@ const ModalProjectCreate = ({
 
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
+
+  const [loadingTagList, setLoadingTagList] = useState(false);
+  const [tagList, setTagList] = useState([]);
+  const [searchField, setSearchField] = useState("");
 
   // 2 USE EFFECT
   // 2.1. Get users or groups for task staff options
@@ -120,6 +129,7 @@ const ModalProjectCreate = ({
       end_date: "",
       project_staffs: [],
       description: "",
+      categories: [],
     });
     setSelectedGroups([]);
     form.resetFields();
@@ -180,6 +190,7 @@ const ModalProjectCreate = ({
       project_staffs: dataProject?.project_staffs?.map((staff) =>
         Number(staff.key)
       ),
+      categories: dataProject?.categories?.map((item) => item?.name),
     };
 
     setLoading(true);
@@ -257,6 +268,51 @@ const ModalProjectCreate = ({
       .finally(() => setLoading(false));
   };
 
+  const handleGetTagList = (value) => {
+    if (!isAllowedToGetTagList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Kategori Proyek");
+      return;
+    }
+
+    setLoadingTagList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList?name=${value}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setTagList(response2.data);
+        } else {
+          notification.error({
+            message: `${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingTagList(false));
+  };
+
+  const onSearchTags = (value) => {
+    if (value) {
+      handleGetTagList(value);
+    } else {
+      setTagList([]);
+    }
+    setSearchField(value);
+  };
+
   // Text Editor Config
   const modules = {
     toolbar: [
@@ -274,6 +330,7 @@ const ModalProjectCreate = ({
     "indent",
     "link",
   ];
+
   return (
     <Modal
       title={
@@ -515,6 +572,88 @@ const ModalProjectCreate = ({
                   }));
                 }}
               />
+            </Form.Item>
+
+            <Form.Item label="Tag Proyek" name={"tag"}>
+              <>
+                {/* List of Selected Tag */}
+                <div className="">
+                  {dataProject?.categories?.map((tag, idx) => (
+                    <Tag
+                      key={tag?.key}
+                      closable
+                      onClose={() => {
+                        let tempTags = [...dataProject.categories];
+                        tempTags.splice(idx, 1);
+                        setDataProject((prev) => ({
+                          ...prev,
+                          categories: tempTags,
+                        }));
+                      }}
+                      color="#35763B1A"
+                      closeIcon={<CloseCircleOutlined />}
+                      className="text-primary100 mb-3"
+                    >
+                      {tag?.name}
+                    </Tag>
+                  ))}
+                </div>
+
+                {/* Input Tag */}
+                <Select
+                  showSearch
+                  allowClear
+                  mode="multiple"
+                  className="w-full dontShow"
+                  placeholder="Cari Tag..."
+                  defaultActiveFirstOption={false}
+                  value={dataProject?.categories}
+                  optionFilterProp="children"
+                  notFoundContent={null}
+                  disabled={!isAllowedToGetTagList}
+                  onSearch={onSearchTags}
+                  onChange={(values, options) => {
+                    let tempTags = [...dataProject?.categories];
+                    for (let newTag of options) {
+                      if (
+                        newTag?.name &&
+                        !tempTags
+                          ?.map((tag) => tag?.name?.toLowerCase())
+                          ?.includes(newTag?.name?.toLowerCase())
+                      ) {
+                        tempTags.push(newTag);
+                      }
+                    }
+
+                    if (values) {
+                      setDataProject((prev) => ({
+                        ...prev,
+                        categories: tempTags,
+                      }));
+                      setSearchField("");
+                    }
+                  }}
+                >
+                  {tagList?.map((tag) => (
+                    <Select.Option
+                      key={tag?.id || tag?.name}
+                      value={tag?.name}
+                      name={tag?.name}
+                    >
+                      {tag?.name}
+                    </Select.Option>
+                  ))}
+                  {searchField && (
+                    <Select.Option
+                      key={searchField}
+                      value={searchField}
+                      name={searchField}
+                    >
+                      {searchField}
+                    </Select.Option>
+                  )}
+                </Select>
+              </>
             </Form.Item>
           </div>
         )}

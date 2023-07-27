@@ -1,3 +1,4 @@
+import { CloseCircleOutlined } from "@ant-design/icons";
 import {
   DatePicker,
   Input,
@@ -17,7 +18,7 @@ import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { GROUPS_GET, USERS_GET } from "lib/features";
+import { GROUPS_GET, PROJECT_CATEGORIES_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import { generateStaticAssetUrl } from "../../../lib/helper";
@@ -41,6 +42,7 @@ const ModalProjectUpdate = ({
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
+  const isAllowedToGetTagList = hasPermission(PROJECT_CATEGORIES_GET);
 
   const rt = useRouter();
   const searchTimeoutRef = useRef(null);
@@ -55,6 +57,7 @@ const ModalProjectUpdate = ({
     end_date: "",
     project_staffs: [],
     description: "",
+    categories: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -64,6 +67,10 @@ const ModalProjectUpdate = ({
   const [isEditTitle, setIsEditTitle] = useState(false);
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([]);
+
+  const [loadingTagList, setLoadingTagList] = useState(false);
+  const [tagList, setTagList] = useState([]);
+  const [searchField, setSearchField] = useState("");
 
   const [modalDelete, setModalDelete] = useState(false);
 
@@ -80,10 +87,16 @@ const ModalProjectUpdate = ({
         key: staff.id,
       }));
 
+      let updatedProjectCategories = dataProject?.categories?.map((item) => ({
+        ...item,
+        key: item?.id,
+      }));
+
       setDataUpdateProject({
         ...dataProject,
         proposed_bys: updatedProposedBys,
         project_staffs: updatedProjectStaffs,
+        categories: updatedProjectCategories,
       });
     }
   }, [dataProject, visible]);
@@ -190,7 +203,7 @@ const ModalProjectUpdate = ({
       return;
     }
 
-    // map proposed_bys and project_staffs into ids
+    // map proposed_bys, project_staffs, and category tag into required form in payload
     const proposedBysId = dataUpdateProject?.proposed_bys?.map((staff) =>
       Number(staff.key)
     );
@@ -198,10 +211,15 @@ const ModalProjectUpdate = ({
       Number(staff.key)
     );
 
+    const projectCategoryNames = dataUpdateProject?.categories?.map(
+      (item) => item?.name
+    );
+
     const payload = {
       ...dataUpdateProject,
       proposed_bys: proposedBysId,
       project_staffs: projectStaffsId,
+      categories: projectCategoryNames,
     };
 
     setLoading(true);
@@ -278,6 +296,51 @@ const ModalProjectUpdate = ({
         });
       })
       .finally(() => setLoading(false));
+  };
+
+  const handleGetTagList = (value) => {
+    if (!isAllowedToGetTagList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Kategori Proyek");
+      return;
+    }
+
+    setLoadingTagList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList?name=${value}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setTagList(response2.data);
+        } else {
+          notification.error({
+            message: `${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingTagList(false));
+  };
+
+  const onSearchTags = (value) => {
+    if (value) {
+      handleGetTagList(value);
+    } else {
+      setTagList([]);
+    }
+    setSearchField(value);
   };
 
   // Used in staff field (diajukan oleh & staff proyek)
@@ -587,16 +650,22 @@ const ModalProjectUpdate = ({
                 showSearch
                 mode="multiple"
                 className="dontShow"
+                disabled={!isAllowedToGetUsers}
+                style={{ width: `100%` }}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
                 value={
                   isSwitchGroup
                     ? selectedGroups
                     : dataUpdateProject.project_staffs
                 }
-                disabled={!isAllowedToGetUsers}
                 placeholder={
                   isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
                 }
-                style={{ width: `100%` }}
                 onSearch={(value) =>
                   !isSwitchGroup && onSearchUsers(value, setDataStaffsOrGroups)
                 }
@@ -635,12 +704,6 @@ const ModalProjectUpdate = ({
                     project_staffs: newProjectStaffs,
                   }));
                 }}
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
               >
                 {dataStaffsOrGroups?.map((item) => {
                   return (
@@ -723,6 +786,87 @@ const ModalProjectUpdate = ({
               }));
             }}
           />
+        </div>
+
+        <div className="md:col-span-2">
+          <p className="mb-2">Tag Proyek</p>
+          {/* List of Selected Tag */}
+          <div className="">
+            {dataUpdateProject?.categories?.map((item, idx) => (
+              <Tag
+                key={item?.key}
+                closable
+                onClose={() => {
+                  let tempTags = [...dataUpdateProject?.categories];
+                  tempTags.splice(idx, 1);
+                  setDataUpdateProject((prev) => ({
+                    ...prev,
+                    categories: tempTags,
+                  }));
+                }}
+                color="#35763B1A"
+                closeIcon={<CloseCircleOutlined />}
+                className="text-primary100 mb-3"
+              >
+                {item?.name}
+              </Tag>
+            ))}
+          </div>
+
+          {/* Input Tag */}
+          <Select
+            showSearch
+            allowClear
+            mode="multiple"
+            className="w-full dontShow"
+            placeholder="Cari atau Tambah Tag..."
+            value={dataUpdateProject?.categories}
+            notFoundContent={null}
+            disabled={!isAllowedToGetTagList}
+            optionFilterProp="children"
+            onSearch={onSearchTags}
+            onChange={(value, option) => {
+              let tempTags = [...dataUpdateProject?.categories];
+
+              for (let newTag of option) {
+                if (
+                  newTag?.key &&
+                  !tempTags
+                    ?.map((tag) => tag?.name?.toLowerCase())
+                    ?.includes(newTag?.name?.toLowerCase())
+                ) {
+                  tempTags.push(newTag);
+                }
+              }
+
+              if (value) {
+                setDataUpdateProject((prev) => ({
+                  ...prev,
+                  categories: tempTags,
+                }));
+                setSearchField("");
+              }
+            }}
+          >
+            {tagList?.map((tag) => (
+              <Select.Option
+                key={tag?.id || tag?.name}
+                value={tag?.name}
+                name={tag?.name}
+              >
+                {tag?.name}
+              </Select.Option>
+            ))}
+            {searchField && (
+              <Select.Option
+                key={searchField}
+                value={searchField}
+                name={searchField}
+              >
+                {searchField}
+              </Select.Option>
+            )}
+          </Select>
         </div>
       </div>
     </Modal>

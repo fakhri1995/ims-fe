@@ -7,6 +7,7 @@ import {
   Select,
   Spin,
   Table,
+  Tag,
   Tooltip,
   notification,
 } from "antd";
@@ -1171,6 +1172,22 @@ const ProjectDetailIndex = ({
                       </div>
                     </div>
                     <div className="md:col-span-2">
+                      <p className="text-mono30 font-bold mb-2">Tag:</p>
+                      <div className="flex flex-wrap">
+                        {dataProject?.categories?.length
+                          ? dataProject?.categories?.map((tag) => (
+                              <Tag
+                                key={tag?.id}
+                                color="#35763B1A"
+                                className="text-primary100 mb-3"
+                              >
+                                {tag?.name}
+                              </Tag>
+                            ))
+                          : "-"}
+                      </div>
+                    </div>
+                    <div className="md:col-span-2">
                       <ButtonSys
                         type={"primary"}
                         fullWidth={true}
@@ -1350,7 +1367,6 @@ const ProjectDetailIndex = ({
 
                       return (
                         <div key={task.id} className="flex-none rounded-md ">
-                          {console.log("current project isi ", task)}
                           <TaskCard
                             title={task?.name}
                             idTask={task?.id}
