@@ -422,18 +422,18 @@ export const AttendanceStaffAktivitasSection: FC<
   useEffect(() => {
     setLoadingTasks(false);
     setDataTaskTempSelected(dataTask);
-    // getDataTaskActivities();
+    getDataTaskActivities();
     // handleSelectAllTask();
   }, []);
 
-  // useEffect(() => {
-  //   getDataModal();
-  // }, [
-  //   queryParams2.page,
-  //   queryParams2.rows,
-  //   queryParams2.keyword,
-  //   isAllowedToGetTaskActivities,
-  // ]);
+  useEffect(() => {
+    getDataModal();
+  }, [
+    queryParams2.page,
+    queryParams2.rows,
+    queryParams2.keyword,
+    isAllowedToGetTaskActivities,
+  ]);
 
   const getDataModal = () => {
     if (!isAllowedToGetTaskActivities) {
@@ -793,7 +793,7 @@ export const AttendanceStaffAktivitasSection: FC<
           </Modal>
 
           <div className="flex space-x-6 md:w-1/2 justify-end items-center">
-            {/* <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
+            <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
               <ButtonSys
                 type="default"
                 onClick={onImportTask}
@@ -802,7 +802,7 @@ export const AttendanceStaffAktivitasSection: FC<
                 <FileImportIconSvg />
                 <p className={"ml-2"}>Import Task</p>
               </ButtonSys>
-            </AccessControl> */}
+            </AccessControl>
             <ButtonSys
               type="primary"
               onClick={mOnAddActivityButtonClicked}
@@ -813,7 +813,7 @@ export const AttendanceStaffAktivitasSection: FC<
             </ButtonSys>
           </div>
         </div>
-        {/* <Tabs
+        <Tabs
           defaultActiveKey="3"
           className="md:w-1/2"
           onChange={setTabActiveKey2}
@@ -822,7 +822,7 @@ export const AttendanceStaffAktivitasSection: FC<
           <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
             <TabPane tab="Task" key="4" />
           </AccessControl>
-        </Tabs> */}
+        </Tabs>
 
         {checkFormOrTask()}
       </section>
