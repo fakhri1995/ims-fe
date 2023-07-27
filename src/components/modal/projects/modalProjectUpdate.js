@@ -18,7 +18,7 @@ import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { GROUPS_GET, USERS_GET } from "lib/features";
+import { GROUPS_GET, PROJECT_CATEGORIES_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import { generateStaticAssetUrl } from "../../../lib/helper";
@@ -42,8 +42,7 @@ const ModalProjectUpdate = ({
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
-  // TODO: change constant
-  const isAllowedToGetTagList = hasPermission(GROUPS_GET);
+  const isAllowedToGetTagList = hasPermission(PROJECT_CATEGORIES_GET);
 
   const rt = useRouter();
   const searchTimeoutRef = useRef(null);
@@ -58,7 +57,7 @@ const ModalProjectUpdate = ({
     end_date: "",
     project_staffs: [],
     description: "",
-    tags: [],
+    categories: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -71,6 +70,7 @@ const ModalProjectUpdate = ({
 
   const [loadingTagList, setLoadingTagList] = useState(false);
   const [tagList, setTagList] = useState([]);
+  const [searchField, setSearchField] = useState("");
 
   const [modalDelete, setModalDelete] = useState(false);
 
@@ -87,11 +87,16 @@ const ModalProjectUpdate = ({
         key: staff.id,
       }));
 
+      let updatedProjectCategories = dataProject?.categories?.map((item) => ({
+        ...item,
+        key: item?.id,
+      }));
+
       setDataUpdateProject({
         ...dataProject,
         proposed_bys: updatedProposedBys,
         project_staffs: updatedProjectStaffs,
-        tags: [], // TODO: delete this if API is ready
+        categories: updatedProjectCategories,
       });
     }
   }, [dataProject, visible]);
@@ -192,21 +197,13 @@ const ModalProjectUpdate = ({
     }, 500);
   };
 
-  const onSearchTags = (value) => {
-    if (value) {
-      handleGetTagList(value);
-    } else {
-      setTagList([]);
-    }
-  };
-
   const handleUpdateProject = () => {
     if (!isAllowedToUpdateProject) {
       permissionWarningNotification("Mengubah", "Proyek");
       return;
     }
 
-    // map proposed_bys and project_staffs into ids
+    // map proposed_bys, project_staffs, and category tag into required form in payload
     const proposedBysId = dataUpdateProject?.proposed_bys?.map((staff) =>
       Number(staff.key)
     );
@@ -214,10 +211,15 @@ const ModalProjectUpdate = ({
       Number(staff.key)
     );
 
+    const projectCategoryNames = dataUpdateProject?.categories?.map(
+      (item) => item?.name
+    );
+
     const payload = {
       ...dataUpdateProject,
       proposed_bys: proposedBysId,
       project_staffs: projectStaffsId,
+      categories: projectCategoryNames,
     };
 
     setLoading(true);
@@ -298,13 +300,13 @@ const ModalProjectUpdate = ({
 
   const handleGetTagList = (value) => {
     if (!isAllowedToGetTagList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Kategori Proyek");
       return;
     }
 
-    // TODO: change endpoint if ready
     setLoadingTagList(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSkillLists?name=${value}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList?name=${value}`,
       {
         method: `GET`,
         headers: {
@@ -330,6 +332,15 @@ const ModalProjectUpdate = ({
         });
       })
       .finally(() => setLoadingTagList(false));
+  };
+
+  const onSearchTags = (value) => {
+    if (value) {
+      handleGetTagList(value);
+    } else {
+      setTagList([]);
+    }
+    setSearchField(value);
   };
 
   // Used in staff field (diajukan oleh & staff proyek)
@@ -639,16 +650,22 @@ const ModalProjectUpdate = ({
                 showSearch
                 mode="multiple"
                 className="dontShow"
+                disabled={!isAllowedToGetUsers}
+                style={{ width: `100%` }}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
                 value={
                   isSwitchGroup
                     ? selectedGroups
                     : dataUpdateProject.project_staffs
                 }
-                disabled={!isAllowedToGetUsers}
                 placeholder={
                   isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
                 }
-                style={{ width: `100%` }}
                 onSearch={(value) =>
                   !isSwitchGroup && onSearchUsers(value, setDataStaffsOrGroups)
                 }
@@ -687,12 +704,6 @@ const ModalProjectUpdate = ({
                     project_staffs: newProjectStaffs,
                   }));
                 }}
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
               >
                 {dataStaffsOrGroups?.map((item) => {
                   return (
@@ -778,60 +789,83 @@ const ModalProjectUpdate = ({
         </div>
 
         <div className="md:col-span-2">
-          {/* Tag List */}
-          <div className="mb-2">
-            {dataUpdateProject?.tags?.map((tag, idx) => (
+          <p className="mb-2">Tag Proyek</p>
+          {/* List of Selected Tag */}
+          <div className="">
+            {dataUpdateProject?.categories?.map((item, idx) => (
               <Tag
-                key={tag}
+                key={item?.key}
                 closable
                 onClose={() => {
-                  let tempTags = [...dataUpdateProject.tags];
+                  let tempTags = [...dataUpdateProject?.categories];
                   tempTags.splice(idx, 1);
                   setDataUpdateProject((prev) => ({
                     ...prev,
-                    tags: tempTags,
+                    categories: tempTags,
                   }));
                 }}
                 color="#35763B1A"
                 closeIcon={<CloseCircleOutlined />}
                 className="text-primary100 mb-3"
               >
-                {tag}
+                {item?.name}
               </Tag>
             ))}
           </div>
 
           {/* Input Tag */}
-          <p className="mb-2">Tag Proyek</p>
           <Select
             showSearch
-            placeholder="Cari Tag..."
             allowClear
-            defaultActiveFirstOption={false}
-            optionFilterProp="children"
+            mode="multiple"
+            className="w-full dontShow"
+            placeholder="Cari atau Tambah Tag..."
+            value={dataUpdateProject?.categories}
             notFoundContent={null}
-            onChange={(value) => {
-              let newTags = [...dataUpdateProject?.tags];
+            disabled={!isAllowedToGetTagList}
+            optionFilterProp="children"
+            onSearch={onSearchTags}
+            onChange={(value, option) => {
+              let tempTags = [...dataUpdateProject?.categories];
+
+              for (let newTag of option) {
+                if (
+                  newTag?.key &&
+                  !tempTags
+                    ?.map((tag) => tag?.name?.toLowerCase())
+                    ?.includes(newTag?.name?.toLowerCase())
+                ) {
+                  tempTags.push(newTag);
+                }
+              }
 
               if (value) {
-                newTags.push(value);
                 setDataUpdateProject((prev) => ({
                   ...prev,
-                  tags: newTags,
+                  categories: tempTags,
                 }));
+                setSearchField("");
               }
             }}
-            onSearch={onSearchTags}
-            className="w-full"
-            disabled={!isAllowedToGetTagList || loadingTagList}
           >
-            {tagList
-              .filter((tag) => !dataUpdateProject?.tags?.includes(tag.name))
-              ?.map((tag) => (
-                <Select.Option key={tag?.id} value={tag.name}>
-                  {tag?.name}
-                </Select.Option>
-              ))}
+            {tagList?.map((tag) => (
+              <Select.Option
+                key={tag?.id || tag?.name}
+                value={tag?.name}
+                name={tag?.name}
+              >
+                {tag?.name}
+              </Select.Option>
+            ))}
+            {searchField && (
+              <Select.Option
+                key={searchField}
+                value={searchField}
+                name={searchField}
+              >
+                {searchField}
+              </Select.Option>
+            )}
           </Select>
         </div>
       </div>

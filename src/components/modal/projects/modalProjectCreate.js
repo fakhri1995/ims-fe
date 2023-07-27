@@ -20,7 +20,7 @@ import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { GROUPS_GET, USERS_GET } from "lib/features";
+import { GROUPS_GET, PROJECT_CATEGORIES_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import { generateStaticAssetUrl } from "../../../lib/helper";
@@ -41,8 +41,7 @@ const ModalProjectCreate = ({
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
-  // TODO: change constant
-  const isAllowedToGetTagList = hasPermission(GROUPS_GET);
+  const isAllowedToGetTagList = hasPermission(PROJECT_CATEGORIES_GET);
 
   const [form] = Form.useForm();
   const rt = useRouter();
@@ -55,7 +54,7 @@ const ModalProjectCreate = ({
     end_date: "",
     project_staffs: [],
     description: "",
-    tags: [],
+    categories: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -67,6 +66,7 @@ const ModalProjectCreate = ({
 
   const [loadingTagList, setLoadingTagList] = useState(false);
   const [tagList, setTagList] = useState([]);
+  const [searchField, setSearchField] = useState("");
 
   // 2 USE EFFECT
   // 2.1. Get users or groups for task staff options
@@ -129,7 +129,7 @@ const ModalProjectCreate = ({
       end_date: "",
       project_staffs: [],
       description: "",
-      tags: [],
+      categories: [],
     });
     setSelectedGroups([]);
     form.resetFields();
@@ -175,14 +175,6 @@ const ModalProjectCreate = ({
     }, 500);
   };
 
-  const onSearchTags = (value) => {
-    if (value) {
-      handleGetTagList(value);
-    } else {
-      setTagList([]);
-    }
-  };
-
   const handleUpdateProject = () => {
     if (!isAllowedToUpdateProject) {
       permissionWarningNotification("Mengubah", "Proyek");
@@ -198,6 +190,7 @@ const ModalProjectCreate = ({
       project_staffs: dataProject?.project_staffs?.map((staff) =>
         Number(staff.key)
       ),
+      categories: dataProject?.categories?.map((item) => item?.name),
     };
 
     setLoading(true);
@@ -277,13 +270,13 @@ const ModalProjectCreate = ({
 
   const handleGetTagList = (value) => {
     if (!isAllowedToGetTagList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Kategori Proyek");
       return;
     }
 
-    // TODO: change endpoint if ready
     setLoadingTagList(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSkillLists?name=${value}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList?name=${value}`,
       {
         method: `GET`,
         headers: {
@@ -309,6 +302,15 @@ const ModalProjectCreate = ({
         });
       })
       .finally(() => setLoadingTagList(false));
+  };
+
+  const onSearchTags = (value) => {
+    if (value) {
+      handleGetTagList(value);
+    } else {
+      setTagList([]);
+    }
+    setSearchField(value);
   };
 
   // Text Editor Config
@@ -572,61 +574,84 @@ const ModalProjectCreate = ({
               />
             </Form.Item>
 
-            {/* Tag List */}
-            <div className="mb-2">
-              {dataProject?.tags?.map((tag, idx) => (
-                <Tag
-                  key={tag}
-                  closable
-                  onClose={() => {
-                    let tempTags = [...dataProject.tags];
-                    tempTags.splice(idx, 1);
-                    setDataProject((prev) => ({
-                      ...prev,
-                      tags: tempTags,
-                    }));
-                  }}
-                  color="#35763B1A"
-                  closeIcon={<CloseCircleOutlined />}
-                  className="text-primary100 mb-3"
-                >
-                  {tag}
-                </Tag>
-              ))}
-            </div>
-
-            {/* Input Tag */}
             <Form.Item label="Tag Proyek" name={"tag"}>
               <>
+                {/* List of Selected Tag */}
+                <div className="">
+                  {dataProject?.categories?.map((tag, idx) => (
+                    <Tag
+                      key={tag?.key}
+                      closable
+                      onClose={() => {
+                        let tempTags = [...dataProject.categories];
+                        tempTags.splice(idx, 1);
+                        setDataProject((prev) => ({
+                          ...prev,
+                          categories: tempTags,
+                        }));
+                      }}
+                      color="#35763B1A"
+                      closeIcon={<CloseCircleOutlined />}
+                      className="text-primary100 mb-3"
+                    >
+                      {tag?.name}
+                    </Tag>
+                  ))}
+                </div>
+
+                {/* Input Tag */}
                 <Select
                   showSearch
-                  placeholder="Cari Tag..."
                   allowClear
+                  mode="multiple"
+                  className="w-full dontShow"
+                  placeholder="Cari Tag..."
                   defaultActiveFirstOption={false}
+                  value={dataProject?.categories}
                   optionFilterProp="children"
                   notFoundContent={null}
-                  onChange={(value) => {
-                    let newTags = [...dataProject.tags];
+                  disabled={!isAllowedToGetTagList}
+                  onSearch={onSearchTags}
+                  onChange={(values, options) => {
+                    let tempTags = [...dataProject?.categories];
+                    for (let newTag of options) {
+                      if (
+                        newTag?.name &&
+                        !tempTags
+                          ?.map((tag) => tag?.name?.toLowerCase())
+                          ?.includes(newTag?.name?.toLowerCase())
+                      ) {
+                        tempTags.push(newTag);
+                      }
+                    }
 
-                    if (value) {
-                      newTags.push(value);
+                    if (values) {
                       setDataProject((prev) => ({
                         ...prev,
-                        tags: newTags,
+                        categories: tempTags,
                       }));
+                      setSearchField("");
                     }
                   }}
-                  onSearch={onSearchTags}
-                  className="w-full"
-                  disabled={!isAllowedToGetTagList || loadingTagList}
                 >
-                  {tagList
-                    .filter((tag) => !dataProject?.tags?.includes(tag.name))
-                    ?.map((tag) => (
-                      <Select.Option key={tag?.id} value={tag.name}>
-                        {tag?.name}
-                      </Select.Option>
-                    ))}
+                  {tagList?.map((tag) => (
+                    <Select.Option
+                      key={tag?.id || tag?.name}
+                      value={tag?.name}
+                      name={tag?.name}
+                    >
+                      {tag?.name}
+                    </Select.Option>
+                  ))}
+                  {searchField && (
+                    <Select.Option
+                      key={searchField}
+                      value={searchField}
+                      name={searchField}
+                    >
+                      {searchField}
+                    </Select.Option>
+                  )}
                 </Select>
               </>
             </Form.Item>
