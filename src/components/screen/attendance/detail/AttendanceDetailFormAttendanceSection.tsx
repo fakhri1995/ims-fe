@@ -91,23 +91,23 @@ export const AttendanceDetailFormAttendanceSection: FC<
     []
   );
 
-  useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivitiesAdmin?id=${attendanceId}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(token),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataTasks(res2.data);
-        }
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch(
+  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivitiesAdmin?id=${attendanceId}`,
+  //     {
+  //       method: `GET`,
+  //       headers: {
+  //         Authorization: JSON.parse(token),
+  //       },
+  //     }
+  //   )
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       if (res2.success) {
+  //         setDataTasks(res2.data);
+  //       }
+  //     });
+  // }, []);
 
   return (
     <section className="mig-platform space-y-6 text-gray-500">
