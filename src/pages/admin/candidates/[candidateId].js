@@ -724,25 +724,7 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
               <Html
                 // hyphenationCallback={e => breakText(e)}
                 style={styles.desc}
-                stylesheet={{
-                  p: {
-                    margin: 0,
-                    marginBottom: 2,
-                    color: "#808080",
-                    lineHeight: 1.5,
-                    marginRight: 10,
-                  },
-                  ul: {
-                    margin: 0,
-                    paddingLeft: 0,
-                    color: "#808080",
-                    lineHeight: 1.5,
-                    marginRight: 10,
-                  },
-                  ".ql-indent-1": { marginLeft: 30 },
-                  ".ql-indent-2": { marginLeft: 40 },
-                  ".ql-indent-3": { marginLeft: 50 },
-                }}
+                stylesheet={styles.htmlStyle}
               >
                 {dataResume.summaries?.description}
               </Html>
@@ -786,25 +768,7 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                   <Html
                     // hyphenationCallback={e => breakText(e)}
                     style={styles.desc}
-                    stylesheet={{
-                      p: {
-                        margin: 0,
-                        marginBottom: 2,
-                        color: "#808080",
-                        lineHeight: 1.5,
-                        marginRight: 10,
-                      },
-                      ul: {
-                        margin: 0,
-                        paddingLeft: 0,
-                        color: "#808080",
-                        lineHeight: 1.5,
-                        marginRight: 10,
-                      },
-                      ".ql-indent-1": { marginLeft: 30 },
-                      ".ql-indent-2": { marginLeft: 40 },
-                      ".ql-indent-3": { marginLeft: 50 },
-                    }}
+                    stylesheet={styles.htmlStyle}
                   >
                     {exp.description}
                   </Html>
@@ -1104,6 +1068,8 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
   );
 };
 
+// .ttf link taken from https://developers.google.com/fonts/docs/developer_api?apix_params=%7B%22sort%22%3A%22ALPHA%22%7D
+// click "Execute" then search for desired font in the API response, remember to change the link into https
 Font.register({
   family: "Inter",
   fonts: [
@@ -1115,18 +1081,25 @@ Font.register({
       src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZhrib2Bg-4.ttf",
       fontWeight: 700,
     },
+  ],
+});
+
+Font.register({
+  family: "Inter Tight",
+  fonts: [
     {
-      src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZhrib2Bg-4.ttf",
+      src: "https://fonts.gstatic.com/s/intertight/v3/NGShv5HMAFg6IuGlBNMjxLsC66ZMtb8hyW62x0xCHy5XgqoUPvi5.ttf",
       fontStyle: "italic",
       fontWeight: 400,
     },
     {
-      src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZhrib2Bg-4.ttf",
+      src: "https://fonts.gstatic.com/s/intertight/v3/NGShv5HMAFg6IuGlBNMjxLsC66ZMtb8hyW62x0ylGC5XgqoUPvi5.ttf",
       fontStyle: "italic",
       fontWeight: 700,
     },
   ],
 });
+
 const styles = StyleSheet.create({
   page: {
     flexDirection: "col",
@@ -1224,6 +1197,34 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginBottom: 10,
     borderRadius: 5,
+  },
+
+  htmlStyle: {
+    p: {
+      margin: 0,
+      marginBottom: 2,
+      color: "#808080",
+      lineHeight: 1.5,
+      marginRight: 10,
+    },
+    ul: {
+      margin: 0,
+      paddingLeft: 0,
+      color: "#808080",
+      lineHeight: 1.5,
+      marginRight: 10,
+    },
+    ".ql-indent-1": { marginLeft: 30 },
+    ".ql-indent-2": { marginLeft: 40 },
+    ".ql-indent-3": { marginLeft: 50 },
+    strong: {
+      fontFamily: "Inter",
+      fontWeight: 700,
+    },
+    em: {
+      fontFamily: "Inter Tight",
+      fontStyle: "italic",
+    },
   },
 
   header: {

@@ -5,9 +5,14 @@ import moment from "moment";
 import { FC, useEffect, useMemo, useState } from "react";
 import React from "react";
 
+import { AccessControl } from "components/features/AccessControl";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { formatDateToLocale } from "lib/date-utils";
+import { ATTENDANCE_TASK_ACTIVITIES_GET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import { useGetAttendanceDetailDataSource } from "apis/attendance";
@@ -27,6 +32,10 @@ export interface IAttendanceDetailFormAttendanceSection {
 export const AttendanceDetailFormAttendanceSection: FC<
   IAttendanceDetailFormAttendanceSection
 > = ({ attendanceId, token }) => {
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetTaskActivities = hasPermission(
+    ATTENDANCE_TASK_ACTIVITIES_GET
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [dataTasks, setDataTasks] = useState([]);
@@ -82,23 +91,23 @@ export const AttendanceDetailFormAttendanceSection: FC<
     []
   );
 
-  useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivitiesAdmin?id=${attendanceId}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(token),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataTasks(res2.data);
-        }
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch(
+  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivitiesAdmin?id=${attendanceId}`,
+  //     {
+  //       method: `GET`,
+  //       headers: {
+  //         Authorization: JSON.parse(token),
+  //       },
+  //     }
+  //   )
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       if (res2.success) {
+  //         setDataTasks(res2.data);
+  //       }
+  //     });
+  // }, []);
 
   return (
     <section className="mig-platform space-y-6 text-gray-500">
@@ -109,7 +118,9 @@ export const AttendanceDetailFormAttendanceSection: FC<
           onChange={setTabActiveKey}
         >
           <TabPane tab="Form" key="1" />
-          <TabPane tab="Task" key="2" />
+          <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
+            <TabPane tab="Task" key="2" />
+          </AccessControl>
         </Tabs>
       </div>
 
@@ -144,7 +155,7 @@ export const AttendanceDetailFormAttendanceSection: FC<
                   className={"text-xs text-mono50"}
                   style={{ lineHeight: "16px" }}
                 >
-                  [{task.activity}]
+                  [{task.project ? task.project.name : " - "}]
                 </p>
               </div>
               <div className={"w-1/12 self-center flex justify-end"}>
