@@ -36,6 +36,7 @@ import {
   PROJECTS_DEADLINE_GET,
   PROJECTS_GET,
   PROJECT_ADD,
+  PROJECT_CATEGORIES_GET,
   PROJECT_DELETE,
   PROJECT_GET,
   PROJECT_STATUSES_GET,
@@ -128,6 +129,8 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     PROJECTS_DEADLINE_GET
   );
 
+  const isAllowedToGetTagList = hasPermission(PROJECT_CATEGORIES_GET);
+
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
@@ -136,6 +139,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     from: withDefault(StringParam, undefined),
     to: withDefault(StringParam, undefined),
     status_ids: withDefault(StringParam, undefined),
+    category_ids: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
@@ -161,12 +165,14 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   // filter data
   const [loadingStatusList, setLoadingStatusList] = useState(false);
   const [dataStatusList, setDataStatusList] = useState([]);
+  const [dataCategoryList, setDataCategoryList] = useState([]);
 
   // filter search & selected options
   const [searchingFilterProjects, setSearchingFilterProjects] = useState("");
   const [selectedFromDate, setSelectedFromDate] = useState("");
   const [selectedToDate, setSelectedToDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(undefined);
+  const [selectedCategory, setSelectedCategory] = useState(undefined);
 
   // table data
   const [loadingProjects, setLoadingProjects] = useState(true);
@@ -269,6 +275,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     queryParams.sort_by,
     queryParams.sort_type,
     queryParams.status_ids,
+    queryParams.category_ids,
     queryParams.from,
     queryParams.to,
   ]);
@@ -447,7 +454,39 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
   }, [isAllowedToGetProjectDeadlineCount, dateState]);
 
-  // 3.7. Update number of rows in task table based on the device width
+  // 3.7. Get Project Category List
+  useEffect(() => {
+    if (!isAllowedToGetTagList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Tag Proyek");
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataCategoryList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  }, [isAllowedToGetTagList, refresh]);
+
+  // 3.8. Update number of rows in task table based on the device width
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 820) {
@@ -470,6 +509,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       from: selectedFromDate,
       to: selectedToDate,
       status_ids: selectedStatus,
+      category_ids: selectedCategory,
     });
   };
 
@@ -685,7 +725,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       {/* Start: Filter table */}
       <div className="grid grid-cols-2 gap-2 md:flex md:flex-row justify-between w-full items-center mb-4">
         {/* Search by keyword (kata kunci) */}
-        <div className="md:w-3/12">
+        <div className="md:w-2/12">
           <Input
             defaultValue={searchingFilterProjects}
             style={{ width: `100%` }}
@@ -699,7 +739,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         </div>
 
         {/* Filter by date */}
-        <div className="md:w-5/12">
+        <div className="md:w-4/12">
           <DatePicker.RangePicker
             allowClear
             allowEmpty
@@ -723,7 +763,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         </div>
 
         {/* Filter by statuses (dropdown) */}
-        <div className="md:w-3/12">
+        <div className="md:w-2/12">
           <Select
             allowClear
             showSearch
@@ -747,6 +787,36 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             {dataStatusList?.map((status) => (
               <Select.Option key={status.id} value={status.id}>
                 {status.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+
+        {/* Filter by category (dropdown) */}
+        <div className="md:w-2/12">
+          <Select
+            allowClear
+            showSearch
+            mode="multiple"
+            defaultValue={queryParams.category_ids}
+            disabled={!isAllowedToGetProjects}
+            placeholder="Semua Tag"
+            style={{ width: `100%` }}
+            onChange={(value) => {
+              const stringCategoryIds = value?.toString();
+              setQueryParams({ category_ids: stringCategoryIds });
+              setSelectedStatus(stringCategoryIds);
+            }}
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              (option.children ?? "")
+                .toLowerCase()
+                .includes(input.toLowerCase())
+            }
+          >
+            {dataCategoryList?.map((category) => (
+              <Select.Option key={category.id} value={category.id}>
+                {category.name}
               </Select.Option>
             ))}
           </Select>
