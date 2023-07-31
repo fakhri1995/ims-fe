@@ -8,6 +8,11 @@ import { useQuery } from "react-query";
 
 import st from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
+import ContractActionSection from "components/screen/contract/detail/ContractActionSection";
+import ContractActivitySection from "components/screen/contract/detail/ContractActivitySection";
+import ContractInfoSection from "components/screen/contract/detail/ContractInfoSection";
+import ContractNotesSection from "components/screen/contract/detail/ContractNotesSection";
+import ContractServiceSection from "components/screen/contract/detail/ContractServiceSection";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -21,11 +26,6 @@ import {
 
 import { ContractService } from "apis/contract";
 
-import ContractActionSection from "../../../components/screen/contract/detail/ContractActionSection";
-import ContractActivitySection from "../../../components/screen/contract/detail/ContractActivitySection";
-import ContractInfoSection from "../../../components/screen/contract/detail/ContractInfoSection";
-import ContractNotesSection from "../../../components/screen/contract/detail/ContractNotesSection";
-import ContractServiceSection from "../../../components/screen/contract/detail/ContractServiceSection";
 import {
   ArcElement,
   BarElement,
@@ -151,13 +151,13 @@ const ContractDetailIndex = ({
               }
             >
               <section className="grid grid-cols-1 gap-2">
-                <ContractActionSection />
+                <ContractActionSection contractId={contractId} />
               </section>
             </Collapse.Panel>
           </Collapse>
         ) : (
           <section className="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 shadow-md rounded-md bg-white p-4 lg:p-6">
-            <ContractActionSection />
+            <ContractActionSection contractId={contractId} />
           </section>
         )}
 

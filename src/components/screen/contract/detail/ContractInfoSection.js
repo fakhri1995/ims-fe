@@ -133,7 +133,7 @@ const ContractInfoSection = ({
             <a
               href={generateStaticAssetUrl(value?.link)}
               target="_blank"
-              className="text-primary100"
+              className="text-primary100 truncate"
             >
               {getFileName(value?.link)}
             </a>
