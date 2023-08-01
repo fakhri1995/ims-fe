@@ -118,9 +118,7 @@ export const AttendanceDetailFormAttendanceSection: FC<
           onChange={setTabActiveKey}
         >
           <TabPane tab="Form" key="1" />
-          <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
-            <TabPane tab="Task" key="2" />
-          </AccessControl>
+          {isAllowedToGetTaskActivities && <TabPane tab="Task" key="2" />}
         </Tabs>
       </div>
 
