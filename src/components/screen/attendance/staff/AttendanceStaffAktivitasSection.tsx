@@ -5,6 +5,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import {
+  Button,
   Checkbox,
   ConfigProvider,
   Input,
@@ -819,9 +820,7 @@ export const AttendanceStaffAktivitasSection: FC<
           onChange={setTabActiveKey2}
         >
           <TabPane tab="Form" key="3" />
-          <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
-            <TabPane tab="Task" key="4" />
-          </AccessControl>
+          {isAllowedToGetTaskActivities && <TabPane tab="Task" key="4" />}
         </Tabs>
 
         {checkFormOrTask()}
