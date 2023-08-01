@@ -30,7 +30,9 @@ import {
   ArrowLeftIconSvg,
   CalendarEventIconSvg,
   FileTextIconSvg,
+  PlusIconSvg,
 } from "../../../../components/icon";
+import ModalContractInfo from "../../../../components/modal/contracts/modalContractInfo";
 import ModalInvoiceCreate from "../../../../components/modal/contracts/modalInvoiceCreate";
 import ContractInvoiceItemSection from "../../../../components/screen/contract/invoice/ContractInvoiceItemSection";
 import {
@@ -81,6 +83,7 @@ const ContractInvoiceIndex = ({
   const [dateState, setDateState] = useState("");
 
   const [modalInvoice, setModalInvoice] = useState(false);
+  const [modalContractInfo, setModalContractInfo] = useState(false);
 
   // 3. Use Effect & Use Query
 
@@ -189,6 +192,15 @@ const ContractInvoiceIndex = ({
               />
             </div>
           </div>
+          <button
+            onClick={() => setModalContractInfo(true)}
+            className="flex space-x-1 items-center bg-transparent"
+          >
+            <PlusIconSvg size={18} color={"#35763B"} />
+            <p className="mig-caption--bold text-primary100">
+              Tambah Informasi Lainnya
+            </p>
+          </button>
         </section>
 
         {/* Detail Kontrak & Daftar Service */}
@@ -204,6 +216,12 @@ const ContractInvoiceIndex = ({
         initProps={initProps}
         visible={modalInvoice}
         onvisible={setModalInvoice}
+      />
+
+      <ModalContractInfo
+        visible={modalContractInfo}
+        onvisible={setModalContractInfo}
+        dataContract={dataContract}
       />
     </LayoutDashboard>
   );
