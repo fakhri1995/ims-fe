@@ -153,7 +153,7 @@ export const AttendanceDetailFormAttendanceSection: FC<
                   className={"text-xs text-mono50"}
                   style={{ lineHeight: "16px" }}
                 >
-                  [{task.project ? task.project.name : " - "}]
+                  [{task.task.project ? task.task.project.name : " - "}]
                 </p>
               </div>
               <div className={"w-1/12 self-center flex justify-end"}>
