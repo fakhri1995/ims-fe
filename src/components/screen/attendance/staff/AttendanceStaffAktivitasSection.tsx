@@ -752,7 +752,7 @@ export const AttendanceStaffAktivitasSection: FC<
                         className={"text-xs text-mono50"}
                         style={{ lineHeight: "16px" }}
                       >
-                        [{task.project ? task.project.name : " - "}]
+                        [{task.task.project ? task.task.project.name : " - "}]
                       </p>
                     </div>
                     <div className={"w-1/12 self-center items-end"}>
@@ -815,14 +815,16 @@ export const AttendanceStaffAktivitasSection: FC<
                 <p className={"ml-2"}>Import Task</p>
               </ButtonSys>
             </AccessControl>
-            <ButtonSys
-              type="primary"
-              onClick={mOnAddActivityButtonClicked}
-              disabled={!isAllowedToAddActivity}
-            >
-              <AppstoreAddOutlined className="mr-2" />
-              Masukkan Aktivitas
-            </ButtonSys>
+            {isAllowedToAddActivity && (
+              <ButtonSys
+                type="primary"
+                onClick={mOnAddActivityButtonClicked}
+                disabled={!isAllowedToAddActivity}
+              >
+                <AppstoreAddOutlined className="mr-2" />
+                Masukkan Aktivitas
+              </ButtonSys>
+            )}
           </div>
         </div>
         {console.log("hasil isAllowedToGetActivity ", isAllowedToGetActivity)}
