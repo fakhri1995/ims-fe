@@ -238,8 +238,8 @@ const TaskCard = ({
           </div>
         </div>
       </div>
-      {checkTask() && (
-        <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITY_ADD}>
+      {checkTask() &&
+        (isAllowedToAddTaskActivities ? (
           <div
             onClick={() => addAktifitas(idTask)}
             className={
@@ -253,8 +253,9 @@ const TaskCard = ({
               </p>
             </div>
           </div>
-        </AccessControl>
-      )}
+        ) : (
+          <div></div>
+        ))}
     </div>
   );
 };
