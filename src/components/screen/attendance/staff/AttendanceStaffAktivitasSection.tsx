@@ -476,6 +476,9 @@ export const AttendanceStaffAktivitasSection: FC<
                 ticket_number: datafromapi[a].ticket_number,
                 name: datafromapi[a].name,
                 start_date: datafromapi[a].start_date,
+                project_name: datafromapi[a].project
+                  ? datafromapi[a].project.name
+                  : null,
                 end_date: datafromapi[a].end_date,
                 is_selected: false,
               });
@@ -752,7 +755,7 @@ export const AttendanceStaffAktivitasSection: FC<
                         className={"text-xs text-mono50"}
                         style={{ lineHeight: "16px" }}
                       >
-                        [{task.task.project ? task.task.project.name : " - "}]
+                        [{task.project_name ? task.project_name : " - "}]
                       </p>
                     </div>
                     <div className={"w-1/12 self-center items-end"}>
@@ -827,11 +830,6 @@ export const AttendanceStaffAktivitasSection: FC<
             )}
           </div>
         </div>
-        {console.log("hasil isAllowedToGetActivity ", isAllowedToGetActivity)}
-        {console.log(
-          "hasil isAllowedToGetTaskActivities ",
-          isAllowedToGetTaskActivities
-        )}
         {isAllowedToGetActivity == true ||
         isAllowedToGetTaskActivities == true ? (
           <Tabs
