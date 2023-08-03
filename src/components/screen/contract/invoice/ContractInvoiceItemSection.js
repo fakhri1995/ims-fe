@@ -1,15 +1,32 @@
 import { Input, Table, Tabs } from "antd";
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
 
 import ButtonSys from "../../../button";
 import { SearchIconSvg, SquarePlusIconSvg } from "../../../icon";
 import ModalColumnAdd from "../../../modal/contracts/modalColumnAdd";
 
-const ContractInvoiceItemSection = ({ initProps, dataServices, loading }) => {
+const ContractInvoiceItemSection = ({
+  dataContract,
+  dataServiceTemplate,
+  setDataServiceTemplate,
+  loading,
+}) => {
   const [dynamicColumns, setDynamicColumns] = useState([]);
+  const [dynamicColumnValues, setDynamicColumnValues] = useState([]);
   const [modalAddColumn, setModalAddColumn] = useState(false);
 
+  useEffect(() => {
+    const dynamicColNames = dynamicColumns.map((item) => item.name);
+    setDataServiceTemplate((prev) => ({
+      ...prev,
+      colNames: dynamicColNames,
+      // colValues: dataServiceTemplate?.colValues,
+    }));
+  }, [dynamicColumns]);
+
+  console.log({ dynamicColumns });
   return (
     <>
       <div className="flex justify-between">
@@ -48,7 +65,7 @@ const ContractInvoiceItemSection = ({ initProps, dataServices, loading }) => {
       </div>
       <Table
         className="tableBordered border-2 rounded-md"
-        dataSource={dataServices}
+        dataSource={dataServiceTemplate?.colValues}
         rowKey={(record) => record.id}
         loading={loading}
         scroll={{ x: 200 }}
@@ -112,11 +129,13 @@ const ContractInvoiceItemSection = ({ initProps, dataServices, loading }) => {
       />
 
       <ModalColumnAdd
-        initProps={initProps}
         visible={modalAddColumn}
         onvisible={setModalAddColumn}
         dynamicColumns={dynamicColumns}
         setDynamicColumns={setDynamicColumns}
+        dataServiceTemplate={dataServiceTemplate}
+        setDataServiceTemplate={setDataServiceTemplate}
+        setDynamicColumnValues={setDynamicColumnValues}
       />
     </>
   );

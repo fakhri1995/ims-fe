@@ -11,17 +11,26 @@ import { ModalHapus2 } from "../modalCustom";
 const ModalColumnAdd = ({
   visible,
   onvisible,
+  dataContract,
   dynamicColumns,
   setDynamicColumns,
+  setDynamicColumnValues,
+  dataServiceTemplate,
+  setDataServiceTemplate,
 }) => {
   // 1. USE STATE
   const [columnName, setColumnName] = useState("");
   const [modalDeleteColumn, setModalDeleteColumn] = useState(false);
-  const [dataCurrentColumn, setDataCurrentColumn] = useState({});
+  const [dataCurrentColumn, setDataCurrentColumn] = useState({
+    id: -1,
+    name: "",
+    values: [],
+  });
 
+  console.log({ dataCurrentColumn });
   // 2. HANDLER
   const handleAddColumn = () => {
-    const currentColumnId = `dc-${dynamicColumns?.length}`;
+    const currentColumnId = columnName.toLowerCase().replace(/ /g, "_");
     let newColumn = {
       key: currentColumnId,
       title: (
@@ -30,10 +39,11 @@ const ModalColumnAdd = ({
           <button
             className="bg-transparent p-0 m-0 hoverComponent"
             onClick={() => {
-              setDataCurrentColumn({
+              setDataCurrentColumn((prev) => ({
+                ...prev,
                 id: currentColumnId,
                 name: columnName,
-              });
+              }));
               setModalDeleteColumn(true);
             }}
           >
@@ -41,7 +51,32 @@ const ModalColumnAdd = ({
           </button>
         </div>
       ),
-      dataIndex: columnName.toLowerCase().replace(/ /g, "_"),
+      name: columnName,
+      render: (text, record, idx) => {
+        return (
+          <Input
+            onChange={(e) => {
+              console.log(idx);
+
+              let dataDynamicColumnValues = [...dataServiceTemplate.colValues];
+              dataDynamicColumnValues[idx].contract_service_id =
+                dataDynamicColumnValues[idx].id;
+              dataDynamicColumnValues[idx].values = [e.target.value];
+              // dataCurrentColumnValues.splice(idx, 1, e.target.value);
+              // setDataCurrentColumn((prev) => ({
+              //   ...prev,
+              //   values: dataCurrentColumnValues,
+              // }));
+              setDataServiceTemplate((prev) => ({
+                ...prev,
+                colValues: dataDynamicColumnValues,
+              }));
+              console.log(dataDynamicColumnValues);
+            }}
+          ></Input>
+        );
+      },
+      // dataIndex: columnName.toLowerCase().replace(/ /g, "_"),
     };
 
     setDynamicColumns((prev) => [...prev, newColumn]);
@@ -60,7 +95,7 @@ const ModalColumnAdd = ({
     onvisible(false);
   };
 
-  // console.log({ dataCurrentColumn });
+  console.log({ dataCurrentColumn });
   return !modalDeleteColumn ? (
     <Modal
       title={<p className="mig-heading--4 text-mono30">Tambah Kolom Baru</p>}

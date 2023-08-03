@@ -10,62 +10,113 @@ import {
   getFileName,
   momentFormatDate,
 } from "../../../lib/helper";
+import { contractInfoString } from "../../../pages/admin/contracts/[contractId]/invoice";
 import ButtonSys from "../../button";
-import { PlusIconSvg, TrashIconSvg } from "../../icon";
+import { PlusIconSvg, TrashIconSvg, XIconSvg } from "../../icon";
 import { FILE } from "../../screen/contract/detail/ContractInfoSection";
 import { ModalHapus2 } from "../modalCustom";
 
-const ModalContractInfo = ({ visible, onvisible, dataContract }) => {
+const ModalContractInfo = ({
+  visible,
+  onvisible,
+  dataContract,
+  dataInvoiceTemplate,
+  setDataInvoiceTemplate,
+}) => {
   // 1. USE STATE
   const [columnName, setColumnName] = useState("");
   const [modalDeleteColumn, setModalDeleteColumn] = useState(false);
   const [dataCurrentColumn, setDataCurrentColumn] = useState({});
-  const [dataContractInfoList, setDataContractInfoList] = useState([]);
+  const [dataNotDisplayedInfo, setDataNotDisplayedInfo] = useState([]);
+  const [dataDisplayedInfo, setDataDisplayedInfo] = useState([]);
 
   // USE EFFECT
   useEffect(() => {
-    const tempContractInfo = [
-      {
-        title: "Judul Kontrak",
-        value: dataContract?.title,
-      },
-      {
-        title: "Tanggal Dibuat",
-        value: momentFormatDate(dataContract?.initial_date),
-      },
-      {
-        title: "Tanggal Berlaku",
-        value: momentFormatDate(dataContract?.start_date),
-      },
-      {
-        title: "Tanggal Selesai",
-        value: momentFormatDate(dataContract?.end_date),
-      },
-      {
-        title: "Durasi Kontrak",
-        value: convertDaysToString(dataContract?.duration),
-      },
-    ];
+    if (dataContract) {
+      const tempNotDisplayed = [
+        {
+          name: "title",
+          title: contractInfoString?.title,
+          value: dataContract?.title,
+        },
+        {
+          name: "requester_id",
+          title: contractInfoString?.requester_id,
+          value: dataContract?.requester_id,
+        },
 
-    for (let item of dataContract?.extras) {
-      const dataExtra = {
-        title: item?.name,
-        value: item?.value,
-        type: item?.type,
-      };
+        {
+          name: "initial_date",
+          title: contractInfoString?.initial_date,
+          value: momentFormatDate(dataContract?.initial_date),
+        },
+        {
+          name: "start_date",
+          title: contractInfoString?.start_date,
+          value: momentFormatDate(dataContract?.start_date),
+        },
+        {
+          name: "end_date",
+          title: contractInfoString?.end_date,
+          value: momentFormatDate(dataContract?.end_date),
+        },
+        {
+          name: "duration",
+          title: contractInfoString?.duration,
+          value: convertDaysToString(dataContract?.duration),
+        },
+      ];
 
-      tempContractInfo.push(dataExtra);
+      if (!dataContract?.invoice_template?.details?.includes("extras")) {
+        for (let item of dataContract?.extras) {
+          const dataExtra = {
+            title: item?.name,
+            value: item?.value,
+            type: item?.type,
+          };
+
+          tempNotDisplayed.push(dataExtra);
+        }
+      }
+
+      tempNotDisplayed = tempNotDisplayed.filter(
+        (item) => !dataContract?.invoice_template?.details?.includes(item?.name)
+      );
+
+      console.log({ dataInvoiceTemplate });
+      console.log({ tempNotDisplayed });
+
+      setDataNotDisplayedInfo(tempNotDisplayed);
     }
-
-    setDataContractInfoList(tempContractInfo);
   }, [dataContract]);
 
+  useEffect(() => {
+    setDataDisplayedInfo(dataInvoiceTemplate);
+  }, [dataInvoiceTemplate]);
+
   // 2. HANDLER
-  const handleAddColumn = () => {};
+  const handleAddToDisplay = (item, idx) => {
+    setDataDisplayedInfo((prev) => [...prev, item]);
 
-  const handleDeleteColumn = (columnKey) => {};
+    let tempNotDisplayed = [...dataNotDisplayedInfo];
+    tempNotDisplayed.splice(idx, 1);
+    setDataNotDisplayedInfo(tempNotDisplayed);
+  };
 
-  // console.log({ dataCurrentColumn });
+  const handleRemoveFromDisplay = (item, idx) => {
+    setDataNotDisplayedInfo((prev) => [...prev, item]);
+
+    let tempDisplayed = [...dataDisplayedInfo];
+    tempDisplayed.splice(idx, 1);
+    setDataDisplayedInfo(tempDisplayed);
+  };
+
+  const handleSaveDisplayedList = () => {
+    setDataInvoiceTemplate(dataDisplayedInfo);
+    onvisible(false);
+  };
+
+  console.log({ dataNotDisplayedInfo });
   return (
     <Modal
       title={
@@ -81,8 +132,8 @@ const ModalContractInfo = ({ visible, onvisible, dataContract }) => {
       footer={
         <ButtonSys
           type={"primary"}
-          onClick={handleAddColumn}
-          disabled={!columnName}
+          onClick={handleSaveDisplayedList}
+          // disabled={!columnName}
         >
           Simpan Perubahan
         </ButtonSys>
@@ -93,7 +144,7 @@ const ModalContractInfo = ({ visible, onvisible, dataContract }) => {
         <div>
           <h5 className="mig-heading--5 mb-6">Informasi Kontrak</h5>
           <div className="grid grid-cols-1 gap-2">
-            {dataContractInfoList?.map((item) => (
+            {dataNotDisplayedInfo?.map((item, idx) => (
               <div
                 key={item.title}
                 className="flex items-center justify-between gap-2 border border-inputkategori rounded px-4 py-2"
@@ -112,9 +163,12 @@ const ModalContractInfo = ({ visible, onvisible, dataContract }) => {
                     <p className="mig-caption">{item?.value}</p>
                   )}
                 </div>
-                <div className="w-6 h-6 p-1 rounded-full bg-primary100 bg-opacity-10 flex items-center">
+                <button
+                  onClick={() => handleAddToDisplay(item, idx)}
+                  className="w-6 h-6 p-1 rounded-full bg-primary100 bg-opacity-10 flex items-center"
+                >
                   <PlusIconSvg size={16} color={"#35763B"} />
-                </div>
+                </button>
               </div>
             ))}
           </div>
@@ -123,16 +177,34 @@ const ModalContractInfo = ({ visible, onvisible, dataContract }) => {
         {/* Informasi Ditampilkan */}
         <div>
           <h5 className="mig-heading--5 mb-6">Informasi Ditampilkan</h5>
-          <div className="flex items-center border border-inputkategori rounded px-4 py-2">
-            <div>
-              <p className="mig-caption--bold mb-2">Judul Kontrak</p>
-              <p className="mig-caption">
-                Perjanjian Kerjasama PT XYZ tahun 2022 hingga 2025
-              </p>
-            </div>
-            <div className="w-6 h-6 p-1 rounded-full bg-primary100 bg-opacity-10 flex items-center">
-              <PlusIconSvg size={16} color={"#35763B"} />
-            </div>
+          <div className="grid grid-cols-1 gap-2">
+            {dataDisplayedInfo?.map((item, idx) => (
+              <div
+                key={item.title}
+                className="flex items-center justify-between gap-2 border border-inputkategori rounded px-4 py-2"
+              >
+                <div>
+                  <p className="mig-caption--bold mb-2">{item?.title}</p>
+                  {item?.type === FILE ? (
+                    <a
+                      href={generateStaticAssetUrl(item?.value?.link)}
+                      target="_blank"
+                      className="text-primary100 truncate"
+                    >
+                      {getFileName(item?.value?.link)}
+                    </a>
+                  ) : (
+                    <p className="mig-caption">{item?.value}</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => handleRemoveFromDisplay(item, idx)}
+                  className="w-6 h-6 p-1 rounded-full bg-mono70 bg-opacity-10 flex items-center"
+                >
+                  <XIconSvg size={16} color={"#808080"} />
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       </div>

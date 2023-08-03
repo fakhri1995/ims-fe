@@ -40,43 +40,6 @@ export class ContractService {
     return apiRes;
   };
 
-  // TODO: change endpoint
-  static getStatusList = async (initProps, feature) => {
-    if (!feature) {
-      permissionWarningNotification("Mendapatkan", "Daftar Contract Status");
-      return;
-    }
-
-    const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatusesList`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          return res2;
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-
-    return apiRes;
-  };
-
   static getContracts = async (initProps, feature, queryParams, keyword) => {
     if (!feature) {
       permissionWarningNotification("Mendapatkan", "Daftar Contract");
@@ -202,6 +165,42 @@ export class ContractService {
 
     const apiRes = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractLogs?contract_id=${contractId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          return res2;
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+
+    return apiRes;
+  };
+
+  static getContractTemplate = async (initProps, feature, contractId) => {
+    if (!feature) {
+      permissionWarningNotification("Mendapatkan", "Data Contract Template");
+      return;
+    }
+
+    const apiRes = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractTemplate?contract_id=${contractId}`,
       {
         method: `GET`,
         headers: {

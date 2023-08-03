@@ -399,6 +399,10 @@ export const CONTRACT_NOTE_ADD = "CONTRACT_NOTE_ADD";
 export const CONTRACT_NOTE_DELETE = "CONTRACT_NOTE_DELETE";
 export const CONTRACT_LOGS_GET = "CONTRACT_LOGS_GET";
 
+/** Contract Invoice Template */
+export const CONTRACT_TEMPLATE_GET = "CONTRACT_TEMPLATE_GET";
+export const CONTRACT_TEMPLATE_UPDATE = "CONTRACT_TEMPLATE_UPDATE";
+
 /**
  * Daftar feature untuk User Management.
  *
