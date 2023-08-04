@@ -1,0 +1,417 @@
+import {
+  ArrowLeftOutlined,
+  FileTextOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
+import { Collapse, DatePicker, Tabs, notification } from "antd";
+import moment from "moment";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { useMemo } from "react";
+import { useEffect } from "react";
+import { useQuery } from "react-query";
+
+import st from "components/layout-dashboard.module.css";
+import LayoutDashboard from "components/layout-dashboardNew";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  CONTRACTS_GET,
+  CONTRACT_ADD,
+  CONTRACT_DELETE,
+  CONTRACT_TEMPLATE_GET,
+  CONTRACT_TEMPLATE_UPDATE,
+} from "lib/features";
+
+import { ContractService } from "apis/contract";
+
+import ButtonSys from "../../../../components/button";
+import {
+  ArrowLeftIconSvg,
+  CalendarEventIconSvg,
+  FileTextIconSvg,
+  PlusIconSvg,
+} from "../../../../components/icon";
+import ModalContractInfo from "../../../../components/modal/contracts/modalContractInfo";
+import ModalInvoiceCreate from "../../../../components/modal/contracts/modalInvoiceCreate";
+import { FILE } from "../../../../components/screen/contract/detail/ContractInfoSection";
+import ContractInvoiceItemSection from "../../../../components/screen/contract/invoice/ContractInvoiceItemSection";
+import {
+  convertDaysToString,
+  generateStaticAssetUrl,
+  getFileName,
+  momentFormatDate,
+} from "../../../../lib/helper";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart,
+  LineElement,
+  LinearScale,
+  PointElement,
+  TooltipChart,
+} from "chart.js";
+import httpcookie from "cookie";
+
+Chart.register(
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  BarElement,
+  PointElement
+);
+
+export const contractInfoString = {
+  title: "Judul Kontrak",
+  requester_id: "Requester",
+  initial_date: "Tanggal Dibuat",
+  start_date: "Tanggal Berlaku",
+  end_date: "Tanggal Selesai",
+  duration: "Durasi Kontrak",
+  extras: "Komponen Tambahan",
+};
+
+const ContractInvoiceIndex = ({
+  dataProfile,
+  sidemenu,
+  initProps,
+  contractId,
+}) => {
+  // 1. Init
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+
+  const isAllowedToGetContractTemplate = hasPermission(CONTRACT_TEMPLATE_GET);
+  const isAllowedToUpdateInvoiceTemplate = hasPermission(
+    CONTRACT_TEMPLATE_UPDATE
+  );
+
+  const rt = useRouter();
+  const pathArr = rt.pathname.split("/").slice(1);
+
+  // 2. useState
+  const [refresh, setRefresh] = useState(-1);
+  const [dataInvoice, setDataInvoice] = useState([]);
+  const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
+  const [dataServiceTemplateValues, setDataServiceTemplateValues] = useState(
+    []
+  );
+
+  const [dateState, setDateState] = useState("");
+
+  const [modalInvoice, setModalInvoice] = useState(false);
+  const [modalContractInfo, setModalContractInfo] = useState(false);
+
+  const [loadingSave, setLoadingSave] = useState(false);
+  // 3. Use Effect & Use Query
+  // 3.1. get contract template detail
+  const { data: dataContract, isLoading: loadingDataContractTemplate } =
+    useQuery(
+      [CONTRACT_TEMPLATE_GET, refresh, contractId],
+      () =>
+        ContractService.getContractTemplate(
+          initProps,
+          isAllowedToGetContractTemplate,
+          contractId
+        ),
+      {
+        enabled: isAllowedToGetContractTemplate,
+        refetchOnMount: true,
+        select: (response) => response.data,
+      }
+    );
+
+  useEffect(() => {
+    if (dataContract?.invoice_template) {
+      const currentInvoiceTemplate = [];
+      for (let item of dataContract?.invoice_template?.details) {
+        if (!item?.includes("extras")) {
+          let tempValue = dataContract[item];
+
+          if (["initial_date", "start_date", "end_date"].includes(item)) {
+            tempValue = momentFormatDate(tempValue);
+          }
+
+          if (item == "duration") {
+            tempValue = convertDaysToString(tempValue);
+          }
+
+          currentInvoiceTemplate.push({
+            name: item,
+            title: contractInfoString[item],
+            value: tempValue,
+          });
+        } else {
+          for (let item of dataContract?.extras) {
+            const dataExtra = {
+              name: item?.key,
+              title: item?.name,
+              value: item?.value,
+              type: item?.type,
+            };
+
+            currentInvoiceTemplate.push(dataExtra);
+          }
+        }
+      }
+      setDataInvoice(currentInvoiceTemplate);
+    }
+  }, [dataContract?.invoice_template]);
+
+  useEffect(() => {
+    setDataServiceTemplateNames(dataContract?.service_template?.details);
+    setDataServiceTemplateValues(dataContract?.services);
+  }, [dataContract?.service_template, dataContract?.services]);
+
+  // 4. Event
+  const handleSaveInvoiceTemplate = () => {
+    if (!isAllowedToUpdateInvoiceTemplate) {
+      permissionWarningNotification("Mengubah", "Template Invoice Kontrak");
+      return;
+    }
+
+    const payload = {
+      contract_id: Number(contractId),
+      invoice_template: dataInvoice.map((item) => item.name),
+      service_template: dataServiceTemplateNames,
+      service_template_values: dataServiceTemplateValues?.map(
+        (item) => item?.service_template_value
+      ),
+    };
+
+    setLoadingSave(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateContractTemplate`, {
+      method: `PUT`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengubah template invoice kontrak. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingSave(false));
+  };
+
+  // Breadcrumb Text
+  const pageBreadcrumbValue = useMemo(
+    () => [
+      { name: "Kontrak", hrefValue: "/admin/contracts" },
+      { name: "Detail Kontrak", hrefValue: `/admin/contracts/${contractId}` },
+      {
+        name: "Template Invoice",
+      },
+    ],
+    []
+  );
+
+  if (isAccessControlPending) {
+    return null;
+  }
+
+  console.log({ dataServiceTemplateValues });
+  console.log({ dataInvoice });
+  return (
+    <LayoutDashboard
+      dataProfile={dataProfile}
+      sidemenu={sidemenu}
+      tok={initProps}
+      st={st}
+      pathArr={pathArr}
+      fixedBreadcrumbValues={pageBreadcrumbValue}
+    >
+      <div
+        className="grid grid-cols-1 gap-4 lg:gap-6 px-4 md:px-5 "
+        id="mainWrapper"
+      >
+        <section
+          className="grid grid-cols-1  
+          gap-6 shadow-md rounded-md bg-white p-4 lg:p-6"
+        >
+          <div className="flex flex-col md:flex-row md:items-center gap-2 justify-between">
+            <button
+              className="flex space-x-2 items-center bg-transparent"
+              onClick={() => rt.back()}
+            >
+              <ArrowLeftIconSvg size={24} />
+              <h4 className="mig-heading--4">Data Template Invoice</h4>
+            </button>
+            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 lg:items-center">
+              <ButtonSys type={"default"} onClick={() => setModalInvoice(true)}>
+                <div className="flex space-x-2 items-center">
+                  <FileTextOutlined />
+                  <p>Buat Invoice</p>
+                </div>
+              </ButtonSys>
+              <ButtonSys
+                onClick={handleSaveInvoiceTemplate}
+                type={"primary"}
+                disabled={!isAllowedToUpdateInvoiceTemplate}
+              >
+                <p>Simpan Template Invoice</p>
+              </ButtonSys>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <p className="mig-caption--bold">Klien</p>
+              <p>{dataContract?.client?.name}</p>
+            </div>
+            <div className="space-y-2">
+              <p className="mig-caption--bold">Periode Penagihan</p>
+              {/* <button
+                className="flex items-center space-x-2 bg-transparent"
+                onClick={() => {
+                  setCalendarPopup((prev) => !prev);
+                }}>
+                <CalendarEventIconSvg color={"#2F80ED"} size={18} />
+                <p className="mig-caption--bold text-open">Pilih Periode</p>
+              </button> */}
+
+              <DatePicker
+                allowEmpty
+                format={"D"}
+                showToday={false}
+                placeholder="Pilih Periode"
+                value={moment(dateState).isValid() ? moment(dateState) : null}
+                onChange={(dates, datestrings) => {
+                  setDateState(dates);
+                }}
+                renderExtraFooter={() => <div />}
+                bordered={false}
+                className="blueDatePicker p-0"
+                suffixIcon={
+                  <CalendarEventIconSvg color={"#2F80ED"} size={20} />
+                }
+              />
+            </div>
+            {dataInvoice?.map((item) => (
+              <div key={item?.title} className="space-y-2">
+                <p className="mig-caption--bold">{item?.title}</p>
+                {item?.type === FILE ? (
+                  <div className="flex space-x-2 items-center">
+                    <FileTextIconSvg size={24} color={"#35763B"} />
+                    <a
+                      href={generateStaticAssetUrl(item?.value?.link)}
+                      target="_blank"
+                      className="text-primary100 truncate"
+                    >
+                      {getFileName(item?.value?.link)}
+                    </a>
+                  </div>
+                ) : (
+                  <p>{item?.value}</p>
+                )}
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => setModalContractInfo(true)}
+            className="flex space-x-1 items-center bg-transparent hover:opacity-75"
+          >
+            <PlusIconSvg size={18} color={"#35763B"} />
+            <p className="mig-caption--bold text-primary100">
+              Tambah Informasi Lainnya
+            </p>
+          </button>
+        </section>
+
+        {/* Detail Kontrak & Daftar Service */}
+        <section className="shadow-md rounded-md bg-white p-6 mb-4 gap-6">
+          <ContractInvoiceItemSection
+            dataServiceTemplateNames={dataServiceTemplateNames}
+            setDataServiceTemplateNames={setDataServiceTemplateNames}
+            dataServiceTemplateValues={dataServiceTemplateValues}
+            setDataServiceTemplateValues={setDataServiceTemplateValues}
+            loading={loadingDataContractTemplate}
+          />
+        </section>
+      </div>
+
+      <ModalInvoiceCreate
+        initProps={initProps}
+        visible={modalInvoice}
+        onvisible={setModalInvoice}
+      />
+
+      <ModalContractInfo
+        visible={modalContractInfo}
+        onvisible={setModalContractInfo}
+        dataContract={dataContract}
+        dataInvoice={dataInvoice}
+        setDataInvoice={setDataInvoice}
+      />
+    </LayoutDashboard>
+  );
+};
+
+export async function getServerSideProps({ req, res, params }) {
+  const contractId = params.contractId;
+  let initProps = {};
+  if (!req.headers.cookie) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+
+  const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+  if (!cookiesJSON1.token) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+  initProps = cookiesJSON1.token;
+  const resourcesGP = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGP = await resourcesGP.json();
+  const dataProfile = resjsonGP;
+
+  return {
+    props: {
+      initProps,
+      dataProfile,
+      sidemenu: "contract-list",
+      contractId,
+    },
+  };
+}
+
+export default ContractInvoiceIndex;

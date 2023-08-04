@@ -223,6 +223,10 @@ ol {
   background: #35763b;
 }
 
+.blueDatePicker .ant-picker-input > input {
+  color: #2f80ed;
+}
+
 /* TREE */
 .treeMyCompanyMain.ant-tree,
 .treeClientMain.ant-tree {
@@ -335,6 +339,14 @@ ol {
 
 .tableBordered .ant-table-tbody td {
   border: 0;
+}
+
+.hoverComponent {
+  display: none;
+}
+
+.dynamicColumn:hover .hoverComponent {
+  display: block;
 }
 
 .slick-dots li button:before {

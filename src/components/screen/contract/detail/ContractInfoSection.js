@@ -133,7 +133,7 @@ const ContractInfoSection = ({
             <a
               href={generateStaticAssetUrl(value?.link)}
               target="_blank"
-              className="text-primary100"
+              className="text-primary100 truncate"
             >
               {getFileName(value?.link)}
             </a>
@@ -209,7 +209,7 @@ const ContractInfoSection = ({
             <h5 className="mig-caption--bold mb-2">Durasi Kontrak</h5>
             <p>
               {dataContract?.duration
-                ? convertDaysToString(Math.abs(dataContract?.duration))
+                ? convertDaysToString(dataContract?.duration)
                 : "-"}
             </p>
           </div>
