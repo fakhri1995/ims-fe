@@ -5,6 +5,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import {
+  Button,
   Checkbox,
   ConfigProvider,
   Input,
@@ -43,6 +44,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
 import {
+  ATTENDANCE_ACTIVITIES_GET,
   ATTENDANCE_ACTIVITY_ADD,
   ATTENDANCE_ACTIVITY_DELETE,
   ATTENDANCE_ACTIVITY_UPDATE,
@@ -85,6 +87,7 @@ export const AttendanceStaffAktivitasSection: FC<
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
   const isAllowedToAddActivity = hasPermission(ATTENDANCE_ACTIVITY_ADD);
+  const isAllowedToGetActivity = hasPermission(ATTENDANCE_ACTIVITIES_GET);
   const isAllowedToUpdateActivity = hasPermission(ATTENDANCE_ACTIVITY_UPDATE);
   const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
   const isAllowedToGetTaskActivities = hasPermission(
@@ -95,7 +98,7 @@ export const AttendanceStaffAktivitasSection: FC<
   );
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
-  const [tabActiveKey2, setTabActiveKey2] = useState<"3" | "4" | string>("3");
+  const [tabActiveKey2, setTabActiveKey2] = useState<"3" | "4" | string>("");
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
     useGetUserAttendanceActivities(tabActiveKey === "1" ? "today" : "past");
   const { attendeeStatus } = useGetAttendeeInfo();
@@ -423,8 +426,17 @@ export const AttendanceStaffAktivitasSection: FC<
     setLoadingTasks(false);
     setDataTaskTempSelected(dataTask);
     getDataTaskActivities();
+    checkActivityTask();
     // handleSelectAllTask();
   }, []);
+
+  const checkActivityTask = () => {
+    if (isAllowedToGetActivity) {
+      setTabActiveKey2("3");
+    } else if (isAllowedToGetTaskActivities) {
+      setTabActiveKey2("4");
+    }
+  };
 
   useEffect(() => {
     getDataModal();
@@ -464,6 +476,9 @@ export const AttendanceStaffAktivitasSection: FC<
                 ticket_number: datafromapi[a].ticket_number,
                 name: datafromapi[a].name,
                 start_date: datafromapi[a].start_date,
+                project_name: datafromapi[a].project
+                  ? datafromapi[a].project.name
+                  : null,
                 end_date: datafromapi[a].end_date,
                 is_selected: false,
               });
@@ -635,7 +650,7 @@ export const AttendanceStaffAktivitasSection: FC<
                           className={"text-xs text-mono50"}
                           style={{ lineHeight: "16px" }}
                         >
-                          [{task.project ? task.project.name : " - "}]
+                          [{task.task.project ? task.task.project.name : " - "}]
                         </p>
                       </div>
                       <div className={"w-1/12 self-center flex justify-end"}>
@@ -740,7 +755,7 @@ export const AttendanceStaffAktivitasSection: FC<
                         className={"text-xs text-mono50"}
                         style={{ lineHeight: "16px" }}
                       >
-                        [{task.project ? task.project.name : " - "}]
+                        [{task.project_name ? task.project_name : " - "}]
                       </p>
                     </div>
                     <div className={"w-1/12 self-center items-end"}>
@@ -803,26 +818,31 @@ export const AttendanceStaffAktivitasSection: FC<
                 <p className={"ml-2"}>Import Task</p>
               </ButtonSys>
             </AccessControl>
-            <ButtonSys
-              type="primary"
-              onClick={mOnAddActivityButtonClicked}
-              disabled={!isAllowedToAddActivity}
-            >
-              <AppstoreAddOutlined className="mr-2" />
-              Masukkan Aktivitas
-            </ButtonSys>
+            {isAllowedToAddActivity && (
+              <ButtonSys
+                type="primary"
+                onClick={mOnAddActivityButtonClicked}
+                disabled={!isAllowedToAddActivity}
+              >
+                <AppstoreAddOutlined className="mr-2" />
+                Masukkan Aktivitas
+              </ButtonSys>
+            )}
           </div>
         </div>
-        <Tabs
-          defaultActiveKey="3"
-          className="md:w-1/2"
-          onChange={setTabActiveKey2}
-        >
-          <TabPane tab="Form" key="3" />
-          <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
-            <TabPane tab="Task" key="4" />
-          </AccessControl>
-        </Tabs>
+        {isAllowedToGetActivity == true ||
+        isAllowedToGetTaskActivities == true ? (
+          <Tabs
+            defaultActiveKey="3"
+            className="md:w-1/2"
+            onChange={setTabActiveKey2}
+          >
+            {isAllowedToGetActivity && <TabPane tab="Form" key="3" />}
+            {isAllowedToGetTaskActivities && <TabPane tab="Task" key="4" />}
+          </Tabs>
+        ) : (
+          <div></div>
+        )}
 
         {checkFormOrTask()}
       </section>
