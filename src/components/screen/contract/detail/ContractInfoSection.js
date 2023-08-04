@@ -209,7 +209,7 @@ const ContractInfoSection = ({
             <h5 className="mig-caption--bold mb-2">Durasi Kontrak</h5>
             <p>
               {dataContract?.duration
-                ? convertDaysToString(Math.abs(dataContract?.duration))
+                ? convertDaysToString(dataContract?.duration)
                 : "-"}
             </p>
           </div>

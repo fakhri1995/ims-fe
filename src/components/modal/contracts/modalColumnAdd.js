@@ -11,12 +11,13 @@ import { ModalHapus2 } from "../modalCustom";
 const ModalColumnAdd = ({
   visible,
   onvisible,
-  dataContract,
   dynamicColumns,
   setDynamicColumns,
-  setDynamicColumnValues,
-  dataServiceTemplate,
-  setDataServiceTemplate,
+  dataServiceTemplateValues,
+  setDataServiceTemplateValues,
+  dataServiceTemplateNames,
+  setDataServiceTemplateNames,
+  isEdit,
 }) => {
   // 1. USE STATE
   const [columnName, setColumnName] = useState("");
@@ -27,9 +28,9 @@ const ModalColumnAdd = ({
     values: [],
   });
 
-  console.log({ dataCurrentColumn });
   // 2. HANDLER
   const handleAddColumn = () => {
+    const colIdx = dataServiceTemplateNames.length;
     const currentColumnId = columnName.toLowerCase().replace(/ /g, "_");
     let newColumn = {
       key: currentColumnId,
@@ -52,34 +53,62 @@ const ModalColumnAdd = ({
         </div>
       ),
       name: columnName,
-      render: (text, record, idx) => {
+      render: (text, record, index) => {
         return (
-          <Input
-            onChange={(e) => {
-              console.log(idx);
+          <>
+            {isEdit?.idx == index && isEdit?.val == true ? (
+              <Input
+                value={
+                  dataServiceTemplateValues?.[index]?.service_template_value
+                    ?.details?.[colIdx]
+                }
+                onChange={(e) => {
+                  let dataDynamicColumnValues = [...dataServiceTemplateValues];
 
-              let dataDynamicColumnValues = [...dataServiceTemplate.colValues];
-              dataDynamicColumnValues[idx].contract_service_id =
-                dataDynamicColumnValues[idx].id;
-              dataDynamicColumnValues[idx].values = [e.target.value];
-              // dataCurrentColumnValues.splice(idx, 1, e.target.value);
-              // setDataCurrentColumn((prev) => ({
-              //   ...prev,
-              //   values: dataCurrentColumnValues,
-              // }));
-              setDataServiceTemplate((prev) => ({
-                ...prev,
-                colValues: dataDynamicColumnValues,
-              }));
-              console.log(dataDynamicColumnValues);
-            }}
-          ></Input>
+                  dataDynamicColumnValues[
+                    index
+                  ].service_template_value.contract_service_id =
+                    dataDynamicColumnValues[index]?.id;
+
+                  if (
+                    !dataDynamicColumnValues[index]?.service_template_value
+                      ?.details
+                  ) {
+                    dataDynamicColumnValues[
+                      index
+                    ].service_template_value.details = [e.target.value];
+                  } else {
+                    dataDynamicColumnValues[
+                      index
+                    ].service_template_value.details?.splice(
+                      colIdx,
+                      1,
+                      e.target.value
+                    );
+                  }
+
+                  setDataServiceTemplateValues(dataDynamicColumnValues);
+                }}
+              />
+            ) : (
+              // <p>{record?.service_template_value?.details?.[colIdx]}</p>
+              <p>
+                {
+                  dataServiceTemplateValues?.[index]?.service_template_value
+                    ?.details?.[colIdx]
+                }
+              </p>
+            )}
+          </>
         );
       },
-      // dataIndex: columnName.toLowerCase().replace(/ /g, "_"),
     };
 
     setDynamicColumns((prev) => [...prev, newColumn]);
+    setDataServiceTemplateNames([
+      ...dynamicColumns.map((item) => item?.name),
+      columnName,
+    ]);
     onvisible(false);
     setColumnName("");
   };
@@ -95,7 +124,7 @@ const ModalColumnAdd = ({
     onvisible(false);
   };
 
-  console.log({ dataCurrentColumn });
+  // console.log({ dataCurrentColumn });
   return !modalDeleteColumn ? (
     <Modal
       title={<p className="mig-heading--4 text-mono30">Tambah Kolom Baru</p>}

@@ -20,15 +20,15 @@ const ModalContractInfo = ({
   visible,
   onvisible,
   dataContract,
-  dataInvoiceTemplate,
-  setDataInvoiceTemplate,
+  dataInvoice,
+  setDataInvoice,
 }) => {
   // 1. USE STATE
   const [columnName, setColumnName] = useState("");
   const [modalDeleteColumn, setModalDeleteColumn] = useState(false);
   const [dataCurrentColumn, setDataCurrentColumn] = useState({});
-  const [dataNotDisplayedInfo, setDataNotDisplayedInfo] = useState([]);
-  const [dataDisplayedInfo, setDataDisplayedInfo] = useState([]);
+  const [dataInvoiceNotDisplayed, setDataInvoiceNotDisplayed] = useState([]);
+  const [dataInvoiceDisplayed, setDataInvoiceDisplayed] = useState([]);
 
   // USE EFFECT
   useEffect(() => {
@@ -67,9 +67,15 @@ const ModalContractInfo = ({
         },
       ];
 
-      if (!dataContract?.invoice_template?.details?.includes("extras")) {
+      // Filter for not displayed info
+      if (
+        dataContract?.invoice_template?.details?.every(
+          (item) => !item.includes("extras")
+        )
+      ) {
         for (let item of dataContract?.extras) {
           const dataExtra = {
+            name: item?.key,
             title: item?.name,
             value: item?.value,
             type: item?.type,
@@ -83,40 +89,38 @@ const ModalContractInfo = ({
         (item) => !dataContract?.invoice_template?.details?.includes(item?.name)
       );
 
-      console.log({ dataInvoiceTemplate });
-      console.log({ tempNotDisplayed });
-
-      setDataNotDisplayedInfo(tempNotDisplayed);
+      setDataInvoiceNotDisplayed(tempNotDisplayed);
     }
   }, [dataContract]);
 
   useEffect(() => {
-    setDataDisplayedInfo(dataInvoiceTemplate);
-  }, [dataInvoiceTemplate]);
+    setDataInvoiceDisplayed(dataInvoice);
+  }, [dataInvoice]);
 
   // 2. HANDLER
   const handleAddToDisplay = (item, idx) => {
-    setDataDisplayedInfo((prev) => [...prev, item]);
+    setDataInvoiceDisplayed((prev) => [...prev, item]);
 
-    let tempNotDisplayed = [...dataNotDisplayedInfo];
+    let tempNotDisplayed = [...dataInvoiceNotDisplayed];
     tempNotDisplayed.splice(idx, 1);
-    setDataNotDisplayedInfo(tempNotDisplayed);
+    setDataInvoiceNotDisplayed(tempNotDisplayed);
   };
 
   const handleRemoveFromDisplay = (item, idx) => {
-    setDataNotDisplayedInfo((prev) => [...prev, item]);
+    setDataInvoiceNotDisplayed((prev) => [...prev, item]);
 
-    let tempDisplayed = [...dataDisplayedInfo];
+    let tempDisplayed = [...dataInvoiceDisplayed];
     tempDisplayed.splice(idx, 1);
-    setDataDisplayedInfo(tempDisplayed);
+    setDataInvoiceDisplayed(tempDisplayed);
   };
 
   const handleSaveDisplayedList = () => {
-    setDataInvoiceTemplate(dataDisplayedInfo);
+    setDataInvoice(dataInvoiceDisplayed);
     onvisible(false);
   };
 
-  console.log({ dataNotDisplayedInfo });
+  // console.log({ dataInvoiceDisplayed });
+  // console.log({ dataInvoiceNotDisplayed });
   return (
     <Modal
       title={
@@ -144,12 +148,12 @@ const ModalContractInfo = ({
         <div>
           <h5 className="mig-heading--5 mb-6">Informasi Kontrak</h5>
           <div className="grid grid-cols-1 gap-2">
-            {dataNotDisplayedInfo?.map((item, idx) => (
+            {dataInvoiceNotDisplayed?.map((item, idx) => (
               <div
                 key={item.title}
                 className="flex items-center justify-between gap-2 border border-inputkategori rounded px-4 py-2"
               >
-                <div>
+                <div className="grid grid-cols-1">
                   <p className="mig-caption--bold mb-2">{item?.title}</p>
                   {item?.type === FILE ? (
                     <a
@@ -178,12 +182,12 @@ const ModalContractInfo = ({
         <div>
           <h5 className="mig-heading--5 mb-6">Informasi Ditampilkan</h5>
           <div className="grid grid-cols-1 gap-2">
-            {dataDisplayedInfo?.map((item, idx) => (
+            {dataInvoiceDisplayed?.map((item, idx) => (
               <div
                 key={item.title}
                 className="flex items-center justify-between gap-2 border border-inputkategori rounded px-4 py-2"
               >
-                <div>
+                <div className="grid grid-cols-1">
                   <p className="mig-caption--bold mb-2">{item?.title}</p>
                   {item?.type === FILE ? (
                     <a

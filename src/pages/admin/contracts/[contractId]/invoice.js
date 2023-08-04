@@ -37,7 +37,12 @@ import ModalContractInfo from "../../../../components/modal/contracts/modalContr
 import ModalInvoiceCreate from "../../../../components/modal/contracts/modalInvoiceCreate";
 import { FILE } from "../../../../components/screen/contract/detail/ContractInfoSection";
 import ContractInvoiceItemSection from "../../../../components/screen/contract/invoice/ContractInvoiceItemSection";
-import { generateStaticAssetUrl, getFileName } from "../../../../lib/helper";
+import {
+  convertDaysToString,
+  generateStaticAssetUrl,
+  getFileName,
+  momentFormatDate,
+} from "../../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -92,11 +97,12 @@ const ContractInvoiceIndex = ({
 
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
-  const [dataInvoiceTemplate, setDataInvoiceTemplate] = useState([]);
-  const [dataServiceTemplate, setDataServiceTemplate] = useState({
-    colNames: [],
-    colValues: [],
-  });
+  const [dataInvoice, setDataInvoice] = useState([]);
+  const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
+  const [dataServiceTemplateValues, setDataServiceTemplateValues] = useState(
+    []
+  );
+
   const [dateState, setDateState] = useState("");
 
   const [modalInvoice, setModalInvoice] = useState(false);
@@ -104,11 +110,10 @@ const ContractInvoiceIndex = ({
 
   const [loadingSave, setLoadingSave] = useState(false);
   // 3. Use Effect & Use Query
-
-  // get contract detail
+  // 3.1. get contract template detail
   const { data: dataContract, isLoading: loadingDataContractTemplate } =
     useQuery(
-      [CONTRACT_TEMPLATE_GET, refresh],
+      [CONTRACT_TEMPLATE_GET, refresh, contractId],
       () =>
         ContractService.getContractTemplate(
           initProps,
@@ -123,26 +128,29 @@ const ContractInvoiceIndex = ({
     );
 
   useEffect(() => {
-    setDataServiceTemplate({
-      colNames: dataContract?.service_template,
-      colValues: dataContract?.services,
-    });
-  }, [dataContract?.service_template, dataContract?.services]);
-
-  useEffect(() => {
     if (dataContract?.invoice_template) {
       const currentInvoiceTemplate = [];
       for (let item of dataContract?.invoice_template?.details) {
-        if (item != "extras") {
+        if (!item?.includes("extras")) {
+          let tempValue = dataContract[item];
+
+          if (["initial_date", "start_date", "end_date"].includes(item)) {
+            tempValue = momentFormatDate(tempValue);
+          }
+
+          if (item == "duration") {
+            tempValue = convertDaysToString(tempValue);
+          }
+
           currentInvoiceTemplate.push({
             name: item,
             title: contractInfoString[item],
-
-            value: dataContract[item],
+            value: tempValue,
           });
         } else {
           for (let item of dataContract?.extras) {
             const dataExtra = {
+              name: item?.key,
               title: item?.name,
               value: item?.value,
               type: item?.type,
@@ -152,9 +160,14 @@ const ContractInvoiceIndex = ({
           }
         }
       }
-      setDataInvoiceTemplate(currentInvoiceTemplate);
+      setDataInvoice(currentInvoiceTemplate);
     }
   }, [dataContract?.invoice_template]);
+
+  useEffect(() => {
+    setDataServiceTemplateNames(dataContract?.service_template?.details);
+    setDataServiceTemplateValues(dataContract?.services);
+  }, [dataContract?.service_template, dataContract?.services]);
 
   // 4. Event
   const handleSaveInvoiceTemplate = () => {
@@ -165,9 +178,11 @@ const ContractInvoiceIndex = ({
 
     const payload = {
       contract_id: Number(contractId),
-      invoice_template: dataInvoiceTemplate.map((item) => item.name),
-      service_template: dataServiceTemplate?.colNames,
-      service_template_values: dataServiceTemplate?.colValues,
+      invoice_template: dataInvoice.map((item) => item.name),
+      service_template: dataServiceTemplateNames,
+      service_template_values: dataServiceTemplateValues?.map(
+        (item) => item?.service_template_value
+      ),
     };
 
     setLoadingSave(true);
@@ -219,7 +234,8 @@ const ContractInvoiceIndex = ({
     return null;
   }
 
-  console.log({ dataInvoiceTemplate });
+  console.log({ dataServiceTemplateValues });
+  console.log({ dataInvoice });
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -294,7 +310,7 @@ const ContractInvoiceIndex = ({
                 }
               />
             </div>
-            {dataInvoiceTemplate?.map((item) => (
+            {dataInvoice?.map((item) => (
               <div key={item?.title} className="space-y-2">
                 <p className="mig-caption--bold">{item?.title}</p>
                 {item?.type === FILE ? (
@@ -328,8 +344,10 @@ const ContractInvoiceIndex = ({
         {/* Detail Kontrak & Daftar Service */}
         <section className="shadow-md rounded-md bg-white p-6 mb-4 gap-6">
           <ContractInvoiceItemSection
-            dataServiceTemplate={dataServiceTemplate}
-            setDataServiceTemplate={setDataServiceTemplate}
+            dataServiceTemplateNames={dataServiceTemplateNames}
+            setDataServiceTemplateNames={setDataServiceTemplateNames}
+            dataServiceTemplateValues={dataServiceTemplateValues}
+            setDataServiceTemplateValues={setDataServiceTemplateValues}
             loading={loadingDataContractTemplate}
           />
         </section>
@@ -345,8 +363,8 @@ const ContractInvoiceIndex = ({
         visible={modalContractInfo}
         onvisible={setModalContractInfo}
         dataContract={dataContract}
-        dataInvoiceTemplate={dataInvoiceTemplate}
-        setDataInvoiceTemplate={setDataInvoiceTemplate}
+        dataInvoice={dataInvoice}
+        setDataInvoice={setDataInvoice}
       />
     </LayoutDashboard>
   );

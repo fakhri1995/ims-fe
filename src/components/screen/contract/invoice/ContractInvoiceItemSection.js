@@ -4,29 +4,114 @@ import { useState } from "react";
 import { useEffect } from "react";
 
 import ButtonSys from "../../../button";
-import { SearchIconSvg, SquarePlusIconSvg } from "../../../icon";
+import {
+  EditIconSvg,
+  EditSquareIconSvg,
+  SearchIconSvg,
+  SquarePlusIconSvg,
+  TrashIconSvg,
+} from "../../../icon";
 import ModalColumnAdd from "../../../modal/contracts/modalColumnAdd";
 
 const ContractInvoiceItemSection = ({
   dataContract,
-  dataServiceTemplate,
-  setDataServiceTemplate,
+  dataServiceTemplateNames,
+  setDataServiceTemplateNames,
+  dataServiceTemplateValues,
+  setDataServiceTemplateValues,
   loading,
 }) => {
   const [dynamicColumns, setDynamicColumns] = useState([]);
   const [dynamicColumnValues, setDynamicColumnValues] = useState([]);
   const [modalAddColumn, setModalAddColumn] = useState(false);
+  const [isEdit, setIsEdit] = useState({ idx: -1, val: false });
+
+  // useEffect(() => {
+  //   const dynamicColNames = dynamicColumns.map((item) => item.name);
+  //   setDataServiceTemplateNames(dynamicColNames);
+  // }, [dynamicColumns]);
 
   useEffect(() => {
-    const dynamicColNames = dynamicColumns.map((item) => item.name);
-    setDataServiceTemplate((prev) => ({
-      ...prev,
-      colNames: dynamicColNames,
-      // colValues: dataServiceTemplate?.colValues,
-    }));
-  }, [dynamicColumns]);
+    const tempDyanmicColumns = [];
+    for (let colIdx in dataServiceTemplateNames) {
+      let newColumn = {
+        key: dataServiceTemplateNames[colIdx],
+        name: dataServiceTemplateNames[colIdx],
+        title: (
+          <div className="flex justify-between items-center space-x-2 dynamicColumn">
+            <p>{dataServiceTemplateNames[colIdx]}</p>
+            <button
+              className="bg-transparent p-0 m-0 hoverComponent"
+              // onClick={() => {
+              //   setDataCurrentColumn((prev) => ({
+              //     ...prev,
+              //     id: currentColumnId,
+              //     name: columnName,
+              //   }));
+              //   setModalDeleteColumn(true);
+              // }}
+            >
+              <TrashIconSvg color={"#4D4D4D"} size={18} />
+            </button>
+          </div>
+        ),
+        render: (text, record, index) => {
+          return (
+            <>
+              {isEdit?.idx == index && isEdit?.val == true ? (
+                <Input
+                  value={
+                    dataServiceTemplateValues?.[index]?.service_template_value
+                      ?.details?.[colIdx]
+                  }
+                  onChange={(e) => {
+                    let dataDynamicColumnValues = [
+                      ...dataServiceTemplateValues,
+                    ];
 
-  console.log({ dynamicColumns });
+                    // dataDynamicColumnValues[
+                    //   index
+                    // ].service_template_value.contract_service_id =
+                    //   dataDynamicColumnValues[index]?.id;
+
+                    if (
+                      !dataDynamicColumnValues[index]?.service_template_value
+                        ?.details
+                    ) {
+                      dataDynamicColumnValues[
+                        index
+                      ].service_template_value.details = [e.target.value];
+                    } else {
+                      dataDynamicColumnValues[
+                        index
+                      ].service_template_value.details[colIdx] = e.target.value;
+                    }
+
+                    setDataServiceTemplateValues(dataDynamicColumnValues);
+                  }}
+                />
+              ) : (
+                // <p>{record?.service_template_value?.details?.[colIdx]}</p>
+                <p>
+                  {
+                    dataServiceTemplateValues?.[index]?.service_template_value
+                      ?.details?.[colIdx]
+                  }
+                </p>
+              )}
+            </>
+          );
+        },
+      };
+
+      tempDyanmicColumns.push(newColumn);
+    }
+    setDynamicColumns(tempDyanmicColumns);
+  }, [dataServiceTemplateNames, isEdit]);
+
+  // console.log({ dataServiceTemplateValues });
+  // console.log({ dataServiceTemplateNames });
+  // console.log({ dynamicColumns });
   return (
     <>
       <div className="flex justify-between">
@@ -65,7 +150,7 @@ const ContractInvoiceItemSection = ({
       </div>
       <Table
         className="tableBordered border-2 rounded-md"
-        dataSource={dataServiceTemplate?.colValues}
+        dataSource={dataServiceTemplateValues}
         rowKey={(record) => record.id}
         loading={loading}
         scroll={{ x: 200 }}
@@ -123,7 +208,21 @@ const ContractInvoiceItemSection = ({
                 <SquarePlusIconSvg color={"#4D4D4D"} size={20} />
               </button>
             ),
-            dataIndex: "addColumn",
+            dataIndex: "actionButton",
+            render: (text, record, index) => {
+              return (
+                Boolean(dataServiceTemplateNames.length) && (
+                  <button
+                    onClick={(e) => {
+                      setIsEdit({ idx: index, val: !isEdit.val });
+                    }}
+                    className="bg-transparent"
+                  >
+                    <EditSquareIconSvg size={24} color={"#CCCCCC"} />
+                  </button>
+                )
+              );
+            },
           },
         ]}
       />
@@ -133,9 +232,11 @@ const ContractInvoiceItemSection = ({
         onvisible={setModalAddColumn}
         dynamicColumns={dynamicColumns}
         setDynamicColumns={setDynamicColumns}
-        dataServiceTemplate={dataServiceTemplate}
-        setDataServiceTemplate={setDataServiceTemplate}
-        setDynamicColumnValues={setDynamicColumnValues}
+        dataServiceTemplateValues={dataServiceTemplateValues}
+        setDataServiceTemplateValues={setDataServiceTemplateValues}
+        dataServiceTemplateNames={dataServiceTemplateNames}
+        setDataServiceTemplateNames={setDataServiceTemplateNames}
+        isEdit={isEdit}
       />
     </>
   );
