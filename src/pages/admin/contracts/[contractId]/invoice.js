@@ -35,7 +35,10 @@ import {
 } from "../../../../components/icon";
 import ModalContractInfo from "../../../../components/modal/contracts/modalContractInfo";
 import ModalInvoiceCreate from "../../../../components/modal/contracts/modalInvoiceCreate";
-import { FILE } from "../../../../components/screen/contract/detail/ContractInfoSection";
+import {
+  FILE,
+  LIST,
+} from "../../../../components/screen/contract/detail/ContractInfoSection";
 import ContractInvoiceItemSection from "../../../../components/screen/contract/invoice/ContractInvoiceItemSection";
 import {
   convertDaysToString,
@@ -66,7 +69,7 @@ Chart.register(
 
 export const contractInfoString = {
   title: "Judul Kontrak",
-  requester_id: "Requester",
+  requester_name: "Requester",
   initial_date: "Tanggal Dibuat",
   start_date: "Tanggal Berlaku",
   end_date: "Tanggal Selesai",
@@ -99,9 +102,7 @@ const ContractInvoiceIndex = ({
   const [refresh, setRefresh] = useState(-1);
   const [dataInvoice, setDataInvoice] = useState([]);
   const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
-  const [dataServiceTemplateValues, setDataServiceTemplateValues] = useState(
-    []
-  );
+  const [dataServices, setDataServices] = useState([]);
 
   const [dateState, setDateState] = useState("");
 
@@ -148,15 +149,17 @@ const ContractInvoiceIndex = ({
             value: tempValue,
           });
         } else {
-          for (let item of dataContract?.extras) {
-            const dataExtra = {
-              name: item?.key,
-              title: item?.name,
-              value: item?.value,
-              type: item?.type,
-            };
+          for (let extra of dataContract?.extras) {
+            if (`extras.${extra?.key}` == item) {
+              const dataExtra = {
+                name: `extras.${extra?.key}`,
+                title: extra?.name,
+                value: extra?.value,
+                type: extra?.type,
+              };
 
-            currentInvoiceTemplate.push(dataExtra);
+              currentInvoiceTemplate.push(dataExtra);
+            }
           }
         }
       }
@@ -166,7 +169,7 @@ const ContractInvoiceIndex = ({
 
   useEffect(() => {
     setDataServiceTemplateNames(dataContract?.service_template?.details);
-    setDataServiceTemplateValues(dataContract?.services);
+    setDataServices(dataContract?.services);
   }, [dataContract?.service_template, dataContract?.services]);
 
   // 4. Event
@@ -180,7 +183,7 @@ const ContractInvoiceIndex = ({
       contract_id: Number(contractId),
       invoice_template: dataInvoice.map((item) => item.name),
       service_template: dataServiceTemplateNames,
-      service_template_values: dataServiceTemplateValues?.map(
+      service_template_values: dataServices?.map(
         (item) => item?.service_template_value
       ),
     };
@@ -234,8 +237,8 @@ const ContractInvoiceIndex = ({
     return null;
   }
 
-  console.log({ dataServiceTemplateValues });
-  console.log({ dataInvoice });
+  // console.log({ dataServices });
+  // console.log({ dataInvoice });
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -324,6 +327,12 @@ const ContractInvoiceIndex = ({
                       {getFileName(item?.value?.link)}
                     </a>
                   </div>
+                ) : item?.type === LIST ? (
+                  <ul>
+                    {item?.value?.map((val, idx) => (
+                      <li key={idx}>{val}</li>
+                    ))}
+                  </ul>
                 ) : (
                   <p>{item?.value}</p>
                 )}
@@ -346,8 +355,8 @@ const ContractInvoiceIndex = ({
           <ContractInvoiceItemSection
             dataServiceTemplateNames={dataServiceTemplateNames}
             setDataServiceTemplateNames={setDataServiceTemplateNames}
-            dataServiceTemplateValues={dataServiceTemplateValues}
-            setDataServiceTemplateValues={setDataServiceTemplateValues}
+            dataServices={dataServices}
+            setDataServices={setDataServices}
             loading={loadingDataContractTemplate}
           />
         </section>
