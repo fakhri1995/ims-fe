@@ -16,13 +16,7 @@ import LayoutDashboard from "components/layout-dashboardNew";
 
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  CONTRACTS_GET,
-  CONTRACT_ADD,
-  CONTRACT_DELETE,
-  CONTRACT_TEMPLATE_GET,
-  CONTRACT_TEMPLATE_UPDATE,
-} from "lib/features";
+import { CONTRACT_TEMPLATE_GET, CONTRACT_TEMPLATE_UPDATE } from "lib/features";
 
 import { ContractService } from "apis/contract";
 

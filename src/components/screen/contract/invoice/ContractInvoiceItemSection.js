@@ -1,122 +1,165 @@
-import { Input, Table, Tabs } from "antd";
+import { Input, Table } from "antd";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
 import ButtonSys from "../../../button";
 import {
-  EditIconSvg,
+  CheckIconSvg,
   EditSquareIconSvg,
   SearchIconSvg,
   SquarePlusIconSvg,
   TrashIconSvg,
+  XIconSvg,
 } from "../../../icon";
 import ModalColumnAdd from "../../../modal/contracts/modalColumnAdd";
+import { ModalHapus2 } from "../../../modal/modalCustom";
 
 const ContractInvoiceItemSection = ({
-  dataContract,
   dataServiceTemplateNames,
   setDataServiceTemplateNames,
-  dataServiceTemplateValues,
-  setDataServiceTemplateValues,
+  dataServices,
+  setDataServices,
   loading,
 }) => {
+  // 1.Use State
   const [dynamicColumns, setDynamicColumns] = useState([]);
-  const [dynamicColumnValues, setDynamicColumnValues] = useState([]);
+  const [isEdit, setIsEdit] = useState(null);
   const [modalAddColumn, setModalAddColumn] = useState(false);
-  const [isEdit, setIsEdit] = useState({ idx: -1, val: false });
+  const [modalDeleteColumn, setModalDeleteColumn] = useState(false);
+  const [dataCurrentColumn, setDataCurrentColumn] = useState({
+    idx: -1,
+    name: "",
+  });
+  const [currentRowValues, setCurrentRowValues] = useState([]);
 
-  // useEffect(() => {
-  //   const dynamicColNames = dynamicColumns.map((item) => item.name);
-  //   setDataServiceTemplateNames(dynamicColNames);
-  // }, [dynamicColumns]);
-
+  // 2. Use Effect
+  // 2.1. Render dynamic columns when dataServiceTemplateNames is changing
   useEffect(() => {
     const tempDyanmicColumns = [];
     for (let colIdx in dataServiceTemplateNames) {
-      let newColumn = {
-        key: dataServiceTemplateNames[colIdx],
-        name: dataServiceTemplateNames[colIdx],
-        title: (
-          <div className="flex justify-between items-center space-x-2 dynamicColumn">
-            <p>{dataServiceTemplateNames[colIdx]}</p>
-            <button
-              className="bg-transparent p-0 m-0 hoverComponent"
-              // onClick={() => {
-              //   setDataCurrentColumn((prev) => ({
-              //     ...prev,
-              //     id: currentColumnId,
-              //     name: columnName,
-              //   }));
-              //   setModalDeleteColumn(true);
-              // }}
-            >
-              <TrashIconSvg color={"#4D4D4D"} size={18} />
-            </button>
-          </div>
-        ),
-        render: (text, record, index) => {
-          return (
-            <>
-              {isEdit?.idx == index && isEdit?.val == true ? (
-                <Input
-                  value={
-                    dataServiceTemplateValues?.[index]?.service_template_value
-                      ?.details?.[colIdx]
-                  }
-                  onChange={(e) => {
-                    let dataDynamicColumnValues = [
-                      ...dataServiceTemplateValues,
-                    ];
-
-                    // dataDynamicColumnValues[
-                    //   index
-                    // ].service_template_value.contract_service_id =
-                    //   dataDynamicColumnValues[index]?.id;
-
-                    if (
-                      !dataDynamicColumnValues[index]?.service_template_value
-                        ?.details
-                    ) {
-                      dataDynamicColumnValues[
-                        index
-                      ].service_template_value.details = [e.target.value];
-                    } else {
-                      dataDynamicColumnValues[
-                        index
-                      ].service_template_value.details[colIdx] = e.target.value;
-                    }
-
-                    setDataServiceTemplateValues(dataDynamicColumnValues);
-                  }}
-                />
-              ) : (
-                // <p>{record?.service_template_value?.details?.[colIdx]}</p>
-                <p>
-                  {
-                    dataServiceTemplateValues?.[index]?.service_template_value
-                      ?.details?.[colIdx]
-                  }
-                </p>
-              )}
-            </>
-          );
-        },
-      };
-
+      let newColumn = renderNewColumn(colIdx, dataServiceTemplateNames[colIdx]);
       tempDyanmicColumns.push(newColumn);
     }
     setDynamicColumns(tempDyanmicColumns);
   }, [dataServiceTemplateNames, isEdit]);
 
-  // console.log({ dataServiceTemplateValues });
+  // 2.2. Add contract_service_id & details attribute if not yet available
+  useEffect(() => {
+    let tempServices = dataServices?.map((service) => ({
+      ...service,
+      service_template_value: {
+        ...service?.service_template_value,
+        contract_service_id: service?.id,
+        details: service.service_template_value
+          ? [...service.service_template_value?.details]
+          : [""],
+      },
+    }));
+    setDataServices(tempServices);
+  }, [dataServiceTemplateNames]);
+
+  // 3. Handler
+  const renderNewColumn = (idx, name) => ({
+    key: name?.toLowerCase().replace(/ /g, "_"),
+    name: name,
+    title: (
+      <div className="flex justify-between items-center space-x-2 dynamicColumn">
+        <p>{name}</p>
+        <button
+          className="bg-transparent p-0 m-0 hoverComponent"
+          onClick={() => {
+            setDataCurrentColumn((prev) => ({
+              ...prev,
+              idx: idx,
+              name: name,
+            }));
+            setModalDeleteColumn(true);
+          }}
+        >
+          <TrashIconSvg color={"#4D4D4D"} size={18} />
+        </button>
+      </div>
+    ),
+    render: (text, record, rowIndex) => {
+      return (
+        <>
+          {isEdit == rowIndex ? (
+            <Input
+              defaultValue={
+                dataServices?.[rowIndex]?.service_template_value?.details?.[idx]
+              }
+              onChange={(e) => {
+                setCurrentRowValues((prev) => {
+                  const tempRowValues = [...prev];
+                  tempRowValues[idx] = e.target.value;
+                  return tempRowValues;
+                });
+                setDataCurrentColumn({ idx: idx, name: name });
+              }}
+            />
+          ) : (
+            <p>
+              {dataServices?.[rowIndex]?.service_template_value?.details?.[idx]}
+            </p>
+          )}
+        </>
+      );
+    },
+  });
+
+  const handleAddColumn = () => {
+    const colIdx = dataServiceTemplateNames?.length;
+    const colName = dataCurrentColumn?.name;
+    let newColumn = renderNewColumn(colIdx, colName);
+
+    setDynamicColumns((prev) => [...prev, newColumn]);
+    setDataServiceTemplateNames([
+      ...dynamicColumns.map((item) => item?.name),
+      colName,
+    ]);
+
+    setModalAddColumn(false);
+    setDataCurrentColumn({ idx: -1, name: "" });
+  };
+
+  const handleDeleteColumn = (idx) => {
+    // Delete column name
+    let tempDyanmicColumns = [...dynamicColumns];
+    tempDyanmicColumns.splice(idx, 1);
+
+    // Delete column values
+    const updatedServices = [];
+    for (let item of dataServices) {
+      let tempValues = [...item?.service_template_value?.details];
+      tempValues.splice(idx, 1);
+      let tempService = {
+        ...item,
+        service_template_value: {
+          ...item.service_template_value,
+          details: tempValues,
+        },
+      };
+      updatedServices.push(tempService);
+    }
+
+    setDynamicColumns(tempDyanmicColumns);
+    setDataServiceTemplateNames(tempDyanmicColumns.map((item) => item?.name));
+    setDataServices(updatedServices);
+    setModalDeleteColumn(false);
+  };
+
+  // console.log({ dataServices });
+  // console.log({ currentRowValues });
   // console.log({ dataServiceTemplateNames });
   // console.log({ dynamicColumns });
+  // console.log({ dataCurrentColumn });
   return (
     <>
       <div className="flex justify-between">
         <h4 className="mig-heading--4 mb-6">Data Item</h4>
         {/* Search by keyword (kata kunci) */}
+        {/* TODO: implement search if API is ready */}
         <div className="flex gap-2 md:gap-6">
           <div className="w-full ">
             <Input
@@ -150,7 +193,7 @@ const ContractInvoiceItemSection = ({
       </div>
       <Table
         className="tableBordered border-2 rounded-md"
-        dataSource={dataServiceTemplateValues}
+        dataSource={dataServices}
         rowKey={(record) => record.id}
         loading={loading}
         scroll={{ x: 200 }}
@@ -203,24 +246,63 @@ const ContractInvoiceItemSection = ({
             title: (
               <button
                 onClick={() => setModalAddColumn(true)}
-                className="bg-transparent"
+                className="bg-transparent hover:opacity-75"
               >
                 <SquarePlusIconSvg color={"#4D4D4D"} size={20} />
               </button>
             ),
             dataIndex: "actionButton",
-            render: (text, record, index) => {
+            render: (text, record, rowIndex) => {
               return (
-                Boolean(dataServiceTemplateNames.length) && (
+                Boolean(dataServiceTemplateNames?.length) &&
+                (isEdit == rowIndex ? (
+                  <div className="flex gap-2 items-center">
+                    <button
+                      onClick={(e) => {
+                        let tempDataServices = [...dataServices];
+
+                        // update row values
+                        if (dataServices?.[rowIndex]?.service_template_value) {
+                          tempDataServices[
+                            rowIndex
+                          ].service_template_value.details = currentRowValues;
+                        }
+
+                        setDataServices(tempDataServices);
+                        setIsEdit(null);
+                      }}
+                      className="bg-transparent hover:opacity-75"
+                    >
+                      <CheckIconSvg size={20} color={"#CCCCCC"} />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        setIsEdit(null);
+                      }}
+                      className="bg-transparent hover:opacity-75"
+                    >
+                      <XIconSvg size={20} color={"#CCCCCC"} />
+                    </button>
+                  </div>
+                ) : (
                   <button
                     onClick={(e) => {
-                      setIsEdit({ idx: index, val: !isEdit.val });
+                      let tempRowValues = [];
+                      if (dataServices?.[rowIndex]?.service_template_value) {
+                        tempRowValues = [
+                          ...dataServices?.[rowIndex]?.service_template_value
+                            ?.details,
+                        ];
+                      }
+
+                      setCurrentRowValues(tempRowValues);
+                      setIsEdit(rowIndex);
                     }}
-                    className="bg-transparent"
+                    className="bg-transparent hover:opacity-75"
                   >
                     <EditSquareIconSvg size={24} color={"#CCCCCC"} />
                   </button>
-                )
+                ))
               );
             },
           },
@@ -230,14 +312,25 @@ const ContractInvoiceItemSection = ({
       <ModalColumnAdd
         visible={modalAddColumn}
         onvisible={setModalAddColumn}
-        dynamicColumns={dynamicColumns}
-        setDynamicColumns={setDynamicColumns}
-        dataServiceTemplateValues={dataServiceTemplateValues}
-        setDataServiceTemplateValues={setDataServiceTemplateValues}
-        dataServiceTemplateNames={dataServiceTemplateNames}
-        setDataServiceTemplateNames={setDataServiceTemplateNames}
-        isEdit={isEdit}
+        handleAddColumn={handleAddColumn}
+        dataCurrentColumn={dataCurrentColumn}
+        setDataCurrentColumn={setDataCurrentColumn}
       />
+
+      <ModalHapus2
+        title={`Konfirmasi Hapus Kolom`}
+        visible={modalDeleteColumn}
+        onvisible={setModalDeleteColumn}
+        onOk={() => handleDeleteColumn(dataCurrentColumn?.idx)}
+        onCancel={() => {
+          setModalDeleteColumn(false);
+        }}
+        itemName={"kolom"}
+        loading={false}
+      >
+        Apakah Anda yakin ingin menghapus kolom{" "}
+        <strong>{dataCurrentColumn?.name}</strong>?
+      </ModalHapus2>
     </>
   );
 };
