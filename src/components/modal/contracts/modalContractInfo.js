@@ -13,7 +13,7 @@ import {
 import { contractInfoString } from "../../../pages/admin/contracts/[contractId]/invoice";
 import ButtonSys from "../../button";
 import { PlusIconSvg, TrashIconSvg, XIconSvg } from "../../icon";
-import { FILE } from "../../screen/contract/detail/ContractInfoSection";
+import { FILE, LIST } from "../../screen/contract/detail/ContractInfoSection";
 import { ModalHapus2 } from "../modalCustom";
 
 const ModalContractInfo = ({
@@ -33,16 +33,28 @@ const ModalContractInfo = ({
   // USE EFFECT
   useEffect(() => {
     if (dataContract) {
+      const dataExtras = dataContract?.extras?.map((extra) => ({
+        name: `extras.${extra?.key}`,
+        title: extra?.name,
+        value: extra?.value,
+        type: extra?.type,
+      }));
+
       const tempNotDisplayed = [
+        {
+          name: "contract_number",
+          title: contractInfoString?.contract_number,
+          value: dataContract?.contract_number,
+        },
         {
           name: "title",
           title: contractInfoString?.title,
           value: dataContract?.title,
         },
         {
-          name: "requester_id",
-          title: contractInfoString?.requester_id,
-          value: dataContract?.requester_id,
+          name: "requester",
+          title: contractInfoString?.requester,
+          value: dataContract?.requester?.name,
         },
 
         {
@@ -65,26 +77,10 @@ const ModalContractInfo = ({
           title: contractInfoString?.duration,
           value: convertDaysToString(dataContract?.duration),
         },
+        ...dataExtras,
       ];
 
       // Filter for not displayed info
-      if (
-        dataContract?.invoice_template?.details?.every(
-          (item) => !item.includes("extras")
-        )
-      ) {
-        for (let item of dataContract?.extras) {
-          const dataExtra = {
-            name: item?.key,
-            title: item?.name,
-            value: item?.value,
-            type: item?.type,
-          };
-
-          tempNotDisplayed.push(dataExtra);
-        }
-      }
-
       tempNotDisplayed = tempNotDisplayed.filter(
         (item) => !dataContract?.invoice_template?.details?.includes(item?.name)
       );
@@ -163,13 +159,19 @@ const ModalContractInfo = ({
                     >
                       {getFileName(item?.value?.link)}
                     </a>
+                  ) : item?.type === LIST ? (
+                    <ul>
+                      {item?.value?.map((val, idx) => (
+                        <li key={idx}>{val}</li>
+                      ))}
+                    </ul>
                   ) : (
                     <p className="mig-caption">{item?.value}</p>
                   )}
                 </div>
                 <button
                   onClick={() => handleAddToDisplay(item, idx)}
-                  className="w-6 h-6 p-1 rounded-full bg-primary100 bg-opacity-10 flex items-center"
+                  className="w-6 h-6 p-1 rounded-full bg-primary100 bg-opacity-10 flex items-center hover:opacity-75"
                 >
                   <PlusIconSvg size={16} color={"#35763B"} />
                 </button>
@@ -197,13 +199,19 @@ const ModalContractInfo = ({
                     >
                       {getFileName(item?.value?.link)}
                     </a>
+                  ) : item?.type === LIST ? (
+                    <ul>
+                      {item?.value?.map((val, idx) => (
+                        <li key={idx}>{val}</li>
+                      ))}
+                    </ul>
                   ) : (
                     <p className="mig-caption">{item?.value}</p>
                   )}
                 </div>
                 <button
                   onClick={() => handleRemoveFromDisplay(item, idx)}
-                  className="w-6 h-6 p-1 rounded-full bg-mono70 bg-opacity-10 flex items-center"
+                  className="w-6 h-6 p-1 rounded-full bg-mono70 bg-opacity-10 flex items-center hover:opacity-75"
                 >
                   <XIconSvg size={16} color={"#808080"} />
                 </button>
