@@ -3,6 +3,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
+import { createKeyPressHandler } from "../../../../lib/helper";
 import ButtonSys from "../../../button";
 import {
   CheckIconSvg,
@@ -32,6 +33,8 @@ const ContractInvoiceItemSection = ({
     name: "",
   });
   const [currentRowValues, setCurrentRowValues] = useState([]);
+  const [searchingFilterItems, setSearchingFilterItems] = useState(null);
+  const [filteredItems, setFilteredItems] = useState([]);
 
   // 2. Use Effect
   // 2.1. Render dynamic columns when dataServiceTemplateNames is changing
@@ -46,8 +49,9 @@ const ContractInvoiceItemSection = ({
 
   // 2.2. Add contract_service_id & details attribute if not yet available
   useEffect(() => {
-    let tempServices = dataServices?.map((service) => ({
+    let tempServices = dataServices?.map((service, idx) => ({
       ...service,
+      key: idx + 1,
       service_template_value: {
         ...service?.service_template_value,
         contract_service_id: service?.id,
@@ -59,7 +63,27 @@ const ContractInvoiceItemSection = ({
     setDataServices(tempServices);
   }, [dataServiceTemplateNames]);
 
+  // 2.3. Filter service items
+  useEffect(() => {
+    setFilteredItems(dataServices);
+  }, [dataServices]);
+
+  useEffect(() => {
+    onFilterItems();
+  }, [searchingFilterItems]);
+
   // 3. Handler
+  const onFilterItems = () => {
+    const tempFilteredItems = dataServices?.filter((service) =>
+      service?.product?.name
+        ?.toLowerCase()
+        ?.includes(searchingFilterItems?.toLowerCase())
+    );
+    setFilteredItems(tempFilteredItems);
+  };
+
+  const { onKeyPressHandler } = createKeyPressHandler(onFilterItems, "Enter");
+
   const renderNewColumn = (idx, name) => ({
     key: name?.toLowerCase().replace(/ /g, "_"),
     name: name,
@@ -154,6 +178,7 @@ const ContractInvoiceItemSection = ({
   // console.log({ dataServiceTemplateNames });
   // console.log({ dynamicColumns });
   // console.log({ dataCurrentColumn });
+  // console.log({ searchingFilterItems });
   return (
     <>
       <div className="flex justify-between">
@@ -163,24 +188,21 @@ const ContractInvoiceItemSection = ({
         <div className="flex gap-2 md:gap-6">
           <div className="w-full ">
             <Input
-              // defaultValue={}
+              defaultValue={null}
               style={{ width: `100%` }}
               placeholder="Cari Item.."
               allowClear
               onChange={(e) => {
-                // setTimeout(
-                //   () => setSearchingFilterContracts(e.target.value),
-                //   500
-                // );
+                setTimeout(() => setSearchingFilterItems(e.target.value), 500);
               }}
-              // onKeyPress={onKeyPressHandler}
+              onKeyPress={onKeyPressHandler}
               // disabled={!isAllowedToGetContracts}
             />
           </div>
           <div className="flex justify-end">
             <ButtonSys
               type={`primary`}
-              // onClick={onFilterRecruitments}
+              onClick={onFilterItems}
               // disabled={!isAllowedToGetContracts}
             >
               <div className="flex flex-row space-x-2.5 w-full items-center">
@@ -193,7 +215,7 @@ const ContractInvoiceItemSection = ({
       </div>
       <Table
         className="tableBordered border-2 rounded-md"
-        dataSource={dataServices}
+        dataSource={filteredItems}
         rowKey={(record) => record.id}
         loading={loading}
         scroll={{ x: 200 }}
@@ -204,8 +226,8 @@ const ContractInvoiceItemSection = ({
         columns={[
           {
             title: "No",
-            dataIndex: "no",
-            render: (text, record, index) => <p>{index + 1}</p>,
+            dataIndex: "key",
+            render: (text, record, index) => <p>{text}</p>,
           },
           {
             title: "Nama Item",

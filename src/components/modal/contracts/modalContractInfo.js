@@ -42,13 +42,18 @@ const ModalContractInfo = ({
 
       const tempNotDisplayed = [
         {
+          name: "contract_number",
+          title: contractInfoString?.contract_number,
+          value: dataContract?.contract_number,
+        },
+        {
           name: "title",
           title: contractInfoString?.title,
           value: dataContract?.title,
         },
         {
-          name: "requester_name",
-          title: contractInfoString?.requester_name,
+          name: "requester",
+          title: contractInfoString?.requester,
           value: dataContract?.requester?.name,
         },
 

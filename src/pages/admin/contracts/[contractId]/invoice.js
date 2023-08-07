@@ -62,8 +62,10 @@ Chart.register(
 );
 
 export const contractInfoString = {
+  contract_number: "No. Kontrak",
   title: "Judul Kontrak",
-  requester_name: "Requester",
+  client: "Klien",
+  requester: "Requester",
   initial_date: "Tanggal Dibuat",
   start_date: "Tanggal Berlaku",
   end_date: "Tanggal Selesai",
@@ -94,11 +96,10 @@ const ContractInvoiceIndex = ({
 
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
+  const [period, setPeriod] = useState(-1);
   const [dataInvoice, setDataInvoice] = useState([]);
   const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
   const [dataServices, setDataServices] = useState([]);
-
-  const [dateState, setDateState] = useState("");
 
   const [modalInvoice, setModalInvoice] = useState(false);
   const [modalContractInfo, setModalContractInfo] = useState(false);
@@ -135,6 +136,14 @@ const ContractInvoiceIndex = ({
 
           if (item == "duration") {
             tempValue = convertDaysToString(tempValue);
+          }
+
+          if (item == "requester") {
+            tempValue = dataContract?.requester?.name;
+          }
+
+          if (item == "client") {
+            tempValue = dataContract?.client?.name;
           }
 
           currentInvoiceTemplate.push({
@@ -175,6 +184,7 @@ const ContractInvoiceIndex = ({
 
     const payload = {
       contract_id: Number(contractId),
+      invoice_period: period,
       invoice_template: dataInvoice.map((item) => item.name),
       service_template: dataServiceTemplateNames,
       service_template_values: dataServices?.map(
@@ -295,9 +305,13 @@ const ContractInvoiceIndex = ({
                 format={"D"}
                 showToday={false}
                 placeholder="Pilih Periode"
-                value={moment(dateState).isValid() ? moment(dateState) : null}
-                onChange={(dates, datestrings) => {
-                  setDateState(dates);
+                defaultValue={
+                  moment(dataContract?.invoice_period ?? "").isValid()
+                    ? moment(dataContract?.invoice_period)
+                    : null
+                }
+                onChange={(date, datestring) => {
+                  setPeriod(datestring);
                 }}
                 renderExtraFooter={() => <div />}
                 bordered={false}
