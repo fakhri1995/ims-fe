@@ -223,8 +223,13 @@ ol {
   background: #35763b;
 }
 
-.blueDatePicker .ant-picker-input > input {
+.invoiceTemplateDPInput .ant-picker-input > input {
   color: #2f80ed;
+}
+
+.invoiceTemplateDP .ant-picker-date-panel > .ant-picker-header,
+.invoiceTemplateDP .ant-picker-date-panel .ant-picker-content th {
+  display: none;
 }
 
 /* TREE */
