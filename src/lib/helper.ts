@@ -389,6 +389,8 @@ export const currency = (money: number) => {
  *
  */
 export const convertDaysToString = (dayTotal: number) => {
+  if (dayTotal < 0) return dayTotal + " Hari";
+
   const years = Math.floor(dayTotal / 365);
   const months = Math.floor((dayTotal % 365) / 30);
   const days = (dayTotal % 365) % 30;

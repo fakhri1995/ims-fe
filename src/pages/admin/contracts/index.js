@@ -366,9 +366,8 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       key: "duration",
       dataIndex: "duration",
       render: (duration, record, index) => {
-        const absDuration = Math.abs(duration);
         return {
-          children: <>{convertDaysToString(absDuration)}</>,
+          children: <>{convertDaysToString(duration)}</>,
         };
       },
       sorter: isAllowedToGetContracts
