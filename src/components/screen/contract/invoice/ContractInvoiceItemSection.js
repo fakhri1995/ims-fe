@@ -1,5 +1,5 @@
 import { Input, Table } from "antd";
-import React from "react";
+import React, { useRef } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -33,8 +33,11 @@ const ContractInvoiceItemSection = ({
     name: "",
   });
   const [currentRowValues, setCurrentRowValues] = useState([]);
+  const [currentRowIndex, setCurrentRowIndex] = useState(-1);
   const [searchingFilterItems, setSearchingFilterItems] = useState(null);
   const [filteredItems, setFilteredItems] = useState([]);
+  const prevRowValues = useRef();
+  const prevRowIndex = useRef();
 
   // 2. Use Effect
   // 2.1. Render dynamic columns when dataServiceTemplateNames is changing
@@ -72,6 +75,15 @@ const ContractInvoiceItemSection = ({
     onFilterItems();
   }, [searchingFilterItems]);
 
+  // 2.4. Save previous row index and values in item table
+  useEffect(() => {
+    prevRowValues.current = currentRowValues;
+  }, [currentRowValues]);
+
+  useEffect(() => {
+    prevRowIndex.current = currentRowIndex;
+  }, [currentRowIndex]);
+
   // 3. Handler
   const onFilterItems = () => {
     const tempFilteredItems = dataServices?.filter((service) =>
@@ -84,6 +96,18 @@ const ContractInvoiceItemSection = ({
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterItems, "Enter");
 
+  const onSaveRowValues = (rowIndex, rowValues) => {
+    let tempDataServices = [...dataServices];
+
+    // update row values
+    if (dataServices?.[rowIndex]?.service_template_value) {
+      tempDataServices[rowIndex].service_template_value.details = rowValues;
+    }
+
+    setDataServices(tempDataServices);
+    setIsEdit(null);
+  };
+
   const renderNewColumn = (idx, name) => ({
     key: name?.toLowerCase().replace(/ /g, "_"),
     name: name,
@@ -91,7 +115,7 @@ const ContractInvoiceItemSection = ({
       <div className="flex justify-between items-center space-x-2 dynamicColumn">
         <p>{name}</p>
         <button
-          className="bg-transparent p-0 m-0 hoverComponent"
+          className="hoverComponent bg-transparent hover:opacity-75"
           onClick={() => {
             setDataCurrentColumn((prev) => ({
               ...prev,
@@ -113,13 +137,24 @@ const ContractInvoiceItemSection = ({
               defaultValue={
                 dataServices?.[rowIndex]?.service_template_value?.details?.[idx]
               }
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  // save row values
+                  let tempRowValues = [...currentRowValues];
+                  tempRowValues[idx] = e.target.value;
+
+                  onSaveRowValues(currentRowIndex, tempRowValues);
+                }
+              }}
               onChange={(e) => {
                 setCurrentRowValues((prev) => {
                   const tempRowValues = [...prev];
                   tempRowValues[idx] = e.target.value;
                   return tempRowValues;
                 });
+
                 setDataCurrentColumn({ idx: idx, name: name });
+                setCurrentRowIndex(rowIndex);
               }}
             />
           ) : (
@@ -280,18 +315,8 @@ const ContractInvoiceItemSection = ({
                 (isEdit == rowIndex ? (
                   <div className="flex gap-2 items-center">
                     <button
-                      onClick={(e) => {
-                        let tempDataServices = [...dataServices];
-
-                        // update row values
-                        if (dataServices?.[rowIndex]?.service_template_value) {
-                          tempDataServices[
-                            rowIndex
-                          ].service_template_value.details = currentRowValues;
-                        }
-
-                        setDataServices(tempDataServices);
-                        setIsEdit(null);
+                      onClick={() => {
+                        onSaveRowValues(rowIndex, currentRowValues);
                       }}
                       className="bg-transparent hover:opacity-75"
                     >
@@ -309,6 +334,14 @@ const ContractInvoiceItemSection = ({
                 ) : (
                   <button
                     onClick={(e) => {
+                      // Auto save previous edited row
+                      if ((isEdit !== null) & (isEdit !== rowIndex)) {
+                        onSaveRowValues(
+                          prevRowIndex.current,
+                          prevRowValues.current
+                        );
+                      }
+
                       let tempRowValues = [];
                       if (dataServices?.[rowIndex]?.service_template_value) {
                         tempRowValues = [
@@ -316,7 +349,7 @@ const ContractInvoiceItemSection = ({
                             ?.details,
                         ];
                       }
-
+                      setCurrentRowIndex(rowIndex);
                       setCurrentRowValues(tempRowValues);
                       setIsEdit(rowIndex);
                     }}
