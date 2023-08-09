@@ -10,11 +10,10 @@ import {
   getFileName,
   momentFormatDate,
 } from "../../../lib/helper";
-import { contractInfoString } from "../../../pages/admin/contracts/[contractId]/invoice";
+import { contractInfoString } from "../../../pages/admin/contracts/[contractId]/invoice-template";
 import ButtonSys from "../../button";
 import { PlusIconSvg, TrashIconSvg, XIconSvg } from "../../icon";
 import { FILE, LIST } from "../../screen/contract/detail/ContractInfoSection";
-import { ModalHapus2 } from "../modalCustom";
 
 const ModalContractInfo = ({
   visible,

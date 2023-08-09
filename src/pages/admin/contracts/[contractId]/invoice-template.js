@@ -73,7 +73,7 @@ export const contractInfoString = {
   extras: "Komponen Tambahan",
 };
 
-const ContractInvoiceIndex = ({
+const ContractInvoiceTemplateIndex = ({
   dataProfile,
   sidemenu,
   initProps,
@@ -425,4 +425,4 @@ export async function getServerSideProps({ req, res, params }) {
   };
 }
 
-export default ContractInvoiceIndex;
+export default ContractInvoiceTemplateIndex;
