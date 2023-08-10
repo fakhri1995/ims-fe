@@ -278,21 +278,23 @@ const ContractInvoiceFormIndex = ({
       pathTitleArr={pathTitleArr}
     >
       <div
-        className="grid grid-cols-1 gap-4 lg:gap-6 px-4 md:px-5 "
+        className="grid grid-cols-1 gap-4 lg:gap-6 md:px-5 "
         id="mainWrapper"
       >
         <section
           className="grid grid-cols-1  
           gap-6 shadow-md rounded-md bg-white p-4 lg:p-6"
         >
-          <div className="flex flex-col md:flex-row md:items-center gap-2 justify-between">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 justify-between">
             <div className="flex gap-6 items-center">
               <button
                 className="flex space-x-2 items-center bg-transparent"
                 onClick={() => rt.back()}
               >
                 <ArrowLeftIconSvg size={24} />
-                <h4 className="mig-heading--4">Sunting Draft Invoice</h4>
+                <h4 className="mig-heading--4 text-left">
+                  Sunting Draft Invoice
+                </h4>
               </button>
               {dataInvoice?.is_posted ? (
                 <div
@@ -323,7 +325,7 @@ const ContractInvoiceFormIndex = ({
                 </div>
               </ButtonSys>
               <ButtonSys
-                onClick={handleSaveInvoice}
+                // onClick={handleSaveInvoice}
                 type={"primary"}
                 disabled={!isAllowedToUpdateInvoice}
               >
@@ -331,18 +333,18 @@ const ContractInvoiceFormIndex = ({
               </ButtonSys>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-6">
-            <p className="col-span-2 text-warning">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <p className="md:col-span-2 text-warning">
               <em>*Informasi ini harus diisi</em>
             </p>
             <Form
               layout="vertical"
-              className="col-span-2 grid grid-cols-2 gap-x-6"
+              className="md:col-span-2 md:grid md:grid-cols-2 gap-x-6"
             >
               <Form.Item
                 name="invoice_no"
                 label="Nomor Invoice"
-                className="col-span-2"
+                className="md:col-span-2"
                 rules={[
                   {
                     required: true,
@@ -454,7 +456,7 @@ const ContractInvoiceFormIndex = ({
               </Form.Item>
             </Form>
 
-            <div className="space-y-2">
+            <div className="md:space-y-2">
               <p className="mig-caption--bold">Periode Penagihan</p>
 
               <DatePicker
@@ -481,7 +483,7 @@ const ContractInvoiceFormIndex = ({
               />
             </div>
             {dataInvoiceDetail?.map((item) => (
-              <div key={item?.title} className="space-y-2">
+              <div key={item?.title} className="md:space-y-2">
                 <p className="mig-caption--bold">{item?.title}</p>
                 {item?.type === FILE ? (
                   <div className="flex space-x-2 items-center">
