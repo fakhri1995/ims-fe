@@ -48,7 +48,7 @@ const ContractInvoiceItemSection = ({
       tempDyanmicColumns.push(newColumn);
     }
     setDynamicColumns(tempDyanmicColumns);
-  }, [dataServiceTemplateNames, isEdit]);
+  }, [dataServiceTemplateNames, isEdit, currentRowValues]);
 
   // 2.2. Add contract_service_id & details attribute if not yet available
   useEffect(() => {
@@ -139,11 +139,7 @@ const ContractInvoiceItemSection = ({
               }
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
-                  // save row values
-                  let tempRowValues = [...currentRowValues];
-                  tempRowValues[idx] = e.target.value;
-
-                  onSaveRowValues(currentRowIndex, tempRowValues);
+                  onSaveRowValues(currentRowIndex, currentRowValues);
                 }
               }}
               onChange={(e) => {
@@ -218,7 +214,7 @@ const ContractInvoiceItemSection = ({
   // console.log({ dataServiceTemplateNames });
   // console.log({ dynamicColumns });
   // console.log({ dataCurrentColumn });
-  // console.log({ searchingFilterItems });
+
   return (
     <>
       <div className="flex justify-between">
