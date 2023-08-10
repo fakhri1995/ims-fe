@@ -3,16 +3,15 @@ import {
   FileTextOutlined,
   RightOutlined,
 } from "@ant-design/icons";
-import { Collapse, DatePicker, Tabs, notification } from "antd";
+import { DatePicker, notification } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { useMemo } from "react";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
 
+import Layout from "components/layout-dashboard";
 import st from "components/layout-dashboard.module.css";
-import LayoutDashboard from "components/layout-dashboardNew";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -92,7 +91,13 @@ const ContractInvoiceTemplateIndex = ({
   );
 
   const rt = useRouter();
-  const pathArr = rt.pathname.split("/").slice(1);
+  // Breadcrumb url
+  const pathArr = rt.asPath.split("/").slice(1);
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 1);
+  pathTitleArr.splice(1, 3, "Kontrak", "Detail Kontrak", "Template Invoice");
 
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
@@ -225,18 +230,6 @@ const ContractInvoiceTemplateIndex = ({
       .finally(() => setLoadingSave(false));
   };
 
-  // Breadcrumb Text
-  const pageBreadcrumbValue = useMemo(
-    () => [
-      { name: "Kontrak", hrefValue: "/admin/contracts" },
-      { name: "Detail Kontrak", hrefValue: `/admin/contracts/${contractId}` },
-      {
-        name: "Template Invoice",
-      },
-    ],
-    []
-  );
-
   if (isAccessControlPending) {
     return null;
   }
@@ -244,13 +237,13 @@ const ContractInvoiceTemplateIndex = ({
   // console.log({ dataServices });
   // console.log({ dataInvoice });
   return (
-    <LayoutDashboard
+    <Layout
+      tok={initProps}
       dataProfile={dataProfile}
       sidemenu={sidemenu}
-      tok={initProps}
       st={st}
       pathArr={pathArr}
-      fixedBreadcrumbValues={pageBreadcrumbValue}
+      pathTitleArr={pathTitleArr}
     >
       <div
         className="grid grid-cols-1 gap-4 lg:gap-6 px-4 md:px-5 "
@@ -377,7 +370,7 @@ const ContractInvoiceTemplateIndex = ({
         dataInvoice={dataInvoice}
         setDataInvoice={setDataInvoice}
       />
-    </LayoutDashboard>
+    </Layout>
   );
 };
 
