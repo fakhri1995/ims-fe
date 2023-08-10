@@ -32,12 +32,13 @@ const ModalContractInfo = ({
   // USE EFFECT
   useEffect(() => {
     if (dataContract) {
-      const dataExtras = dataContract?.extras?.map((extra) => ({
-        name: `extras.${extra?.key}`,
-        title: extra?.name,
-        value: extra?.value,
-        type: extra?.type,
-      }));
+      const dataExtras =
+        dataContract?.extras?.map((extra) => ({
+          name: `extras.${extra?.key}`,
+          title: extra?.name,
+          value: extra?.value,
+          type: extra?.type,
+        })) || [];
 
       const tempNotDisplayed = [
         {
@@ -116,6 +117,7 @@ const ModalContractInfo = ({
 
   // console.log({ dataInvoiceDisplayed });
   // console.log({ dataInvoiceNotDisplayed });
+  // console.log({ dataContract });
   return (
     <Modal
       title={

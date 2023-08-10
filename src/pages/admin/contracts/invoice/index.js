@@ -1,6 +1,17 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Input, Modal, Select, Spin, notification } from "antd";
+import {
+  Button,
+  DatePicker,
+  Input,
+  Modal,
+  Select,
+  Spin,
+  Tooltip,
+  notification,
+} from "antd";
+// import locale from "antd/es/date-picker/locale/id_ID";
 import moment from "moment";
+import "moment/locale/id";
 import {
   NumberParam,
   StringParam,
@@ -13,8 +24,21 @@ import { useState } from "react";
 import { useCallback } from "react";
 import { useQuery } from "react-query";
 
+import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
-import { AddNewFormButton } from "components/screen/resume";
+import {
+  DownloadIconSvg,
+  EditSquareIconSvg,
+  FileDownloadIconSvg,
+  SearchIconSvg,
+} from "components/icon";
+import Layout from "components/layout-dashboard";
+import st from "components/layout-dashboard.module.css";
+import { ModalHapus2 } from "components/modal/modalCustom";
+import {
+  TableCustomContractList,
+  TableCustomInvoiceList,
+} from "components/table/tableCustom";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -31,28 +55,15 @@ import {
   RECRUITMENT_STATUSES_LIST_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
-
-import { CompanyService } from "apis/company";
-import { ContractService } from "apis/contract";
-
-import ButtonSys from "../../../components/button";
-import {
-  DownloadIconSvg,
-  EditSquareIconSvg,
-  SearchIconSvg,
-} from "../../../components/icon";
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
-import { ModalHapus2 } from "../../../components/modal/modalCustom";
-import {
-  TableCustomContractList,
-  TableCustomInvoiceList,
-} from "../../../components/table/tableCustom";
 import {
   convertDaysToString,
   createKeyPressHandler,
   momentFormatDate,
-} from "../../../lib/helper";
+} from "lib/helper";
+
+import { CompanyService } from "apis/company";
+import { ContractService } from "apis/contract";
+
 import {
   ArcElement,
   BarElement,
@@ -61,13 +72,13 @@ import {
   LineElement,
   LinearScale,
   PointElement,
-  Tooltip,
 } from "chart.js";
 import httpcookie from "cookie";
 
+moment.locale("id");
+
 Chart.register(
   ArcElement,
-  Tooltip,
   CategoryScale,
   LinearScale,
   LineElement,
@@ -113,8 +124,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
-  pathTitleArr.splice(1, 1);
-  pathTitleArr.splice(1, 1, "Kontrak");
+  pathTitleArr.splice(1, 2, "Kontrak", "Invoice");
 
   const durationRangeList = [
     { name: "1 Bulan", value: 30 },
@@ -124,23 +134,13 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const dataStatusList = [
     {
-      id: "segeraberakhir",
-      name: "Segera Berakhir",
-      color: "#BF4A40",
-    },
-    {
-      id: "draft",
+      id: 0,
       name: "Draft",
-      color: "#808080",
+      color: "#4D4D4D",
     },
     {
-      id: "berlangsung",
-      name: "Berlangsung",
-      color: "#00589F",
-    },
-    {
-      id: "selesai",
-      name: "Selesai",
+      id: 1,
+      name: "Terbit",
       color: "#35763B",
     },
   ];
@@ -427,26 +427,83 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <div className="flex flex-col md:flex-row gap-2 items-center">
-              <Button
-                type={"primary"}
-                // disabled={!isAllowedToUpdateEmployeeContract}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  // rt.push(`/admin/employees/${record.id}?tab=2`);
-                }}
-                icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
-                className="bg-mono50 border-transparent hover:bg-mono80 hover:border-transparent focus:bg-mono80 focus:border-mono80"
-              />
-              <Button
-                type={"primary"}
-                // disabled={!isAllowedToUpdateEmployeeContract}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  // rt.push(`/admin/employees/${record.id}?tab=2`);
-                }}
-                icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
-                className="bg-primary100 border-primary100 hover:bg-primary75 hover:border-primary75 focus:bg-primary75 focus:border-primary75"
-              />
+              {!record?.is_posted ? (
+                <Button
+                  type={"primary"}
+                  disabled={true}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    // rt.push(`/admin/employees/${record.id}?tab=2`);
+                  }}
+                  icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
+                  className="invoiceButton bg-mono50 border-transparent hover:bg-mono80 
+                  hover:border-transparent focus:bg-mono80 focus:border-mono80"
+                />
+              ) : (
+                <Tooltip
+                  className="border rounded-md"
+                  placement="bottomRight"
+                  color="#FFFFFF"
+                  title={
+                    <div className="flex gap-2 text-mono30 p-2">
+                      <div>
+                        <EditSquareIconSvg size={20} color={"#4D4D4D"} />
+                      </div>
+                      <div>
+                        <p className="mig-caption--bold">Sunting Invoice</p>
+                        <p className="mig-caption">
+                          Sunting invoice untuk merubah data.
+                        </p>
+                      </div>
+                    </div>
+                  }
+                >
+                  <Button
+                    type={"primary"}
+                    disabled={!isAllowedToUpdateContract}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      rt.push(`invoice/${record.id}`);
+                    }}
+                    icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
+                    className="invoiceButton bg-mono50 border-transparent hover:bg-mono80 
+                    hover:border-transparent focus:bg-mono80 focus:border-mono80"
+                  />
+                </Tooltip>
+              )}
+
+              <Tooltip
+                className="border rounded-md"
+                placement="bottomRight"
+                color="#FFFFFF"
+                title={
+                  <div className="flex gap-2 p-2">
+                    <div>
+                      <FileDownloadIconSvg size={20} color={"#35763B"} />
+                    </div>
+                    <div>
+                      <p className="mig-caption--bold text-primary100">
+                        Unduh File Invoice
+                      </p>
+                      <p className="text-mono30 mig-caption">
+                        Unduh invoice dengan format pdf/excel.
+                      </p>
+                    </div>
+                  </div>
+                }
+              >
+                <Button
+                  type={"primary"}
+                  // disabled={!isAllowedToUpdateEmployeeContract}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    // rt.push(`/admin/employees/${record.id}?tab=2`);
+                  }}
+                  icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
+                  className="bg-primary100 border-primary100 hover:bg-primary75 
+                hover:border-primary75 focus:bg-primary75 focus:border-primary75"
+                />
+              </Tooltip>
             </div>
           ),
         };
@@ -478,11 +535,14 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
             <div className="flex gap-4 items-center">
               <h4 className="mig-heading--4">Daftar Invoice</h4>
               <p className="mig-caption--medium text-mono50">Bulan</p>
-              <Select defaultValue={1}>
-                <Select.Option key={1} value={1}>
-                  Juni 2023
-                </Select.Option>
-              </Select>
+
+              <DatePicker
+                className="themedDatePicker"
+                defaultValue={moment()}
+                format={"MMMM YYYY"}
+                picker="month"
+                // locale={locale}
+              />
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center ">
@@ -492,7 +552,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <Input
                     defaultValue={searchingFilterContracts}
                     style={{ width: `100%` }}
-                    placeholder="Cari.."
+                    placeholder="Cari..."
                     allowClear
                     onChange={(e) => {
                       setTimeout(
@@ -505,15 +565,69 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                   />
                 </div>
 
-                {/* Filter by duration (dropdown) */}
+                {/* Filter by status (dropdown) */}
+                <div className="w-full md:w-2/12">
+                  <Select
+                    defaultValue={queryParams.status_types}
+                    allowClear
+                    name={`status`}
+                    disabled={!isAllowedToGetContractStatusList}
+                    placeholder="Semua Status"
+                    style={{ width: `100%` }}
+                    className="themedSelector"
+                    onChange={(value) => {
+                      setQueryParams({ status_types: value });
+                      setSelectedStatus(value);
+                    }}
+                    optionLabelProp="children"
+                  >
+                    {dataStatusList?.map((status) => (
+                      <Select.Option key={status.id} value={status.id}>
+                        <div className="flex items-center">
+                          <div
+                            className="rounded-full w-4 h-4 p-2 mr-2"
+                            style={{ backgroundColor: `${status.color}` }}
+                          />
+                          <p className="truncate">{status.name}</p>
+                        </div>
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                {/* Filter by company client */}
+                <div className="w-full md:w-2/12">
+                  <Select
+                    defaultValue={queryParams.client_ids}
+                    allowClear
+                    name={`client`}
+                    disabled={!isAllowedToGetCompanyClients}
+                    placeholder="Semua Klien"
+                    style={{ width: `100%` }}
+                    className="themedSelector"
+                    onChange={(value) => {
+                      setQueryParams({ client_ids: value });
+                      setSelectedCompany(value);
+                    }}
+                  >
+                    {dataCompanyList?.map((client) => (
+                      <Select.Option key={client.id} value={client.id}>
+                        {client.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                {/* Filter by total price (dropdown) */}
                 <div className="w-full md:w-2/12">
                   <Select
                     defaultValue={queryParams.duration}
                     allowClear
                     name={`role`}
                     disabled={!isAllowedToGetCompanyClients}
-                    placeholder="Rentang Durasi"
+                    placeholder="Harga Total"
                     style={{ width: `100%` }}
+                    className="themedSelector"
                     onChange={(value) => {
                       setQueryParams({ duration: value });
                       setSelectedDuration(value);
@@ -560,57 +674,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                   </Select>
                 </div>
 
-                {/* Filter by company client */}
-                <div className="w-full md:w-2/12">
-                  <Select
-                    defaultValue={queryParams.client_ids}
-                    allowClear
-                    name={`client`}
-                    disabled={!isAllowedToGetCompanyClients}
-                    placeholder="Semua Klien"
-                    style={{ width: `100%` }}
-                    onChange={(value) => {
-                      setQueryParams({ client_ids: value });
-                      setSelectedCompany(value);
-                    }}
-                  >
-                    {dataCompanyList?.map((client) => (
-                      <Select.Option key={client.id} value={client.id}>
-                        {client.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-
-                {/* Search by status (dropdown) */}
-                <div className="w-full md:w-2/12">
-                  <Select
-                    defaultValue={queryParams.status_types}
-                    allowClear
-                    name={`status`}
-                    disabled={!isAllowedToGetContractStatusList}
-                    placeholder="Semua Status"
-                    style={{ width: `100%` }}
-                    onChange={(value) => {
-                      setQueryParams({ status_types: value });
-                      setSelectedStatus(value);
-                    }}
-                    optionLabelProp="children"
-                  >
-                    {dataStatusList?.map((status) => (
-                      <Select.Option key={status.id} value={status.id}>
-                        <div className="flex items-center">
-                          <div
-                            className="rounded-full w-4 h-4 p-2 mr-2"
-                            style={{ backgroundColor: `${status.color}` }}
-                          />
-                          <p className="truncate">{status.name}</p>
-                        </div>
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-
                 {/* End: Search criteria */}
 
                 <div className="flex justify-end">
@@ -628,7 +691,10 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               <p className="mig-caption text-mono30">
-                Menampilkan invoice bulan <strong> Juni 2023</strong>
+                Menampilkan invoice bulan{" "}
+                <strong>
+                  {momentFormatDate(new Date(), "-", "MMMM YYYY")}
+                </strong>
               </p>
             </div>
 
