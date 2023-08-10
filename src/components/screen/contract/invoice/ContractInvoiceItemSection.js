@@ -137,7 +137,7 @@ const ContractInvoiceItemSection = ({
               defaultValue={
                 dataServices?.[rowIndex]?.service_template_value?.details?.[idx]
               }
-              onKeyDown={(e) => {
+              onKeyPress={(e) => {
                 if (e.key === "Enter") {
                   // save row values
                   let tempRowValues = [...currentRowValues];
@@ -181,6 +181,11 @@ const ContractInvoiceItemSection = ({
     setModalAddColumn(false);
     setDataCurrentColumn({ idx: -1, name: "" });
   };
+
+  const { onKeyPressHandler: onEnterAddColumn } = createKeyPressHandler(
+    handleAddColumn,
+    "Enter"
+  );
 
   const handleDeleteColumn = (idx) => {
     // Delete column name
@@ -370,6 +375,7 @@ const ContractInvoiceItemSection = ({
         handleAddColumn={handleAddColumn}
         dataCurrentColumn={dataCurrentColumn}
         setDataCurrentColumn={setDataCurrentColumn}
+        onEnterAddColumn={onEnterAddColumn}
       />
 
       <ModalHapus2
