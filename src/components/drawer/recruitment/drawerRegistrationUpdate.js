@@ -154,7 +154,7 @@ const DrawerRegistrationUpdate = ({
       buttonSpace="space-x-2"
       buttonCancelText={
         <div className="flex flex-row space-x-1 items-center">
-          <DeleteOutlined />
+          <DeleteOutlined rev={""} />
           <p>Hapus Jalur Daftar</p>
         </div>
       }

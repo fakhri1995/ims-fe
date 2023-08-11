@@ -150,7 +150,7 @@ const DrawerTicketAssign = ({
           </div>
           <div className="my-5">
             <Input
-              suffix={<SearchOutlined />}
+              suffix={<SearchOutlined rev={""} />}
               allowClear
               placeholder="Nama Staff, Group.."
               onChange={(e) => {

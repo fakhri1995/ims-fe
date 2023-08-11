@@ -533,7 +533,7 @@ const DrawerTaskSpareParts = ({
                     <Select
                       style={{ width: `100%` }}
                       className="dontShow"
-                      suffixIcon={<SearchOutlined />}
+                      suffixIcon={<SearchOutlined rev={""} />}
                       showArrow
                       placeholder="MIG ID, Model"
                       disabled={!isAllowedToGetTaskSparePartList}
@@ -623,7 +623,7 @@ const DrawerTaskSpareParts = ({
                             placeholder="Pilih Induk"
                             className="mt-2"
                             showSearch
-                            suffixIcon={<SearchOutlined />}
+                            suffixIcon={<SearchOutlined rev={""} />}
                             showArrow
                             defaultValue={
                               doc.connect_id === 0 ? null : doc.connect_id
@@ -740,7 +740,7 @@ const DrawerTaskSpareParts = ({
                       style={{ width: `100%` }}
                       showSearch
                       className="dontShow"
-                      suffixIcon={<SearchOutlined />}
+                      suffixIcon={<SearchOutlined rev={""} />}
                       showArrow
                       name={`part_out`}
                       onChange={(value, label, extra) => {

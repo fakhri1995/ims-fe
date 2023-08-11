@@ -79,7 +79,7 @@ function LayoutDashboardProfile({
         </div>
         <div>
           <a target="_blank" rel="noopener noreferrer" onClick={handleLogout}>
-            <ExportOutlined /> Logout
+            <ExportOutlined rev={""} /> Logout
           </a>
         </div>
       </div>
@@ -112,7 +112,7 @@ function LayoutDashboardProfile({
           }}
         ></div>
         <Menu theme="light" mode="inline" defaultSelectedKeys={["1"]}>
-          <Menu.Item key="1" icon={<DashboardTwoTone />}>
+          <Menu.Item key="1" icon={<DashboardTwoTone rev={""} />}>
             <Link href="/dashboard/home">Dashboard</Link>
           </Menu.Item>
         </Menu>
@@ -160,12 +160,14 @@ function LayoutDashboardProfile({
           <div className="flex">
             {coll ? (
               <MenuUnfoldOutlined
+                rev={""}
                 onClick={handleColl}
                 style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }}
                 className={st.trigger}
               ></MenuUnfoldOutlined>
             ) : (
               <MenuFoldOutlined
+                rev={""}
                 onClick={handleColl}
                 style={{ padding: `24px`, float: `left` }}
                 className={st.trigger}
@@ -173,12 +175,14 @@ function LayoutDashboardProfile({
             )}
             {collsmall ? (
               <MenuUnfoldOutlined
+                rev={""}
                 onClick={handleCollSmall}
                 style={{ padding: `24px`, float: `left`, marginTop: `0.3rem` }}
                 className={st.triggerSmall}
               ></MenuUnfoldOutlined>
             ) : (
               <MenuFoldOutlined
+                rev={""}
                 onClick={handleCollSmall}
                 style={{ padding: `24px`, float: `left` }}
                 className={st.triggerSmall}

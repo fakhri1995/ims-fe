@@ -494,7 +494,7 @@ const DrawerTaskCreate = ({
               <Select
                 value={datacreate.reference_id}
                 style={{ width: `100%` }}
-                suffixIcon={<SearchOutlined />}
+                suffixIcon={<SearchOutlined rev={""} />}
                 showArrow
                 placeholder="Referensi"
                 disabled={!isAllowedToGetReferensi}
@@ -570,7 +570,7 @@ const DrawerTaskCreate = ({
               placeholder="Cari Lokasi"
               disabled={!isAllowedToGetCompanyList}
               showSearch
-              suffixIcon={<SearchOutlined />}
+              suffixIcon={<SearchOutlined rev={""} />}
               showArrow
               name={`locations_id`}
               onChange={(value) => {
@@ -607,7 +607,7 @@ const DrawerTaskCreate = ({
                 placeholder="Cari Sublokasi"
                 disabled={!isAllowedToGetCompanySubLocations}
                 showSearch
-                suffixIcon={<SearchOutlined />}
+                suffixIcon={<SearchOutlined rev={""} />}
                 showArrow
                 name={`locations_id`}
                 onChange={(value) => {
@@ -654,7 +654,7 @@ const DrawerTaskCreate = ({
                 style={{ width: `100%` }}
                 className="dontShow"
                 mode="multiple"
-                suffixIcon={<SearchOutlined />}
+                suffixIcon={<SearchOutlined rev={""} />}
                 showArrow
                 value={datacreate.inventory_ids}
                 placeholder="Cari MIG ID, Nama Model, Nama Aset"
@@ -777,7 +777,7 @@ const DrawerTaskCreate = ({
                   style={{ width: `100%` }}
                   className="dontShow"
                   mode="multiple"
-                  suffixIcon={<SearchOutlined />}
+                  suffixIcon={<SearchOutlined rev={""} />}
                   showArrow
                   value={datacreate.assign_ids}
                   placeholder="Cari Nama Staff, Group.."
@@ -830,7 +830,7 @@ const DrawerTaskCreate = ({
                 <Select
                   style={{ width: `100%` }}
                   className="dontShow"
-                  suffixIcon={<SearchOutlined />}
+                  suffixIcon={<SearchOutlined rev={""} />}
                   showArrow
                   value={[datacreate.assign_ids]}
                   placeholder="Cari Nama Staff, Group.."

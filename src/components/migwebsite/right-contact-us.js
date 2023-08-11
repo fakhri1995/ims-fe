@@ -60,6 +60,7 @@ function RightContactUs({
                 style={{ color: "#188E4D" }}
               >
                 <CheckCircleTwoTone
+                  rev={""}
                   className={"relative -top-2"}
                   twoToneColor="#188E4D"
                 />
@@ -91,6 +92,7 @@ function RightContactUs({
                 style={{ color: "#188E4D" }}
               >
                 <CheckCircleTwoTone
+                  rev={""}
                   className={"relative -top-2"}
                   twoToneColor="#188E4D"
                 />

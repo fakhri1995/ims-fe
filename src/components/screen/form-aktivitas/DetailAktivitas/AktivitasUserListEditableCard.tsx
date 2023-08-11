@@ -136,7 +136,12 @@ export const AktivitasUserListEditableCard: FC<
   const onDeleteStaffButtonClicked = () => {
     confirm({
       title: "Hapus Staff",
-      icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
+      icon: (
+        <ExclamationCircleOutlined
+          rev={""}
+          style={{ color: "rgb(191 74 64)" }}
+        />
+      ),
       content: (
         <p>
           Apakah Anda yakin ingin menghapus staff{" "}
@@ -197,7 +202,12 @@ export const AktivitasUserListEditableCard: FC<
 
     confirm({
       title: "Menambahkan Staff",
-      icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
+      icon: (
+        <ExclamationCircleOutlined
+          rev={""}
+          style={{ color: "rgb(191 74 64)" }}
+        />
+      ),
       content: (
         <>
           {someStaffHaveFormAttendance && (
@@ -311,7 +321,10 @@ export const AktivitasUserListEditableCard: FC<
                   className="rounded-full bg-primary100/25 w-12 h-12 flex items-center justify-center group-hover:border-primary100 group-hover:bg-primary100/50 focus:border-primary100"
                   disabled={!canAddNewStaffToFormActivity}
                 >
-                  <UserAddOutlined className="text-xl text-primary100" />
+                  <UserAddOutlined
+                    rev={""}
+                    className="text-xl text-primary100"
+                  />
                 </Button>
 
                 <span className="text-mono30 text-center">Tambah Staff</span>
@@ -410,7 +423,7 @@ const CardHeader: FC<ICardHeader> = ({
             className="flex items-center text-mono30 hover:text-mono50 focus:text-mono50"
             onClick={onBackButtonClicked}
           >
-            <LeftOutlined />
+            <LeftOutlined rev={""} />
           </Button>
         )}
         <span className="font-bold text-mono30 text-lg">
@@ -426,7 +439,7 @@ const CardHeader: FC<ICardHeader> = ({
             className="mig-button mig-button--outlined-danger"
             onClick={onRemoveButtonClicked}
           >
-            <UserDeleteOutlined />
+            <UserDeleteOutlined rev={""} />
             Hapus Staff
           </Button>
         )}
@@ -454,7 +467,7 @@ const CardHeader: FC<ICardHeader> = ({
             <Button
               htmlType="submit"
               className="mig-button mig-button--solid-primary"
-              icon={<SearchOutlined />}
+              icon={<SearchOutlined rev={""} />}
             >
               Cari
             </Button>
@@ -533,9 +546,9 @@ const CardFooter: FC<ICardFooter> = ({
             disabled={disableActionButton}
           >
             {cardPhase === "add" ? (
-              <UserAddOutlined className="text-base" />
+              <UserAddOutlined rev={""} className="text-base" />
             ) : (
-              <UserDeleteOutlined className="text-base" />
+              <UserDeleteOutlined rev={""} className="text-base" />
             )}
             {cardPhase === "add" ? "Tambah" : "Hapus Terpilih"}
           </Button>
@@ -594,7 +607,7 @@ const StaffListItem: FC<IStaffListItem> = ({
         </div>
         {isSelected && (
           <button className="bg-state1/40 rounded-full flex items-center p-1 absolute -top-1 -right-2">
-            <CloseOutlined className="text-state1" />
+            <CloseOutlined rev={""} className="text-state1" />
           </button>
         )}
       </div>
