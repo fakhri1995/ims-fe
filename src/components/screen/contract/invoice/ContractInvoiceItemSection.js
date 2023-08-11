@@ -1,6 +1,6 @@
 import { Input, Table } from "antd";
 import React from "react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useEffect } from "react";
 
 import { createKeyPressHandler } from "../../../../lib/helper";
@@ -83,7 +83,23 @@ const ContractInvoiceItemSection = ({
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterItems, "Enter");
+  const checkKeyPress = useCallback(
+    (e) => {
+      const { key, keyCode } = e;
+      console.log(key, keyCode);
+      if (key === "Enter") {
+        alert(currentRowValues);
+      }
+    },
+    [currentRowValues]
+  );
 
+  useEffect(() => {
+    window.addEventListener("keydown", checkKeyPress);
+    return () => {
+      window.removeEventListener("keydown", checkKeyPress);
+    };
+  }, [checkKeyPress]);
   const renderNewColumn = (idx, name) => ({
     key: name?.toLowerCase().replace(/ /g, "_"),
     name: name,
@@ -113,7 +129,9 @@ const ContractInvoiceItemSection = ({
               defaultValue={
                 dataServices?.[rowIndex]?.service_template_value?.details?.[idx]
               }
+              // onKeyDown={checkKeyPress}
               onChange={(e) => {
+                console.log("on change bro ", e.target.value);
                 setCurrentRowValues((prev) => {
                   const tempRowValues = [...prev];
                   tempRowValues[idx] = e.target.value;
