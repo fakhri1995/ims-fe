@@ -95,6 +95,16 @@ const ContractInvoiceItemSection = ({
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterItems, "Enter");
+  const checkKeyPress = useCallback(
+    (e) => {
+      const { key, keyCode } = e;
+      console.log(key, keyCode);
+      if (key === "Enter") {
+        alert(currentRowValues);
+      }
+    },
+    [currentRowValues]
+  );
 
   const onSaveRowValues = (rowIndex, rowValues) => {
     let tempDataServices = [...dataServices];
@@ -147,6 +157,7 @@ const ContractInvoiceItemSection = ({
                 }
               }}
               onChange={(e) => {
+                console.log("on change bro ", e.target.value);
                 setCurrentRowValues((prev) => {
                   const tempRowValues = [...prev];
                   tempRowValues[idx] = e.target.value;

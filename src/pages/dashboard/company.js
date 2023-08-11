@@ -2,9 +2,9 @@ import { useMemo } from "react";
 
 import LayoutDashboard from "components/layout-dashboard-company";
 import {
-  AttendanceAdminLeafletMapNoSSR,
-  AttendanceAdminListSection,
-  AttendanceAdminTodayStatCard,
+  AttendanceCompanyLeafletMapNoSSR,
+  AttendanceCompanyListSection,
+  AttendanceCompanyTodayStatCard,
   CheckInOutCard,
 } from "components/screen/attendance";
 
@@ -37,14 +37,14 @@ function DashboardCompany({ initProps, dataProfile, sidemenu }) {
             </div>
 
             <div className="min-h-[12rem] flex-grow h-full">
-              <AttendanceAdminTodayStatCard />
+              <AttendanceCompanyTodayStatCard />
             </div>
           </div>
 
           {/* Second column: maps */}
           <div className="flex w-full lg:w-3/5 xl:w-2/3 2xl:w-4/5">
             <div className="mig-platform w-full">
-              <AttendanceAdminLeafletMapNoSSR />
+              <AttendanceCompanyLeafletMapNoSSR />
             </div>
           </div>
         </div>
@@ -52,7 +52,7 @@ function DashboardCompany({ initProps, dataProfile, sidemenu }) {
         {/* Second row: Table all attendance */}
         <div className="grid grid-cols-12">
           <div className="col-span-full">
-            <AttendanceAdminListSection />
+            <AttendanceCompanyListSection />
           </div>
         </div>
       </div>

@@ -77,6 +77,9 @@ module.exports = {
         statusactive: "rgba(53, 118, 59, 0.1)",
         statusarchived: "rgba(221, 180, 74, 0.1)",
         buttondeleteproduct: "#FF4D4F",
+        bgstatustaskongoing:"rgba(0, 88, 159, 0.10)",
+        bgstatustaskfinish:"rgba(53, 118, 59, 0.10)",
+        bgstatustasklate:"rgba(191, 74, 64, 0.10)",
       },
       borderColor: {
         primary: "#1890ff",

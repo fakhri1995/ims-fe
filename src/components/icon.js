@@ -2890,6 +2890,34 @@ const ProyekCompanyIconSvg = ({ size, color }) => {
   );
   return <Icon component={proyekCompanyIconSvg}></Icon>;
 };
+
+const TautanIconSvg = ({ size, color }) => {
+  const tautanIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+    >
+      <path
+        d="M6.66797 9.33489C7.10684 9.78281 7.70754 10.0352 8.33464 10.0352C8.96173 10.0352 9.56243 9.78281 10.0013 9.33489L12.668 6.66822C13.5884 5.74775 13.5884 4.25536 12.668 3.33489C11.7475 2.41441 10.2551 2.41441 9.33464 3.33489L9.0013 3.66822"
+        stroke="#35763B"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M9.33489 6.66518C8.89601 6.21726 8.29531 5.96484 7.66822 5.96484C7.04113 5.96484 6.44043 6.21726 6.00155 6.66518L3.33489 9.33185C2.41441 10.2523 2.41441 11.7447 3.33489 12.6652C4.25536 13.5857 5.74775 13.5857 6.66822 12.6652L7.00155 12.3319"
+        stroke="#35763B"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+  return <Icon component={tautanIconSvg}></Icon>;
+};
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -3011,4 +3039,5 @@ export {
   CalendarEventIconSvg,
   ProyekCompanyIconSvg,
   KehadiranCompanyIconSvg,
+  TautanIconSvg,
 };

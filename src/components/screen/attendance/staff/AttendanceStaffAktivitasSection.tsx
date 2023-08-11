@@ -700,7 +700,7 @@ export const AttendanceStaffAktivitasSection: FC<
 
           <Modal
             title="Import Task ke Aktivitas"
-            open={showModalTask}
+            visible={showModalTask}
             width={502}
             footer={null}
             onCancel={() => setShowModalTask(false)}
