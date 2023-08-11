@@ -43,7 +43,7 @@ export const FormAktivitasTableHeader: FC<IFormAktivitasTableHeader> = memo(
             <Button
               htmlType="submit"
               className="mig-button mig-button--solid-primary"
-              icon={<SearchOutlined />}
+              icon={<SearchOutlined rev={""} />}
             >
               Cari
             </Button>

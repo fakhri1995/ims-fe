@@ -1,8 +1,4 @@
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -828,7 +824,7 @@ const ModalHapus2 = ({
                 disabled={disabled}
               >
                 <div className="flex flex-row space-x-2">
-                  <DeleteOutlined />
+                  <DeleteOutlined rev={""} />
                   {okButtonText ? (
                     <p>{okButtonText}</p>
                   ) : (
@@ -1325,7 +1321,7 @@ const ModalAddCompany = ({
               hover:border-primary75 hover:text-white bg-white space-x-2
               focus:border-primary75 focus:text-primary100"
               >
-                <UploadOutlined />
+                <UploadOutlined rev={""} />
                 <p>Unggah File</p>
               </Button>
             </Upload>

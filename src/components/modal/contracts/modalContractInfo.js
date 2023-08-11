@@ -1,5 +1,4 @@
-import { DeleteOutlined } from "@ant-design/icons";
-import { Form, Input, Modal, notification } from "antd";
+import { Modal } from "antd";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import "react-quill/dist/quill.snow.css";

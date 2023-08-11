@@ -92,7 +92,7 @@ const ModalProjectNote = ({
             disabled={!isAllowedToDeleteNote}
           >
             <div className="flex space-x-2 items-center">
-              <DeleteOutlined />
+              <DeleteOutlined rev={""} />
               <p>Hapus Catatan</p>
             </div>
           </ButtonSys>

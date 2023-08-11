@@ -601,7 +601,7 @@ const ModalSalaryVarAdd = ({
             <div className="flex flex-wrap">
               <Tag color="#35763B" className="py-1 px-3 rounded mb-2">
                 <div className="flex flex-row items-center space-x-1">
-                  <PlusOutlined />
+                  <PlusOutlined rev={""} />
                   <p>Gaji Pokok</p>
                 </div>
               </Tag>
@@ -615,7 +615,7 @@ const ModalSalaryVarAdd = ({
                     onChange={(checked) => handleClickTag(tag, checked)}
                   >
                     <div className="flex flex-row items-center space-x-1">
-                      <PlusOutlined />
+                      <PlusOutlined rev={""} />
                       <p>{tag.column?.name}</p>
                     </div>
                   </CheckableTag>

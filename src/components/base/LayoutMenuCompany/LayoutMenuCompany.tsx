@@ -1,4 +1,3 @@
-import { CheckSquareOutlined } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import Link from "next/link";
 import type { FC } from "react";

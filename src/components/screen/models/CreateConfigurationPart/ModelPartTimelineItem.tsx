@@ -84,7 +84,7 @@ export const ModelPartTimelineItem: FC<any> = ({ doc, idx }) => {
                           <div className="flex w-full items-center justify-between rounded bg-gray-100 h-10 px-3">
                             <p className="mb-0">{docmc2.default}</p>
                             <div>
-                              <CalendarOutlined></CalendarOutlined>
+                              <CalendarOutlined rev={""}></CalendarOutlined>
                             </div>
                           </div>
                         )}
@@ -214,7 +214,9 @@ const Children = ({ doc }) => {
                                     <div className="flex w-full items-center justify-between rounded bg-gray-100 h-10 px-3">
                                       <p className="mb-0">{docmc2.default}</p>
                                       <div>
-                                        <CalendarOutlined></CalendarOutlined>
+                                        <CalendarOutlined
+                                          rev={""}
+                                        ></CalendarOutlined>
                                       </div>
                                     </div>
                                   )}

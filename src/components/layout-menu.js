@@ -202,7 +202,7 @@ const LayoutMenu = ({
             style={{ marginBottom: `1.5rem` }}
             title="Attendance"
             key="124124"
-            icon={<CheckSquareOutlined className="text-[#597e8d]" />}
+            icon={<CheckSquareOutlined rev={""} className="text-[#597e8d]" />}
           >
             {
               // [144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&

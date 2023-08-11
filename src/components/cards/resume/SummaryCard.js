@@ -1,8 +1,3 @@
-import {
-  CloseOutlined,
-  DeleteOutlined,
-  DownloadOutlined,
-} from "@ant-design/icons";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Form, Input, Select, Spin } from "antd";
 import TextArea from "antd/lib/input/TextArea";

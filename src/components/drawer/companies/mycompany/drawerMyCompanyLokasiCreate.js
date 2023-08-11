@@ -341,7 +341,10 @@ const DrawerLokasi = ({
               <div className="flex justify-end items-end">
                 <ButtonSys type="primaryInput" onChangeGambar={onChangeGambar}>
                   {loadingfoto ? (
-                    <LoadingOutlined style={{ marginRight: `0.5rem` }} />
+                    <LoadingOutlined
+                      rev={""}
+                      style={{ marginRight: `0.5rem` }}
+                    />
                   ) : (
                     <RefreshIconSvg size={15} color={`#ffffff`} />
                   )}

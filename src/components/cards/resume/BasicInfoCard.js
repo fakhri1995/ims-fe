@@ -95,7 +95,7 @@ const BasicInfoCard = ({
             }}
           >
             <div className="flex flex-row space-x-2">
-              <CloseOutlined />
+              <CloseOutlined rev={""} />
               <p>Batalkan</p>
             </div>
           </ButtonSys>
@@ -294,7 +294,7 @@ const BasicInfoCard = ({
               onClick={() => setModalDelete(true)}
             >
               <div className="flex flex-row space-x-2 items-center">
-                <DeleteOutlined />
+                <DeleteOutlined rev={""} />
                 <p className="whitespace-nowrap">Remove Candidate</p>
               </div>
             </ButtonSys>
@@ -305,7 +305,7 @@ const BasicInfoCard = ({
               onClick={() => setOpenDownloadModal(true)}
             >
               <div className="flex flex-row space-x-2 items-center">
-                <DownloadOutlined />
+                <DownloadOutlined rev={""} />
                 <p className="whitespace-nowrap">Download Resume</p>
               </div>
             </ButtonSys>

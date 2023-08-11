@@ -450,7 +450,7 @@ const DrawerTaskUpdate = ({
                   </style>
                 </div>
                 <Select
-                  suffixIcon={<SearchOutlined />}
+                  suffixIcon={<SearchOutlined rev={""} />}
                   disabled
                   showArrow
                   name={`task_type_id`}
@@ -492,7 +492,7 @@ const DrawerTaskUpdate = ({
               <div className="w-full">
                 <Select
                   style={{ width: `100%` }}
-                  suffixIcon={<SearchOutlined />}
+                  suffixIcon={<SearchOutlined rev={""} />}
                   showArrow
                   value={dataupdate.reference_id}
                   placeholder="Referensi"
@@ -573,7 +573,7 @@ const DrawerTaskUpdate = ({
                 placeholder="Cari Lokasi"
                 disabled={!isAllowedToGetCompanyList}
                 showSearch
-                suffixIcon={<SearchOutlined />}
+                suffixIcon={<SearchOutlined rev={""} />}
                 showArrow
                 name={`locations_id`}
                 onChange={(value) => {
@@ -611,7 +611,7 @@ const DrawerTaskUpdate = ({
                   placeholder="Cari Sublokasi"
                   disabled={!isAllowedToGetSublocations}
                   showSearch
-                  suffixIcon={<SearchOutlined />}
+                  suffixIcon={<SearchOutlined rev={""} />}
                   showArrow
                   name={`locations_id`}
                   onChange={(value) => {
@@ -650,7 +650,7 @@ const DrawerTaskUpdate = ({
                   style={{ width: `100%` }}
                   className="dontShow"
                   mode="multiple"
-                  suffixIcon={<SearchOutlined />}
+                  suffixIcon={<SearchOutlined rev={""} />}
                   showArrow
                   value={dataupdate.inventory_ids}
                   placeholder="Cari MIG ID, Nama Model, Nama Aset"
@@ -772,7 +772,7 @@ const DrawerTaskUpdate = ({
                     style={{ width: `100%` }}
                     className="dontShow"
                     mode="multiple"
-                    suffixIcon={<SearchOutlined />}
+                    suffixIcon={<SearchOutlined rev={""} />}
                     showArrow
                     value={dataupdate.assign_ids}
                     placeholder="Cari Nama Staff, Group.."
@@ -826,7 +826,7 @@ const DrawerTaskUpdate = ({
                   <Select
                     style={{ width: `100%` }}
                     className="dontShow"
-                    suffixIcon={<SearchOutlined />}
+                    suffixIcon={<SearchOutlined rev={""} />}
                     showArrow
                     value={[dataupdate.assign_ids]}
                     placeholder="Cari Nama Staff, Group.."

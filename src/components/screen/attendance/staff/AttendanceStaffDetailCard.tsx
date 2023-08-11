@@ -1,4 +1,3 @@
-import { DownloadOutlined } from "@ant-design/icons";
 import { FC, memo, useCallback, useMemo } from "react";
 import { useQuery } from "react-query";
 
