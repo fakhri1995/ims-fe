@@ -291,20 +291,16 @@ const ContractInvoiceIndex = ({
             </div>
             <div className="space-y-2">
               <p className="mig-caption--bold">Periode Penagihan</p>
-              {/* <button
-                className="flex items-center space-x-2 bg-transparent"
-                onClick={() => {
-                  setCalendarPopup((prev) => !prev);
-                }}>
-                <CalendarEventIconSvg color={"#2F80ED"} size={18} />
-                <p className="mig-caption--bold text-open">Pilih Periode</p>
-              </button> */}
 
               <DatePicker
                 allowEmpty
                 format={"D"}
                 showToday={false}
+                picker="date"
                 placeholder="Pilih Periode"
+                bordered={false}
+                className="invoiceTemplateDPInput p-0"
+                dropdownClassName="invoiceTemplateDP"
                 defaultValue={
                   moment(dataContract?.invoice_period ?? "").isValid()
                     ? moment(dataContract?.invoice_period)
@@ -314,8 +310,6 @@ const ContractInvoiceIndex = ({
                   setPeriod(datestring);
                 }}
                 renderExtraFooter={() => <div />}
-                bordered={false}
-                className="blueDatePicker p-0"
                 suffixIcon={
                   <CalendarEventIconSvg color={"#2F80ED"} size={20} />
                 }
