@@ -88,7 +88,7 @@ const AcademicCard = ({
           <div className="flex flex-row space-x-4">
             <Input
               placeholder="University"
-              value={dataUpdateEdu.university}
+              value={dataUpdateEdu?.university}
               onChange={(e) => {
                 let input = e.target.value;
                 setDataUpdateEdu((prev) => ({
@@ -119,7 +119,7 @@ const AcademicCard = ({
           </div>
           <Input
             placeholder="Degree"
-            value={dataUpdateEdu.major}
+            value={dataUpdateEdu?.major}
             onChange={(e) => {
               let input = e.target.value;
               setDataUpdateEdu((prev) => ({
@@ -135,7 +135,7 @@ const AcademicCard = ({
               placeholder="Graduation Year"
               allowClear={false}
               className="w-1/2"
-              value={dataUpdateEdu.graduation_year}
+              value={dataUpdateEdu?.graduation_year}
               onChange={(date) => {
                 let input = date.format("YYYY-MM-DD");
                 setDataUpdateEdu((prev) => ({
@@ -146,7 +146,7 @@ const AcademicCard = ({
             />
             <Input
               placeholder="GPA"
-              value={dataUpdateEdu.gpa}
+              value={dataUpdateEdu?.gpa}
               onChange={(e) => {
                 let input = e.target.value;
                 setDataUpdateEdu((prev) => ({

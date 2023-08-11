@@ -23,11 +23,11 @@ const AssessmentResultCard = ({
       return;
     }
 
-    let oldResult = dataDisplay.assessment_results.map(
-      (result) => result.value
+    let oldResult = dataDisplay.assessment_results?.map(
+      (result) => result?.value
     );
     setDataUpdate({
-      id: Number(dataDisplay.id),
+      id: Number(dataDisplay?.id),
       assessment_result_values: oldResult,
     });
   }, [isAllowedToUpdateResumeAssessment, dataDisplay]);
@@ -78,7 +78,7 @@ const AssessmentResultCard = ({
       <div>
         <div className="flex flex-col space-y-2 mb-3">
           <p className="text-xs text-mono80">Assessment Role</p>
-          <p>{dataDisplay.assessment?.name}</p>
+          <p>{dataDisplay?.assessment?.name}</p>
         </div>
 
         <div>
@@ -86,18 +86,18 @@ const AssessmentResultCard = ({
           {isShowInput ? (
             <ul>
               {/* Input Assessment Result */}
-              {dataDisplay.assessment_results?.map((result, idx) => (
+              {dataDisplay?.assessment_results?.map((result, idx) => (
                 <li key={idx}>
                   <div className="flex flex-row justify-between items-center mb-1">
-                    <p className="w-full mr-5">{result.criteria}</p>
+                    <p className="w-full mr-5">{result?.criteria}</p>
                     <Input
                       className="w-20"
-                      value={dataUpdate.assessment_result_values[idx]}
+                      value={dataUpdate?.assessment_result_values?.[idx]}
                       onChange={(event) => {
                         // to change update data
                         let newScore = event.target.value;
                         const tempUpdate = [
-                          ...dataUpdate.assessment_result_values,
+                          ...dataUpdate?.assessment_result_values,
                         ];
                         tempUpdate[idx] = newScore;
                         setDataUpdate((prev) => ({
@@ -113,11 +113,11 @@ const AssessmentResultCard = ({
           ) : (
             // Read state
             <ul>
-              {dataDisplay.assessment_results?.map((result) => (
-                <li key={result.id}>
+              {dataDisplay?.assessment_results?.map((result) => (
+                <li key={result?.id}>
                   <div className="flex flex-row justify-between mb-1">
-                    <p className="text-mono30">{result.criteria}</p>
-                    <p className="text-primary100 font-bold">{result.value}</p>
+                    <p className="text-mono30">{result?.criteria}</p>
+                    <p className="text-primary100 font-bold">{result?.value}</p>
                   </div>
                 </li>
               ))}

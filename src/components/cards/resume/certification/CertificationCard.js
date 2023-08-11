@@ -82,7 +82,7 @@ const CertificationCard = ({
           <div className="flex flex-row space-x-4">
             <Input
               placeholder="Course or program name"
-              value={dataUpdateCert.name}
+              value={dataUpdateCert?.name}
               onChange={(e) => {
                 let input = e.target.value;
                 setDataUpdateCert((prev) => ({
@@ -117,7 +117,7 @@ const CertificationCard = ({
               picker="year"
               placeholder="Year"
               className="w-1/3"
-              value={dataUpdateCert.year ? moment(dataUpdateCert.year) : null}
+              value={dataUpdateCert?.year ? moment(dataUpdateCert.year) : null}
               onChange={(date) => {
                 let input = date?.format("YYYY-MM-DD");
                 setDataUpdateCert((prev) => ({
@@ -128,7 +128,7 @@ const CertificationCard = ({
             />
             <Input
               placeholder="Company or organization"
-              value={dataUpdateCert.organizer}
+              value={dataUpdateCert?.organizer}
               onChange={(e) => {
                 let input = e.target.value;
                 setDataUpdateCert((prev) => ({
@@ -162,7 +162,7 @@ const CertificationCard = ({
           visible={modalDelete}
           onvisible={setModalDelete}
           onOk={() => {
-            handleDeleteSection("certificate", dataUpdateCert.id);
+            handleDeleteSection("certificate", dataUpdateCert?.id);
             setModalDelete(false);
           }}
           onCancel={() => {
@@ -173,7 +173,7 @@ const CertificationCard = ({
         >
           <p className="mb-4">
             Apakah Anda yakin ingin menghapus data sertifikat{" "}
-            <strong>{dataUpdateCert.name}</strong>?
+            <strong>{dataUpdateCert?.name}</strong>?
           </p>
         </ModalHapus2>
       </AccessControl>

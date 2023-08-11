@@ -56,7 +56,7 @@ const BasicInfoCard = ({
   const onChangeInput = (e) => {
     setDataUpdateBasic({
       ...dataUpdateBasic,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target?.value,
     });
   };
 
@@ -149,7 +149,7 @@ const BasicInfoCard = ({
         >
           <div>
             <Input
-              value={dataUpdateBasic.name}
+              value={dataUpdateBasic?.name}
               name={"name"}
               onChange={onChangeInput}
             />
@@ -201,7 +201,7 @@ const BasicInfoCard = ({
         >
           <div>
             <Input
-              value={dataUpdateBasic.email}
+              value={dataUpdateBasic?.email}
               name={"email"}
               onChange={onChangeInput}
             />
@@ -223,7 +223,7 @@ const BasicInfoCard = ({
         >
           <div>
             <Input
-              value={dataUpdateBasic.telp}
+              value={dataUpdateBasic?.telp}
               name={"telp"}
               onChange={onChangeInput}
             />
@@ -241,13 +241,13 @@ const BasicInfoCard = ({
         >
           <div className="flex flex-row space-x-3">
             <Input
-              value={dataUpdateBasic.city}
+              value={dataUpdateBasic?.city}
               name={"city"}
               placeholder="City"
               onChange={onChangeInput}
             />
             <Input
-              value={dataUpdateBasic.province}
+              value={dataUpdateBasic?.province}
               name={"province"}
               placeholder="Province"
               onChange={onChangeInput}
