@@ -235,7 +235,7 @@ export const AttendanceAdminListSection: FC<
                 htmlType="submit"
                 disabled={!isAllowedToSearchData}
                 className="mig-button mig-button--solid-primary"
-                icon={<SearchOutlined />}
+                icon={<SearchOutlined rev={""} />}
               >
                 Cari
               </Button>
