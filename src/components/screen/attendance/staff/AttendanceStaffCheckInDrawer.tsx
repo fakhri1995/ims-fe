@@ -279,7 +279,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                             setIsWebcamModalShown(true);
                           }}
                         >
-                          <CameraOutlined />
+                          <CameraOutlined rev={""} />
                           Ambil Foto
                         </Button>
 
@@ -303,7 +303,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                         onChange={onUploadChange}
                       >
                         <Button className="mig-button mig-button--outlined-primary absolute top-0 right-0">
-                          <UploadOutlined />
+                          <UploadOutlined rev={""} />
                           Unggah File
                         </Button>
                       </Upload>

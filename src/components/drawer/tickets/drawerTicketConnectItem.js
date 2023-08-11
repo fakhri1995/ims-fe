@@ -229,7 +229,7 @@ const DrawerTicketConnectItem = ({
                 style={{ width: `100%` }}
                 placeholder="Nama aset..."
                 disabled={!isAllowedToGetInventories}
-                suffixIcon={<SearchOutlined />}
+                suffixIcon={<SearchOutlined rev={""} />}
                 showArrow
                 onChange={(value, option) => {
                   setdatapayload({

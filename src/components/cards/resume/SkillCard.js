@@ -1,4 +1,4 @@
-import { CloseCircleFilled, CloseCircleOutlined } from "@ant-design/icons";
+import { CloseCircleOutlined } from "@ant-design/icons";
 import { Input, Select, Tag } from "antd";
 import React from "react";
 import { useState } from "react";
@@ -100,7 +100,9 @@ const SkillCard = ({
                 handleDeleteSection("skill", skill.id);
             }}
             color="#35763B1A"
-            closeIcon={isAllowedToDeleteSection && <CloseCircleOutlined />}
+            closeIcon={
+              isAllowedToDeleteSection && <CloseCircleOutlined rev={""} />
+            }
             className="text-primary100 mb-3"
           >
             {skill.name}

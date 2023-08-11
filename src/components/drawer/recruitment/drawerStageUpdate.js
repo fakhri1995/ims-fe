@@ -149,7 +149,7 @@ const DrawerStageUpdate = ({
       disabled={disabledUpdate}
       buttonCancelText={
         <div className="flex flex-row space-x-2 items-center">
-          <DeleteOutlined />
+          <DeleteOutlined rev={""} />
           <p>Hapus Stage</p>
         </div>
       }

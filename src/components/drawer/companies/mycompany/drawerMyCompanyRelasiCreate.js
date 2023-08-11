@@ -187,9 +187,9 @@ const DrawerAddRelasi = ({
             >
               <p className="mb-0">{relationnameadd}</p>
               {relationnameddadd ? (
-                <UpOutlined style={{ color: `rgb(229,231,235)` }} />
+                <UpOutlined rev={""} style={{ color: `rgb(229,231,235)` }} />
               ) : (
-                <DownOutlined style={{ color: `rgb(229,231,235)` }} />
+                <DownOutlined rev={""} style={{ color: `rgb(229,231,235)` }} />
               )}
             </div>
             {relationnameddadd ? (

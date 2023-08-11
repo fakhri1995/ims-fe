@@ -469,7 +469,7 @@ const DrawerTicketCreate = ({
                 placeholder="Semua Lokasi"
                 disabled={!isAllowedToGetTicket}
                 showSearch
-                suffixIcon={<SearchOutlined />}
+                suffixIcon={<SearchOutlined rev={""} />}
                 showArrow
                 name={`locations_id`}
                 onChange={(value) => {
@@ -548,7 +548,10 @@ const DrawerTicketCreate = ({
                   disabled={loadingfile}
                 >
                   {loadingfile ? (
-                    <LoadingOutlined style={{ marginRight: `0.5rem` }} />
+                    <LoadingOutlined
+                      rev={""}
+                      style={{ marginRight: `0.5rem` }}
+                    />
                   ) : (
                     <div className="mr-1">
                       <CloudUploadIconSvg size={15} color={`#ffffff`} />

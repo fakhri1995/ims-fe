@@ -145,7 +145,7 @@ export const AttendanceCompanyListSection: FC<
                 onClick={() => setIsExportDrawerShown(true)}
                 disabled={!canExportTableData}
               >
-                <DownloadOutlined className="mr-2" />
+                <DownloadOutlined rev={""} className="mr-2" />
                 Unduh Tabel
               </ButtonSys>
             </div>
@@ -235,7 +235,7 @@ export const AttendanceCompanyListSection: FC<
                 htmlType="submit"
                 disabled={!isAllowedToSearchData}
                 className="mig-button mig-button--solid-primary"
-                icon={<SearchOutlined />}
+                icon={<SearchOutlined rev={""} />}
               >
                 Cari
               </Button>

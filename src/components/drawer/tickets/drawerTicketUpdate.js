@@ -382,7 +382,7 @@ const DrawerTicketUpdate = ({
             </div>
             <div className=" mb-2 flex">
               <Select
-                suffixIcon={<SearchOutlined />}
+                suffixIcon={<SearchOutlined rev={""} />}
                 showArrow
                 style={{ width: `100%` }}
                 onChange={(value, option) => {
@@ -602,7 +602,7 @@ const DrawerTicketUpdate = ({
                 allowClear
                 placeholder="Semua Lokasi"
                 showSearch
-                suffixIcon={<SearchOutlined />}
+                suffixIcon={<SearchOutlined rev={""} />}
                 showArrow
                 name={`locations_id`}
                 onChange={(value) => {
@@ -681,7 +681,10 @@ const DrawerTicketUpdate = ({
                   disabled={loadingfile}
                 >
                   {loadingfile ? (
-                    <LoadingOutlined style={{ marginRight: `0.5rem` }} />
+                    <LoadingOutlined
+                      rev={""}
+                      style={{ marginRight: `0.5rem` }}
+                    />
                   ) : (
                     <div className="mr-1">
                       <CloudUploadIconSvg size={15} color={`#ffffff`} />

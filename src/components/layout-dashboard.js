@@ -114,6 +114,7 @@ function LayoutDashboard({
             <div className="flex z-50">
               {coll ? (
                 <MenuUnfoldOutlined
+                  rev={""}
                   onClick={handleColl}
                   style={{
                     padding: `24px`,
@@ -124,6 +125,7 @@ function LayoutDashboard({
                 ></MenuUnfoldOutlined>
               ) : (
                 <MenuFoldOutlined
+                  rev={""}
                   onClick={handleColl}
                   style={{ padding: `24px`, float: `left` }}
                   className={st.trigger}
@@ -131,6 +133,7 @@ function LayoutDashboard({
               )}
               {collsmall ? (
                 <MenuUnfoldOutlined
+                  rev={""}
                   onClick={handleCollSmall}
                   style={{
                     padding: `24px`,
@@ -141,6 +144,7 @@ function LayoutDashboard({
                 ></MenuUnfoldOutlined>
               ) : (
                 <MenuFoldOutlined
+                  rev={""}
                   onClick={handleCollSmall}
                   style={{ padding: `24px`, float: `left` }}
                   className={st.triggerSmall}

@@ -167,7 +167,7 @@ const DrawerPayslipDetail = ({
             bordered={false}
             expandIconPosition="right"
             expandIcon={({ isActive }) => (
-              <UpOutlined rotate={isActive ? 180 : 0} />
+              <UpOutlined rev={""} rotate={isActive ? 180 : 0} />
             )}
             defaultActiveKey={["1", "2"]}
           >

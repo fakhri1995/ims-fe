@@ -227,7 +227,7 @@ const DrawerTicketTypeCreate = ({
             <div className=" mb-2 flex">
               <Select
                 style={{ width: `100%` }}
-                suffixIcon={<SearchOutlined />}
+                suffixIcon={<SearchOutlined rev={""} />}
                 showArrow
                 placeholder="Nama.."
                 disabled={!isAllowedToGetTaskTypes}

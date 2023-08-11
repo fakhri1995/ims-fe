@@ -336,7 +336,10 @@ const ModalStatusManage = ({
               {...attributes}
               className="bg-transparent -mt-1"
             >
-              <HolderOutlined className="text-lg text-mono50 cursor-move" />
+              <HolderOutlined
+                rev={""}
+                className="text-lg text-mono50 cursor-move"
+              />
             </button>
           </div>
         </div>
@@ -354,7 +357,7 @@ const ModalStatusManage = ({
         <div>
           <h4 className="mb-2 mig-heading--4">Kelola Status</h4>{" "}
           <div className="flex items-center space-x-2 text-secondary100">
-            <InfoCircleOutlined color="#00589F" size={16} />
+            <InfoCircleOutlined rev={""} color="#00589F" size={16} />
             <p className="mig-caption">
               Urutkan prioritas status dengan cara melakukan "drag and drop"
               pada card status
@@ -473,7 +476,11 @@ const ModalStatusManage = ({
                   title={
                     <div className="flex flex-col space-y-2 items-start p-2 text-mono30">
                       <div className="flex space-x-2 items-center">
-                        <InfoCircleOutlined color="#4D4D4D" size={16} />
+                        <InfoCircleOutlined
+                          rev={""}
+                          color="#4D4D4D"
+                          size={16}
+                        />
                         <p className="font-bold">Konfigurasi Status</p>
                       </div>
                       <p className="ml-5">
@@ -486,7 +493,7 @@ const ModalStatusManage = ({
                   placement="bottomLeft"
                 >
                   <div className="cursor-help -mt-2">
-                    <InfoCircleOutlined color="#4D4D4D" size={16} />
+                    <InfoCircleOutlined rev={""} color="#4D4D4D" size={16} />
                   </div>
                 </Tooltip>
               </div>
@@ -554,7 +561,7 @@ const ModalStatusManage = ({
             disabled={!isAllowedToDeleteStatus}
           >
             <div className="flex space-x-2 items-center">
-              <DeleteOutlined />
+              <DeleteOutlined rev={""} />
               <p>Hapus Status</p>
             </div>
           </ButtonSys>
@@ -620,7 +627,11 @@ const ModalStatusManage = ({
                     title={
                       <div className="flex flex-col space-y-2 items-start p-2 text-mono30">
                         <div className="flex space-x-2 items-center">
-                          <InfoCircleOutlined color="#4D4D4D" size={16} />
+                          <InfoCircleOutlined
+                            rev={""}
+                            color="#4D4D4D"
+                            size={16}
+                          />
                           <p className="font-bold">Konfigurasi Status</p>
                         </div>
                         <p className="ml-5">
@@ -633,7 +644,7 @@ const ModalStatusManage = ({
                     placement="bottomLeft"
                   >
                     <div className="cursor-help -mt-2">
-                      <InfoCircleOutlined color="#4D4D4D" size={16} />
+                      <InfoCircleOutlined rev={""} color="#4D4D4D" size={16} />
                     </div>
                   </Tooltip>
                 </div>

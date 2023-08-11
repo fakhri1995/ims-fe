@@ -519,7 +519,7 @@ const ModalProjectTaskDetailUpdate = ({
               disabled={!isAllowedToDeleteTask}
             >
               <div className="flex space-x-2 items-center whitespace-nowrap">
-                <DeleteOutlined />
+                <DeleteOutlined rev={""} />
                 <p>Hapus Task</p>
               </div>
             </ButtonSys>
