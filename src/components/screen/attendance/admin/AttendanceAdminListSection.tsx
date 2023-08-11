@@ -145,7 +145,7 @@ export const AttendanceAdminListSection: FC<
                 onClick={() => setIsExportDrawerShown(true)}
                 disabled={!canExportTableData}
               >
-                <DownloadOutlined className="mr-2" />
+                <DownloadOutlined rev={""} className="mr-2" />
                 Unduh Tabel
               </ButtonSys>
             </div>
