@@ -82,7 +82,7 @@ const TrainingCard = ({
           <div className="flex flex-row space-x-4">
             <Input
               placeholder="Course or program name"
-              value={dataUpdateTrain.name}
+              value={dataUpdateTrain?.name}
               onChange={(e) => {
                 let input = e.target.value;
                 setDataUpdateTrain((prev) => ({
@@ -117,7 +117,9 @@ const TrainingCard = ({
               picker="year"
               placeholder="Year"
               className="w-1/3"
-              value={dataUpdateTrain.year ? moment(dataUpdateTrain.year) : null}
+              value={
+                dataUpdateTrain?.year ? moment(dataUpdateTrain.year) : null
+              }
               onChange={(date) => {
                 let input = date?.format("YYYY-MM-DD");
                 setDataUpdateTrain((prev) => ({
@@ -128,7 +130,7 @@ const TrainingCard = ({
             />
             <Input
               placeholder="Company or organization"
-              value={dataUpdateTrain.organizer}
+              value={dataUpdateTrain?.organizer}
               onChange={(e) => {
                 let input = e.target.value;
                 setDataUpdateTrain((prev) => ({
@@ -161,7 +163,7 @@ const TrainingCard = ({
           visible={modalDelete}
           onvisible={setModalDelete}
           onOk={() => {
-            handleDeleteSection("training", dataUpdateTrain.id);
+            handleDeleteSection("training", dataUpdateTrain?.id);
             setModalDelete(false);
           }}
           onCancel={() => {
@@ -172,7 +174,7 @@ const TrainingCard = ({
         >
           <p className="mb-4">
             Apakah Anda yakin ingin menghapus data pelatihan{" "}
-            <strong>{dataUpdateTrain.name}</strong>?
+            <strong>{dataUpdateTrain?.name}</strong>?
           </p>
         </ModalHapus2>
       </AccessControl>

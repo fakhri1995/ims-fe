@@ -83,7 +83,7 @@ const ProjectCard = ({
           <div className="flex flex-row space-x-4">
             <Input
               placeholder="Project name"
-              value={dataUpdateProj.name}
+              value={dataUpdateProj?.name}
               onChange={(e) => {
                 let input = e.target.value;
                 setDataUpdateProj((prev) => ({
@@ -118,7 +118,7 @@ const ProjectCard = ({
               picker="year"
               placeholder="Year"
               className="w-1/3"
-              value={dataUpdateProj.year ? moment(dataUpdateProj.year) : null}
+              value={dataUpdateProj?.year ? moment(dataUpdateProj?.year) : null}
               onChange={(date) => {
                 let input = date?.format("YYYY-MM-DD");
                 setDataUpdateProj((prev) => ({
@@ -129,7 +129,7 @@ const ProjectCard = ({
             />
             <Input
               placeholder="Description"
-              value={dataUpdateProj.description}
+              value={dataUpdateProj?.description}
               onChange={(e) => {
                 let input = e.target.value;
                 setDataUpdateProj((prev) => ({

@@ -632,7 +632,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
 export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
   const isAllResultEmpty = dataResume.assessment_results?.every(
-    (result) => result.value === ""
+    (result) => result?.value === ""
   );
 
   function breakText(text) {
@@ -670,13 +670,13 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                     color: "#808080",
                   }}
                 >
-                  {dataResume.name}
+                  {dataResume?.name}
                 </Text>
                 <Text style={{ fontSize: 10, color: "#808080" }}>
                   &nbsp;-&nbsp;
                 </Text>
                 <Text style={{ fontSize: 10, color: "#808080" }}>
-                  {dataResume.assessment?.name}
+                  {dataResume?.assessment?.name}
                 </Text>
               </View>
             )
@@ -717,7 +717,7 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
           </View>
         </View>
         {/*Summary Section */}
-        {dataResume.summaries && checkDataDescription(dataResume.summaries) && (
+        {dataResume?.summaries && checkDataDescription(dataResume?.summaries) && (
           <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
             <Text style={styles.sectionHeader}>SUMMARY</Text>
             <View style={{}}>
@@ -726,18 +726,18 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                 style={styles.desc}
                 stylesheet={styles.htmlStyle}
               >
-                {dataResume.summaries?.description}
+                {dataResume?.summaries?.description}
               </Html>
             </View>
           </View>
         )}
         {/* Body */}
         {/* EXPERIENCE SECTION */}
-        {dataResume.experiences?.length !== 0 && (
+        {dataResume?.experiences?.length !== 0 && (
           <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
             <Text style={styles.sectionHeader}>EXPERIENCE</Text>
-            {dataResume.experiences.map((exp, idx) => (
-              <View style={styles.sectionBlock1} key={exp.id}>
+            {dataResume?.experiences?.map((exp, idx) => (
+              <View style={styles.sectionBlock1} key={exp?.id}>
                 <View style={{ flexDirection: "column" }}>
                   <Image
                     style={{ width: 10, height: 10, padding: 1, marginTop: 2 }}
@@ -749,7 +749,7 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                     style={styles.title}
                     hyphenationCallback={(e) => breakText(e)}
                   >
-                    {exp.role}
+                    {exp?.role}
                   </Text>
                   <View
                     style={{
@@ -758,11 +758,11 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                       paddingBottom: 2,
                     }}
                   >
-                    <Text>{exp.company} ·&nbsp;</Text>
+                    <Text>{exp?.company} ·&nbsp;</Text>
                     <Text style={styles.textYear}>
-                      {momentFormatDate(exp.start_date, "-", "MMM YYYY")}{" "}
+                      {momentFormatDate(exp?.start_date, "-", "MMM YYYY")}{" "}
                       -&nbsp;
-                      {momentFormatDate(exp.end_date, "present", "MMM YYYY")}
+                      {momentFormatDate(exp?.end_date, "present", "MMM YYYY")}
                     </Text>
                   </View>
                   <Html
@@ -770,7 +770,7 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                     style={styles.desc}
                     stylesheet={styles.htmlStyle}
                   >
-                    {exp.description}
+                    {exp?.description}
                   </Html>
                 </View>
               </View>
@@ -779,11 +779,11 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
         )}
         <View style={styles.rowTwoCol} wrap={false}>
           {/* ACADEMIC SECTION */}
-          {dataResume.educations?.length !== 0 && (
+          {dataResume?.educations?.length !== 0 && (
             <View style={styles.section}>
               <Text style={styles.sectionHeader}>ACADEMIC HISTORY</Text>
-              {dataResume.educations.map((edu, idx) => (
-                <View style={styles.sectionBlock1} key={edu.id}>
+              {dataResume?.educations?.map((edu, idx) => (
+                <View style={styles.sectionBlock1} key={edu?.id}>
                   <View style={{ flexDirection: "column" }}>
                     <Image
                       style={{
@@ -801,7 +801,7 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                       style={styles.title}
                       hyphenationCallback={(e) => breakText(e)}
                     >
-                      {edu.university}
+                      {edu?.university}
                     </Text>
                     <View
                       style={{
@@ -812,15 +812,17 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                       }}
                     >
                       <Text hyphenationCallback={(e) => breakText(e)}>
-                        {edu.major} ·&nbsp;
+                        {edu?.major} ·&nbsp;
                       </Text>
                       <Text style={styles.textYear}>
-                        {edu.graduation_year
-                          ? edu.graduation_year.slice(0, 4)
+                        {edu?.graduation_year
+                          ? edu?.graduation_year?.slice(0, 4)
                           : "-"}
                       </Text>
                     </View>
-                    {edu?.gpa && <Text style={styles.desc}>GPA {edu.gpa}</Text>}
+                    {edu?.gpa && (
+                      <Text style={styles.desc}>GPA {edu?.gpa}</Text>
+                    )}
                   </View>
                 </View>
               ))}
@@ -828,7 +830,7 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
           )}
 
           {/* SKILL SECTION */}
-          {dataResume.skills?.length !== 0 && (
+          {dataResume?.skills?.length !== 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeader}>SKILLS</Text>
               <View
@@ -837,9 +839,9 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                   flexWrap: "wrap",
                 }}
               >
-                {dataResume.skills.map((skill) => (
-                  <View style={styles.skillTag} key={skill.id}>
-                    <Text>{skill.name}</Text>
+                {dataResume?.skills?.map((skill) => (
+                  <View style={styles.skillTag} key={skill?.id}>
+                    <Text>{skill?.name}</Text>
                   </View>
                 ))}
               </View>
@@ -848,7 +850,7 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
         </View>
 
         {/* PROJECT SECTION */}
-        {dataResume.projects?.length !== 0 && (
+        {dataResume?.projects?.length !== 0 && (
           <View
             style={styles.rowOneCol}
             // wrap={false}
@@ -861,30 +863,30 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                 justifyContent: "space-between",
               }}
             >
-              {dataResume.projects.map((proj) => (
+              {dataResume?.projects?.map((proj) => (
                 <View
                   style={{
                     width: "45%",
                     ...styles.sectionBlock2,
                   }}
-                  key={proj.id}
+                  key={proj?.id}
                   wrap={false}
                 >
                   <Text style={styles.textGreen}>
-                    {proj.year ? proj.year.slice(0, 4) : "-"}
+                    {proj?.year ? proj?.year.slice(0, 4) : "-"}
                   </Text>
                   <View style={styles.sectionCol2}>
                     <Text
                       style={styles.title}
                       hyphenationCallback={(e) => breakText(e)}
                     >
-                      {proj.name}
+                      {proj?.name}
                     </Text>
                     <Text
                       style={styles.desc}
                       hyphenationCallback={(e) => breakText(e)}
                     >
-                      {proj.description}
+                      {proj?.description}
                     </Text>
                   </View>
                 </View>
@@ -901,26 +903,26 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
           }}
         >
           {/* TRAINING SECTION */}
-          {dataResume.trainings?.length !== 0 && (
+          {dataResume?.trainings?.length !== 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeader}>TRAINING</Text>
-              {dataResume.trainings.map((train) => (
-                <View style={styles.sectionBlock2} key={train.id}>
+              {dataResume?.trainings?.map((train) => (
+                <View style={styles.sectionBlock2} key={train?.id}>
                   <Text style={styles.textGreen}>
-                    {train.year ? train.year.slice(0, 4) : "-"}
+                    {train?.year ? train?.year.slice(0, 4) : "-"}
                   </Text>
                   <View style={styles.sectionCol2}>
                     <Text
                       style={styles.title}
                       hyphenationCallback={(e) => breakText(e)}
                     >
-                      {train.name}
+                      {train?.name}
                     </Text>
                     <Text
                       style={styles.desc}
                       hyphenationCallback={(e) => breakText(e)}
                     >
-                      {train.organizer}
+                      {train?.organizer}
                     </Text>
                   </View>
                 </View>
@@ -929,26 +931,26 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
           )}
 
           {/* CERTIFICATION SECTION */}
-          {dataResume.certificates?.length !== 0 && (
+          {dataResume?.certificates?.length !== 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeader}>CERTIFICATIONS</Text>
-              {dataResume.certificates.map((cert) => (
-                <View style={styles.sectionBlock2} key={cert.id}>
+              {dataResume?.certificates?.map((cert) => (
+                <View style={styles.sectionBlock2} key={cert?.id}>
                   <Text style={styles.textGreen}>
-                    {cert.year ? cert.year.slice(0, 4) : "-"}
+                    {cert?.year ? cert?.year.slice(0, 4) : "-"}
                   </Text>
                   <View style={styles.sectionCol2}>
                     <Text
                       style={styles.title}
                       hyphenationCallback={(e) => breakText(e)}
                     >
-                      {cert.name}
+                      {cert?.name}
                     </Text>
                     <Text
                       style={styles.desc}
                       hyphenationCallback={(e) => breakText(e)}
                     >
-                      {cert.organizer}
+                      {cert?.organizer}
                     </Text>
                   </View>
                 </View>
@@ -957,26 +959,26 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
           )}
 
           {/* ACHIEVEMENT SECTION */}
-          {dataResume.achievements?.length !== 0 && (
+          {dataResume?.achievements?.length !== 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeader}>ACHIEVEMENTS</Text>
-              {dataResume.achievements.map((achiev) => (
-                <View style={styles.sectionBlock2} key={achiev.id}>
+              {dataResume?.achievements?.map((achiev) => (
+                <View style={styles.sectionBlock2} key={achiev?.id}>
                   <Text style={styles.textGreen}>
-                    {achiev.year ? achiev.year.slice(0, 4) : "-"}
+                    {achiev?.year ? achiev?.year?.slice(0, 4) : "-"}
                   </Text>
                   <View style={styles.sectionCol2}>
                     <Text
                       style={styles.title}
                       hyphenationCallback={(e) => breakText(e)}
                     >
-                      {achiev.name}
+                      {achiev?.name}
                     </Text>
                     <Text
                       style={styles.desc}
                       hyphenationCallback={(e) => breakText(e)}
                     >
-                      {achiev.organizer}
+                      {achiev?.organizer}
                     </Text>
                   </View>
                 </View>
@@ -991,11 +993,11 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                 TECHNICAL ASSESSMENT{"\n"}
                 RESULTS
               </Text>
-              {dataResume.assessment_results?.map(
+              {dataResume?.assessment_results?.map(
                 (result) =>
-                  result.value !== "" && (
+                  result?.value !== "" && (
                     <View
-                      key={result.id}
+                      key={result?.id}
                       style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
@@ -1019,11 +1021,11 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                           }}
                           hyphenationCallback={(e) => breakText(e)}
                         >
-                          {result.criteria}
+                          {result?.criteria}
                         </Text>
                       </View>
 
-                      <Text style={styles.textGreen}>{result.value}</Text>
+                      <Text style={styles.textGreen}>{result?.value}</Text>
                     </View>
                   )
               )}

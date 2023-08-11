@@ -59,7 +59,7 @@ const SummaryCard = ({
   const onChangeInput = (e) => {
     setDataUpdateBasic({
       ...dataUpdateBasic,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target?.value,
     });
   };
   const modules = {
@@ -136,7 +136,7 @@ const SummaryCard = ({
           <div className={"w-11/12"}>
             <ReactQuill
               theme="snow"
-              value={dataSummary.description}
+              value={dataSummary?.description}
               modules={modules}
               formats={formats}
               className="h-44 pb-10"

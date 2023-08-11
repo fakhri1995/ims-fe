@@ -1,13 +1,10 @@
 import { CloseCircleFilled, CloseCircleOutlined } from "@ant-design/icons";
 import { Input, Select, Tag } from "antd";
 import React from "react";
-import { useEffect } from "react";
 import { useState } from "react";
-import { setConstantValue } from "typescript";
 
 import ButtonSys from "../../button";
 import { CheckIconSvg, EditIconSvg, TrashIconSvg, XIconSvg } from "../../icon";
-import { H2 } from "../../typography";
 
 const SkillCard = ({
   initProps,
@@ -117,7 +114,7 @@ const SkillCard = ({
             <Select
               showSearch
               placeholder="Skill name"
-              value={dataUpdateSkill.name}
+              value={dataUpdateSkill?.name}
               defaultActiveFirstOption={false}
               optionFilterProp="children"
               notFoundContent={null}
@@ -126,7 +123,7 @@ const SkillCard = ({
               className="w-full"
             >
               {skillList.map((skill) => (
-                <Select.Option key={skill?.id} value={skill.name}>
+                <Select.Option key={skill?.id} value={skill?.name}>
                   {skill?.name}
                 </Select.Option>
               ))}
