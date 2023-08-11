@@ -2113,11 +2113,11 @@ const TableCustomInvoiceList = ({
           onMouseOver: () => {
             setrowstate(record.id);
           },
-          onClick: () => {
-            record.id &&
-              record.is_posted &&
-              rt.push(`/admin/contracts/${record.id}`);
-          },
+          // onClick: () => {
+          //   record.id &&
+          //     record.is_posted &&
+          //     rt.push(`/admin/contracts/${record.id}`);
+          // },
         };
       }}
       rowClassName={(record, idx) => {

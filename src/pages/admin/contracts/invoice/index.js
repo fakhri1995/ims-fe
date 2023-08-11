@@ -11,7 +11,6 @@ import {
 } from "antd";
 // import locale from "antd/es/date-picker/locale/id_ID";
 import moment from "moment";
-import "moment/locale/id";
 import {
   NumberParam,
   StringParam,
@@ -74,8 +73,6 @@ import {
   PointElement,
 } from "chart.js";
 import httpcookie from "cookie";
-
-moment.locale("id");
 
 Chart.register(
   ArcElement,
