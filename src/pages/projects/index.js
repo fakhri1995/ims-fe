@@ -1124,7 +1124,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
               disabled={!isAllowedToAddProject}
             >
               <PlusIconSvg color={"#ffffff"} size={32} />
-              <p className="font-bold text-sm">Tambah Proyek Baru</p>
+              <p className="font-bold text-sm text-left">Tambah Proyek Baru</p>
             </button>
           </div>
 
@@ -1133,10 +1133,12 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             <button
               onClick={() => setModalManageStatus(true)}
               className="mig-platform--p-0 px-4 py-2 w-full flex space-x-2 items-center text-white bg-mono50 disabled:bg-gray-200 hover:bg-opacity-75 overflow-hidden"
-              disabled={!isAllowedToGetStatuses}
+              disabled={!isAllowedToEditStatus}
             >
               <AdjusmentsHorizontalIconSvg color={"#ffffff"} size={32} />
-              <p className="font-bold text-sm">Kelola Status Task & Proyek</p>
+              <p className="font-bold text-sm text-left">
+                Kelola Status Task & Proyek
+              </p>
             </button>
           </div>
 
