@@ -5,12 +5,7 @@ import { Notification } from "components/features/Notification";
 
 import { generateStaticAssetUrl } from "lib/helper";
 
-import {
-  LogoutIconSvg,
-  NotifIconSvg,
-  SearchIconSvg,
-  UsercircleIconSvg,
-} from "./icon";
+import { LogoutIconSvg, UsercircleIconSvg } from "./icon";
 
 function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
   const rt = useRouter();
@@ -62,14 +57,10 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
     <div
       className={`hidden md:flex md:w-auto w-full ${st.menu} md:justify-end`}
     >
-      <div className="md:mr-8 mr-4 cursor-pointer">
-        <SearchIconSvg size={28} color={`#000000`} />
-      </div>
       <div className="md:mr-8 mr-4 flex items-center">
-        {/* <NotifIconSvg /> */}
         <Notification />
       </div>
-      <div className=" md:mr-12 mr-4 mt-2 flex items-center">
+      <div className="md:mr-12 mr-4 flex items-center">
         <Dropdown overlay={menuProfile2} trigger={["click"]}>
           <img
             src={generateStaticAssetUrl(dataProfile.data.profile_image?.link)}
