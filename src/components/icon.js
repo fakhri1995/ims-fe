@@ -20,7 +20,7 @@ const DashboardIconSvg = () => {
       <rect x={10} y={12} width={4} height={4} />
     </svg>
   );
-  return <Icon component={dashboardIconSvg}></Icon>;
+  return <Icon rev={""} component={dashboardIconSvg}></Icon>;
 };
 const TicketIconSvg = ({ size, color }) => {
   const ticketIconSvg = () => (
@@ -43,7 +43,7 @@ const TicketIconSvg = ({ size, color }) => {
       <path d="M5 5h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-3a2 2 0 0 0 0 -4v-3a2 2 0 0 1 2 -2" />
     </svg>
   );
-  return <Icon component={ticketIconSvg}></Icon>;
+  return <Icon rev={""} component={ticketIconSvg}></Icon>;
 };
 const TaskIconSvg = () => {
   const taskIconSvg = () => (
@@ -65,7 +65,7 @@ const TaskIconSvg = () => {
       <path d="M9 14l2 2l4 -4" />
     </svg>
   );
-  return <Icon component={taskIconSvg}></Icon>;
+  return <Icon rev={""} component={taskIconSvg}></Icon>;
 };
 const ItemIconSvg = () => {
   const itemIconSvg = () => (
@@ -87,7 +87,7 @@ const ItemIconSvg = () => {
       <line x1={10} y1={12} x2={14} y2={12} />
     </svg>
   );
-  return <Icon component={itemIconSvg}></Icon>;
+  return <Icon rev={""} component={itemIconSvg}></Icon>;
 };
 const CompanyIconSvg = () => {
   const companyIconSvg = () => (
@@ -113,7 +113,7 @@ const CompanyIconSvg = () => {
       <line x1={9} y1={18} x2={9} y2="18.01" />
     </svg>
   );
-  return <Icon component={companyIconSvg}></Icon>;
+  return <Icon rev={""} component={companyIconSvg}></Icon>;
 };
 const UserIconSvg = ({ size, color }) => {
   const userIconSvg = () => (
@@ -136,7 +136,7 @@ const UserIconSvg = ({ size, color }) => {
       <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
     </svg>
   );
-  return <Icon component={userIconSvg}></Icon>;
+  return <Icon rev={""} component={userIconSvg}></Icon>;
 };
 const FiturIconSvg = () => {
   const fiturIconSvg = () => (
@@ -158,7 +158,7 @@ const FiturIconSvg = () => {
       <polyline points="4 16 12 20 20 16" />
     </svg>
   );
-  return <Icon component={fiturIconSvg}></Icon>;
+  return <Icon rev={""} component={fiturIconSvg}></Icon>;
 };
 const AsetIconSvg = () => {
   const asetIconSvg = () => (
@@ -181,7 +181,7 @@ const AsetIconSvg = () => {
       <line x1={12} y1={12} x2={4} y2="7.5" />
     </svg>
   );
-  return <Icon component={asetIconSvg}></Icon>;
+  return <Icon rev={""} component={asetIconSvg}></Icon>;
 };
 const KatalogIconSvg = () => {
   const katalogIconSvg = () => (
@@ -202,7 +202,7 @@ const KatalogIconSvg = () => {
       <path d="M4 7v3.859c0 .537 .213 1.052 .593 1.432l8.116 8.116a2.025 2.025 0 0 0 2.864 0l4.834 -4.834a2.025 2.025 0 0 0 0 -2.864l-8.117 -8.116a2.025 2.025 0 0 0 -1.431 -.593h-3.859a3 3 0 0 0 -3 3z" />
     </svg>
   );
-  return <Icon component={katalogIconSvg}></Icon>;
+  return <Icon rev={""} component={katalogIconSvg}></Icon>;
 };
 const PakaiInternalIconSvg = ({ size, color }) => {
   const pakaiinternalIconSvg = () => (
@@ -229,7 +229,7 @@ const PakaiInternalIconSvg = ({ size, color }) => {
       <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16" />
     </svg>
   );
-  return <Icon component={pakaiinternalIconSvg}></Icon>;
+  return <Icon rev={""} component={pakaiinternalIconSvg}></Icon>;
 };
 
 const PakaiSewaIconSvg = ({ size, color }) => {
@@ -252,7 +252,7 @@ const PakaiSewaIconSvg = ({ size, color }) => {
       <path d="M15 19l2 2l4 -4" />
     </svg>
   );
-  return <Icon component={pakaisewaIconSvg}></Icon>;
+  return <Icon rev={""} component={pakaisewaIconSvg}></Icon>;
 };
 const TersediaIconSvg = ({ size, color }) => {
   const tersediaIconSvg = () => (
@@ -272,7 +272,7 @@ const TersediaIconSvg = ({ size, color }) => {
       <path d="M5 12l5 5l10 -10" />
     </svg>
   );
-  return <Icon component={tersediaIconSvg}></Icon>;
+  return <Icon rev={""} component={tersediaIconSvg}></Icon>;
 };
 
 const SearchIconSvg = ({ size, color }) => {
@@ -294,7 +294,7 @@ const SearchIconSvg = ({ size, color }) => {
       <line x1={21} y1={21} x2={15} y2={15} />
     </svg>
   );
-  return <Icon component={searchIconSvg}></Icon>;
+  return <Icon rev={""} component={searchIconSvg}></Icon>;
 };
 const NotifIconSvg = () => {
   const notifIconSvg = () => (
@@ -315,7 +315,7 @@ const NotifIconSvg = () => {
       <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
     </svg>
   );
-  return <Icon component={notifIconSvg}></Icon>;
+  return <Icon rev={""} component={notifIconSvg}></Icon>;
 };
 const Aset2IconSvg = ({ size, color }) => {
   const aset2IconSvg = () => (
@@ -338,7 +338,7 @@ const Aset2IconSvg = ({ size, color }) => {
       <line x1={12} y1={12} x2={4} y2="7.5" />
     </svg>
   );
-  return <Icon component={aset2IconSvg}></Icon>;
+  return <Icon rev={""} component={aset2IconSvg}></Icon>;
 };
 const EditIconSvg = ({ size, color }) => {
   const editIconSvg = () => (
@@ -359,7 +359,7 @@ const EditIconSvg = ({ size, color }) => {
       <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
     </svg>
   );
-  return <Icon component={editIconSvg}></Icon>;
+  return <Icon rev={""} component={editIconSvg}></Icon>;
 };
 const EmailIconSvg = ({ size, color }) => {
   const emailIconSvg = () => (
@@ -380,7 +380,7 @@ const EmailIconSvg = ({ size, color }) => {
       <polyline points="3 7 12 13 21 7" />
     </svg>
   );
-  return <Icon component={emailIconSvg}></Icon>;
+  return <Icon rev={""} component={emailIconSvg}></Icon>;
 };
 const PhoneIconSvg = ({ size, color }) => {
   const phoneIconSvg = () => (
@@ -400,7 +400,7 @@ const PhoneIconSvg = ({ size, color }) => {
       <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" />
     </svg>
   );
-  return <Icon component={phoneIconSvg}></Icon>;
+  return <Icon rev={""} component={phoneIconSvg}></Icon>;
 };
 const WebIconSvg = ({ size, color }) => {
   const webIconSvg = () => (
@@ -424,7 +424,7 @@ const WebIconSvg = ({ size, color }) => {
       <path d="M12.5 3a17 17 0 0 1 0 18" />
     </svg>
   );
-  return <Icon component={webIconSvg}></Icon>;
+  return <Icon rev={""} component={webIconSvg}></Icon>;
 };
 const LocationIconSvg = ({ size, color, id }) => {
   const locationIconSvg = () => (
@@ -448,7 +448,7 @@ const LocationIconSvg = ({ size, color, id }) => {
       <line x1={17} y1={15} x2={17} y2="15.01" />
     </svg>
   );
-  return <Icon id={id} component={locationIconSvg}></Icon>;
+  return <Icon rev={""} id={id} component={locationIconSvg}></Icon>;
 };
 const SubLocationIconSvg = ({ size, color }) => {
   const sublocationIconSvg = () => (
@@ -475,7 +475,7 @@ const SubLocationIconSvg = ({ size, color }) => {
       <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16" />
     </svg>
   );
-  return <Icon component={sublocationIconSvg}></Icon>;
+  return <Icon rev={""} component={sublocationIconSvg}></Icon>;
 };
 const ShareIconSvg = ({ size, color }) => {
   const shareIconSvg = () => (
@@ -499,7 +499,7 @@ const ShareIconSvg = ({ size, color }) => {
       <line x1="8.7" y1="13.3" x2="15.3" y2="16.7" />
     </svg>
   );
-  return <Icon component={shareIconSvg}></Icon>;
+  return <Icon rev={""} component={shareIconSvg}></Icon>;
 };
 const TrashIconSvg = ({ size, color }) => {
   const trashIconSvg = () => (
@@ -523,7 +523,7 @@ const TrashIconSvg = ({ size, color }) => {
       <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
     </svg>
   );
-  return <Icon component={trashIconSvg}></Icon>;
+  return <Icon rev={""} component={trashIconSvg}></Icon>;
 };
 const CheckIconSvg = ({ size, color }) => {
   const checkIconSvg = () => (
@@ -543,7 +543,7 @@ const CheckIconSvg = ({ size, color }) => {
       <path d="M5 12l5 5l10 -10" />
     </svg>
   );
-  return <Icon component={checkIconSvg}></Icon>;
+  return <Icon rev={""} component={checkIconSvg}></Icon>;
 };
 const BackIconSvg = ({ size, color }) => {
   const backIconSvg = () => (
@@ -563,7 +563,7 @@ const BackIconSvg = ({ size, color }) => {
       <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1" />
     </svg>
   );
-  return <Icon component={backIconSvg}></Icon>;
+  return <Icon rev={""} component={backIconSvg}></Icon>;
 };
 const SortingIconSvg = ({ size, color }) => {
   const sortingIconSvg = () => (
@@ -586,7 +586,7 @@ const SortingIconSvg = ({ size, color }) => {
       <path d="M7 6v12" />
     </svg>
   );
-  return <Icon component={sortingIconSvg}></Icon>;
+  return <Icon rev={""} component={sortingIconSvg}></Icon>;
 };
 const DownIconSvg = ({ size, color }) => {
   const downIconSvg = () => (
@@ -606,7 +606,7 @@ const DownIconSvg = ({ size, color }) => {
       <polyline points="6 9 12 15 18 9" />
     </svg>
   );
-  return <Icon component={downIconSvg}></Icon>;
+  return <Icon rev={""} component={downIconSvg}></Icon>;
 };
 const ExternalLinkIconSvg = ({ size, color }) => {
   const externallinkIconSvg = () => (
@@ -628,7 +628,7 @@ const ExternalLinkIconSvg = ({ size, color }) => {
       <polyline points="15 4 20 4 20 9" />
     </svg>
   );
-  return <Icon component={externallinkIconSvg}></Icon>;
+  return <Icon rev={""} component={externallinkIconSvg}></Icon>;
 };
 const CameraIconSvg = ({ size, color }) => {
   const cameraIconSvg = () => (
@@ -649,7 +649,7 @@ const CameraIconSvg = ({ size, color }) => {
       <circle cx={12} cy={13} r={3} />
     </svg>
   );
-  return <Icon component={cameraIconSvg}></Icon>;
+  return <Icon rev={""} component={cameraIconSvg}></Icon>;
 };
 const RefreshIconSvg = ({ size, color }) => {
   const refreshIconSvg = () => (
@@ -670,7 +670,7 @@ const RefreshIconSvg = ({ size, color }) => {
       <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
     </svg>
   );
-  return <Icon component={refreshIconSvg}></Icon>;
+  return <Icon rev={""} component={refreshIconSvg}></Icon>;
 };
 const ReplacementIconSvg = ({ size, color }) => {
   const replacementIconSvg = () => (
@@ -691,7 +691,7 @@ const ReplacementIconSvg = ({ size, color }) => {
       <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
     </svg>
   );
-  return <Icon component={replacementIconSvg}></Icon>;
+  return <Icon rev={""} component={replacementIconSvg}></Icon>;
 };
 
 const PeriodeIconSvg = ({ size, color }) => {
@@ -713,7 +713,7 @@ const PeriodeIconSvg = ({ size, color }) => {
       <path d="M12 7v5l3 3" />
     </svg>
   );
-  return <Icon component={periodeIconSvg}></Icon>;
+  return <Icon rev={""} component={periodeIconSvg}></Icon>;
 };
 
 const LuarPeriodeIconSvg = ({ size, color }) => {
@@ -737,7 +737,7 @@ const LuarPeriodeIconSvg = ({ size, color }) => {
       <path d="M19 22v.01" />
     </svg>
   );
-  return <Icon component={luarperiodeIconSvg}></Icon>;
+  return <Icon rev={""} component={luarperiodeIconSvg}></Icon>;
 };
 const EditTablerIconSvg = ({ size, color }) => {
   const edittablerIconSvg = () => (
@@ -759,7 +759,7 @@ const EditTablerIconSvg = ({ size, color }) => {
       <path d="M16 5l3 3" />
     </svg>
   );
-  return <Icon component={edittablerIconSvg}></Icon>;
+  return <Icon rev={""} component={edittablerIconSvg}></Icon>;
 };
 const DeleteTablerIconSvg = ({ size, color }) => {
   const deletetablerIconSvg = () => (
@@ -783,7 +783,7 @@ const DeleteTablerIconSvg = ({ size, color }) => {
       <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
     </svg>
   );
-  return <Icon component={deletetablerIconSvg}></Icon>;
+  return <Icon rev={""} component={deletetablerIconSvg}></Icon>;
 };
 
 const SquarePlusIconSvg = ({ size, color }) => {
@@ -806,7 +806,7 @@ const SquarePlusIconSvg = ({ size, color }) => {
       <line x1={12} y1={9} x2={12} y2={15} />
     </svg>
   );
-  return <Icon component={squareplusIconSvg}></Icon>;
+  return <Icon rev={""} component={squareplusIconSvg}></Icon>;
 };
 const NotesIconSvg = ({ size, color }) => {
   const notesIconSvg = () => (
@@ -829,7 +829,7 @@ const NotesIconSvg = ({ size, color }) => {
       <line x1={9} y1={15} x2={13} y2={15} />
     </svg>
   );
-  return <Icon component={notesIconSvg}></Icon>;
+  return <Icon rev={""} component={notesIconSvg}></Icon>;
 };
 const FaxIconSvg = ({ size, color }) => {
   const faxIconSvg = () => (
@@ -851,7 +851,7 @@ const FaxIconSvg = ({ size, color }) => {
       <rect x={7} y={13} width={10} height={8} rx={2} />
     </svg>
   );
-  return <Icon component={faxIconSvg}></Icon>;
+  return <Icon rev={""} component={faxIconSvg}></Icon>;
 };
 const PkpIconSvg = ({ size, color }) => {
   const pkpIconSvg = () => (
@@ -874,7 +874,7 @@ const PkpIconSvg = ({ size, color }) => {
       <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16l-3 -2l-2 2l-2 -2l-2 2l-2 -2l-3 2" />
     </svg>
   );
-  return <Icon component={pkpIconSvg}></Icon>;
+  return <Icon rev={""} component={pkpIconSvg}></Icon>;
 };
 const AlertIconSvg = ({ size, color }) => {
   const alertIconSvg = () => (
@@ -896,7 +896,7 @@ const AlertIconSvg = ({ size, color }) => {
       <line x1={12} y1={16} x2="12.01" y2={16} />
     </svg>
   );
-  return <Icon component={alertIconSvg}></Icon>;
+  return <Icon rev={""} component={alertIconSvg}></Icon>;
 };
 const AlerttriangleIconSvg = ({ size, color }) => {
   const alerttriangleIconSvg = () => (
@@ -917,7 +917,7 @@ const AlerttriangleIconSvg = ({ size, color }) => {
       <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
     </svg>
   );
-  return <Icon component={alerttriangleIconSvg}></Icon>;
+  return <Icon rev={""} component={alerttriangleIconSvg}></Icon>;
 };
 const ClockIconSvg = ({ size, color }) => {
   const clockIconSvg = () => (
@@ -938,7 +938,7 @@ const ClockIconSvg = ({ size, color }) => {
       <polyline points="12 7 12 12 15 15" />
     </svg>
   );
-  return <Icon component={clockIconSvg}></Icon>;
+  return <Icon rev={""} component={clockIconSvg}></Icon>;
 };
 
 const ClockXIconSvg = ({ size, color }) => {
@@ -962,7 +962,7 @@ const ClockXIconSvg = ({ size, color }) => {
       <path d="M17 22l5 -5" />
     </svg>
   );
-  return <Icon component={clockXIconSvg}></Icon>;
+  return <Icon rev={""} component={clockXIconSvg}></Icon>;
 };
 
 const ClipboardcheckIconSvg = ({ size, color }) => {
@@ -985,7 +985,7 @@ const ClipboardcheckIconSvg = ({ size, color }) => {
       <path d="M9 14l2 2l4 -4" />
     </svg>
   );
-  return <Icon component={clipboardcheckIconSvg}></Icon>;
+  return <Icon rev={""} component={clipboardcheckIconSvg}></Icon>;
 };
 const CalendartimeIconSvg = ({ size, color }) => {
   const calendartimeIconSvg = () => (
@@ -1010,7 +1010,7 @@ const CalendartimeIconSvg = ({ size, color }) => {
       <path d="M18 16.496v1.504l1 1" />
     </svg>
   );
-  return <Icon component={calendartimeIconSvg}></Icon>;
+  return <Icon rev={""} component={calendartimeIconSvg}></Icon>;
 };
 const MappinIconSvg = ({ size, color }) => {
   const mappinIconSvg = () => (
@@ -1031,7 +1031,7 @@ const MappinIconSvg = ({ size, color }) => {
       <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" />
     </svg>
   );
-  return <Icon component={mappinIconSvg}></Icon>;
+  return <Icon rev={""} component={mappinIconSvg}></Icon>;
 };
 const AlignJustifiedIconSvg = ({ size, color }) => {
   const alignjustifiedIconSvg = () => (
@@ -1053,7 +1053,7 @@ const AlignJustifiedIconSvg = ({ size, color }) => {
       <line x1={4} y1={18} x2={16} y2={18} />
     </svg>
   );
-  return <Icon component={alignjustifiedIconSvg}></Icon>;
+  return <Icon rev={""} component={alignjustifiedIconSvg}></Icon>;
 };
 const CheckboxIconSvg = ({ size, color }) => {
   const checkboxIconSvg = () => (
@@ -1074,7 +1074,7 @@ const CheckboxIconSvg = ({ size, color }) => {
       <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
     </svg>
   );
-  return <Icon component={checkboxIconSvg}></Icon>;
+  return <Icon rev={""} component={checkboxIconSvg}></Icon>;
 };
 const BorderAllSvg = ({ size, color }) => {
   const borderallSvg = () => (
@@ -1096,7 +1096,7 @@ const BorderAllSvg = ({ size, color }) => {
       <line x1={12} y1={4} x2={12} y2={20} />
     </svg>
   );
-  return <Icon component={borderallSvg}></Icon>;
+  return <Icon rev={""} component={borderallSvg}></Icon>;
 };
 const ListNumbersSvg = ({ size, color }) => {
   const listnumbersSvg = () => (
@@ -1120,7 +1120,7 @@ const ListNumbersSvg = ({ size, color }) => {
       <path d="M6 10v-6l-2 2" />
     </svg>
   );
-  return <Icon component={listnumbersSvg}></Icon>;
+  return <Icon rev={""} component={listnumbersSvg}></Icon>;
 };
 const ListcheckIconSvg = ({ size, color }) => {
   const listcheckIconSvg = () => (
@@ -1145,7 +1145,7 @@ const ListcheckIconSvg = ({ size, color }) => {
       <line x1={11} y1={18} x2={20} y2={18} />
     </svg>
   );
-  return <Icon component={listcheckIconSvg}></Icon>;
+  return <Icon rev={""} component={listcheckIconSvg}></Icon>;
 };
 const CopyIconSvg = ({ size, color }) => {
   const copyIconSvg = () => (
@@ -1166,7 +1166,7 @@ const CopyIconSvg = ({ size, color }) => {
       <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
     </svg>
   );
-  return <Icon component={copyIconSvg}></Icon>;
+  return <Icon rev={""} component={copyIconSvg}></Icon>;
 };
 const ArrowsSortIconSvg = ({ size, color }) => {
   const arrowsSortIconSvg = () => (
@@ -1187,7 +1187,7 @@ const ArrowsSortIconSvg = ({ size, color }) => {
       <path d="M21 15l-4 4l-4 -4m4 4v-14" />
     </svg>
   );
-  return <Icon component={arrowsSortIconSvg}></Icon>;
+  return <Icon rev={""} component={arrowsSortIconSvg}></Icon>;
 };
 const UsercircleIconSvg = ({ size, color }) => {
   const usercircleIconSvg = () => (
@@ -1209,7 +1209,7 @@ const UsercircleIconSvg = ({ size, color }) => {
       <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
     </svg>
   );
-  return <Icon component={usercircleIconSvg}></Icon>;
+  return <Icon rev={""} component={usercircleIconSvg}></Icon>;
 };
 const CircleXIconSvg = ({ size, color }) => {
   const circlexIconSvg = () => (
@@ -1230,7 +1230,7 @@ const CircleXIconSvg = ({ size, color }) => {
       <path d="M10 10l4 4m0 -4l-4 4" />
     </svg>
   );
-  return <Icon component={circlexIconSvg}></Icon>;
+  return <Icon rev={""} component={circlexIconSvg}></Icon>;
 };
 const RulerIconSvg = ({ size, color }) => {
   const rulerIconSvg = () => (
@@ -1256,7 +1256,7 @@ const RulerIconSvg = ({ size, color }) => {
       <polyline points="16 4 16 6 " />
     </svg>
   );
-  return <Icon component={rulerIconSvg}></Icon>;
+  return <Icon rev={""} component={rulerIconSvg}></Icon>;
 };
 const UserPlusIconSvg = ({ size, color }) => {
   const userPlusIconSvg = () => (
@@ -1278,7 +1278,7 @@ const UserPlusIconSvg = ({ size, color }) => {
       <path d="M16 11h6m-3 -3v6" />
     </svg>
   );
-  return <Icon component={userPlusIconSvg}></Icon>;
+  return <Icon rev={""} component={userPlusIconSvg}></Icon>;
 };
 const SortAscendingIconSvg = ({ size, color }) => {
   const sortAscendingIconSvg = () => (
@@ -1301,7 +1301,7 @@ const SortAscendingIconSvg = ({ size, color }) => {
       <path d="M7 6v12" />
     </svg>
   );
-  return <Icon component={sortAscendingIconSvg}></Icon>;
+  return <Icon rev={""} component={sortAscendingIconSvg}></Icon>;
 };
 const SortDescendingIconSvg = ({ size, color }) => {
   const sortDescendingIconSvg = () => (
@@ -1324,7 +1324,7 @@ const SortDescendingIconSvg = ({ size, color }) => {
       <path d="M7 6v12" />
     </svg>
   );
-  return <Icon component={sortDescendingIconSvg}></Icon>;
+  return <Icon rev={""} component={sortDescendingIconSvg}></Icon>;
 };
 const ForbidIconSvg = ({ size, color }) => {
   const forbidIconSvg = () => (
@@ -1345,7 +1345,7 @@ const ForbidIconSvg = ({ size, color }) => {
       <line x1={9} y1={9} x2={15} y2={15} />
     </svg>
   );
-  return <Icon component={forbidIconSvg}></Icon>;
+  return <Icon rev={""} component={forbidIconSvg}></Icon>;
 };
 const PlayerPauseIconSvg = ({ size, color }) => {
   const playerPauseIconSvg = () => (
@@ -1366,7 +1366,7 @@ const PlayerPauseIconSvg = ({ size, color }) => {
       <rect x={14} y={5} width={4} height={14} rx={1} />
     </svg>
   );
-  return <Icon component={playerPauseIconSvg}></Icon>;
+  return <Icon rev={""} component={playerPauseIconSvg}></Icon>;
 };
 const PlayerPlayIconSvg = ({ size, color }) => {
   const playerPlayIconSvg = () => (
@@ -1386,7 +1386,7 @@ const PlayerPlayIconSvg = ({ size, color }) => {
       <path d="M7 4v16l13 -8z" />
     </svg>
   );
-  return <Icon component={playerPlayIconSvg}></Icon>;
+  return <Icon rev={""} component={playerPlayIconSvg}></Icon>;
 };
 const CloudUploadIconSvg = ({ size, color }) => {
   const cloudUploadIconSvg = () => (
@@ -1408,7 +1408,7 @@ const CloudUploadIconSvg = ({ size, color }) => {
       <line x1={12} y1={12} x2={12} y2={21} />
     </svg>
   );
-  return <Icon component={cloudUploadIconSvg}></Icon>;
+  return <Icon rev={""} component={cloudUploadIconSvg}></Icon>;
 };
 const PhotoIconSvg = ({ size, color }) => {
   const photoIconSvg = () => (
@@ -1431,7 +1431,7 @@ const PhotoIconSvg = ({ size, color }) => {
       <path d="M14 14l1 -1a3 5 0 0 1 3 0l2 2" />
     </svg>
   );
-  return <Icon component={photoIconSvg}></Icon>;
+  return <Icon rev={""} component={photoIconSvg}></Icon>;
 };
 const FileTextIconSvg = ({ size, color }) => {
   const fileTextIconSvg = () => (
@@ -1455,7 +1455,7 @@ const FileTextIconSvg = ({ size, color }) => {
       <line x1={9} y1={17} x2={15} y2={17} />
     </svg>
   );
-  return <Icon component={fileTextIconSvg}></Icon>;
+  return <Icon rev={""} component={fileTextIconSvg}></Icon>;
 };
 const SendIconSvg = ({ size, color }) => {
   const sendIconSvg = () => (
@@ -1476,7 +1476,7 @@ const SendIconSvg = ({ size, color }) => {
       <path d="M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5" />
     </svg>
   );
-  return <Icon component={sendIconSvg}></Icon>;
+  return <Icon rev={""} component={sendIconSvg}></Icon>;
 };
 const LayoutGridSvg = ({ size, color }) => {
   const layoutGridSvg = () => (
@@ -1499,7 +1499,7 @@ const LayoutGridSvg = ({ size, color }) => {
       <rect x="14" y="14" width="6" height="6" rx="1" />
     </svg>
   );
-  return <Icon component={layoutGridSvg}></Icon>;
+  return <Icon rev={""} component={layoutGridSvg}></Icon>;
 };
 const LayoutGridAddSvg = ({ size, color }) => {
   const layoutGridAddSvg = () => (
@@ -1522,7 +1522,7 @@ const LayoutGridAddSvg = ({ size, color }) => {
       <path d="M14 17h6m-3 -3v6" />
     </svg>
   );
-  return <Icon component={layoutGridAddSvg}></Icon>;
+  return <Icon rev={""} component={layoutGridAddSvg}></Icon>;
 };
 const FilePlusIconSvg = ({ size, color }) => {
   const filePlusIconSvg = () => (
@@ -1545,7 +1545,7 @@ const FilePlusIconSvg = ({ size, color }) => {
       <line x1={9} y1={14} x2={15} y2={14} />
     </svg>
   );
-  return <Icon component={filePlusIconSvg}></Icon>;
+  return <Icon rev={""} component={filePlusIconSvg}></Icon>;
 };
 const TableExportIconSvg = ({ size, color }) => {
   const tableExportIconSvg = () => (
@@ -1565,7 +1565,7 @@ const TableExportIconSvg = ({ size, color }) => {
       <path d="M11.5 20h-5.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v7.5m-16 -3.5h16m-10 -6v16m4 -1h7m-3 -3l3 3l-3 3" />
     </svg>
   );
-  return <Icon component={tableExportIconSvg}></Icon>;
+  return <Icon rev={""} component={tableExportIconSvg}></Icon>;
 };
 const FileExportIconSvg = ({ size, color }) => {
   const fileExportIconSvg = () => (
@@ -1586,7 +1586,7 @@ const FileExportIconSvg = ({ size, color }) => {
       <path d="M11.5 21h-4.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v5m-5 6h7m-3 -3l3 3l-3 3" />
     </svg>
   );
-  return <Icon component={fileExportIconSvg}></Icon>;
+  return <Icon rev={""} component={fileExportIconSvg}></Icon>;
 };
 const DotsIconSvg = ({ size, color }) => {
   const dotsIconSvg = () => (
@@ -1608,7 +1608,7 @@ const DotsIconSvg = ({ size, color }) => {
       <circle cx={19} cy={12} r={1} />
     </svg>
   );
-  return <Icon component={dotsIconSvg}></Icon>;
+  return <Icon rev={""} component={dotsIconSvg}></Icon>;
 };
 const UserSearchIconSvg = ({ size, color }) => {
   const userSearchIconSvg = () => (
@@ -1631,7 +1631,7 @@ const UserSearchIconSvg = ({ size, color }) => {
       <path d="M18.5 19.5l2.5 2.5" />
     </svg>
   );
-  return <Icon component={userSearchIconSvg}></Icon>;
+  return <Icon rev={""} component={userSearchIconSvg}></Icon>;
 };
 const InfoCircleIconSvg = ({ size, color }) => {
   const infoCircleIconSvg = () => (
@@ -1653,7 +1653,7 @@ const InfoCircleIconSvg = ({ size, color }) => {
       <polyline points="11 12 12 12 12 16 13 16" />
     </svg>
   );
-  return <Icon component={infoCircleIconSvg}></Icon>;
+  return <Icon rev={""} component={infoCircleIconSvg}></Icon>;
 };
 const PlusIconSvg = ({ size, color }) => {
   const plusIconSvg = () => (
@@ -1674,7 +1674,7 @@ const PlusIconSvg = ({ size, color }) => {
       <line x1={5} y1={12} x2={19} y2={12} />
     </svg>
   );
-  return <Icon component={plusIconSvg}></Icon>;
+  return <Icon rev={""} component={plusIconSvg}></Icon>;
 };
 const XIconSvg = ({ size, color }) => {
   const xIconSvg = () => (
@@ -1695,7 +1695,7 @@ const XIconSvg = ({ size, color }) => {
       <line x1={6} y1={6} x2={18} y2={18} />
     </svg>
   );
-  return <Icon component={xIconSvg}></Icon>;
+  return <Icon rev={""} component={xIconSvg}></Icon>;
 };
 const HistoryIconSvg = ({ size, color }) => {
   const historyIconSvg = () => (
@@ -1716,7 +1716,7 @@ const HistoryIconSvg = ({ size, color }) => {
       <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
     </svg>
   );
-  return <Icon component={historyIconSvg}></Icon>;
+  return <Icon rev={""} component={historyIconSvg}></Icon>;
 };
 const AdjusmentsHorizontalIconSvg = ({ size, color }) => {
   const adjusmentsHorizontalIconSvg = () => (
@@ -1744,7 +1744,7 @@ const AdjusmentsHorizontalIconSvg = ({ size, color }) => {
       <line x1={19} y1={18} x2={20} y2={18} />
     </svg>
   );
-  return <Icon component={adjusmentsHorizontalIconSvg}></Icon>;
+  return <Icon rev={""} component={adjusmentsHorizontalIconSvg}></Icon>;
 };
 const ArmChairlIconSvg = ({ size, color }) => {
   const armChairlIconSvg = () => (
@@ -1767,7 +1767,7 @@ const ArmChairlIconSvg = ({ size, color }) => {
       <path d="M18 19v2" />
     </svg>
   );
-  return <Icon component={armChairlIconSvg}></Icon>;
+  return <Icon rev={""} component={armChairlIconSvg}></Icon>;
 };
 const AssetIconSvg = ({ size, color }) => {
   const assetIconSvg = () => (
@@ -1832,7 +1832,7 @@ const AssetIconSvg = ({ size, color }) => {
       </defs>
     </svg>
   );
-  return <Icon component={assetIconSvg}></Icon>;
+  return <Icon rev={""} component={assetIconSvg}></Icon>;
 };
 const MoveIconSvg = ({ size, color }) => {
   const moveIconSvg = () => (
@@ -1905,7 +1905,7 @@ const MoveIconSvg = ({ size, color }) => {
       </defs>
     </svg>
   );
-  return <Icon component={moveIconSvg}></Icon>;
+  return <Icon rev={""} component={moveIconSvg}></Icon>;
 };
 const ContractIconSvg = () => {
   const contractIconSvg = () => (
@@ -2002,7 +2002,7 @@ const ContractIconSvg = () => {
       />
     </svg>
   );
-  return <Icon component={contractIconSvg}></Icon>;
+  return <Icon rev={""} component={contractIconSvg}></Icon>;
 };
 
 const IconBroadcast = (props) => {
@@ -2029,7 +2029,9 @@ const IconBroadcast = (props) => {
       </g>
     </svg>
   );
-  return <Icon component={svgbroadcast} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgbroadcast} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const Iconquestion = (props) => {
@@ -2078,7 +2080,9 @@ const Iconquestion = (props) => {
       <g></g>
     </svg>
   );
-  return <Icon component={svgquestion} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgquestion} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const ResumeIconSvg = () => {
@@ -2101,7 +2105,7 @@ const ResumeIconSvg = () => {
       <line x1="9" y1="17" x2="15" y2="17" />
     </svg>
   );
-  return <Icon component={resumeIconSvg}></Icon>;
+  return <Icon rev={""} component={resumeIconSvg}></Icon>;
 };
 
 const ClipboardIconSvg = ({ size, color }) => {
@@ -2121,7 +2125,7 @@ const ClipboardIconSvg = ({ size, color }) => {
       <rect x="9" y="3" width="6" height="4" rx="2" />
     </svg>
   );
-  return <Icon component={clipboardIconSvg}></Icon>;
+  return <Icon rev={""} component={clipboardIconSvg}></Icon>;
 };
 
 const UsersIconSvg = ({ size, color }) => {
@@ -2143,7 +2147,7 @@ const UsersIconSvg = ({ size, color }) => {
       <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
     </svg>
   );
-  return <Icon component={usersIconSvg}></Icon>;
+  return <Icon rev={""} component={usersIconSvg}></Icon>;
 };
 
 const DownloadIconSvg = ({ size, color }) => {
@@ -2164,7 +2168,7 @@ const DownloadIconSvg = ({ size, color }) => {
       <line x1="12" y1="4" x2="12" y2="16" />
     </svg>
   );
-  return <Icon component={downloadIconSvg}></Icon>;
+  return <Icon rev={""} component={downloadIconSvg}></Icon>;
 };
 
 const DownloadIcon2Svg = ({ size, color }) => {
@@ -2187,7 +2191,7 @@ const DownloadIcon2Svg = ({ size, color }) => {
       <path d="M12 4l0 12" />
     </svg>
   );
-  return <Icon component={downloadIcon2Svg}></Icon>;
+  return <Icon rev={""} component={downloadIcon2Svg}></Icon>;
 };
 
 const OneUserIconSvg = ({ size, color, strokeWidth }) => {
@@ -2209,7 +2213,7 @@ const OneUserIconSvg = ({ size, color, strokeWidth }) => {
       <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
     </svg>
   );
-  return <Icon component={oneUserIconSvg}></Icon>;
+  return <Icon rev={""} component={oneUserIconSvg}></Icon>;
 };
 
 const ListSearchIconSvg = ({ size, color }) => {
@@ -2234,7 +2238,7 @@ const ListSearchIconSvg = ({ size, color }) => {
       <path d="M4 18h4" />
     </svg>
   );
-  return <Icon component={listSearchIconSvg}></Icon>;
+  return <Icon rev={""} component={listSearchIconSvg}></Icon>;
 };
 const MailForwardIconSvg = ({ size, color }) => {
   const mailForwardIconSvg = () => (
@@ -2257,7 +2261,7 @@ const MailForwardIconSvg = ({ size, color }) => {
       <path d="M18 15l3 3l-3 3" />
     </svg>
   );
-  return <Icon component={mailForwardIconSvg}></Icon>;
+  return <Icon rev={""} component={mailForwardIconSvg}></Icon>;
 };
 
 const TrendingUpIconSvg = ({ size, color }) => {
@@ -2279,7 +2283,7 @@ const TrendingUpIconSvg = ({ size, color }) => {
       <polyline points="14 7 21 7 21 14" />
     </svg>
   );
-  return <Icon component={trendingUpIconSvg}></Icon>;
+  return <Icon rev={""} component={trendingUpIconSvg}></Icon>;
 };
 
 const InfoSquareIconSvg = ({ size, color }) => {
@@ -2302,7 +2306,7 @@ const InfoSquareIconSvg = ({ size, color }) => {
       <polyline points="11 12 12 12 12 16 13 16" />
     </svg>
   );
-  return <Icon component={infoSquareIconSvg}></Icon>;
+  return <Icon rev={""} component={infoSquareIconSvg}></Icon>;
 };
 
 const BriefcaseIconSvg = ({ size, color }) => {
@@ -2326,7 +2330,7 @@ const BriefcaseIconSvg = ({ size, color }) => {
       <path d="M3 13a20 20 0 0 0 18 0" />
     </svg>
   );
-  return <Icon component={briefcaseIconSvg}></Icon>;
+  return <Icon rev={""} component={briefcaseIconSvg}></Icon>;
 };
 
 const ClickIconSvg = ({ size, color }) => {
@@ -2352,7 +2356,7 @@ const ClickIconSvg = ({ size, color }) => {
       <path d="M12 12l9 3l-4 2l-2 4l-3 -9" />
     </svg>
   );
-  return <Icon component={clickIconSvg}></Icon>;
+  return <Icon rev={""} component={clickIconSvg}></Icon>;
 };
 
 const UserCheckIconSvg = ({ size, color }) => {
@@ -2375,7 +2379,7 @@ const UserCheckIconSvg = ({ size, color }) => {
       <path d="M16 11l2 2l4 -4" />
     </svg>
   );
-  return <Icon component={userCheckIconSvg}></Icon>;
+  return <Icon rev={""} component={userCheckIconSvg}></Icon>;
 };
 
 const CirclePlusIconSvg = ({ size, color }) => {
@@ -2398,7 +2402,7 @@ const CirclePlusIconSvg = ({ size, color }) => {
       <line x1="12" y1="9" x2="12" y2="15" />
     </svg>
   );
-  return <Icon component={circlePlusIconSvg}></Icon>;
+  return <Icon rev={""} component={circlePlusIconSvg}></Icon>;
 };
 
 const UploadIconSvg = ({ size, color }) => {
@@ -2421,7 +2425,7 @@ const UploadIconSvg = ({ size, color }) => {
       <line x1="12" y1="4" x2="12" y2="16" />
     </svg>
   );
-  return <Icon component={uploadIconSvg}></Icon>;
+  return <Icon rev={""} component={uploadIconSvg}></Icon>;
 };
 
 const RightIconSvg = ({ size, color }) => {
@@ -2442,7 +2446,7 @@ const RightIconSvg = ({ size, color }) => {
       <polyline points="9 6 15 12 9 18" />
     </svg>
   );
-  return <Icon component={rightIconSvg}></Icon>;
+  return <Icon rev={""} component={rightIconSvg}></Icon>;
 };
 
 const LeftIconSvg = ({ size, color }) => {
@@ -2463,7 +2467,7 @@ const LeftIconSvg = ({ size, color }) => {
       <polyline points="15 6 9 12 15 18" />
     </svg>
   );
-  return <Icon component={leftIconSvg}></Icon>;
+  return <Icon rev={""} component={leftIconSvg}></Icon>;
 };
 
 const CircleCheckIconSvg = ({ size, color }) => {
@@ -2485,7 +2489,7 @@ const CircleCheckIconSvg = ({ size, color }) => {
       <path d="M9 12l2 2l4 -4" />
     </svg>
   );
-  return <Icon component={circleCheckIconSvg}></Icon>;
+  return <Icon rev={""} component={circleCheckIconSvg}></Icon>;
 };
 
 const LogoutIconSvg = ({ size, color }) => {
@@ -2507,7 +2511,7 @@ const LogoutIconSvg = ({ size, color }) => {
       <path d="M7 12h14l-3 -3m0 6l3 -3" />
     </svg>
   );
-  return <Icon component={logoutIconSvg}></Icon>;
+  return <Icon rev={""} component={logoutIconSvg}></Icon>;
 };
 
 const ClipboardListIconSvg = ({ size, color }) => {
@@ -2533,7 +2537,7 @@ const ClipboardListIconSvg = ({ size, color }) => {
       <line x1="13" y1="16" x2="15" y2="16" />
     </svg>
   );
-  return <Icon component={clipboardListIconSvg}></Icon>;
+  return <Icon rev={""} component={clipboardListIconSvg}></Icon>;
 };
 
 const SettingsIconSvg = ({ size, color }) => {
@@ -2555,7 +2559,7 @@ const SettingsIconSvg = ({ size, color }) => {
       <circle cx="12" cy="12" r="3" />
     </svg>
   );
-  return <Icon component={settingsIconSvg}></Icon>;
+  return <Icon rev={""} component={settingsIconSvg}></Icon>;
 };
 
 const EyeCheckIconSvg = ({ size, color }) => {
@@ -2578,7 +2582,7 @@ const EyeCheckIconSvg = ({ size, color }) => {
       <path d="M15 19l2 2l4 -4" />
     </svg>
   );
-  return <Icon component={eyeCheckIconSvg}></Icon>;
+  return <Icon rev={""} component={eyeCheckIconSvg}></Icon>;
 };
 
 const FoldersIconSvg = ({ size, color }) => {
@@ -2600,7 +2604,7 @@ const FoldersIconSvg = ({ size, color }) => {
       <path d="M17 17v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h2" />
     </svg>
   );
-  return <Icon component={foldersIconSvg}></Icon>;
+  return <Icon rev={""} component={foldersIconSvg}></Icon>;
 };
 
 const EditSquareIconSvg = ({ size, color }) => {
@@ -2623,7 +2627,7 @@ const EditSquareIconSvg = ({ size, color }) => {
       <line x1="16" y1="5" x2="19" y2="8" />
     </svg>
   );
-  return <Icon component={editSquareIconSvg}></Icon>;
+  return <Icon rev={""} component={editSquareIconSvg}></Icon>;
 };
 const AlertCircleIconSvg = ({ size, color }) => {
   const alertCircleIconSvg = () => (
@@ -2645,7 +2649,7 @@ const AlertCircleIconSvg = ({ size, color }) => {
       <path d="M12 16h.01" />
     </svg>
   );
-  return <Icon component={alertCircleIconSvg}></Icon>;
+  return <Icon rev={""} component={alertCircleIconSvg}></Icon>;
 };
 
 const PaperclipIconSvg = ({ size, color }) => {
@@ -2666,7 +2670,7 @@ const PaperclipIconSvg = ({ size, color }) => {
       <path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5" />
     </svg>
   );
-  return <Icon component={paperclipIconSvg}></Icon>;
+  return <Icon rev={""} component={paperclipIconSvg}></Icon>;
 };
 
 const WritingIconSvg = ({ size, color }) => {
@@ -2689,7 +2693,7 @@ const WritingIconSvg = ({ size, color }) => {
       <path d="M18 19h-13a2 2 0 1 1 0 -4h4a2 2 0 1 0 0 -4h-3" />
     </svg>
   );
-  return <Icon component={writingIconSvg}></Icon>;
+  return <Icon rev={""} component={writingIconSvg}></Icon>;
 };
 
 const CutIconSvg = ({ size, color }) => {
@@ -2713,7 +2717,7 @@ const CutIconSvg = ({ size, color }) => {
       <path d="M6 4l8.85 10.85" />
     </svg>
   );
-  return <Icon component={cutIconSvg}></Icon>;
+  return <Icon rev={""} component={cutIconSvg}></Icon>;
 };
 
 const BellRingingIconSvg = ({ size, color }) => {
@@ -2737,7 +2741,7 @@ const BellRingingIconSvg = ({ size, color }) => {
       <path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727" />
     </svg>
   );
-  return <Icon component={bellRingingIconSvg}></Icon>;
+  return <Icon rev={""} component={bellRingingIconSvg}></Icon>;
 };
 const FileImportIconSvg = ({ size, color }) => {
   const fileImportIconSvg = () => (
@@ -2760,7 +2764,7 @@ const FileImportIconSvg = ({ size, color }) => {
       />
     </svg>
   );
-  return <Icon component={fileImportIconSvg}></Icon>;
+  return <Icon rev={""} component={fileImportIconSvg}></Icon>;
 };
 
 const SquareCheckIconSvg = ({ size, color }) => {
@@ -2782,7 +2786,7 @@ const SquareCheckIconSvg = ({ size, color }) => {
       <path d="M9 12l2 2l4 -4" />
     </svg>
   );
-  return <Icon component={squareCheckIconSvg}></Icon>;
+  return <Icon rev={""} component={squareCheckIconSvg}></Icon>;
 };
 
 const ArrowNarrowRightIconSvg = ({ size, color }) => {
@@ -2805,7 +2809,7 @@ const ArrowNarrowRightIconSvg = ({ size, color }) => {
       <path d="M15 8l4 4" />
     </svg>
   );
-  return <Icon component={arrowNarrowRightIconSvg}></Icon>;
+  return <Icon rev={""} component={arrowNarrowRightIconSvg}></Icon>;
 };
 
 const ArrowLeftIconSvg = ({ size, color }) => {
@@ -2828,7 +2832,7 @@ const ArrowLeftIconSvg = ({ size, color }) => {
       <path d="M5 12l6 -6" />
     </svg>
   );
-  return <Icon component={arrowLeftIconSvg}></Icon>;
+  return <Icon rev={""} component={arrowLeftIconSvg}></Icon>;
 };
 
 const CalendarEventIconSvg = ({ size, color }) => {
@@ -2853,7 +2857,7 @@ const CalendarEventIconSvg = ({ size, color }) => {
       <path d="M8 15h2v2h-2z" />
     </svg>
   );
-  return <Icon component={calendarEventIconSvg}></Icon>;
+  return <Icon rev={""} component={calendarEventIconSvg}></Icon>;
 };
 
 const FileDownloadIconSvg = ({ size, color }) => {
@@ -2877,9 +2881,71 @@ const FileDownloadIconSvg = ({ size, color }) => {
       <path d="M9.5 14.5l2.5 2.5l2.5 -2.5" />
     </svg>
   );
-  return <Icon component={fileDownloadIconSvg}></Icon>;
+  return <Icon rev={""} component={fileDownloadIconSvg}></Icon>;
 };
 
+const KehadiranCompanyIconSvg = ({ size, color }) => {
+  const kehadiranCompanyIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="15"
+      height="15"
+      viewBox="0 0 15 15"
+      fill="none"
+    >
+      <path
+        d="M7.66667 9.41537C8.08088 9.41537 8.41667 9.07958 8.41667 8.66536C8.41667 8.25115 8.08088 7.91536 7.66667 7.91536V9.41537ZM7.66667 14.7487C8.08088 14.7487 8.41667 14.4129 8.41667 13.9987C8.41667 13.5845 8.08088 13.2487 7.66667 13.2487V14.7487ZM14.2254 9.16564C14.5017 8.85703 14.4755 8.38288 14.1669 8.10659C13.8583 7.8303 13.3842 7.85649 13.1079 8.16509L14.2254 9.16564ZM11.4206 11.1742L10.8618 10.6739L11.4206 11.1742ZM7.57945 11.1741L8.13822 10.6739H8.13822L7.57945 11.1741ZM7.55877 10.0267C7.28248 9.71807 6.80833 9.69187 6.49973 9.96817C6.19113 10.2445 6.16493 10.7186 6.44123 11.0272L7.55877 10.0267ZM7.58333 3.9987C7.58333 5.05724 6.72521 5.91536 5.66667 5.91536V7.41536C7.55364 7.41536 9.08333 5.88567 9.08333 3.9987H7.58333ZM5.66667 5.91536C4.60812 5.91536 3.75 5.05724 3.75 3.9987H2.25C2.25 5.88567 3.77969 7.41536 5.66667 7.41536V5.91536ZM3.75 3.9987C3.75 2.94015 4.60812 2.08203 5.66667 2.08203V0.582031C3.77969 0.582031 2.25 2.11172 2.25 3.9987H3.75ZM5.66667 2.08203C6.72521 2.08203 7.58333 2.94015 7.58333 3.9987H9.08333C9.08333 2.11172 7.55364 0.582031 5.66667 0.582031V2.08203ZM3.66667 9.41537H7.66667V7.91536H3.66667V9.41537ZM7.66667 13.2487H3.66667V14.7487H7.66667V13.2487ZM3.66667 13.2487C2.60812 13.2487 1.75 12.3906 1.75 11.332H0.25C0.25 13.219 1.77969 14.7487 3.66667 14.7487V13.2487ZM3.66667 7.91536C1.77969 7.91536 0.25 9.44506 0.25 11.332H1.75C1.75 10.2735 2.60812 9.41537 3.66667 9.41537V7.91536ZM13.1079 8.16509L10.8618 10.6739L11.9793 11.6744L14.2254 9.16564L13.1079 8.16509ZM8.13822 10.6739L7.55877 10.0267L6.44123 11.0272L7.02067 11.6744L8.13822 10.6739ZM10.8618 10.6739C10.4016 11.1879 10.1087 11.5123 9.86349 11.7184C9.63689 11.9089 9.54576 11.9154 9.5 11.9154V13.4154C10.0397 13.4154 10.4638 13.1733 10.8286 12.8667C11.1748 12.5757 11.5495 12.1546 11.9793 11.6744L10.8618 10.6739ZM7.02067 11.6744C7.45054 12.1546 7.82522 12.5757 8.17138 12.8667C8.53617 13.1733 8.96029 13.4154 9.5 13.4154V11.9154C9.45424 11.9154 9.36311 11.9089 9.13651 11.7184C8.89128 11.5123 8.59841 11.1879 8.13822 10.6739L7.02067 11.6744Z"
+        fill="#35763B"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={kehadiranCompanyIconSvg}></Icon>;
+};
+const ProyekCompanyIconSvg = ({ size, color }) => {
+  const proyekCompanyIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="16"
+      viewBox="0 0 14 16"
+      fill="none"
+    >
+      <path
+        d="M2.37405 14.0314L2.66794 13.6269L2.37405 14.0314ZM1.63661 13.2939L2.04112 13L1.63661 13.2939ZM12.3634 13.2939L11.9589 13L12.3634 13.2939ZM11.626 14.0314L11.3321 13.6269L11.626 14.0314ZM11.626 3.30458L11.3321 3.70909L11.626 3.30458ZM12.3634 4.04202L11.9589 4.33591L12.3634 4.04202ZM2.37405 3.30458L2.66794 3.70909L2.37405 3.30458ZM1.63661 4.04202L2.04112 4.33591L1.63661 4.04202ZM9.36343 0.831114L9.20892 1.30664L9.36343 0.831114ZM11.5036 2.97125L11.028 3.12575V3.12575L11.5036 2.97125ZM4.63665 0.831114L4.79115 1.30664L4.63665 0.831114ZM2.49651 2.97125L2.97204 3.12575L2.49651 2.97125ZM11.5796 3.27176L11.2954 3.68314L11.5796 3.27176ZM4.33333 10.168C4.05719 10.168 3.83333 10.3918 3.83333 10.668C3.83333 10.9441 4.05719 11.168 4.33333 11.168V10.168ZM9.66667 11.168C9.94281 11.168 10.1667 10.9441 10.1667 10.668C10.1667 10.3918 9.94281 10.168 9.66667 10.168V11.168ZM7 14.168C5.73895 14.168 4.83333 14.1673 4.13203 14.0913C3.44009 14.0163 3.00661 13.8729 2.66794 13.6269L2.08016 14.4359C2.61771 14.8264 3.24729 15.0013 4.02432 15.0855C4.79198 15.1687 5.76123 15.168 7 15.168V14.168ZM0.5 8.66797C0.5 9.90674 0.499314 10.876 0.582485 11.6437C0.666671 12.4207 0.841549 13.0503 1.2321 13.5878L2.04112 13C1.79506 12.6614 1.65163 12.2279 1.57667 11.5359C1.50069 10.8346 1.5 9.92902 1.5 8.66797H0.5ZM2.66794 13.6269C2.42741 13.4521 2.21588 13.2406 2.04112 13L1.2321 13.5878C1.46854 13.9132 1.75473 14.1994 2.08016 14.4359L2.66794 13.6269ZM12.5 8.66797C12.5 9.92902 12.4993 10.8346 12.4233 11.5359C12.3484 12.2279 12.2049 12.6614 11.9589 13L12.7679 13.5878C13.1585 13.0503 13.3333 12.4207 13.4175 11.6437C13.5007 10.876 13.5 9.90674 13.5 8.66797H12.5ZM7 15.168C8.23877 15.168 9.20802 15.1687 9.97568 15.0855C10.7527 15.0013 11.3823 14.8264 11.9198 14.4359L11.3321 13.6269C10.9934 13.8729 10.5599 14.0163 9.86797 14.0913C9.16667 14.1673 8.26105 14.168 7 14.168V15.168ZM11.9589 13C11.7841 13.2406 11.5726 13.4521 11.3321 13.6269L11.9198 14.4359C12.2453 14.1994 12.5315 13.9132 12.7679 13.5878L11.9589 13ZM13.5 8.66797C13.5 7.4292 13.5007 6.45995 13.4175 5.69229C13.3333 4.91526 13.1585 4.28567 12.7679 3.74813L11.9589 4.33591C12.2049 4.67458 12.3484 5.10806 12.4233 5.8C12.4993 6.5013 12.5 7.40692 12.5 8.66797H13.5ZM11.3321 3.70909C11.5726 3.88385 11.7841 4.09538 11.9589 4.33591L12.7679 3.74813C12.5315 3.4227 12.2453 3.13651 11.9198 2.90007L11.3321 3.70909ZM1.5 8.66797C1.5 7.40692 1.50069 6.5013 1.57667 5.8C1.65163 5.10806 1.79506 4.67458 2.04112 4.33591L1.2321 3.74813C0.841549 4.28567 0.666671 4.91526 0.582485 5.69229C0.499314 6.45995 0.5 7.4292 0.5 8.66797H1.5ZM2.08016 2.90007C1.75473 3.13651 1.46854 3.4227 1.2321 3.74813L2.04112 4.33591C2.21588 4.09538 2.42741 3.88385 2.66794 3.70909L2.08016 2.90007ZM7.00004 1.16797C8.27981 1.16797 8.80111 1.17414 9.20892 1.30664L9.51793 0.355585C8.92153 0.1618 8.20197 0.167969 7.00004 0.167969V1.16797ZM9.20892 1.30664C10.0715 1.58691 10.7478 2.26318 11.028 3.12575L11.9791 2.81674C11.5999 1.64973 10.6849 0.734771 9.51793 0.355585L9.20892 1.30664ZM7.00004 0.167969C5.7981 0.167969 5.07855 0.1618 4.48214 0.355585L4.79115 1.30664C5.19896 1.17414 5.72026 1.16797 7.00004 1.16797V0.167969ZM4.48214 0.355585C3.31512 0.734771 2.40017 1.64972 2.02099 2.81674L2.97204 3.12575C3.25231 2.26318 3.92858 1.58691 4.79115 1.30664L4.48214 0.355585ZM2.91165 3.36508C2.92841 3.27695 2.9484 3.19852 2.97204 3.12575L2.02099 2.81674C1.98302 2.93358 1.95303 3.0532 1.92925 3.17832L2.91165 3.36508ZM7 2.16797C5.78254 2.16797 4.82581 2.16734 4.06545 2.2461C3.29735 2.32565 2.67143 2.49064 2.13627 2.86031L2.70463 3.68309C3.04347 3.44903 3.47931 3.31215 4.16848 3.24077C4.86539 3.16859 5.76144 3.16797 7 3.16797V2.16797ZM2.13627 2.86031C2.11742 2.87334 2.09871 2.88659 2.08016 2.90007L2.66794 3.70909C2.68009 3.70026 2.69232 3.6916 2.70463 3.68309L2.13627 2.86031ZM12.0708 3.17839C12.047 3.05324 12.0171 2.9336 11.9791 2.81674L11.028 3.12575C11.0517 3.19854 11.0717 3.27698 11.0884 3.36513L12.0708 3.17839ZM7 3.16797C8.2386 3.16797 9.13467 3.16859 9.83159 3.24078C10.5208 3.31217 10.9566 3.44906 11.2954 3.68314L11.8638 2.86038C11.3287 2.49067 10.7027 2.32567 9.93462 2.2461C9.17425 2.16734 8.2175 2.16797 7 2.16797V3.16797ZM11.2954 3.68314C11.3077 3.69163 11.3199 3.70028 11.3321 3.70909L11.9198 2.90007C11.9013 2.88661 11.8827 2.87338 11.8638 2.86038L11.2954 3.68314ZM4.33333 11.168H9.66667V10.168H4.33333V11.168Z"
+        fill="#808080"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={proyekCompanyIconSvg}></Icon>;
+};
+
+const TautanIconSvg = ({ size, color }) => {
+  const tautanIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+    >
+      <path
+        d="M6.66797 9.33489C7.10684 9.78281 7.70754 10.0352 8.33464 10.0352C8.96173 10.0352 9.56243 9.78281 10.0013 9.33489L12.668 6.66822C13.5884 5.74775 13.5884 4.25536 12.668 3.33489C11.7475 2.41441 10.2551 2.41441 9.33464 3.33489L9.0013 3.66822"
+        stroke="#35763B"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M9.33489 6.66518C8.89601 6.21726 8.29531 5.96484 7.66822 5.96484C7.04113 5.96484 6.44043 6.21726 6.00155 6.66518L3.33489 9.33185C2.41441 10.2523 2.41441 11.7447 3.33489 12.6652C4.25536 13.5857 5.74775 13.5857 6.66822 12.6652L7.00155 12.3319"
+        stroke="#35763B"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={tautanIconSvg}></Icon>;
+};
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -3000,4 +3066,7 @@ export {
   ArrowLeftIconSvg,
   CalendarEventIconSvg,
   FileDownloadIconSvg,
+  ProyekCompanyIconSvg,
+  KehadiranCompanyIconSvg,
+  TautanIconSvg,
 };

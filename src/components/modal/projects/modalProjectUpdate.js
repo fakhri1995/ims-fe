@@ -805,7 +805,7 @@ const ModalProjectUpdate = ({
                   }));
                 }}
                 color="#35763B1A"
-                closeIcon={<CloseCircleOutlined />}
+                closeIcon={<CloseCircleOutlined rev={""} />}
                 className="text-primary100 mb-3"
               >
                 {item?.name}

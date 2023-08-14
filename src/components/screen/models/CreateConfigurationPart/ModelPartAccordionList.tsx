@@ -103,7 +103,10 @@ export const ModelPartAccordionList: FC<IModelPartAccordionList> = ({
                           // });
                         }}
                       >
-                        <CloseCircleOutlined style={{ color: `red` }} />
+                        <CloseCircleOutlined
+                          rev={""}
+                          style={{ color: `red` }}
+                        />
                       </Popconfirm>
                     </div>
                   }
@@ -196,7 +199,9 @@ export const ModelPartAccordionList: FC<IModelPartAccordionList> = ({
                                   <div className="flex w-full items-center bg-gray-100 justify-between rounded h-10 px-3">
                                     <p className="mb-0">{docmc.default}</p>
                                     <div>
-                                      <CalendarOutlined></CalendarOutlined>
+                                      <CalendarOutlined
+                                        rev={""}
+                                      ></CalendarOutlined>
                                     </div>
                                   </div>
                                 )}

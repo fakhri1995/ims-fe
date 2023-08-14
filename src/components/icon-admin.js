@@ -67,7 +67,9 @@ const IconAgents = (props) => {
       </g>
     </svg>
   );
-  return <Icon component={svgagents} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgagents} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const IconRequesters = (props) => {
@@ -146,7 +148,13 @@ const IconRequesters = (props) => {
       <rect x={23} y={35} width={2} height={6} style={{ fill: "#009986" }} />
     </svg>
   );
-  return <Icon component={svgrequesters} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon
+      rev={""}
+      component={svgrequesters}
+      style={{ marginRight: `0.5rem` }}
+    />
+  );
 };
 
 const Icongroups = (props) => {
@@ -209,7 +217,9 @@ const Icongroups = (props) => {
       </g>
     </svg>
   );
-  return <Icon component={svggroups} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svggroups} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const IconRoles = (props) => {
@@ -287,7 +297,9 @@ const IconRoles = (props) => {
       </g>
     </svg>
   );
-  return <Icon component={svgroles} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgroles} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const IconModules = (props) => {
@@ -379,7 +391,9 @@ const IconModules = (props) => {
       </g>
     </svg>
   );
-  return <Icon component={svgmodules} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgmodules} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const IconFeatures = (props) => {
@@ -455,7 +469,9 @@ const IconFeatures = (props) => {
       </g>
     </svg>
   );
-  return <Icon component={svgfeatures} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgfeatures} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const IconMIGCompany = (props) => {
@@ -535,7 +551,13 @@ const IconMIGCompany = (props) => {
       <g></g>
     </svg>
   );
-  return <Icon component={svgmigcompany} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon
+      rev={""}
+      component={svgmigcompany}
+      style={{ marginRight: `0.5rem` }}
+    />
+  );
 };
 
 const IconClientsCompany = (props) => {
@@ -619,7 +641,11 @@ const IconClientsCompany = (props) => {
     </svg>
   );
   return (
-    <Icon component={svgclientscompany} style={{ marginRight: `0.5rem` }} />
+    <Icon
+      rev={""}
+      component={svgclientscompany}
+      style={{ marginRight: `0.5rem` }}
+    />
   );
 };
 
@@ -687,7 +713,9 @@ const IconAssets = (props) => {
       />
     </svg>
   );
-  return <Icon component={svgAssets} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgAssets} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const IconVendors = (props) => {
@@ -740,7 +768,9 @@ const IconVendors = (props) => {
       </g>
     </svg>
   );
-  return <Icon component={svgvendors} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgvendors} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const IconCatalog = (props) => {
@@ -776,7 +806,9 @@ const IconCatalog = (props) => {
       </g>
     </svg>
   );
-  return <Icon component={svgcatalog} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgcatalog} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const IconContract = (props) => {
@@ -879,7 +911,9 @@ const IconContract = (props) => {
       />
     </svg>
   );
-  return <Icon component={svgcontract} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgcontract} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const IconDepreciation = (props) => {
@@ -922,7 +956,13 @@ const IconDepreciation = (props) => {
       </g>
     </svg>
   );
-  return <Icon component={svgdepreciation} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon
+      rev={""}
+      component={svgdepreciation}
+      style={{ marginRight: `0.5rem` }}
+    />
+  );
 };
 
 const IconCareer = (props) => {
@@ -986,7 +1026,9 @@ const IconCareer = (props) => {
       </g>
     </svg>
   );
-  return <Icon component={svgcareer} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgcareer} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 const IconMessages = (props) => {
@@ -1042,7 +1084,9 @@ const IconMessages = (props) => {
       <g></g>
     </svg>
   );
-  return <Icon component={svgmessages} style={{ marginRight: `0.5rem` }} />;
+  return (
+    <Icon rev={""} component={svgmessages} style={{ marginRight: `0.5rem` }} />
+  );
 };
 
 export {

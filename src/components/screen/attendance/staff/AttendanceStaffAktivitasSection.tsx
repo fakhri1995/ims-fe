@@ -1,9 +1,4 @@
-import {
-  AppstoreAddOutlined,
-  FileAddOutlined,
-  FileImageFilled,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { AppstoreAddOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -700,7 +695,7 @@ export const AttendanceStaffAktivitasSection: FC<
 
           <Modal
             title="Import Task ke Aktivitas"
-            open={showModalTask}
+            visible={showModalTask}
             width={502}
             footer={null}
             onCancel={() => setShowModalTask(false)}
@@ -708,7 +703,7 @@ export const AttendanceStaffAktivitasSection: FC<
             <div className="col-span-4">
               <Input
                 style={{ width: `100%` }}
-                suffix={<SearchOutlined />}
+                suffix={<SearchOutlined rev={""} />}
                 defaultValue={queryParams2.keyword}
                 placeholder="Cari Task.."
                 onChange={onChangeProductSearch}
@@ -824,7 +819,7 @@ export const AttendanceStaffAktivitasSection: FC<
                 onClick={mOnAddActivityButtonClicked}
                 disabled={!isAllowedToAddActivity}
               >
-                <AppstoreAddOutlined className="mr-2" />
+                <AppstoreAddOutlined rev={""} className="mr-2" />
                 Masukkan Aktivitas
               </ButtonSys>
             )}

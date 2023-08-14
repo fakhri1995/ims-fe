@@ -56,7 +56,7 @@ const BasicInfoCard = ({
   const onChangeInput = (e) => {
     setDataUpdateBasic({
       ...dataUpdateBasic,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target?.value,
     });
   };
 
@@ -95,7 +95,7 @@ const BasicInfoCard = ({
             }}
           >
             <div className="flex flex-row space-x-2">
-              <CloseOutlined />
+              <CloseOutlined rev={""} />
               <p>Batalkan</p>
             </div>
           </ButtonSys>
@@ -149,7 +149,7 @@ const BasicInfoCard = ({
         >
           <div>
             <Input
-              value={dataUpdateBasic.name}
+              value={dataUpdateBasic?.name}
               name={"name"}
               onChange={onChangeInput}
             />
@@ -201,7 +201,7 @@ const BasicInfoCard = ({
         >
           <div>
             <Input
-              value={dataUpdateBasic.email}
+              value={dataUpdateBasic?.email}
               name={"email"}
               onChange={onChangeInput}
             />
@@ -223,7 +223,7 @@ const BasicInfoCard = ({
         >
           <div>
             <Input
-              value={dataUpdateBasic.telp}
+              value={dataUpdateBasic?.telp}
               name={"telp"}
               onChange={onChangeInput}
             />
@@ -241,13 +241,13 @@ const BasicInfoCard = ({
         >
           <div className="flex flex-row space-x-3">
             <Input
-              value={dataUpdateBasic.city}
+              value={dataUpdateBasic?.city}
               name={"city"}
               placeholder="City"
               onChange={onChangeInput}
             />
             <Input
-              value={dataUpdateBasic.province}
+              value={dataUpdateBasic?.province}
               name={"province"}
               placeholder="Province"
               onChange={onChangeInput}
@@ -294,7 +294,7 @@ const BasicInfoCard = ({
               onClick={() => setModalDelete(true)}
             >
               <div className="flex flex-row space-x-2 items-center">
-                <DeleteOutlined />
+                <DeleteOutlined rev={""} />
                 <p className="whitespace-nowrap">Remove Candidate</p>
               </div>
             </ButtonSys>
@@ -305,7 +305,7 @@ const BasicInfoCard = ({
               onClick={() => setOpenDownloadModal(true)}
             >
               <div className="flex flex-row space-x-2 items-center">
-                <DownloadOutlined />
+                <DownloadOutlined rev={""} />
                 <p className="whitespace-nowrap">Download Resume</p>
               </div>
             </ButtonSys>

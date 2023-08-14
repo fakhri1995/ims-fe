@@ -44,6 +44,7 @@ export default function Home({ initProps }) {
           Cookies.set("token", JSON.stringify(res2.data.token), { expires: 1 });
           // console.log("token di session: " + JSON.parse(jscookie.get('token')))
           rt.push("/dashboard/home").then(() => setLoadinglogin(false));
+          // rt.push("/dashboard/company").then(() => setLoadinglogin(false));
         } else if (!res2.success) {
           // console.log("masuk ke error login")
           const errorMessage =
@@ -166,10 +167,12 @@ export async function getServerSideProps({ req, res }) {
     if (req.headers.cookie) {
       const cookies = req.headers.cookie;
       const cookiesJSON1 = httpcookie.parse(cookies);
+      console.log("isi cookies ", cookiesJSON1);
       if (cookiesJSON1.token) {
         return {
           redirect: {
             permanent: false,
+            // destination: "/dashboard/company",
             destination: "/dashboard/home",
           },
         };

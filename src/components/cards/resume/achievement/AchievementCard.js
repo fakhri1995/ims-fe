@@ -85,7 +85,7 @@ const AchievementCard = ({
           <div className="flex flex-row space-x-4">
             <Input
               placeholder="Achievement name"
-              value={dataUpdateAchiev.name}
+              value={dataUpdateAchiev?.name}
               onChange={(e) => {
                 let input = e.target.value;
                 setDataUpdateAchiev((prev) => ({
@@ -121,7 +121,7 @@ const AchievementCard = ({
               placeholder="Year"
               className="w-1/3"
               value={
-                dataUpdateAchiev.year ? moment(dataUpdateAchiev.year) : null
+                dataUpdateAchiev?.year ? moment(dataUpdateAchiev?.year) : null
               }
               onChange={(date) => {
                 let input = date ? date.format("YYYY-MM-DD") : null;
@@ -133,7 +133,7 @@ const AchievementCard = ({
             />
             <Input
               placeholder="Company or organization"
-              value={dataUpdateAchiev.organizer}
+              value={dataUpdateAchiev?.organizer}
               onChange={(e) => {
                 let input = e.target.value;
                 setDataUpdateAchiev((prev) => ({
@@ -167,7 +167,7 @@ const AchievementCard = ({
           visible={modalDelete}
           onvisible={setModalDelete}
           onOk={() => {
-            handleDeleteSection("achievement", dataUpdateAchiev.id);
+            handleDeleteSection("achievement", dataUpdateAchiev?.id);
             setModalDelete(false);
           }}
           onCancel={() => {
@@ -178,7 +178,7 @@ const AchievementCard = ({
         >
           <p className="mb-4">
             Apakah Anda yakin ingin menghapus data penghargaan{" "}
-            <strong>{dataUpdateAchiev.name}</strong>?
+            <strong>{dataUpdateAchiev?.name}</strong>?
           </p>
         </ModalHapus2>
       </AccessControl>

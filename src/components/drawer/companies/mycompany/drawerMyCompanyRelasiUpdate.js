@@ -1,4 +1,4 @@
-import { DownOutlined, LoadingOutlined, UpOutlined } from "@ant-design/icons";
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import {
   Checkbox,
   Empty,
@@ -185,9 +185,9 @@ const DrawerUpdateRelasi = ({
             >
               <p className="mb-0">{relationnameadd}</p>
               {relationnameddadd ? (
-                <UpOutlined style={{ color: `rgb(229,231,235)` }} />
+                <UpOutlined rev={""} style={{ color: `rgb(229,231,235)` }} />
               ) : (
-                <DownOutlined style={{ color: `rgb(229,231,235)` }} />
+                <DownOutlined rev={""} style={{ color: `rgb(229,231,235)` }} />
               )}
             </div>
             {relationnameddadd ? (

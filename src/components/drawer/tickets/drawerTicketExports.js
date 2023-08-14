@@ -210,7 +210,7 @@ const DrawerTicketExports = ({
                 style={{ width: `100%` }}
                 placeholder="Nama Grup..."
                 disabled={!isAllowedToGetGroups}
-                suffixIcon={<SearchOutlined />}
+                suffixIcon={<SearchOutlined rev={""} />}
                 showArrow
                 allowClear
                 onChange={(value, option) => {
@@ -263,7 +263,7 @@ const DrawerTicketExports = ({
                 style={{ width: `100%` }}
                 placeholder="Nama Engineer..."
                 disabled={!isAllowedToGetUsers}
-                suffixIcon={<SearchOutlined />}
+                suffixIcon={<SearchOutlined rev={""} />}
                 showArrow
                 allowClear
                 onChange={(value, option) => {

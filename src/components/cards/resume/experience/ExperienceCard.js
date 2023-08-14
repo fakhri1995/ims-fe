@@ -119,7 +119,7 @@ const ExperienceCard = ({
           <div className="flex flex-row space-x-4">
             <Input
               placeholder="Role"
-              value={dataUpdateExp.role}
+              value={dataUpdateExp?.role}
               onChange={(e) => {
                 let input = e.target.value;
                 setDataUpdateExp((prev) => ({
@@ -150,7 +150,7 @@ const ExperienceCard = ({
           </div>
           <Input
             placeholder="Company"
-            value={dataUpdateExp.company}
+            value={dataUpdateExp?.company}
             onChange={(e) => {
               let input = e.target.value;
               setDataUpdateExp((prev) => ({
@@ -163,10 +163,10 @@ const ExperienceCard = ({
           <RangePicker
             allowEmpty
             value={[
-              dataUpdateExp.start_date
-                ? moment(dataUpdateExp.start_date)
+              dataUpdateExp?.start_date
+                ? moment(dataUpdateExp?.start_date)
                 : null,
-              dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
+              dataUpdateExp?.end_date ? moment(dataUpdateExp?.end_date) : null,
             ]}
             open={calendarOpen}
             onOpenChange={setCalendarOpen}
@@ -200,7 +200,7 @@ const ExperienceCard = ({
           <ReactQuill
             placeholder="Job description..."
             theme="snow"
-            value={dataUpdateExp.description}
+            value={dataUpdateExp?.description}
             modules={modules}
             formats={formats}
             className="h-32 pb-10"

@@ -498,6 +498,7 @@ function layout({ children }) {
                 >
                   {t.solutions}{" "}
                   <CaretDownOutlined
+                    rev={""}
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                   />
                 </p>
@@ -546,6 +547,7 @@ function layout({ children }) {
                   >
                     Resource{" "}
                     <CaretDownOutlined
+                      rev={""}
                       style={{
                         display: "inline-block",
                         verticalAlign: "middle",
@@ -771,9 +773,9 @@ function layout({ children }) {
                                 zIndex: 1,
                                 transition: 'all 0.2s',
                             }}><a href='/contactus' className="text-lg gilroy-medium">Contact Us &nbsp;&nbsp;
-                            <ArrowRightOutlined style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
-                            <LinkedinFilled style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
-                            <InstagramFilled style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
+                            <ArrowRightOutlined rev={""} style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
+                            <LinkedinFilled  rev={""} style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
+                            <InstagramFilled  rev={""} style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
                             </a></Menu.Item> */}
               {/* <SubMenu key="sub 2" title="Contactus" className="text-lg gilroy-medium"style={{
                                 position: 'absolute',
@@ -820,6 +822,7 @@ function layout({ children }) {
               </Link>
               &nbsp;&nbsp;
               <ArrowRightOutlined
+                rev={""}
                 style={{
                   fontSize: "20px",
                   display: "inline-block",
@@ -833,6 +836,7 @@ function layout({ children }) {
                 href="https://www.linkedin.com/company/pt-mitramas-infosys-global"
               >
                 <LinkedinFilled
+                  rev={""}
                   style={{
                     fontSize: "20px",
                     display: "inline-block",
@@ -847,6 +851,7 @@ function layout({ children }) {
                 href="https://instagram.com/mitramasglobal?utm_medium=copy_link"
               >
                 <InstagramFilled
+                  rev={""}
                   style={{
                     fontSize: "20px",
                     display: "inline-block",
@@ -1066,7 +1071,6 @@ function layout({ children }) {
                       src="/image/footer/linkedin.png"
                     />
                     <a
-                      style={{ textDecoration: "none" }}
                       style={{ textDecoration: "none" }}
                       className={
                         "font-gilroyregular text-[14px] cursor-pointer menu-underlined py-1 hover:text-green-500"

@@ -155,7 +155,7 @@ const DrawerRoleUpdate = ({
       buttonCancelText={
         isAllowedToDeleteRole && (
           <div className="flex flex-row space-x-2 items-center">
-            <DeleteOutlined />
+            <DeleteOutlined rev={""} />
             <p>Hapus Role</p>
           </div>
         )
