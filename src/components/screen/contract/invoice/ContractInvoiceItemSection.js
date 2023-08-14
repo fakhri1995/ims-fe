@@ -1,5 +1,5 @@
 import { Input, Table } from "antd";
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -48,7 +48,7 @@ const ContractInvoiceItemSection = ({
       tempDyanmicColumns.push(newColumn);
     }
     setDynamicColumns(tempDyanmicColumns);
-  }, [dataServiceTemplateNames, isEdit]);
+  }, [dataServiceTemplateNames, isEdit, currentRowValues]);
 
   // 2.2. Add contract_service_id & details attribute if not yet available
   useEffect(() => {
@@ -95,17 +95,6 @@ const ContractInvoiceItemSection = ({
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterItems, "Enter");
-  const checkKeyPress = useCallback(
-    (e) => {
-      const { key, keyCode } = e;
-      console.log(key, keyCode);
-      if (key === "Enter") {
-        alert(currentRowValues);
-      }
-    },
-    [currentRowValues]
-  );
-
   const onSaveRowValues = (rowIndex, rowValues) => {
     let tempDataServices = [...dataServices];
 
@@ -147,17 +136,12 @@ const ContractInvoiceItemSection = ({
               defaultValue={
                 dataServices?.[rowIndex]?.service_template_value?.details?.[idx]
               }
-              onKeyDown={(e) => {
+              onKeyPress={(e) => {
                 if (e.key === "Enter") {
-                  // save row values
-                  let tempRowValues = [...currentRowValues];
-                  tempRowValues[idx] = e.target.value;
-
-                  onSaveRowValues(currentRowIndex, tempRowValues);
+                  onSaveRowValues(currentRowIndex, currentRowValues);
                 }
               }}
               onChange={(e) => {
-                console.log("on change bro ", e.target.value);
                 setCurrentRowValues((prev) => {
                   const tempRowValues = [...prev];
                   tempRowValues[idx] = e.target.value;
@@ -193,6 +177,11 @@ const ContractInvoiceItemSection = ({
     setDataCurrentColumn({ idx: -1, name: "" });
   };
 
+  const { onKeyPressHandler: onEnterAddColumn } = createKeyPressHandler(
+    handleAddColumn,
+    "Enter"
+  );
+
   const handleDeleteColumn = (idx) => {
     // Delete column name
     let tempDyanmicColumns = [...dynamicColumns];
@@ -224,7 +213,7 @@ const ContractInvoiceItemSection = ({
   // console.log({ dataServiceTemplateNames });
   // console.log({ dynamicColumns });
   // console.log({ dataCurrentColumn });
-  // console.log({ searchingFilterItems });
+
   return (
     <>
       <div className="flex justify-between">
@@ -381,6 +370,7 @@ const ContractInvoiceItemSection = ({
         handleAddColumn={handleAddColumn}
         dataCurrentColumn={dataCurrentColumn}
         setDataCurrentColumn={setDataCurrentColumn}
+        onEnterAddColumn={onEnterAddColumn}
       />
 
       <ModalHapus2

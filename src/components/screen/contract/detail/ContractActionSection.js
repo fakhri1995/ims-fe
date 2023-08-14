@@ -66,7 +66,7 @@ const ContractActionSection = ({ contractId }) => {
       </div> */}
 
       <button
-        onClick={() => rt.push(`${contractId}/invoice`)}
+        onClick={() => rt.push(`${contractId}/invoice-template`)}
         className="flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center"
       >
         <FileTextIconSvg size={32} color={"#35763B"} />

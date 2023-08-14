@@ -86,6 +86,7 @@ export const SIDEBAR_RECRUITMENT_SETUP = "SIDEBAR_RECRUITMENT_SETUP";
 /** Contract Management */
 export const SIDEBAR_CONTRACT = "SIDEBAR_CONTRACT";
 export const SIDEBAR_CONTRACT_LIST = "SIDEBAR_CONTRACT_LIST";
+export const SIDEBAR_CONTRACT_INVOICE = "SIDEBAR_CONTRACT_INVOICE";
 
 /**
  * Daftar feature untuk halaman Attendance.

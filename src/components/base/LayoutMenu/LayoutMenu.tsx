@@ -43,6 +43,7 @@ import {
   SIDEBAR_COMPANY,
   SIDEBAR_COMPANY_PROFILE,
   SIDEBAR_CONTRACT,
+  SIDEBAR_CONTRACT_INVOICE,
   SIDEBAR_CONTRACT_LIST,
   SIDEBAR_DASHBOARD,
   SIDEBAR_EMPLOYEE,
@@ -442,6 +443,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_CONTRACT_LIST) && (
             <Menu.Item key="contract-list">
               <Link href="/admin/contracts">Kontrak</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_CONTRACT_INVOICE) && (
+            <Menu.Item key="contract-invoice">
+              <Link href="/admin/contracts/invoice">Invoice</Link>
             </Menu.Item>
           )}
         </SubMenu>

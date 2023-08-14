@@ -12,6 +12,7 @@ const ModalColumnAdd = ({
   handleAddColumn,
   dataCurrentColumn,
   setDataCurrentColumn,
+  onEnterAddColumn,
 }) => {
   const [instanceForm] = useForm();
   useEffect(() => {
@@ -64,6 +65,9 @@ const ModalColumnAdd = ({
                     name: e.target.value,
                   }))
                 }
+                onKeyPress={(e) => {
+                  e.target.value && onEnterAddColumn(e);
+                }}
               ></Input>
             </>
           </Form.Item>

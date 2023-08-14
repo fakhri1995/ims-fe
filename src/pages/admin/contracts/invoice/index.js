@@ -1,5 +1,15 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Input, Modal, Select, Spin, notification } from "antd";
+import {
+  Button,
+  DatePicker,
+  Input,
+  Modal,
+  Select,
+  Spin,
+  Tooltip,
+  notification,
+} from "antd";
+// import locale from "antd/es/date-picker/locale/id_ID";
 import moment from "moment";
 import {
   NumberParam,
@@ -13,8 +23,21 @@ import { useState } from "react";
 import { useCallback } from "react";
 import { useQuery } from "react-query";
 
+import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
-import { AddNewFormButton } from "components/screen/resume";
+import {
+  DownloadIconSvg,
+  EditSquareIconSvg,
+  FileDownloadIconSvg,
+  SearchIconSvg,
+} from "components/icon";
+import Layout from "components/layout-dashboard";
+import st from "components/layout-dashboard.module.css";
+import { ModalHapus2 } from "components/modal/modalCustom";
+import {
+  TableCustomContractList,
+  TableCustomInvoiceList,
+} from "components/table/tableCustom";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -31,21 +54,15 @@ import {
   RECRUITMENT_STATUSES_LIST_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
-
-import { CompanyService } from "apis/company";
-import { ContractService } from "apis/contract";
-
-import ButtonSys from "../../../components/button";
-import { SearchIconSvg } from "../../../components/icon";
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
-import { ModalHapus2 } from "../../../components/modal/modalCustom";
-import { TableCustomContractList } from "../../../components/table/tableCustom";
 import {
   convertDaysToString,
   createKeyPressHandler,
   momentFormatDate,
-} from "../../../lib/helper";
+} from "lib/helper";
+
+import { CompanyService } from "apis/company";
+import { ContractService } from "apis/contract";
+
 import {
   ArcElement,
   BarElement,
@@ -54,13 +71,11 @@ import {
   LineElement,
   LinearScale,
   PointElement,
-  Tooltip,
 } from "chart.js";
 import httpcookie from "cookie";
 
 Chart.register(
   ArcElement,
-  Tooltip,
   CategoryScale,
   LinearScale,
   LineElement,
@@ -68,7 +83,7 @@ Chart.register(
   PointElement
 );
 
-const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
+const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 1. Init
   /**
    * Dependencies
@@ -106,8 +121,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
-  pathTitleArr.splice(1, 1);
-  pathTitleArr.splice(1, 1, "Kontrak");
+  pathTitleArr.splice(1, 2, "Kontrak", "Invoice");
 
   const durationRangeList = [
     { name: "1 Bulan", value: 30 },
@@ -117,23 +131,13 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const dataStatusList = [
     {
-      id: "segeraberakhir",
-      name: "Segera Berakhir",
-      color: "#BF4A40",
-    },
-    {
-      id: "draft",
+      id: 0,
       name: "Draft",
-      color: "#808080",
+      color: "#4D4D4D",
     },
     {
-      id: "berlangsung",
-      name: "Berlangsung",
-      color: "#00589F",
-    },
-    {
-      id: "selesai",
-      name: "Selesai",
+      id: 1,
+      name: "Terbit",
       color: "#35763B",
     },
   ];
@@ -296,7 +300,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   // Kontrak Table's columns
-  const columnContracts = [
+  const columnInvoices = [
     {
       title: "No",
       key: "number",
@@ -312,7 +316,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Nomor Kontrak",
+      title: "Nomor Invoice",
       key: "contract_number",
       dataIndex: "contract_number",
       render: (text, record, index) => {
@@ -326,7 +330,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
     {
-      title: "Judul Kontrak",
+      title: "Nama Invoice",
       key: "title",
       dataIndex: "title",
       render: (text, record, index) => {
@@ -349,7 +353,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Tanggal Berlaku",
+      title: "Tanggal Terbit",
       key: "start_date",
       dataIndex: "start_date",
       render: (text, record, index) => {
@@ -362,7 +366,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
     {
-      title: "Sisa Durasi",
+      title: "Total Tagihan",
       key: "duration",
       dataIndex: "duration",
       render: (duration, record, index) => {
@@ -383,32 +387,16 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <>
               {record.is_posted ? (
-                text == "segeraberakhir" ? (
-                  <div
-                    className="rounded-md py-1 px-4 hover:cursor-pointer text-center
-                   text-white bg-warning whitespace-nowrap"
-                  >
-                    Segera Berakhir
-                  </div>
-                ) : text == "berlangsung" ? (
-                  <div
-                    className="rounded-md py-1 px-4 hover:cursor-pointer text-center
-                    text-white bg-secondary100 whitespace-nowrap"
-                  >
-                    Berlangsung
-                  </div>
-                ) : (
-                  <div
-                    className="rounded-md py-1 px-4 hover:cursor-pointer text-center
-                    text-white bg-primary100 whitespace-nowrap"
-                  >
-                    Selesai
-                  </div>
-                )
+                <div
+                  className="rounded-md py-1 px-4 hover:cursor-pointer text-center mig-caption--bold
+                   text-primary100 bg-primary100 bg-opacity-10 whitespace-nowrap"
+                >
+                  Terbit
+                </div>
               ) : (
                 <div
-                  className="rounded-md py-1 px-4 hover:cursor-pointer text-center 
-                   bg-mono50 text-white"
+                  className="rounded-md py-1 px-4 hover:cursor-pointer 
+                  text-center mig-caption--bold text-mono30 bg-mono90"
                 >
                   Draft
                 </div>
@@ -428,54 +416,100 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           }
         : false,
     },
-    dataRawContracts?.data?.some((item) => !item.is_posted)
-      ? {
-          title: "Aksi",
-          key: "action_button",
-          dataIndex: "action_button",
-          render: (text, record, index) => {
-            return {
-              children: (
-                <>
-                  {!record.is_posted && (
-                    <div className="flex flex-col md:flex-row gap-2 items-center">
-                      <ButtonSys
-                        type={"default"}
-                        color={"secondary100"}
-                        disabled={!isAllowedToUpdateContract}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          rt.push(`/admin/contracts/create?id=${record.id}`);
-                        }}
-                      >
-                        <EditOutlined />
-                      </ButtonSys>
-                      <ButtonSys
-                        type={"default"}
-                        color={"danger"}
-                        disabled={!isAllowedToDeleteContract}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setDataRowClicked(record);
-                          setModalDelete(true);
-                        }}
-                      >
-                        <DeleteOutlined />
-                      </ButtonSys>
+    {
+      title: "Aksi",
+      key: "action_button",
+      dataIndex: "action_button",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div className="flex flex-col md:flex-row gap-2 items-center">
+              {!record?.is_posted ? (
+                <Button
+                  type={"primary"}
+                  disabled={true}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    // rt.push(`/admin/employees/${record.id}?tab=2`);
+                  }}
+                  icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
+                  className="invoiceButton bg-mono50 border-transparent hover:bg-mono80 
+                  hover:border-transparent focus:bg-mono80 focus:border-mono80"
+                />
+              ) : (
+                <Tooltip
+                  className="border rounded-md"
+                  placement="bottomRight"
+                  color="#FFFFFF"
+                  title={
+                    <div className="flex gap-2 text-mono30 p-2">
+                      <div>
+                        <EditSquareIconSvg size={20} color={"#4D4D4D"} />
+                      </div>
+                      <div>
+                        <p className="mig-caption--bold">Sunting Invoice</p>
+                        <p className="mig-caption">
+                          Sunting invoice untuk merubah data.
+                        </p>
+                      </div>
                     </div>
-                  )}
-                </>
-              ),
-            };
-          },
-          sorter: isAllowedToGetContracts
-            ? (a, b) =>
-                a.role?.name
-                  .toLowerCase()
-                  .localeCompare(b.role?.name.toLowerCase())
-            : false,
-        }
-      : {},
+                  }
+                >
+                  <Button
+                    type={"primary"}
+                    disabled={!isAllowedToUpdateContract}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      rt.push(`invoice/${record.id}`);
+                    }}
+                    icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
+                    className="invoiceButton bg-mono50 border-transparent hover:bg-mono80 
+                    hover:border-transparent focus:bg-mono80 focus:border-mono80"
+                  />
+                </Tooltip>
+              )}
+
+              <Tooltip
+                className="border rounded-md"
+                placement="bottomRight"
+                color="#FFFFFF"
+                title={
+                  <div className="flex gap-2 p-2">
+                    <div>
+                      <FileDownloadIconSvg size={20} color={"#35763B"} />
+                    </div>
+                    <div>
+                      <p className="mig-caption--bold text-primary100">
+                        Unduh File Invoice
+                      </p>
+                      <p className="text-mono30 mig-caption">
+                        Unduh invoice dengan format pdf/excel.
+                      </p>
+                    </div>
+                  </div>
+                }
+              >
+                <Button
+                  type={"primary"}
+                  // disabled={!isAllowedToUpdateEmployeeContract}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    // rt.push(`/admin/employees/${record.id}?tab=2`);
+                  }}
+                  icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
+                  className="bg-primary100 border-primary100 hover:bg-primary75 
+                hover:border-primary75 focus:bg-primary75 focus:border-primary75"
+                />
+              </Tooltip>
+            </div>
+          ),
+        };
+      },
+      sorter: isAllowedToGetContracts
+        ? (a, b) =>
+            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
+        : false,
+    },
   ];
 
   if (isAccessControlPending) {
@@ -492,180 +526,180 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathTitleArr={pathTitleArr}
     >
       <div className="grid grid-cols-1 gap-6" id="mainWrapper">
-        <div className="grid grid-cols-1 lg:grid-cols-2 md:px-5 gap-6">
-          <div
-            className="flex flex-row items-center w-full 
-						justify-between px-6 py-2 shadow-md rounded-md bg-white
-						divide-x divide-gray-300"
-          >
-            <div className="flex flex-row items-center justify-between w-full">
-              <h4 className="font-semibold lg:mig-heading--4">Kontrak Aktif</h4>
-              <Spin spinning={loadingDataCount}>
-                <p className="text-4xl lg:text-5xl text-primary100">
-                  {dataCount?.total}
-                </p>
-              </Spin>
-            </div>
-          </div>
-          <AddNewFormButton
-            title="Buat Kontrak"
-            subtitle={moment().format("dddd, DD MMMM YYYY")}
-            onButtonClicked={onAddContract}
-            disabled={!isAllowedToAddContract || loadingAdd}
-          />
-        </div>
         <div className="md:px-5">
           {/* Table Kontrak */}
-          <div className="flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-            <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
-              <h4 className="mig-heading--4 w-full md:w-2/12">Kontrak</h4>
-              {/* Start: Search criteria */}
+          <div className="flex flex-col gap-6 shadow-md rounded-md bg-white p-5 mb-6">
+            <div className="flex gap-4 items-center">
+              <h4 className="mig-heading--4">Daftar Invoice</h4>
+              <p className="mig-caption--medium text-mono50">Bulan</p>
 
-              {/* Filter by duration (dropdown) */}
-              <div className="w-full md:w-2/12">
-                <Select
-                  defaultValue={queryParams.duration}
-                  allowClear
-                  name={`role`}
-                  disabled={!isAllowedToGetCompanyClients}
-                  placeholder="Rentang Durasi"
-                  style={{ width: `100%` }}
-                  onChange={(value) => {
-                    setQueryParams({ duration: value });
-                    setSelectedDuration(value);
-                  }}
-                  dropdownRender={(options) => (
-                    <>
-                      {options}
-                      <p
-                        onClick={() => setModalDuration(true)}
-                        className={`flex justify-center py-1 px-2 text-center 
+              <DatePicker
+                className="themedDatePicker"
+                defaultValue={moment()}
+                format={"MMMM YYYY"}
+                picker="month"
+                // locale={locale}
+              />
+            </div>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center ">
+                {/* Start: Search criteria */}
+                {/* Search by keyword (kata kunci) */}
+                <div className="w-full md:w-4/12">
+                  <Input
+                    defaultValue={searchingFilterContracts}
+                    style={{ width: `100%` }}
+                    placeholder="Cari..."
+                    allowClear
+                    onChange={(e) => {
+                      setTimeout(
+                        () => setSearchingFilterContracts(e.target.value),
+                        500
+                      );
+                    }}
+                    onKeyPress={onKeyPressHandler}
+                    disabled={!isAllowedToGetContracts}
+                  />
+                </div>
+
+                {/* Filter by status (dropdown) */}
+                <div className="w-full md:w-2/12">
+                  <Select
+                    defaultValue={queryParams.status_types}
+                    allowClear
+                    name={`status`}
+                    disabled={!isAllowedToGetContractStatusList}
+                    placeholder="Semua Status"
+                    style={{ width: `100%` }}
+                    className="themedSelector"
+                    onChange={(value) => {
+                      setQueryParams({ status_types: value });
+                      setSelectedStatus(value);
+                    }}
+                    optionLabelProp="children"
+                  >
+                    {dataStatusList?.map((status) => (
+                      <Select.Option key={status.id} value={status.id}>
+                        <div className="flex items-center">
+                          <div
+                            className="rounded-full w-4 h-4 p-2 mr-2"
+                            style={{ backgroundColor: `${status.color}` }}
+                          />
+                          <p className="truncate">{status.name}</p>
+                        </div>
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                {/* Filter by company client */}
+                <div className="w-full md:w-2/12">
+                  <Select
+                    defaultValue={queryParams.client_ids}
+                    allowClear
+                    name={`client`}
+                    disabled={!isAllowedToGetCompanyClients}
+                    placeholder="Semua Klien"
+                    style={{ width: `100%` }}
+                    className="themedSelector"
+                    onChange={(value) => {
+                      setQueryParams({ client_ids: value });
+                      setSelectedCompany(value);
+                    }}
+                  >
+                    {dataCompanyList?.map((client) => (
+                      <Select.Option key={client.id} value={client.id}>
+                        {client.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                {/* Filter by total price (dropdown) */}
+                <div className="w-full md:w-2/12">
+                  <Select
+                    defaultValue={queryParams.duration}
+                    allowClear
+                    name={`role`}
+                    disabled={!isAllowedToGetCompanyClients}
+                    placeholder="Harga Total"
+                    style={{ width: `100%` }}
+                    className="themedSelector"
+                    onChange={(value) => {
+                      setQueryParams({ duration: value });
+                      setSelectedDuration(value);
+                    }}
+                    dropdownRender={(options) => (
+                      <>
+                        {options}
+                        <p
+                          onClick={() => setModalDuration(true)}
+                          className={`flex justify-center py-1 px-2 text-center 
                         rounded hover:bg-primary100 hover:text-white hover:cursor-pointer`}
-                      >
-                        Custom Range
-                      </p>
-                    </>
-                  )}
-                >
-                  {durationRangeList?.map((item, idx) => (
-                    <Select.Option key={idx + 1} value={item.value}>
-                      <p
-                        className={`px-2 text-center rounded  
+                        >
+                          Custom Range
+                        </p>
+                      </>
+                    )}
+                  >
+                    {durationRangeList?.map((item, idx) => (
+                      <Select.Option key={idx + 1} value={item.value}>
+                        <p
+                          className={`px-2 text-center rounded  
                         ${
                           selectedDuration === item.value &&
                           "bg-primary100 text-white"
                         }`}
-                      >
-                        {item.name}
-                      </p>
-                    </Select.Option>
-                  ))}
-                  {durationInput && (
-                    <Select.Option key={5} value={durationInput * 30}>
-                      <p
-                        className={`px-2 text-center rounded
+                        >
+                          {item.name}
+                        </p>
+                      </Select.Option>
+                    ))}
+                    {durationInput && (
+                      <Select.Option key={5} value={durationInput * 30}>
+                        <p
+                          className={`px-2 text-center rounded
                       ${
                         selectedDuration === durationInput * 30 &&
                         "bg-primary100 text-white"
                       }`}
-                      >
-                        {durationInput} Bulan (Custom)
-                      </p>
-                    </Select.Option>
-                  )}
-                </Select>
+                        >
+                          {durationInput} Bulan (Custom)
+                        </p>
+                      </Select.Option>
+                    )}
+                  </Select>
+                </div>
+
+                {/* End: Search criteria */}
+
+                <div className="flex justify-end">
+                  <ButtonSys
+                    type={`primary`}
+                    onClick={onFilterRecruitments}
+                    disabled={!isAllowedToGetContracts}
+                  >
+                    <div className="flex flex-row space-x-2.5 w-full items-center">
+                      <SearchIconSvg size={15} color={`#ffffff`} />
+                      <p>Cari</p>
+                    </div>
+                  </ButtonSys>
+                </div>
               </div>
 
-              {/* Filter by company client */}
-              <div className="w-full md:w-2/12">
-                <Select
-                  defaultValue={queryParams.client_ids}
-                  allowClear
-                  name={`client`}
-                  disabled={!isAllowedToGetCompanyClients}
-                  placeholder="Semua Klien"
-                  style={{ width: `100%` }}
-                  onChange={(value) => {
-                    setQueryParams({ client_ids: value });
-                    setSelectedCompany(value);
-                  }}
-                >
-                  {dataCompanyList?.map((client) => (
-                    <Select.Option key={client.id} value={client.id}>
-                      {client.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-
-              {/* Search by status (dropdown) */}
-              <div className="w-full md:w-2/12">
-                <Select
-                  defaultValue={queryParams.status_types}
-                  allowClear
-                  name={`status`}
-                  disabled={!isAllowedToGetContractStatusList}
-                  placeholder="Semua Status"
-                  style={{ width: `100%` }}
-                  onChange={(value) => {
-                    setQueryParams({ status_types: value });
-                    setSelectedStatus(value);
-                  }}
-                  optionLabelProp="children"
-                >
-                  {dataStatusList?.map((status) => (
-                    <Select.Option key={status.id} value={status.id}>
-                      <div className="flex items-center">
-                        <div
-                          className="rounded-full w-4 h-4 p-2 mr-2"
-                          style={{ backgroundColor: `${status.color}` }}
-                        />
-                        <p className="truncate">{status.name}</p>
-                      </div>
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-
-              {/* Search by keyword (kata kunci) */}
-              <div className="w-full md:w-4/12">
-                <Input
-                  defaultValue={searchingFilterContracts}
-                  style={{ width: `100%` }}
-                  placeholder="Cari.."
-                  allowClear
-                  onChange={(e) => {
-                    setTimeout(
-                      () => setSearchingFilterContracts(e.target.value),
-                      500
-                    );
-                  }}
-                  onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetContracts}
-                />
-              </div>
-
-              {/* End: Search criteria */}
-
-              <div className="flex justify-end">
-                <ButtonSys
-                  type={`primary`}
-                  onClick={onFilterRecruitments}
-                  disabled={!isAllowedToGetContracts}
-                >
-                  <div className="flex flex-row space-x-2.5 w-full items-center">
-                    <SearchIconSvg size={15} color={`#ffffff`} />
-                    <p>Cari</p>
-                  </div>
-                </ButtonSys>
-              </div>
+              <p className="mig-caption text-mono30">
+                Menampilkan invoice bulan{" "}
+                <strong>
+                  {momentFormatDate(new Date(), "-", "MMMM YYYY")}
+                </strong>
+              </p>
             </div>
 
             <div>
-              <TableCustomContractList
+              <TableCustomInvoiceList
                 rt={rt}
                 dataSource={dataRawContracts?.data}
-                columns={columnContracts}
+                columns={columnInvoices}
                 loading={loadingDataRawContracts}
                 total={dataRawContracts?.total}
                 queryParams={queryParams}
@@ -773,9 +807,9 @@ export async function getServerSideProps({ req, res }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "contract-list",
+      sidemenu: "contract-invoice",
     },
   };
 }
 
-export default ContractIndex;
+export default ContractInvoiceIndex;
