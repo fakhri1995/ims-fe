@@ -1,57 +1,45 @@
 import { DatePicker, Form, Input, Modal, Select, Spin } from "antd";
+import locale from "antd/lib/date-picker/locale/id_ID";
+import moment from "moment";
+import "moment/locale/id";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
-import { useRef } from "react";
-import { useQuery } from "react-query";
-import "react-quill/dist/quill.snow.css";
+import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { PRODUCTS_GET } from "lib/features";
+import { CONTRACT_INVOICE_ADD } from "lib/features";
 
-import { ProductCatalogService } from "../../../apis/product-catalog";
 import ButtonSys from "../../button";
-import { PlusIconSvg } from "../../icon";
 
-const ModalInvoiceCreate = ({ initProps, visible, onvisible }) => {
+const ModalInvoiceCreate = ({
+  initProps,
+  visible,
+  onvisible,
+  dataContract,
+}) => {
   const { hasPermission } = useAccessControl();
-  const isAllowedToGetProductInventories = hasPermission(PRODUCTS_GET);
+  const isAllowedToAddInvoice = hasPermission(CONTRACT_INVOICE_ADD);
   const [form] = Form.useForm();
 
   // 1. USE STATE
-  const dataService = {
-    id: null,
-    product_id: null,
-    product: { name: "" },
-    pax: 0,
-    price: "",
-    unit: "bulan",
-  };
-  const [dataServiceList, setDataServiceList] = useState([dataService]);
+
+  const [dataInvoiceDraft, setDataInvoiceDraft] = useState({});
 
   const [loading, setLoading] = useState(false);
-  const [serviceTypeSearch, setServiceTypeSearch] = useState("");
 
   // 2. USE QUERY & USE EFFECT
-  // 2.1. Get Contract Service Type List
-  const { data: dataServiceTypeList, isLoading: loadingServiceTypeList } =
-    useQuery(
-      [PRODUCTS_GET, serviceTypeSearch],
-      () =>
-        ProductCatalogService.getInventories(
-          initProps,
-          isAllowedToGetProductInventories,
-          serviceTypeSearch
-        ),
-      {
-        enabled: isAllowedToGetProductInventories,
-        select: (response) => response.data.data,
-      }
-    );
+  useEffect(() => {
+    if (visible) {
+      setDataInvoiceDraft({
+        ...dataContract,
+        invoice_raise_at: new Date(),
+      });
+    }
+  }, [dataContract, visible]);
 
   // 3. HANDLER
   const clearData = () => {
-    setDataServiceList([dataService]);
+    setDataInvoiceDraft();
     form.resetFields();
   };
 
@@ -60,19 +48,46 @@ const ModalInvoiceCreate = ({ initProps, visible, onvisible }) => {
     clearData();
   };
 
-  const handleSave = () => {
-    let tempServiceList = [...dataContractUpdate.services];
-    tempServiceList.push(...dataServiceList);
-    setDataContractUpdate((prev) => ({
-      ...prev,
-      services: tempServiceList,
-    }));
+  const handleAddInvoice = () => {
+    if (!isAllowedToAddInvoice) {
+      permissionWarningNotification("Menambah", "Invoice");
+      return;
+    }
 
-    handleClose();
+    setLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addContractInvoice`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          handleClose();
+          notification.success({
+            message: `Draft invoice berhasil dibuat.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal membuat draft invoice. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
   };
 
-  // console.log({ dataService });
-  // console.log({ dataContractUpdate });
+  // console.log({ dataInvoiceDraft });
+  // console.log({ dataContract });
 
   return (
     <Modal
@@ -91,8 +106,12 @@ const ModalInvoiceCreate = ({ initProps, visible, onvisible }) => {
             </button>
             <ButtonSys
               type={"primary"}
-              onClick={handleSave}
-              // disabled={!dataServiceList[0]?.dataService?.product}
+              onClick={handleAddInvoice}
+              disabled={
+                !isAllowedToAddInvoice ||
+                !dataInvoiceDraft?.title ||
+                !dataInvoiceDraft?.invoice_raise_at
+              }
             >
               <p>Buat Draft</p>
             </ButtonSys>
@@ -103,17 +122,20 @@ const ModalInvoiceCreate = ({ initProps, visible, onvisible }) => {
     >
       <Form layout="vertical" form={form}>
         <Form.Item
-          label="Nama Kontrak"
+          label="Nama Invoice"
           name={"name"}
           rules={[
             {
               required: true,
-              message: "Nama kontrak wajib diisi",
+              message: "Nama invoice wajib diisi",
             },
           ]}
         >
           <>
-            <Input placeholder="Masukkan nama Kontrak" />
+            <Input
+              placeholder="Masukkan nama invoice"
+              defaultValue={dataInvoiceDraft?.title}
+            />
           </>
         </Form.Item>
         <Form.Item
@@ -122,40 +144,41 @@ const ModalInvoiceCreate = ({ initProps, visible, onvisible }) => {
           rules={[
             {
               required: true,
-              message: "PT Klien wajib diisi",
+              message: "PT klien wajib diisi",
             },
           ]}
         >
           <Input
-            placeholder="Pilih PT Klien"
-            // value={service?.pax}
-            // onChange={(e) => {
-            //   let tempServiceList = [...dataServiceList];
-            //   tempServiceList[idx].pax = e.target.value;
-
-            //   setDataServiceList(tempServiceList);
-            // }}
+            placeholder="Pilih PT klien"
+            defaultValue={dataInvoiceDraft?.client?.name}
+            disabled
           />
         </Form.Item>
 
         <Form.Item
-          label="Periode Tagihan"
-          name={"invoice_periode"}
+          label="Tanggal Terbit Invoice"
+          name={"invoice_raise_at"}
           rules={[
             {
               required: true,
-              message: "Periode Tagihan wajib diisi",
+              message: "Tanggal terbit wajib diisi",
             },
           ]}
         >
           <>
-            <DatePicker.RangePicker
+            <DatePicker
               allowEmpty
-              // placeholder="Pilih Periode"
-              // value={moment(dateState).isValid() ? moment(dateState) : null}
-              // onChange={(dates, datestrings) => {
-              //   setDateState(datestrings);
-              // }}
+              format={"DD MMMM YYYY"}
+              locale={locale}
+              defaultValue={moment(dataInvoiceDraft?.invoice_raise_at)}
+              onChange={(date, datestring) => {
+                const defaultFormatDate = date.format("YYYY-MM-DD");
+                setDataInvoiceDraft((prev) => ({
+                  ...prev,
+                  invoice_raise_at: defaultFormatDate,
+                }));
+              }}
+              placeholder="Pilih tanggal terbit"
               renderExtraFooter={() => <div />}
               style={{ width: "100%" }}
             />
