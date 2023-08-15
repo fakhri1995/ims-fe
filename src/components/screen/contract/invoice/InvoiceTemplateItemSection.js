@@ -16,7 +16,7 @@ import {
 import ModalColumnAdd from "../../../modal/contracts/modalColumnAdd";
 import { ModalHapus2 } from "../../../modal/modalCustom";
 
-const ContractInvoiceItemSection = ({
+const InvoiceTemplateItemSection = ({
   dataServiceTemplateNames,
   setDataServiceTemplateNames,
   dataServices,
@@ -391,4 +391,4 @@ const ContractInvoiceItemSection = ({
   );
 };
 
-export default ContractInvoiceItemSection;
+export default InvoiceTemplateItemSection;

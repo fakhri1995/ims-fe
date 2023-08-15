@@ -32,7 +32,7 @@ import {
   FILE,
   LIST,
 } from "../../../../components/screen/contract/detail/ContractInfoSection";
-import ContractInvoiceItemSection from "../../../../components/screen/contract/invoice/ContractInvoiceItemSection";
+import InvoiceTemplateItemSection from "../../../../components/screen/contract/invoice/InvoiceTemplateItemSection";
 import {
   convertDaysToString,
   generateStaticAssetUrl,
@@ -347,7 +347,7 @@ const ContractInvoiceTemplateIndex = ({
 
         {/* Detail Kontrak & Daftar Service */}
         <section className="shadow-md rounded-md bg-white p-6 mb-4 gap-6">
-          <ContractInvoiceItemSection
+          <InvoiceTemplateItemSection
             dataServiceTemplateNames={dataServiceTemplateNames}
             setDataServiceTemplateNames={setDataServiceTemplateNames}
             dataServices={dataServices}
@@ -361,6 +361,7 @@ const ContractInvoiceTemplateIndex = ({
         initProps={initProps}
         visible={modalInvoice}
         onvisible={setModalInvoice}
+        dataContract={dataContract}
       />
 
       <ModalContractInfo
