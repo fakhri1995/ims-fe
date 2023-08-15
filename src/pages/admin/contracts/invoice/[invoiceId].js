@@ -35,7 +35,7 @@ import {
   FILE,
   LIST,
 } from "../../../../components/screen/contract/detail/ContractInfoSection";
-import ContractInvoiceItemSection from "../../../../components/screen/contract/invoice/ContractInvoiceItemSection";
+import InvoiceItemSection from "../../../../components/screen/contract/invoice/InvoiceItemSection";
 import {
   convertDaysToString,
   generateStaticAssetUrl,
@@ -266,8 +266,8 @@ const ContractInvoiceFormIndex = ({
       .finally(() => setLoadingSave(false));
   };
 
-  // console.log({ dataServices });
-  // console.log({ dataInvoice });
+  console.log({ dataServices });
+  console.log({ dataInvoice });
   return (
     <Layout
       tok={initProps}
@@ -521,13 +521,20 @@ const ContractInvoiceFormIndex = ({
 
         {/* Detail Kontrak & Daftar Service */}
         <section className="shadow-md rounded-md bg-white p-6 mb-4 gap-6">
-          <ContractInvoiceItemSection
+          <InvoiceItemSection
             dataServiceTemplateNames={dataServiceTemplateNames}
             setDataServiceTemplateNames={setDataServiceTemplateNames}
             dataServices={dataServices}
             setDataServices={setDataServices}
             loading={loadingInvoice}
           />
+
+          {/* <ContractServiceForm
+            initProps={initProps}
+            dataContractUpdate={dataInvoice}
+            setDataContractUpdate={setDataInvoice}
+            loading={loadingInvoice}
+          /> */}
         </section>
       </div>
 
