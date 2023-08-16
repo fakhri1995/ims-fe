@@ -324,23 +324,29 @@ const ModalStatusManage = ({
             </p>
           </div>
           <div className="flex space-x-2 items-center">
-            <button
-              onClick={onClickEdit}
-              className="border-none shadow-none hover:opacity-70 bg-transparent"
-              disabled={!isAllowedToEditStatus}
-            >
-              <EditSquareIconSvg size={24} color={"#CCCCCC"} />
-            </button>
-            <button
-              {...listeners}
-              {...attributes}
-              className="bg-transparent -mt-1"
-            >
-              <HolderOutlined
-                rev={""}
-                className="text-lg text-mono50 cursor-move"
-              />
-            </button>
+            {isAllowedToEditStatus && (
+              <>
+                <button
+                  onClick={onClickEdit}
+                  className="border-none shadow-none hover:opacity-70 bg-transparent"
+                  disabled={!isAllowedToEditStatus}
+                >
+                  <EditSquareIconSvg size={24} color={"#CCCCCC"} />
+                </button>
+
+                <button
+                  {...listeners}
+                  {...attributes}
+                  className="bg-transparent -mt-1"
+                  disabled={!isAllowedToEditStatus}
+                >
+                  <HolderOutlined
+                    rev={""}
+                    className="text-lg text-mono50 cursor-move"
+                  />
+                </button>
+              </>
+            )}
           </div>
         </div>
       </li>
