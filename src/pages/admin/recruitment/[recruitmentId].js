@@ -691,7 +691,7 @@ const RecruitmentDetailIndex = ({
             <div className="flex flex-col shadow-lg rounded-md bg-white p-4 space-y-4">
               <div className="flex flex-row space-x-2 items-center justify-center">
                 <OneUserIconSvg size={32} color="#4D4D4D" />
-                <h3 className="mig-heading--3">{dataRecruitment.name}</h3>
+                <h3 className="mig-heading--3">{dataRecruitment?.name}</h3>
               </div>
               <ButtonSys
                 type={isAllowedToUpdateRecruitment ? "default" : "primary"}
@@ -705,32 +705,28 @@ const RecruitmentDetailIndex = ({
               </ButtonSys>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Email</p>
-                <p className="text-md">{dataRecruitment.email || "-"}</p>
+                <p className="text-md">{dataRecruitment?.email || "-"}</p>
               </div>
-              {/* <div className="space-y-2">
-							<p className="mig-caption--medium text-mono80">Password</p>
-							<p className="text-md">pass</p>
-						</div> */}
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Universitas</p>
-                <p className="text-md">{dataRecruitment.university || "-"}</p>
+                <p className="text-md">{dataRecruitment?.university || "-"}</p>
               </div>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">
                   Role yang Didaftarkan
                 </p>
-                <p className="text-md">{dataRecruitment.role?.name || "-"}</p>
+                <p className="text-md">{dataRecruitment?.role?.name || "-"}</p>
               </div>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Tipe Role</p>
                 <p className="text-md">
-                  {dataRecruitment.role?.type?.name || "-"}
+                  {dataRecruitment?.role?.type?.name || "-"}
                 </p>
               </div>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Jalur Daftar</p>
                 <p className="text-md">
-                  {dataRecruitment.jalur_daftar?.name || "-"}
+                  {dataRecruitment?.jalur_daftar?.name || "-"}
                 </p>
               </div>
               <div className="space-y-2">
@@ -738,8 +734,8 @@ const RecruitmentDetailIndex = ({
                   Tanggal Daftar
                 </p>
                 <p className="text-md">
-                  {moment(dataRecruitment.created_at).format("LL")},&nbsp;
-                  {moment(dataRecruitment.created_at).format("LT")}
+                  {moment(dataRecruitment?.created_at).format("LL")},&nbsp;
+                  {moment(dataRecruitment?.created_at).format("LT")}
                 </p>
               </div>
               <div className="space-y-2">
@@ -796,8 +792,8 @@ const RecruitmentDetailIndex = ({
               </div>
               <Spin spinning={loadingActivities}>
                 {dataActivities?.slice(0, 5).map((activity) => (
-                  <div key={activity.id} className="mb-6">
-                    <p className="text-md mb-2">{activity.notes}</p>
+                  <div key={activity?.id} className="mb-6">
+                    <p className="text-md mb-2">{activity?.notes}</p>
                     <div className="flex flex-row justify-between flex-wrap items-center">
                       <div className="flex flex-row text-wrap w-30">
                         <img
@@ -805,13 +801,11 @@ const RecruitmentDetailIndex = ({
                           className="rounded-full w-5 h-5 mr-2"
                         ></img>
                         <p className="mig-caption--medium text-primary100 ">
-                          {`${activity.causer?.name} - ${activity.causer?.roles[0].name}`}
+                          {`${activity?.causer?.name} - ${activity?.causer?.roles[0].name}`}
                         </p>
                       </div>
                       <p className="text-sm text-mono80">
-                        {/* {moment(activity.created_at).format('ll')},&nbsp;
-											{moment(activity.created_at).format('LT')} */}
-                        {moment(activity.created_at).calendar()}
+                        {moment(activity?.created_at).calendar()}
                       </p>
                     </div>
                   </div>
@@ -836,8 +830,8 @@ const RecruitmentDetailIndex = ({
               <h4 className="mig-heading--4 mb-6">Aktivitas</h4>
               <Spin spinning={loadingActivities}>
                 {dataActivities?.slice(0, 5).map((activity) => (
-                  <div key={activity.id} className="mb-6">
-                    <p className="text-md mb-2">{activity.description}</p>
+                  <div key={activity?.id} className="mb-6">
+                    <p className="text-md mb-2">{activity?.description}</p>
                     <div className="flex flex-row justify-between flex-wrap items-center">
                       <div className="flex flex-row text-wrap w-30">
                         <img
@@ -845,13 +839,11 @@ const RecruitmentDetailIndex = ({
                           className="rounded-full w-5 h-5 mr-2"
                         ></img>
                         <p className="mig-caption--medium text-primary100 ">
-                          {`${activity.causer?.name} - ${activity.causer?.roles[0].name}`}
+                          {`${activity?.causer?.name} - ${activity?.causer?.roles[0].name}`}
                         </p>
                       </div>
                       <p className="text-sm text-mono80 ">
-                        {/* {moment(activity.created_at).format('ll')},&nbsp;
-											{moment(activity.created_at).format('LT')} */}
-                        {moment(activity.created_at).calendar()}
+                        {moment(activity?.created_at).calendar()}
                       </p>
                     </div>
                   </div>
@@ -915,16 +907,16 @@ const RecruitmentDetailIndex = ({
                 </div>
                 <div className="flex flex-row space-x-1 items-center">
                   <h4 className="mig-heading--4">
-                    {dataRecruitment.stage?.name}
+                    {dataRecruitment?.stage?.name}
                   </h4>
-                  {checkStageIsAvailable(dataRecruitment.stage?.name) ===
+                  {checkStageIsAvailable(dataRecruitment?.stage?.name) ===
                     false && (
                     <Popover
                       content={
                         <div className="flex flex-row space-x-4 w-80">
                           <InfoCircleIconSvg color={"#BF4A40"} size={18} />
                           <p>
-                            Stage {dataRecruitment.stage?.name} telah dihapus.
+                            Stage {dataRecruitment?.stage?.name} telah dihapus.
                             Silahkan lakukan pengubahan Stage.
                           </p>
                         </div>
@@ -978,21 +970,21 @@ const RecruitmentDetailIndex = ({
                   <div
                     className="rounded-full w-4 h-4"
                     style={{
-                      backgroundColor: `${dataRecruitment.status?.color}`,
+                      backgroundColor: `${dataRecruitment?.status?.color}`,
                     }}
                   />
                   <h4 className="mig-heading--4">
-                    {dataRecruitment.status?.name}
+                    {dataRecruitment?.status?.name}
                   </h4>
-                  {checkStatusIsAvailable(dataRecruitment.status?.name) ===
+                  {checkStatusIsAvailable(dataRecruitment?.status?.name) ===
                     false && (
                     <Popover
                       content={
                         <div className="flex flex-row space-x-4 w-80">
                           <InfoCircleIconSvg color={"#BF4A40"} size={18} />
                           <p>
-                            Status {dataRecruitment.status?.name} telah dihapus.
-                            Silahkan lakukan pengubahan Status.
+                            Status {dataRecruitment?.status?.name} telah
+                            dihapus. Silahkan lakukan pengubahan Status.
                           </p>
                         </div>
                       }
@@ -1075,6 +1067,7 @@ const RecruitmentDetailIndex = ({
                   </ButtonSys>
                 </div>
               </div>
+
               <div className="flex flex-col pt-4 pb-8">
                 <p className="text-sm font-bold text-primary100 mb-4">
                   Informasi Dasar
@@ -1082,174 +1075,225 @@ const RecruitmentDetailIndex = ({
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col space-y-2">
                     <p className="mig-caption--medium text-mono80">Nama</p>
-                    <p className="text-md">{dataResume.name}</p>
+                    <p className="text-md">{dataResume?.name || "-"}</p>
                   </div>
                   <div className="flex flex-col space-y-2">
                     <p className="mig-caption--medium text-mono80">
                       Nomor Telepon
                     </p>
-                    <p className="text-md">{dataResume.telp}</p>
+                    <p className="text-md">{dataResume?.telp || "-"}</p>
                   </div>
                   <div className="flex flex-col space-y-2">
                     <p className="mig-caption--medium text-mono80">Email</p>
-                    <p className="text-md">{dataResume.email}</p>
+                    <p className="text-md">{dataResume?.email || "-"}</p>
                   </div>
                   <div className="flex flex-col space-y-2 col-span-2">
                     <p className="mig-caption--medium text-mono80">Alamat</p>
                     <p className="text-md">
-                      {`${dataResume.city}, ${dataResume.province}`}
+                      {dataResume?.city && dataResume?.province
+                        ? `${dataResume.city}, ${dataResume.province}`
+                        : dataResume?.city || dataResume?.province
+                        ? `${dataResume.city || dataResume.province}`
+                        : "-"}
                     </p>
                   </div>
+                </div>
+              </div>
+              <div className="flex flex-col pt-4 pb-8">
+                <p className="text-sm font-bold text-primary100 mb-4">
+                  Summary
+                </p>
+                <div>
+                  {dataResume?.summaries?.description ? (
+                    parse(dataResume?.summaries?.description)
+                  ) : (
+                    <p>-</p>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col pt-4 pb-4">
                 <p className="text-sm font-bold text-primary100 mb-9">
                   Pengalaman Kerja
                 </p>
-                <Timeline className="pl-6">
-                  {dataResume.experiences?.map((experience) => (
-                    <Timeline.Item color="#35763B" key={experience.id}>
-                      <p className="text-sm text-mono30 font-bold mb-1">
-                        {experience.role}
-                      </p>
-                      <div className="flex flex-row">
-                        <p className="mig-caption text-mono50 mb-2">
-                          {experience.company},&nbsp;
+                {dataResume?.experiences?.length ? (
+                  <Timeline className="pl-6">
+                    {dataResume?.experiences?.map((experience) => (
+                      <Timeline.Item color="#35763B" key={experience?.id}>
+                        <p className="text-sm text-mono30 font-bold mb-1">
+                          {experience?.role || "-"}
                         </p>
-                        <p className="mig-caption text-mono80">
-                          {moment(experience.start_date).format("MMMM YYYY")}{" "}
-                          -&nbsp;
-                          {moment(experience.end_date).format("MMMM YYYY")}
+                        <div className="flex flex-row">
+                          <p className="mig-caption text-mono50 mb-2">
+                            {experience?.company || "-"},&nbsp;
+                          </p>
+                          <p className="mig-caption text-mono80">
+                            {moment(experience?.start_date).format("MMMM YYYY")}{" "}
+                            -&nbsp;
+                            {moment(experience?.end_date).format("MMMM YYYY")}
+                          </p>
+                        </div>
+                        <p className="mig-caption text-mono50">
+                          {parse(experience?.description || "-")}
                         </p>
-                      </div>
-                      <p className="mig-caption text-mono50">
-                        {parse(experience.description || "")}
-                      </p>
-                    </Timeline.Item>
-                  ))}
-                </Timeline>
+                      </Timeline.Item>
+                    ))}
+                  </Timeline>
+                ) : (
+                  <p>-</p>
+                )}
               </div>
               <div className="flex flex-col pt-4 pb-4">
                 <p className="text-sm font-bold text-primary100 mb-9">
                   Riwayat Pendidikan
                 </p>
-                <Timeline className="pl-6">
-                  {dataResume.educations?.map((edu) => (
-                    <Timeline.Item color="#35763B" key={edu.id}>
-                      <p className="text-sm text-mono30 font-bold mb-1">
-                        {edu.university}
-                      </p>
-                      <div className="flex flex-row">
-                        <p className="mig-caption text-mono50 mb-2">
-                          {edu.major},&nbsp;
+                {dataResume?.educations?.length ? (
+                  <Timeline className="pl-6">
+                    {dataResume?.educations?.map((edu) => (
+                      <Timeline.Item color="#35763B" key={edu?.id}>
+                        <p className="text-sm text-mono30 font-bold mb-1">
+                          {edu?.university}
                         </p>
-                        <p className="mig-caption text-mono80">
-                          {moment(edu.graduation_year).format("YYYY")}
-                        </p>
-                      </div>
-                    </Timeline.Item>
-                  ))}
-                </Timeline>
+                        <div className="flex flex-row">
+                          <p className="mig-caption text-mono50 mb-2">
+                            {edu?.major},&nbsp;
+                          </p>
+                          <p className="mig-caption text-mono80">
+                            {moment(edu?.graduation_year).format("YYYY")}
+                          </p>
+                        </div>
+                      </Timeline.Item>
+                    ))}
+                  </Timeline>
+                ) : (
+                  <p>-</p>
+                )}
               </div>
               <div className="flex flex-col pt-4 pb-4">
                 <p className="text-sm font-bold text-primary100 mb-4">Skill</p>
-                <div className="flex flex-wrap">
-                  {dataResume.skills?.map((skill) => (
-                    <Tag
-                      key={skill.id}
-                      color="#35763B1A"
-                      className="text-primary100 mb-3"
-                    >
-                      {skill.name}
-                    </Tag>
-                  ))}
-                </div>
+                {dataResume?.skills?.length ? (
+                  <div className="flex flex-wrap">
+                    {dataResume?.skills?.map((skill) => (
+                      <Tag
+                        key={skill?.id}
+                        color="#35763B1A"
+                        className="text-primary100 mb-3"
+                      >
+                        {skill?.name}
+                      </Tag>
+                    ))}
+                  </div>
+                ) : (
+                  <p>-</p>
+                )}
               </div>
               <div className="flex flex-col pt-4 pb-4">
                 <p className="text-sm font-bold text-primary100 mb-4">Proyek</p>
-                <div className="flex flex-col space-y-4">
-                  {dataResume.projects?.map((proj) => (
-                    <div key={proj.id}>
-                      <p className="text-sm text-mono30 font-bold mb-1">
-                        {proj.name}
-                      </p>
-                      <p className="mig-caption text-mono50 mb-2">
-                        {proj.description}
-                      </p>
-                      <p className="mig-caption text-mono80">
-                        {moment(proj.year).format("YYYY")}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                {dataResume?.projects?.length ? (
+                  <div className="flex flex-col space-y-4">
+                    {dataResume?.projects?.map((proj) => (
+                      <div key={proj?.id}>
+                        <p className="text-sm text-mono30 font-bold mb-1">
+                          {proj?.name}
+                        </p>
+                        <p className="mig-caption text-mono50 mb-2">
+                          {proj?.description}
+                        </p>
+                        <p className="mig-caption text-mono80">
+                          {moment(proj?.year).format("YYYY")}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>-</p>
+                )}
               </div>
               <div className="flex flex-col pt-4 pb-4">
                 <p className="text-sm font-bold text-primary100 mb-4">
                   Pelatihan
                 </p>
-                <div className="flex flex-col space-y-4">
-                  {dataResume.trainings?.map((train) => (
-                    <div key={train.id}>
-                      <p className="text-sm text-mono30 font-bold mb-1">
-                        {train.name}
-                      </p>
-                      <p className="mig-caption text-mono50 mb-2">
-                        {train.organizer}, {moment(train.year).format("YYYY")}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                {dataResume?.trainings?.length ? (
+                  <div className="flex flex-col space-y-4">
+                    {dataResume?.trainings?.map((train) => (
+                      <div key={train.id}>
+                        <p className="text-sm text-mono30 font-bold mb-1">
+                          {train?.name}
+                        </p>
+                        <p className="mig-caption text-mono50 mb-2">
+                          {train?.organizer},{" "}
+                          {moment(train?.year).format("YYYY")}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>-</p>
+                )}
               </div>
               <div className="flex flex-col pt-4 pb-4">
                 <p className="text-sm font-bold text-primary100 mb-4">
                   Lisensi dan Sertifikasi
                 </p>
-                <div className="flex flex-col space-y-4">
-                  {dataResume.certificates?.map((certif) => (
-                    <div key={certif.id}>
-                      <p className="text-sm text-mono30 font-bold mb-1">
-                        {certif.name}
-                      </p>
-                      <p className="mig-caption text-mono50 mb-2">
-                        {certif.organizer}, {moment(certif.year).format("YYYY")}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                {dataResume?.certificates?.length ? (
+                  <div className="flex flex-col space-y-4">
+                    {dataResume?.certificates?.map((certif) => (
+                      <div key={certif?.id}>
+                        <p className="text-sm text-mono30 font-bold mb-1">
+                          {certif?.name}
+                        </p>
+                        <p className="mig-caption text-mono50 mb-2">
+                          {certif?.organizer},{" "}
+                          {moment(certif?.year).format("YYYY")}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>-</p>
+                )}
               </div>
               <div className="flex flex-col pt-4 pb-4">
                 <p className="text-sm font-bold text-primary100 mb-4">
                   Penghargaan
                 </p>
-                <div className="flex flex-col space-y-4">
-                  {dataResume.achievements?.map((achiev) => (
-                    <div key={achiev.id}>
-                      <p className="text-sm text-mono30 font-bold mb-1">
-                        {achiev.name}
-                      </p>
-                      <p className="mig-caption text-mono50 mb-2">
-                        {achiev.organizer}, {moment(achiev.year).format("YYYY")}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                {dataResume?.achievements?.length ? (
+                  <div className="flex flex-col space-y-4">
+                    {dataResume?.achievements?.map((achiev) => (
+                      <div key={achiev?.id}>
+                        <p className="text-sm text-mono30 font-bold mb-1">
+                          {achiev?.name}
+                        </p>
+                        <p className="mig-caption text-mono50 mb-2">
+                          {achiev?.organizer},{" "}
+                          {moment(achiev?.year).format("YYYY")}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>-</p>
+                )}
               </div>
               <div className="flex flex-col pt-4 pb-4">
                 <p className="text-sm font-bold text-primary100 mb-4">
                   Hasil Technical Assessment
                 </p>
-                <ul>
-                  {dataResume.assessment_results?.map((result) => (
-                    <li key={result.id}>
-                      <div className="flex flex-row justify-between mb-1">
-                        <p className="text-mono50 mr-2">{result.criteria}</p>
-                        <p className="text-primary100 font-bold">
-                          {result.value}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                {dataResume?.assessment_results?.length ? (
+                  <ul>
+                    {dataResume?.assessment_results?.map((result) => (
+                      <li key={result.id}>
+                        <div className="flex flex-row justify-between mb-1">
+                          <p className="text-mono50 mr-2">{result?.criteria}</p>
+                          <p className="text-primary100 font-bold">
+                            {result?.value}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>-</p>
+                )}
               </div>
             </div>
           </div>
