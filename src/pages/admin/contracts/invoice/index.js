@@ -9,7 +9,7 @@ import {
   Tooltip,
   notification,
 } from "antd";
-// import locale from "antd/es/date-picker/locale/id_ID";
+import locale from "antd/lib/date-picker/locale/id_ID";
 import moment from "moment";
 import {
   NumberParam,
@@ -45,12 +45,13 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   COMPANY_CLIENTS_GET,
-  CONTRACTS_COUNT_GET,
   CONTRACTS_GET,
-  CONTRACT_ADD,
   CONTRACT_DELETE,
-  CONTRACT_GET,
-  CONTRACT_UPDATE,
+  CONTRACT_INVOICES_GET,
+  CONTRACT_INVOICE_ADD,
+  CONTRACT_INVOICE_DELETE,
+  CONTRACT_INVOICE_GET,
+  CONTRACT_INVOICE_UPDATE,
   RECRUITMENT_STATUSES_LIST_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
@@ -92,16 +93,15 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
-  const isAllowedToGetContracts = hasPermission(CONTRACTS_GET);
-  const isAllowedToGetContract = hasPermission(CONTRACT_GET);
-  const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
-  const isAllowedToDeleteContract = hasPermission(CONTRACT_DELETE);
-  const isAllowedToAddContract = hasPermission(CONTRACT_ADD);
-  const isAllowedToGetContractCount = hasPermission(CONTRACTS_COUNT_GET);
+  const isAllowedToGetInvoices = hasPermission(CONTRACT_INVOICES_GET);
+  const isAllowedToGetInvoice = hasPermission(CONTRACT_INVOICE_GET);
+  const isAllowedToUpdateInvoice = hasPermission(CONTRACT_INVOICE_UPDATE);
+  const isAllowedToDeleteInvoice = hasPermission(CONTRACT_INVOICE_DELETE);
+  const isAllowedToAddInvoice = hasPermission(CONTRACT_INVOICE_ADD);
 
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
 
-  const isAllowedToGetContractStatusList = hasPermission(
+  const isAllowedToGetInvoicestatusList = hasPermission(
     RECRUITMENT_STATUSES_LIST_GET
   );
 
@@ -145,7 +145,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2. Use state
   // 2.1. Table Contract
   // filter search & selected options
-  const [searchingFilterContracts, setSearchingFilterContracts] = useState("");
+  const [searchingFilterInvoices, setSearchingFilterContracts] = useState("");
   const [selectedDuration, setSelectedDuration] = useState(undefined);
   const [selectedCompany, setSelectedCompany] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
@@ -161,18 +161,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 3. UseEffect & UseQuery
-  // 3.1. Get Contract Count
-  const { data: dataCount, isLoading: loadingDataCount } = useQuery(
-    [CONTRACTS_COUNT_GET, refresh],
-    () =>
-      ContractService.getCountContract(initProps, isAllowedToGetContractCount),
-    {
-      enabled: isAllowedToGetContractCount,
-      select: (response) => response.data,
-    }
-  );
-
-  // 3.2. Get Company Client List
+  // 3.1. Get Company Client List
   const { data: dataCompanyList, isLoading: loadingCompanyList } = useQuery(
     [COMPANY_CLIENTS_GET],
     () => CompanyService.getCompanyClientList(axiosClient, true),
@@ -182,19 +171,19 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
   );
 
-  // 3.3. Get Contracts
+  // 3.2. Get Invoices
   const { data: dataRawContracts, isLoading: loadingDataRawContracts } =
     useQuery(
-      [CONTRACTS_GET, queryParams, searchingFilterContracts, refresh],
+      [CONTRACT_INVOICES_GET, queryParams, searchingFilterInvoices, refresh],
       () =>
-        ContractService.getContracts(
+        ContractService.getInvoices(
           initProps,
-          isAllowedToGetContracts,
+          isAllowedToGetInvoices,
           queryParams,
-          searchingFilterContracts
+          searchingFilterInvoices
         ),
       {
-        enabled: isAllowedToGetContracts,
+        enabled: isAllowedToGetInvoices,
         select: (response) => response.data,
       }
     );
@@ -214,53 +203,9 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     "Enter"
   );
 
-  // 4.2. Create Contract
-  const onAddContract = useCallback(() => {
-    handleAddContract();
-  }, []);
-
-  const handleAddContract = () => {
-    // if (!isAllowedToAddContract) {
-    //   permissionWarningNotification("Menambah", "Kontrak");
-    //   return;
-    // }
-    setLoadingAdd(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addContract`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          setTimeout(() => {
-            rt.push(
-              `/admin/contracts/create?id=${response2.data?.id}&prevpath=add`
-            );
-            setLoadingAdd(false);
-          }, 500);
-        } else {
-          notification.error({
-            message: `Gagal menambahkan kontrak. ${response2.message}`,
-            duration: 3,
-          });
-          setLoadingAdd(false);
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menambahkan kontrak. ${err.response}`,
-          duration: 3,
-        });
-        setLoadingAdd(false);
-      });
-  };
-
-  // 4.3. Delete Contract
-  const handleDeleteContract = (id) => {
-    if (!isAllowedToDeleteContract) {
+  // 4.3. Delete Invoice
+  const handleDeleteInvoice = (id) => {
+    if (!isAllowedToDeleteInvoice) {
       permissionWarningNotification("Menghapus", "Kontrak");
       return;
     }
@@ -317,29 +262,32 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
     {
       title: "Nomor Invoice",
-      key: "contract_number",
-      dataIndex: "contract_number",
+      key: "invoice_number",
+      dataIndex: "invoice_number",
       render: (text, record, index) => {
         return {
           children: <div className="xl:w-40">{text || "-"}</div>,
         };
       },
-      sorter: isAllowedToGetContracts
+      sorter: isAllowedToGetInvoices
         ? (a, b) =>
-            a.contract_number?.toLowerCase() > b.contract_number?.toLowerCase()
+            a.invoice_number?.toLowerCase() > b.invoice_number?.toLowerCase()
         : false,
     },
     {
       title: "Nama Invoice",
-      key: "title",
-      dataIndex: "title",
+      key: "invoice_name",
+      dataIndex: "invoice_name",
       render: (text, record, index) => {
         return {
-          children: <>{record.title || "-"}</>,
+          children: <>{record.invoice_name || "-"}</>,
         };
       },
-      sorter: isAllowedToGetContracts
-        ? (a, b) => a.title?.toLowerCase().localeCompare(b.title?.toLowerCase())
+      sorter: isAllowedToGetInvoices
+        ? (a, b) =>
+            a.invoice_name
+              ?.toLowerCase()
+              .localeCompare(b.invoice_name?.toLowerCase())
         : false,
     },
     {
@@ -354,28 +302,28 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
     {
       title: "Tanggal Terbit",
-      key: "start_date",
-      dataIndex: "start_date",
+      key: "invoice_raise_at",
+      dataIndex: "invoice_raise_at",
       render: (text, record, index) => {
         return {
           children: <div>{momentFormatDate(text)}</div>,
         };
       },
-      sorter: isAllowedToGetContracts
-        ? (a, b) => a?.start_date?.localeCompare(b?.start_date)
+      sorter: isAllowedToGetInvoices
+        ? (a, b) => a?.invoice_raise_at?.localeCompare(b?.invoice_raise_at)
         : false,
     },
     {
       title: "Total Tagihan",
-      key: "duration",
-      dataIndex: "duration",
-      render: (duration, record, index) => {
+      key: "invoice_total",
+      dataIndex: "invoice_total",
+      render: (text, record, index) => {
         return {
-          children: <>{convertDaysToString(duration)}</>,
+          children: <>Rp{Number(text)?.toLocaleString("id-ID") || "-"}</>,
         };
       },
-      sorter: isAllowedToGetContracts
-        ? (a, b) => a?.duration - b?.duration
+      sorter: isAllowedToGetInvoices
+        ? (a, b) => a?.invoice_total - b?.invoice_total
         : false,
     },
     {
@@ -405,7 +353,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           ),
         };
       },
-      sorter: isAllowedToGetContracts
+      sorter: isAllowedToGetInvoices
         ? (a, b) => {
             const dataStatusListIds = dataStatusList?.map(
               (status) => status?.id
@@ -457,7 +405,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                 >
                   <Button
                     type={"primary"}
-                    disabled={!isAllowedToUpdateContract}
+                    disabled={!isAllowedToUpdateInvoice}
                     onClick={(event) => {
                       event.stopPropagation();
                       rt.push(`invoice/${record.id}`);
@@ -505,7 +453,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           ),
         };
       },
-      sorter: isAllowedToGetContracts
+      sorter: isAllowedToGetInvoices
         ? (a, b) =>
             a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
         : false,
@@ -538,7 +486,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                 defaultValue={moment()}
                 format={"MMMM YYYY"}
                 picker="month"
-                // locale={locale}
+                locale={locale}
               />
             </div>
             <div className="flex flex-col gap-4">
@@ -547,18 +495,18 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                 {/* Search by keyword (kata kunci) */}
                 <div className="w-full md:w-4/12">
                   <Input
-                    defaultValue={searchingFilterContracts}
+                    defaultValue={searchingFilterInvoices}
                     style={{ width: `100%` }}
                     placeholder="Cari..."
                     allowClear
                     onChange={(e) => {
                       setTimeout(
                         () => setSearchingFilterContracts(e.target.value),
-                        500
+                        1000
                       );
                     }}
                     onKeyPress={onKeyPressHandler}
-                    disabled={!isAllowedToGetContracts}
+                    disabled={!isAllowedToGetInvoices}
                   />
                 </div>
 
@@ -568,7 +516,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     defaultValue={queryParams.status_types}
                     allowClear
                     name={`status`}
-                    disabled={!isAllowedToGetContractStatusList}
+                    disabled={!isAllowedToGetInvoicestatusList}
                     placeholder="Semua Status"
                     style={{ width: `100%` }}
                     className="themedSelector"
@@ -677,7 +625,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <ButtonSys
                     type={`primary`}
                     onClick={onFilterRecruitments}
-                    disabled={!isAllowedToGetContracts}
+                    disabled={!isAllowedToGetInvoices}
                   >
                     <div className="flex flex-row space-x-2.5 w-full items-center">
                       <SearchIconSvg size={15} color={`#ffffff`} />
@@ -754,7 +702,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           title={`Peringatan`}
           visible={modalDelete}
           onvisible={setModalDelete}
-          onOk={() => handleDeleteContract(dataRowClicked?.id)}
+          onOk={() => handleDeleteInvoice(dataRowClicked?.id)}
           onCancel={() => {
             setModalDelete(false);
           }}

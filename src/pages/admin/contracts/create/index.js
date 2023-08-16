@@ -397,8 +397,9 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               <Select
                 showSearch
                 value={
-                  dataContractUpdate?.client_id &&
-                  Number(dataContractUpdate?.client_id)
+                  dataContractUpdate?.client_id
+                    ? Number(dataContractUpdate?.client_id)
+                    : null
                 }
                 onChange={(value) => onChangeSelect(value, "client_id")}
                 placeholder="Pilih klien"
@@ -435,8 +436,9 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               <Select
                 showSearch
                 value={
-                  dataContractUpdate?.requester_id &&
-                  Number(dataContractUpdate?.requester_id)
+                  dataContractUpdate?.requester_id
+                    ? Number(dataContractUpdate?.requester_id)
+                    : null
                 }
                 onChange={(value) => onChangeSelect(value, "requester_id")}
                 placeholder="Pilih requester"
