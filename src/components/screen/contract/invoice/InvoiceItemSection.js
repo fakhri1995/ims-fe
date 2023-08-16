@@ -1,4 +1,4 @@
-import { Input, Table } from "antd";
+import { Input, Popconfirm, Table } from "antd";
 import React, { useCallback, useRef } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -8,15 +8,21 @@ import ButtonSys from "../../../button";
 import {
   CheckIconSvg,
   EditSquareIconSvg,
+  PlusIconSvg,
   SearchIconSvg,
   SquarePlusIconSvg,
   TrashIconSvg,
   XIconSvg,
 } from "../../../icon";
 import ModalColumnAdd from "../../../modal/contracts/modalColumnAdd";
+import ModalServiceCreate from "../../../modal/contracts/modalServiceCreate";
+import ModalServiceUpdate from "../../../modal/contracts/modalServiceUpdate";
 import { ModalHapus2 } from "../../../modal/modalCustom";
 
 const InvoiceItemSection = ({
+  initProps,
+  dataInvoiceUpdate,
+  setDataInvoiceUpdate,
   dataServiceTemplateNames,
   setDataServiceTemplateNames,
   dataServices,
@@ -44,12 +50,10 @@ const InvoiceItemSection = ({
   const prevCellValue = useRef();
   const prevCellIndex = useRef();
 
-  console.log("cell value", currentCellValue);
-  console.log("cell index", currentCellIndex);
-
   // Modal
   const [modalAddColumn, setModalAddColumn] = useState(false);
   const [modalDeleteColumn, setModalDeleteColumn] = useState(false);
+  const [modalAddItem, setModalAddItem] = useState(false);
   const [modalEditItem, setModalEditItem] = useState(false);
 
   // 2. Use Effect
@@ -120,6 +124,10 @@ const InvoiceItemSection = ({
       tempDataServices[cellIdx.row].service_template_value.details[
         cellIdx.col
       ] = value;
+    } else {
+      tempDataServices[cellIdx.row].service_template_value = {
+        details: [value],
+      };
     }
 
     console.log({ tempDataServices });
@@ -139,7 +147,7 @@ const InvoiceItemSection = ({
           onClick={() => {
             setDataCurrentColumn((prev) => ({
               ...prev,
-              idx: idx,
+              idx: colIdx,
               name: name,
             }));
             setModalDeleteColumn(true);
@@ -279,7 +287,7 @@ const InvoiceItemSection = ({
     setModalDeleteColumn(false);
   };
 
-  // console.log({ dataServices });
+  console.log({ dataServices });
   // console.log({ currentRowValues });
   // console.log({ dataServiceTemplateNames });
   // console.log({ dynamicColumns });
@@ -329,11 +337,21 @@ const InvoiceItemSection = ({
           pageSize: 5,
           showSizeChanger: false,
         }}
+        footer={() => (
+          <button
+            type="button"
+            onClick={() => setModalAddItem(true)}
+            className="bg-transparent flex items-center space-x-2 text-primary100"
+          >
+            <PlusIconSvg size={16} color={"#35763B"} />
+            <p>Tambah Item Baru</p>
+          </button>
+        )}
         columns={[
           {
             title: "No",
             dataIndex: "key",
-            render: (text, record, index) => <p>{text}</p>,
+            render: (text, record, index) => <p>{text || index + 1}</p>,
           },
           {
             title: "Nama Item",
@@ -382,20 +400,42 @@ const InvoiceItemSection = ({
             dataIndex: "actionButton",
             render: (text, record, rowIndex) => {
               return (
-                <button
-                  onClick={() => {
-                    setModalEditItem(true);
-                  }}
-                  className="bg-transparent hover:opacity-75"
-                >
-                  <EditSquareIconSvg size={24} color={"#CCCCCC"} />
-                </button>
+                <div className="flex gap-2 items-center">
+                  <button
+                    onClick={() => {
+                      setModalEditItem(true);
+                    }}
+                    className="bg-transparent hover:opacity-75"
+                  >
+                    <EditSquareIconSvg size={24} color={"#CCCCCC"} />
+                  </button>
+                  <Popconfirm
+                    title={
+                      <p className="w-40">
+                        Apakah Anda yakin ingin menghapus item ini?
+                      </p>
+                    }
+                    okText={"Ya"}
+                    cancelText={"Tidak"}
+                    placement="bottomRight"
+                    onConfirm={() => {
+                      let tempDataServices = [...dataServices];
+                      tempDataServices.splice(rowIndex, 1);
+                      setDataServices(tempDataServices);
+                    }}
+                  >
+                    <button className="bg-transparent hover:opacity-75">
+                      <TrashIconSvg color={"#CCCCCC"} size={20} />
+                    </button>
+                  </Popconfirm>
+                </div>
               );
             },
           },
         ]}
       />
 
+      {/* Modal add and delete dynamic column in item table*/}
       <ModalColumnAdd
         visible={modalAddColumn}
         onvisible={setModalAddColumn}
@@ -419,6 +459,24 @@ const InvoiceItemSection = ({
         Apakah Anda yakin ingin menghapus kolom{" "}
         <strong>{dataCurrentColumn?.name}</strong>?
       </ModalHapus2>
+
+      {/* Modal add and update item row */}
+      <ModalServiceCreate
+        initProps={initProps}
+        visible={modalAddItem}
+        onvisible={setModalAddItem}
+        dataContractUpdate={dataInvoiceUpdate}
+        setDataContractUpdate={setDataInvoiceUpdate}
+      />
+
+      <ModalServiceUpdate
+        initProps={initProps}
+        visible={modalEditItem}
+        onvisible={setModalEditItem}
+        dataContractUpdate={dataInvoiceUpdate}
+        setDataContractUpdate={setDataInvoiceUpdate}
+        currentIdx={currentCellIndex?.row}
+      />
     </>
   );
 };

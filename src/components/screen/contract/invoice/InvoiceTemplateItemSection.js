@@ -325,7 +325,7 @@ const InvoiceTemplateItemSection = ({
           {
             title: "No",
             dataIndex: "key",
-            render: (text, record, index) => <p>{text}</p>,
+            render: (text, record, index) => <p>{text || index + 1}</p>,
           },
           {
             title: "Nama Item",

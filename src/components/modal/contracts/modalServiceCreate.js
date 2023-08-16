@@ -132,6 +132,10 @@ const ModalServiceCreate = ({
                     style={{ width: `100%` }}
                     onChange={(value, option) => {
                       let tempServiceList = [...dataServiceList];
+                      let tempIdx = dataContractUpdate?.services?.length + idx;
+
+                      tempServiceList[idx].id =
+                        tempServiceList[idx].id || tempIdx;
                       tempServiceList[idx].product_id = value;
                       tempServiceList[idx].price = option.price;
                       tempServiceList[idx].unit = option.price_option;

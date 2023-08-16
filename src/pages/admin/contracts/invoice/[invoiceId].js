@@ -20,7 +20,7 @@ import st from "components/layout-dashboard.module.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { CONTRACT_TEMPLATE_GET, CONTRACT_TEMPLATE_UPDATE } from "lib/features";
+import { CONTRACT_INVOICE_GET, CONTRACT_INVOICE_UPDATE } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
 import {
@@ -74,8 +74,8 @@ const ContractInvoiceFormIndex = ({
   }
 
   // TODO: change feature constant
-  const isAllowedToGetInvoice = hasPermission(CONTRACT_TEMPLATE_GET);
-  const isAllowedToUpdateInvoice = hasPermission(CONTRACT_TEMPLATE_UPDATE);
+  const isAllowedToGetInvoice = hasPermission(CONTRACT_INVOICE_GET);
+  const isAllowedToUpdateInvoice = hasPermission(CONTRACT_INVOICE_UPDATE);
 
   const rt = useRouter();
   // Breadcrumb url
@@ -522,6 +522,9 @@ const ContractInvoiceFormIndex = ({
         {/* Detail Kontrak & Daftar Service */}
         <section className="shadow-md rounded-md bg-white p-6 mb-4 gap-6">
           <InvoiceItemSection
+            initProps={initProps}
+            dataInvoiceUpdate={dataInvoice}
+            setDataInvoiceUpdate={setDataInvoice}
             dataServiceTemplateNames={dataServiceTemplateNames}
             setDataServiceTemplateNames={setDataServiceTemplateNames}
             dataServices={dataServices}
