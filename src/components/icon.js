@@ -2634,11 +2634,11 @@ const AlertCircleIconSvg = ({ size, color }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-alert-circle"
-      width="24"
-      height="24"
+      width={size ? size : 24}
+      height={size ? size : 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#BF4A40"
+      stroke={color ? color : "#BF4A40"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"

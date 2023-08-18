@@ -850,7 +850,6 @@ const ModalUbah = ({
   onOk,
   onCancel,
   loading,
-  itemName,
   disabled,
   children,
   okButtonText,
@@ -864,9 +863,10 @@ const ModalUbah = ({
       closable={closable}
       footer={
         <Spin spinning={loading}>
-          <div className="flex justify-between items-center">
+          <div className="flex gap-4 items-center justify-end">
             <ButtonSys
-              type="default"
+              type={"primary"}
+              color={"mono100"}
               onClick={() => {
                 onvisible(false);
               }}
