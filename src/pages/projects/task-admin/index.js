@@ -312,6 +312,10 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3.4. Get Data Chart Status Task
   useEffect(() => {
     if (!isAllowedToGetTaskStatusCount) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Data Statistik Status Task"
+      );
       setLoadingChart(false);
       return;
     }
@@ -340,6 +344,10 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3.5. Get Data Chart Deadline Task
   useEffect(() => {
     if (!isAllowedToGetTaskDeadlineCount) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Data Statistik Deadline Task"
+      );
       setLoadingChart(false);
       return;
     }
@@ -369,6 +377,10 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3.6. Get Data Chart Staff
   useEffect(() => {
     if (!isAllowedToGetStaffCount) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Data Statistik Jumlah Staff"
+      );
       setLoadingChart(false);
       return;
     }
@@ -635,7 +647,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 py-3 px-2">
                 {/* CARD STATUS TASK */}
-                <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5">
+                <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5 gap-6">
                   <h4 className="mig-heading--4 ">Status Task</h4>
                   {/* CHART STATUS TASK */}
                   <div className="flex flex-col items-center">
