@@ -3,7 +3,7 @@ import React, { useCallback, useRef } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
-import { createKeyPressHandler } from "../../../../lib/helper";
+import { countSubTotal, createKeyPressHandler } from "../../../../lib/helper";
 import ButtonSys from "../../../button";
 import {
   CheckIconSvg,
@@ -129,8 +129,6 @@ const InvoiceItemSection = ({
         details: [value],
       };
     }
-
-    console.log({ tempDataServices });
 
     setDataServices(tempDataServices);
     setIsEdit({ row: null, col: null });
@@ -287,7 +285,7 @@ const InvoiceItemSection = ({
     setModalDeleteColumn(false);
   };
 
-  console.log({ dataServices });
+  // console.log({ dataServices });
   // console.log({ currentRowValues });
   // console.log({ dataServiceTemplateNames });
   // console.log({ dynamicColumns });
@@ -341,7 +339,8 @@ const InvoiceItemSection = ({
           <button
             type="button"
             onClick={() => setModalAddItem(true)}
-            className="bg-transparent flex items-center space-x-2 text-primary100"
+            className="bg-transparent flex items-center space-x-2 
+            text-primary100 hover:opacity-75"
           >
             <PlusIconSvg size={16} color={"#35763B"} />
             <p>Tambah Item Baru</p>
@@ -378,7 +377,7 @@ const InvoiceItemSection = ({
             title: "Subtotal",
             dataIndex: "subtotal",
             render: (text, record) => {
-              let tempSubtotal = Number(record?.pax) * Number(record?.price);
+              const tempSubtotal = countSubTotal(record?.pax, record?.price);
               return (
                 <p className="">
                   Rp{" "}
@@ -390,12 +389,14 @@ const InvoiceItemSection = ({
           ...dynamicColumns,
           {
             title: (
-              <button
-                onClick={() => setModalAddColumn(true)}
-                className="bg-transparent hover:opacity-75"
-              >
-                <SquarePlusIconSvg color={"#4D4D4D"} size={20} />
-              </button>
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setModalAddColumn(true)}
+                  className="bg-transparent hover:opacity-75 "
+                >
+                  <SquarePlusIconSvg color={"#4D4D4D"} size={20} />
+                </button>
+              </div>
             ),
             dataIndex: "actionButton",
             render: (text, record, rowIndex) => {
@@ -403,6 +404,7 @@ const InvoiceItemSection = ({
                 <div className="flex gap-2 items-center">
                   <button
                     onClick={() => {
+                      setCurrentCellIndex({ row: rowIndex, col: 0 });
                       setModalEditItem(true);
                     }}
                     className="bg-transparent hover:opacity-75"
@@ -425,7 +427,7 @@ const InvoiceItemSection = ({
                     }}
                   >
                     <button className="bg-transparent hover:opacity-75">
-                      <TrashIconSvg color={"#CCCCCC"} size={20} />
+                      <TrashIconSvg color={"#CCCCCC"} size={24} />
                     </button>
                   </Popconfirm>
                 </div>
@@ -467,6 +469,7 @@ const InvoiceItemSection = ({
         onvisible={setModalAddItem}
         dataContractUpdate={dataInvoiceUpdate}
         setDataContractUpdate={setDataInvoiceUpdate}
+        isInvoiceForm={true}
       />
 
       <ModalServiceUpdate
@@ -476,6 +479,7 @@ const InvoiceItemSection = ({
         dataContractUpdate={dataInvoiceUpdate}
         setDataContractUpdate={setDataInvoiceUpdate}
         currentIdx={currentCellIndex?.row}
+        isInvoiceForm={true}
       />
     </>
   );

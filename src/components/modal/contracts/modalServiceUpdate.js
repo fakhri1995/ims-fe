@@ -11,6 +11,7 @@ import { useAccessControl } from "contexts/access-control";
 import { PRODUCTS_GET } from "lib/features";
 
 import { ProductCatalogService } from "../../../apis/product-catalog";
+import { countSubTotal } from "../../../lib/helper";
 import ButtonSys from "../../button";
 
 const ModalServiceUpdate = ({
@@ -20,6 +21,7 @@ const ModalServiceUpdate = ({
   dataContractUpdate,
   setDataContractUpdate,
   currentIdx,
+  isInvoiceForm,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetProductInventories = hasPermission(PRODUCTS_GET);
@@ -36,14 +38,19 @@ const ModalServiceUpdate = ({
   });
 
   const [loading, setLoading] = useState(false);
-
   const [serviceTypeSearch, setServiceTypeSearch] = useState("");
 
   // 2. USE QUERY & USE EFFECT
   // 2.1. Set current service data
   useEffect(() => {
     if (visible) {
-      setDataService(dataContractUpdate?.services?.[currentIdx]);
+      let tempService = {};
+      if (isInvoiceForm) {
+        tempService = dataContractUpdate?.invoice_services?.[currentIdx];
+      } else {
+        tempService = dataContractUpdate?.services?.[currentIdx];
+      }
+      setDataService(tempService);
     }
   }, [dataContractUpdate.services, visible]);
 
@@ -82,18 +89,26 @@ const ModalServiceUpdate = ({
   };
 
   const handleSave = () => {
-    let tempServiceList = [...dataContractUpdate.services];
-    tempServiceList.splice(currentIdx, 1, dataService);
-    setDataContractUpdate((prev) => ({
-      ...prev,
-      services: tempServiceList,
-    }));
+    if (isInvoiceForm) {
+      let tempServiceList = [...dataContractUpdate?.invoice_services];
+      tempServiceList.splice(currentIdx, 1, dataService);
+      setDataContractUpdate((prev) => ({
+        ...prev,
+        invoice_services: tempServiceList,
+      }));
+    } else {
+      let tempServiceList = [...dataContractUpdate?.services];
+      tempServiceList.splice(currentIdx, 1, dataService);
+      setDataContractUpdate((prev) => ({
+        ...prev,
+        services: tempServiceList,
+      }));
+    }
 
     handleClose();
   };
 
-  // console.log({ dataServiceTypeList });
-  // console.log({ currentService });
+  // console.log({ dataService });
 
   return (
     <Modal
@@ -193,7 +208,12 @@ const ModalServiceUpdate = ({
                 min={1}
                 value={dataService?.pax}
                 onChange={(e) => {
-                  setDataService((prev) => ({ ...prev, pax: e.target.value }));
+                  const newPax = e.target.value;
+                  setDataService((prev) => ({
+                    ...prev,
+                    pax: newPax,
+                    subtotal: countSubTotal(newPax, prev.price),
+                  }));
                 }}
               />
             </>
@@ -219,9 +239,11 @@ const ModalServiceUpdate = ({
                   min={0}
                   value={dataService?.price}
                   onChange={(e) => {
+                    const newPrice = e.target.value;
                     setDataService((prev) => ({
                       ...prev,
-                      price: e.target.value,
+                      price: newPrice,
+                      subtotal: countSubTotal(prev.pax, newPrice),
                     }));
                   }}
                 />

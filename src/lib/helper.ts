@@ -203,7 +203,6 @@ export const objectToFormData = <T extends Object>(entry: T) => {
  *             value: [4, 5, 6]
  *            }]
  * });
- * // use the payload directly to an axios method with `Content-Type`: `multipart/form-data`
  * ```
  *
  * @param entry Any JavaScript literal object
@@ -402,3 +401,7 @@ export const convertDaysToString = (dayTotal: number) => {
 
   return str;
 };
+
+/** Calculate subtotal */
+export const countSubTotal = (pax: number, price: number) =>
+  Number(pax) * Number(price);

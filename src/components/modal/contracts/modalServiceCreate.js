@@ -10,6 +10,7 @@ import { useAccessControl } from "contexts/access-control";
 import { PRODUCTS_GET } from "lib/features";
 
 import { ProductCatalogService } from "../../../apis/product-catalog";
+import { countSubTotal } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { PlusIconSvg } from "../../icon";
 
@@ -19,6 +20,7 @@ const ModalServiceCreate = ({
   onvisible,
   dataContractUpdate,
   setDataContractUpdate,
+  isInvoiceForm,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetProductInventories = hasPermission(PRODUCTS_GET);
@@ -30,11 +32,11 @@ const ModalServiceCreate = ({
     product_id: null,
     product: { name: "" },
     pax: 0,
-    price: "",
+    price: 0,
+    subtotal: 0,
     unit: "bulan",
   };
   const [dataServiceList, setDataServiceList] = useState([dataService]);
-
   const [loading, setLoading] = useState(false);
   const [serviceTypeSearch, setServiceTypeSearch] = useState("");
 
@@ -67,12 +69,21 @@ const ModalServiceCreate = ({
   };
 
   const handleSave = () => {
-    let tempServiceList = [...dataContractUpdate.services];
-    tempServiceList.push(...dataServiceList);
-    setDataContractUpdate((prev) => ({
-      ...prev,
-      services: tempServiceList,
-    }));
+    if (isInvoiceForm) {
+      let tempServiceList = [...dataContractUpdate?.invoice_services];
+      tempServiceList.push(...dataServiceList);
+      setDataContractUpdate((prev) => ({
+        ...prev,
+        invoice_services: tempServiceList,
+      }));
+    } else {
+      let tempServiceList = [...dataContractUpdate?.services];
+      tempServiceList.splice(...dataServiceList);
+      setDataContractUpdate((prev) => ({
+        ...prev,
+        services: tempServiceList,
+      }));
+    }
 
     handleClose();
   };
@@ -132,7 +143,9 @@ const ModalServiceCreate = ({
                     style={{ width: `100%` }}
                     onChange={(value, option) => {
                       let tempServiceList = [...dataServiceList];
-                      let tempIdx = dataContractUpdate?.services?.length + idx;
+                      let tempIdx = isInvoiceForm
+                        ? dataContractUpdate?.invoice_services?.length + idx
+                        : dataContractUpdate?.services?.length + idx;
 
                       tempServiceList[idx].id =
                         tempServiceList[idx].id || tempIdx;
@@ -184,7 +197,12 @@ const ModalServiceCreate = ({
                   value={service?.pax}
                   onChange={(e) => {
                     let tempServiceList = [...dataServiceList];
-                    tempServiceList[idx].pax = e.target.value;
+                    let newPax = e.target.value;
+                    tempServiceList[idx].pax = newPax;
+                    tempServiceList[idx].subtotal = countSubTotal(
+                      newPax,
+                      tempServiceList[idx]?.price
+                    );
 
                     setDataServiceList(tempServiceList);
                   }}
@@ -212,7 +230,12 @@ const ModalServiceCreate = ({
                       value={service?.price}
                       onChange={(e) => {
                         let tempServiceList = [...dataServiceList];
-                        tempServiceList[idx].price = e.target.value;
+                        let newPrice = e.target.value;
+                        tempServiceList[idx].price = newPrice;
+                        tempServiceList[idx].subtotal = countSubTotal(
+                          tempServiceList[idx]?.pax,
+                          newPrice
+                        );
 
                         setDataServiceList(tempServiceList);
                       }}
