@@ -5,6 +5,7 @@ import {
   Input,
   InputNumber,
   Select,
+  Spin,
   notification,
 } from "antd";
 import debounce from "lodash.debounce";
@@ -26,6 +27,7 @@ import ButtonSys from "../../../../components/button";
 import {
   ArrowLeftIconSvg,
   CalendarEventIconSvg,
+  CheckIconSvg,
   DownloadIcon2Svg,
   FileTextIconSvg,
   PlusIconSvg,
@@ -73,7 +75,6 @@ const ContractInvoiceFormIndex = ({
     return null;
   }
 
-  // TODO: change feature constant
   const isAllowedToGetInvoice = hasPermission(CONTRACT_INVOICE_GET);
   const isAllowedToUpdateInvoice = hasPermission(CONTRACT_INVOICE_UPDATE);
 
@@ -96,22 +97,26 @@ const ContractInvoiceFormIndex = ({
 
   const [modalContractInfo, setModalContractInfo] = useState(false);
 
-  const [loadingInvoice, setLoadingInvoice] = useState(false);
+  const [loadingContractInvoice, setLoadingContractInvoice] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
+  const [showSuccessIcon, setShowSuccessIcon] = useState(false);
+  const [disablePublish, setDisablePublish] = useState(true);
+
+  const requiredField = ["invoice_number", "invoice_name", "invoice_raise_at"];
 
   // 3. Use Effect & Use Query
   // 2.1. Get Invoice Data
   useEffect(() => {
     if (!isAllowedToGetInvoice) {
-      permissionWarningNotification("Mendapatkan", "Data Invoice");
-      setLoadingInvoice(false);
+      permissionWarningNotification("Mendapatkan", "Data Contract Invoice");
+      setLoadingContractInvoice(false);
       return;
     }
 
     if (invoiceId) {
-      setLoadingInvoice(true);
+      setLoadingContractInvoice(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractTemplate?contract_id=${invoiceId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractInvoice?id=${invoiceId}`,
         {
           method: `GET`,
           headers: {
@@ -137,15 +142,16 @@ const ContractInvoiceFormIndex = ({
           });
         })
         .finally(() => {
-          setLoadingInvoice(false);
+          setLoadingContractInvoice(false);
         });
     }
   }, [isAllowedToGetInvoice, refresh]);
 
+  // 2.2. Set displayed invoice detail
   useEffect(() => {
-    if (dataInvoice?.invoice_template) {
-      const currentInvoiceTemplate = [];
-      for (let item of dataInvoice?.invoice_template?.details) {
+    if (dataInvoice?.invoice_attribute?.length) {
+      const currentInvoiceDetail = [];
+      for (let item of dataInvoice?.invoice_attribute) {
         if (!item?.includes("extras")) {
           let tempValue = dataInvoice[item];
 
@@ -165,7 +171,7 @@ const ContractInvoiceFormIndex = ({
             tempValue = dataInvoice?.client?.name;
           }
 
-          currentInvoiceTemplate.push({
+          currentInvoiceDetail.push({
             name: item,
             title: contractInfoString[item],
             value: tempValue,
@@ -180,26 +186,43 @@ const ContractInvoiceFormIndex = ({
                 type: extra?.type,
               };
 
-              currentInvoiceTemplate.push(dataExtra);
+              currentInvoiceDetail.push(dataExtra);
             }
           }
         }
       }
-      setDataInvoiceDetail(currentInvoiceTemplate);
+      setDataInvoiceDetail(currentInvoiceDetail);
     }
-  }, [dataInvoice?.invoice_template]);
+  }, [dataInvoice?.invoice_attribute]);
 
+  // 2.3. Set item table data
   useEffect(() => {
-    setDataServiceTemplateNames(dataInvoice?.service_template?.details);
-    setDataServices(dataInvoice?.services);
-  }, [dataInvoice?.service_template, dataInvoice?.services]);
+    setDataServiceTemplateNames(dataInvoice?.service_attribute);
+    setDataServices(dataInvoice?.invoice_services);
+  }, [dataInvoice?.service_attribute, dataInvoice?.invoice_services]);
+
+  // 2.4. Clean up debounce function when component unmounts
+  useEffect(() => {
+    return () => {
+      debouncedSaveInvoice.cancel();
+    };
+  }, []);
+
+  // 2.5. Enable "Terbitkan" button if all required fields are filled
+  useEffect(() => {
+    const isAllFilled = requiredField.every(
+      (item) => dataInvoice[item]?.length
+    );
+    if (isAllFilled) {
+      setDisablePublish(false);
+    }
+  }, [requiredField.map((item) => dataInvoice[item])]);
 
   // 4. Event
   // Debounce function for auto save draft
   const debouncedSaveInvoice = useCallback(
     debounce((data) => {
-      // handleSaveInvoice(0, data);
-      console.log(data);
+      handleSaveInvoice(0, data);
     }, 5000),
     []
   );
@@ -223,18 +246,23 @@ const ContractInvoiceFormIndex = ({
       return;
     }
 
+    // TODO: recheck if API is done
     const payload = {
-      contract_id: Number(invoiceId),
-      invoice_period: period,
-      invoice_template: dataInvoiceDetail.map((item) => item.name),
-      service_template: dataServiceTemplateNames,
-      service_template_values: dataServices?.map(
-        (item) => item?.service_template_value
-      ),
+      id: data?.id,
+      is_posted: isPosted,
+      invoice_number: data?.invoice_number,
+      invoice_name: data?.invoice_name,
+      invoice_raise_at: data?.invoice_raise_at,
+      invoice_attribute: data?.invoice_attribute, //TODO: check
+      service_attribute: data?.service_attribute,
+      service_attribute_values: data?.invoice_services?.map((item) => ({
+        ...item,
+        details: item?.invoice_service_value?.details || [],
+      })), // TODO: check,
     };
 
     setLoadingSave(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateContractTemplate`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateContractInvoice`, {
       method: `PUT`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -245,11 +273,15 @@ const ContractInvoiceFormIndex = ({
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
-          notification.success({
-            message: response.message,
-            duration: 3,
-          });
           setRefresh((prev) => prev + 1);
+          setShowSuccessIcon(true);
+          setTimeout(() => setShowSuccessIcon(false), 1000);
+          if (isPosted) {
+            notification.success({
+              message: "Invoice berhasil diterbitkan.",
+              duration: 3,
+            });
+          }
         } else {
           notification.error({
             message: response.message,
@@ -259,15 +291,17 @@ const ContractInvoiceFormIndex = ({
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal mengubah template invoice kontrak. ${err.response}`,
+          message: `Gagal mengubah invoice kontrak. ${err.response}`,
           duration: 3,
         });
       })
       .finally(() => setLoadingSave(false));
   };
 
-  console.log({ dataServices });
-  console.log({ dataInvoice });
+  // console.log({ dataServices });
+  // console.log({ dataServiceTemplateNames });
+  // console.log({ dataInvoice });
+  // console.log({ dataInvoiceDetail });
   return (
     <Layout
       tok={initProps}
@@ -281,6 +315,7 @@ const ContractInvoiceFormIndex = ({
         className="grid grid-cols-1 gap-4 lg:gap-6 md:px-5 "
         id="mainWrapper"
       >
+        {/* Detail Invoice */}
         <section
           className="grid grid-cols-1  
           gap-6 shadow-md rounded-md bg-white p-4 lg:p-6"
@@ -304,15 +339,52 @@ const ContractInvoiceFormIndex = ({
                   Terbit
                 </div>
               ) : (
-                <div
-                  className="rounded-md py-1 px-4 hover:cursor-pointer 
+                <div className="flex items-center gap-6">
+                  <div
+                    className="rounded-md py-1 px-4 hover:cursor-pointer 
                   text-center mig-caption--bold text-mono30 bg-mono90"
-                >
-                  Draft
+                  >
+                    Draft
+                  </div>
+                  {loadingSave ? (
+                    <Spin className="mt-2" spinning={loadingSave} />
+                  ) : (
+                    <div
+                      className={`transition duration-700 ease-in-out ${
+                        showSuccessIcon ? "opacity-1" : "opacity-0"
+                      }`}
+                    >
+                      <CheckIconSvg color={"#35763B"} size={32} />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 lg:items-center">
+            {!dataInvoice?.is_posted ? (
+              <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 lg:items-center">
+                <ButtonSys
+                  type={"primary"}
+                  color={"secondary100"}
+                  disabled={false}
+                  // onClick={() => setModalInvoice(true)}
+                >
+                  <div className="flex space-x-2 items-center">
+                    <p>Unduh Draft</p>
+                    <DownloadIcon2Svg color={"#FFFFFF"} size={20} />
+                  </div>
+                </ButtonSys>
+
+                <ButtonSys
+                  type={"primary"}
+                  disabled={!isAllowedToUpdateInvoice || disablePublish}
+                  onClick={() => {
+                    handleSaveInvoice(1, dataInvoice);
+                  }}
+                >
+                  <p>Terbitkan</p>
+                </ButtonSys>
+              </div>
+            ) : (
               <ButtonSys
                 type={"primary"}
                 color={"secondary100"}
@@ -320,18 +392,11 @@ const ContractInvoiceFormIndex = ({
                 // onClick={() => setModalInvoice(true)}
               >
                 <div className="flex space-x-2 items-center">
-                  <p>Unduh Draft</p>
+                  <p>Unduh </p>
                   <DownloadIcon2Svg color={"#FFFFFF"} size={20} />
                 </div>
               </ButtonSys>
-              <ButtonSys
-                // onClick={handleSaveInvoice}
-                type={"primary"}
-                disabled={!isAllowedToUpdateInvoice}
-              >
-                <p>Terbitkan</p>
-              </ButtonSys>
-            </div>
+            )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <p className="md:col-span-2 text-warning">
@@ -342,7 +407,7 @@ const ContractInvoiceFormIndex = ({
               className="md:col-span-2 md:grid md:grid-cols-2 gap-x-6"
             >
               <Form.Item
-                name="invoice_no"
+                name="invoice_number"
                 label="Nomor Invoice"
                 className="md:col-span-2"
                 rules={[
@@ -356,7 +421,8 @@ const ContractInvoiceFormIndex = ({
                 <>
                   <Input
                     placeholder="Masukkan nomor invoice"
-                    name={`invoice_no`}
+                    name={`invoice_number`}
+                    value={dataInvoice?.invoice_number}
                     onChange={(e) =>
                       onChangeInput(e.target.name, e.target.value)
                     }
@@ -373,12 +439,12 @@ const ContractInvoiceFormIndex = ({
                     message: "Nama invoice wajib diisi",
                   },
                 ]}
-                // initialValue={newgroup.name}
               >
                 <>
                   <Input
                     placeholder="Masukkan nama invoice"
                     name={`invoice_name`}
+                    value={dataInvoice?.invoice_name}
                     onChange={(e) =>
                       onChangeInput(e.target.name, e.target.value)
                     }
@@ -409,7 +475,7 @@ const ContractInvoiceFormIndex = ({
               </Form.Item>
 
               <Form.Item
-                name="published_date"
+                name="invoice_raise_at"
                 label="Tanggal Terbit Invoice"
                 rules={[
                   {
@@ -417,13 +483,15 @@ const ContractInvoiceFormIndex = ({
                     message: "Tanggal terbit invoice wajib diisi",
                   },
                 ]}
-                // initialValue={newgroup.name}
               >
                 <>
                   <DatePicker
                     placeholder="Pilih tanggal terbit"
-                    name={`published_date`}
-                    // onChange={onChangeCreateGroup}
+                    name={`invoice_raise_at`}
+                    defaultValue={moment(dataInvoice?.invoice_raise_at)}
+                    onChange={(date, datestring) => {
+                      onChangeInput("invoice_raise_at", datestring);
+                    }}
                     className="w-full"
                   />
                 </>
@@ -438,13 +506,12 @@ const ContractInvoiceFormIndex = ({
                     message: "Total tagihan wajib diisi",
                   },
                 ]}
-                // initialValue={newgroup.name}
               >
                 <>
                   <InputNumber
                     disabled
                     name={`total_bill`}
-                    value={5000000}
+                    value={dataInvoice?.invoice_total}
                     formatter={(value) =>
                       `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                     }
@@ -458,8 +525,8 @@ const ContractInvoiceFormIndex = ({
 
             <div className="md:space-y-2">
               <p className="mig-caption--bold">Periode Penagihan</p>
-
               <DatePicker
+                disabled
                 allowEmpty
                 format={"D"}
                 showToday={false}
@@ -468,7 +535,7 @@ const ContractInvoiceFormIndex = ({
                 bordered={false}
                 className="invoiceTemplateDPInput p-0"
                 dropdownClassName="invoiceTemplateDP"
-                defaultValue={
+                value={
                   moment(dataInvoice?.invoice_period ?? "").isValid()
                     ? moment(dataInvoice?.invoice_period)
                     : null
@@ -519,7 +586,7 @@ const ContractInvoiceFormIndex = ({
           </button>
         </section>
 
-        {/* Detail Kontrak & Daftar Service */}
+        {/* Daftar Item */}
         <section className="shadow-md rounded-md bg-white p-6 mb-4 gap-6">
           <InvoiceItemSection
             initProps={initProps}
@@ -529,15 +596,8 @@ const ContractInvoiceFormIndex = ({
             setDataServiceTemplateNames={setDataServiceTemplateNames}
             dataServices={dataServices}
             setDataServices={setDataServices}
-            loading={loadingInvoice}
+            loading={loadingContractInvoice}
           />
-
-          {/* <ContractServiceForm
-            initProps={initProps}
-            dataContractUpdate={dataInvoice}
-            setDataContractUpdate={setDataInvoice}
-            loading={loadingInvoice}
-          /> */}
         </section>
       </div>
 
@@ -547,6 +607,7 @@ const ContractInvoiceFormIndex = ({
         dataContract={dataInvoice}
         dataInvoice={dataInvoiceDetail}
         setDataInvoice={setDataInvoiceDetail}
+        isInvoiceForm
       />
     </Layout>
   );
