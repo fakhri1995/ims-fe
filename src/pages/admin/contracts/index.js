@@ -527,7 +527,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   defaultValue={queryParams.duration}
                   allowClear
                   name={`role`}
-                  disabled={!isAllowedToGetCompanyClients}
                   placeholder="Rentang Durasi"
                   style={{ width: `100%` }}
                   onChange={(value) => {
