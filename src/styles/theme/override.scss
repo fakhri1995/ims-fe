@@ -235,7 +235,7 @@ ol {
 }
 
 /* DATEPICKER */
-.ant-picker:hover,
+.ant-picker:not(.ant-picker-disabled):hover,
 .ant-picker-focused {
   border-color: #65976a;
   outline: 0;

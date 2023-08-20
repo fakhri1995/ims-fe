@@ -321,7 +321,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "invoice_total",
       render: (text, record, index) => {
         return {
-          children: <>Rp{Number(text)?.toLocaleString("id-ID") || "-"}</>,
+          children: <>Rp {Number(text)?.toLocaleString("id-ID") || "-"}</>,
         };
       },
       sorter: isAllowedToGetInvoices
@@ -559,7 +559,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     style={{ width: `100%` }}
                     className="themedSelector"
                     onChange={(value) => {
-                      console.log({ value });
                       setQueryParams({ price_range: value });
                       setSelectedPriceRange(value);
                     }}
