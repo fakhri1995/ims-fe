@@ -28,6 +28,8 @@ const InvoiceItemSection = ({
   dataServices,
   setDataServices,
   loading,
+  handleSaveInvoice,
+  isReadOnly,
 }) => {
   // 1. Use state & ref
   const [dynamicColumns, setDynamicColumns] = useState([]);
@@ -75,11 +77,11 @@ const InvoiceItemSection = ({
     let tempServices = dataServices?.map((service, idx) => ({
       ...service,
       key: idx + 1,
-      service_template_value: {
-        ...service?.service_template_value,
-        contract_service_id: service?.id,
-        details: service.service_template_value
-          ? [...service.service_template_value?.details]
+      invoice_service_value: {
+        ...service?.invoice_service_value,
+        invoice_service_id: service?.id,
+        details: service?.invoice_service_value
+          ? [...service?.invoice_service_value?.details]
           : [""],
       },
     }));
@@ -120,17 +122,23 @@ const InvoiceItemSection = ({
     let tempDataServices = [...dataServices];
 
     // update row values
-    if (dataServices?.[cellIdx.row]?.service_template_value) {
-      tempDataServices[cellIdx.row].service_template_value.details[
-        cellIdx.col
-      ] = value;
+    if (dataServices?.[cellIdx.row]?.invoice_service_value) {
+      tempDataServices[cellIdx.row].invoice_service_value.details[cellIdx.col] =
+        value;
     } else {
-      tempDataServices[cellIdx.row].service_template_value = {
+      tempDataServices[cellIdx.row].invoice_service_value = {
         details: [value],
       };
     }
 
     setDataServices(tempDataServices);
+
+    if (handleSaveInvoice) {
+      handleSaveInvoice(0, {
+        ...dataInvoiceUpdate,
+        invoice_services: tempDataServices,
+      });
+    }
     setIsEdit({ row: null, col: null });
   };
 
@@ -162,7 +170,7 @@ const InvoiceItemSection = ({
             <div className="flex gap-2 items-center">
               <Input
                 defaultValue={
-                  dataServices?.[rowIdx]?.service_template_value?.details?.[
+                  dataServices?.[rowIdx]?.invoice_service_value?.details?.[
                     colIdx
                   ]
                 }
@@ -198,40 +206,41 @@ const InvoiceItemSection = ({
             <div className="flex gap-2 items-center">
               <p>
                 {
-                  dataServices?.[rowIdx]?.service_template_value?.details?.[
+                  dataServices?.[rowIdx]?.invoice_service_value?.details?.[
                     colIdx
                   ]
                 }
               </p>
-              <button
-                onClick={(e) => {
-                  // Auto save previous edited cell
-                  if (
-                    isEdit.row !== null &&
-                    isEdit.col !== null &&
-                    (isEdit.row !== rowIdx || isEdit.col !== colIdx)
-                  ) {
-                    onSaveCellValue(
-                      prevCellIndex.current,
-                      prevCellValue.current
-                    );
-                  }
+              {!isReadOnly && (
+                <button
+                  onClick={(e) => {
+                    // Auto save previous edited cell
+                    if (
+                      isEdit.row !== null &&
+                      isEdit.col !== null &&
+                      (isEdit.row !== rowIdx || isEdit.col !== colIdx)
+                    ) {
+                      onSaveCellValue(
+                        prevCellIndex.current,
+                        prevCellValue.current
+                      );
+                    }
 
-                  let tempCellValue = [];
-                  if (dataServices?.[rowIdx]?.service_template_value) {
-                    tempCellValue =
-                      dataServices?.[rowIdx]?.service_template_value?.details?.[
-                        colIdx
-                      ];
-                  }
-                  setCurrentCellIndex({ row: rowIdx, col: colIdx });
-                  setCurrentCellValue(tempCellValue);
-                  setIsEdit({ row: rowIdx, col: colIdx });
-                }}
-                className="bg-transparent hover:opacity-75"
-              >
-                <EditSquareIconSvg size={24} color={"#CCCCCC"} />
-              </button>
+                    let tempCellValue = [];
+                    if (dataServices?.[rowIdx]?.invoice_service_value) {
+                      tempCellValue =
+                        dataServices?.[rowIdx]?.invoice_service_value
+                          ?.details?.[colIdx];
+                    }
+                    setCurrentCellIndex({ row: rowIdx, col: colIdx });
+                    setCurrentCellValue(tempCellValue);
+                    setIsEdit({ row: rowIdx, col: colIdx });
+                  }}
+                  className="bg-transparent hover:opacity-75"
+                >
+                  <EditSquareIconSvg size={24} color={"#CCCCCC"} />
+                </button>
+              )}
             </div>
           )}
         </>
@@ -243,12 +252,20 @@ const InvoiceItemSection = ({
     const colIdx = dataServiceTemplateNames?.length;
     const colName = dataCurrentColumn?.name;
     let newColumn = renderDynamicColumn(colIdx, colName);
-
-    setDynamicColumns((prev) => [...prev, newColumn]);
-    setDataServiceTemplateNames([
+    let newColumnNameList = [
       ...dynamicColumns.map((item) => item?.name),
       colName,
-    ]);
+    ];
+
+    setDynamicColumns((prev) => [...prev, newColumn]);
+    setDataServiceTemplateNames(newColumnNameList);
+
+    if (handleSaveInvoice) {
+      handleSaveInvoice(0, {
+        ...dataInvoiceUpdate,
+        service_attribute: newColumnNameList,
+      });
+    }
 
     setModalAddColumn(false);
     setDataCurrentColumn({ idx: -1, name: "" });
@@ -267,12 +284,12 @@ const InvoiceItemSection = ({
     // Delete column values
     const updatedServices = [];
     for (let item of dataServices) {
-      let tempValues = [...item?.service_template_value?.details];
+      let tempValues = [...item?.invoice_service_value?.details];
       tempValues.splice(idx, 1);
       let tempService = {
         ...item,
-        service_template_value: {
-          ...item.service_template_value,
+        invoice_service_value: {
+          ...item.invoice_service_value,
           details: tempValues,
         },
       };
@@ -282,14 +299,19 @@ const InvoiceItemSection = ({
     setDynamicColumns(tempDyanmicColumns);
     setDataServiceTemplateNames(tempDyanmicColumns.map((item) => item?.name));
     setDataServices(updatedServices);
+
+    if (handleSaveInvoice) {
+      handleSaveInvoice(0, {
+        ...dataInvoiceUpdate,
+        service_attribute: tempDyanmicColumns.map((item) => item?.name),
+        invoice_services: updatedServices,
+      });
+    }
     setModalDeleteColumn(false);
   };
 
   // console.log({ dataServices });
-  // console.log({ currentRowValues });
-  // console.log({ dataServiceTemplateNames });
-  // console.log({ dynamicColumns });
-  // console.log({ dataCurrentColumn });
+  // console.log({ dataInvoiceUpdate });
 
   return (
     <>
@@ -328,24 +350,26 @@ const InvoiceItemSection = ({
       <Table
         className="tableBordered border-2 rounded-md"
         dataSource={filteredItems}
-        rowKey={(record) => record.id}
+        rowKey={(record) => record.id || record.key}
         loading={loading}
         scroll={{ x: 200 }}
         pagination={{
           pageSize: 5,
           showSizeChanger: false,
         }}
-        footer={() => (
-          <button
-            type="button"
-            onClick={() => setModalAddItem(true)}
-            className="bg-transparent flex items-center space-x-2 
+        footer={() =>
+          !isReadOnly && (
+            <button
+              type="button"
+              onClick={() => setModalAddItem(true)}
+              className="bg-transparent flex items-center space-x-2 
             text-primary100 hover:opacity-75"
-          >
-            <PlusIconSvg size={16} color={"#35763B"} />
-            <p>Tambah Item Baru</p>
-          </button>
-        )}
+            >
+              <PlusIconSvg size={16} color={"#35763B"} />
+              <p>Tambah Item Baru</p>
+            </button>
+          )
+        }
         columns={[
           {
             title: "No",
@@ -387,53 +411,73 @@ const InvoiceItemSection = ({
             },
           },
           ...dynamicColumns,
-          {
-            title: (
-              <div className="flex justify-center">
-                <button
-                  onClick={() => setModalAddColumn(true)}
-                  className="bg-transparent hover:opacity-75 "
-                >
-                  <SquarePlusIconSvg color={"#4D4D4D"} size={20} />
-                </button>
-              </div>
-            ),
-            dataIndex: "actionButton",
-            render: (text, record, rowIndex) => {
-              return (
-                <div className="flex gap-2 items-center">
-                  <button
-                    onClick={() => {
-                      setCurrentCellIndex({ row: rowIndex, col: 0 });
-                      setModalEditItem(true);
-                    }}
-                    className="bg-transparent hover:opacity-75"
-                  >
-                    <EditSquareIconSvg size={24} color={"#CCCCCC"} />
-                  </button>
-                  <Popconfirm
-                    title={
-                      <p className="w-40">
-                        Apakah Anda yakin ingin menghapus item ini?
-                      </p>
-                    }
-                    okText={"Ya"}
-                    cancelText={"Tidak"}
-                    placement="bottomRight"
-                    onConfirm={() => {
-                      let tempDataServices = [...dataServices];
-                      tempDataServices.splice(rowIndex, 1);
-                      setDataServices(tempDataServices);
-                    }}
-                  >
-                    <button className="bg-transparent hover:opacity-75">
-                      <TrashIconSvg color={"#CCCCCC"} size={24} />
+          !isReadOnly
+            ? {
+                title: (
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => setModalAddColumn(true)}
+                      className="bg-transparent hover:opacity-75 "
+                    >
+                      <SquarePlusIconSvg color={"#4D4D4D"} size={20} />
                     </button>
-                  </Popconfirm>
-                </div>
-              );
-            },
-          },
+                  </div>
+                ),
+                dataIndex: "actionButton",
+                render: (text, record, rowIndex) => {
+                  return (
+                    <div className="flex gap-2 items-center justify-center">
+                      <button
+                        onClick={() => {
+                          setCurrentCellIndex({ row: rowIndex, col: 0 });
+                          setModalEditItem(true);
+                        }}
+                        className="bg-transparent hover:opacity-75"
+                      >
+                        <EditSquareIconSvg size={24} color={"#CCCCCC"} />
+                      </button>
+                      <Popconfirm
+                        title={
+                          <p className="w-40">
+                            Apakah Anda yakin ingin menghapus item ini?
+                          </p>
+                        }
+                        okText={"Ya"}
+                        cancelText={"Tidak"}
+                        placement="bottomRight"
+                        onConfirm={() => {
+                          let tempDataServices = [...dataServices];
+
+                          // add is_delete flag as payload in API updateContractInvoice
+                          let payloadServices = tempDataServices.map(
+                            (item, currIdx) => ({
+                              ...item,
+                              is_delete: currIdx == rowIndex ? true : false,
+                            })
+                          );
+
+                          // remove deleted item from list
+                          tempDataServices.splice(rowIndex, 1);
+                          setDataServices(tempDataServices);
+
+                          // fetch API
+                          if (handleSaveInvoice) {
+                            handleSaveInvoice(0, {
+                              ...dataInvoiceUpdate,
+                              invoice_services: payloadServices,
+                            });
+                          }
+                        }}
+                      >
+                        <button className="bg-transparent hover:opacity-75">
+                          <TrashIconSvg color={"#CCCCCC"} size={24} />
+                        </button>
+                      </Popconfirm>
+                    </div>
+                  );
+                },
+              }
+            : {},
         ]}
       />
 
@@ -470,6 +514,7 @@ const InvoiceItemSection = ({
         dataContractUpdate={dataInvoiceUpdate}
         setDataContractUpdate={setDataInvoiceUpdate}
         isInvoiceForm={true}
+        handleSaveInvoice={handleSaveInvoice}
       />
 
       <ModalServiceUpdate
@@ -480,6 +525,7 @@ const InvoiceItemSection = ({
         setDataContractUpdate={setDataInvoiceUpdate}
         currentIdx={currentCellIndex?.row}
         isInvoiceForm={true}
+        handleSaveInvoice={handleSaveInvoice}
       />
     </>
   );

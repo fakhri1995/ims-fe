@@ -2,6 +2,7 @@ import { Form, Input, Modal, Select, Spin } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useRef } from "react";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
@@ -21,6 +22,7 @@ const ModalServiceCreate = ({
   dataContractUpdate,
   setDataContractUpdate,
   isInvoiceForm,
+  handleSaveInvoice,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetProductInventories = hasPermission(PRODUCTS_GET);
@@ -39,6 +41,7 @@ const ModalServiceCreate = ({
   const [dataServiceList, setDataServiceList] = useState([dataService]);
   const [loading, setLoading] = useState(false);
   const [serviceTypeSearch, setServiceTypeSearch] = useState("");
+  const [disableSave, setDisableSave] = useState(true);
 
   // 2. USE QUERY & USE EFFECT
   // 2.1. Get Contract Service Type List
@@ -57,6 +60,13 @@ const ModalServiceCreate = ({
       }
     );
 
+  useEffect(() => {
+    const allTypeIsFilled = dataServiceList.every((item) => item?.product_id);
+    if (allTypeIsFilled) {
+      setDisableSave(false);
+    }
+  }, [dataServiceList]);
+
   // 3. HANDLER
   const clearData = () => {
     setDataServiceList([dataService]);
@@ -69,26 +79,35 @@ const ModalServiceCreate = ({
   };
 
   const handleSave = () => {
+    let tempServiceList = [];
     if (isInvoiceForm) {
-      let tempServiceList = [...dataContractUpdate?.invoice_services];
+      tempServiceList = [...dataContractUpdate?.invoice_services];
       tempServiceList.push(...dataServiceList);
       setDataContractUpdate((prev) => ({
         ...prev,
         invoice_services: tempServiceList,
       }));
     } else {
-      let tempServiceList = [...dataContractUpdate?.services];
-      tempServiceList.splice(...dataServiceList);
+      tempServiceList = [...dataContractUpdate?.services];
+      tempServiceList.push(...dataServiceList);
       setDataContractUpdate((prev) => ({
         ...prev,
         services: tempServiceList,
       }));
     }
 
+    // use in invoice form
+    if (handleSaveInvoice) {
+      handleSaveInvoice(0, {
+        ...dataContractUpdate,
+        invoice_services: tempServiceList,
+      });
+    }
+
     handleClose();
   };
 
-  // console.log({ dataService });
+  // console.log({ dataServiceList });
   // console.log({ dataContractUpdate });
 
   return (
@@ -110,7 +129,7 @@ const ModalServiceCreate = ({
             <ButtonSys
               type={"primary"}
               onClick={handleSave}
-              // disabled={!dataServiceList[0]?.dataService?.product}
+              disabled={disableSave}
             >
               <p>Tambah & Simpan</p>
             </ButtonSys>
@@ -143,12 +162,14 @@ const ModalServiceCreate = ({
                     style={{ width: `100%` }}
                     onChange={(value, option) => {
                       let tempServiceList = [...dataServiceList];
+
                       let tempIdx = isInvoiceForm
                         ? dataContractUpdate?.invoice_services?.length + idx
                         : dataContractUpdate?.services?.length + idx;
 
-                      tempServiceList[idx].id =
+                      tempServiceList[idx].key =
                         tempServiceList[idx].id || tempIdx;
+
                       tempServiceList[idx].product_id = value;
                       tempServiceList[idx].price = option.price;
                       tempServiceList[idx].unit = option.price_option;
@@ -285,6 +306,7 @@ const ModalServiceCreate = ({
               <button
                 onClick={() => {
                   const tempServiceList = [...dataServiceList];
+
                   tempServiceList.splice(idx + 1, 0, dataService);
                   setDataServiceList(tempServiceList);
                 }}

@@ -21,6 +21,7 @@ const ModalContractInfo = ({
   dataInvoice,
   setDataInvoice,
   isInvoiceForm,
+  handleSaveInvoice,
 }) => {
   // 1. USE STATE
   const [dataInvoiceNotDisplayed, setDataInvoiceNotDisplayed] = useState([]);
@@ -118,6 +119,13 @@ const ModalContractInfo = ({
 
   const handleSaveDisplayedList = () => {
     setDataInvoice(dataInvoiceDisplayed);
+
+    if (handleSaveInvoice) {
+      handleSaveInvoice(0, {
+        ...dataContract,
+        invoice_attribute: dataInvoiceDisplayed.map((item) => item?.name),
+      });
+    }
     onvisible(false);
   };
 

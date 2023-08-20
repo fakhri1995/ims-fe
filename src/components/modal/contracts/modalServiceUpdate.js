@@ -22,6 +22,7 @@ const ModalServiceUpdate = ({
   setDataContractUpdate,
   currentIdx,
   isInvoiceForm,
+  handleSaveInvoice,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetProductInventories = hasPermission(PRODUCTS_GET);
@@ -35,6 +36,7 @@ const ModalServiceUpdate = ({
     pax: 0,
     price: "",
     unit: "",
+    subtotal: 0,
   });
 
   const [loading, setLoading] = useState(false);
@@ -89,15 +91,16 @@ const ModalServiceUpdate = ({
   };
 
   const handleSave = () => {
+    let tempServiceList = [];
     if (isInvoiceForm) {
-      let tempServiceList = [...dataContractUpdate?.invoice_services];
+      tempServiceList = [...dataContractUpdate?.invoice_services];
       tempServiceList.splice(currentIdx, 1, dataService);
       setDataContractUpdate((prev) => ({
         ...prev,
         invoice_services: tempServiceList,
       }));
     } else {
-      let tempServiceList = [...dataContractUpdate?.services];
+      tempServiceList = [...dataContractUpdate?.services];
       tempServiceList.splice(currentIdx, 1, dataService);
       setDataContractUpdate((prev) => ({
         ...prev,
@@ -105,10 +108,18 @@ const ModalServiceUpdate = ({
       }));
     }
 
+    // fetch API update invoice
+    if (handleSaveInvoice) {
+      handleSaveInvoice(0, {
+        ...dataContractUpdate,
+        invoice_services: tempServiceList,
+      });
+    }
+
     handleClose();
   };
 
-  // console.log({ dataService });
+  // console.log({ dataContractUpdate });
 
   return (
     <Modal
