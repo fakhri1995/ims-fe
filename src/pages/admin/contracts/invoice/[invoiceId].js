@@ -322,7 +322,7 @@ const ContractInvoiceFormIndex = ({
 
   // console.log({ dataServices });
   // console.log({ dataServiceTemplateNames });
-  console.log({ dataInvoice });
+  // console.log({ dataInvoice });
   // console.log({ dataInvoiceDetail });
   return (
     <Layout
@@ -421,14 +421,13 @@ const ContractInvoiceFormIndex = ({
               </ButtonSys>
             )}
           </div>
-
-          {loadingContractInvoice ? (
-            <Spin spinning={loadingContractInvoice}></Spin>
-          ) : (
+          <Spin spinning={loadingContractInvoice}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <p className="md:col-span-2 text-warning">
-                <em>*Informasi ini harus diisi</em>
-              </p>
+              {!isReadOnly && (
+                <p className="md:col-span-2 text-warning">
+                  <em>*Informasi ini harus diisi</em>
+                </p>
+              )}
               <Form
                 layout="vertical"
                 className="md:col-span-2 md:grid md:grid-cols-2 gap-x-6"
@@ -552,29 +551,6 @@ const ContractInvoiceFormIndex = ({
                 </Form.Item>
               </Form>
 
-              <div className="md:space-y-2">
-                <p className="mig-caption--bold">Periode Penagihan</p>
-                <DatePicker
-                  disabled
-                  allowEmpty
-                  format={"D"}
-                  showToday={false}
-                  picker="date"
-                  placeholder="Pilih Periode"
-                  bordered={false}
-                  className="invoiceTemplateDPInput p-0"
-                  dropdownClassName="invoiceTemplateDP"
-                  value={
-                    moment(dataInvoice?.invoice_period ?? "").isValid()
-                      ? moment(dataInvoice?.invoice_period)
-                      : null
-                  }
-                  renderExtraFooter={() => <div />}
-                  suffixIcon={
-                    <CalendarEventIconSvg color={"#2F80ED"} size={20} />
-                  }
-                />
-              </div>
               {dataInvoiceDetail?.map((item) => (
                 <div key={item?.title} className="md:space-y-2">
                   <p className="mig-caption--bold">{item?.title}</p>
@@ -601,7 +577,7 @@ const ContractInvoiceFormIndex = ({
                 </div>
               ))}
             </div>
-          )}
+          </Spin>
 
           {!isReadOnly && (
             <button

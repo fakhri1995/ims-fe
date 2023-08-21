@@ -15,7 +15,11 @@ import st from "components/layout-dashboard.module.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { CONTRACT_TEMPLATE_GET, CONTRACT_TEMPLATE_UPDATE } from "lib/features";
+import {
+  CONTRACT_INVOICE_ADD,
+  CONTRACT_TEMPLATE_GET,
+  CONTRACT_TEMPLATE_UPDATE,
+} from "lib/features";
 
 import { ContractService } from "apis/contract";
 
@@ -89,6 +93,7 @@ const ContractInvoiceTemplateIndex = ({
   const isAllowedToUpdateInvoiceTemplate = hasPermission(
     CONTRACT_TEMPLATE_UPDATE
   );
+  const isAllowedToAddInvoice = hasPermission(CONTRACT_INVOICE_ADD);
 
   const rt = useRouter();
   // Breadcrumb url
@@ -262,9 +267,13 @@ const ContractInvoiceTemplateIndex = ({
               <h4 className="mig-heading--4">Data Template Invoice</h4>
             </button>
             <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 lg:items-center">
-              <ButtonSys type={"default"} onClick={() => setModalInvoice(true)}>
+              <ButtonSys
+                type={"default"}
+                onClick={() => setModalInvoice(true)}
+                disabled={!isAllowedToAddInvoice}
+              >
                 <div className="flex space-x-2 items-center">
-                  <FileTextOutlined />
+                  <FileTextOutlined rev={""} />
                   <p>Buat Invoice</p>
                 </div>
               </ButtonSys>
@@ -284,7 +293,6 @@ const ContractInvoiceTemplateIndex = ({
             </div>
             <div className="space-y-2">
               <p className="mig-caption--bold">Periode Penagihan</p>
-
               <DatePicker
                 allowEmpty
                 format={"D"}

@@ -2114,7 +2114,7 @@ const TableCustomInvoiceList = ({
             setrowstate(record.id);
           },
           onClick: () => {
-            record.id && record.is_posted && rt.push(`invoice/${record.id}`);
+            record.id && rt.push(`invoice/${record.id}`);
           },
         };
       }}
