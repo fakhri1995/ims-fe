@@ -144,6 +144,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [selectedPriceRange, setSelectedPriceRange] = useState([0, 0]);
   const [selectedCompany, setSelectedCompany] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
+  const [selectedMonthYear, setSelectedMonthYear] = useState(moment());
 
   // Modal Price Range Filter
   const [modalPriceRange, setModalPriceRange] = useState(false);
@@ -465,7 +466,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
               <p className="mig-caption--medium text-mono50">Bulan</p>
               <DatePicker
                 className="themedDatePicker"
-                value={moment(`${queryParams.year}-${queryParams.month}`)}
+                value={selectedMonthYear}
                 format={"MMMM YYYY"}
                 picker="month"
                 locale={locale}
@@ -475,17 +476,22 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                       month: date.format("M"),
                       year: date.format("YYYY"),
                     });
+                    setSelectedMonthYear(date);
                   } else {
                     setQueryParams({
                       month: moment().format("M"),
                       year: moment().format("YYYY"),
                     });
+                    setSelectedMonthYear(moment());
                   }
                 }}
               />
             </div>
             <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-4 lg:flex-row lg:justify-between w-full lg:items-center ">
+              <div
+                className="flex flex-col gap-4 lg:flex-row lg:justify-between 
+                w-full lg:items-center "
+              >
                 {/* Start: Search criteria */}
                 {/* Search by keyword (kata kunci) */}
                 <div className="w-full lg:w-3/12">

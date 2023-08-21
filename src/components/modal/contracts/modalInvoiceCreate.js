@@ -146,7 +146,7 @@ const ModalInvoiceCreate = ({
             <Input
               name="invoice_name"
               placeholder="Masukkan nama invoice"
-              defaultValue={dataInvoiceDraft?.invoice_name}
+              value={dataInvoiceDraft?.invoice_name}
               onChange={(e) =>
                 setDataInvoiceDraft((prev) => ({
                   ...prev,
@@ -188,7 +188,7 @@ const ModalInvoiceCreate = ({
               allowEmpty
               format={"DD MMMM YYYY"}
               locale={locale}
-              defaultValue={moment(dataInvoiceDraft?.invoice_raise_at)}
+              value={moment(dataInvoiceDraft?.invoice_raise_at)}
               onChange={(date, datestring) => {
                 const defaultFormatDate = date.format("YYYY-MM-DD");
                 setDataInvoiceDraft((prev) => ({
