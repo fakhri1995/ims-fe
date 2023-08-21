@@ -807,16 +807,17 @@ const ModalHapus2 = ({
       onCancel={onCancel}
       footer={
         <Spin spinning={loading}>
-          <div className="grid grid-cols-3 gap-2 items-center ">
+          <div className="flex gap-4 items-center justify-end">
             <ButtonSys
-              type="default"
+              type={"primary"}
+              color={"mono100"}
               onClick={() => {
                 onvisible(false);
               }}
             >
               Batalkan
             </ButtonSys>
-            <div className="col-span-2">
+            <div className="col-span-2 hover:opacity-75">
               <ButtonSys
                 type={"primary"}
                 color={"danger"}
@@ -850,7 +851,6 @@ const ModalUbah = ({
   onOk,
   onCancel,
   loading,
-  itemName,
   disabled,
   children,
   okButtonText,
@@ -864,9 +864,10 @@ const ModalUbah = ({
       closable={closable}
       footer={
         <Spin spinning={loading}>
-          <div className="flex justify-between items-center">
+          <div className="flex gap-4 items-center justify-end">
             <ButtonSys
-              type="default"
+              type={"primary"}
+              color={"mono100"}
               onClick={() => {
                 onvisible(false);
               }}

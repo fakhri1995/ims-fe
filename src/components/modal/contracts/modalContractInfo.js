@@ -20,11 +20,10 @@ const ModalContractInfo = ({
   dataContract,
   dataInvoice,
   setDataInvoice,
+  isInvoiceForm,
+  handleSaveInvoice,
 }) => {
   // 1. USE STATE
-  const [columnName, setColumnName] = useState("");
-  const [modalDeleteColumn, setModalDeleteColumn] = useState(false);
-  const [dataCurrentColumn, setDataCurrentColumn] = useState({});
   const [dataInvoiceNotDisplayed, setDataInvoiceNotDisplayed] = useState([]);
   const [dataInvoiceDisplayed, setDataInvoiceDisplayed] = useState([]);
 
@@ -80,9 +79,18 @@ const ModalContractInfo = ({
       ];
 
       // Filter for not displayed info
-      tempNotDisplayed = tempNotDisplayed.filter(
-        (item) => !dataContract?.invoice_template?.details?.includes(item?.name)
-      );
+      if (isInvoiceForm) {
+        // use for data from invoice/[invoiceId].js
+        tempNotDisplayed = tempNotDisplayed.filter(
+          (item) => !dataContract?.invoice_attribute?.includes(item?.name)
+        );
+      } else {
+        // use for data from invoice-template.js
+        tempNotDisplayed = tempNotDisplayed.filter(
+          (item) =>
+            !dataContract?.invoice_template?.details?.includes(item?.name)
+        );
+      }
 
       setDataInvoiceNotDisplayed(tempNotDisplayed);
     }
@@ -111,6 +119,13 @@ const ModalContractInfo = ({
 
   const handleSaveDisplayedList = () => {
     setDataInvoice(dataInvoiceDisplayed);
+
+    if (handleSaveInvoice) {
+      handleSaveInvoice(0, {
+        ...dataContract,
+        invoice_attribute: dataInvoiceDisplayed.map((item) => item?.name),
+      });
+    }
     onvisible(false);
   };
 
@@ -146,7 +161,7 @@ const ModalContractInfo = ({
           <div className="grid grid-cols-1 gap-2">
             {dataInvoiceNotDisplayed?.map((item, idx) => (
               <div
-                key={item.title}
+                key={item?.title}
                 className="flex items-center justify-between gap-2 border border-inputkategori rounded px-4 py-2"
               >
                 <div className="grid grid-cols-1">

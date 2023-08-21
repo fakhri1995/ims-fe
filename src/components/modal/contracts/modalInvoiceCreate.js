@@ -1,4 +1,12 @@
-import { DatePicker, Form, Input, Modal, Select, Spin } from "antd";
+import {
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Spin,
+  notification,
+} from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
 import moment from "moment";
 import "moment/locale/id";
@@ -9,7 +17,10 @@ import { useAccessControl } from "contexts/access-control";
 
 import { CONTRACT_INVOICE_ADD } from "lib/features";
 
+import { momentFormatDate } from "../../../lib/helper";
 import ButtonSys from "../../button";
+import { AlertCircleIconSvg } from "../../icon";
+import { ModalUbah } from "../modalCustom";
 
 const ModalInvoiceCreate = ({
   initProps,
@@ -24,27 +35,29 @@ const ModalInvoiceCreate = ({
   // 1. USE STATE
 
   const [dataInvoiceDraft, setDataInvoiceDraft] = useState({});
-
   const [loading, setLoading] = useState(false);
+  const [modalConfirm, setModalConfirm] = useState(false);
 
   // 2. USE QUERY & USE EFFECT
   useEffect(() => {
     if (visible) {
       setDataInvoiceDraft({
-        ...dataContract,
-        invoice_raise_at: new Date(),
+        invoice_name: dataContract?.title,
+        invoice_raise_at: moment(new Date()).format("YYYY-MM-DD"),
+        contract_template_id: dataContract?.id,
       });
     }
   }, [dataContract, visible]);
 
   // 3. HANDLER
   const clearData = () => {
-    setDataInvoiceDraft();
+    setDataInvoiceDraft({});
     form.resetFields();
   };
 
   const handleClose = () => {
     onvisible(false);
+    setModalConfirm(false);
     clearData();
   };
 
@@ -61,13 +74,14 @@ const ModalInvoiceCreate = ({
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(dataInvoiceDraft),
     })
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
           handleClose();
           notification.success({
-            message: `Draft invoice berhasil dibuat.`,
+            message: `Draft invoice berhasil ditambahkan.`,
             duration: 3,
           });
         } else {
@@ -79,7 +93,7 @@ const ModalInvoiceCreate = ({
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal membuat draft invoice. ${err.response}`,
+          message: `Gagal menambahkan draft invoice. ${err.response}`,
           duration: 3,
         });
       })
@@ -89,7 +103,7 @@ const ModalInvoiceCreate = ({
   // console.log({ dataInvoiceDraft });
   // console.log({ dataContract });
 
-  return (
+  return !modalConfirm ? (
     <Modal
       title={"Buat Draft Invoice"}
       visible={visible}
@@ -97,19 +111,16 @@ const ModalInvoiceCreate = ({
       maskClosable={false}
       footer={
         <Spin spinning={loading}>
-          <div className="flex space-x-2 justify-end items-center">
-            <button
-              onClick={handleClose}
-              className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
-            >
-              Batal
-            </button>
+          <div className="flex space-x-4 justify-end items-center">
+            <ButtonSys type={"primary"} color={"mono100"} onClick={handleClose}>
+              Batalkan
+            </ButtonSys>
             <ButtonSys
               type={"primary"}
-              onClick={handleAddInvoice}
+              onClick={() => setModalConfirm(true)}
               disabled={
                 !isAllowedToAddInvoice ||
-                !dataInvoiceDraft?.title ||
+                !dataInvoiceDraft?.invoice_name ||
                 !dataInvoiceDraft?.invoice_raise_at
               }
             >
@@ -123,7 +134,7 @@ const ModalInvoiceCreate = ({
       <Form layout="vertical" form={form}>
         <Form.Item
           label="Nama Invoice"
-          name={"name"}
+          name={"invoice_name"}
           rules={[
             {
               required: true,
@@ -133,8 +144,15 @@ const ModalInvoiceCreate = ({
         >
           <>
             <Input
+              name="invoice_name"
               placeholder="Masukkan nama invoice"
-              defaultValue={dataInvoiceDraft?.title}
+              defaultValue={dataInvoiceDraft?.invoice_name}
+              onChange={(e) =>
+                setDataInvoiceDraft((prev) => ({
+                  ...prev,
+                  invoice_name: e.target.value,
+                }))
+              }
             />
           </>
         </Form.Item>
@@ -150,7 +168,7 @@ const ModalInvoiceCreate = ({
         >
           <Input
             placeholder="Pilih PT klien"
-            defaultValue={dataInvoiceDraft?.client?.name}
+            defaultValue={dataContract?.client?.name}
             disabled
           />
         </Form.Item>
@@ -186,6 +204,32 @@ const ModalInvoiceCreate = ({
         </Form.Item>
       </Form>
     </Modal>
+  ) : (
+    <ModalUbah
+      title={
+        <div className="flex gap-2 items-center">
+          <AlertCircleIconSvg size={28} color={"#35763B75"} />
+          <h3 className="mig-heading--3 text-primary100">
+            Konfirmasi Buat Draft
+          </h3>
+        </div>
+      }
+      visible={modalConfirm}
+      onvisible={setModalConfirm}
+      onOk={handleAddInvoice}
+      onCancel={() => setModalConfirm(false)}
+      loading={loading}
+      disabled={!isAllowedToAddInvoice}
+      okButtonText={"Ya, Buat Draft"}
+      closable={false}
+    >
+      <p>
+        Apakah Anda yakin ingin membuat draft dengan nama invoice{" "}
+        <strong>{dataInvoiceDraft?.invoice_name}</strong> dari PT klien{" "}
+        <strong>{dataContract?.client?.name}</strong> dengan tanggal terbit{" "}
+        <strong>{momentFormatDate(dataInvoiceDraft?.invoice_raise_at)}</strong>.
+      </p>
+    </ModalUbah>
   );
 };
 

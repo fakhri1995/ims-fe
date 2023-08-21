@@ -1,11 +1,9 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
   Input,
   Modal,
   Select,
-  Spin,
   Tooltip,
   notification,
 } from "antd";
@@ -20,7 +18,6 @@ import {
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
-import { useCallback } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
@@ -34,10 +31,7 @@ import {
 import Layout from "components/layout-dashboard";
 import st from "components/layout-dashboard.module.css";
 import { ModalHapus2 } from "components/modal/modalCustom";
-import {
-  TableCustomContractList,
-  TableCustomInvoiceList,
-} from "components/table/tableCustom";
+import { TableCustomInvoiceList } from "components/table/tableCustom";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -45,10 +39,8 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   COMPANY_CLIENTS_GET,
-  CONTRACTS_GET,
   CONTRACT_DELETE,
   CONTRACT_INVOICES_GET,
-  CONTRACT_INVOICE_ADD,
   CONTRACT_INVOICE_DELETE,
   CONTRACT_INVOICE_GET,
   CONTRACT_INVOICE_UPDATE,
@@ -64,6 +56,7 @@ import {
 import { CompanyService } from "apis/company";
 import { ContractService } from "apis/contract";
 
+import { PlusIconSvg } from "../../../../components/icon";
 import {
   ArcElement,
   BarElement,
@@ -97,7 +90,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetInvoice = hasPermission(CONTRACT_INVOICE_GET);
   const isAllowedToUpdateInvoice = hasPermission(CONTRACT_INVOICE_UPDATE);
   const isAllowedToDeleteInvoice = hasPermission(CONTRACT_INVOICE_DELETE);
-  const isAllowedToAddInvoice = hasPermission(CONTRACT_INVOICE_ADD);
 
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
 
@@ -110,9 +102,12 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    duration: withDefault(NumberParam, undefined),
+    total_min: withDefault(NumberParam, undefined),
+    total_max: withDefault(NumberParam, undefined),
     client_ids: withDefault(NumberParam, undefined),
-    status_types: withDefault(StringParam, undefined),
+    status: withDefault(StringParam, undefined),
+    year: withDefault(NumberParam, moment().format("YYYY")),
+    month: withDefault(NumberParam, moment().format("M")),
   });
 
   const rt = useRouter();
@@ -123,10 +118,10 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 2, "Kontrak", "Invoice");
 
-  const durationRangeList = [
-    { name: "1 Bulan", value: 30 },
-    { name: "3 Bulan", value: 90 },
-    { name: "1 Tahun", value: 365 },
+  const priceRangeList = [
+    { name: "Rp 0 - Rp 50.000.000", value: "0,50000000" },
+    { name: "Rp 50.000.001 - Rp 100.000.000", value: "50000001,100000000" },
+    { name: "> Rp 100.000.000", value: "1000000," },
   ];
 
   const dataStatusList = [
@@ -145,14 +140,14 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2. Use state
   // 2.1. Table Contract
   // filter search & selected options
-  const [searchingFilterInvoices, setSearchingFilterContracts] = useState("");
-  const [selectedDuration, setSelectedDuration] = useState(undefined);
+  const [searchingFilterInvoices, setSearchingFilterInvoices] = useState("");
+  const [selectedPriceRange, setSelectedPriceRange] = useState([0, 0]);
   const [selectedCompany, setSelectedCompany] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
-  // Modal Duration Range Filter
-  const [modalDuration, setModalDuration] = useState(false);
-  const [durationInput, setDurationInput] = useState(0);
+  // Modal Price Range Filter
+  const [modalPriceRange, setModalPriceRange] = useState(false);
+  const [priceRangeInput, setPriceRangeInput] = useState([0, 0]);
 
   const [refresh, setRefresh] = useState(-1);
   const [loadingAdd, setLoadingAdd] = useState(false);
@@ -192,9 +187,10 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 4.1. Filter Table
   const onFilterRecruitments = () => {
     setQueryParams({
-      duration: selectedDuration,
+      total_min: selectedPriceRange[0],
+      total_max: selectedPriceRange[1],
       client_ids: selectedCompany,
-      status_types: selectedStatus,
+      status: selectedStatus,
     });
   };
 
@@ -203,7 +199,16 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     "Enter"
   );
 
-  // 4.3. Delete Invoice
+  const onAddPriceRange = () => {
+    setQueryParams({
+      total_min: priceRangeInput[0],
+      total_max: priceRangeInput[1],
+    });
+    setSelectedPriceRange([...priceRangeInput]);
+    setModalPriceRange(false);
+  };
+
+  // 4.2. Delete Invoice
   const handleDeleteInvoice = (id) => {
     if (!isAllowedToDeleteInvoice) {
       permissionWarningNotification("Menghapus", "Kontrak");
@@ -244,6 +249,15 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => setLoadingDelete(false));
   };
 
+  // Use for price range filter
+  const getPriceRangeLabel = (priceRangeArr) =>
+    `Rp ${Number(priceRangeArr[0])?.toLocaleString("id-ID")} - Rp ${Number(
+      priceRangeArr[1]
+    )?.toLocaleString("id-ID")}`;
+
+  const getPriceRangeValue = (priceRangeArr) =>
+    `${priceRangeArr[0]},${priceRangeArr[1]}`;
+
   // Kontrak Table's columns
   const columnInvoices = [
     {
@@ -269,10 +283,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <div className="xl:w-40">{text || "-"}</div>,
         };
       },
-      sorter: isAllowedToGetInvoices
-        ? (a, b) =>
-            a.invoice_number?.toLowerCase() > b.invoice_number?.toLowerCase()
-        : false,
     },
     {
       title: "Nama Invoice",
@@ -283,22 +293,11 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.invoice_name || "-"}</>,
         };
       },
-      sorter: isAllowedToGetInvoices
-        ? (a, b) =>
-            a.invoice_name
-              ?.toLowerCase()
-              .localeCompare(b.invoice_name?.toLowerCase())
-        : false,
     },
     {
       title: "Nama Klien",
       key: "client_name",
       dataIndex: ["client", "name"],
-      render: (text, record, index) => {
-        return {
-          children: <div>{text || "-"}</div>,
-        };
-      },
     },
     {
       title: "Tanggal Terbit",
@@ -319,7 +318,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "invoice_total",
       render: (text, record, index) => {
         return {
-          children: <>Rp{Number(text)?.toLocaleString("id-ID") || "-"}</>,
+          children: <>Rp {Number(text)?.toLocaleString("id-ID") || "-"}</>,
         };
       },
       sorter: isAllowedToGetInvoices
@@ -353,16 +352,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           ),
         };
       },
-      sorter: isAllowedToGetInvoices
-        ? (a, b) => {
-            const dataStatusListIds = dataStatusList?.map(
-              (status) => status?.id
-            );
-            const indexA = dataStatusListIds?.indexOf(a?.status);
-            const indexB = dataStatusListIds?.indexOf(b?.status);
-            return indexA - indexB;
-          }
-        : false,
     },
     {
       title: "Aksi",
@@ -372,14 +361,10 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <div className="flex flex-col md:flex-row gap-2 items-center">
-              {!record?.is_posted ? (
+              {record?.is_posted ? (
                 <Button
+                  disabled
                   type={"primary"}
-                  disabled={true}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    // rt.push(`/admin/employees/${record.id}?tab=2`);
-                  }}
                   icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
                   className="invoiceButton bg-mono50 border-transparent hover:bg-mono80 
                   hover:border-transparent focus:bg-mono80 focus:border-mono80"
@@ -442,7 +427,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                   // disabled={!isAllowedToUpdateEmployeeContract}
                   onClick={(event) => {
                     event.stopPropagation();
-                    // rt.push(`/admin/employees/${record.id}?tab=2`);
                   }}
                   icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
                   className="bg-primary100 border-primary100 hover:bg-primary75 
@@ -453,10 +437,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           ),
         };
       },
-      sorter: isAllowedToGetInvoices
-        ? (a, b) =>
-            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
-        : false,
     },
   ];
 
@@ -464,6 +444,9 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     return null;
   }
 
+  // console.log({ priceRangeList });
+  // console.log({ selectedPriceRange });
+  // console.log({ priceRangeInput });
   return (
     <Layout
       tok={initProps}
@@ -480,20 +463,32 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
             <div className="flex gap-4 items-center">
               <h4 className="mig-heading--4">Daftar Invoice</h4>
               <p className="mig-caption--medium text-mono50">Bulan</p>
-
               <DatePicker
                 className="themedDatePicker"
-                defaultValue={moment()}
+                value={moment(`${queryParams.year}-${queryParams.month}`)}
                 format={"MMMM YYYY"}
                 picker="month"
                 locale={locale}
+                onChange={(date) => {
+                  if (date) {
+                    setQueryParams({
+                      month: date.format("M"),
+                      year: date.format("YYYY"),
+                    });
+                  } else {
+                    setQueryParams({
+                      month: moment().format("M"),
+                      year: moment().format("YYYY"),
+                    });
+                  }
+                }}
               />
             </div>
             <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center ">
+              <div className="flex flex-col gap-4 lg:flex-row lg:justify-between w-full lg:items-center ">
                 {/* Start: Search criteria */}
                 {/* Search by keyword (kata kunci) */}
-                <div className="w-full md:w-4/12">
+                <div className="w-full lg:w-3/12">
                   <Input
                     defaultValue={searchingFilterInvoices}
                     style={{ width: `100%` }}
@@ -501,7 +496,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     allowClear
                     onChange={(e) => {
                       setTimeout(
-                        () => setSearchingFilterContracts(e.target.value),
+                        () => setSearchingFilterInvoices(e.target.value),
                         1000
                       );
                     }}
@@ -511,17 +506,17 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
 
                 {/* Filter by status (dropdown) */}
-                <div className="w-full md:w-2/12">
+                <div className="w-full lg:w-2/12">
                   <Select
-                    defaultValue={queryParams.status_types}
+                    defaultValue={queryParams.status}
                     allowClear
                     name={`status`}
                     disabled={!isAllowedToGetInvoicestatusList}
-                    placeholder="Semua Status"
+                    placeholder="Status"
                     style={{ width: `100%` }}
                     className="themedSelector"
                     onChange={(value) => {
-                      setQueryParams({ status_types: value });
+                      setQueryParams({ status: value });
                       setSelectedStatus(value);
                     }}
                     optionLabelProp="children"
@@ -541,13 +536,13 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
 
                 {/* Filter by company client */}
-                <div className="w-full md:w-2/12">
+                <div className="w-full lg:w-2/12">
                   <Select
                     defaultValue={queryParams.client_ids}
                     allowClear
                     name={`client`}
                     disabled={!isAllowedToGetCompanyClients}
-                    placeholder="Semua Klien"
+                    placeholder="PT Klien"
                     style={{ width: `100%` }}
                     className="themedSelector"
                     onChange={(value) => {
@@ -564,58 +559,79 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
 
                 {/* Filter by total price (dropdown) */}
-                <div className="w-full md:w-2/12">
+                <div className="w-full lg:w-4/12">
                   <Select
-                    defaultValue={queryParams.duration}
+                    value={
+                      getPriceRangeValue(selectedPriceRange) != "0,0"
+                        ? getPriceRangeValue(selectedPriceRange)
+                        : undefined
+                    }
                     allowClear
                     name={`role`}
-                    disabled={!isAllowedToGetCompanyClients}
-                    placeholder="Harga Total"
+                    placeholder="Pilih Range Total Tagihan"
                     style={{ width: `100%` }}
                     className="themedSelector"
                     onChange={(value) => {
-                      setQueryParams({ duration: value });
-                      setSelectedDuration(value);
+                      if (value) {
+                        const tempPriceRange = value?.split(",");
+                        setQueryParams({
+                          total_min: tempPriceRange[0],
+                          total_max: tempPriceRange[1],
+                        });
+                        setSelectedPriceRange(tempPriceRange);
+                      } else {
+                        setQueryParams({
+                          total_min: undefined,
+                          total_max: undefined,
+                        });
+                        setSelectedPriceRange([0, 0]);
+                      }
                     }}
-                    dropdownRender={(options) => (
-                      <>
-                        {options}
-                        <p
-                          onClick={() => setModalDuration(true)}
-                          className={`flex justify-center py-1 px-2 text-center 
-                        rounded hover:bg-primary100 hover:text-white hover:cursor-pointer`}
-                        >
-                          Custom Range
-                        </p>
-                      </>
-                    )}
+                    optionLabelProp="label"
                   >
-                    {durationRangeList?.map((item, idx) => (
-                      <Select.Option key={idx + 1} value={item.value}>
-                        <p
-                          className={`px-2 text-center rounded  
-                        ${
-                          selectedDuration === item.value &&
-                          "bg-primary100 text-white"
-                        }`}
-                        >
-                          {item.name}
-                        </p>
+                    {priceRangeList?.map((item, idx) => (
+                      <Select.Option
+                        key={idx + 1}
+                        label={item.name}
+                        value={item.value}
+                      >
+                        {item.name}
                       </Select.Option>
                     ))}
-                    {durationInput && (
-                      <Select.Option key={5} value={durationInput * 30}>
+
+                    <Select.Option
+                      key={5}
+                      label={getPriceRangeLabel(priceRangeInput)}
+                      value={getPriceRangeValue(priceRangeInput)}
+                    >
+                      {/* <div onClick={() => setModalPriceRange(true)}> */}
+                      {priceRangeInput[0] || priceRangeInput[1] ? (
+                        <div className="flex items-center justify-between">
+                          <p>{getPriceRangeLabel(priceRangeInput)}</p>
+                          <p
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setModalPriceRange(true);
+                            }}
+                            className="mig-caption--bold text-primary100 bg-backdrop 
+                            rounded-xl px-2 hover:opacity-75"
+                          >
+                            Ubah
+                          </p>
+                        </div>
+                      ) : (
                         <p
-                          className={`px-2 text-center rounded
-                      ${
-                        selectedDuration === durationInput * 30 &&
-                        "bg-primary100 text-white"
-                      }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setModalPriceRange(true);
+                          }}
+                          className="mig-caption--bold text-primary100"
                         >
-                          {durationInput} Bulan (Custom)
+                          Kustom Nominal
                         </p>
-                      </Select.Option>
-                    )}
+                      )}
+                      {/* </div> */}
+                    </Select.Option>
                   </Select>
                 </div>
 
@@ -658,40 +674,54 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
         </div>
       </div>
 
-      {/* Modal Duration Range */}
-      <AccessControl hasPermission={CONTRACTS_GET}>
+      {/* Modal Price Range */}
+      <AccessControl hasPermission={CONTRACT_INVOICES_GET}>
         <Modal
-          title={"Masukkan Jumlah Bulan"}
-          visible={modalDuration}
-          onCancel={() => setModalDuration(false)}
+          title={"Kustom Nominal"}
+          visible={modalPriceRange}
+          onCancel={() => setModalPriceRange(false)}
           maskClosable={false}
           footer={
-            <div className="flex space-x-2 justify-end items-center">
-              <button
-                onClick={() => setModalDuration(false)}
-                className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
-              >
-                Batal
-              </button>
-              <ButtonSys
-                type={"primary"}
-                onClick={() => setModalDuration(false)}
-              >
-                <p>Tambah</p>
-              </ButtonSys>
-            </div>
+            <ButtonSys fullWidth type={"primary"} onClick={onAddPriceRange}>
+              <div className="flex gap-2 items-center">
+                <PlusIconSvg size={16} color={"#FFFFFF"} />
+
+                <p>Tambah Nominal</p>
+              </div>
+            </ButtonSys>
           }
           // loading={}
         >
-          <div className="space-y-2">
-            <p>Jumlah Bulan</p>
-            <Input
-              type="number"
-              min={0}
-              placeholder="Masukkan jumlah bulan"
-              value={durationInput}
-              onChange={(e) => setDurationInput(e.target.value)}
-            />
+          <div className="space-y-4">
+            <p>Masukkan Nominal Kustom</p>
+            <div className="flex gap-2 items-center">
+              <Input
+                allowClear
+                type="number"
+                min={0}
+                placeholder="Nominal Minimum"
+                defaultValue={null}
+                onChange={(e) =>
+                  setPriceRangeInput((prev) => [e.target.value, prev[1]])
+                }
+              />
+              <p>-</p>
+              <Input
+                allowClear
+                type="number"
+                min={0}
+                placeholder="Nominal Maksimum"
+                defaultValue={null}
+                onChange={(e) =>
+                  setPriceRangeInput((prev) => [prev[0], e.target.value])
+                }
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    onAddPriceRange();
+                  }
+                }}
+              />
+            </div>
           </div>
         </Modal>
       </AccessControl>
