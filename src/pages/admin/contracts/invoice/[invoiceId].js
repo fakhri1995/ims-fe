@@ -421,10 +421,7 @@ const ContractInvoiceFormIndex = ({
               </ButtonSys>
             )}
           </div>
-
-          {loadingContractInvoice ? (
-            <Spin spinning={loadingContractInvoice}></Spin>
-          ) : (
+          <Spin spinning={loadingContractInvoice}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {!isReadOnly && (
                 <p className="md:col-span-2 text-warning">
@@ -580,7 +577,7 @@ const ContractInvoiceFormIndex = ({
                 </div>
               ))}
             </div>
-          )}
+          </Spin>
 
           {!isReadOnly && (
             <button
