@@ -91,7 +91,6 @@ const ContractInvoiceFormIndex = ({
 
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
-  const [period, setPeriod] = useState(-1);
   const [dataInvoice, setDataInvoice] = useState({});
   const [dataInvoiceDetail, setDataInvoiceDetail] = useState([]);
   const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
@@ -323,7 +322,7 @@ const ContractInvoiceFormIndex = ({
 
   // console.log({ dataServices });
   // console.log({ dataServiceTemplateNames });
-  // console.log({ dataInvoice });
+  console.log({ dataInvoice });
   // console.log({ dataInvoiceDetail });
   return (
     <Layout
@@ -570,9 +569,6 @@ const ContractInvoiceFormIndex = ({
                       ? moment(dataInvoice?.invoice_period)
                       : null
                   }
-                  onChange={(date, datestring) => {
-                    setPeriod(datestring);
-                  }}
                   renderExtraFooter={() => <div />}
                   suffixIcon={
                     <CalendarEventIconSvg color={"#2F80ED"} size={20} />

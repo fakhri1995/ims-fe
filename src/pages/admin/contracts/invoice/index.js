@@ -1,11 +1,9 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
   Input,
   Modal,
   Select,
-  Spin,
   Tooltip,
   notification,
 } from "antd";
@@ -20,7 +18,6 @@ import {
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
-import { useCallback } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
@@ -34,10 +31,7 @@ import {
 import Layout from "components/layout-dashboard";
 import st from "components/layout-dashboard.module.css";
 import { ModalHapus2 } from "components/modal/modalCustom";
-import {
-  TableCustomContractList,
-  TableCustomInvoiceList,
-} from "components/table/tableCustom";
+import { TableCustomInvoiceList } from "components/table/tableCustom";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -45,10 +39,8 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   COMPANY_CLIENTS_GET,
-  CONTRACTS_GET,
   CONTRACT_DELETE,
   CONTRACT_INVOICES_GET,
-  CONTRACT_INVOICE_ADD,
   CONTRACT_INVOICE_DELETE,
   CONTRACT_INVOICE_GET,
   CONTRACT_INVOICE_UPDATE,
@@ -98,7 +90,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetInvoice = hasPermission(CONTRACT_INVOICE_GET);
   const isAllowedToUpdateInvoice = hasPermission(CONTRACT_INVOICE_UPDATE);
   const isAllowedToDeleteInvoice = hasPermission(CONTRACT_INVOICE_DELETE);
-  const isAllowedToAddInvoice = hasPermission(CONTRACT_INVOICE_ADD);
 
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
 
@@ -111,9 +102,12 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    price_range: withDefault(StringParam, undefined),
+    total_min: withDefault(NumberParam, undefined),
+    total_max: withDefault(NumberParam, undefined),
     client_ids: withDefault(NumberParam, undefined),
-    status_types: withDefault(StringParam, undefined),
+    status: withDefault(StringParam, undefined),
+    year: withDefault(NumberParam, moment().format("YYYY")),
+    month: withDefault(NumberParam, moment().format("M")),
   });
 
   const rt = useRouter();
@@ -127,7 +121,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const priceRangeList = [
     { name: "Rp 0 - Rp 50.000.000", value: "0,50000000" },
     { name: "Rp 50.000.001 - Rp 100.000.000", value: "50000001,100000000" },
-    { name: "> Rp 100.000.000", value: "1000000,0" },
+    { name: "> Rp 100.000.000", value: "1000000," },
   ];
 
   const dataStatusList = [
@@ -147,7 +141,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2.1. Table Contract
   // filter search & selected options
   const [searchingFilterInvoices, setSearchingFilterInvoices] = useState("");
-  const [selectedPriceRange, setSelectedPriceRange] = useState(undefined);
+  const [selectedPriceRange, setSelectedPriceRange] = useState([0, 0]);
   const [selectedCompany, setSelectedCompany] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
@@ -193,9 +187,10 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 4.1. Filter Table
   const onFilterRecruitments = () => {
     setQueryParams({
-      price_range: selectedPriceRange,
+      total_min: selectedPriceRange[0],
+      total_max: selectedPriceRange[1],
       client_ids: selectedCompany,
-      status_types: selectedStatus,
+      status: selectedStatus,
     });
   };
 
@@ -205,9 +200,11 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   const onAddPriceRange = () => {
-    const tempPriceRange = getPriceRangeValue(priceRangeInput);
-    setQueryParams({ price_range: tempPriceRange });
-    setSelectedPriceRange(tempPriceRange);
+    setQueryParams({
+      total_min: priceRangeInput[0],
+      total_max: priceRangeInput[1],
+    });
+    setSelectedPriceRange([...priceRangeInput]);
     setModalPriceRange(false);
   };
 
@@ -466,13 +463,25 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
             <div className="flex gap-4 items-center">
               <h4 className="mig-heading--4">Daftar Invoice</h4>
               <p className="mig-caption--medium text-mono50">Bulan</p>
-
               <DatePicker
                 className="themedDatePicker"
-                defaultValue={moment()}
+                value={moment(`${queryParams.year}-${queryParams.month}`)}
                 format={"MMMM YYYY"}
                 picker="month"
                 locale={locale}
+                onChange={(date) => {
+                  if (date) {
+                    setQueryParams({
+                      month: date.format("M"),
+                      year: date.format("YYYY"),
+                    });
+                  } else {
+                    setQueryParams({
+                      month: moment().format("M"),
+                      year: moment().format("YYYY"),
+                    });
+                  }
+                }}
               />
             </div>
             <div className="flex flex-col gap-4">
@@ -499,7 +508,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                 {/* Filter by status (dropdown) */}
                 <div className="w-full lg:w-2/12">
                   <Select
-                    defaultValue={queryParams.status_types}
+                    defaultValue={queryParams.status}
                     allowClear
                     name={`status`}
                     disabled={!isAllowedToGetInvoicestatusList}
@@ -507,7 +516,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     style={{ width: `100%` }}
                     className="themedSelector"
                     onChange={(value) => {
-                      setQueryParams({ status_types: value });
+                      setQueryParams({ status: value });
                       setSelectedStatus(value);
                     }}
                     optionLabelProp="children"
@@ -552,15 +561,31 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                 {/* Filter by total price (dropdown) */}
                 <div className="w-full lg:w-4/12">
                   <Select
-                    value={queryParams.price_range}
+                    value={
+                      getPriceRangeValue(selectedPriceRange) != "0,0"
+                        ? getPriceRangeValue(selectedPriceRange)
+                        : undefined
+                    }
                     allowClear
                     name={`role`}
                     placeholder="Pilih Range Total Tagihan"
                     style={{ width: `100%` }}
                     className="themedSelector"
                     onChange={(value) => {
-                      setQueryParams({ price_range: value });
-                      setSelectedPriceRange(value);
+                      if (value) {
+                        const tempPriceRange = value?.split(",");
+                        setQueryParams({
+                          total_min: tempPriceRange[0],
+                          total_max: tempPriceRange[1],
+                        });
+                        setSelectedPriceRange(tempPriceRange);
+                      } else {
+                        setQueryParams({
+                          total_min: undefined,
+                          total_max: undefined,
+                        });
+                        setSelectedPriceRange([0, 0]);
+                      }
                     }}
                     optionLabelProp="label"
                   >
