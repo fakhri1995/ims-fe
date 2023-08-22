@@ -86,6 +86,7 @@ export const SIDEBAR_RECRUITMENT_SETUP = "SIDEBAR_RECRUITMENT_SETUP";
 /** Contract Management */
 export const SIDEBAR_CONTRACT = "SIDEBAR_CONTRACT";
 export const SIDEBAR_CONTRACT_LIST = "SIDEBAR_CONTRACT_LIST";
+export const SIDEBAR_CONTRACT_INVOICE = "SIDEBAR_CONTRACT_INVOICE";
 
 /**
  * Daftar feature untuk halaman Attendance.
@@ -402,6 +403,13 @@ export const CONTRACT_LOGS_GET = "CONTRACT_LOGS_GET";
 /** Contract Invoice Template */
 export const CONTRACT_TEMPLATE_GET = "CONTRACT_TEMPLATE_GET";
 export const CONTRACT_TEMPLATE_UPDATE = "CONTRACT_TEMPLATE_UPDATE";
+
+/** Contract Invoice */
+export const CONTRACT_INVOICES_GET = "CONTRACT_INVOICES_GET";
+export const CONTRACT_INVOICE_GET = "CONTRACT_INVOICE_GET";
+export const CONTRACT_INVOICE_ADD = "CONTRACT_INVOICE_ADD";
+export const CONTRACT_INVOICE_UPDATE = "CONTRACT_INVOICE_UPDATE";
+export const CONTRACT_INVOICE_DELETE = "CONTRACT_INVOICE_DELETE";
 
 /**
  * Daftar feature untuk User Management.

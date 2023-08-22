@@ -32,12 +32,16 @@ const ContractServiceForm = ({
         rowKey={(record) => record.id}
         loading={loading}
         scroll={{ x: 200 }}
-        pagination={false}
+        pagination={{
+          pageSize: 5,
+          showSizeChanger: false,
+        }}
         footer={() => (
           <button
             type="button"
             onClick={() => setModalServiceCreate(true)}
-            className="bg-transparent flex items-center space-x-2 text-primary100"
+            className="bg-transparent flex items-center space-x-2 
+            text-primary100 hover:opacity-75"
           >
             <PlusIconSvg size={16} color={"#35763B"} />
             <p>Tambah Service Baru</p>
@@ -75,11 +79,9 @@ const ContractServiceForm = ({
             title: "Subtotal",
             dataIndex: "subtotal",
             render: (text, record) => {
-              let tempSubtotal = Number(record?.pax) * Number(record?.price);
               return (
                 <p className="">
-                  Rp{" "}
-                  {Number(text || tempSubtotal)?.toLocaleString("id-ID") || "-"}
+                  Rp {Number(text)?.toLocaleString("id-ID") || "-"}
                 </p>
               );
             },

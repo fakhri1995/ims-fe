@@ -3,20 +3,23 @@ import {
   FileTextOutlined,
   RightOutlined,
 } from "@ant-design/icons";
-import { Collapse, DatePicker, Tabs, notification } from "antd";
+import { DatePicker, notification } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { useMemo } from "react";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
 
+import Layout from "components/layout-dashboard";
 import st from "components/layout-dashboard.module.css";
-import LayoutDashboard from "components/layout-dashboardNew";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { CONTRACT_TEMPLATE_GET, CONTRACT_TEMPLATE_UPDATE } from "lib/features";
+import {
+  CONTRACT_INVOICE_ADD,
+  CONTRACT_TEMPLATE_GET,
+  CONTRACT_TEMPLATE_UPDATE,
+} from "lib/features";
 
 import { ContractService } from "apis/contract";
 
@@ -33,7 +36,7 @@ import {
   FILE,
   LIST,
 } from "../../../../components/screen/contract/detail/ContractInfoSection";
-import ContractInvoiceItemSection from "../../../../components/screen/contract/invoice/ContractInvoiceItemSection";
+import InvoiceTemplateItemSection from "../../../../components/screen/contract/invoice/InvoiceTemplateItemSection";
 import {
   convertDaysToString,
   generateStaticAssetUrl,
@@ -73,7 +76,7 @@ export const contractInfoString = {
   extras: "Komponen Tambahan",
 };
 
-const ContractInvoiceIndex = ({
+const ContractInvoiceTemplateIndex = ({
   dataProfile,
   sidemenu,
   initProps,
@@ -90,9 +93,16 @@ const ContractInvoiceIndex = ({
   const isAllowedToUpdateInvoiceTemplate = hasPermission(
     CONTRACT_TEMPLATE_UPDATE
   );
+  const isAllowedToAddInvoice = hasPermission(CONTRACT_INVOICE_ADD);
 
   const rt = useRouter();
-  const pathArr = rt.pathname.split("/").slice(1);
+  // Breadcrumb url
+  const pathArr = rt.asPath.split("/").slice(1);
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 1);
+  pathTitleArr.splice(1, 3, "Kontrak", "Detail Kontrak", "Template Invoice");
 
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
@@ -225,18 +235,6 @@ const ContractInvoiceIndex = ({
       .finally(() => setLoadingSave(false));
   };
 
-  // Breadcrumb Text
-  const pageBreadcrumbValue = useMemo(
-    () => [
-      { name: "Kontrak", hrefValue: "/admin/contracts" },
-      { name: "Detail Kontrak", hrefValue: `/admin/contracts/${contractId}` },
-      {
-        name: "Template Invoice",
-      },
-    ],
-    []
-  );
-
   if (isAccessControlPending) {
     return null;
   }
@@ -244,13 +242,13 @@ const ContractInvoiceIndex = ({
   // console.log({ dataServices });
   // console.log({ dataInvoice });
   return (
-    <LayoutDashboard
+    <Layout
+      tok={initProps}
       dataProfile={dataProfile}
       sidemenu={sidemenu}
-      tok={initProps}
       st={st}
       pathArr={pathArr}
-      fixedBreadcrumbValues={pageBreadcrumbValue}
+      pathTitleArr={pathTitleArr}
     >
       <div
         className="grid grid-cols-1 gap-4 lg:gap-6 px-4 md:px-5 "
@@ -269,9 +267,13 @@ const ContractInvoiceIndex = ({
               <h4 className="mig-heading--4">Data Template Invoice</h4>
             </button>
             <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 lg:items-center">
-              <ButtonSys type={"default"} onClick={() => setModalInvoice(true)}>
+              <ButtonSys
+                type={"default"}
+                onClick={() => setModalInvoice(true)}
+                disabled={!isAllowedToAddInvoice}
+              >
                 <div className="flex space-x-2 items-center">
-                  <FileTextOutlined />
+                  <FileTextOutlined rev={""} />
                   <p>Buat Invoice</p>
                 </div>
               </ButtonSys>
@@ -291,7 +293,6 @@ const ContractInvoiceIndex = ({
             </div>
             <div className="space-y-2">
               <p className="mig-caption--bold">Periode Penagihan</p>
-
               <DatePicker
                 allowEmpty
                 format={"D"}
@@ -354,7 +355,7 @@ const ContractInvoiceIndex = ({
 
         {/* Detail Kontrak & Daftar Service */}
         <section className="shadow-md rounded-md bg-white p-6 mb-4 gap-6">
-          <ContractInvoiceItemSection
+          <InvoiceTemplateItemSection
             dataServiceTemplateNames={dataServiceTemplateNames}
             setDataServiceTemplateNames={setDataServiceTemplateNames}
             dataServices={dataServices}
@@ -368,6 +369,7 @@ const ContractInvoiceIndex = ({
         initProps={initProps}
         visible={modalInvoice}
         onvisible={setModalInvoice}
+        dataContract={dataContract}
       />
 
       <ModalContractInfo
@@ -377,7 +379,7 @@ const ContractInvoiceIndex = ({
         dataInvoice={dataInvoice}
         setDataInvoice={setDataInvoice}
       />
-    </LayoutDashboard>
+    </Layout>
   );
 };
 
@@ -425,4 +427,4 @@ export async function getServerSideProps({ req, res, params }) {
   };
 }
 
-export default ContractInvoiceIndex;
+export default ContractInvoiceTemplateIndex;

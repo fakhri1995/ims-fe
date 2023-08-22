@@ -1,5 +1,5 @@
 import { Input, Table } from "antd";
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -16,39 +16,51 @@ import {
 import ModalColumnAdd from "../../../modal/contracts/modalColumnAdd";
 import { ModalHapus2 } from "../../../modal/modalCustom";
 
-const ContractInvoiceItemSection = ({
+const InvoiceTemplateItemSection = ({
   dataServiceTemplateNames,
   setDataServiceTemplateNames,
   dataServices,
   setDataServices,
   loading,
 }) => {
-  // 1.Use State
+  // 1. Use state & ref
   const [dynamicColumns, setDynamicColumns] = useState([]);
-  const [isEdit, setIsEdit] = useState(null);
-  const [modalAddColumn, setModalAddColumn] = useState(false);
-  const [modalDeleteColumn, setModalDeleteColumn] = useState(false);
+  const [isEdit, setIsEdit] = useState({ row: null, col: null });
   const [dataCurrentColumn, setDataCurrentColumn] = useState({
     idx: -1,
     name: "",
   });
-  const [currentRowValues, setCurrentRowValues] = useState([]);
-  const [currentRowIndex, setCurrentRowIndex] = useState(-1);
+
+  // Filter item table
   const [searchingFilterItems, setSearchingFilterItems] = useState(null);
   const [filteredItems, setFilteredItems] = useState([]);
-  const prevRowValues = useRef();
-  const prevRowIndex = useRef();
+
+  // Cell values and index in dynamic column (Item table)
+  const [currentCellValue, setCurrentCellValue] = useState(null);
+  const [currentCellIndex, setCurrentCellIndex] = useState({
+    row: null,
+    col: null,
+  });
+  const prevCellValue = useRef();
+  const prevCellIndex = useRef();
+
+  // Modal
+  const [modalAddColumn, setModalAddColumn] = useState(false);
+  const [modalDeleteColumn, setModalDeleteColumn] = useState(false);
 
   // 2. Use Effect
   // 2.1. Render dynamic columns when dataServiceTemplateNames is changing
   useEffect(() => {
     const tempDyanmicColumns = [];
     for (let colIdx in dataServiceTemplateNames) {
-      let newColumn = renderNewColumn(colIdx, dataServiceTemplateNames[colIdx]);
+      let newColumn = renderDynamicColumn(
+        colIdx,
+        dataServiceTemplateNames[colIdx]
+      );
       tempDyanmicColumns.push(newColumn);
     }
     setDynamicColumns(tempDyanmicColumns);
-  }, [dataServiceTemplateNames, isEdit]);
+  }, [dataServiceTemplateNames, isEdit, currentCellValue]);
 
   // 2.2. Add contract_service_id & details attribute if not yet available
   useEffect(() => {
@@ -75,14 +87,14 @@ const ContractInvoiceItemSection = ({
     onFilterItems();
   }, [searchingFilterItems]);
 
-  // 2.4. Save previous row index and values in item table
+  // 2.4. Save previous cell index and values in item table
   useEffect(() => {
-    prevRowValues.current = currentRowValues;
-  }, [currentRowValues]);
+    prevCellValue.current = currentCellValue;
+  }, [currentCellValue]);
 
   useEffect(() => {
-    prevRowIndex.current = currentRowIndex;
-  }, [currentRowIndex]);
+    prevCellIndex.current = currentCellIndex;
+  }, [currentCellIndex]);
 
   // 3. Handler
   const onFilterItems = () => {
@@ -95,30 +107,22 @@ const ContractInvoiceItemSection = ({
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterItems, "Enter");
-  const checkKeyPress = useCallback(
-    (e) => {
-      const { key, keyCode } = e;
-      console.log(key, keyCode);
-      if (key === "Enter") {
-        alert(currentRowValues);
-      }
-    },
-    [currentRowValues]
-  );
 
-  const onSaveRowValues = (rowIndex, rowValues) => {
+  const onSaveCellValue = (cellIdx, value) => {
     let tempDataServices = [...dataServices];
 
     // update row values
-    if (dataServices?.[rowIndex]?.service_template_value) {
-      tempDataServices[rowIndex].service_template_value.details = rowValues;
+    if (dataServices?.[cellIdx.row]?.service_template_value) {
+      tempDataServices[cellIdx.row].service_template_value.details[
+        cellIdx.col
+      ] = value;
     }
 
     setDataServices(tempDataServices);
-    setIsEdit(null);
+    setIsEdit({ row: null, col: null });
   };
 
-  const renderNewColumn = (idx, name) => ({
+  const renderDynamicColumn = (colIdx, name) => ({
     key: name?.toLowerCase().replace(/ /g, "_"),
     name: name,
     title: (
@@ -129,7 +133,7 @@ const ContractInvoiceItemSection = ({
           onClick={() => {
             setDataCurrentColumn((prev) => ({
               ...prev,
-              idx: idx,
+              idx: colIdx,
               name: name,
             }));
             setModalDeleteColumn(true);
@@ -139,39 +143,84 @@ const ContractInvoiceItemSection = ({
         </button>
       </div>
     ),
-    render: (text, record, rowIndex) => {
+    render: (text, record, rowIdx) => {
       return (
         <>
-          {isEdit == rowIndex ? (
-            <Input
-              defaultValue={
-                dataServices?.[rowIndex]?.service_template_value?.details?.[idx]
-              }
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  // save row values
-                  let tempRowValues = [...currentRowValues];
-                  tempRowValues[idx] = e.target.value;
-
-                  onSaveRowValues(currentRowIndex, tempRowValues);
+          {isEdit.row == rowIdx && isEdit.col == colIdx ? (
+            <div className="flex gap-2 items-center">
+              <Input
+                defaultValue={
+                  dataServices?.[rowIdx]?.service_template_value?.details?.[
+                    colIdx
+                  ]
                 }
-              }}
-              onChange={(e) => {
-                console.log("on change bro ", e.target.value);
-                setCurrentRowValues((prev) => {
-                  const tempRowValues = [...prev];
-                  tempRowValues[idx] = e.target.value;
-                  return tempRowValues;
-                });
-
-                setDataCurrentColumn({ idx: idx, name: name });
-                setCurrentRowIndex(rowIndex);
-              }}
-            />
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    onSaveCellValue(currentCellIndex, e.target.value);
+                  }
+                }}
+                onChange={(e) => {
+                  setCurrentCellValue(e.target.value);
+                  setCurrentCellIndex({ row: rowIdx, col: colIdx });
+                  setDataCurrentColumn({ idx: colIdx, name: name });
+                }}
+              />
+              <button
+                onClick={() => {
+                  onSaveCellValue(currentCellIndex, currentCellValue);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <CheckIconSvg size={20} color={"#CCCCCC"} />
+              </button>
+              <button
+                onClick={(e) => {
+                  setIsEdit({ row: null, col: null });
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <XIconSvg size={20} color={"#CCCCCC"} />
+              </button>
+            </div>
           ) : (
-            <p>
-              {dataServices?.[rowIndex]?.service_template_value?.details?.[idx]}
-            </p>
+            <div className="flex gap-2 items-center">
+              <p>
+                {
+                  dataServices?.[rowIdx]?.service_template_value?.details?.[
+                    colIdx
+                  ]
+                }
+              </p>
+              <button
+                onClick={(e) => {
+                  // Auto save previous edited cell
+                  if (
+                    isEdit.row !== null &&
+                    isEdit.col !== null &&
+                    (isEdit.row !== rowIdx || isEdit.col !== colIdx)
+                  ) {
+                    onSaveCellValue(
+                      prevCellIndex.current,
+                      prevCellValue.current
+                    );
+                  }
+
+                  let tempCellValue = [];
+                  if (dataServices?.[rowIdx]?.service_template_value) {
+                    tempCellValue =
+                      dataServices?.[rowIdx]?.service_template_value?.details?.[
+                        colIdx
+                      ];
+                  }
+                  setCurrentCellIndex({ row: rowIdx, col: colIdx });
+                  setCurrentCellValue(tempCellValue);
+                  setIsEdit({ row: rowIdx, col: colIdx });
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <EditSquareIconSvg size={24} color={"#CCCCCC"} />
+              </button>
+            </div>
           )}
         </>
       );
@@ -181,7 +230,7 @@ const ContractInvoiceItemSection = ({
   const handleAddColumn = () => {
     const colIdx = dataServiceTemplateNames?.length;
     const colName = dataCurrentColumn?.name;
-    let newColumn = renderNewColumn(colIdx, colName);
+    let newColumn = renderDynamicColumn(colIdx, colName);
 
     setDynamicColumns((prev) => [...prev, newColumn]);
     setDataServiceTemplateNames([
@@ -192,6 +241,11 @@ const ContractInvoiceItemSection = ({
     setModalAddColumn(false);
     setDataCurrentColumn({ idx: -1, name: "" });
   };
+
+  const { onKeyPressHandler: onEnterAddColumn } = createKeyPressHandler(
+    handleAddColumn,
+    "Enter"
+  );
 
   const handleDeleteColumn = (idx) => {
     // Delete column name
@@ -220,11 +274,9 @@ const ContractInvoiceItemSection = ({
   };
 
   // console.log({ dataServices });
-  // console.log({ currentRowValues });
   // console.log({ dataServiceTemplateNames });
   // console.log({ dynamicColumns });
-  // console.log({ dataCurrentColumn });
-  // console.log({ searchingFilterItems });
+
   return (
     <>
       <div className="flex justify-between">
@@ -273,7 +325,7 @@ const ContractInvoiceItemSection = ({
           {
             title: "No",
             dataIndex: "key",
-            render: (text, record, index) => <p>{text}</p>,
+            render: (text, record, index) => <p>{text || index + 1}</p>,
           },
           {
             title: "Nama Item",
@@ -320,57 +372,6 @@ const ContractInvoiceItemSection = ({
               </button>
             ),
             dataIndex: "actionButton",
-            render: (text, record, rowIndex) => {
-              return (
-                Boolean(dataServiceTemplateNames?.length) &&
-                (isEdit == rowIndex ? (
-                  <div className="flex gap-2 items-center">
-                    <button
-                      onClick={() => {
-                        onSaveRowValues(rowIndex, currentRowValues);
-                      }}
-                      className="bg-transparent hover:opacity-75"
-                    >
-                      <CheckIconSvg size={20} color={"#CCCCCC"} />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        setIsEdit(null);
-                      }}
-                      className="bg-transparent hover:opacity-75"
-                    >
-                      <XIconSvg size={20} color={"#CCCCCC"} />
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={(e) => {
-                      // Auto save previous edited row
-                      if ((isEdit !== null) & (isEdit !== rowIndex)) {
-                        onSaveRowValues(
-                          prevRowIndex.current,
-                          prevRowValues.current
-                        );
-                      }
-
-                      let tempRowValues = [];
-                      if (dataServices?.[rowIndex]?.service_template_value) {
-                        tempRowValues = [
-                          ...dataServices?.[rowIndex]?.service_template_value
-                            ?.details,
-                        ];
-                      }
-                      setCurrentRowIndex(rowIndex);
-                      setCurrentRowValues(tempRowValues);
-                      setIsEdit(rowIndex);
-                    }}
-                    className="bg-transparent hover:opacity-75"
-                  >
-                    <EditSquareIconSvg size={24} color={"#CCCCCC"} />
-                  </button>
-                ))
-              );
-            },
           },
         ]}
       />
@@ -381,6 +382,7 @@ const ContractInvoiceItemSection = ({
         handleAddColumn={handleAddColumn}
         dataCurrentColumn={dataCurrentColumn}
         setDataCurrentColumn={setDataCurrentColumn}
+        onEnterAddColumn={onEnterAddColumn}
       />
 
       <ModalHapus2
@@ -401,4 +403,4 @@ const ContractInvoiceItemSection = ({
   );
 };
 
-export default ContractInvoiceItemSection;
+export default InvoiceTemplateItemSection;

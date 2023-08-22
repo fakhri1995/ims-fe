@@ -2126,6 +2126,62 @@ const TableCustomContractList = ({
   );
 };
 
+const TableCustomInvoiceList = ({
+  rt,
+  dataSource,
+  columns,
+  loading,
+  total,
+  queryParams,
+  setQueryParams,
+}) => {
+  const [rowstate, setrowstate] = useState(0);
+  return (
+    <Table
+      dataSource={dataSource}
+      columns={columns}
+      rowKey={(record) => record.id}
+      loading={loading}
+      scroll={{ x: 200 }}
+      pagination={{
+        current: queryParams.page,
+        pageSize: queryParams.rows,
+        total: total,
+        showSizeChanger: true,
+      }}
+      onChange={(pagination, filters, sorter, extra) => {
+        const sortTypePayload =
+          sorter.order === "ascend"
+            ? "asc"
+            : sorter.order === "descend"
+            ? "desc"
+            : undefined;
+
+        setQueryParams({
+          sort_type: sortTypePayload,
+          sort_by: sortTypePayload === undefined ? undefined : sorter.field,
+          page: pagination.current,
+          rows: pagination.pageSize,
+        });
+      }}
+      onRow={(record, rowIndex) => {
+        return {
+          onMouseOver: () => {
+            setrowstate(record.id);
+          },
+          onClick: () => {
+            record.id && rt.push(`invoice/${record.id}`);
+          },
+        };
+      }}
+      rowClassName={(record, idx) => {
+        return `${record.id === rowstate && `cursor-pointer`}
+        }`;
+      }}
+    />
+  );
+};
+
 export {
   TableCustom,
   TableCustomRelasi,
@@ -2152,4 +2208,5 @@ export {
   TableCustomProjectCompanyList,
   TableCustomTaskList,
   TableCustomContractList,
+  TableCustomInvoiceList,
 };

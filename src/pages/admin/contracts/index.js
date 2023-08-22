@@ -491,7 +491,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="flex flex-col gap-6" id="mainWrapper">
+      <div className="grid grid-cols-1 gap-6" id="mainWrapper">
         <div className="grid grid-cols-1 lg:grid-cols-2 md:px-5 gap-6">
           <div
             className="flex flex-row items-center w-full 
@@ -527,7 +527,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   defaultValue={queryParams.duration}
                   allowClear
                   name={`role`}
-                  disabled={!isAllowedToGetCompanyClients}
                   placeholder="Rentang Durasi"
                   style={{ width: `100%` }}
                   onChange={(value) => {

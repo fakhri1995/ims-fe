@@ -6,8 +6,8 @@ import { useEffect } from "react";
 import { useMemo } from "react";
 import { useQuery } from "react-query";
 
+import Layout from "components/layout-dashboard";
 import st from "components/layout-dashboard.module.css";
-import LayoutDashboard from "components/layout-dashboardNew";
 import ContractActionSection from "components/screen/contract/detail/ContractActionSection";
 import ContractActivitySection from "components/screen/contract/detail/ContractActivitySection";
 import ContractInfoSection from "components/screen/contract/detail/ContractInfoSection";
@@ -66,7 +66,13 @@ const ContractDetailIndex = ({
   const isAllowedToDeleteContract = hasPermission(CONTRACT_DELETE);
 
   const rt = useRouter();
+  // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 1);
+  pathTitleArr.splice(1, 2, "Kontrak", "Detail Kontrak");
 
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
@@ -106,29 +112,18 @@ const ContractDetailIndex = ({
     }
   );
 
-  // 4. Event
-
-  // Breadcrumb Text
-  const pageBreadcrumbValue = useMemo(
-    () => [
-      { name: "Kontrak", hrefValue: "/admin/contracts" },
-      { name: "Detail Kontrak", hrefValue: `/admin/contracts/${contractId}` },
-    ],
-    []
-  );
-
   if (isAccessControlPending) {
     return null;
   }
 
   return (
-    <LayoutDashboard
+    <Layout
+      tok={initProps}
       dataProfile={dataProfile}
       sidemenu={sidemenu}
-      tok={initProps}
       st={st}
       pathArr={pathArr}
-      fixedBreadcrumbValues={pageBreadcrumbValue}
+      pathTitleArr={pathTitleArr}
     >
       <div
         className="grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-6 px-4 md:px-5 "
@@ -195,7 +190,7 @@ const ContractDetailIndex = ({
           />
         </div>
       </div>
-    </LayoutDashboard>
+    </Layout>
   );
 };
 

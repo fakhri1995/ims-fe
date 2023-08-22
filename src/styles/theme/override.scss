@@ -204,13 +204,38 @@ ol {
 //   box-shadow: 0 0 0 1px #35763b;
 // }
 
+.themedSelector.ant-select:not(.ant-select-disabled):hover
+  .ant-select-selector {
+  border-color: #65976a;
+  border-radius: 5px;
+  color: #35763b;
+}
+
+.themedSelector.ant-select:not(.ant-select-customize-input)
+  .ant-select-selector {
+  border-color: #65976a;
+  border-radius: 5px;
+}
+
+.themedSelector.ant-select:not(.ant-select-disabled) .ant-select-selector {
+  color: #35763b;
+}
+
+.themedSelector.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
+  .ant-select-selector {
+  border-color: #65976a;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 1px #35763b;
+  box-shadow: 0 0 0 1px #35763b;
+}
+
 /* TREE SELECT */
 .dontShow .ant-select-selection-item {
   display: none !important;
 }
 
 /* DATEPICKER */
-.ant-picker:hover,
+.ant-picker:not(.ant-picker-disabled):hover,
 .ant-picker-focused {
   border-color: #65976a;
   outline: 0;
@@ -230,6 +255,10 @@ ol {
 .invoiceTemplateDP .ant-picker-date-panel > .ant-picker-header,
 .invoiceTemplateDP .ant-picker-date-panel .ant-picker-content th {
   display: none;
+}
+
+.themedDatePicker .ant-picker-input > input {
+  color: #35763b;
 }
 
 /* TREE */
@@ -439,8 +468,17 @@ ol {
   }
 }
 
+/* BUTTON */
 .ant-btn {
   @apply rounded-md;
+}
+
+.invoiceButton.ant-btn-primary[disabled],
+.ant-btn-primary[disabled]:hover,
+.invoiceButton.ant-btn-primary[disabled]:focus,
+.ant-btn-primary[disabled]:active {
+  border-color: transparent;
+  background: #80808050;
 }
 
 .ant-input {
