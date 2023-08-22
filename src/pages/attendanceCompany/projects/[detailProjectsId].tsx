@@ -45,7 +45,7 @@ import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
 
-const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
+const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
 }) => {
@@ -83,9 +83,12 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     user_id: withDefault(NumberParam, 35),
-    project_id: withDefault(NumberParam, 0),
+    project_id: withDefault(NumberParam, undefined),
+    has_project: withDefault(NumberParam, undefined),
+    status_ids: withDefault(NumberParam, undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
   });
+  const [showButtonFilter, setShowButtonFilter] = useState(true);
 
   const [dataTasks, setDataTasks] = useState([]);
   // const [dataTasks, setDataTasks] = useState([
@@ -228,7 +231,7 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
     },
   ]);
   const router = useRouter();
-
+  const userId = router.query.detailProjectsId as unknown as number;
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Dashboard Kehadiran",
@@ -251,7 +254,13 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
 
   useEffect(() => {
     getProjectsTask();
-  }, [queryParams.project_id]);
+  }, [
+    queryParams.project_id,
+    queryParams.has_project,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.status_ids,
+  ]);
 
   const getProjectsTask = () => {
     const payload = QueryString.stringify(queryParams, {
@@ -273,12 +282,15 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
       });
   };
   const getProjects = () => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects?user_id=35`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(token),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects?user_id=${userId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(token),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -313,9 +325,30 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
 
   const onClickTasks = (id) => {
     setStatusSelected(id);
-
+    setShowButtonFilter(false);
     setQueryParams({
       project_id: id,
+      has_project: undefined,
+    });
+  };
+
+  const onCLickAllTask = () => {
+    setStatusSelected(null);
+    setShowButtonFilter(true);
+    setQueryParams({
+      project_id: undefined,
+      has_project: undefined,
+    });
+  };
+
+  const onClikButtonFilter = (value) => {
+    setQueryParams({
+      has_project: value,
+    });
+  };
+  const onChangeStatus = (value) => {
+    setQueryParams({
+      status_ids: value === undefined ? undefined : Number(Boolean(value)),
     });
   };
 
@@ -332,6 +365,7 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
           {/* Detail attendance meta */}
           <h3 className="mig-heading--4">Proyek & Tugas [Nama_Karyawan]</h3>
           <div
+            onClick={() => onCLickAllTask()}
             className={
               statusSelected == null
                 ? "mt-8 px-4 py-3 bg-backdrop rounded-[5px] hover:cursor-pointer"
@@ -373,22 +407,22 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                   </div>
                   <div className={"self-center"}>
                     {/* <div
-                      className={
-                        task.status == 1
-                          ? "bg-secondary100 flex justify-center  py-1 rounded-[2px] w-[62px]"
-                          : task.status == 2
-                          ? "bg-primary100 flex justify-center  py-1 rounded-[2px] w-[62px]"
-                          : "bg-warning flex justify-center rounded-[2px] py-1 w-[62px]"
-                      }
-                    >
-                      <p className={"text-white text-[10px] font-bold leading-4"}>
-                        {task.status == 1
-                          ? "On Going"
-                          : task.status == 2
-                          ? "Selesai"
-                          : "Batal"}
-                      </p>
-                    </div> */}
+                        className={
+                          task.status == 1
+                            ? "bg-secondary100 flex justify-center  py-1 rounded-[2px] w-[62px]"
+                            : task.status == 2
+                            ? "bg-primary100 flex justify-center  py-1 rounded-[2px] w-[62px]"
+                            : "bg-warning flex justify-center rounded-[2px] py-1 w-[62px]"
+                        }
+                      >
+                        <p className={"text-white text-[10px] font-bold leading-4"}>
+                          {task.status == 1
+                            ? "On Going"
+                            : task.status == 2
+                            ? "Selesai"
+                            : "Batal"}
+                        </p>
+                      </div> */}
                     <div
                       style={{
                         backgroundColor: task.status
@@ -433,7 +467,7 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
               <Select
                 allowClear
                 showSearch
-                // mode="multiple"
+                onChange={onChangeStatus}
                 // defaultValue={queryParams.status_ids}
                 // disabled={!isAllowedToGetProjects}
                 placeholder="Semua Status"
@@ -456,26 +490,30 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
               />
             </div>
           </div>
-          <div className={"mt-6 flex flex-row gap-4"}>
-            <div
-              className={
-                "rounded-[48px] px-4 py-2 border border-mono50 hover:cursor-pointer"
-              }
-            >
-              <p className={"text-[10px] text-mono50 font-normal leading-4"}>
-                Tugas Proyek
-              </p>
+          {showButtonFilter && (
+            <div className={"mt-6 flex flex-row gap-4"}>
+              <div
+                className={
+                  "rounded-[48px] px-4 py-2 border border-mono50 hover:cursor-pointer"
+                }
+                onClick={() => onClikButtonFilter(1)}
+              >
+                <p className={"text-[10px] text-mono50 font-normal leading-4"}>
+                  Tugas Proyek
+                </p>
+              </div>
+              <div
+                className={
+                  "rounded-[48px] px-4 py-2 border border-mono50 hover:cursor-pointer"
+                }
+                onClick={() => onClikButtonFilter(0)}
+              >
+                <p className={"text-[10px] text-mono50 font-normal leading-4"}>
+                  Tugas Bebas
+                </p>
+              </div>
             </div>
-            <div
-              className={
-                "rounded-[48px] px-4 py-2 border border-mono50 hover:cursor-pointer"
-              }
-            >
-              <p className={"text-[10px] text-mono50 font-normal leading-4"}>
-                Tugas Bebas
-              </p>
-            </div>
-          </div>
+          )}
           <div className={"mt-6"}>
             <Table
               className={styles.customTable}
@@ -509,7 +547,7 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                               "text-sm leading-6 font-bold text-mono30"
                             }
                           >
-                            T-1225
+                            {task.ticket_number}
                           </p>
                         </div>
                         <div className={"self-center w-3/6"}>
@@ -520,7 +558,7 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                           >
                             {task.name}
                           </p>
-                          {task.name && (
+                          {task.project && (
                             <div className={"flex flex-row items-center"}>
                               <TautanIconSvg />
                               <p
@@ -528,17 +566,18 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                               >
                                 Terkait dengan{" "}
                                 <span className={"font-bold leading-5"}>
-                                  {task.name}
+                                  {task.project.name}
                                 </span>
                               </p>
                             </div>
                           )}
                         </div>
-                        <div className={"self-center flex justify-end w-2/6"}>
-                          {task.status == 1 ? (
+                        {task.status && (
+                          <div className={"self-center flex justify-end w-2/6"}>
                             <div
+                              style={{ backgroundColor: task.status.color }}
                               className={
-                                "rounded-[5px] py-1 bg-bgstatustaskongoing w-[109px] flex justify-center items-center"
+                                "rounded-[5px] py-1 w-[109px] flex justify-center items-center"
                               }
                             >
                               <p
@@ -546,98 +585,115 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                                   "text-[10px] font-medium leading-4 text-secondary100"
                                 }
                               >
-                                Berlangsung
+                                {task.status.name}
                               </p>
                             </div>
-                          ) : task.status == 2 ? (
-                            <div
-                              className={
-                                "rounded-[5px] py-1 bg-bgstatustaskfinish w-[109px] flex justify-center items-center"
-                              }
-                            >
-                              <p
+                          </div>
+                        )}
+                        {/* <div className={"self-center flex justify-end w-2/6"}>
+                            {task.status == 1 ? (
+                              <div
                                 className={
-                                  "text-[10px] font-medium leading-4 text-secondary100"
+                                  "rounded-[5px] py-1 bg-bgstatustaskongoing w-[109px] flex justify-center items-center"
                                 }
                               >
-                                Selesai
-                              </p>
-                            </div>
-                          ) : (
-                            <div
-                              className={
-                                "rounded-[5px] py-1 bg-bgstatustasklate w-[109px] flex justify-center items-center"
-                              }
-                            >
-                              <p
+                                <p
+                                  className={
+                                    "text-[10px] font-medium leading-4 text-secondary100"
+                                  }
+                                >
+                                  Berlangsung
+                                </p>
+                              </div>
+                            ) : task.status == 2 ? (
+                              <div
                                 className={
-                                  "text-[10px] font-medium leading-4 text-secondary100"
+                                  "rounded-[5px] py-1 bg-bgstatustaskfinish w-[109px] flex justify-center items-center"
                                 }
                               >
-                                Terlambat
-                              </p>
-                            </div>
-                          )}
-                        </div>
+                                <p
+                                  className={
+                                    "text-[10px] font-medium leading-4 text-secondary100"
+                                  }
+                                >
+                                  Selesai
+                                </p>
+                              </div>
+                            ) : (
+                              <div
+                                className={
+                                  "rounded-[5px] py-1 bg-bgstatustasklate w-[109px] flex justify-center items-center"
+                                }
+                              >
+                                <p
+                                  className={
+                                    "text-[10px] font-medium leading-4 text-secondary100"
+                                  }
+                                >
+                                  Terlambat
+                                </p>
+                              </div>
+                            )}
+                          </div> */}
                       </div>
                     );
                   },
                 },
               ]}
               loading={loadingTasks}
-              // onChange={(pagination, _, sorter) => {
-              //   const sortTypePayload =
-              //     sorter.order === "ascend"
-              //       ? "asc"
-              //       : sorter.order === "descend"
-              //       ? "desc"
-              //       : undefined;
+              onChange={(pagination, _, sorter) => {
+                const sortTypePayload =
+                  sorter.order === "ascend"
+                    ? "asc"
+                    : sorter.order === "descend"
+                    ? "desc"
+                    : undefined;
 
-              //   setQueryParams({
-              //     sort_type: sortTypePayload,
-              //     sort_by:
-              //       sortTypePayload === undefined ? undefined : sorter.field,
-              //     page: pagination.current,
-              //     rows: pagination.pageSize,
-              //   });
-              // }}
+                setQueryParams({
+                  sort_type: sortTypePayload,
+                  sort_by:
+                    sortTypePayload === undefined ? undefined : sorter.field,
+                  page: pagination.current,
+                  rows: pagination.pageSize,
+                });
+              }}
             ></Table>
             {/* {
-                            dataProjects.map((project, index) => (
-                                <div className={'mb-3 flex flex-row px-4 py-2 border-inputkategori border bg-white rounded-[5px] h-[59px]'}>
-                            <div className={'self-center w-1/6'}>
-                                <p className={'text-sm leading-6 font-bold text-mono30'}>T-1225</p>
-                            </div>
-                            <div className={'self-center w-3/6'}>
-                                <p className={'text-xs font-bold leading-5 text-mono30'}>{project.name}</p>
-                                {
-                                    project.project_name &&
-                                    <div className={'flex flex-row items-center'}>
-                                    <TautanIconSvg/>
-                                    <p className={'leading-4 text-xs text-mono30 ml-1'}>Terkait dengan <span className={'font-bold leading-5'}>{project.project_name}</span></p>
-                                </div>
-                                }
-                            </div>
-                            <div className={'self-center flex justify-end w-2/6'}>
+                              dataProjects.map((project, index) => (
+                                  <div className={'mb-3 flex flex-row px-4 py-2 border-inputkategori border bg-white rounded-[5px] h-[59px]'}>
+                              <div className={'self-center w-1/6'}>
+                                  <p className={'text-sm leading-6 font-bold text-mono30'}>T-1225</p>
+                              </div>
+                              <div className={'self-center w-3/6'}>
+                                  <p className={'text-xs font-bold leading-5 text-mono30'}>{project.name}</p>
                                   {
-                                    project.status==1 ?
-                                    <div className={'rounded-[5px] py-1 bg-bgstatustaskongoing w-[109px] flex justify-center items-center'}>
-                                    <p className={'text-[10px] font-medium leading-4 text-secondary100'}>Berlangsung</p>
-                                  </div>
-                                  :
-                                  project.status==2 ?
-                                  <div className={'rounded-[5px] py-1 bg-bgstatustaskfinish w-[109px] flex justify-center items-center'}>
-                                    <p className={'text-[10px] font-medium leading-4 text-secondary100'}>Selesai</p>
-                                  </div>
-                                  :
-                                  <div className={'rounded-[5px] py-1 bg-bgstatustasklate w-[109px] flex justify-center items-center'}>
-                                    <p className={'text-[10px] font-medium leading-4 text-secondary100'}>Terlambat</p>
+                                      project.project_name &&
+                                      <div className={'flex flex-row items-center'}>
+                                      <TautanIconSvg/>
+                                      <p className={'leading-4 text-xs text-mono30 ml-1'}>Terkait dengan <span className={'font-bold leading-5'}>{project.project_name}</span></p>
                                   </div>
                                   }
-                            </div>
-                        </div>  
-                            ))
-                        } */}
+                              </div>
+                              <div className={'self-center flex justify-end w-2/6'}>
+                                    {
+                                      project.status==1 ?
+                                      <div className={'rounded-[5px] py-1 bg-bgstatustaskongoing w-[109px] flex justify-center items-center'}>
+                                      <p className={'text-[10px] font-medium leading-4 text-secondary100'}>Berlangsung</p>
+                                    </div>
+                                    :
+                                    project.status==2 ?
+                                    <div className={'rounded-[5px] py-1 bg-bgstatustaskfinish w-[109px] flex justify-center items-center'}>
+                                      <p className={'text-[10px] font-medium leading-4 text-secondary100'}>Selesai</p>
+                                    </div>
+                                    :
+                                    <div className={'rounded-[5px] py-1 bg-bgstatustasklate w-[109px] flex justify-center items-center'}>
+                                      <p className={'text-[10px] font-medium leading-4 text-secondary100'}>Terlambat</p>
+                                    </div>
+                                    }
+                              </div>
+                          </div>  
+                              ))
+                          } */}
           </div>
         </div>
       </div>
@@ -687,4 +743,4 @@ export const getServerSideProps: GetServerSideProps<
   };
 };
 
-export default ListProjectCompanyPage;
+export default DetailProjectCompanyPage;
