@@ -1512,7 +1512,31 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         <div className="flex mt-5">
                           {/* <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain> */}
                           <div
-                            className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${doc.color_first} ${doc.color_second} relative mr-3`}
+                            style={
+                              doc.color_first == "from-state1" &&
+                              doc.color_second == "to-state2"
+                                ? {
+                                    backgroundImage:
+                                      "linear-gradient(to top left, #799F0C, #FFE000)",
+                                  }
+                                : doc.color_first == "from-state3" &&
+                                  doc.color_second == "to-state4"
+                                ? {
+                                    backgroundImage:
+                                      "linear-gradient(to top left, #6DD5ED, #2193B0)",
+                                  }
+                                : doc.color_first == "from-red-200" &&
+                                  doc.color_second == "to-red-600"
+                                ? {
+                                    backgroundImage:
+                                      "linear-gradient(to top left, #fecaca, #dc2626)",
+                                  }
+                                : {
+                                    backgroundImage:
+                                      "linear-gradient(to top left, #9333ea, #db2777)",
+                                  }
+                            }
+                            className={`w-5/12 h-28 rounded-md relative mr-3`}
                           >
                             <div className="absolute bottom-0 right-2">
                               <img

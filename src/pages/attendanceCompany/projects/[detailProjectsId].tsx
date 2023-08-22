@@ -641,22 +641,22 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                 },
               ]}
               loading={loadingTasks}
-              onChange={(pagination, _, sorter) => {
-                const sortTypePayload =
-                  sorter.order === "ascend"
-                    ? "asc"
-                    : sorter.order === "descend"
-                    ? "desc"
-                    : undefined;
+              // onChange={(pagination, _, sorter) => {
+              //   const sortTypePayload =
+              //     sorter.order === "ascend"
+              //       ? "asc"
+              //       : sorter.order === "descend"
+              //       ? "desc"
+              //       : undefined;
 
-                setQueryParams({
-                  sort_type: sortTypePayload,
-                  sort_by:
-                    sortTypePayload === undefined ? undefined : sorter.field,
-                  page: pagination.current,
-                  rows: pagination.pageSize,
-                });
-              }}
+              //   setQueryParams({
+              //     sort_type: sortTypePayload,
+              //     sort_by:
+              //       sortTypePayload === undefined ? undefined : sorter.field,
+              //     page: pagination.current,
+              //     rows: pagination.pageSize,
+              //   });
+              // }}
             ></Table>
             {/* {
                               dataProjects.map((project, index) => (
