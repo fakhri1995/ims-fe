@@ -26,6 +26,7 @@ import { CONTRACT_INVOICE_GET, CONTRACT_INVOICE_UPDATE } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
 import {
+  AlertCircleIconSvg,
   ArrowLeftIconSvg,
   CalendarEventIconSvg,
   CheckIconSvg,
@@ -34,6 +35,7 @@ import {
   PlusIconSvg,
 } from "../../../../components/icon";
 import ModalContractInfo from "../../../../components/modal/contracts/modalContractInfo";
+import { ModalUbah } from "../../../../components/modal/modalCustom";
 import {
   FILE,
   LIST,
@@ -97,6 +99,7 @@ const ContractInvoiceFormIndex = ({
   const [dataServices, setDataServices] = useState([]);
 
   const [modalContractInfo, setModalContractInfo] = useState(false);
+  const [modalPublish, setModalPublish] = useState(false);
 
   const [loadingContractInvoice, setLoadingContractInvoice] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
@@ -303,6 +306,7 @@ const ContractInvoiceFormIndex = ({
               message: "Invoice berhasil diterbitkan.",
               duration: 3,
             });
+            setModalPublish(false);
           }
         } else {
           notification.error({
@@ -401,7 +405,7 @@ const ContractInvoiceFormIndex = ({
                   type={"primary"}
                   disabled={!isAllowedToUpdateInvoice || disablePublish}
                   onClick={() => {
-                    handleSaveInvoice(1, dataInvoice);
+                    setModalPublish(true);
                   }}
                 >
                   <p>Terbitkan</p>
@@ -620,6 +624,33 @@ const ContractInvoiceFormIndex = ({
           isInvoiceForm={true}
           handleSaveInvoice={handleSaveInvoice}
         />
+      </AccessControl>
+
+      {/* Modal "Terbitkan" */}
+      <AccessControl hasPermission={CONTRACT_INVOICE_UPDATE}>
+        <ModalUbah
+          title={
+            <div className="flex gap-2 items-center">
+              <AlertCircleIconSvg size={28} color={"#35763B75"} />
+              <h3 className="mig-heading--3 text-primary100">
+                Konfirmasi Terbitkan Invoice
+              </h3>
+            </div>
+          }
+          visible={modalPublish}
+          onvisible={setModalPublish}
+          onOk={() => handleSaveInvoice(1, dataInvoice)}
+          onCancel={() => setModalPublish(false)}
+          loading={loadingSave}
+          disabled={!isAllowedToUpdateInvoice}
+          okButtonText={"Terbitkan"}
+          closable={false}
+        >
+          <p>
+            Apakah Anda yakin ingin menerbitkan invoice dengan nomor invoice{" "}
+            <strong>{dataInvoice?.invoice_number}?</strong>
+          </p>
+        </ModalUbah>
       </AccessControl>
     </Layout>
   );
