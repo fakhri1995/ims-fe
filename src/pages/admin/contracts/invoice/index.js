@@ -56,7 +56,11 @@ import {
 import { CompanyService } from "apis/company";
 import { ContractService } from "apis/contract";
 
-import { PlusIconSvg } from "../../../../components/icon";
+import {
+  AlertCircleIconSvg,
+  PlusIconSvg,
+  TrashIconSvg,
+} from "../../../../components/icon";
 import {
   ArcElement,
   BarElement,
@@ -212,18 +216,21 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 4.2. Delete Invoice
   const handleDeleteInvoice = (id) => {
     if (!isAllowedToDeleteInvoice) {
-      permissionWarningNotification("Menghapus", "Kontrak");
+      permissionWarningNotification("Menghapus", "Draft Invoice");
       return;
     }
 
     setLoadingDelete(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${id}`, {
-      method: `DELETE`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContractInvoice?id=${id}`,
+      {
+        method: `DELETE`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
@@ -243,7 +250,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menghapus proyek. ${err.response}`,
+          message: `Gagal menghapus draft invoice. ${err.response}`,
           duration: 3,
         });
       })
@@ -362,15 +369,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <div className="flex flex-col md:flex-row gap-2 items-center">
-              {record?.is_posted ? (
-                <Button
-                  disabled
-                  type={"primary"}
-                  icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
-                  className="invoiceButton bg-mono50 border-transparent hover:bg-mono80 
-                  hover:border-transparent focus:bg-mono80 focus:border-mono80"
-                />
-              ) : (
+              {!record?.is_posted && (
                 <Tooltip
                   className="border rounded-md"
                   placement="bottomRight"
@@ -398,11 +397,10 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }}
                     icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
                     className="invoiceButton bg-mono50 border-transparent hover:bg-mono80 
-                    hover:border-transparent focus:bg-mono80 focus:border-mono80"
+                    hover:border-transparent focus:bg-mono50 focus:border-mono50"
                   />
                 </Tooltip>
               )}
-
               <Tooltip
                 className="border rounded-md"
                 placement="bottomRight"
@@ -431,9 +429,26 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                   }}
                   icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
                   className="bg-primary100 border-primary100 hover:bg-primary75 
-                hover:border-primary75 focus:bg-primary75 focus:border-primary75"
+                  hover:border-primary75 focus:bg-primary100 focus:border-primary100"
                 />
               </Tooltip>
+              {!record?.is_posted && (
+                <Button
+                  type={"primary"}
+                  disabled={!isAllowedToDeleteInvoice}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setDataRowClicked({
+                      id: record?.id,
+                      invoice_number: record?.invoice_number,
+                    });
+                    setModalDelete(true);
+                  }}
+                  icon={<TrashIconSvg size={20} color={"#FFFFFF"} />}
+                  className="bg-warning border-warning hover:bg-warning hover:opacity-75
+                  hover:border-warning focus:bg-warning focus:border-warning"
+                />
+              )}
             </div>
           ),
         };
@@ -732,22 +747,29 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
         </Modal>
       </AccessControl>
 
-      {/* Modal Delete Contract */}
-      <AccessControl hasPermission={CONTRACT_DELETE}>
+      {/* Modal Delete Invoice */}
+      <AccessControl hasPermission={CONTRACT_INVOICE_DELETE}>
         <ModalHapus2
-          title={`Peringatan`}
+          title={
+            <div className="flex gap-2 items-center">
+              <AlertCircleIconSvg size={28} color={"#BF4A40"} />
+              <h3 className="mig-heading--3 text-warning">
+                Konfirmasi Hapus Invoice
+              </h3>
+            </div>
+          }
           visible={modalDelete}
           onvisible={setModalDelete}
           onOk={() => handleDeleteInvoice(dataRowClicked?.id)}
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"kontrak"}
+          itemName={"invoice"}
           loading={loadingDelete}
         >
           <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan kontrak{" "}
-            <strong>{dataRowClicked?.contract_number}</strong>?
+            Apakah Anda yakin ingin menghapus invoice dengan nomor invoice{" "}
+            <strong>{dataRowClicked?.invoice_number || "- "}?</strong>
           </p>
         </ModalHapus2>
       </AccessControl>
