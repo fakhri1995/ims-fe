@@ -226,7 +226,9 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         <SubMenu
           title="Attendance"
           key="attendance"
-          icon={<CheckSquareOutlined rev={""} className="text-[#597e8d]" />}
+          icon={
+            <CheckSquareOutlined rev={""} className="text-[#597e8d] px-0.5" />
+          }
         >
           {hasPermission(SIDEBAR_ATTENDANCE_FORM_ACTIVITY) && (
             <Menu.Item key="attendance/form-aktivitas">
