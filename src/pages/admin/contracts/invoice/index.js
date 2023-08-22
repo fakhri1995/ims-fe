@@ -105,7 +105,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     total_min: withDefault(NumberParam, undefined),
     total_max: withDefault(NumberParam, undefined),
     client_ids: withDefault(NumberParam, undefined),
-    status: withDefault(StringParam, undefined),
+    is_posted: withDefault(NumberParam, undefined),
     year: withDefault(NumberParam, moment().format("YYYY")),
     month: withDefault(NumberParam, moment().format("M")),
   });
@@ -121,7 +121,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const priceRangeList = [
     { name: "Rp 0 - Rp 50.000.000", value: "0,50000000" },
     { name: "Rp 50.000.001 - Rp 100.000.000", value: "50000001,100000000" },
-    { name: "> Rp 100.000.000", value: "1000000," },
+    { name: "> Rp 100.000.000", value: "100000000," },
   ];
 
   const dataStatusList = [
@@ -191,7 +191,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       total_min: selectedPriceRange[0],
       total_max: selectedPriceRange[1],
       client_ids: selectedCompany,
-      status: selectedStatus,
+      is_posted: selectedStatus,
     });
   };
 
@@ -328,8 +328,8 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
     {
       title: "Status",
-      key: "status",
-      dataIndex: "status",
+      key: "is_posted",
+      dataIndex: "is_posted",
       render: (text, record, index) => {
         return {
           children: (
@@ -514,15 +514,15 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                 {/* Filter by status (dropdown) */}
                 <div className="w-full lg:w-2/12">
                   <Select
-                    defaultValue={queryParams.status}
+                    defaultValue={queryParams.is_posted}
                     allowClear
-                    name={`status`}
+                    name={`is_posted`}
                     disabled={!isAllowedToGetInvoicestatusList}
                     placeholder="Status"
                     style={{ width: `100%` }}
                     className="themedSelector"
                     onChange={(value) => {
-                      setQueryParams({ status: value });
+                      setQueryParams({ is_posted: value });
                       setSelectedStatus(value);
                     }}
                     optionLabelProp="children"

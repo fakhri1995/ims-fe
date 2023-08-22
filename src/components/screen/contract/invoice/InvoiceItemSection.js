@@ -70,7 +70,7 @@ const InvoiceItemSection = ({
       tempDyanmicColumns.push(newColumn);
     }
     setDynamicColumns(tempDyanmicColumns);
-  }, [dataServiceTemplateNames, isEdit, currentCellValue]);
+  }, [dataServiceTemplateNames, isEdit, currentCellValue, isReadOnly]);
 
   // 2.2. Add contract_service_id & details attribute if not yet available
   useEffect(() => {
@@ -148,19 +148,21 @@ const InvoiceItemSection = ({
     title: (
       <div className="flex justify-between items-center space-x-2 dynamicColumn">
         <p>{name}</p>
-        <button
-          className="hoverComponent bg-transparent hover:opacity-75"
-          onClick={() => {
-            setDataCurrentColumn((prev) => ({
-              ...prev,
-              idx: colIdx,
-              name: name,
-            }));
-            setModalDeleteColumn(true);
-          }}
-        >
-          <TrashIconSvg color={"#4D4D4D"} size={18} />
-        </button>
+        {!isReadOnly && (
+          <button
+            className="hoverComponent bg-transparent hover:opacity-75"
+            onClick={() => {
+              setDataCurrentColumn((prev) => ({
+                ...prev,
+                idx: colIdx,
+                name: name,
+              }));
+              setModalDeleteColumn(true);
+            }}
+          >
+            <TrashIconSvg color={"#4D4D4D"} size={18} />
+          </button>
+        )}
       </div>
     ),
     render: (text, record, rowIdx) => {
