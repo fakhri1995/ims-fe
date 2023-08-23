@@ -107,7 +107,12 @@ const ContractInvoiceFormIndex = ({
   const [disablePublish, setDisablePublish] = useState(true);
   const [isReadOnly, setIsReadOnly] = useState(false);
 
-  const requiredField = ["invoice_number", "invoice_name", "invoice_raise_at"];
+  const requiredField = [
+    dataInvoice?.invoice_number,
+    dataInvoice?.invoice_name,
+    dataInvoice?.invoice_raise_at,
+    dataInvoice?.invoice_total,
+  ];
 
   // 3. Use Effect & Use Query
   // 2.1. Get Invoice Data
@@ -211,24 +216,15 @@ const ContractInvoiceFormIndex = ({
 
   // 2.4. Enable "Terbitkan" button if all required fields are filled
   useEffect(() => {
-    const isAllFilled = requiredField.every(
-      (item) => dataInvoice[item]?.length
-    );
+    const isAllFilled = requiredField.every((item) => Boolean(item));
     if (isAllFilled) {
       setDisablePublish(false);
+    } else {
+      setDisablePublish(true);
     }
-  }, [requiredField.map((item) => dataInvoice[item])]);
+  }, [...requiredField]);
 
-  // 2.5. Auto count "Total Tagihan" when service item is altered
-  useEffect(() => {
-    const newInvoiceTotal = dataServices?.reduce(
-      (acc, item) => acc + countSubTotal(item?.pax, item?.price),
-      0
-    );
-    setDataInvoice((prev) => ({ ...prev, invoice_total: newInvoiceTotal }));
-  }, [dataServices]);
-
-  // 2.6. Clean up debounce function when component unmounts
+  // 2.5. Clean up debounce function when component unmounts
   useEffect(() => {
     return () => {
       debouncedSaveInvoice.cancel();
@@ -271,7 +267,6 @@ const ContractInvoiceFormIndex = ({
       return;
     }
 
-    // TODO: recheck if API is done
     const payload = {
       ...data,
       is_posted: isPosted,
@@ -446,7 +441,6 @@ const ContractInvoiceFormIndex = ({
                       message: "Nomor invoice wajib diisi",
                     },
                   ]}
-                  // initialValue={}
                 >
                   <>
                     <Input
@@ -542,13 +536,16 @@ const ContractInvoiceFormIndex = ({
                 >
                   <>
                     <InputNumber
-                      disabled
                       name={`invoice_total`}
-                      value={dataInvoice?.invoice_total}
+                      disabled={isReadOnly}
+                      value={dataInvoice.invoice_total}
                       formatter={(value) =>
                         `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                       }
-                      parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                      parser={(value) => value.replace(/Rp\s?|(\.*)/g, "")}
+                      onChange={(value) => {
+                        onChangeInput("invoice_total", value);
+                      }}
                       className="w-full"
                     />
                   </>
