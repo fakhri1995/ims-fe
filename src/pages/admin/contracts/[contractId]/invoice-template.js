@@ -3,7 +3,7 @@ import {
   FileTextOutlined,
   RightOutlined,
 } from "@ant-design/icons";
-import { DatePicker, notification } from "antd";
+import { DatePicker, Select, notification } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -16,6 +16,7 @@ import st from "components/layout-dashboard.module.css";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  COMPANY_MAIN_BANKS_GET,
   CONTRACT_INVOICE_ADD,
   CONTRACT_TEMPLATE_GET,
   CONTRACT_TEMPLATE_UPDATE,
@@ -42,6 +43,7 @@ import {
   generateStaticAssetUrl,
   getFileName,
   momentFormatDate,
+  permissionWarningNotification,
 } from "../../../../lib/helper";
 import {
   ArcElement,
@@ -89,11 +91,16 @@ const ContractInvoiceTemplateIndex = ({
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
+  if (isAccessControlPending) {
+    return null;
+  }
+
   const isAllowedToGetContractTemplate = hasPermission(CONTRACT_TEMPLATE_GET);
   const isAllowedToUpdateInvoiceTemplate = hasPermission(
     CONTRACT_TEMPLATE_UPDATE
   );
   const isAllowedToAddInvoice = hasPermission(CONTRACT_INVOICE_ADD);
+  const isAllowedToGetMainBanks = hasPermission(COMPANY_MAIN_BANKS_GET);
 
   const rt = useRouter();
   // Breadcrumb url
@@ -111,12 +118,17 @@ const ContractInvoiceTemplateIndex = ({
   const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
   const [dataServices, setDataServices] = useState([]);
 
+  const [bankAccountList, setBankAccountList] = useState([]);
+
+  // Modal
   const [modalInvoice, setModalInvoice] = useState(false);
   const [modalContractInfo, setModalContractInfo] = useState(false);
 
+  // Loading
   const [loadingSave, setLoadingSave] = useState(false);
+
   // 3. Use Effect & Use Query
-  // 3.1. get contract template detail
+  // 3.1. Get contract template detail
   const { data: dataContract, isLoading: loadingDataContractTemplate } =
     useQuery(
       [CONTRACT_TEMPLATE_GET, refresh, contractId],
@@ -133,6 +145,7 @@ const ContractInvoiceTemplateIndex = ({
       }
     );
 
+  // 3.2. Display invoice detail
   useEffect(() => {
     if (dataContract?.invoice_template) {
       const currentInvoiceTemplate = [];
@@ -180,10 +193,36 @@ const ContractInvoiceTemplateIndex = ({
     }
   }, [dataContract?.invoice_template]);
 
+  // 3.3. Fill state for item table
   useEffect(() => {
     setDataServiceTemplateNames(dataContract?.service_template?.details);
     setDataServices(dataContract?.services);
   }, [dataContract?.service_template, dataContract?.services]);
+
+  // 3.4. Get main bank account list
+  useEffect(() => {
+    if (!isAllowedToGetMainBanks) {
+      permissionWarningNotification("Mendapatkan", "Detail Company");
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getMainBanks`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setBankAccountList(res2?.data);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  }, [isAllowedToGetMainBanks]);
 
   // 4. Event
   const handleSaveInvoiceTemplate = () => {
@@ -234,10 +273,6 @@ const ContractInvoiceTemplateIndex = ({
       })
       .finally(() => setLoadingSave(false));
   };
-
-  if (isAccessControlPending) {
-    return null;
-  }
 
   // console.log({ dataServices });
   // console.log({ dataInvoice });
@@ -315,6 +350,23 @@ const ContractInvoiceTemplateIndex = ({
                   <CalendarEventIconSvg color={"#2F80ED"} size={20} />
                 }
               />
+            </div>
+            <div className="space-y-2">
+              <p className="mig-caption--bold">Nomor Rekening</p>
+              {/* TODO: adjust if API is done */}
+              <Select
+                // value={""}
+                disabled={!isAllowedToGetMainBanks}
+                placeholder="Pilih Rekening"
+                onChange={(value) => {}}
+                className="w-1/2 themedSelector"
+              >
+                {bankAccountList?.map((item) => (
+                  <Select.Option key={item?.id} value={item?.id}>
+                    {item?.name} - {item?.account_number}
+                  </Select.Option>
+                ))}
+              </Select>
             </div>
             {dataInvoice?.map((item) => (
               <div key={item?.title} className="space-y-2">

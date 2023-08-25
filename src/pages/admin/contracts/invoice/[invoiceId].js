@@ -22,7 +22,11 @@ import st from "components/layout-dashboard.module.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { CONTRACT_INVOICE_GET, CONTRACT_INVOICE_UPDATE } from "lib/features";
+import {
+  COMPANY_MAIN_BANKS_GET,
+  CONTRACT_INVOICE_GET,
+  CONTRACT_INVOICE_UPDATE,
+} from "lib/features";
 
 import ButtonSys from "../../../../components/button";
 import {
@@ -43,7 +47,6 @@ import {
 import InvoiceItemSection from "../../../../components/screen/contract/invoice/InvoiceItemSection";
 import {
   convertDaysToString,
-  countSubTotal,
   generateStaticAssetUrl,
   getFileName,
   momentFormatDate,
@@ -81,6 +84,7 @@ const ContractInvoiceFormIndex = ({
 
   const isAllowedToGetInvoice = hasPermission(CONTRACT_INVOICE_GET);
   const isAllowedToUpdateInvoice = hasPermission(CONTRACT_INVOICE_UPDATE);
+  const isAllowedToGetMainBanks = hasPermission(COMPANY_MAIN_BANKS_GET);
 
   const rt = useRouter();
   // Breadcrumb url
@@ -92,17 +96,23 @@ const ContractInvoiceFormIndex = ({
   pathTitleArr.splice(1, 3, "Kontrak", "Invoice", "Sunting Draft Invoice");
 
   // 2. useState
-  const [refresh, setRefresh] = useState(-1);
+  // Data
   const [dataInvoice, setDataInvoice] = useState({});
   const [dataInvoiceDetail, setDataInvoiceDetail] = useState([]);
   const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
   const [dataServices, setDataServices] = useState([]);
+  const [bankAccountList, setBankAccountList] = useState([]);
 
+  // Modal
   const [modalContractInfo, setModalContractInfo] = useState(false);
   const [modalPublish, setModalPublish] = useState(false);
 
+  // Loading
   const [loadingContractInvoice, setLoadingContractInvoice] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
+
+  // Misc.
+  const [refresh, setRefresh] = useState(-1);
   const [showSuccessIcon, setShowSuccessIcon] = useState(false);
   const [disablePublish, setDisablePublish] = useState(true);
   const [isReadOnly, setIsReadOnly] = useState(false);
@@ -230,6 +240,31 @@ const ContractInvoiceFormIndex = ({
       debouncedSaveInvoice.cancel();
     };
   }, []);
+
+  // 2.6. Get main bank account list
+  useEffect(() => {
+    if (!isAllowedToGetMainBanks) {
+      permissionWarningNotification("Mendapatkan", "Detail Company");
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getMainBanks`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setBankAccountList(res2?.data);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  }, [isAllowedToGetMainBanks]);
 
   // 4. Event
   // Debounce function for auto save draft
@@ -548,6 +583,35 @@ const ContractInvoiceFormIndex = ({
                       }}
                       className="w-full"
                     />
+                  </>
+                </Form.Item>
+
+                <Form.Item
+                  name="invoice_bank"
+                  label="Nomor Rekening"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Nomor rekening wajib diisi",
+                    },
+                  ]}
+                >
+                  <>
+                    {/* TODO: adjust if API is done */}
+                    <Select
+                      name="invoice_bank"
+                      // value={""}
+                      disabled={!isAllowedToGetMainBanks || isReadOnly}
+                      placeholder="Pilih Rekening"
+                      onChange={(value) => {}}
+                      className="themedSelector"
+                    >
+                      {bankAccountList?.map((item) => (
+                        <Select.Option key={item?.id} value={item?.id}>
+                          {item?.name} - {item?.account_number}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </>
                 </Form.Item>
               </Form>
