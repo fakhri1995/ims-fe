@@ -79,8 +79,8 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
-    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    sort_by: withDefault(StringParam, undefined),
+    sort_type: withDefault(StringParam, undefined),
     assessment_ids: withDefault(NumberParam, undefined),
   });
 

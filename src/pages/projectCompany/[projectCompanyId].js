@@ -80,6 +80,8 @@ import {
 } from "chart.js";
 import httpcookie from "cookie";
 
+import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
+
 Chart.register(
   ArcElement,
   CategoryScale,
@@ -621,15 +623,12 @@ const ProjectCompanyDetail = ({
             index !== lastIndexStaff ? staff.name : null
           )
           ?.join(", ");
-
-  const pageBreadcrumbValue = useMemo(
-    () => [
-      { name: "Manajemen Proyek", hrefValue: "/projects" },
-      { name: dataProject?.name, hrefValue: `/projects/${projectId}` },
-    ],
-    [dataProject.name]
-  );
-
+  const pageBreadcrumbValue = [
+    { name: "Manajemen Proyek", hrefValue: "back" },
+    {
+      name: dataProject?.name,
+    },
+  ];
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -1037,7 +1036,6 @@ const ProjectCompanyDetail = ({
                     </div>
                     <div>
                       <p className="mig-caption--bold mb-2">Status:</p>
-                      {console.log("current status ", currentStatus)}
                       <div
                         className="mig-caption--bold w-1/2 flex justify-center bg-transparent hover:opacity-75 
                         rounded-md px-2 py-1 "
@@ -1048,7 +1046,7 @@ const ProjectCompanyDetail = ({
                           color: currentStatus?.color ?? "#808080",
                         }}
                       >
-                        <p>{currentStatus.name}</p>
+                        <p>{currentStatus?.name}</p>
                       </div>
                       {/* <div>
                         <Select
@@ -1425,7 +1423,7 @@ export async function getServerSideProps({ req, res, params }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "projects",
+      sidemenu: "projectscompany",
       projectId,
     },
   };

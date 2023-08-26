@@ -115,15 +115,15 @@ export const AttendanceCompanyListSection: FC<
   const [activeTab, setActiveTab] = useState<"1" | "2">("1");
   const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
 
-  const { data: dataCompanyList, isLoading: loadingCompanyClients } = useQuery(
-    [CompanyServiceQueryKeys.COMPANY_CLIENTS_GET],
-    () => CompanyService.getCompanyClientList(axiosClient, true),
-    {
-      enabled: isAllowedToGetCompanyClients,
-      refetchOnMount: false,
-      select: (response) => response.data.data,
-    }
-  );
+  // const { data: dataCompanyList, isLoading: loadingCompanyClients } = useQuery(
+  //   [CompanyServiceQueryKeys.COMPANY_CLIENTS_GET],
+  //   () => CompanyService.getCompanyClientListCompany(axiosClient, companyId),
+  //   {
+  //     enabled: true,
+  //     refetchOnMount: false,
+  //     select: (response) => response.data.data,
+  //   }
+  // );
 
   return (
     <>

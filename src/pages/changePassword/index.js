@@ -39,7 +39,6 @@ export default function ChangePassword({ initProps }) {
       })
         .then((res) => res.json())
         .then((res2) => {
-          console.log("2");
           setloadingbuatpass(false);
           if (res2.success) {
             notification["success"]({

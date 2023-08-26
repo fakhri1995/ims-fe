@@ -26,7 +26,6 @@ import {
   SearchIconSvg,
   TautanIconSvg,
 } from "components/icon";
-import LayoutDashboard from "components/layout-dashboard-company";
 import {
   AttendanceDetailCompanySection,
   AttendanceDetailEvidenceSection,
@@ -40,6 +39,8 @@ import { useAccessControl } from "contexts/access-control";
 import { ATTENDANCE_USER_ADMIN_GET, ATTENDANCE_USER_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import LayoutDashboard from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard.module.css";
 import styles from "./projects.module.scss";
 import httpcookie from "cookie";
 
@@ -86,6 +87,7 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
     project_id: withDefault(NumberParam, undefined),
     has_project: withDefault(NumberParam, undefined),
     status_ids: withDefault(NumberParam, undefined),
+    keyword: withDefault(StringParam, undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
   });
   const [showButtonFilter, setShowButtonFilter] = useState(true);
@@ -259,6 +261,7 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
     queryParams.has_project,
     queryParams.page,
     queryParams.rows,
+    queryParams.keyword,
     queryParams.status_ids,
   ]);
 
@@ -294,7 +297,6 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log("get project tasks ", res2);
           setDataTasks(res2.data.data);
         }
       });
@@ -310,7 +312,6 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log("get project status ", res2);
           // let dataTemp=[];
           // for(let a=0;a<res2.data.data.length;a++) {
           //   dataTemp.push({
@@ -348,13 +349,20 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
   };
   const onChangeStatus = (value) => {
     setQueryParams({
-      status_ids: value === undefined ? undefined : Number(Boolean(value)),
+      status_ids: value,
+    });
+  };
+
+  const onChangeSearch = (e) => {
+    setQueryParams({
+      keyword: e.target.value === "" ? undefined : e.target.value,
     });
   };
 
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
+      st={st}
       tok={token}
       sidemenu={"1"}
       fixedBreadcrumbValues={pageBreadcrumb}
@@ -363,7 +371,9 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
         {/* First column */}
         <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-2/5 py-6 space-y-6">
           {/* Detail attendance meta */}
-          <h3 className="mig-heading--4">Proyek & Tugas [Nama_Karyawan]</h3>
+          <h3 className="mig-heading--4">
+            Proyek & Tugas {dataProfile?.data?.name}
+          </h3>
           <div
             onClick={() => onCLickAllTask()}
             className={
@@ -467,7 +477,7 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
               <Select
                 allowClear
                 showSearch
-                onChange={onChangeStatus}
+                onChange={(e) => onChangeStatus(e)}
                 // defaultValue={queryParams.status_ids}
                 // disabled={!isAllowedToGetProjects}
                 placeholder="Semua Status"
@@ -483,6 +493,8 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
             </div>
             <div className="w-6/12">
               <Input
+                value={queryParams.keyword}
+                onChange={(e) => onChangeSearch(e)}
                 prefix={<SearchIconSvg size={16} color={"#CCCCCC"} />}
                 style={{ width: `100%` }}
                 placeholder="Cari proyek ...."
