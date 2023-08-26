@@ -61,8 +61,8 @@ import {
   PlusIconSvg,
   SearchIconSvg,
 } from "../../components/icon";
-import LayoutDashboard from "../../components/layout-dashboard-company";
 import st from "../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../components/layout-dashboardNew";
 import { TableCustomProjectCompanyList } from "../../components/table/tableCustom";
 import {
   createKeyPressHandler,
@@ -229,7 +229,7 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
     const fetchData = async () => {
       setLoadingProjects(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${params}&keyword=${searchingFilterProjects}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientProjects${params}&keyword=${searchingFilterProjects}`,
         {
           method: `GET`,
           headers: {
@@ -451,36 +451,36 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, [isAllowedToGetProjectDeadlineCount, dateState]);
 
   // 3.7. Get Project Category List
-  useEffect(() => {
-    if (!isAllowedToGetTagList) {
-      permissionWarningNotification("Mendapatkan", "Daftar Tag Proyek");
-      return;
-    }
+  // useEffect(() => {
+  //   if (!isAllowedToGetTagList) {
+  //     permissionWarningNotification("Mendapatkan", "Daftar Tag Proyek");
+  //     return;
+  //   }
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataCategoryList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-  }, [isAllowedToGetTagList, refresh]);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList`, {
+  //     method: `GET`,
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       if (res2.success) {
+  //         setDataCategoryList(res2.data);
+  //       } else {
+  //         notification.error({
+  //           message: `${res2.message}`,
+  //           duration: 3,
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       notification.error({
+  //         message: `${err.response}`,
+  //         duration: 3,
+  //       });
+  //     });
+  // }, [isAllowedToGetTagList, refresh]);
 
   // 3.8. Update number of rows in task table based on the device width
   useEffect(() => {
@@ -553,76 +553,6 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
         })
       )
       .finally(() => setLoadingChart(false));
-  };
-
-  const handleAddProject = () => {
-    if (!isAllowedToAddProject) {
-      permissionWarningNotification("Menambah", "Proyek");
-      return;
-    }
-
-    setLoadingProjects(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProject`, {
-      method: `POST`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          setCurrentProject(response.data);
-          setModalAddProject(true);
-        } else {
-          notification.error({
-            message: response.message,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menambahkan proyek baru. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoadingProjects(false));
-  };
-
-  const handleAddTask = () => {
-    if (!isAllowedToAddTask) {
-      permissionWarningNotification("Menambah", "Task");
-      return;
-    }
-
-    setLoadingMyTaskList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectTask`, {
-      method: `POST`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          setCurrentTaskId(response.data?.id);
-          setModalAddTask(true);
-        } else {
-          notification.error({
-            message: response.message,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menambahkan task baru. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoadingMyTaskList(false));
   };
 
   // "Semua Proyek" Table columns

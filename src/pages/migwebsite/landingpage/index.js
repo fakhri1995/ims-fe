@@ -161,7 +161,6 @@ function LandingPage({ dataBlog }) {
           if (locale == "en") {
             let dataTestiTemp = [];
             for (let i = 0; i < res2.data.length; i++) {
-              console.log("dataTestiTemp.length ", dataTestiTemp.length);
               if (dataTestiTemp.length < 6) {
                 dataTestiTemp.push(res2.data[i]);
               } else {

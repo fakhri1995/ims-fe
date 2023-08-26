@@ -135,10 +135,6 @@ const ProductCatalogDetail = ({
   }
   var pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(3, 3);
-  console.log("path array 0 s", pathArr);
-  // pathArr[0]="Katalog";
-  // pathArr[1]="Produk";
-  console.log("path array ", pathArr);
   const [dataDetail, setDataDetail] = useState(null);
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -248,7 +244,6 @@ const ProductCatalogDetail = ({
   const renderStatusItem = (status_usage, location) => {
     return (
       <div className={""}>
-        {console.log("status usage ", status_usage)}
         {status_usage.name == "In Used" ? (
           renderUsage(location)
         ) : status_usage.name == "In Stock" ? (
@@ -604,7 +599,6 @@ const ProductCatalogDetail = ({
     )
       .then((res) => res.json())
       .then((res2) => {
-        console.log("data detail ", res2.data.model_inventory);
         if (res2.success) {
           setDataDetail(res2.data);
           pathArr[2] = res2.data.name;
@@ -640,7 +634,6 @@ const ProductCatalogDetail = ({
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("data model ", res2.data);
         if (res2.success) {
           setdisplayentiredata(res2.data);
           setdisplaydatamodel(res2.data.data);
@@ -674,7 +667,6 @@ const ProductCatalogDetail = ({
     )
       .then((res) => res.json())
       .then((res2) => {
-        console.log("data model ", res2.data);
         if (res2.success) {
           setdisplayentiredata(res2.data);
           setdisplaydatamodel(res2.data.data);
@@ -793,7 +785,6 @@ const ProductCatalogDetail = ({
     })
       .then((response) => response.json())
       .then((response2) => {
-        console.log("response add inventory ", response2);
         if (response2.success) {
           notification.success({
             message: "Update Product Success!",
@@ -1117,7 +1108,6 @@ const ProductCatalogDetail = ({
                     </div>
                   </div>
                 </div>
-                {console.log("isi data tabel ", displaydata)}
                 <Table
                   className="tableTypeTask pb-6"
                   pagination={{

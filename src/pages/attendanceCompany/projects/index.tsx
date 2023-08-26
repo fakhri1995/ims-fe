@@ -282,7 +282,6 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log("get project tasks ", res2);
           setDataTasks(res2.data.data);
         }
       });
@@ -298,7 +297,6 @@ const ListProjectCompanyPage: NextPage<ProtectedPageProps> = ({
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log("get project status ", res2);
           // let dataTemp=[];
           // for(let a=0;a<res2.data.data.length;a++) {
           //   dataTemp.push({

@@ -11,6 +11,8 @@ import {
   FoldersIconSvg,
   ItemIconSvg,
   KatalogIconSvg,
+  KehadiranCompanyIconSvg,
+  ProyekCompanyIconSvg,
   ResumeIconSvg,
   TaskIconSvg,
   TicketIconSvg,
@@ -34,6 +36,8 @@ import {
   SIDEBAR_ATTENDANCE_ADMIN,
   SIDEBAR_ATTENDANCE_FORM_ACTIVITY,
   SIDEBAR_ATTENDANCE_MY,
+  SIDEBAR_CLIENT_ATTENDANCE,
+  SIDEBAR_CLIENT_PROJECT,
   SIDEBAR_CMS,
   SIDEBAR_CMS_BLOG,
   SIDEBAR_CMS_CAREER,
@@ -147,6 +151,20 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       {hasPermission(SIDEBAR_DASHBOARD) && (
         <Menu.Item key="1" icon={<DashboardIconSvg />} title="Dashboard">
           <Link href="/dashboard/home">Dashboard</Link>
+        </Menu.Item>
+      )}
+      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN) && (
+        <Menu.Item key="1" icon={<KehadiranCompanyIconSvg />} title="Dashboard">
+          <Link href="/dashboard/home">Dashboard</Link>
+        </Menu.Item>
+      )}
+      {hasPermission(SIDEBAR_CLIENT_PROJECT) && !hasRole(ROLE_SUPER_ADMIN) && (
+        <Menu.Item
+          key="projectscompany"
+          icon={<ProyekCompanyIconSvg />}
+          title="projectscompany"
+        >
+          <Link href="/projectCompany/">Proyek AQRO</Link>
         </Menu.Item>
       )}
 

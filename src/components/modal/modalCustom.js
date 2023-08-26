@@ -65,6 +65,30 @@ function ModalEdit({
   );
 }
 
+function ModalEditTag({
+  title,
+  visible,
+  onOk,
+  onCancel,
+  footer,
+  loading,
+  level,
+  children,
+}) {
+  return (
+    <ModalCore
+      title={title}
+      visible={visible}
+      onOk={onOk}
+      onCancel={onCancel}
+      footer={footer}
+      loading={loading}
+    >
+      Apakah anda yakin ingin mengupdate tag proyek untuk perusahaan ini?
+    </ModalCore>
+  );
+}
+
 function ModalStatus({
   title,
   visible,
@@ -1443,6 +1467,7 @@ const ModalAddCompany = ({
 
 export {
   ModalEdit,
+  ModalEditTag,
   ModalHapus,
   ModalHapusLokasiCekChild,
   ModalHapusLokasiMoveChild,

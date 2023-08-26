@@ -2,7 +2,6 @@ import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import LayoutDashboard from "components/layout-dashboard-company";
 import {
   AttendanceCompanyStatisticCard,
   AttendanceDetailCompanySection,
@@ -16,6 +15,8 @@ import { useAccessControl } from "contexts/access-control";
 import { ATTENDANCE_USER_ADMIN_GET, ATTENDANCE_USER_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import st from "../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../components/layout-dashboardNew";
 import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
@@ -97,6 +98,7 @@ const AttendanceCompanyDetailPage: NextPage<ProtectedPageProps> = ({
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
+      st={st}
       tok={token}
       sidemenu={"1"}
       fixedBreadcrumbValues={pageBreadcrumb}
