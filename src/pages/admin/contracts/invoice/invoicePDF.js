@@ -1,5 +1,3 @@
-// 2
-import { DownloadOutlined, FileTextOutlined } from "@ant-design/icons";
 import {
   Document,
   Font,
@@ -12,28 +10,13 @@ import {
   View,
 } from "@react-pdf/renderer";
 import { notification } from "antd";
-import debounce from "lodash.debounce";
-import moment from "moment";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { useCallback } from "react";
-import { useQuery } from "react-query";
-
-import { AccessControl } from "components/features/AccessControl";
-import Layout from "components/layout-dashboard";
-import st from "components/layout-dashboard.module.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  COMPANY_DETAIL_GET,
-  COMPANY_MAIN_BANKS_GET,
-  CONTRACT_INVOICE_GET,
-  CONTRACT_INVOICE_UPDATE,
-} from "lib/features";
+import { COMPANY_DETAIL_GET, CONTRACT_INVOICE_GET } from "lib/features";
 
-import { FileTextIconSvg } from "../../../../components/icon";
 import {
   FILE,
   LIST,
@@ -47,26 +30,10 @@ import {
   momentFormatDate,
   permissionWarningNotification,
 } from "../../../../lib/helper";
+import { contractInfoString } from "../[contractId]/invoice-template";
 import httpcookie from "cookie";
 
-export const contractInfoString = {
-  contract_number: "No. Kontrak",
-  title: "Judul Kontrak",
-  client: "Klien",
-  requester: "Requester",
-  initial_date: "Tanggal Dibuat",
-  start_date: "Tanggal Berlaku",
-  end_date: "Tanggal Selesai",
-  duration: "Durasi Kontrak",
-  extras: "Komponen Tambahan",
-};
-
-const ContractInvoicePDFView = ({
-  dataProfile,
-  sidemenu,
-  initProps,
-  invoiceId,
-}) => {
+const ContractInvoicePDF = ({ initProps, invoiceId }) => {
   // 1. Init
   /**
    * Dependencies
@@ -78,8 +45,6 @@ const ContractInvoicePDFView = ({
   }
 
   const isAllowedToGetInvoice = hasPermission(CONTRACT_INVOICE_GET);
-  const isAllowedToUpdateInvoice = hasPermission(CONTRACT_INVOICE_UPDATE);
-  const isAllowedToGetMainBanks = hasPermission(COMPANY_MAIN_BANKS_GET);
   const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
 
   const rt = useRouter();
@@ -95,18 +60,12 @@ const ContractInvoicePDFView = ({
   // Data
   const [dataInvoice, setDataInvoice] = useState({});
   const [dataInvoiceDetail, setDataInvoiceDetail] = useState([]);
-  const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
-  const [dataServices, setDataServices] = useState([]);
   const [dataClient, setDataClient] = useState({});
-  const [dataMainCompany, setDataMainCompany] = useState({});
 
   // Loading
   const [loadingContractInvoice, setLoadingContractInvoice] = useState(false);
-  const [loadingSave, setLoadingSave] = useState(false);
 
   // Misc.
-  const [refresh, setRefresh] = useState(-1);
-  const [isReadOnly, setIsReadOnly] = useState(false);
   const [windowSize, setWindowSize] = useState([]);
 
   // 3. Use Effect & Use Query
@@ -133,9 +92,6 @@ const ContractInvoicePDFView = ({
         .then((res2) => {
           if (res2.success) {
             setDataInvoice(res2.data);
-
-            // if invoice is already posted, then set form to disabled
-            setIsReadOnly(Boolean(res2?.data?.is_posted));
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -153,7 +109,7 @@ const ContractInvoicePDFView = ({
           setLoadingContractInvoice(false);
         });
     }
-  }, [isAllowedToGetInvoice, refresh]);
+  }, [isAllowedToGetInvoice, invoiceId]);
 
   // 2.2. Set displayed invoice detail
   useEffect(() => {
@@ -203,13 +159,7 @@ const ContractInvoicePDFView = ({
     }
   }, [dataInvoice?.invoice_attribute]);
 
-  // 2.3. Set item table data
-  useEffect(() => {
-    setDataServiceTemplateNames(dataInvoice?.service_attribute);
-    setDataServices(dataInvoice?.invoice_services);
-  }, [dataInvoice?.service_attribute, dataInvoice?.invoice_services]);
-
-  // 2.4. Get client data
+  // 2.3. Get client data
   useEffect(() => {
     if (!isAllowedToGetCompanyDetail) {
       permissionWarningNotification("Mendapatkan", "Detail Company");
@@ -268,10 +218,7 @@ const ContractInvoicePDFView = ({
   useEffect(() => {
     setWindowSize([window.innerWidth, window.innerHeight]);
   }, []);
-  // 4. Event
 
-  // console.log({ dataServices });
-  // console.log({ dataServiceTemplateNames });
   // console.log({ dataInvoice });
   // console.log({ dataInvoiceDetail });
   // console.log({ dataClient });
@@ -293,11 +240,7 @@ export const InvoicePDFTemplate = ({
   dataClient,
   dataMainCompany,
 }) => {
-  function breakText(text) {
-    return [text];
-  }
-
-  // https://developers.google.com/fonts/docs/developer_api?apix_params=%7B%22sort%22%3A%22ALPHA%22%7D
+  // Source of font link: https://developers.google.com/fonts/docs/developer_api?apix_params=%7B%22sort%22%3A%22ALPHA%22%7D
   Font.register({
     family: "Inter",
     fonts: [
@@ -333,50 +276,12 @@ export const InvoicePDFTemplate = ({
       justifyContent: "space-between",
     },
 
-    tableHeader: {
-      fontWeight: 700,
-      borderTopWidth: 1,
-      borderBottomWidth: 1,
-      paddingVertical: 12,
-      borderColor: "#CCCCCC",
-    },
-
     textHeading: {
       fontSize: 24,
       fontFamily: "Inter",
       fontWeight: 700,
       lineHeight: 1.5,
       color: "#35763B",
-    },
-
-    textHeading6: {
-      fontSize: 12,
-      fontFamily: "Inter",
-      fontWeight: 500,
-      letterSpacing: 1.5,
-      lineHeight: 1.5,
-    },
-
-    textCaptionBold: {
-      fontSize: 10,
-      fontFamily: "Inter",
-      fontWeight: 700,
-      lineHeight: 1.5,
-      color: "#4D4D4D",
-    },
-
-    textCaptionSmallBold: {
-      fontSize: 8,
-      fontFamily: "Inter",
-      fontWeight: 700,
-      lineHeight: 1.5,
-    },
-
-    textCaptionSmallRegular: {
-      fontSize: 8,
-      fontFamily: "Inter",
-      fontWeight: 400,
-      lineHeight: 1.5,
     },
 
     footer: {
@@ -390,11 +295,6 @@ export const InvoicePDFTemplate = ({
       alignItems: "center",
       color: "#4D4D4D",
     },
-
-    pageNumber: {
-      textAlign: "left",
-      color: "#4D4D4D",
-    },
   });
 
   return (
@@ -402,7 +302,7 @@ export const InvoicePDFTemplate = ({
       <Page size={"A4"} style={styles.page} wrap>
         {/* Header */}
         <View style={styles.rowSection}>
-          <View style={{ paddingRight: 10 }}>
+          <View style={{ width: "50%" }}>
             <Text style={styles.textHeading}>INVOICE</Text>
             <Text>{dataInvoice?.invoice_number?.toUpperCase()}</Text>
             <Text>
@@ -429,6 +329,7 @@ export const InvoicePDFTemplate = ({
 
         {/* Body */}
         {/* INVOICE DETAIL SECTION */}
+        {/* Left column */}
         <View
           style={[
             styles.rowSection,
@@ -442,10 +343,10 @@ export const InvoicePDFTemplate = ({
         >
           {/* Left column */}
           <View
+            // debug
             style={{
               width: 250,
-              borderRight: "0.5px solid #CCC",
-              paddingRight: 10,
+              paddingRight: 5,
             }}
           >
             <Text>Kepada Yth,</Text>
@@ -454,13 +355,20 @@ export const InvoicePDFTemplate = ({
           </View>
 
           {/* Right column */}
-          <View style={{ width: 250, textAlign: "right", paddingLeft: 10 }}>
+          <View
+            // debug
+            style={{
+              width: 250,
+              textAlign: "right",
+              borderLeft: "0.5px solid #CCC",
+              paddingLeft: 10,
+            }}
+          >
             {dataInvoiceDetail?.map((item) => (
               <View key={item?.title} className="md:space-y-2">
                 {item?.type === FILE ? (
                   <View className="flex space-x-2 items-center">
                     <Text className="mig-caption--bold">{item?.title}: </Text>
-                    <FileTextIconSvg size={24} color={"#35763B"} />
                     <Link
                       href={generateStaticAssetUrl(item?.value?.link)}
                       target="_blank"
@@ -473,7 +381,7 @@ export const InvoicePDFTemplate = ({
                   <View>
                     <Text className="mig-caption--bold">{item?.title}: </Text>
                     {item?.value?.map((val, idx) => (
-                      <Text key={idx}>{val}</Text>
+                      <Text key={idx}>• {val}</Text>
                     ))}
                   </View>
                 ) : (
@@ -591,11 +499,6 @@ export const InvoicePDFTemplate = ({
               width: "50%",
               flexDirection: "column",
               marginBottom: 0,
-              // paddingTop: 16,
-              // paddingBottom: 0,
-              // borderBottomWidth: 0,
-              // position: "absolute",
-              // bottom: 10,
             },
           ]}
         >
@@ -659,11 +562,9 @@ export async function getServerSideProps({ req, res, params }) {
   return {
     props: {
       initProps,
-      dataProfile,
-      sidemenu: "contract-invoice",
       invoiceId,
     },
   };
 }
 
-export default ContractInvoicePDFView;
+export default ContractInvoicePDF;

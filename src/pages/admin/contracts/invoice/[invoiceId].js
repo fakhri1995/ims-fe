@@ -52,19 +52,8 @@ import {
   momentFormatDate,
   permissionWarningNotification,
 } from "../../../../lib/helper";
+import { contractInfoString } from "../[contractId]/invoice-template";
 import httpcookie from "cookie";
-
-export const contractInfoString = {
-  contract_number: "No. Kontrak",
-  title: "Judul Kontrak",
-  client: "Klien",
-  requester: "Requester",
-  initial_date: "Tanggal Dibuat",
-  start_date: "Tanggal Berlaku",
-  end_date: "Tanggal Selesai",
-  duration: "Durasi Kontrak",
-  extras: "Komponen Tambahan",
-};
 
 const ContractInvoiceFormIndex = ({
   dataProfile,
