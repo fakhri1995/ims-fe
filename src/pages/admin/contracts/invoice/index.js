@@ -237,11 +237,11 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, [dataInvoice?.id, dataRowClicked?.id]);
 
   // Triggers auto click if PDF data is ready on client
-  useEffect(() => {
-    if (isOnClient && downloadRef.current) {
-      downloadRef.current.click();
-    }
-  }, [isOnClient]);
+  // useEffect(() => {
+  //   if (isOnClient && downloadRef.current) {
+  //     downloadRef.current.click();
+  //   }
+  // }, [isOnClient]);
 
   if (isAccessControlPending) {
     return null;
