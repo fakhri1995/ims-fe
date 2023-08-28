@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useRef } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
@@ -59,6 +60,7 @@ import {
   PlusIconSvg,
   TrashIconSvg,
 } from "../../../../components/icon";
+import { convertDaysToString } from "../../../../lib/helper";
 import { contractInfoString } from "../[contractId]/invoice-template";
 import ContractInvoicePDF, { InvoicePDFTemplate } from "./invoicePDF";
 import {
@@ -138,6 +140,8 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
+  const downloadRef = useRef(null);
+
   // 2. Use state
   // 2.1. Table Contract
   // filter search & selected options
@@ -163,6 +167,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataClient, setDataClient] = useState({});
   const [dataMainCompany, setDataMainCompany] = useState({});
   const [loadingContractInvoice, setLoadingContractInvoice] = useState(false);
+  const [isOnClient, setIsOnClient] = useState(-1); // use invoiceId as argument
 
   // 3. UseEffect & UseQuery
   // 3.1. Get Company Client List
@@ -192,127 +197,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       }
     );
 
-  // 3.3. [PDF] Get Invoice Data
-  const handleGetInvoiceData = (invoiceId) => {
-    if (!isAllowedToGetInvoice) {
-      permissionWarningNotification("Mendapatkan", "Data Contract Invoice");
-      setLoadingContractInvoice(false);
-      return;
-    }
-
-    if (invoiceId) {
-      setLoadingContractInvoice(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractInvoice?id=${invoiceId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataInvoice(res2.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingContractInvoice(false);
-        });
-    }
-  };
-
-  // 3.4. [PDF] Set displayed invoice detail
-  const handleSetInvoiceDetail = () => {
-    if (dataInvoice?.invoice_attribute?.length) {
-      const currentInvoiceDetail = [];
-      for (let item of dataInvoice?.invoice_attribute) {
-        if (!item?.includes("extras")) {
-          let tempValue = dataInvoice[item];
-
-          if (["initial_date", "start_date", "end_date"].includes(item)) {
-            tempValue = momentFormatDate(tempValue);
-          }
-
-          if (item == "duration") {
-            tempValue = convertDaysToString(tempValue);
-          }
-
-          if (item == "requester") {
-            tempValue = dataInvoice?.requester?.name;
-          }
-
-          if (item == "client") {
-            tempValue = dataInvoice?.client?.name;
-          }
-
-          currentInvoiceDetail.push({
-            name: item,
-            title: contractInfoString[item],
-            value: tempValue,
-          });
-        } else {
-          for (let extra of dataInvoice?.extras) {
-            if (`extras.${extra?.key}` == item) {
-              const dataExtra = {
-                name: `extras.${extra?.key}`,
-                title: extra?.name,
-                value: extra?.value,
-                type: extra?.type,
-              };
-
-              currentInvoiceDetail.push(dataExtra);
-            }
-          }
-        }
-      }
-      setDataInvoiceDetail(currentInvoiceDetail);
-    }
-  };
-
-  // 3.5. [PDF] Get client data
-  const handleGetClientData = (clientId) => {
-    if (!isAllowedToGetCompanyDetail) {
-      permissionWarningNotification("Mendapatkan", "Detail Company");
-      return;
-    }
-
-    if (dataInvoice?.client_id) {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${clientId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          setDataClient(res2?.data);
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        });
-    }
-  };
-
-  // 3.6. [PDF] Get main company data
+  // 3.3. [PDF] Get main company data
   useEffect(() => {
     if (!isAllowedToGetCompanyDetail) {
       permissionWarningNotification("Mendapatkan", "Detail Company");
@@ -336,6 +221,31 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
         });
       });
   }, [isAllowedToGetCompanyDetail]);
+
+  // 3.4. State to only renders `<PDFDownloadLink>` component
+  // after dataInvoice is available (client-side)
+  useEffect(() => {
+    if (
+      dataInvoice.id &&
+      dataInvoice?.id == dataRowClicked?.id &&
+      (dataInvoiceDetail?.length || dataClient?.id)
+    ) {
+      setIsOnClient(dataRowClicked?.id);
+    } else {
+      setIsOnClient(-1);
+    }
+  }, [dataInvoice?.id, dataRowClicked?.id]);
+
+  // Triggers auto click if PDF data is ready on client
+  useEffect(() => {
+    if (isOnClient && downloadRef.current) {
+      downloadRef.current.click();
+    }
+  }, [isOnClient]);
+
+  if (isAccessControlPending) {
+    return null;
+  }
 
   // 4. Event
   // 4.1. Filter Table
@@ -406,6 +316,126 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => setLoadingDelete(false));
   };
 
+  // 4.3. [PDF] Get Invoice Data
+  const handleGetInvoiceData = (invoiceId) => {
+    if (!isAllowedToGetInvoice) {
+      permissionWarningNotification("Mendapatkan", "Data Contract Invoice");
+      setLoadingContractInvoice(false);
+      return;
+    }
+
+    if (invoiceId) {
+      setLoadingContractInvoice(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractInvoice?id=${invoiceId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataInvoice(res2.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingContractInvoice(false);
+        });
+    }
+  };
+
+  // 4.4. [PDF] Set displayed invoice detail
+  const handleSetInvoiceDetail = () => {
+    if (dataInvoice?.invoice_attribute?.length) {
+      const currentInvoiceDetail = [];
+      for (let item of dataInvoice?.invoice_attribute) {
+        if (!item?.includes("extras")) {
+          let tempValue = dataInvoice[item];
+
+          if (["initial_date", "start_date", "end_date"].includes(item)) {
+            tempValue = momentFormatDate(tempValue);
+          }
+
+          if (item == "duration") {
+            tempValue = convertDaysToString(tempValue);
+          }
+
+          if (item == "requester") {
+            tempValue = dataInvoice?.requester?.name;
+          }
+
+          if (item == "client") {
+            tempValue = dataInvoice?.client?.name;
+          }
+
+          currentInvoiceDetail.push({
+            name: item,
+            title: contractInfoString[item],
+            value: tempValue,
+          });
+        } else {
+          for (let extra of dataInvoice?.extras) {
+            if (`extras.${extra?.key}` == item) {
+              const dataExtra = {
+                name: `extras.${extra?.key}`,
+                title: extra?.name,
+                value: extra?.value,
+                type: extra?.type,
+              };
+
+              currentInvoiceDetail.push(dataExtra);
+            }
+          }
+        }
+      }
+      setDataInvoiceDetail(currentInvoiceDetail);
+    }
+  };
+
+  // 4.5. [PDF] Get client data
+  const handleGetClientData = (clientId) => {
+    if (!isAllowedToGetCompanyDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Company");
+      return;
+    }
+
+    if (dataInvoice?.client_id) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${clientId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataClient(res2?.data);
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        });
+    }
+  };
+
   // Use for price range filter
   const getPriceRangeLabel = (priceRangeArr) =>
     `Rp ${Number(priceRangeArr[0])?.toLocaleString("id-ID")} - Rp ${Number(
@@ -454,7 +484,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     {
       title: "PT Klien",
       key: "client_name",
-      dataIndex: ["client", "name"],
+      dataIndex: ["contract_template", "client", "name"],
     },
     {
       title: "Tanggal Terbit",
@@ -568,38 +598,58 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                 }
               >
                 <div>
-                  <Button
-                    type={"primary"}
-                    disabled={!record.id}
-                    onClick={async (event) => {
-                      event.stopPropagation();
-                      handleGetInvoiceData(record?.id);
-                      handleSetInvoiceDetail();
-                      handleGetClientData(record?.contract_template?.client_id);
-                    }}
-                    icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
-                    className="bg-secondary100 border-secondary100 hover:bg-secondary 
+                  {isOnClient != record?.id ? (
+                    <Button
+                      type={"primary"}
+                      disabled={!record.id}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setDataRowClicked({ id: record?.id });
+
+                        // get required data used for PDF
+                        handleGetInvoiceData(record?.id);
+                        handleSetInvoiceDetail();
+                        handleGetClientData(
+                          record?.contract_template?.client_id
+                        );
+                      }}
+                      icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
+                      className="bg-secondary100 border-secondary100 hover:bg-secondary 
                       hover:border-secondary focus:bg-secondary100 focus:border-secondary100"
-                  />
-                  {dataInvoice?.id == record?.id &&
-                    dataInvoiceDetail?.length &&
-                    dataClient?.id && (
-                      <PDFDownloadLink
-                        document={
-                          <InvoicePDFTemplate
-                            dataInvoice={dataInvoice}
-                            dataInvoiceDetail={dataInvoiceDetail}
-                            dataClient={dataClient}
-                            dataMainCompany={dataMainCompany}
-                          />
-                        }
-                        fileName={`Invoice-${record?.invoice_number}.pdf`}
-                      >
-                        {({ blob, url, loading, error }) =>
-                          loading ? <Spin spinning={loading} /> : "Download"
-                        }
-                      </PDFDownloadLink>
-                    )}
+                    />
+                  ) : (
+                    <PDFDownloadLink
+                      document={
+                        <InvoicePDFTemplate
+                          dataInvoice={dataInvoice}
+                          dataInvoiceDetail={dataInvoiceDetail}
+                          dataClient={dataClient}
+                          dataMainCompany={dataMainCompany}
+                        />
+                      }
+                      fileName={`Invoice_${record?.invoice_number}.pdf`}
+                    >
+                      {({ blob, url, loading, error }) =>
+                        loading ? (
+                          <Spin spinning={loading} />
+                        ) : (
+                          <Button
+                            type={"primary"}
+                            ref={downloadRef}
+                            disabled={!record.id}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                            }}
+                            icon={
+                              <DownloadIconSvg size={20} color={"#FFFFFF"} />
+                            }
+                            className="bg-secondary100 border-secondary100 hover:bg-secondary 
+                            hover:border-secondary focus:bg-secondary100 focus:border-secondary100"
+                          ></Button>
+                        )
+                      }
+                    </PDFDownloadLink>
+                  )}
                 </div>
               </Tooltip>
               {!record?.is_posted && (
@@ -626,14 +676,11 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
-  if (isAccessControlPending) {
-    return null;
-  }
-
-  // console.log({ priceRangeList });
-  // console.log({ selectedPriceRange });
-  // console.log({ priceRangeInput });
-  console.log({ dataInvoiceDetail });
+  // console.log({ dataInvoice });
+  // console.log({ dataRowClicked });
+  // console.log({ isOnClient });
+  // console.log({ dataClient });
+  // console.log({ dataInvoiceDetail });
   return (
     <Layout
       tok={initProps}

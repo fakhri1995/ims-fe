@@ -10,6 +10,7 @@ import {
   View,
 } from "@react-pdf/renderer";
 import { notification } from "antd";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
 
@@ -61,6 +62,7 @@ const ContractInvoicePDF = ({ initProps, invoiceId }) => {
   const [dataInvoice, setDataInvoice] = useState({});
   const [dataInvoiceDetail, setDataInvoiceDetail] = useState([]);
   const [dataClient, setDataClient] = useState({});
+  const [dataMainCompany, setDataMainCompany] = useState({});
 
   // Loading
   const [loadingContractInvoice, setLoadingContractInvoice] = useState(false);
@@ -460,14 +462,12 @@ export const InvoicePDFTemplate = ({
                 );
               })}
             </View>
-            {dataInvoice?.service_attribute?.map((item, idx) => (
+            {dataInvoice?.service_attribute?.map((item, colIdx) => (
               <View key={item}>
                 <Text style={{ fontWeight: 700 }}>{item}</Text>
-                {dataInvoice?.invoice_services?.[
-                  idx
-                ]?.invoice_service_value?.details?.map((value, idx) => (
-                  <Text key={idx} style={{ marginTop: 12 }}>
-                    {value}
+                {dataInvoice?.invoice_services?.map((item, itemIdx) => (
+                  <Text key={itemIdx} style={{ marginTop: 12 }}>
+                    {item?.invoice_service_value?.details[colIdx]}
                   </Text>
                 ))}
               </View>
@@ -526,7 +526,7 @@ export const InvoicePDFTemplate = ({
 };
 
 export async function getServerSideProps({ req, res, params }) {
-  const invoiceId = 9;
+  const invoiceId = 14;
   let initProps = {};
   if (!req.headers.cookie) {
     return {
