@@ -14,13 +14,21 @@ import httpcookie from "cookie";
 
 function DashboardIndex({ initProps, dataProfile, sidemenu }) {
   const { hasPermission, hasRole } = useAccessControl();
-
+  const pageBreadcrumbValue = [
+    { name: "Dashboard Kehadiran " + dataProfile.data.company.name },
+  ];
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
       tok={initProps}
       sidemenu={sidemenu}
+      fixedBreadcrumbValues={
+        hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN)
+          ? pageBreadcrumbValue
+          : null
+      }
     >
+      {console.log("dataProfile ", dataProfile)}
       {/* <div className="grid grid-cols-3">
                 <div className="w-auto h-auto border rounded-xl flex flex-col mx-3">
                     <div className="p-3 flex flex-col border-b">

@@ -109,6 +109,7 @@ function LayoutDashboard({
           sidemenu={sidemenu}
           coll={coll}
           collsmall={collsmall}
+          dataPerusahaan={dataProfile.data.company.name}
         />
 
         {/* Header + Main Content */}
