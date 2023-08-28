@@ -14,12 +14,13 @@ function DashboardCompany({ initProps, dataProfile, sidemenu }) {
   const pageBreadcrumbValue = useMemo(
     () => [
       {
-        name: "Dashboar Kehadiran PT Maju Jaya",
+        name: "Dashboar Kehadiran " + dataProfile.data.company.name,
         hrefValue: "/projectsCompany",
       },
     ],
     []
   );
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -52,7 +53,9 @@ function DashboardCompany({ initProps, dataProfile, sidemenu }) {
         {/* Second row: Table all attendance */}
         <div className="grid grid-cols-12">
           <div className="col-span-full">
-            <AttendanceCompanyListSection />
+            <AttendanceCompanyListSection
+              companyId={dataProfile.data.company.id.toString()}
+            />
           </div>
         </div>
       </div>

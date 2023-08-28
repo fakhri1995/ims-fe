@@ -90,7 +90,31 @@ const DrawerBankClient = ({
           <div className="flex justify-center items-center mb-5">
             {/* <AtmBank from={createdata.color_first} to={createdata.color_second}></AtmBank> */}
             <div
-              className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${createdata.color_first} ${createdata.color_second} relative mr-3`}
+              style={
+                createdata.color_first == "from-state1" &&
+                createdata.color_second == "to-state2"
+                  ? {
+                      backgroundImage:
+                        "linear-gradient(to top left, #799F0C, #FFE000)",
+                    }
+                  : createdata.color_first == "from-state3" &&
+                    createdata.color_second == "to-state4"
+                  ? {
+                      backgroundImage:
+                        "linear-gradient(to top left, #6DD5ED, #2193B0)",
+                    }
+                  : createdata.color_first == "from-red-200" &&
+                    createdata.color_second == "to-red-600"
+                  ? {
+                      backgroundImage:
+                        "linear-gradient(to top left, #fecaca, #dc2626)",
+                    }
+                  : {
+                      backgroundImage:
+                        "linear-gradient(to top left, #9333ea, #db2777)",
+                    }
+              }
+              className={`w-5/12 h-28 rounded-md relative mr-3`}
             >
               <div className="absolute bottom-0 right-2">
                 <img src="/image/visa.png" className="object-contain" />
@@ -103,7 +127,11 @@ const DrawerBankClient = ({
           </div>
           <div className="flex justify-center mb-10">
             <div
-              className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${
+              style={{
+                backgroundImage:
+                  "linear-gradient(to top left, #799F0C, #FFE000)",
+              }}
+              className={`w-8 h-8 rounded-full border cursor-pointer ${
                 createdata.color_first === "from-state1" && "border-primary100"
               } mx-2`}
               onClick={() => {
@@ -115,7 +143,11 @@ const DrawerBankClient = ({
               }}
             ></div>
             <div
-              className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${
+              style={{
+                backgroundImage:
+                  "linear-gradient(to top left, #6DD5ED, #2193B0)",
+              }}
+              className={`w-8 h-8 rounded-full border cursor-pointer ${
                 createdata.color_first === "from-state3" && "border-primary100"
               } mx-2`}
               onClick={() => {
@@ -127,7 +159,11 @@ const DrawerBankClient = ({
               }}
             ></div>
             <div
-              className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${
+              style={{
+                backgroundImage:
+                  "linear-gradient(to top left, #fecaca, #dc2626)",
+              }}
+              className={`w-8 h-8 rounded-full border cursor-pointer ${
                 createdata.color_first === "from-red-200" && "border-primary100"
               } mx-2`}
               onClick={() => {
@@ -139,7 +175,11 @@ const DrawerBankClient = ({
               }}
             ></div>
             <div
-              className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-600 to-pink-600 border cursor-pointer ${
+              style={{
+                backgroundImage:
+                  "linear-gradient(to top left, #9333ea, #db2777)",
+              }}
+              className={`w-8 h-8 rounded-full border cursor-pointer ${
                 createdata.color_first === "from-purple-600" &&
                 "border-primary100"
               } mx-2`}

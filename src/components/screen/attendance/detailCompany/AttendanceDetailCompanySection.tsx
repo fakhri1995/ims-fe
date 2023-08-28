@@ -47,6 +47,7 @@ export const AttendanceDetailCompanySection: FC<
   const [dataHistoryTask, setDataHistoryTask] = useState([]);
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
   const [tabActiveKey2, setTabActiveKey2] = useState<"3" | "4" | string>("");
+  const [userId, setUserId] = useState(null);
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
     useGetAttendanceDetailDataSource(attendanceId);
   const tableColums = useMemo<ColumnsType>(() => {
@@ -69,7 +70,10 @@ export const AttendanceDetailCompanySection: FC<
           return isBefore(rhsDate, lhsDate) ? -1 : 1;
         },
         render: (value) => {
-          const formattedDate = formatDateToLocale(new Date(value), "HH:mm");
+          const formattedDate = formatDateToLocale(
+            new Date(value),
+            tabActiveKey === "1" ? "HH:mm" : "dd MMM yyyy, HH:mm"
+          );
 
           return <>{formattedDate}</>;
         },
@@ -99,11 +103,30 @@ export const AttendanceDetailCompanySection: FC<
   );
 
   useEffect(() => {
+    getUserId();
     getAttendanceAdmin();
     getAttendance();
-    getAttendanceTask();
     checkActivityTask();
   }, []);
+
+  const getUserId = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceUserAdmin?id=${attendanceId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(token),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setUserId(res2.data.user_attendance.user_id);
+          getAttendanceTask(res2.data.user_attendance.user_id);
+        }
+      });
+  };
 
   const getAttendance = () => {
     fetch(
@@ -123,9 +146,9 @@ export const AttendanceDetailCompanySection: FC<
         }
       });
   };
-  const getAttendanceTask = () => {
+  const getAttendanceTask = (id) => {
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivities?id=${attendanceId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserAttendanceTaskActivitiesAdmin?id=${id}`,
       {
         method: `GET`,
         headers: {
@@ -163,12 +186,12 @@ export const AttendanceDetailCompanySection: FC<
     // if (isAllowedToGetActivity) {
     setTabActiveKey2("3");
     // } else if (isAllowedToGetTaskActivities) {
-    setTabActiveKey2("4");
+    // setTabActiveKey2("4");
     // }
   };
 
   const onViewProject = () => {
-    router.push("/attendanceCompany/projects");
+    router.push(`/attendanceCompany/projects/${userId}`);
   };
   const columnsTable: ColumnsType = [
     {
@@ -291,13 +314,15 @@ export const AttendanceDetailCompanySection: FC<
           <TabPane tab="Hari Ini" key="1" />
           <TabPane tab="Riwayat" key="2" />
         </Tabs>
-        <ButtonSys
-          type="default"
-          onClick={onViewProject}
-          // disabled={!isAllowedToAddTaskActivities}
-        >
-          <p className={"ml-2"}>Lihat Proyek dan Tugas</p>
-        </ButtonSys>
+        {userId && (
+          <ButtonSys
+            type="default"
+            onClick={onViewProject}
+            // disabled={!isAllowedToAddTaskActivities}
+          >
+            <p className={"ml-2"}>Lihat Proyek dan Tugas</p>
+          </ButtonSys>
+        )}
       </div>
       <Tabs
         defaultActiveKey="3"

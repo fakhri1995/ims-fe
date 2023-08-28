@@ -167,7 +167,6 @@ export async function getServerSideProps({ req, res }) {
     if (req.headers.cookie) {
       const cookies = req.headers.cookie;
       const cookiesJSON1 = httpcookie.parse(cookies);
-      console.log("isi cookies ", cookiesJSON1);
       if (cookiesJSON1.token) {
         return {
           redirect: {

@@ -5,6 +5,22 @@ import "react-quill/dist/quill.snow.css";
 
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 
+const logDetailLabel = {
+  id: "ID Task",
+  ticket_number: "Nomor Tiket",
+  name: "Nama",
+  start_date: "Tanggal Dimulai",
+  end_date: "Ekspektasi Tanggal Selesai",
+  description: "Deskripsi",
+  status_id: "ID Status",
+  project_id: "ID Proyek",
+  created_by: "Dibuat Oleh",
+  created_at: "Tanggal Dibuat",
+  updated_at: "Tanggal Diubah",
+  deleted_at: "Tanggal Dihapus",
+  task_staffs: "Staff Task",
+};
+
 const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
   const [dataTableLog, setDataTableLog] = useState([]);
 
@@ -19,7 +35,7 @@ const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
       // add object of each log attribute to a list
       Object.entries(dataLogName)?.forEach((logData) => {
         let rowTable = {};
-        rowTable.name = logData[0];
+        rowTable.name = logDetailLabel[logData[0]] || "-";
         dataTable.push(rowTable);
       });
 

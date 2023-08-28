@@ -144,7 +144,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   useEffect(() => {
-    console.log("product id bro ", productId);
     if (productId) {
       getDetailProduct();
     } else {
@@ -163,7 +162,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("generate id ", res2.data);
         if (res2.success) {
           setProductIdValue(res2.data);
           //  setDataDetail(res2.data)
@@ -197,7 +195,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
     )
       .then((res) => res.json())
       .then((res2) => {
-        console.log("data detail ", res2.data);
         if (res2.success) {
           setProductName(res2.data.name);
           instanceForm.setFieldsValue({
@@ -245,8 +242,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("datanya apis ", res2);
-        console.log("datanya categories ", res2.data);
         setDataCategories(res2.data);
       });
   };
@@ -265,7 +260,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   const onChangeNameProduct = (e) => {
-    console.log("value ", e.target.value);
     setProductName(e.target.value);
   };
 
@@ -320,7 +314,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((response) => response.json())
       .then((response2) => {
-        console.log("response add inventory ", response2);
         if (response2.success) {
           notification.success({
             message: productId
@@ -491,7 +484,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                         placeholder="Pilih Kategori"
                         optionFilterProp="children"
                         onChange={(value) => {
-                          console.log("on change kategori bos ", value);
                           setCategoryChoose(value);
                         }}
                         filterOption={(input, option) =>
@@ -611,7 +603,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                           size={"large"}
                           value={"Aset"}
                           onChange={(value) => {
-                            console.log("on change relasi bos ", value);
                             setRelation(value);
                           }}
                           className={"w-full mt-4"}

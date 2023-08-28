@@ -96,10 +96,8 @@ function CustomerStoriesDetail({}) {
     )
       .then((res) => res.json())
       .then((res2) => {
-        console.log("get data testimonial ", res2);
         if (res2.success) {
           //   setDataTestimonial(res2.data);
-          console.log("locale apa ", locale);
           if (locale == "en") {
             setDetailBlog(res2.data[0]);
             let total =
@@ -129,8 +127,6 @@ function CustomerStoriesDetail({}) {
             }
             setTableContentH3(datacontenttemph3);
           } else {
-            console.log("masuk id ");
-            console.log("data id ", res2.data[0]);
             if (
               res2.data[0].title_id != "" &&
               res2.data[0].description_id != "" &&
@@ -138,7 +134,6 @@ function CustomerStoriesDetail({}) {
               res2.data[0].content_id != "" &&
               res2.data[0].tags_id != ""
             ) {
-              console.log("masuk id if ");
               setHalamanId(true);
               setDetailBlog(res2.data[0]);
 
@@ -169,7 +164,6 @@ function CustomerStoriesDetail({}) {
               }
               setTableContentH3(datacontenttemph3);
             } else {
-              console.log("masuk id else");
               setHalamanId(false);
               alert("Halaman ID tidak tersedia untuk testimoni ini");
               setDetailBlog(res2.data[0]);
@@ -179,7 +173,6 @@ function CustomerStoriesDetail({}) {
               let minute = timeRead(total);
               setMinutesRead(minute);
             }
-            console.log("masuk apa bro ");
           }
         } else {
         }
@@ -201,10 +194,8 @@ function CustomerStoriesDetail({}) {
     )
       .then((res) => res.json())
       .then((res2) => {
-        console.log("get data testimonial 2 ", res2);
         if (res2.success) {
           //   setDataTestimonial(res2.data);
-          console.log("locale apa ", locale);
           if (locale == "en") {
             let dataTemp = [];
             for (let i = 0; i < res2.data.length; i++) {
@@ -216,8 +207,6 @@ function CustomerStoriesDetail({}) {
           } else {
             let dataTemp = [];
             for (let i = 0; i < res2.data.length; i++) {
-              console.log("page path id ", res2.data[i].page_path_id);
-              console.log("pagenya ", page);
               if (
                 res2.data[i].title_id != "" &&
                 res2.data[i].description_id != "" &&
@@ -266,7 +255,6 @@ function CustomerStoriesDetail({}) {
       <Head>
         <title>Customer Stories Detail</title>
       </Head>
-      {console.log("query router ", router)}
 
       <section
         className={

@@ -60,14 +60,16 @@ const { TabPane } = Tabs;
 /**
  * Component AttendanceAdminListSection's props.
  */
-export interface IAttendanceCompanyListSection {}
+export interface IAttendanceCompanyListSection {
+  companyId: string;
+}
 
 /**
  * Component AttendanceAdminListSection
  */
 export const AttendanceCompanyListSection: FC<
   IAttendanceCompanyListSection
-> = () => {
+> = ({ companyId }) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
 
@@ -85,7 +87,7 @@ export const AttendanceCompanyListSection: FC<
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    company_ids: withDefault(StringParam, undefined),
+    company_ids: withDefault(StringParam, companyId),
     is_late: withDefault(NumberParam, undefined),
     is_hadir: withDefault(NumberParam, undefined),
     keyword: withDefault(StringParam, undefined),
@@ -113,15 +115,15 @@ export const AttendanceCompanyListSection: FC<
   const [activeTab, setActiveTab] = useState<"1" | "2">("1");
   const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
 
-  const { data: dataCompanyList, isLoading: loadingCompanyClients } = useQuery(
-    [CompanyServiceQueryKeys.COMPANY_CLIENTS_GET],
-    () => CompanyService.getCompanyClientList(axiosClient, true),
-    {
-      enabled: isAllowedToGetCompanyClients,
-      refetchOnMount: false,
-      select: (response) => response.data.data,
-    }
-  );
+  // const { data: dataCompanyList, isLoading: loadingCompanyClients } = useQuery(
+  //   [CompanyServiceQueryKeys.COMPANY_CLIENTS_GET],
+  //   () => CompanyService.getCompanyClientListCompany(axiosClient, companyId),
+  //   {
+  //     enabled: true,
+  //     refetchOnMount: false,
+  //     select: (response) => response.data.data,
+  //   }
+  // );
 
   return (
     <>
@@ -139,16 +141,6 @@ export const AttendanceCompanyListSection: FC<
               <TabPane tab="Hadir" key="1" />
               <TabPane tab="Absen" key="2" />
             </Tabs>
-            <div className="xl:justify-end">
-              <ButtonSys
-                type={canExportTableData ? "default" : "primary"}
-                onClick={() => setIsExportDrawerShown(true)}
-                disabled={!canExportTableData}
-              >
-                <DownloadOutlined rev={""} className="mr-2" />
-                Unduh Tabel
-              </ButtonSys>
-            </div>
           </div>
 
           {/* Table's filter */}
@@ -176,12 +168,23 @@ export const AttendanceCompanyListSection: FC<
                 />
               </Form.Item>
             )}
+            {/* <div className="xl:justify-end">
+              <ButtonSys
+                type={canExportTableData ? "default" : "primary"}
+                onClick={() => setIsExportDrawerShown(true)}
+                disabled={!canExportTableData}
+              >
+                <DownloadOutlined rev={""} className="mr-2" />
+                Unduh Tabel
+              </ButtonSys>
+            </div> */}
             <Form.Item noStyle name="search">
               <Input
+                prefix={<SearchOutlined rev={""} />}
                 placeholder="Cari..."
                 disabled={!isAllowedToSearchData}
                 allowClear
-                className="w-full"
+                className="w-3/5"
                 onChange={(event) => {
                   if (
                     event.target.value.length === 0 ||
@@ -196,49 +199,6 @@ export const AttendanceCompanyListSection: FC<
                   }
                 }}
               />
-            </Form.Item>
-
-            {activeTab === "1" && (
-              <Form.Item noStyle>
-                <Select
-                  allowClear
-                  showSearch
-                  mode="multiple"
-                  className="w-full"
-                  defaultValue={queryParams.company_ids}
-                  disabled={
-                    !isAllowedToGetCompanyClients || loadingCompanyClients
-                  }
-                  placeholder="Semua Penempatan"
-                  onChange={(value) => {
-                    setQueryParams({ company_ids: value, page: 1 });
-                  }}
-                  filterOption={(input, option) =>
-                    (String(option?.children) ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  loading={loadingCompanyClients}
-                  optionFilterProp="children"
-                >
-                  {dataCompanyList?.map((company) => (
-                    <Select.Option key={company.id} value={company.id}>
-                      {company.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            )}
-
-            <Form.Item noStyle>
-              <Button
-                htmlType="submit"
-                disabled={!isAllowedToSearchData}
-                className="mig-button mig-button--solid-primary"
-                icon={<SearchOutlined rev={""} />}
-              >
-                Cari
-              </Button>
             </Form.Item>
           </Form>
         </div>
@@ -307,7 +267,7 @@ const HadirTable: FC<ITable> = memo(
     keyword = "",
     is_late = 0,
     is_hadir = 1,
-    company_ids = "1",
+    company_ids = "",
   }) => {
     const router = useRouter();
     const axiosClient = useAxiosClient();

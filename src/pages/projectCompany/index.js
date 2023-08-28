@@ -61,9 +61,9 @@ import {
   PlusIconSvg,
   SearchIconSvg,
 } from "../../components/icon";
-import LayoutDashboard from "../../components/layout-dashboard-company";
 import st from "../../components/layout-dashboard.module.css";
-import { TableCustomProjectList } from "../../components/table/tableCustom";
+import LayoutDashboard from "../../components/layout-dashboardNew";
+import { TableCustomProjectCompanyList } from "../../components/table/tableCustom";
 import {
   createKeyPressHandler,
   momentFormatDate,
@@ -229,7 +229,7 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
     const fetchData = async () => {
       setLoadingProjects(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${params}&keyword=${searchingFilterProjects}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientProjects${params}&keyword=${searchingFilterProjects}`,
         {
           method: `GET`,
           headers: {
@@ -451,36 +451,36 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, [isAllowedToGetProjectDeadlineCount, dateState]);
 
   // 3.7. Get Project Category List
-  useEffect(() => {
-    if (!isAllowedToGetTagList) {
-      permissionWarningNotification("Mendapatkan", "Daftar Tag Proyek");
-      return;
-    }
+  // useEffect(() => {
+  //   if (!isAllowedToGetTagList) {
+  //     permissionWarningNotification("Mendapatkan", "Daftar Tag Proyek");
+  //     return;
+  //   }
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataCategoryList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-  }, [isAllowedToGetTagList, refresh]);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList`, {
+  //     method: `GET`,
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       if (res2.success) {
+  //         setDataCategoryList(res2.data);
+  //       } else {
+  //         notification.error({
+  //           message: `${res2.message}`,
+  //           duration: 3,
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       notification.error({
+  //         message: `${err.response}`,
+  //         duration: 3,
+  //       });
+  //     });
+  // }, [isAllowedToGetTagList, refresh]);
 
   // 3.8. Update number of rows in task table based on the device width
   useEffect(() => {
@@ -553,76 +553,6 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
         })
       )
       .finally(() => setLoadingChart(false));
-  };
-
-  const handleAddProject = () => {
-    if (!isAllowedToAddProject) {
-      permissionWarningNotification("Menambah", "Proyek");
-      return;
-    }
-
-    setLoadingProjects(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProject`, {
-      method: `POST`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          setCurrentProject(response.data);
-          setModalAddProject(true);
-        } else {
-          notification.error({
-            message: response.message,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menambahkan proyek baru. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoadingProjects(false));
-  };
-
-  const handleAddTask = () => {
-    if (!isAllowedToAddTask) {
-      permissionWarningNotification("Menambah", "Task");
-      return;
-    }
-
-    setLoadingMyTaskList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectTask`, {
-      method: `POST`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          setCurrentTaskId(response.data?.id);
-          setModalAddTask(true);
-        } else {
-          notification.error({
-            message: response.message,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menambahkan task baru. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoadingMyTaskList(false));
   };
 
   // "Semua Proyek" Table columns
@@ -719,9 +649,9 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
       <h4 className="mig-heading--4 mb-6">Semua Proyek</h4>
 
       {/* Start: Filter table */}
-      <div className="grid grid-cols-2 gap-2 md:flex md:flex-row justify-between w-full items-center mb-4">
+      <div className="grid md:flex md:flex-row justify-between w-full items-center mb-4">
         {/* Search by keyword (kata kunci) */}
-        <div className="md:w-2/12">
+        <div className="md:w-11/12">
           <Input
             defaultValue={searchingFilterProjects}
             style={{ width: `100%` }}
@@ -734,96 +664,12 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
           />
         </div>
 
-        {/* Filter by date */}
-        <div className="md:w-4/12">
-          <DatePicker.RangePicker
-            allowClear
-            allowEmpty
-            value={
-              selectedFromDate === ""
-                ? [null, null]
-                : [moment(queryParams.from), moment(queryParams.to)]
-            }
-            placeholder={["Tanggal Mulai", "Tanggal Selesai"]}
-            disabled={!isAllowedToGetProjects}
-            style={{ width: `100%` }}
-            onChange={(dates, datestrings) => {
-              setQueryParams({
-                from: datestrings[0],
-                to: datestrings[1],
-              });
-              setSelectedFromDate(datestrings[0]);
-              setSelectedToDate(datestrings[1]);
-            }}
-          />
-        </div>
-
-        {/* Filter by statuses (dropdown) */}
-        <div className="md:w-2/12">
-          <Select
-            allowClear
-            showSearch
-            mode="multiple"
-            defaultValue={queryParams.status_ids}
-            disabled={!isAllowedToGetProjects}
-            placeholder="Semua Status"
-            style={{ width: `100%` }}
-            onChange={(value) => {
-              const stringStatusIds = value?.toString();
-              setQueryParams({ status_ids: stringStatusIds });
-              setSelectedStatus(stringStatusIds);
-            }}
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option.children ?? "")
-                .toLowerCase()
-                .includes(input.toLowerCase())
-            }
-          >
-            {dataStatusList?.map((status) => (
-              <Select.Option key={status.id} value={status.id}>
-                {status.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-
-        {/* Filter by category (dropdown) */}
-        <div className="md:w-2/12">
-          <Select
-            allowClear
-            showSearch
-            mode="multiple"
-            defaultValue={queryParams.category_ids}
-            disabled={!isAllowedToGetProjects}
-            placeholder="Semua Tag"
-            style={{ width: `100%` }}
-            onChange={(value) => {
-              const stringCategoryIds = value?.toString();
-              setQueryParams({ category_ids: stringCategoryIds });
-              setSelectedStatus(stringCategoryIds);
-            }}
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option.children ?? "")
-                .toLowerCase()
-                .includes(input.toLowerCase())
-            }
-          >
-            {dataCategoryList?.map((category) => (
-              <Select.Option key={category.id} value={category.id}>
-                {category.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-
         <ButtonSys
           type={`primary`}
           onClick={onFilterProjects}
           disabled={!isAllowedToGetProjects}
         >
-          <div className="flex flex-row space-x-2.5 w-full items-center">
+          <div className="flex flex-row w-full items-center">
             <SearchIconSvg size={15} color={`#ffffff`} />
             <p>Cari</p>
           </div>
@@ -831,7 +677,7 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
       </div>
       {/* End: Filter table */}
 
-      <TableCustomProjectList
+      <TableCustomProjectCompanyList
         rt={rt}
         dataSource={dataProjects}
         columns={columnProjects}

@@ -11,6 +11,8 @@ import {
   FoldersIconSvg,
   ItemIconSvg,
   KatalogIconSvg,
+  KehadiranCompanyIconSvg,
+  ProyekCompanyIconSvg,
   ResumeIconSvg,
   TaskIconSvg,
   TicketIconSvg,
@@ -34,6 +36,8 @@ import {
   SIDEBAR_ATTENDANCE_ADMIN,
   SIDEBAR_ATTENDANCE_FORM_ACTIVITY,
   SIDEBAR_ATTENDANCE_MY,
+  SIDEBAR_CLIENT_ATTENDANCE,
+  SIDEBAR_CLIENT_PROJECT,
   SIDEBAR_CMS,
   SIDEBAR_CMS_BLOG,
   SIDEBAR_CMS_CAREER,
@@ -104,6 +108,7 @@ export interface ILayoutMenu {
    * TODO: rename this variable name karena sangat membingungkan.
    */
   collsmall: boolean;
+  dataPerusahaan: string;
 
   /**
    * Handler untuk toggle collapsed state pada smaller width device.
@@ -118,6 +123,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
   sidemenu,
   coll,
   collsmall,
+  dataPerusahaan,
   handleCollSmall,
 }) => {
   /**
@@ -147,6 +153,24 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       {hasPermission(SIDEBAR_DASHBOARD) && (
         <Menu.Item key="1" icon={<DashboardIconSvg />} title="Dashboard">
           <Link href="/dashboard/home">Dashboard</Link>
+        </Menu.Item>
+      )}
+      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN) && (
+        <Menu.Item key="1" icon={<KehadiranCompanyIconSvg />} title="Dashboard">
+          <Link href="/dashboard/home">
+            <p>Kehadiran {dataPerusahaan}</p>
+          </Link>
+        </Menu.Item>
+      )}
+      {hasPermission(SIDEBAR_CLIENT_PROJECT) && !hasRole(ROLE_SUPER_ADMIN) && (
+        <Menu.Item
+          key="projectscompany"
+          icon={<ProyekCompanyIconSvg />}
+          title="projectscompany"
+        >
+          <Link href="/projectCompany/">
+            <p>Proyek {dataPerusahaan}</p>
+          </Link>
         </Menu.Item>
       )}
 
@@ -226,7 +250,9 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         <SubMenu
           title="Attendance"
           key="attendance"
-          icon={<CheckSquareOutlined rev={""} className="text-[#597e8d]" />}
+          icon={
+            <CheckSquareOutlined rev={""} className="text-[#597e8d] px-0.5" />
+          }
         >
           {hasPermission(SIDEBAR_ATTENDANCE_FORM_ACTIVITY) && (
             <Menu.Item key="attendance/form-aktivitas">

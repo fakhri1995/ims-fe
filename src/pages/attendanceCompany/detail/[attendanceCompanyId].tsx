@@ -1,8 +1,7 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-import LayoutDashboard from "components/layout-dashboard-company";
 import {
   AttendanceCompanyStatisticCard,
   AttendanceDetailCompanySection,
@@ -16,6 +15,8 @@ import { useAccessControl } from "contexts/access-control";
 import { ATTENDANCE_USER_ADMIN_GET, ATTENDANCE_USER_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import st from "../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../components/layout-dashboardNew";
 import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
@@ -32,10 +33,10 @@ const AttendanceCompanyDetailPage: NextPage<ProtectedPageProps> = ({
   const isAllowedToGetAsAdmin = hasPermission(ATTENDANCE_USER_ADMIN_GET);
   const isAllowedToGetAsUser = hasPermission(ATTENDANCE_USER_GET);
   const isAllowedToGet = isAllowedToGetAsAdmin || isAllowedToGetAsUser;
-
+  const [lateCount, setLateCount] = useState(-1);
+  const [onTimeCount, setOnTimeCount] = useState(-1);
   const router = useRouter();
   const attendanceId = router.query.attendanceCompanyId as unknown as number;
-
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Dashboard Kehadiran",
@@ -52,9 +53,52 @@ const AttendanceCompanyDetailPage: NextPage<ProtectedPageProps> = ({
     }
   }, [isAllowedToGet]);
 
+  useEffect(() => {
+    getUserId();
+  });
+
+  const getUserId = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceUserAdmin?id=${attendanceId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(token),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          getCountLate(res2.data.user_attendance.user_id);
+        }
+      });
+  };
+
+  const getCountLate = (user_id) => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}//getAttendanceLateCount?id=${user_id}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(token),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setLateCount(res2.data.late_count);
+          setOnTimeCount(res2.data.on_time_count);
+          // setDataHistory(res2.data.last_two_month_activities);
+        }
+      });
+  };
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
+      st={st}
       tok={token}
       sidemenu={"1"}
       fixedBreadcrumbValues={pageBreadcrumb}
@@ -64,7 +108,14 @@ const AttendanceCompanyDetailPage: NextPage<ProtectedPageProps> = ({
         <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5 space-y-6">
           {/* Detail attendance meta */}
           <AttendanceDetailMetaCard attendanceId={attendanceId} />
-          <AttendanceCompanyStatisticCard attendanceId={attendanceId} />
+          {lateCount != -1 && onTimeCount != -1 ? (
+            <AttendanceCompanyStatisticCard
+              lateCount={lateCount}
+              onTimeCount={onTimeCount}
+            />
+          ) : (
+            <div></div>
+          )}
         </div>
 
         {/* Second column */}

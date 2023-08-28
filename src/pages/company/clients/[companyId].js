@@ -10,7 +10,14 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import { useEffect, useMemo, useState } from "react";
 import CountUp from "react-countup";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -50,7 +57,10 @@ import {
   EmailIconSvg,
   LocationIconSvg,
   PhoneIconSvg,
+  PlusIconSvg,
   RefreshIconSvg,
+  SearchIconSvg,
+  SettingsIconSvg,
   ShareIconSvg,
   SubLocationIconSvg,
   TrashIconSvg,
@@ -61,6 +71,7 @@ import st from "../../../components/layout-dashboard.module.css";
 import Layout from "../../../components/layout-dashboardNew";
 import {
   ModalEdit,
+  ModalEditTag,
   ModalHapus,
   ModalStatus,
 } from "../../../components/modal/modalCustom";
@@ -157,6 +168,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
   //EDIT PROFILE
   const [editable, seteditable] = useState(false);
   const [modaledit, setmodaledit] = useState(false);
+  const [modalSaveTag, setModalSaveTag] = useState(false);
   const [praloadingedit, setpraloadingedit] = useState(true);
   const [editloading, seteditloading] = useState(false);
   const [loadingfoto, setloadingfoto] = useState(false);
@@ -212,7 +224,67 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
   const [pagerelasi, setpagerelasi] = useState(1);
   const [rowsrelasi, setrowsrelasi] = useState(6);
   const [loadingrelasi, setloadingrelasi] = useState(false);
+  const [tagProyek, setTagProyek] = useState([]);
+  const [queryParams, setQueryParams] = useQueryParams({
+    name: withDefault(StringParam, undefined),
+  });
+  //   const tagProyek = [
+  //     {
+  //         name: "Proyek Absensi",
+  //         age: 19,
+  //     },
+  //     {
+  //         name: "Proyek Manajemen",
+  //         age: 18,
+  //     },
+  //     {
+  //         name: "Proyek Editorial",
+  //         age: 20,
+  //     },
 
+  // ];
+
+  const [dataTag, setDataTag] = useState([]);
+  // const [dataTag,setDataTag]= useState([
+  //   {
+  //     id:1,
+  //     name:'Proyek Rekrutmen',
+  //   },
+  //   {
+  //     id:2,
+  //     name:'Proyek Task Manajemen',
+  //   },
+  //   {
+  //     id:3,
+  //     name:'Proyek Dashboard Utama',
+  //   },
+  //   {
+  //     id:4,
+  //     name:'Proyek Mobile',
+  //   },
+  //   {
+  //     id:5,
+  //     name:'Proyek Prototyping',
+  //   },
+  //   {
+  //     id:6,
+  //     name:'Proyek Absensi',
+  //   },
+  //   {
+  //     id:7,
+  //     name:'Proyek Submisi Tugas',
+  //   },
+  //   {
+  //     id:8,
+  //     name:'Proyek Rekrutmen Ver 2',
+  //   },
+  //   {
+  //     id:9,
+  //     name:'Proyek Rekrutmen Talent',
+  //   },
+  // ]);
+  const [dataTagSelected, setDataTagSelected] = useState([]);
+  const [showTag, setShowTag] = useState(true);
   //columns table items
   const columnrelasi = [
     {
@@ -627,6 +699,51 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
     }
   }, [viewrelasi, isAllowedToGetRelationshipInventories]);
 
+  // Get data tag project
+  useEffect(() => {
+    getDataTagProject();
+  }, []);
+
+  useEffect(() => {
+    getListTagProject();
+  }, [queryParams.name]);
+
+  const getDataTagProject = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryListClient`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setTagProyek(res2.data);
+        setDataTagSelected(res2.data);
+      });
+  };
+
+  const getListTagProject = () => {
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList${payload}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataTag(res2.data);
+      });
+  };
+
   const breadcrumbValues = useMemo(() => {
     const pageBreadcrumbValue = [
       { name: "Clients", hrefValue: "/company/clients" },
@@ -638,6 +755,88 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
 
     return pageBreadcrumbValue;
   }, [rawdata]);
+
+  const onClickProject = () => {
+    if (showTag == true) {
+      setShowTag(false);
+    } else {
+      if (dataTagSelected.length > 0) {
+        setModalSaveTag(true);
+      }
+    }
+  };
+
+  const handleSaveTag = () => {
+    let dataTemp = dataTagSelected;
+    let dataIds = "";
+    for (let a = 0; a < dataTemp.length; a++) {
+      if (a != dataTemp.length - 1) {
+        dataIds = dataIds + dataTemp[a].id + ",";
+      } else {
+        dataIds = dataIds + dataTemp[a].id;
+      }
+    }
+    console.log("hasil handle id ", dataIds);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectCategoryListClient`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          categories_list_ids: dataIds,
+        }),
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+          setShowTag(true);
+          setModalSaveTag(false);
+          getDataTagProject();
+        } else if (!res2.success) {
+          setVisible(false);
+          setVisiblenon(false);
+          notification["error"]({
+            message: res2.message.errorInfo.status_detail,
+            duration: 3,
+          });
+          setModalSaveTag(false);
+        }
+      });
+  };
+
+  const onSelectTag = (name, value) => {
+    let dataTemp = dataTagSelected;
+    let dataNew = {
+      id: value,
+      name: name,
+    };
+    let check = false;
+    if (dataTemp.length > 0) {
+      for (let a = 0; a < dataTemp.length; a++) {
+        if (dataTemp[a].id == value) {
+          a = dataTemp.length;
+          check = true;
+        }
+      }
+    }
+    if (dataTemp.length == 0 || check == false) {
+      dataTemp.push(dataNew);
+      setDataTagSelected([...dataTemp]);
+    }
+  };
+
+  const onUnselectTag = (id) => {
+    var filteredArray = dataTagSelected.filter((e) => e.id !== id);
+    setDataTagSelected([...filteredArray]);
+  };
 
   return (
     <Layout
@@ -979,6 +1178,30 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                   )} */}
                 </div>
               </Form>
+              {/* Modal konfirmasi update tag */}
+              <ModalEditTag
+                title={`Konfirmasi Update Tag Project Perusahaan`}
+                visible={modalSaveTag}
+                onCancel={() => {
+                  setModalSaveTag(false);
+                }}
+                footer={
+                  <div className="flex justify-between items-center">
+                    <Buttonsys
+                      type="default"
+                      setModalSaveTag={() => {
+                        setModalSaveTag(false);
+                      }}
+                    >
+                      Batalkan
+                    </Buttonsys>
+                    <Buttonsys type="primary" onClick={handleSaveTag}>
+                      <CheckIconSvg size={15} color={`#ffffff`} />
+                      Simpan
+                    </Buttonsys>
+                  </div>
+                }
+              ></ModalEditTag>
               <AccessControl hasPermission={COMPANY_UPDATE}>
                 <ModalEdit
                   title={`Konfirmasi Edit Perusahaan`}
@@ -1149,7 +1372,31 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       <div className="flex mt-5">
                         {/* <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain> */}
                         <div
-                          className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${doc.color_first} ${doc.color_second} relative mr-3`}
+                          style={
+                            doc.color_first == "from-state1" &&
+                            doc.color_second == "to-state2"
+                              ? {
+                                  backgroundImage:
+                                    "linear-gradient(to top left, #799F0C, #FFE000)",
+                                }
+                              : doc.color_first == "from-state3" &&
+                                doc.color_second == "to-state4"
+                              ? {
+                                  backgroundImage:
+                                    "linear-gradient(to top left, #6DD5ED, #2193B0)",
+                                }
+                              : doc.color_first == "from-red-200" &&
+                                doc.color_second == "to-red-600"
+                              ? {
+                                  backgroundImage:
+                                    "linear-gradient(to top left, #fecaca, #dc2626)",
+                                }
+                              : {
+                                  backgroundImage:
+                                    "linear-gradient(to top left, #9333ea, #db2777)",
+                                }
+                          }
+                          className={`w-5/12 h-28 rounded-md relative mr-3`}
                         >
                           <div className="absolute bottom-0 right-2">
                             <img
@@ -1165,7 +1412,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                               <div
                                 className="mx-1 cursor-pointer"
                                 onClick={() => {
-                                  if (!isAllowedToUpdateBank) {
+                                  if (!isAllowedToUpdateMainBank) {
                                     permissionWarningNotification(
                                       "Memperbarui",
                                       "Bank"
@@ -1182,7 +1429,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                               <div
                                 className="mx-1 cursor-pointer"
                                 onClick={() => {
-                                  if (!isAllowedToDeleteBank) {
+                                  if (!isAllowedToDeleteMainBank) {
                                     permissionWarningNotification(
                                       "Menghapus",
                                       "Bank"
@@ -1411,172 +1658,328 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                   })}
                 </div>
               </div>
-              {/* Aktivitas */}
-              <div className="w-6/12 flex flex-col shadow-md rounded-md bg-white p-8 mx-2">
-                <div className="mb-8">
-                  <H1>Aktivitas</H1>
-                </div>
-                <div className="h-screen overflow-auto">
-                  {praloadingedit ? (
-                    <>
-                      <Spin />
-                    </>
-                  ) : logs.length === 0 ? (
-                    <>
-                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                    </>
-                  ) : (
-                    <InfiniteScroll
-                      dataLength={logs.length}
-                      next={fetchDataMoreLogs}
-                      hasMore={hasmore}
-                      loader={
-                        <>
-                          <Spin />
-                        </>
+              <div className="w-6/12 flex flex-col">
+                {/* TAG PROYEK */}
+                <div className={"shadow-md rounded-md bg-white p-8 mx-2 mb-6"}>
+                  <div className="flex flex-row justify-between mb-6">
+                    <H1>Tag Proyek</H1>
+                    <div
+                      className={
+                        "rounded-[5px] py-2 px-6 flex justify-center items-center bg-primary100 hover:cursor-pointer"
                       }
-                      endMessage={
-                        <div className="flex justify-center text-center">
-                          <Label>Sudah Semua</Label>
-                        </div>
-                      }
+                      onClick={() => onClickProject()}
                     >
-                      {logs.map((doc, idx) => {
-                        var tanggalan =
-                          (new Date() - new Date(doc.created_at)) /
-                          (1000 * 60 * 60 * 24);
-                        var aksi = "";
-                        const type = doc.subjectable_type.split("\\");
-                        if (type[1] === "Company") {
-                          if (doc.log_name === "Created") {
-                            return (
-                              <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                  {doc.causer.name} <strong>menambahkan</strong>{" "}
-                                  lokasi <strong>{doc.subjectable.name}</strong>
-                                </p>
-                                <Label>
-                                  {tanggalan < 1
-                                    ? `Hari ini, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`
-                                    : `${moment(doc.created_at)
-                                        .locale("id")
-                                        .format("dddd")} ${moment(
-                                        doc.created_at
-                                      )
-                                        .locale("id")
-                                        .format("LL")}, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`}
-                                </Label>
-                              </div>
-                            );
-                          }
-                          if (doc.log_name === "Updated") {
-                            return (
-                              <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                  {doc.causer.name} <strong>mengubah</strong>{" "}
-                                  informasi profil perusahaan
-                                </p>
-                                <Label>
-                                  {tanggalan < 1
-                                    ? `Hari ini, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`
-                                    : `${moment(doc.created_at)
-                                        .locale("id")
-                                        .format("dddd")} ${moment(
-                                        doc.created_at
-                                      )
-                                        .locale("id")
-                                        .format("LL")}, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`}
-                                </Label>
-                              </div>
-                            );
-                          }
-                        } else if (type[1] === "Bank") {
-                          if (doc.log_name === "Created") {
-                            return (
-                              <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                  {doc.causer.name} <strong>menambahkan</strong>{" "}
-                                  akun <strong>{doc.subjectable.name}</strong>
-                                </p>
-                                <Label>
-                                  {tanggalan < 1
-                                    ? `Hari ini, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`
-                                    : `${moment(doc.created_at)
-                                        .locale("id")
-                                        .format("dddd")} ${moment(
-                                        doc.created_at
-                                      )
-                                        .locale("id")
-                                        .format("LL")}, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`}
-                                </Label>
-                              </div>
-                            );
-                          } else if (doc.log_name === "Updated") {
-                            return (
-                              <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                  {doc.causer.name} <strong>mengubah</strong>{" "}
-                                  informasi akun{" "}
-                                  <strong>{doc.subjectable.name}</strong>
-                                </p>
-                                <Label>
-                                  {tanggalan < 1
-                                    ? `Hari ini, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`
-                                    : `${moment(doc.created_at)
-                                        .locale("id")
-                                        .format("dddd")} ${moment(
-                                        doc.created_at
-                                      )
-                                        .locale("id")
-                                        .format("LL")}, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`}
-                                </Label>
-                              </div>
-                            );
-                          } else if (doc.log_name === "Deleted") {
-                            return (
-                              <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                  {doc.causer.name} <strong>menghapus</strong>{" "}
-                                  akun <strong>{doc.subjectable.name}</strong>
-                                </p>
-                                <Label>
-                                  {tanggalan < 1
-                                    ? `Hari ini, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`
-                                    : `${moment(doc.created_at)
-                                        .locale("id")
-                                        .format("dddd")} ${moment(
-                                        doc.created_at
-                                      )
-                                        .locale("id")
-                                        .format("LL")}, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`}
-                                </Label>
-                              </div>
-                            );
-                          }
+                      {showTag ? (
+                        <SettingsIconSvg color={"#F3F3F3"} size={16} />
+                      ) : (
+                        <CheckIconSvg color={"#ffffff"} size={16} />
+                      )}
+                      <p
+                        className={
+                          "ml-2 text-white text-[10px] font-medium leading-4 "
                         }
-                      })}
-                    </InfiniteScroll>
+                      >
+                        {showTag ? "Kelola Tag Proyek" : "Simpan Perubahan"}
+                      </p>
+                    </div>
+                  </div>
+                  {showTag ? (
+                    <div>
+                      {tagProyek.length == 0 ? (
+                        <Empty
+                          image={Empty.PRESENTED_IMAGE_SIMPLE}
+                          description={
+                            <p
+                              className={
+                                "text-sm text-mono50 font-medium leading-6"
+                              }
+                            >
+                              Belum ada tag proyek di perusahaan ini.
+                            </p>
+                          }
+                        />
+                      ) : (
+                        <div className={"flex flex-row flex-wrap gap-2"}>
+                          {tagProyek?.map((tag, idx) => (
+                            <div className={"bg-primary100 rounded-[5px] p-2"}>
+                              <p
+                                className={
+                                  "text-[10px] text-white font-bold leading-4"
+                                }
+                              >
+                                {tag.name}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="w-full">
+                        <Input
+                          value={queryParams.name}
+                          prefix={<SearchIconSvg size={16} color={"#CCCCCC"} />}
+                          style={{ width: `100%` }}
+                          onChange={(e) => {
+                            setQueryParams({ name: e.target.value });
+                          }}
+                          placeholder="Cari proyek ...."
+                          allowClear
+                        />
+                      </div>
+                      <div className={"my-6"}>
+                        <p
+                          className={
+                            "mb-2 text-xs font-medium leading-5 text-mono30"
+                          }
+                        >
+                          Tag Proyek Tersedia
+                        </p>
+                        <div className={"flex flex-row flex-wrap gap-2"}>
+                          {dataTag?.map((tag, idx) => (
+                            <div
+                              onClick={() => onSelectTag(tag.name, tag.id)}
+                              className={
+                                "flex px-2 py-1 gap-1 rounded-[5px] bg-mono80 hover:cursor-pointer"
+                              }
+                            >
+                              <p
+                                className={
+                                  "text-[10px] font-normal leading-4 text-white"
+                                }
+                              >
+                                {tag.name}
+                              </p>
+                              <PlusIconSvg size={16} color={"#ffffff"} />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className={""}>
+                        <p
+                          className={
+                            "mb-2 text-xs font-medium leading-5 text-mono30"
+                          }
+                        >
+                          Tag Proyek Dipilih
+                        </p>
+                        {dataTagSelected.length == 0 ? (
+                          <Empty
+                            image={Empty.PRESENTED_IMAGE_SIMPLE}
+                            description={
+                              <p
+                                className={
+                                  "text-sm text-mono50 font-medium leading-6"
+                                }
+                              >
+                                Tags masih kosong
+                              </p>
+                            }
+                          />
+                        ) : (
+                          <div className={"flex flex-row flex-wrap gap-2"}>
+                            {dataTagSelected?.map((tag, idx) => (
+                              <div
+                                onClick={() => onUnselectTag(tag.id)}
+                                className={
+                                  "bg-primary100 rounded-[5px] p-2 hover:cursor-pointer"
+                                }
+                              >
+                                <p
+                                  className={
+                                    "text-[10px] text-white font-bold leading-4"
+                                  }
+                                >
+                                  {tag.name}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   )}
+                </div>
+                <div className={"shadow-md rounded-md bg-white p-8 mx-2"}>
+                  {/* Aktivitas */}
+                  <div className="mb-8">
+                    <H1>Aktivitas</H1>
+                  </div>
+                  <div className="h-screen overflow-auto">
+                    {praloadingedit ? (
+                      <>
+                        <Spin />
+                      </>
+                    ) : logs.length === 0 ? (
+                      <>
+                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                      </>
+                    ) : (
+                      <InfiniteScroll
+                        dataLength={logs.length}
+                        next={fetchDataMoreLogs}
+                        hasMore={hasmore}
+                        loader={
+                          <>
+                            <Spin />
+                          </>
+                        }
+                        endMessage={
+                          <div className="flex justify-center text-center">
+                            <Label>Sudah Semua</Label>
+                          </div>
+                        }
+                      >
+                        {logs.map((doc, idx) => {
+                          var tanggalan =
+                            (new Date() - new Date(doc.created_at)) /
+                            (1000 * 60 * 60 * 24);
+                          var aksi = "";
+                          const type = doc.subjectable_type.split("\\");
+                          if (type[1] === "Company") {
+                            if (doc.log_name === "Created") {
+                              return (
+                                <div className="flex flex-col mb-5">
+                                  <p className="mb-0">
+                                    {doc.causer.name}{" "}
+                                    <strong>menambahkan</strong> lokasi{" "}
+                                    <strong>{doc.subjectable.name}</strong>
+                                  </p>
+                                  <Label>
+                                    {tanggalan < 1
+                                      ? `Hari ini, ${moment(doc.created_at)
+                                          .locale("id")
+                                          .format(`LT`)}`
+                                      : `${moment(doc.created_at)
+                                          .locale("id")
+                                          .format("dddd")} ${moment(
+                                          doc.created_at
+                                        )
+                                          .locale("id")
+                                          .format("LL")}, ${moment(
+                                          doc.created_at
+                                        )
+                                          .locale("id")
+                                          .format(`LT`)}`}
+                                  </Label>
+                                </div>
+                              );
+                            }
+                            if (doc.log_name === "Updated") {
+                              return (
+                                <div className="flex flex-col mb-5">
+                                  <p className="mb-0">
+                                    {doc.causer.name} <strong>mengubah</strong>{" "}
+                                    informasi profil perusahaan
+                                  </p>
+                                  <Label>
+                                    {tanggalan < 1
+                                      ? `Hari ini, ${moment(doc.created_at)
+                                          .locale("id")
+                                          .format(`LT`)}`
+                                      : `${moment(doc.created_at)
+                                          .locale("id")
+                                          .format("dddd")} ${moment(
+                                          doc.created_at
+                                        )
+                                          .locale("id")
+                                          .format("LL")}, ${moment(
+                                          doc.created_at
+                                        )
+                                          .locale("id")
+                                          .format(`LT`)}`}
+                                  </Label>
+                                </div>
+                              );
+                            }
+                          } else if (type[1] === "Bank") {
+                            if (doc.log_name === "Created") {
+                              return (
+                                <div className="flex flex-col mb-5">
+                                  <p className="mb-0">
+                                    {doc.causer.name}{" "}
+                                    <strong>menambahkan</strong> akun{" "}
+                                    <strong>{doc.subjectable.name}</strong>
+                                  </p>
+                                  <Label>
+                                    {tanggalan < 1
+                                      ? `Hari ini, ${moment(doc.created_at)
+                                          .locale("id")
+                                          .format(`LT`)}`
+                                      : `${moment(doc.created_at)
+                                          .locale("id")
+                                          .format("dddd")} ${moment(
+                                          doc.created_at
+                                        )
+                                          .locale("id")
+                                          .format("LL")}, ${moment(
+                                          doc.created_at
+                                        )
+                                          .locale("id")
+                                          .format(`LT`)}`}
+                                  </Label>
+                                </div>
+                              );
+                            } else if (doc.log_name === "Updated") {
+                              return (
+                                <div className="flex flex-col mb-5">
+                                  <p className="mb-0">
+                                    {doc.causer.name} <strong>mengubah</strong>{" "}
+                                    informasi akun{" "}
+                                    <strong>{doc.subjectable.name}</strong>
+                                  </p>
+                                  <Label>
+                                    {tanggalan < 1
+                                      ? `Hari ini, ${moment(doc.created_at)
+                                          .locale("id")
+                                          .format(`LT`)}`
+                                      : `${moment(doc.created_at)
+                                          .locale("id")
+                                          .format("dddd")} ${moment(
+                                          doc.created_at
+                                        )
+                                          .locale("id")
+                                          .format("LL")}, ${moment(
+                                          doc.created_at
+                                        )
+                                          .locale("id")
+                                          .format(`LT`)}`}
+                                  </Label>
+                                </div>
+                              );
+                            } else if (doc.log_name === "Deleted") {
+                              return (
+                                <div className="flex flex-col mb-5">
+                                  <p className="mb-0">
+                                    {doc.causer.name} <strong>menghapus</strong>{" "}
+                                    akun <strong>{doc.subjectable.name}</strong>
+                                  </p>
+                                  <Label>
+                                    {tanggalan < 1
+                                      ? `Hari ini, ${moment(doc.created_at)
+                                          .locale("id")
+                                          .format(`LT`)}`
+                                      : `${moment(doc.created_at)
+                                          .locale("id")
+                                          .format("dddd")} ${moment(
+                                          doc.created_at
+                                        )
+                                          .locale("id")
+                                          .format("LL")}, ${moment(
+                                          doc.created_at
+                                        )
+                                          .locale("id")
+                                          .format(`LT`)}`}
+                                  </Label>
+                                </div>
+                              );
+                            }
+                          }
+                        })}
+                      </InfiniteScroll>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

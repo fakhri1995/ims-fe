@@ -50,14 +50,11 @@ function CustomerStories({ dataBlog }) {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log("get list customer stories ", res2);
           if (locale == "en") {
-            console.log("masuk en");
             setArticleList(res2.data);
           } else {
             let dataTemp = [];
             for (let i = 0; i < res2.data.length; i++) {
-              console.log("res2.data[i].title_id ", res2.data[i].title_id);
               if (
                 res2.data[i].title_id != "" &&
                 res2.data[i].description_id != ""
@@ -83,7 +80,6 @@ function CustomerStories({ dataBlog }) {
   return (
     <Layout>
       {/* <section className={'container mx-auto'}> */}
-      {console.log("data blogs ", dataBlog)}
       <Head>
         <title>Customer Stories</title>
       </Head>
@@ -846,7 +842,6 @@ export async function getStaticProps() {
         method: `GET`,
       }
     );
-    console.log("hasil get api ", resources);
     const resjson = await resources.json();
     dataBlogs = resjson.data;
   } catch {}

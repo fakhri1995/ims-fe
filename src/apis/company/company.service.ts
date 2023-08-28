@@ -31,6 +31,20 @@ export class CompanyService {
     );
   }
 
+  static async getCompanyClientListCompany(
+    axiosClient: AxiosInstance,
+    companyId: string
+  ) {
+    const qs = QueryString.stringify(
+      { company_ids: [companyId] },
+      { addQueryPrefix: true }
+    );
+
+    return await axiosClient.get<GetCompanyClientListSucceedResponse>(
+      "/getAttendancesUsersPaginate" + qs
+    );
+  }
+
   /**
    * Update existing company.
    *
