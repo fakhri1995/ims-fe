@@ -62,7 +62,6 @@ const ContractInvoicePDF = ({ initProps, invoiceId }) => {
   const [dataInvoice, setDataInvoice] = useState({});
   const [dataInvoiceDetail, setDataInvoiceDetail] = useState([]);
   const [dataClient, setDataClient] = useState({});
-  const [dataMainCompany, setDataMainCompany] = useState({});
 
   // Loading
   const [loadingContractInvoice, setLoadingContractInvoice] = useState(false);
@@ -191,7 +190,41 @@ const ContractInvoicePDF = ({ initProps, invoiceId }) => {
     }
   }, [isAllowedToGetCompanyDetail, dataInvoice?.client_id]);
 
-  // 2.5. Get main company data
+  // use for rendering pdf in full window size
+  useEffect(() => {
+    setWindowSize([window.innerWidth, window.innerHeight]);
+  }, []);
+
+  // console.log({ dataInvoice });
+  // console.log({ dataInvoiceDetail });
+  // console.log({ dataClient });
+  return (
+    <PDFViewer width={windowSize[0]} height={windowSize[1]}>
+      <InvoicePDFTemplate
+        dataInvoice={dataInvoice}
+        dataInvoiceDetail={dataInvoiceDetail}
+        dataClient={dataClient}
+      />
+    </PDFViewer>
+  );
+};
+
+export const InvoicePDFTemplate = ({
+  dataInvoice,
+  dataInvoiceDetail,
+  dataClient,
+}) => {
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+
+  if (isAccessControlPending) {
+    return null;
+  }
+
+  const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
+
+  // Get main company data
+  const [dataMainCompany, setDataMainCompany] = useState({});
   useEffect(() => {
     if (!isAllowedToGetCompanyDetail) {
       permissionWarningNotification("Mendapatkan", "Detail Company");
@@ -216,32 +249,7 @@ const ContractInvoicePDF = ({ initProps, invoiceId }) => {
       });
   }, [isAllowedToGetCompanyDetail]);
 
-  // use for rendering pdf in full window size
-  useEffect(() => {
-    setWindowSize([window.innerWidth, window.innerHeight]);
-  }, []);
-
-  // console.log({ dataInvoice });
-  // console.log({ dataInvoiceDetail });
-  // console.log({ dataClient });
-  return (
-    <PDFViewer width={windowSize[0]} height={windowSize[1]}>
-      <InvoicePDFTemplate
-        dataInvoice={dataInvoice}
-        dataInvoiceDetail={dataInvoiceDetail}
-        dataClient={dataClient}
-        dataMainCompany={dataMainCompany}
-      />
-    </PDFViewer>
-  );
-};
-
-export const InvoicePDFTemplate = ({
-  dataInvoice,
-  dataInvoiceDetail,
-  dataClient,
-  dataMainCompany,
-}) => {
+  // PDF Stylesheet
   // Source of font link: https://developers.google.com/fonts/docs/developer_api?apix_params=%7B%22sort%22%3A%22ALPHA%22%7D
   Font.register({
     family: "Inter",

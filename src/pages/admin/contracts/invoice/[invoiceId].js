@@ -1,4 +1,4 @@
-import { DownloadOutlined, FileTextOutlined } from "@ant-design/icons";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   DatePicker,
   Form,
@@ -23,6 +23,7 @@ import st from "components/layout-dashboard.module.css";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  COMPANY_DETAIL_GET,
   COMPANY_MAIN_BANKS_GET,
   CONTRACT_INVOICE_GET,
   CONTRACT_INVOICE_UPDATE,
@@ -53,6 +54,7 @@ import {
   permissionWarningNotification,
 } from "../../../../lib/helper";
 import { contractInfoString } from "../[contractId]/invoice-template";
+import { InvoicePDFTemplate } from "./invoicePDF";
 import httpcookie from "cookie";
 
 const ContractInvoiceFormIndex = ({
@@ -74,6 +76,7 @@ const ContractInvoiceFormIndex = ({
   const isAllowedToGetInvoice = hasPermission(CONTRACT_INVOICE_GET);
   const isAllowedToUpdateInvoice = hasPermission(CONTRACT_INVOICE_UPDATE);
   const isAllowedToGetMainBanks = hasPermission(COMPANY_MAIN_BANKS_GET);
+  const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
 
   const rt = useRouter();
   // Breadcrumb url
@@ -91,6 +94,7 @@ const ContractInvoiceFormIndex = ({
   const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
   const [dataServices, setDataServices] = useState([]);
   const [bankAccountList, setBankAccountList] = useState([]);
+  const [dataClient, setDataClient] = useState({});
 
   // Modal
   const [modalContractInfo, setModalContractInfo] = useState(false);
@@ -255,7 +259,37 @@ const ContractInvoiceFormIndex = ({
       });
   }, [isAllowedToGetMainBanks]);
 
-  // 4. Event
+  // 2.7. [PDF] Get client data
+  useEffect(() => {
+    if (!isAllowedToGetCompanyDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Company");
+      return;
+    }
+
+    if (dataInvoice?.client_id) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${dataInvoice?.client_id}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataClient(res2?.data);
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        });
+    }
+  }, [dataInvoice?.client_id]);
+
+  // 3. Event
   // Debounce function for auto save draft
   const debouncedSaveInvoice = useCallback(
     debounce((data) => {
@@ -408,17 +442,31 @@ const ContractInvoiceFormIndex = ({
             </div>
             {!isReadOnly ? (
               <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 lg:items-center">
-                <ButtonSys
-                  type={"primary"}
-                  color={"secondary100"}
-                  disabled={false}
-                  // onClick={() => setModalInvoice(true)}
+                <PDFDownloadLink
+                  document={
+                    <InvoicePDFTemplate
+                      dataInvoice={dataInvoice}
+                      dataInvoiceDetail={dataInvoiceDetail}
+                      dataClient={dataClient}
+                    />
+                  }
+                  fileName={`Invoice_${dataInvoice?.invoice_number}.pdf`}
                 >
-                  <div className="flex space-x-2 items-center">
-                    <p>Unduh Draft</p>
-                    <DownloadIcon2Svg color={"#FFFFFF"} size={20} />
-                  </div>
-                </ButtonSys>
+                  {({ blob, url, loading, error }) => (
+                    <Spin spinning={loadingContractInvoice}>
+                      <ButtonSys
+                        type={"primary"}
+                        color={"secondary100"}
+                        disabled={false}
+                      >
+                        <div className="flex space-x-2 items-center">
+                          <p>Unduh Draft</p>
+                          <DownloadIcon2Svg color={"#FFFFFF"} size={20} />
+                        </div>
+                      </ButtonSys>
+                    </Spin>
+                  )}
+                </PDFDownloadLink>
 
                 <ButtonSys
                   type={"primary"}
@@ -431,17 +479,31 @@ const ContractInvoiceFormIndex = ({
                 </ButtonSys>
               </div>
             ) : (
-              <ButtonSys
-                type={"primary"}
-                color={"secondary100"}
-                disabled={false}
-                // onClick={() => setModalInvoice(true)}
+              <PDFDownloadLink
+                document={
+                  <InvoicePDFTemplate
+                    dataInvoice={dataInvoice}
+                    dataInvoiceDetail={dataInvoiceDetail}
+                    dataClient={dataClient}
+                  />
+                }
+                fileName={`Invoice_${dataInvoice?.invoice_number}.pdf`}
               >
-                <div className="flex space-x-2 items-center">
-                  <p>Unduh </p>
-                  <DownloadIcon2Svg color={"#FFFFFF"} size={20} />
-                </div>
-              </ButtonSys>
+                {({ blob, url, loading, error }) => (
+                  <Spin spinning={loadingContractInvoice}>
+                    <ButtonSys
+                      type={"primary"}
+                      color={"secondary100"}
+                      disabled={false}
+                    >
+                      <div className="flex space-x-2 items-center">
+                        <p>Unduh Draft</p>
+                        <DownloadIcon2Svg color={"#FFFFFF"} size={20} />
+                      </div>
+                    </ButtonSys>
+                  </Spin>
+                )}
+              </PDFDownloadLink>
             )}
           </div>
           <Spin spinning={loadingContractInvoice}>
