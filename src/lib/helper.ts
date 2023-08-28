@@ -377,7 +377,7 @@ export const timeRead = (total: number) => {
 };
 
 export const currency = (money: number) => {
-  return money.toLocaleString("id-ID", {
+  return money?.toLocaleString("id-ID", {
     style: "currency",
     currency: "IDR",
   });
