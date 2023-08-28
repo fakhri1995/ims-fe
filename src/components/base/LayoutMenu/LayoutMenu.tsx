@@ -108,6 +108,7 @@ export interface ILayoutMenu {
    * TODO: rename this variable name karena sangat membingungkan.
    */
   collsmall: boolean;
+  dataPerusahaan: string;
 
   /**
    * Handler untuk toggle collapsed state pada smaller width device.
@@ -122,6 +123,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
   sidemenu,
   coll,
   collsmall,
+  dataPerusahaan,
   handleCollSmall,
 }) => {
   /**
@@ -155,7 +157,9 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       )}
       {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN) && (
         <Menu.Item key="1" icon={<KehadiranCompanyIconSvg />} title="Dashboard">
-          <Link href="/dashboard/home">Dashboard</Link>
+          <Link href="/dashboard/home">
+            <p>Kehadiran {dataPerusahaan}</p>
+          </Link>
         </Menu.Item>
       )}
       {hasPermission(SIDEBAR_CLIENT_PROJECT) && !hasRole(ROLE_SUPER_ADMIN) && (
@@ -164,7 +168,9 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           icon={<ProyekCompanyIconSvg />}
           title="projectscompany"
         >
-          <Link href="/projectCompany/">Proyek AQRO</Link>
+          <Link href="/projectCompany/">
+            <p>Proyek {dataPerusahaan}</p>
+          </Link>
         </Menu.Item>
       )}
 

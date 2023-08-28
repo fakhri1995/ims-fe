@@ -168,7 +168,7 @@ export const AttendanceCompanyListSection: FC<
                 />
               </Form.Item>
             )}
-            <div className="xl:justify-end">
+            {/* <div className="xl:justify-end">
               <ButtonSys
                 type={canExportTableData ? "default" : "primary"}
                 onClick={() => setIsExportDrawerShown(true)}
@@ -177,7 +177,7 @@ export const AttendanceCompanyListSection: FC<
                 <DownloadOutlined rev={""} className="mr-2" />
                 Unduh Tabel
               </ButtonSys>
-            </div>
+            </div> */}
             <Form.Item noStyle name="search">
               <Input
                 prefix={<SearchOutlined rev={""} />}
