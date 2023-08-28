@@ -224,6 +224,11 @@ const ContractInvoiceTemplateIndex = ({
       });
   }, [isAllowedToGetMainBanks]);
 
+  // 3.5. Set period value from dataContract
+  useEffect(() => {
+    setPeriod(dataContract?.invoice_template?.invoice_period);
+  }, [dataContract?.invoice_template?.invoice_period]);
+
   // 4. Event
   const handleSaveInvoiceTemplate = () => {
     if (!isAllowedToUpdateInvoiceTemplate) {
@@ -330,16 +335,20 @@ const ContractInvoiceTemplateIndex = ({
               <p className="mig-caption--bold">Periode Penagihan</p>
               <DatePicker
                 allowEmpty
-                format={"D"}
+                format={"DD"}
                 showToday={false}
                 picker="date"
                 placeholder="Pilih Periode"
                 bordered={false}
                 className="invoiceTemplateDPInput p-0"
                 dropdownClassName="invoiceTemplateDP"
-                defaultValue={
-                  moment(dataContract?.invoice_period ?? "").isValid()
-                    ? moment(dataContract?.invoice_period)
+                value={
+                  period
+                    ? moment(
+                        `${moment().format("YYYY")}-${moment().format(
+                          "MM"
+                        )}-${period}`
+                      )
                     : null
                 }
                 onChange={(date, datestring) => {
