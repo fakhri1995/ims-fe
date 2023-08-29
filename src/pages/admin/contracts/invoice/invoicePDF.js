@@ -470,11 +470,10 @@ export const InvoicePDFTemplate = ({
           {dataInvoice?.invoice_services?.map((item, idx) => {
             const subtotal = countSubTotal(item?.pax, item?.price);
             return (
-              <View>
+              <View key={item?.id}>
                 {/* Repeat table header in each top of page */}
                 {(idx === 0 || idx === 12 || idx == 33) && <TableHeader />}
                 <View
-                  key={item?.id}
                   // minPresenceAhead={10}
                   style={[
                     styles.rowBetween,
