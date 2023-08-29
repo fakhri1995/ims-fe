@@ -34,6 +34,8 @@ import {
 import { contractInfoString } from "../[contractId]/invoice-template";
 import httpcookie from "cookie";
 
+// This page is only used for developing Invoice PDF,
+// it will automatically renders the PDF when saved
 const ContractInvoicePDF = ({ initProps, invoiceId }) => {
   // 1. Init
   /**
@@ -195,24 +197,24 @@ const ContractInvoicePDF = ({ initProps, invoiceId }) => {
     setWindowSize([window.innerWidth, window.innerHeight]);
   }, []);
 
-  // console.log({ dataInvoice });
-  // console.log({ dataInvoiceDetail });
-  // console.log({ dataClient });
   return (
     <PDFViewer width={windowSize[0]} height={windowSize[1]}>
       <InvoicePDFTemplate
         dataInvoice={dataInvoice}
         dataInvoiceDetail={dataInvoiceDetail}
         dataClient={dataClient}
+        initProps={initProps}
       />
     </PDFViewer>
   );
 };
 
+// Actual Invoice PDF template
 export const InvoicePDFTemplate = ({
   dataInvoice,
   dataInvoiceDetail,
   dataClient,
+  initProps,
 }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
@@ -226,11 +228,6 @@ export const InvoicePDFTemplate = ({
   // Get main company data
   const [dataMainCompany, setDataMainCompany] = useState({});
   useEffect(() => {
-    if (!isAllowedToGetCompanyDetail) {
-      permissionWarningNotification("Mendapatkan", "Detail Company");
-      return;
-    }
-
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=1`, {
       method: `GET`,
       headers: {
@@ -267,16 +264,17 @@ export const InvoicePDFTemplate = ({
     page: {
       flexDirection: "col",
       backgroundColor: "#ffffff",
-      paddingVertical: 40,
+      paddingTop: 28,
+      paddingBottom: 50,
       fontFamily: "Inter",
       color: "#4D4D4D",
-      fontSize: 11,
+      fontSize: 10,
       lineHeight: 1.5,
     },
 
     rowSection: {
       marginHorizontal: 40,
-      marginBottom: 40,
+      marginBottom: 28,
       flexDirection: "row",
       justifyContent: "space-between",
     },
@@ -286,8 +284,17 @@ export const InvoicePDFTemplate = ({
       justifyContent: "space-between",
     },
 
+    tableBorder: {
+      borderTopWidth: 1,
+      borderBottomWidth: 1,
+      paddingVertical: 12,
+      marginTop: 12,
+      borderColor: "#CCCCCC",
+      fontWeight: 700,
+    },
+
     textHeading: {
-      fontSize: 24,
+      fontSize: 22,
       fontFamily: "Inter",
       fontWeight: 700,
       lineHeight: 1.5,
@@ -297,19 +304,70 @@ export const InvoicePDFTemplate = ({
     footer: {
       position: "absolute",
       fontSize: 10,
-      bottom: 20,
-      left: 36,
-      right: 36,
+      bottom: 28,
+      right: 40,
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
       color: "#4D4D4D",
     },
+
+    // Table cols
+    colNo: {
+      width: "6%",
+    },
+
+    colKet: {
+      width: "25%",
+    },
+
+    colPax: {
+      width: "6%",
+    },
+
+    colHarga: {
+      width: "28%",
+    },
+
+    colSub: {
+      width: "20%",
+      textAlign: dataInvoice?.service_attribute?.length ? "left" : "right",
+    },
+
+    colDynamic: {
+      width: `${35 / (dataInvoice?.service_attribute?.length || 1)}%`,
+    },
   });
+
+  const TableHeader = () => (
+    <View
+      wrap={false}
+      style={[
+        styles.rowBetween,
+        styles.tableBorder,
+        {
+          textAlign: "left",
+        },
+      ]}
+    >
+      <Text style={styles.colNo}>No.</Text>
+      <Text style={styles.colKet}>Keterangan</Text>
+      <Text style={styles.colPax}>Pax</Text>
+      <Text style={styles.colHarga}>Harga</Text>
+      <Text style={styles.colSub}>Subtotal</Text>
+
+      {/* dynamic column header */}
+      {dataInvoice?.service_attribute?.map((item) => (
+        <Text key={item} style={styles.colDynamic}>
+          {item}
+        </Text>
+      ))}
+    </View>
+  );
 
   return (
     <Document>
-      <Page size={"A4"} style={styles.page} wrap>
+      <Page size={"LETTER"} style={styles.page} wrap>
         {/* Header */}
         <View style={styles.rowSection}>
           <View style={{ width: "50%" }}>
@@ -336,7 +394,6 @@ export const InvoicePDFTemplate = ({
             />
           </View>
         </View>
-
         {/* Body */}
         {/* INVOICE DETAIL SECTION */}
         {/* Left column */}
@@ -344,16 +401,17 @@ export const InvoicePDFTemplate = ({
           style={[
             styles.rowSection,
             {
+              height: 140,
               borderTopWidth: 1,
               borderBottomWidth: 1,
               borderColor: `1px solid #CCCCCC`,
-              paddingVertical: 16,
+              paddingVertical: 12,
+              marginBottom: 20,
             },
           ]}
         >
           {/* Left column */}
           <View
-            // debug
             style={{
               width: 250,
               paddingRight: 5,
@@ -366,7 +424,6 @@ export const InvoicePDFTemplate = ({
 
           {/* Right column */}
           <View
-            // debug
             style={{
               width: 250,
               textAlign: "right",
@@ -375,21 +432,19 @@ export const InvoicePDFTemplate = ({
             }}
           >
             {dataInvoiceDetail?.map((item) => (
-              <View key={item?.title} className="md:space-y-2">
+              <View key={item?.title}>
                 {item?.type === FILE ? (
-                  <View className="flex space-x-2 items-center">
-                    <Text className="mig-caption--bold">{item?.title}: </Text>
-                    <Link
-                      href={generateStaticAssetUrl(item?.value?.link)}
-                      target="_blank"
-                      className="text-primary100 truncate"
-                    >
-                      <Text>{getFileName(item?.value?.link)}</Text>
+                  <View>
+                    <Text>{item?.title}: </Text>
+                    <Link src={generateStaticAssetUrl(item?.value?.link)}>
+                      <Text style={{ color: "#35763B" }}>
+                        {getFileName(item?.value?.link)}
+                      </Text>
                     </Link>
                   </View>
                 ) : item?.type === LIST ? (
                   <View>
-                    <Text className="mig-caption--bold">{item?.title}: </Text>
+                    <Text>{item?.title}: </Text>
                     {item?.value?.map((val, idx) => (
                       <Text key={idx}>• {val}</Text>
                     ))}
@@ -411,95 +466,55 @@ export const InvoicePDFTemplate = ({
             { flexDirection: "column", borderBottomWidth: 0 },
           ]}
         >
-          <View
-            style={[
-              styles.rowBetween,
-              {
-                borderTopWidth: 1,
-                paddingVertical: 12,
-                borderColor: "#CCCCCC",
-              },
-            ]}
-          >
-            <View>
-              <Text style={{ fontWeight: 700 }}>No.</Text>
-              {dataInvoice?.invoice_services?.map((item, idx) => (
-                <Text
+          {/* Table rows */}
+          {dataInvoice?.invoice_services?.map((item, idx) => {
+            const subtotal = countSubTotal(item?.pax, item?.price);
+            return (
+              <View>
+                {/* Repeat table header in each top of page */}
+                {(idx === 0 || idx === 12 || idx == 33) && <TableHeader />}
+                <View
                   key={item?.id}
-                  style={{ marginTop: 12, textAlign: "center" }}
+                  // minPresenceAhead={10}
+                  style={[
+                    styles.rowBetween,
+                    { marginTop: 12, textAlign: "left" },
+                  ]}
                 >
-                  {idx + 1}
-                </Text>
-              ))}
-            </View>
-            <View>
-              <Text style={{ fontWeight: 700 }}>Keterangan</Text>
-              {dataInvoice?.invoice_services?.map((item, idx) => (
-                <Text key={item?.id} style={{ marginTop: 12 }}>
-                  {item?.product?.name}
-                </Text>
-              ))}
-            </View>
-            <View>
-              <Text style={{ fontWeight: 700 }}>Pax</Text>
-              {dataInvoice?.invoice_services?.map((item, idx) => (
-                <Text key={item?.id} style={{ marginTop: 12 }}>
-                  {item?.pax}
-                </Text>
-              ))}
-            </View>
-            <View>
-              <Text style={{ fontWeight: 700 }}>Harga</Text>
-              {dataInvoice?.invoice_services?.map((item, idx) => (
-                <Text key={item?.id} style={{ marginTop: 12 }}>
-                  {currency(item?.price)}/
-                  <Text style={{ color: "#808080" }}>
-                    {item?.unit?.toLowerCase()}
+                  <Text style={styles.colNo}>{idx + 1}</Text>
+                  <Text style={styles.colKet}>{item?.product?.name}</Text>
+                  <Text style={styles.colPax}>{item?.pax}</Text>
+                  <Text style={styles.colHarga}>
+                    {currency(item?.price)}/
+                    <Text style={{ color: "#808080" }}>
+                      {item?.unit?.toLowerCase()}
+                    </Text>
                   </Text>
-                </Text>
-              ))}
-            </View>
-            <View>
-              <Text style={{ fontWeight: 700 }}>Subtotal</Text>
-              {dataInvoice?.invoice_services?.map((item, idx) => {
-                const subtotal = countSubTotal(item?.pax, item?.price);
-                return (
-                  <Text key={item?.id} style={{ marginTop: 12 }}>
-                    {currency(subtotal)}
-                  </Text>
-                );
-              })}
-            </View>
-            {dataInvoice?.service_attribute?.map((item, colIdx) => (
-              <View key={item}>
-                <Text style={{ fontWeight: 700 }}>{item}</Text>
-                {dataInvoice?.invoice_services?.map((item, itemIdx) => (
-                  <Text key={itemIdx} style={{ marginTop: 12 }}>
-                    {item?.invoice_service_value?.details[colIdx]}
-                  </Text>
-                ))}
+                  <Text style={styles.colSub}>{currency(subtotal)}</Text>
+
+                  {/* dynamic column row */}
+                  {dataInvoice?.service_attribute?.map((colName, colIdx) => (
+                    <Text
+                      key={`${item?.product?.name}-${colName}`}
+                      style={[styles.colDynamic]}
+                    >
+                      {item?.invoice_service_value?.details[colIdx] || "-"}
+                    </Text>
+                  ))}
+                </View>
               </View>
-            ))}
-          </View>
+            );
+          })}
 
           {/* Total Keseluruhan */}
           <View
-            style={{
-              ...styles.rowBetween,
-              marginTop: 12,
-              borderTopWidth: 1,
-              borderBottomWidth: 1,
-              paddingVertical: 12,
-              borderColor: "#CCCCCC",
-              fontWeight: 700,
-            }}
+            style={[styles.rowBetween, styles.tableBorder, { marginTop: 12 }]}
+            wrap={false}
           >
             <Text>Total Keseluruhan</Text>
             <Text>{currency(dataInvoice?.invoice_total)}</Text>
           </View>
         </View>
-
-        {/* Footer */}
         <View
           style={[
             styles.rowSection,
@@ -510,23 +525,31 @@ export const InvoicePDFTemplate = ({
             },
           ]}
         >
-          <Text>Pembayaran mohon ditransfer ke rekening :</Text>
-          <Text>BANK {dataInvoice?.bank_account?.name || "-"}</Text>
-          <Text>
-            Rekening No: {dataInvoice?.bank_account?.account_number || "-"}
-          </Text>
-          <Text>a.n. {dataInvoice?.bank_account?.owner || "-"}</Text>
-          <Text>No. NPWP {dataMainCompany?.npwp || "-"}</Text>
-          <Text>{dataMainCompany?.address || "-"}</Text>
+          <View>
+            <Text>Pembayaran mohon ditransfer ke rekening :</Text>
+            <Text>BANK {dataInvoice?.bank?.name || "-"}</Text>
+            <Text>Rekening No: {dataInvoice?.bank?.account_number || "-"}</Text>
+            <Text>a.n. {dataInvoice?.bank?.owner || "-"}</Text>
+            <Text>No. NPWP {dataMainCompany?.npwp || "-"}</Text>
+            <Text>{dataMainCompany?.address || "-"}</Text>
+          </View>
 
-          <View style={{ marginTop: 40 }}>
+          <View style={{ marginTop: 28 }} wrap={false}>
             <Text>PT. Mitramas Infosys Global</Text>
 
-            <View style={{ marginTop: 72 }}>
+            <View style={{ marginTop: 60 }}>
               <Text style={{ fontWeight: 700 }}>Kadmina</Text>
               <Text>Dierktur Utama</Text>
             </View>
           </View>
+        </View>
+        {/* Footer */}
+        <View fixed style={styles.footer}>
+          <Text
+            render={({ pageNumber, totalPages }) =>
+              `Page ${pageNumber} of ${totalPages}`
+            }
+          />
         </View>
       </Page>
     </Document>
@@ -565,7 +588,6 @@ export async function getServerSideProps({ req, res, params }) {
     }
   );
   const resjsonGP = await resourcesGP.json();
-  const dataProfile = resjsonGP;
 
   return {
     props: {
