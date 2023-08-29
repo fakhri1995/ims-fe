@@ -163,7 +163,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   // Download PDF
   const [dataInvoice, setDataInvoice] = useState({});
   const [dataInvoiceDetail, setDataInvoiceDetail] = useState([]);
-  const [dataClient, setDataClient] = useState({});
+  const [dataClient, setDataClient] = useState({ id: null });
   const [loadingContractInvoice, setLoadingContractInvoice] = useState(false);
   const [isOnClient, setIsOnClient] = useState(-1); // use invoiceId as argument
   const [openDownloadModal, setOpenDownloadModal] = useState(false);
@@ -202,7 +202,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     if (
       dataInvoice.id &&
       dataInvoice?.id == dataRowClicked?.id &&
-      (dataInvoiceDetail?.length || dataClient?.id)
+      dataClient?.id
     ) {
       setIsOnClient(dataRowClicked?.id);
     } else {
@@ -306,6 +306,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
         .then((res2) => {
           if (res2.success) {
             setDataInvoice(res2.data);
+            handleSetInvoiceDetail(res2.data);
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -326,12 +327,12 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   // 4.4. [PDF] Set displayed invoice detail
-  const handleSetInvoiceDetail = () => {
-    if (dataInvoice?.invoice_attribute?.length) {
+  const handleSetInvoiceDetail = (data) => {
+    if (data?.invoice_attribute?.length) {
       const currentInvoiceDetail = [];
-      for (let item of dataInvoice?.invoice_attribute) {
+      for (let item of data?.invoice_attribute) {
         if (!item?.includes("extras")) {
-          let tempValue = dataInvoice[item];
+          let tempValue = data[item];
 
           if (["initial_date", "start_date", "end_date"].includes(item)) {
             tempValue = momentFormatDate(tempValue);
@@ -342,11 +343,11 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           }
 
           if (item == "requester") {
-            tempValue = dataInvoice?.requester?.name;
+            tempValue = data?.requester?.name;
           }
 
           if (item == "client") {
-            tempValue = dataInvoice?.client?.name;
+            tempValue = data?.client?.name;
           }
 
           currentInvoiceDetail.push({
@@ -355,7 +356,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
             value: tempValue,
           });
         } else {
-          for (let extra of dataInvoice?.extras) {
+          for (let extra of data?.extras) {
             if (`extras.${extra?.key}` == item) {
               const dataExtra = {
                 name: `extras.${extra?.key}`,
@@ -380,27 +381,38 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    if (dataInvoice?.client_id) {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${clientId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${clientId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
           setDataClient(res2?.data);
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
         });
-    }
+      });
+  };
+
+  const handleDownloadClick = (event, record) => {
+    event.stopPropagation();
+    setDataRowClicked({ id: record?.id });
+
+    // get required data used for PDF
+    handleGetInvoiceData(record?.id);
+    handleGetClientData(record?.contract_template?.client_id);
+
+    setOpenDownloadModal(true);
   };
 
   // Use for price range filter
@@ -564,17 +576,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
               <Button
                 type={"primary"}
                 disabled={!record.id}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setDataRowClicked({ id: record?.id });
-
-                  // get required data used for PDF
-                  handleGetInvoiceData(record?.id);
-                  handleSetInvoiceDetail();
-                  handleGetClientData(record?.contract_template?.client_id);
-
-                  setOpenDownloadModal(true);
-                }}
+                onClick={(event) => handleDownloadClick(event, record)}
                 icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
                 className="bg-secondary100 border-secondary100 hover:bg-secondary 
                       hover:border-secondary focus:bg-secondary100 focus:border-secondary100"
@@ -604,11 +606,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
-  // console.log({ dataInvoice });
-  // console.log({ dataRowClicked });
-  // console.log({ isOnClient });
-  // console.log({ dataClient });
-  // console.log({ dataInvoiceDetail });
   return (
     <Layout
       tok={initProps}
@@ -946,6 +943,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     dataInvoice={dataInvoice}
                     dataInvoiceDetail={dataInvoiceDetail}
                     dataClient={dataClient}
+                    initProps={initProps}
                   />
                 }
                 fileName={`Invoice_${dataInvoice?.invoice_number}.pdf`}
@@ -964,12 +962,12 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
           }
         >
-          {isOnClient && (
+          <Spin spinning={!isOnClient}>
             <p>
               Klik untuk mengunduh invoice dengan nomor&nbsp;
-              <strong>{dataInvoice.invoice_number}</strong>
+              <strong>{dataInvoice.invoice_number || "-"}</strong>
             </p>
-          )}
+          </Spin>
         </ModalCore>
       </AccessControl>
     </Layout>
