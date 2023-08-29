@@ -57,9 +57,11 @@ import { ContractService } from "apis/contract";
 
 import {
   AlertCircleIconSvg,
+  DownloadIcon2Svg,
   PlusIconSvg,
   TrashIconSvg,
 } from "../../../../components/icon";
+import ModalCore from "../../../../components/modal/modalCore";
 import { convertDaysToString } from "../../../../lib/helper";
 import { contractInfoString } from "../[contractId]/invoice-template";
 import ContractInvoicePDF, { InvoicePDFTemplate } from "./invoicePDF";
@@ -140,8 +142,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
-  const downloadRef = useRef(null);
-
   // 2. Use state
   // 2.1. Table Contract
   // filter search & selected options
@@ -156,18 +156,17 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [priceRangeInput, setPriceRangeInput] = useState([0, 0]);
 
   const [refresh, setRefresh] = useState(-1);
-  const [loadingAdd, setLoadingAdd] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [dataRowClicked, setDataRowClicked] = useState({});
 
-  // PDF Data
+  // Download PDF
   const [dataInvoice, setDataInvoice] = useState({});
   const [dataInvoiceDetail, setDataInvoiceDetail] = useState([]);
-  const [dataClient, setDataClient] = useState({});
-  const [dataMainCompany, setDataMainCompany] = useState({});
+  const [dataClient, setDataClient] = useState({ id: null });
   const [loadingContractInvoice, setLoadingContractInvoice] = useState(false);
   const [isOnClient, setIsOnClient] = useState(-1); // use invoiceId as argument
+  const [openDownloadModal, setOpenDownloadModal] = useState(false);
 
   // 3. UseEffect & UseQuery
   // 3.1. Get Company Client List
@@ -197,51 +196,19 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       }
     );
 
-  // 3.3. [PDF] Get main company data
-  useEffect(() => {
-    if (!isAllowedToGetCompanyDetail) {
-      permissionWarningNotification("Mendapatkan", "Detail Company");
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=1`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setDataMainCompany(res2?.data);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-  }, [isAllowedToGetCompanyDetail]);
-
   // 3.4. State to only renders `<PDFDownloadLink>` component
   // after dataInvoice is available (client-side)
   useEffect(() => {
     if (
       dataInvoice.id &&
       dataInvoice?.id == dataRowClicked?.id &&
-      (dataInvoiceDetail?.length || dataClient?.id)
+      dataClient?.id
     ) {
       setIsOnClient(dataRowClicked?.id);
     } else {
       setIsOnClient(-1);
     }
-  }, [dataInvoice?.id, dataRowClicked?.id]);
-
-  // Triggers auto click if PDF data is ready on client
-  // useEffect(() => {
-  //   if (isOnClient && downloadRef.current) {
-  //     downloadRef.current.click();
-  //   }
-  // }, [isOnClient]);
+  }, [dataInvoice?.id, dataRowClicked?.id, dataClient?.id]);
 
   if (isAccessControlPending) {
     return null;
@@ -339,6 +306,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
         .then((res2) => {
           if (res2.success) {
             setDataInvoice(res2.data);
+            handleSetInvoiceDetail(res2.data);
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -359,12 +327,12 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   // 4.4. [PDF] Set displayed invoice detail
-  const handleSetInvoiceDetail = () => {
-    if (dataInvoice?.invoice_attribute?.length) {
+  const handleSetInvoiceDetail = (data) => {
+    if (data?.invoice_attribute?.length) {
       const currentInvoiceDetail = [];
-      for (let item of dataInvoice?.invoice_attribute) {
+      for (let item of data?.invoice_attribute) {
         if (!item?.includes("extras")) {
-          let tempValue = dataInvoice[item];
+          let tempValue = data[item];
 
           if (["initial_date", "start_date", "end_date"].includes(item)) {
             tempValue = momentFormatDate(tempValue);
@@ -375,11 +343,11 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           }
 
           if (item == "requester") {
-            tempValue = dataInvoice?.requester?.name;
+            tempValue = data?.requester?.name;
           }
 
           if (item == "client") {
-            tempValue = dataInvoice?.client?.name;
+            tempValue = data?.client?.name;
           }
 
           currentInvoiceDetail.push({
@@ -388,7 +356,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
             value: tempValue,
           });
         } else {
-          for (let extra of dataInvoice?.extras) {
+          for (let extra of data?.extras) {
             if (`extras.${extra?.key}` == item) {
               const dataExtra = {
                 name: `extras.${extra?.key}`,
@@ -413,27 +381,38 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    if (dataInvoice?.client_id) {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${clientId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${clientId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
           setDataClient(res2?.data);
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
         });
-    }
+      });
+  };
+
+  const handleDownloadClick = (event, record) => {
+    event.stopPropagation();
+    setDataRowClicked({ id: record?.id });
+
+    // get required data used for PDF
+    handleGetInvoiceData(record?.id);
+    handleGetClientData(record?.contract_template?.client_id);
+
+    setOpenDownloadModal(true);
   };
 
   // Use for price range filter
@@ -546,38 +525,36 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <div className="flex flex-col md:flex-row gap-2 items-center">
               {!record?.is_posted && (
-                <Tooltip
-                  className="border rounded-md"
-                  placement="bottomRight"
-                  color="#FFFFFF"
-                  title={
-                    <div className="flex gap-2 text-mono30 p-2">
-                      <div>
-                        <EditSquareIconSvg size={20} color={"#4D4D4D"} />
-                      </div>
-                      <div>
-                        <p className="mig-caption--bold">Sunting Invoice</p>
-                        <p className="mig-caption">
-                          Sunting invoice untuk merubah data.
-                        </p>
-                      </div>
-                    </div>
-                  }
-                >
-                  <Button
-                    type={"primary"}
-                    disabled={!isAllowedToUpdateInvoice}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      rt.push(`invoice/${record.id}`);
-                    }}
-                    icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
-                    className="invoiceButton bg-mono50 border-transparent hover:bg-mono80 
+                // <Tooltip
+                //   className="border rounded-md"
+                //   placement="bottomRight"
+                //   color="#FFFFFF"
+                //   title={
+                //     <div className="flex gap-2 text-mono30 p-2">
+                //       <div>
+                //         <EditSquareIconSvg size={20} color={"#4D4D4D"} />
+                //       </div>
+                //       <div>
+                //         <p className="mig-caption--bold">Sunting Invoice</p>
+                //         <p className="mig-caption">
+                //           Sunting invoice untuk merubah data.
+                //         </p>
+                //       </div>
+                //     </div>
+                //   }>
+                <Button
+                  type={"primary"}
+                  disabled={!isAllowedToUpdateInvoice}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    rt.push(`invoice/${record.id}`);
+                  }}
+                  icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
+                  className="invoiceButton bg-mono50 border-transparent hover:bg-mono80 
                     hover:border-transparent focus:bg-mono50 focus:border-mono50"
-                  />
-                </Tooltip>
+                />
               )}
-              <Tooltip
+              {/* <Tooltip
                 className="border rounded-md"
                 placement="bottomRight"
                 color="#FFFFFF"
@@ -595,63 +572,16 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                       </p>
                     </div>
                   </div>
-                }
-              >
-                <div>
-                  {isOnClient != record?.id ? (
-                    <Button
-                      type={"primary"}
-                      disabled={!record.id}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setDataRowClicked({ id: record?.id });
-
-                        // get required data used for PDF
-                        handleGetInvoiceData(record?.id);
-                        handleSetInvoiceDetail();
-                        handleGetClientData(
-                          record?.contract_template?.client_id
-                        );
-                      }}
-                      icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
-                      className="bg-secondary100 border-secondary100 hover:bg-secondary 
+                }> */}
+              <Button
+                type={"primary"}
+                disabled={!record.id}
+                onClick={(event) => handleDownloadClick(event, record)}
+                icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
+                className="bg-secondary100 border-secondary100 hover:bg-secondary 
                       hover:border-secondary focus:bg-secondary100 focus:border-secondary100"
-                    />
-                  ) : (
-                    <PDFDownloadLink
-                      document={
-                        <InvoicePDFTemplate
-                          dataInvoice={dataInvoice}
-                          dataInvoiceDetail={dataInvoiceDetail}
-                          dataClient={dataClient}
-                          dataMainCompany={dataMainCompany}
-                        />
-                      }
-                      fileName={`Invoice_${record?.invoice_number}.pdf`}
-                    >
-                      {({ blob, url, loading, error }) =>
-                        loading ? (
-                          <Spin spinning={loading} />
-                        ) : (
-                          <Button
-                            type={"primary"}
-                            ref={downloadRef}
-                            disabled={!record.id}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                            }}
-                            icon={
-                              <DownloadIconSvg size={20} color={"#FFFFFF"} />
-                            }
-                            className="bg-secondary100 border-secondary100 hover:bg-secondary 
-                            hover:border-secondary focus:bg-secondary100 focus:border-secondary100"
-                          ></Button>
-                        )
-                      }
-                    </PDFDownloadLink>
-                  )}
-                </div>
-              </Tooltip>
+              />
+
               {!record?.is_posted && (
                 <Button
                   type={"primary"}
@@ -676,11 +606,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
-  // console.log({ dataInvoice });
-  // console.log({ dataRowClicked });
-  // console.log({ isOnClient });
-  // console.log({ dataClient });
-  // console.log({ dataInvoiceDetail });
   return (
     <Layout
       tok={initProps}
@@ -723,7 +648,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
             <div className="flex flex-col gap-4">
               <div
                 className="flex flex-col gap-4 lg:flex-row lg:justify-between 
-                w-full lg:items-center "
+                w-full lg:items-center"
               >
                 {/* Start: Search criteria */}
                 {/* Search by keyword (kata kunci) */}
@@ -991,6 +916,59 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
             <strong>{dataRowClicked?.invoice_number || "- "}?</strong>
           </p>
         </ModalHapus2>
+      </AccessControl>
+
+      {/* Modal Download Invoice */}
+      <AccessControl hasPermission={CONTRACT_INVOICE_GET}>
+        <ModalCore
+          title={
+            <h3 className="mig-heading--3 text-primary100">Unduh Invoice</h3>
+          }
+          visible={openDownloadModal}
+          onCancel={() => setOpenDownloadModal(false)}
+          footer={
+            <div className="flex gap-4 items-center justify-end">
+              <ButtonSys
+                type={"primary"}
+                color={"mono100"}
+                onClick={() => {
+                  setOpenDownloadModal(false);
+                }}
+              >
+                Batalkan
+              </ButtonSys>
+              <PDFDownloadLink
+                document={
+                  <InvoicePDFTemplate
+                    dataInvoice={dataInvoice}
+                    dataInvoiceDetail={dataInvoiceDetail}
+                    dataClient={dataClient}
+                    initProps={initProps}
+                  />
+                }
+                fileName={`Invoice_${dataInvoice?.invoice_number}.pdf`}
+              >
+                {({ blob, url, loading, error }) => (
+                  <Spin spinning={loading}>
+                    <ButtonSys type={"primary"}>
+                      <div className={"flex items-center"}>
+                        <DownloadIcon2Svg size={16} color={"#fffffff"} />
+                        <p className={"ml-2 text-white"}>Unduh Invoice</p>
+                      </div>
+                    </ButtonSys>
+                  </Spin>
+                )}
+              </PDFDownloadLink>
+            </div>
+          }
+        >
+          <Spin spinning={!isOnClient}>
+            <p>
+              Klik untuk mengunduh invoice dengan nomor&nbsp;
+              <strong>{dataInvoice.invoice_number || "-"}</strong>
+            </p>
+          </Spin>
+        </ModalCore>
       </AccessControl>
     </Layout>
   );

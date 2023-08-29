@@ -118,6 +118,7 @@ const ContractInvoiceTemplateIndex = ({
   const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
   const [dataServices, setDataServices] = useState([]);
 
+  const [selectedBank, setSelectedBank] = useState({});
   const [bankAccountList, setBankAccountList] = useState([]);
 
   // Modal
@@ -227,7 +228,8 @@ const ContractInvoiceTemplateIndex = ({
   // 3.5. Set period value from dataContract
   useEffect(() => {
     setPeriod(dataContract?.invoice_template?.invoice_period);
-  }, [dataContract?.invoice_template?.invoice_period]);
+    setSelectedBank(dataContract?.invoice_template?.bank_id);
+  }, [dataContract?.invoice_template]);
 
   // 4. Event
   const handleSaveInvoiceTemplate = () => {
@@ -244,6 +246,7 @@ const ContractInvoiceTemplateIndex = ({
       service_template_values: dataServices?.map(
         (item) => item?.service_template_value
       ),
+      bank_id: selectedBank,
     };
 
     setLoadingSave(true);
@@ -364,10 +367,12 @@ const ContractInvoiceTemplateIndex = ({
               <p className="mig-caption--bold">Nomor Rekening</p>
               {/* TODO: adjust if API is done */}
               <Select
-                // value={""}
+                value={selectedBank || null}
                 disabled={!isAllowedToGetMainBanks}
                 placeholder="Pilih Rekening"
-                onChange={(value) => {}}
+                onChange={(value) => {
+                  setSelectedBank(value);
+                }}
                 className="w-1/2 themedSelector"
               >
                 {bankAccountList?.map((item) => (
