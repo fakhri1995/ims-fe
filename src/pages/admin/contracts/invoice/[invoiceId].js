@@ -448,16 +448,17 @@ const ContractInvoiceFormIndex = ({
                       dataInvoice={dataInvoice}
                       dataInvoiceDetail={dataInvoiceDetail}
                       dataClient={dataClient}
+                      initProps={initProps}
                     />
                   }
                   fileName={`Invoice_${dataInvoice?.invoice_number}.pdf`}
                 >
                   {({ blob, url, loading, error }) => (
-                    <Spin spinning={loadingContractInvoice}>
+                    <Spin spinning={loading}>
                       <ButtonSys
                         type={"primary"}
                         color={"secondary100"}
-                        disabled={false}
+                        disabled={!isAllowedToGetInvoice}
                       >
                         <div className="flex space-x-2 items-center">
                           <p>Unduh Draft</p>
@@ -485,19 +486,20 @@ const ContractInvoiceFormIndex = ({
                     dataInvoice={dataInvoice}
                     dataInvoiceDetail={dataInvoiceDetail}
                     dataClient={dataClient}
+                    initProps={initProps}
                   />
                 }
                 fileName={`Invoice_${dataInvoice?.invoice_number}.pdf`}
               >
                 {({ blob, url, loading, error }) => (
-                  <Spin spinning={loadingContractInvoice}>
+                  <Spin spinning={loading}>
                     <ButtonSys
                       type={"primary"}
                       color={"secondary100"}
-                      disabled={false}
+                      disabled={!isAllowedToGetInvoice}
                     >
                       <div className="flex space-x-2 items-center">
-                        <p>Unduh Draft</p>
+                        <p>Unduh</p>
                         <DownloadIcon2Svg color={"#FFFFFF"} size={20} />
                       </div>
                     </ButtonSys>
@@ -573,7 +575,6 @@ const ContractInvoiceFormIndex = ({
                       message: "PT klien wajib diisi",
                     },
                   ]}
-                  // initialValue={newgroup.name}
                 >
                   <>
                     <Select
@@ -600,7 +601,7 @@ const ContractInvoiceFormIndex = ({
                     <DatePicker
                       placeholder="Pilih tanggal terbit"
                       name={`invoice_raise_at`}
-                      defaultValue={moment(dataInvoice?.invoice_raise_at)}
+                      value={moment(dataInvoice?.invoice_raise_at)}
                       disabled={isReadOnly}
                       onChange={(date, datestring) => {
                         onChangeInput("invoice_raise_at", datestring);
@@ -638,7 +639,7 @@ const ContractInvoiceFormIndex = ({
                 </Form.Item>
 
                 <Form.Item
-                  name="invoice_bank"
+                  name="bank_id"
                   label="Nomor Rekening"
                   rules={[
                     {
@@ -650,11 +651,13 @@ const ContractInvoiceFormIndex = ({
                   <>
                     {/* TODO: adjust if API is done */}
                     <Select
-                      name="invoice_bank"
-                      // value={""}
+                      name="bank_id"
+                      value={dataInvoice?.bank_id || null}
                       disabled={!isAllowedToGetMainBanks || isReadOnly}
                       placeholder="Pilih Rekening"
-                      onChange={(value) => {}}
+                      onChange={(value) => {
+                        onChangeInput("bank_id", value);
+                      }}
                       className="themedSelector"
                     >
                       {bankAccountList?.map((item) => (
