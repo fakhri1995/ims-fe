@@ -72,7 +72,7 @@ const InvoiceTemplateItemSection = ({
         contract_service_id: service?.id,
         details: service.service_template_value
           ? [...service.service_template_value?.details]
-          : [""],
+          : [],
       },
     }));
     setDataServices(tempServices);

@@ -243,9 +243,8 @@ const ContractInvoiceTemplateIndex = ({
       invoice_period: period,
       invoice_template: dataInvoice.map((item) => item.name),
       service_template: dataServiceTemplateNames,
-      service_template_values: dataServices?.map(
-        (item) => item?.service_template_value
-      ),
+      service_template_values:
+        dataServices?.map((item) => item?.service_template_value) || [],
       bank_id: selectedBank,
     };
 
