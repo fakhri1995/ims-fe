@@ -347,8 +347,8 @@ function layout({ children }) {
               res2.data[0].title_id != "" &&
               res2.data[0].description_id != "" &&
               res2.data[0].page_path_id != "" &&
-              res2.data[0].content_id != "" &&
-              res2.data[0].tags_id != ""
+              res2.data[0].content_id != ""
+              // res2.data[0].tags_id != ""
             ) {
               console.log("harusnya pindah halaman ", router);
               // router.push(`/id/`+router.asPath);
