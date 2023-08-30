@@ -33,7 +33,7 @@ const ContractActionSection = ({ contractId }) => {
 
   return (
     <>
-      <div className="flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center">
+      {/* <div className="flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center">
         <WritingIconSvg size={32} color={"#35763B"} />
         <div className="ml-4">
           <p className="mb-2 mig-caption--bold text-primary100">
@@ -41,7 +41,7 @@ const ContractActionSection = ({ contractId }) => {
           </p>
           <p className="mig-caption text-primary75">s.d. 05 Desember 2022</p>
         </div>
-      </div>
+      </div> */}
 
       {/* <div className="flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center">
         <CutIconSvg size={32} color={"#35763B"} />
@@ -67,7 +67,7 @@ const ContractActionSection = ({ contractId }) => {
 
       <button
         onClick={() => rt.push(`${contractId}/invoice-template`)}
-        className="flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center hover:opacity-75"
+        className="flex flex-row p-2 lg:p-4 bg-backdrop rounded-md items-center hover:opacity-75"
       >
         <FileTextIconSvg size={32} color={"#35763B"} />
         <div className="ml-4">
