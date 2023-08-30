@@ -3,6 +3,7 @@ import {
   Button,
   DatePicker,
   Input,
+  InputNumber,
   Modal,
   Select,
   Spin,
@@ -525,23 +526,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <div className="flex flex-col md:flex-row gap-2 items-center">
               {!record?.is_posted && (
-                // <Tooltip
-                //   className="border rounded-md"
-                //   placement="bottomRight"
-                //   color="#FFFFFF"
-                //   title={
-                //     <div className="flex gap-2 text-mono30 p-2">
-                //       <div>
-                //         <EditSquareIconSvg size={20} color={"#4D4D4D"} />
-                //       </div>
-                //       <div>
-                //         <p className="mig-caption--bold">Sunting Invoice</p>
-                //         <p className="mig-caption">
-                //           Sunting invoice untuk merubah data.
-                //         </p>
-                //       </div>
-                //     </div>
-                //   }>
                 <Button
                   type={"primary"}
                   disabled={!isAllowedToUpdateInvoice}
@@ -554,25 +538,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     hover:border-transparent focus:bg-mono50 focus:border-mono50"
                 />
               )}
-              {/* <Tooltip
-                className="border rounded-md"
-                placement="bottomRight"
-                color="#FFFFFF"
-                title={
-                  <div className="flex gap-2 p-2">
-                    <div>
-                      <FileDownloadIconSvg size={20} color={"#00589F"} />
-                    </div>
-                    <div>
-                      <p className="mig-caption--bold text-secondary100">
-                        Unduh File Invoice
-                      </p>
-                      <p className="text-mono30 mig-caption">
-                        Unduh invoice dengan format pdf/excel.
-                      </p>
-                    </div>
-                  </div>
-                }> */}
+
               <Button
                 type={"primary"}
                 disabled={!record.id}
@@ -860,31 +826,37 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="space-y-4">
             <p>Masukkan Nominal Kustom</p>
             <div className="flex gap-2 items-center">
-              <Input
-                allowClear
-                type="number"
+              <InputNumber
                 min={0}
                 placeholder="Nominal Minimum"
-                defaultValue={null}
-                onChange={(e) =>
-                  setPriceRangeInput((prev) => [e.target.value, prev[1]])
+                value={priceRangeInput[0]}
+                formatter={(value) =>
+                  `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                 }
+                parser={(value) => value.replace(/Rp\s?|(\.*)/g, "")}
+                onChange={(value) =>
+                  setPriceRangeInput((prev) => [value, prev[1]])
+                }
+                className="w-full"
               />
               <p>-</p>
-              <Input
-                allowClear
-                type="number"
+              <InputNumber
                 min={0}
                 placeholder="Nominal Maksimum"
-                defaultValue={null}
-                onChange={(e) =>
-                  setPriceRangeInput((prev) => [prev[0], e.target.value])
+                value={priceRangeInput[1]}
+                formatter={(value) =>
+                  `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                }
+                parser={(value) => value.replace(/Rp\s?|(\.*)/g, "")}
+                onChange={(value) =>
+                  setPriceRangeInput((prev) => [prev[0], value])
                 }
                 onKeyPress={(e) => {
                   if (e.key === "Enter") {
                     onAddPriceRange();
                   }
                 }}
+                className="w-full"
               />
             </div>
           </div>

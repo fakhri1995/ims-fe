@@ -1,4 +1,4 @@
-import { Form, Input, Modal, Select, Spin } from "antd";
+import { Form, Input, InputNumber, Modal, Select, Spin } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
@@ -249,20 +249,22 @@ const ModalServiceUpdate = ({
               ]}
             >
               <>
-                <Input
-                  addonBefore="Rp."
+                <InputNumber
                   placeholder="Isi harga produk"
-                  type="number"
                   min={0}
                   value={dataService?.price}
-                  onChange={(e) => {
-                    const newPrice = e.target.value;
+                  formatter={(value) =>
+                    `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                  }
+                  parser={(value) => value.replace(/Rp\s?|(\.*)/g, "")}
+                  onChange={(value) => {
                     setDataService((prev) => ({
                       ...prev,
-                      price: newPrice,
-                      subtotal: countSubTotal(prev.pax, newPrice),
+                      price: value,
+                      subtotal: countSubTotal(prev.pax, value),
                     }));
                   }}
+                  className="w-full"
                 />
               </>
             </Form.Item>
