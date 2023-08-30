@@ -14,6 +14,7 @@ import { ProductCatalogService } from "../../../apis/product-catalog";
 import { countSubTotal } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { PlusIconSvg } from "../../icon";
+import { InputCurrency } from "../../input";
 
 const ModalServiceCreate = ({
   initProps,
@@ -249,14 +250,9 @@ const ModalServiceCreate = ({
                   ]}
                 >
                   <>
-                    <InputNumber
-                      placeholder="Isi harga produk"
-                      min={0}
+                    <InputCurrency
+                      placeholder={"Isi harga produk"}
                       value={service?.price}
-                      formatter={(value) =>
-                        `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-                      }
-                      parser={(value) => value.replace(/Rp\s?|(\.*)/g, "")}
                       onChange={(value) => {
                         let tempServiceList = [...dataServiceList];
                         tempServiceList[idx].price = value;
@@ -266,7 +262,6 @@ const ModalServiceCreate = ({
                         );
                         setDataServiceList(tempServiceList);
                       }}
-                      className="w-full"
                     />
                   </>
                 </Form.Item>

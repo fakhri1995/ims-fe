@@ -3,7 +3,6 @@ import {
   Button,
   DatePicker,
   Input,
-  InputNumber,
   Modal,
   Select,
   Spin,
@@ -62,6 +61,7 @@ import {
   PlusIconSvg,
   TrashIconSvg,
 } from "../../../../components/icon";
+import { InputCurrency } from "../../../../components/input";
 import ModalCore from "../../../../components/modal/modalCore";
 import { convertDaysToString } from "../../../../lib/helper";
 import { contractInfoString } from "../[contractId]/invoice-template";
@@ -826,37 +826,25 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="space-y-4">
             <p>Masukkan Nominal Kustom</p>
             <div className="flex gap-2 items-center">
-              <InputNumber
-                min={0}
+              <InputCurrency
                 placeholder="Nominal Minimum"
                 value={priceRangeInput[0]}
-                formatter={(value) =>
-                  `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-                }
-                parser={(value) => value.replace(/Rp\s?|(\.*)/g, "")}
-                onChange={(value) =>
-                  setPriceRangeInput((prev) => [value, prev[1]])
-                }
-                className="w-full"
+                onChange={(value) => {
+                  setPriceRangeInput((prev) => [value, prev[1]]);
+                }}
               />
               <p>-</p>
-              <InputNumber
-                min={0}
+              <InputCurrency
                 placeholder="Nominal Maksimum"
                 value={priceRangeInput[1]}
-                formatter={(value) =>
-                  `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-                }
-                parser={(value) => value.replace(/Rp\s?|(\.*)/g, "")}
-                onChange={(value) =>
-                  setPriceRangeInput((prev) => [prev[0], value])
-                }
+                onChange={(value) => {
+                  setPriceRangeInput((prev) => [prev[0], value]);
+                }}
                 onKeyPress={(e) => {
                   if (e.key === "Enter") {
                     onAddPriceRange();
                   }
                 }}
-                className="w-full"
               />
             </div>
           </div>

@@ -13,6 +13,7 @@ import { PRODUCTS_GET } from "lib/features";
 import { ProductCatalogService } from "../../../apis/product-catalog";
 import { countSubTotal } from "../../../lib/helper";
 import ButtonSys from "../../button";
+import { InputCurrency } from "../../input";
 
 const ModalServiceUpdate = ({
   initProps,
@@ -249,14 +250,9 @@ const ModalServiceUpdate = ({
               ]}
             >
               <>
-                <InputNumber
-                  placeholder="Isi harga produk"
-                  min={0}
+                <InputCurrency
+                  placeholder={"Isi harga produk"}
                   value={dataService?.price}
-                  formatter={(value) =>
-                    `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-                  }
-                  parser={(value) => value.replace(/Rp\s?|(\.*)/g, "")}
                   onChange={(value) => {
                     setDataService((prev) => ({
                       ...prev,
@@ -264,7 +260,6 @@ const ModalServiceUpdate = ({
                       subtotal: countSubTotal(prev.pax, value),
                     }));
                   }}
-                  className="w-full"
                 />
               </>
             </Form.Item>
