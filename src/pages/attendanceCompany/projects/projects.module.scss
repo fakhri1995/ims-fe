@@ -4,3 +4,31 @@
 .customTable .ant-table-tbody > tr > td {
   border: none;
 }
+.customSelect .ant-select-selection-placeholder {
+  color: yellow;
+}
+.ant-select-selection {
+  max-height: 51px;
+  overflow: auto;
+  background-color: blue;
+}
+.ant-select-selection-search-input {
+  background-color: green;
+}
+.ant-select-item-option-content {
+  background-color: orange;
+}
+.ant-select-item {
+  position: relative;
+  display: block;
+  min-height: 32px;
+  padding: 5px 12px;
+  color: red;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 22px;
+  cursor: pointer;
+  -webkit-transition: background 0.3s ease;
+  transition: background 0.3s ease;
+  background-color: #9068b0;
+}
