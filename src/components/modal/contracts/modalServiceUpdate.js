@@ -110,9 +110,15 @@ const ModalServiceUpdate = ({
 
     // fetch API update invoice
     if (handleSaveInvoice) {
+      const newInvoiceTotal = tempServiceList?.reduce(
+        (acc, item) => acc + countSubTotal(item?.pax, item?.price),
+        0
+      );
+
       handleSaveInvoice(0, {
         ...dataContractUpdate,
         invoice_services: tempServiceList,
+        invoice_total: newInvoiceTotal,
       });
     }
 

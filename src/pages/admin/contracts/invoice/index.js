@@ -1,9 +1,11 @@
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   Button,
   DatePicker,
   Input,
   Modal,
   Select,
+  Spin,
   Tooltip,
   notification,
 } from "antd";
@@ -18,6 +20,8 @@ import {
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
+import { useRef } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
@@ -39,24 +43,28 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   COMPANY_CLIENTS_GET,
-  CONTRACT_DELETE,
+  COMPANY_DETAIL_GET,
   CONTRACT_INVOICES_GET,
   CONTRACT_INVOICE_DELETE,
   CONTRACT_INVOICE_GET,
   CONTRACT_INVOICE_UPDATE,
-  RECRUITMENT_STATUSES_LIST_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
-import {
-  convertDaysToString,
-  createKeyPressHandler,
-  momentFormatDate,
-} from "lib/helper";
+import { createKeyPressHandler, momentFormatDate } from "lib/helper";
 
 import { CompanyService } from "apis/company";
 import { ContractService } from "apis/contract";
 
-import { PlusIconSvg } from "../../../../components/icon";
+import {
+  AlertCircleIconSvg,
+  DownloadIcon2Svg,
+  PlusIconSvg,
+  TrashIconSvg,
+} from "../../../../components/icon";
+import ModalCore from "../../../../components/modal/modalCore";
+import { convertDaysToString } from "../../../../lib/helper";
+import { contractInfoString } from "../[contractId]/invoice-template";
+import ContractInvoicePDF, { InvoicePDFTemplate } from "./invoicePDF";
 import {
   ArcElement,
   BarElement,
@@ -92,10 +100,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToDeleteInvoice = hasPermission(CONTRACT_INVOICE_DELETE);
 
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
-
-  const isAllowedToGetInvoicestatusList = hasPermission(
-    RECRUITMENT_STATUSES_LIST_GET
-  );
+  const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -151,10 +156,17 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [priceRangeInput, setPriceRangeInput] = useState([0, 0]);
 
   const [refresh, setRefresh] = useState(-1);
-  const [loadingAdd, setLoadingAdd] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [dataRowClicked, setDataRowClicked] = useState({});
+
+  // Download PDF
+  const [dataInvoice, setDataInvoice] = useState({});
+  const [dataInvoiceDetail, setDataInvoiceDetail] = useState([]);
+  const [dataClient, setDataClient] = useState({ id: null });
+  const [loadingContractInvoice, setLoadingContractInvoice] = useState(false);
+  const [isOnClient, setIsOnClient] = useState(-1); // use invoiceId as argument
+  const [openDownloadModal, setOpenDownloadModal] = useState(false);
 
   // 3. UseEffect & UseQuery
   // 3.1. Get Company Client List
@@ -184,6 +196,24 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       }
     );
 
+  // 3.4. State to only renders `<PDFDownloadLink>` component
+  // after dataInvoice is available (client-side)
+  useEffect(() => {
+    if (
+      dataInvoice.id &&
+      dataInvoice?.id == dataRowClicked?.id &&
+      dataClient?.id
+    ) {
+      setIsOnClient(dataRowClicked?.id);
+    } else {
+      setIsOnClient(-1);
+    }
+  }, [dataInvoice?.id, dataRowClicked?.id, dataClient?.id]);
+
+  if (isAccessControlPending) {
+    return null;
+  }
+
   // 4. Event
   // 4.1. Filter Table
   const onFilterRecruitments = () => {
@@ -212,18 +242,21 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 4.2. Delete Invoice
   const handleDeleteInvoice = (id) => {
     if (!isAllowedToDeleteInvoice) {
-      permissionWarningNotification("Menghapus", "Kontrak");
+      permissionWarningNotification("Menghapus", "Draft Invoice");
       return;
     }
 
     setLoadingDelete(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${id}`, {
-      method: `DELETE`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContractInvoice?id=${id}`,
+      {
+        method: `DELETE`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
@@ -243,11 +276,143 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menghapus proyek. ${err.response}`,
+          message: `Gagal menghapus draft invoice. ${err.response}`,
           duration: 3,
         });
       })
       .finally(() => setLoadingDelete(false));
+  };
+
+  // 4.3. [PDF] Get Invoice Data
+  const handleGetInvoiceData = (invoiceId) => {
+    if (!isAllowedToGetInvoice) {
+      permissionWarningNotification("Mendapatkan", "Data Contract Invoice");
+      setLoadingContractInvoice(false);
+      return;
+    }
+
+    if (invoiceId) {
+      setLoadingContractInvoice(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractInvoice?id=${invoiceId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataInvoice(res2.data);
+            handleSetInvoiceDetail(res2.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingContractInvoice(false);
+        });
+    }
+  };
+
+  // 4.4. [PDF] Set displayed invoice detail
+  const handleSetInvoiceDetail = (data) => {
+    if (data?.invoice_attribute?.length) {
+      const currentInvoiceDetail = [];
+      for (let item of data?.invoice_attribute) {
+        if (!item?.includes("extras")) {
+          let tempValue = data[item];
+
+          if (["initial_date", "start_date", "end_date"].includes(item)) {
+            tempValue = momentFormatDate(tempValue);
+          }
+
+          if (item == "duration") {
+            tempValue = convertDaysToString(tempValue);
+          }
+
+          if (item == "requester") {
+            tempValue = data?.requester?.name;
+          }
+
+          if (item == "client") {
+            tempValue = data?.client?.name;
+          }
+
+          currentInvoiceDetail.push({
+            name: item,
+            title: contractInfoString[item],
+            value: tempValue,
+          });
+        } else {
+          for (let extra of data?.extras) {
+            if (`extras.${extra?.key}` == item) {
+              const dataExtra = {
+                name: `extras.${extra?.key}`,
+                title: extra?.name,
+                value: extra?.value,
+                type: extra?.type,
+              };
+
+              currentInvoiceDetail.push(dataExtra);
+            }
+          }
+        }
+      }
+      setDataInvoiceDetail(currentInvoiceDetail);
+    }
+  };
+
+  // 4.5. [PDF] Get client data
+  const handleGetClientData = (clientId) => {
+    if (!isAllowedToGetCompanyDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Company");
+      return;
+    }
+
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${clientId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataClient(res2?.data);
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  };
+
+  const handleDownloadClick = (event, record) => {
+    event.stopPropagation();
+    setDataRowClicked({ id: record?.id });
+
+    // get required data used for PDF
+    handleGetInvoiceData(record?.id);
+    handleGetClientData(record?.contract_template?.client_id);
+
+    setOpenDownloadModal(true);
   };
 
   // Use for price range filter
@@ -262,7 +427,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
   // Kontrak Table's columns
   const columnInvoices = [
     {
-      title: "No",
+      title: "No.",
       key: "number",
       dataIndex: "num",
       render: (text, record, index) => {
@@ -296,9 +461,9 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Nama Klien",
+      title: "PT Klien",
       key: "client_name",
-      dataIndex: ["client", "name"],
+      dataIndex: ["contract_template", "client", "name"],
     },
     {
       title: "Tanggal Terbit",
@@ -322,9 +487,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>Rp {Number(text)?.toLocaleString("id-ID") || "-"}</>,
         };
       },
-      sorter: isAllowedToGetInvoices
-        ? (a, b) => a?.invoice_total - b?.invoice_total
-        : false,
     },
     {
       title: "Status",
@@ -362,58 +524,47 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <div className="flex flex-col md:flex-row gap-2 items-center">
-              {record?.is_posted ? (
+              {!record?.is_posted && (
+                // <Tooltip
+                //   className="border rounded-md"
+                //   placement="bottomRight"
+                //   color="#FFFFFF"
+                //   title={
+                //     <div className="flex gap-2 text-mono30 p-2">
+                //       <div>
+                //         <EditSquareIconSvg size={20} color={"#4D4D4D"} />
+                //       </div>
+                //       <div>
+                //         <p className="mig-caption--bold">Sunting Invoice</p>
+                //         <p className="mig-caption">
+                //           Sunting invoice untuk merubah data.
+                //         </p>
+                //       </div>
+                //     </div>
+                //   }>
                 <Button
-                  disabled
                   type={"primary"}
+                  disabled={!isAllowedToUpdateInvoice}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    rt.push(`invoice/${record.id}`);
+                  }}
                   icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
                   className="invoiceButton bg-mono50 border-transparent hover:bg-mono80 
-                  hover:border-transparent focus:bg-mono80 focus:border-mono80"
+                    hover:border-transparent focus:bg-mono50 focus:border-mono50"
                 />
-              ) : (
-                <Tooltip
-                  className="border rounded-md"
-                  placement="bottomRight"
-                  color="#FFFFFF"
-                  title={
-                    <div className="flex gap-2 text-mono30 p-2">
-                      <div>
-                        <EditSquareIconSvg size={20} color={"#4D4D4D"} />
-                      </div>
-                      <div>
-                        <p className="mig-caption--bold">Sunting Invoice</p>
-                        <p className="mig-caption">
-                          Sunting invoice untuk merubah data.
-                        </p>
-                      </div>
-                    </div>
-                  }
-                >
-                  <Button
-                    type={"primary"}
-                    disabled={!isAllowedToUpdateInvoice}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      rt.push(`invoice/${record.id}`);
-                    }}
-                    icon={<EditSquareIconSvg size={20} color={"#FFFFFF"} />}
-                    className="invoiceButton bg-mono50 border-transparent hover:bg-mono80 
-                    hover:border-transparent focus:bg-mono80 focus:border-mono80"
-                  />
-                </Tooltip>
               )}
-
-              <Tooltip
+              {/* <Tooltip
                 className="border rounded-md"
                 placement="bottomRight"
                 color="#FFFFFF"
                 title={
                   <div className="flex gap-2 p-2">
                     <div>
-                      <FileDownloadIconSvg size={20} color={"#35763B"} />
+                      <FileDownloadIconSvg size={20} color={"#00589F"} />
                     </div>
                     <div>
-                      <p className="mig-caption--bold text-primary100">
+                      <p className="mig-caption--bold text-secondary100">
                         Unduh File Invoice
                       </p>
                       <p className="text-mono30 mig-caption">
@@ -421,19 +572,33 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                       </p>
                     </div>
                   </div>
-                }
-              >
+                }> */}
+              <Button
+                type={"primary"}
+                disabled={!record.id}
+                onClick={(event) => handleDownloadClick(event, record)}
+                icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
+                className="bg-secondary100 border-secondary100 hover:bg-secondary 
+                      hover:border-secondary focus:bg-secondary100 focus:border-secondary100"
+              />
+
+              {!record?.is_posted && (
                 <Button
                   type={"primary"}
-                  // disabled={!isAllowedToUpdateEmployeeContract}
+                  disabled={!isAllowedToDeleteInvoice}
                   onClick={(event) => {
                     event.stopPropagation();
+                    setDataRowClicked({
+                      id: record?.id,
+                      invoice_number: record?.invoice_number,
+                    });
+                    setModalDelete(true);
                   }}
-                  icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
-                  className="bg-primary100 border-primary100 hover:bg-primary75 
-                hover:border-primary75 focus:bg-primary75 focus:border-primary75"
+                  icon={<TrashIconSvg size={20} color={"#FFFFFF"} />}
+                  className="bg-warning border-warning hover:bg-warning hover:opacity-75
+                  hover:border-warning focus:bg-warning focus:border-warning"
                 />
-              </Tooltip>
+              )}
             </div>
           ),
         };
@@ -441,13 +606,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
-  if (isAccessControlPending) {
-    return null;
-  }
-
-  // console.log({ priceRangeList });
-  // console.log({ selectedPriceRange });
-  // console.log({ priceRangeInput });
   return (
     <Layout
       tok={initProps}
@@ -490,7 +648,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
             <div className="flex flex-col gap-4">
               <div
                 className="flex flex-col gap-4 lg:flex-row lg:justify-between 
-                w-full lg:items-center "
+                w-full lg:items-center"
               >
                 {/* Start: Search criteria */}
                 {/* Search by keyword (kata kunci) */}
@@ -517,7 +675,6 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     defaultValue={queryParams.is_posted}
                     allowClear
                     name={`is_posted`}
-                    disabled={!isAllowedToGetInvoicestatusList}
                     placeholder="Status"
                     style={{ width: `100%` }}
                     className="themedSelector"
@@ -660,7 +817,8 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
               <p className="mig-caption text-mono30">
                 Menampilkan invoice bulan{" "}
                 <strong>
-                  {momentFormatDate(new Date(), "-", "MMMM YYYY")}
+                  {momentFormatDate(selectedMonthYear, "-", "MMMM YYYY")}
+                  {/* {momentFormatDate(new Date(), "-", "MMMM YYYY")} */}
                 </strong>
               </p>
             </div>
@@ -674,6 +832,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                 total={dataRawContracts?.total}
                 queryParams={queryParams}
                 setQueryParams={setQueryParams}
+                isAllowedToGetInvoice={isAllowedToGetInvoice}
               />
             </div>
           </div>
@@ -732,24 +891,84 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
         </Modal>
       </AccessControl>
 
-      {/* Modal Delete Contract */}
-      <AccessControl hasPermission={CONTRACT_DELETE}>
+      {/* Modal Delete Invoice */}
+      <AccessControl hasPermission={CONTRACT_INVOICE_DELETE}>
         <ModalHapus2
-          title={`Peringatan`}
+          title={
+            <div className="flex gap-2 items-center">
+              <AlertCircleIconSvg size={28} color={"#BF4A40"} />
+              <h3 className="mig-heading--3 text-warning">
+                Konfirmasi Hapus Invoice
+              </h3>
+            </div>
+          }
           visible={modalDelete}
           onvisible={setModalDelete}
           onOk={() => handleDeleteInvoice(dataRowClicked?.id)}
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"kontrak"}
+          itemName={"invoice"}
           loading={loadingDelete}
         >
           <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan kontrak{" "}
-            <strong>{dataRowClicked?.contract_number}</strong>?
+            Apakah Anda yakin ingin menghapus invoice dengan nomor invoice{" "}
+            <strong>{dataRowClicked?.invoice_number || "- "}?</strong>
           </p>
         </ModalHapus2>
+      </AccessControl>
+
+      {/* Modal Download Invoice */}
+      <AccessControl hasPermission={CONTRACT_INVOICE_GET}>
+        <ModalCore
+          title={
+            <h3 className="mig-heading--3 text-primary100">Unduh Invoice</h3>
+          }
+          visible={openDownloadModal}
+          onCancel={() => setOpenDownloadModal(false)}
+          footer={
+            <div className="flex gap-4 items-center justify-end">
+              <ButtonSys
+                type={"primary"}
+                color={"mono100"}
+                onClick={() => {
+                  setOpenDownloadModal(false);
+                }}
+              >
+                Batalkan
+              </ButtonSys>
+              <PDFDownloadLink
+                document={
+                  <InvoicePDFTemplate
+                    dataInvoice={dataInvoice}
+                    dataInvoiceDetail={dataInvoiceDetail}
+                    dataClient={dataClient}
+                    initProps={initProps}
+                  />
+                }
+                fileName={`Invoice_${dataInvoice?.invoice_number}.pdf`}
+              >
+                {({ blob, url, loading, error }) => (
+                  <Spin spinning={loading}>
+                    <ButtonSys type={"primary"}>
+                      <div className={"flex items-center"}>
+                        <DownloadIcon2Svg size={16} color={"#fffffff"} />
+                        <p className={"ml-2 text-white"}>Unduh Invoice</p>
+                      </div>
+                    </ButtonSys>
+                  </Spin>
+                )}
+              </PDFDownloadLink>
+            </div>
+          }
+        >
+          <Spin spinning={!isOnClient}>
+            <p>
+              Klik untuk mengunduh invoice dengan nomor&nbsp;
+              <strong>{dataInvoice.invoice_number || "-"}</strong>
+            </p>
+          </Spin>
+        </ModalCore>
       </AccessControl>
     </Layout>
   );

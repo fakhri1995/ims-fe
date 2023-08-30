@@ -2134,6 +2134,7 @@ const TableCustomInvoiceList = ({
   total,
   queryParams,
   setQueryParams,
+  isAllowedToGetInvoice,
 }) => {
   const [rowstate, setrowstate] = useState(0);
   return (
@@ -2170,7 +2171,9 @@ const TableCustomInvoiceList = ({
             setrowstate(record.id);
           },
           onClick: () => {
-            record.id && rt.push(`invoice/${record.id}`);
+            record.id &&
+              isAllowedToGetInvoice &&
+              rt.push(`invoice/${record.id}`);
           },
         };
       }}

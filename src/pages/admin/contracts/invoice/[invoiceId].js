@@ -1,4 +1,4 @@
-import { DownloadOutlined, FileTextOutlined } from "@ant-design/icons";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   DatePicker,
   Form,
@@ -22,10 +22,16 @@ import st from "components/layout-dashboard.module.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { CONTRACT_INVOICE_GET, CONTRACT_INVOICE_UPDATE } from "lib/features";
+import {
+  COMPANY_DETAIL_GET,
+  COMPANY_MAIN_BANKS_GET,
+  CONTRACT_INVOICE_GET,
+  CONTRACT_INVOICE_UPDATE,
+} from "lib/features";
 
 import ButtonSys from "../../../../components/button";
 import {
+  AlertCircleIconSvg,
   ArrowLeftIconSvg,
   CalendarEventIconSvg,
   CheckIconSvg,
@@ -34,6 +40,7 @@ import {
   PlusIconSvg,
 } from "../../../../components/icon";
 import ModalContractInfo from "../../../../components/modal/contracts/modalContractInfo";
+import { ModalUbah } from "../../../../components/modal/modalCustom";
 import {
   FILE,
   LIST,
@@ -41,25 +48,14 @@ import {
 import InvoiceItemSection from "../../../../components/screen/contract/invoice/InvoiceItemSection";
 import {
   convertDaysToString,
-  countSubTotal,
   generateStaticAssetUrl,
   getFileName,
   momentFormatDate,
   permissionWarningNotification,
 } from "../../../../lib/helper";
+import { contractInfoString } from "../[contractId]/invoice-template";
+import { InvoicePDFTemplate } from "./invoicePDF";
 import httpcookie from "cookie";
-
-export const contractInfoString = {
-  contract_number: "No. Kontrak",
-  title: "Judul Kontrak",
-  client: "Klien",
-  requester: "Requester",
-  initial_date: "Tanggal Dibuat",
-  start_date: "Tanggal Berlaku",
-  end_date: "Tanggal Selesai",
-  duration: "Durasi Kontrak",
-  extras: "Komponen Tambahan",
-};
 
 const ContractInvoiceFormIndex = ({
   dataProfile,
@@ -79,6 +75,8 @@ const ContractInvoiceFormIndex = ({
 
   const isAllowedToGetInvoice = hasPermission(CONTRACT_INVOICE_GET);
   const isAllowedToUpdateInvoice = hasPermission(CONTRACT_INVOICE_UPDATE);
+  const isAllowedToGetMainBanks = hasPermission(COMPANY_MAIN_BANKS_GET);
+  const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
 
   const rt = useRouter();
   // Breadcrumb url
@@ -90,21 +88,34 @@ const ContractInvoiceFormIndex = ({
   pathTitleArr.splice(1, 3, "Kontrak", "Invoice", "Sunting Draft Invoice");
 
   // 2. useState
-  const [refresh, setRefresh] = useState(-1);
+  // Data
   const [dataInvoice, setDataInvoice] = useState({});
   const [dataInvoiceDetail, setDataInvoiceDetail] = useState([]);
   const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
   const [dataServices, setDataServices] = useState([]);
+  const [bankAccountList, setBankAccountList] = useState([]);
+  const [dataClient, setDataClient] = useState({});
 
+  // Modal
   const [modalContractInfo, setModalContractInfo] = useState(false);
+  const [modalPublish, setModalPublish] = useState(false);
 
+  // Loading
   const [loadingContractInvoice, setLoadingContractInvoice] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
+
+  // Misc.
+  const [refresh, setRefresh] = useState(-1);
   const [showSuccessIcon, setShowSuccessIcon] = useState(false);
   const [disablePublish, setDisablePublish] = useState(true);
   const [isReadOnly, setIsReadOnly] = useState(false);
 
-  const requiredField = ["invoice_number", "invoice_name", "invoice_raise_at"];
+  const requiredField = [
+    dataInvoice?.invoice_number,
+    dataInvoice?.invoice_name,
+    dataInvoice?.invoice_raise_at,
+    dataInvoice?.invoice_total,
+  ];
 
   // 3. Use Effect & Use Query
   // 2.1. Get Invoice Data
@@ -208,31 +219,77 @@ const ContractInvoiceFormIndex = ({
 
   // 2.4. Enable "Terbitkan" button if all required fields are filled
   useEffect(() => {
-    const isAllFilled = requiredField.every(
-      (item) => dataInvoice[item]?.length
-    );
+    const isAllFilled = requiredField.every((item) => Boolean(item));
     if (isAllFilled) {
       setDisablePublish(false);
+    } else {
+      setDisablePublish(true);
     }
-  }, [requiredField.map((item) => dataInvoice[item])]);
+  }, [...requiredField]);
 
-  // 2.5. Auto count "Total Tagihan" when service item is altered
-  useEffect(() => {
-    const newInvoiceTotal = dataServices?.reduce(
-      (acc, item) => acc + countSubTotal(item?.pax, item?.price),
-      0
-    );
-    setDataInvoice((prev) => ({ ...prev, invoice_total: newInvoiceTotal }));
-  }, [dataServices]);
-
-  // 2.6. Clean up debounce function when component unmounts
+  // 2.5. Clean up debounce function when component unmounts
   useEffect(() => {
     return () => {
       debouncedSaveInvoice.cancel();
     };
   }, []);
 
-  // 4. Event
+  // 2.6. Get main bank account list
+  useEffect(() => {
+    if (!isAllowedToGetMainBanks) {
+      permissionWarningNotification("Mendapatkan", "Detail Company");
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getMainBanks`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setBankAccountList(res2?.data);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  }, [isAllowedToGetMainBanks]);
+
+  // 2.7. [PDF] Get client data
+  useEffect(() => {
+    if (!isAllowedToGetCompanyDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Company");
+      return;
+    }
+
+    if (dataInvoice?.client_id) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${dataInvoice?.client_id}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataClient(res2?.data);
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        });
+    }
+  }, [dataInvoice?.client_id]);
+
+  // 3. Event
   // Debounce function for auto save draft
   const debouncedSaveInvoice = useCallback(
     debounce((data) => {
@@ -268,7 +325,6 @@ const ContractInvoiceFormIndex = ({
       return;
     }
 
-    // TODO: recheck if API is done
     const payload = {
       ...data,
       is_posted: isPosted,
@@ -303,6 +359,7 @@ const ContractInvoiceFormIndex = ({
               message: "Invoice berhasil diterbitkan.",
               duration: 3,
             });
+            setModalPublish(false);
           }
         } else {
           notification.error({
@@ -385,40 +442,70 @@ const ContractInvoiceFormIndex = ({
             </div>
             {!isReadOnly ? (
               <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 lg:items-center">
-                <ButtonSys
-                  type={"primary"}
-                  color={"secondary100"}
-                  disabled={false}
-                  // onClick={() => setModalInvoice(true)}
+                <PDFDownloadLink
+                  document={
+                    <InvoicePDFTemplate
+                      dataInvoice={dataInvoice}
+                      dataInvoiceDetail={dataInvoiceDetail}
+                      dataClient={dataClient}
+                      initProps={initProps}
+                    />
+                  }
+                  fileName={`Invoice_${dataInvoice?.invoice_number}.pdf`}
                 >
-                  <div className="flex space-x-2 items-center">
-                    <p>Unduh Draft</p>
-                    <DownloadIcon2Svg color={"#FFFFFF"} size={20} />
-                  </div>
-                </ButtonSys>
+                  {({ blob, url, loading, error }) => (
+                    <Spin spinning={loading}>
+                      <ButtonSys
+                        type={"primary"}
+                        color={"secondary100"}
+                        disabled={!isAllowedToGetInvoice}
+                      >
+                        <div className="flex space-x-2 items-center">
+                          <p>Unduh Draft</p>
+                          <DownloadIcon2Svg color={"#FFFFFF"} size={20} />
+                        </div>
+                      </ButtonSys>
+                    </Spin>
+                  )}
+                </PDFDownloadLink>
 
                 <ButtonSys
                   type={"primary"}
                   disabled={!isAllowedToUpdateInvoice || disablePublish}
                   onClick={() => {
-                    handleSaveInvoice(1, dataInvoice);
+                    setModalPublish(true);
                   }}
                 >
                   <p>Terbitkan</p>
                 </ButtonSys>
               </div>
             ) : (
-              <ButtonSys
-                type={"primary"}
-                color={"secondary100"}
-                disabled={false}
-                // onClick={() => setModalInvoice(true)}
+              <PDFDownloadLink
+                document={
+                  <InvoicePDFTemplate
+                    dataInvoice={dataInvoice}
+                    dataInvoiceDetail={dataInvoiceDetail}
+                    dataClient={dataClient}
+                    initProps={initProps}
+                  />
+                }
+                fileName={`Invoice_${dataInvoice?.invoice_number}.pdf`}
               >
-                <div className="flex space-x-2 items-center">
-                  <p>Unduh </p>
-                  <DownloadIcon2Svg color={"#FFFFFF"} size={20} />
-                </div>
-              </ButtonSys>
+                {({ blob, url, loading, error }) => (
+                  <Spin spinning={loading}>
+                    <ButtonSys
+                      type={"primary"}
+                      color={"secondary100"}
+                      disabled={!isAllowedToGetInvoice}
+                    >
+                      <div className="flex space-x-2 items-center">
+                        <p>Unduh</p>
+                        <DownloadIcon2Svg color={"#FFFFFF"} size={20} />
+                      </div>
+                    </ButtonSys>
+                  </Spin>
+                )}
+              </PDFDownloadLink>
             )}
           </div>
           <Spin spinning={loadingContractInvoice}>
@@ -442,7 +529,6 @@ const ContractInvoiceFormIndex = ({
                       message: "Nomor invoice wajib diisi",
                     },
                   ]}
-                  // initialValue={}
                 >
                   <>
                     <Input
@@ -489,7 +575,6 @@ const ContractInvoiceFormIndex = ({
                       message: "PT klien wajib diisi",
                     },
                   ]}
-                  // initialValue={newgroup.name}
                 >
                   <>
                     <Select
@@ -516,7 +601,7 @@ const ContractInvoiceFormIndex = ({
                     <DatePicker
                       placeholder="Pilih tanggal terbit"
                       name={`invoice_raise_at`}
-                      defaultValue={moment(dataInvoice?.invoice_raise_at)}
+                      value={moment(dataInvoice?.invoice_raise_at)}
                       disabled={isReadOnly}
                       onChange={(date, datestring) => {
                         onChangeInput("invoice_raise_at", datestring);
@@ -538,15 +623,49 @@ const ContractInvoiceFormIndex = ({
                 >
                   <>
                     <InputNumber
-                      disabled
                       name={`invoice_total`}
-                      value={dataInvoice?.invoice_total}
+                      disabled={isReadOnly}
+                      value={dataInvoice.invoice_total}
                       formatter={(value) =>
                         `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                       }
-                      parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                      parser={(value) => value.replace(/Rp\s?|(\.*)/g, "")}
+                      onChange={(value) => {
+                        onChangeInput("invoice_total", value);
+                      }}
                       className="w-full"
                     />
+                  </>
+                </Form.Item>
+
+                <Form.Item
+                  name="bank_id"
+                  label="Nomor Rekening"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Nomor rekening wajib diisi",
+                    },
+                  ]}
+                >
+                  <>
+                    {/* TODO: adjust if API is done */}
+                    <Select
+                      name="bank_id"
+                      value={dataInvoice?.bank_id || null}
+                      disabled={!isAllowedToGetMainBanks || isReadOnly}
+                      placeholder="Pilih Rekening"
+                      onChange={(value) => {
+                        onChangeInput("bank_id", value);
+                      }}
+                      className="themedSelector"
+                    >
+                      {bankAccountList?.map((item) => (
+                        <Select.Option key={item?.id} value={item?.id}>
+                          {item?.name} - {item?.account_number}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </>
                 </Form.Item>
               </Form>
@@ -620,6 +739,33 @@ const ContractInvoiceFormIndex = ({
           isInvoiceForm={true}
           handleSaveInvoice={handleSaveInvoice}
         />
+      </AccessControl>
+
+      {/* Modal "Terbitkan" */}
+      <AccessControl hasPermission={CONTRACT_INVOICE_UPDATE}>
+        <ModalUbah
+          title={
+            <div className="flex gap-2 items-center">
+              <AlertCircleIconSvg size={28} color={"#35763B75"} />
+              <h3 className="mig-heading--3 text-primary100">
+                Konfirmasi Terbitkan Invoice
+              </h3>
+            </div>
+          }
+          visible={modalPublish}
+          onvisible={setModalPublish}
+          onOk={() => handleSaveInvoice(1, dataInvoice)}
+          onCancel={() => setModalPublish(false)}
+          loading={loadingSave}
+          disabled={!isAllowedToUpdateInvoice}
+          okButtonText={"Terbitkan"}
+          closable={false}
+        >
+          <p>
+            Apakah Anda yakin ingin menerbitkan invoice dengan nomor invoice{" "}
+            <strong>{dataInvoice?.invoice_number}?</strong>
+          </p>
+        </ModalUbah>
       </AccessControl>
     </Layout>
   );

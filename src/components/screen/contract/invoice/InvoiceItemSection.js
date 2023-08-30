@@ -464,9 +464,16 @@ const InvoiceItemSection = ({
 
                           // fetch API
                           if (handleSaveInvoice) {
+                            const newInvoiceTotal = tempDataServices?.reduce(
+                              (acc, item) =>
+                                acc + countSubTotal(item?.pax, item?.price),
+                              0
+                            );
+
                             handleSaveInvoice(0, {
                               ...dataInvoiceUpdate,
                               invoice_services: payloadServices,
+                              invoice_total: newInvoiceTotal,
                             });
                           }
                         }}
