@@ -225,8 +225,10 @@ export const InvoicePDFTemplate = ({
 
   const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
 
-  // Get main company data
   const [dataMainCompany, setDataMainCompany] = useState({});
+  const [dynamicColumnCount, setDynamicColumnCount] = useState(0);
+
+  // Get main company data
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=1`, {
       method: `GET`,
@@ -245,6 +247,10 @@ export const InvoicePDFTemplate = ({
         });
       });
   }, [isAllowedToGetCompanyDetail]);
+
+  useEffect(() => {
+    setDynamicColumnCount(dataInvoice?.service_attribute?.length);
+  }, [dataInvoice]);
 
   // PDF Stylesheet
   // Source of font link: https://developers.google.com/fonts/docs/developer_api?apix_params=%7B%22sort%22%3A%22ALPHA%22%7D
@@ -318,7 +324,7 @@ export const InvoicePDFTemplate = ({
     },
 
     colKet: {
-      width: "25%",
+      width: dynamicColumnCount ? `${82 / (3 + dynamicColumnCount)}%` : "25%",
     },
 
     colPax: {
@@ -326,16 +332,16 @@ export const InvoicePDFTemplate = ({
     },
 
     colHarga: {
-      width: "28%",
+      width: dynamicColumnCount ? `${94 / (3 + dynamicColumnCount)}%` : "28%",
     },
 
     colSub: {
-      width: "20%",
-      textAlign: dataInvoice?.service_attribute?.length ? "left" : "right",
+      width: dynamicColumnCount ? `${82 / (3 + dynamicColumnCount)}%` : "20%",
+      textAlign: dynamicColumnCount ? "left" : "right",
     },
 
     colDynamic: {
-      width: `${35 / (dataInvoice?.service_attribute?.length || 1)}%`,
+      width: dynamicColumnCount && `${82 / (3 + dynamicColumnCount)}%`,
     },
   });
 
@@ -357,11 +363,21 @@ export const InvoicePDFTemplate = ({
       <Text style={styles.colSub}>Subtotal</Text>
 
       {/* dynamic column header */}
-      {dataInvoice?.service_attribute?.map((item) => (
-        <Text key={item} style={styles.colDynamic}>
-          {item}
-        </Text>
-      ))}
+      {dataInvoice?.service_attribute?.map((item, idx) => {
+        return (
+          <Text
+            key={item}
+            style={[
+              styles.colDynamic,
+              {
+                textAlign: idx + 1 == dynamicColumnCount ? "right" : "left",
+              },
+            ]}
+          >
+            {item}
+          </Text>
+        );
+      })}
     </View>
   );
 
@@ -474,7 +490,6 @@ export const InvoicePDFTemplate = ({
                 {/* Repeat table header in each top of page */}
                 {(idx === 0 || idx === 12 || idx == 33) && <TableHeader />}
                 <View
-                  // minPresenceAhead={10}
                   style={[
                     styles.rowBetween,
                     { marginTop: 12, textAlign: "left" },
@@ -495,7 +510,13 @@ export const InvoicePDFTemplate = ({
                   {dataInvoice?.service_attribute?.map((colName, colIdx) => (
                     <Text
                       key={`${item?.product?.name}-${colName}`}
-                      style={[styles.colDynamic]}
+                      style={[
+                        styles.colDynamic,
+                        {
+                          textAlign:
+                            colIdx + 1 == dynamicColumnCount ? "right" : "left",
+                        },
+                      ]}
                     >
                       {item?.invoice_service_value?.details[colIdx] || "-"}
                     </Text>
@@ -556,7 +577,7 @@ export const InvoicePDFTemplate = ({
 };
 
 export async function getServerSideProps({ req, res, params }) {
-  const invoiceId = 14;
+  const invoiceId = 18;
   let initProps = {};
   if (!req.headers.cookie) {
     return {
