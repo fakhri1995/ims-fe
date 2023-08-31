@@ -10,7 +10,6 @@ import {
   View,
 } from "@react-pdf/renderer";
 import { notification } from "antd";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
 
@@ -50,15 +49,6 @@ const ContractInvoicePDF = ({ initProps, invoiceId }) => {
   const isAllowedToGetInvoice = hasPermission(CONTRACT_INVOICE_GET);
   const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
 
-  const rt = useRouter();
-  // Breadcrumb url
-  const pathArr = rt.asPath.split("/").slice(1);
-
-  // Breadcrumb title
-  const pathTitleArr = [...pathArr];
-  pathTitleArr.splice(1, 1);
-  pathTitleArr.splice(1, 3, "Kontrak", "Invoice", "Sunting Draft Invoice");
-
   // 2. useState
   // Data
   const [dataInvoice, setDataInvoice] = useState({});
@@ -72,7 +62,7 @@ const ContractInvoicePDF = ({ initProps, invoiceId }) => {
   const [windowSize, setWindowSize] = useState([]);
 
   // 3. Use Effect & Use Query
-  // 2.1. Get Invoice Data
+  // 3.1. Get Invoice Data
   useEffect(() => {
     if (!isAllowedToGetInvoice) {
       permissionWarningNotification("Mendapatkan", "Data Contract Invoice");
@@ -114,7 +104,7 @@ const ContractInvoicePDF = ({ initProps, invoiceId }) => {
     }
   }, [isAllowedToGetInvoice, invoiceId]);
 
-  // 2.2. Set displayed invoice detail
+  // 3.2. Set displayed invoice detail
   useEffect(() => {
     if (dataInvoice?.invoice_attribute?.length) {
       const currentInvoiceDetail = [];
@@ -162,7 +152,7 @@ const ContractInvoicePDF = ({ initProps, invoiceId }) => {
     }
   }, [dataInvoice?.invoice_attribute]);
 
-  // 2.3. Get client data
+  // 3.3. Get client data
   useEffect(() => {
     if (!isAllowedToGetCompanyDetail) {
       permissionWarningNotification("Mendapatkan", "Detail Company");
@@ -225,8 +215,10 @@ export const InvoicePDFTemplate = ({
 
   const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
 
-  // Get main company data
   const [dataMainCompany, setDataMainCompany] = useState({});
+  const [dynamicColumnCount, setDynamicColumnCount] = useState(0);
+
+  // Get main company data
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=1`, {
       method: `GET`,
@@ -245,6 +237,10 @@ export const InvoicePDFTemplate = ({
         });
       });
   }, [isAllowedToGetCompanyDetail]);
+
+  useEffect(() => {
+    setDynamicColumnCount(dataInvoice?.service_attribute?.length);
+  }, [dataInvoice]);
 
   // PDF Stylesheet
   // Source of font link: https://developers.google.com/fonts/docs/developer_api?apix_params=%7B%22sort%22%3A%22ALPHA%22%7D
@@ -318,7 +314,7 @@ export const InvoicePDFTemplate = ({
     },
 
     colKet: {
-      width: "25%",
+      width: dynamicColumnCount ? `${82 / (3 + dynamicColumnCount)}%` : "25%",
     },
 
     colPax: {
@@ -326,16 +322,16 @@ export const InvoicePDFTemplate = ({
     },
 
     colHarga: {
-      width: "28%",
+      width: dynamicColumnCount ? `${94 / (3 + dynamicColumnCount)}%` : "28%",
     },
 
     colSub: {
-      width: "20%",
-      textAlign: dataInvoice?.service_attribute?.length ? "left" : "right",
+      width: dynamicColumnCount ? `${82 / (3 + dynamicColumnCount)}%` : "20%",
+      textAlign: dynamicColumnCount ? "left" : "right",
     },
 
     colDynamic: {
-      width: `${35 / (dataInvoice?.service_attribute?.length || 1)}%`,
+      width: dynamicColumnCount && `${82 / (3 + dynamicColumnCount)}%`,
     },
   });
 
@@ -357,11 +353,21 @@ export const InvoicePDFTemplate = ({
       <Text style={styles.colSub}>Subtotal</Text>
 
       {/* dynamic column header */}
-      {dataInvoice?.service_attribute?.map((item) => (
-        <Text key={item} style={styles.colDynamic}>
-          {item}
-        </Text>
-      ))}
+      {dataInvoice?.service_attribute?.map((item, idx) => {
+        return (
+          <Text
+            key={item}
+            style={[
+              styles.colDynamic,
+              {
+                textAlign: idx + 1 == dynamicColumnCount ? "right" : "left",
+              },
+            ]}
+          >
+            {item}
+          </Text>
+        );
+      })}
     </View>
   );
 
@@ -396,7 +402,6 @@ export const InvoicePDFTemplate = ({
         </View>
         {/* Body */}
         {/* INVOICE DETAIL SECTION */}
-        {/* Left column */}
         <View
           style={[
             styles.rowSection,
@@ -470,12 +475,10 @@ export const InvoicePDFTemplate = ({
           {dataInvoice?.invoice_services?.map((item, idx) => {
             const subtotal = countSubTotal(item?.pax, item?.price);
             return (
-              <View>
+              <View key={item?.id}>
                 {/* Repeat table header in each top of page */}
                 {(idx === 0 || idx === 12 || idx == 33) && <TableHeader />}
                 <View
-                  key={item?.id}
-                  // minPresenceAhead={10}
                   style={[
                     styles.rowBetween,
                     { marginTop: 12, textAlign: "left" },
@@ -496,7 +499,13 @@ export const InvoicePDFTemplate = ({
                   {dataInvoice?.service_attribute?.map((colName, colIdx) => (
                     <Text
                       key={`${item?.product?.name}-${colName}`}
-                      style={[styles.colDynamic]}
+                      style={[
+                        styles.colDynamic,
+                        {
+                          textAlign:
+                            colIdx + 1 == dynamicColumnCount ? "right" : "left",
+                        },
+                      ]}
                     >
                       {item?.invoice_service_value?.details[colIdx] || "-"}
                     </Text>
@@ -557,7 +566,7 @@ export const InvoicePDFTemplate = ({
 };
 
 export async function getServerSideProps({ req, res, params }) {
-  const invoiceId = 14;
+  const invoiceId = 18;
   let initProps = {};
   if (!req.headers.cookie) {
     return {

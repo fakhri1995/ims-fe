@@ -10,7 +10,6 @@ import {
 import locale from "antd/lib/date-picker/locale/id_ID";
 import moment from "moment";
 import "moment/locale/id";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
@@ -81,8 +80,18 @@ const ModalInvoiceCreate = ({
         if (response.success) {
           handleClose();
           notification.success({
-            message: `Draft invoice berhasil ditambahkan.`,
-            duration: 3,
+            message: (
+              <p>
+                Draft invoice berhasil ditambahkan!{" "}
+                <a
+                  href={`/admin/contracts/invoice/${response?.data?.id}`}
+                  className="text-primary100 font-bold"
+                >
+                  Lihat Draft Disini
+                </a>
+              </p>
+            ),
+            duration: 5,
           });
         } else {
           notification.error({
