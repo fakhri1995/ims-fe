@@ -21,7 +21,7 @@ import {
   WritingIconSvg,
 } from "../../../icon";
 
-const ContractActionSection = ({ contractId }) => {
+const ContractActionSection = ({ contractId, invoiceTemplate }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -74,7 +74,10 @@ const ContractActionSection = ({ contractId }) => {
           <p className="mb-2 mig-caption--bold text-primary100">
             Template Invoice
           </p>
-          <p className="mig-caption text-primary75">Template belum terisi</p>
+
+          <p className="mig-caption text-primary75 text-left">
+            {invoiceTemplate ? "Template tersedia" : "Template belum terisi"}
+          </p>
         </div>
       </button>
     </>
