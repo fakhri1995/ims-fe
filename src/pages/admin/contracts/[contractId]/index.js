@@ -96,7 +96,7 @@ const ContractDetailIndex = ({
     };
   }, []);
 
-  // get contract detail
+  // Get contract detail
   const { data: dataContract, isLoading: loadingDataContract } = useQuery(
     [CONTRACT_GET],
     () =>
@@ -146,13 +146,19 @@ const ContractDetailIndex = ({
               }
             >
               <section className="grid grid-cols-1 gap-2">
-                <ContractActionSection contractId={contractId} />
+                <ContractActionSection
+                  contractId={contractId}
+                  invoiceTemplate={dataContract?.invoice_template}
+                />
               </section>
             </Collapse.Panel>
           </Collapse>
         ) : (
-          <section className="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 shadow-md rounded-md bg-white p-4 lg:p-6">
-            <ContractActionSection contractId={contractId} />
+          <section className="md:col-span-12 grid grid-cols-1 gap-4 lg:gap-6 shadow-md rounded-md bg-white p-4 lg:p-6">
+            <ContractActionSection
+              contractId={contractId}
+              invoiceTemplate={dataContract?.invoice_template}
+            />
           </section>
         )}
 

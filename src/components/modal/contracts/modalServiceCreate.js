@@ -1,4 +1,4 @@
-import { Form, Input, Modal, Select, Spin } from "antd";
+import { Form, Input, InputNumber, Modal, Select, Spin } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useRef } from "react";
@@ -14,6 +14,7 @@ import { ProductCatalogService } from "../../../apis/product-catalog";
 import { countSubTotal } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { PlusIconSvg } from "../../icon";
+import { InputCurrency } from "../../input";
 
 const ModalServiceCreate = ({
   initProps,
@@ -249,21 +250,16 @@ const ModalServiceCreate = ({
                   ]}
                 >
                   <>
-                    <Input
-                      addonBefore="Rp."
-                      placeholder="Isi harga produk"
-                      type="number"
-                      min={0}
+                    <InputCurrency
+                      placeholder={"Isi harga produk"}
                       value={service?.price}
-                      onChange={(e) => {
+                      onChange={(value) => {
                         let tempServiceList = [...dataServiceList];
-                        let newPrice = e.target.value;
-                        tempServiceList[idx].price = newPrice;
+                        tempServiceList[idx].price = value;
                         tempServiceList[idx].subtotal = countSubTotal(
                           tempServiceList[idx]?.pax,
-                          newPrice
+                          value
                         );
-
                         setDataServiceList(tempServiceList);
                       }}
                     />

@@ -1,13 +1,5 @@
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import {
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Spin,
-  notification,
-} from "antd";
+import { DatePicker, Form, Input, Select, Spin, notification } from "antd";
 import debounce from "lodash.debounce";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -33,12 +25,12 @@ import ButtonSys from "../../../../components/button";
 import {
   AlertCircleIconSvg,
   ArrowLeftIconSvg,
-  CalendarEventIconSvg,
   CheckIconSvg,
   DownloadIcon2Svg,
   FileTextIconSvg,
   PlusIconSvg,
 } from "../../../../components/icon";
+import { InputCurrency } from "../../../../components/input";
 import ModalContractInfo from "../../../../components/modal/contracts/modalContractInfo";
 import { ModalUbah } from "../../../../components/modal/modalCustom";
 import {
@@ -622,18 +614,12 @@ const ContractInvoiceFormIndex = ({
                   ]}
                 >
                   <>
-                    <InputNumber
-                      name={`invoice_total`}
-                      disabled={isReadOnly}
+                    <InputCurrency
                       value={dataInvoice.invoice_total}
-                      formatter={(value) =>
-                        `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-                      }
-                      parser={(value) => value.replace(/Rp\s?|(\.*)/g, "")}
+                      disabled={isReadOnly}
                       onChange={(value) => {
                         onChangeInput("invoice_total", value);
                       }}
-                      className="w-full"
                     />
                   </>
                 </Form.Item>

@@ -118,19 +118,19 @@ const ContractInvoiceTemplateIndex = ({
   const [dataServiceTemplateNames, setDataServiceTemplateNames] = useState([]);
   const [dataServices, setDataServices] = useState([]);
 
-  const [selectedBank, setSelectedBank] = useState({});
+  const [selectedBank, setSelectedBank] = useState(-1);
   const [bankAccountList, setBankAccountList] = useState([]);
 
   // Modal
   const [modalInvoice, setModalInvoice] = useState(false);
   const [modalContractInfo, setModalContractInfo] = useState(false);
 
-  // Loading
+  // Misc.
   const [loadingSave, setLoadingSave] = useState(false);
 
   // 3. Use Effect & Use Query
   // 3.1. Get contract template detail
-  const { data: dataContract, isLoading: loadingDataContractTemplate } =
+  const { data: dataContractTemplate, isLoading: loadingDataContractTemplate } =
     useQuery(
       [CONTRACT_TEMPLATE_GET, refresh, contractId],
       () =>
@@ -148,11 +148,11 @@ const ContractInvoiceTemplateIndex = ({
 
   // 3.2. Display invoice detail
   useEffect(() => {
-    if (dataContract?.invoice_template) {
+    if (dataContractTemplate?.invoice_template) {
       const currentInvoiceTemplate = [];
-      for (let item of dataContract?.invoice_template?.details) {
+      for (let item of dataContractTemplate?.invoice_template?.details) {
         if (!item?.includes("extras")) {
-          let tempValue = dataContract[item];
+          let tempValue = dataContractTemplate[item];
 
           if (["initial_date", "start_date", "end_date"].includes(item)) {
             tempValue = momentFormatDate(tempValue);
@@ -163,11 +163,11 @@ const ContractInvoiceTemplateIndex = ({
           }
 
           if (item == "requester") {
-            tempValue = dataContract?.requester?.name;
+            tempValue = dataContractTemplate?.requester?.name;
           }
 
           if (item == "client") {
-            tempValue = dataContract?.client?.name;
+            tempValue = dataContractTemplate?.client?.name;
           }
 
           currentInvoiceTemplate.push({
@@ -176,7 +176,7 @@ const ContractInvoiceTemplateIndex = ({
             value: tempValue,
           });
         } else {
-          for (let extra of dataContract?.extras) {
+          for (let extra of dataContractTemplate?.extras) {
             if (`extras.${extra?.key}` == item) {
               const dataExtra = {
                 name: `extras.${extra?.key}`,
@@ -192,13 +192,15 @@ const ContractInvoiceTemplateIndex = ({
       }
       setDataInvoice(currentInvoiceTemplate);
     }
-  }, [dataContract?.invoice_template]);
+  }, [dataContractTemplate?.invoice_template]);
 
   // 3.3. Fill state for item table
   useEffect(() => {
-    setDataServiceTemplateNames(dataContract?.service_template?.details);
-    setDataServices(dataContract?.services);
-  }, [dataContract?.service_template, dataContract?.services]);
+    setDataServiceTemplateNames(
+      dataContractTemplate?.service_template?.details
+    );
+    setDataServices(dataContractTemplate?.services);
+  }, [dataContractTemplate?.service_template, dataContractTemplate?.services]);
 
   // 3.4. Get main bank account list
   useEffect(() => {
@@ -225,11 +227,11 @@ const ContractInvoiceTemplateIndex = ({
       });
   }, [isAllowedToGetMainBanks]);
 
-  // 3.5. Set period value from dataContract
+  // 3.5. Set period value from dataContractTemplate
   useEffect(() => {
-    setPeriod(dataContract?.invoice_template?.invoice_period);
-    setSelectedBank(dataContract?.invoice_template?.bank_id);
-  }, [dataContract?.invoice_template]);
+    setPeriod(dataContractTemplate?.invoice_template?.invoice_period);
+    setSelectedBank(dataContractTemplate?.invoice_template?.bank_id);
+  }, [dataContractTemplate?.invoice_template]);
 
   // 4. Event
   const handleSaveInvoiceTemplate = () => {
@@ -243,9 +245,9 @@ const ContractInvoiceTemplateIndex = ({
       invoice_period: period,
       invoice_template: dataInvoice.map((item) => item.name),
       service_template: dataServiceTemplateNames,
-      service_template_values: dataServices?.map(
-        (item) => item?.service_template_value
-      ),
+      service_template_values: dataServiceTemplateNames?.length
+        ? dataServices?.map((item) => item?.service_template_value)
+        : [],
       bank_id: selectedBank,
     };
 
@@ -313,7 +315,10 @@ const ContractInvoiceTemplateIndex = ({
               <ButtonSys
                 type={"default"}
                 onClick={() => setModalInvoice(true)}
-                disabled={!isAllowedToAddInvoice}
+                disabled={
+                  !isAllowedToAddInvoice ||
+                  !dataContractTemplate?.invoice_template
+                }
               >
                 <div className="flex space-x-2 items-center">
                   <FileTextOutlined rev={""} />
@@ -323,7 +328,9 @@ const ContractInvoiceTemplateIndex = ({
               <ButtonSys
                 onClick={handleSaveInvoiceTemplate}
                 type={"primary"}
-                disabled={!isAllowedToUpdateInvoiceTemplate}
+                disabled={
+                  !isAllowedToUpdateInvoiceTemplate || !period || !selectedBank
+                }
               >
                 <p>Simpan Template Invoice</p>
               </ButtonSys>
@@ -332,10 +339,12 @@ const ContractInvoiceTemplateIndex = ({
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
               <p className="mig-caption--bold">Klien</p>
-              <p>{dataContract?.client?.name}</p>
+              <p>{dataContractTemplate?.client?.name}</p>
             </div>
             <div className="space-y-2">
-              <p className="mig-caption--bold">Periode Penagihan</p>
+              <p className="mig-caption--bold">
+                <span className="text-[#ff4d4f]">*</span> Periode Penagihan
+              </p>
               <DatePicker
                 allowEmpty
                 format={"DD"}
@@ -364,7 +373,9 @@ const ContractInvoiceTemplateIndex = ({
               />
             </div>
             <div className="space-y-2">
-              <p className="mig-caption--bold">Nomor Rekening</p>
+              <p className="mig-caption--bold">
+                <span className="text-[#ff4d4f]">*</span> Nomor Rekening
+              </p>
               {/* TODO: adjust if API is done */}
               <Select
                 value={selectedBank || null}
@@ -435,13 +446,13 @@ const ContractInvoiceTemplateIndex = ({
         initProps={initProps}
         visible={modalInvoice}
         onvisible={setModalInvoice}
-        dataContract={dataContract}
+        dataContract={dataContractTemplate}
       />
 
       <ModalContractInfo
         visible={modalContractInfo}
         onvisible={setModalContractInfo}
-        dataContract={dataContract}
+        dataContract={dataContractTemplate}
         dataInvoice={dataInvoice}
         setDataInvoice={setDataInvoice}
       />

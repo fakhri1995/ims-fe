@@ -1,4 +1,12 @@
-import { DatePicker, Input, Radio, Select, TimePicker, TreeSelect } from "antd";
+import {
+  DatePicker,
+  Input,
+  InputNumber,
+  Radio,
+  Select,
+  TimePicker,
+  TreeSelect,
+} from "antd";
 import React from "react";
 
 import { Label } from "./typography";
@@ -370,6 +378,28 @@ const InputProduk = ({
   return <Input className={"h-[52px]"} />;
 };
 
+const InputCurrency = ({
+  placeholder,
+  value,
+  onChange,
+  onKeyPress,
+  disabled,
+}) => {
+  return (
+    <InputNumber
+      placeholder={placeholder}
+      min={0}
+      value={value}
+      formatter={(value) => `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+      parser={(value) => value.replace(/Rp\s?|(\.*)/g, "")}
+      onChange={onChange}
+      onKeyPress={onKeyPress}
+      disabled={disabled}
+      className="w-full"
+    />
+  );
+};
+
 export {
   InputRequired,
   InputNotRequired,
@@ -384,4 +414,5 @@ export {
   TextAreaRequired,
   TextAreaNotRequired,
   InputProduk,
+  InputCurrency,
 };
