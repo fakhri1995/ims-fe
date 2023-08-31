@@ -721,7 +721,7 @@ ol {
   display: inline-block;
   align-items: center;
 }
-.exampe .ant-select-single .ant-select-selector .ant-select-selection-search {
+.example .ant-select-single .ant-select-selector .ant-select-selection-search {
   position: absolute;
   top: 11px;
   align-self: center;
@@ -737,7 +737,9 @@ ol {
   bottom: 0;
   left: 11px;
 }
-
+.customSelect .ant-select-selection-placeholder {
+  color: rgba(53, 118, 59, 1);
+}
 .example
   .ant-select-show-search.ant-select:not(.ant-select-customize-input)
   .ant-select-selector {

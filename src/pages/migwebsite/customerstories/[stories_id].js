@@ -131,8 +131,8 @@ function CustomerStoriesDetail({}) {
               res2.data[0].title_id != "" &&
               res2.data[0].description_id != "" &&
               res2.data[0].page_path_id != "" &&
-              res2.data[0].content_id != "" &&
-              res2.data[0].tags_id != ""
+              res2.data[0].content_id != ""
+              // res2.data[0].tags_id != ""
             ) {
               setHalamanId(true);
               setDetailBlog(res2.data[0]);
@@ -212,7 +212,7 @@ function CustomerStoriesDetail({}) {
                 res2.data[i].description_id != "" &&
                 res2.data[i].page_path_id != "" &&
                 res2.data[i].content_id != "" &&
-                res2.data[i].tags_id != "" &&
+                // res2.data[i].tags_id != "" &&
                 res2.data[i].page_path_id != page
               ) {
                 dataTemp.push(res2.data[i]);
@@ -828,7 +828,7 @@ function CustomerStoriesDetail({}) {
                           )}
                     </p>
                     <span class="text-xs mt-1 font-gilroyregular text-primarygreen bg-greenTrans20 px-2 py-1 rounded-[20px]">
-                      {locale == "en" ? dataarticle.tags : dataarticle.tags_id}
+                      {locale == "en" ? dataarticle.tags : dataarticle?.tags_id}
                     </span>
                   </div>
                 </div>

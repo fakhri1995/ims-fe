@@ -39,9 +39,9 @@ import { useAccessControl } from "contexts/access-control";
 import { ATTENDANCE_USER_ADMIN_GET, ATTENDANCE_USER_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import LayoutDashboard from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
-import styles from "./projects.module.scss";
+import LayoutDashboard from "../../../components/layout-dashboardNew";
+import "./projects.module.scss";
 import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
@@ -132,18 +132,15 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
   //   },
   // ]);
   const [statusSelected, setStatusSelected] = useState(null);
+  const [dataDetailUser, setDataDetailUser] = useState(null);
   const [datafiltertipetasks, setDatafiltertipetasks] = useState([
     {
       id: 1,
-      name: "Proyek 1",
+      name: "Proyek",
     },
     {
       id: 2,
-      name: "Proyek 2",
-    },
-    {
-      id: 3,
-      name: "Proyek 3",
+      name: "Tugas",
     },
   ]);
   const [dataStatusList, setDataStatusList] = useState([]);
@@ -252,6 +249,7 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
   useEffect(() => {
     getProjects();
     getProjectStatus();
+    getDetailUser();
   }, []);
 
   useEffect(() => {
@@ -298,6 +296,23 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
       .then((res2) => {
         if (res2.success) {
           setDataTasks(res2.data.data);
+        }
+      });
+  };
+  const getDetailUser = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentDetail?account_id=${userId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(token),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataDetailUser(res2.data);
         }
       });
   };
@@ -372,7 +387,7 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
         <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-2/5 py-6 space-y-6">
           {/* Detail attendance meta */}
           <h3 className="mig-heading--4">
-            Proyek & Tugas {dataProfile?.data?.name}
+            Proyek & Tugas {dataDetailUser?.name}
           </h3>
           <div
             onClick={() => onCLickAllTask()}
@@ -460,10 +475,11 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
           <div className="flex flex-row">
             <div className="w-3/12">
               <Select
+                className="customSelect"
                 placeholder="Proyek"
                 style={{ width: `100%` }}
                 allowClear
-                showSearch
+                // showSearch
                 optionFilterProp="children"
               >
                 {datafiltertipetasks.map((doc, idx) => (
@@ -475,12 +491,13 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
             </div>
             <div className="w-3/12">
               <Select
+                className="customSelect"
                 allowClear
                 showSearch
                 onChange={(e) => onChangeStatus(e)}
                 // defaultValue={queryParams.status_ids}
                 // disabled={!isAllowedToGetProjects}
-                placeholder="Semua Status"
+                placeholder={<p className="text-red">Semua Status</p>}
                 style={{ width: `100%` }}
                 optionFilterProp="children"
               >
@@ -528,7 +545,7 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
           )}
           <div className={"mt-6"}>
             <Table
-              className={styles.customTable}
+              className={"customTable"}
               pagination={{
                 showSizeChanger: true,
                 current: queryParams.page,
