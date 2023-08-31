@@ -547,7 +547,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                 <Button
                   // disabled={praloading}
                   onClick={() => {
-                    rt.push(`/admin/requesters`);
+                    rt.push(`/admin/blog`);
                   }}
                   type="default"
                 >
