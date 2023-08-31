@@ -1,4 +1,5 @@
 import { DeleteOutlined, PrinterOutlined, UpOutlined } from "@ant-design/icons";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Spin, notification } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -27,6 +28,7 @@ import {
   momentFormatDate,
   permissionWarningNotification,
 } from "../../../../lib/helper";
+import { ContractPDFTemplate } from "../../../../pages/admin/contracts/[contractId]/contractPDF";
 import { FileTextIconSvg } from "../../../icon";
 import { ModalHapus2 } from "../../../modal/modalCustom";
 
@@ -171,12 +173,25 @@ const ContractInfoSection = ({
                 </div>
               </ButtonSys>
 
-              <ButtonSys type={"default"}>
-                <div className="flex space-x-2 items-center">
-                  <PrinterOutlined />
-                  <p>Cetak Kontrak</p>
-                </div>
-              </ButtonSys>
+              <PDFDownloadLink
+                document={<ContractPDFTemplate dataContract={dataContract} />}
+                fileName={`Contract_${dataContract?.contract_number}.pdf`}
+              >
+                {({ blob, url, loading, error }) => (
+                  <Spin spinning={loading}>
+                    <ButtonSys
+                      type={"default"}
+                      disabled={!isAllowedToGetContract}
+                      fullWidth
+                    >
+                      <div className="flex space-x-2 items-center">
+                        <PrinterOutlined />
+                        <p>Cetak Kontrak</p>
+                      </div>
+                    </ButtonSys>
+                  </Spin>
+                )}
+              </PDFDownloadLink>
             </div>
           </div>
 

@@ -96,7 +96,7 @@ const ContractDetailIndex = ({
     };
   }, []);
 
-  // get contract detail
+  // Get contract detail
   const { data: dataContract, isLoading: loadingDataContract } = useQuery(
     [CONTRACT_GET],
     () =>
