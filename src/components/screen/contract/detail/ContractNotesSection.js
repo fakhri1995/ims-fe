@@ -120,6 +120,7 @@ const ContractNotesSection = ({ initProps, contractId }) => {
           <button
             className="bg-transparent hover:bg-gray-100 rounded-md"
             onClick={() => setModalAddNote(true)}
+            disabled={!isAllowedToAddNote}
           >
             <PlusIconSvg size={24} color="#35763B" />
           </button>

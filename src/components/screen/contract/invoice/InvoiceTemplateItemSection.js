@@ -3,6 +3,10 @@ import React, { useCallback, useRef } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { CONTRACT_TEMPLATE_UPDATE } from "lib/features";
+
 import { createKeyPressHandler } from "../../../../lib/helper";
 import ButtonSys from "../../../button";
 import {
@@ -23,6 +27,20 @@ const InvoiceTemplateItemSection = ({
   setDataServices,
   loading,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+
+  if (isAccessControlPending) {
+    return null;
+  }
+
+  const isAllowedToUpdateInvoiceTemplate = hasPermission(
+    CONTRACT_TEMPLATE_UPDATE
+  );
+
   // 1. Use state & ref
   const [dynamicColumns, setDynamicColumns] = useState([]);
   const [isEdit, setIsEdit] = useState({ row: null, col: null });
@@ -128,19 +146,21 @@ const InvoiceTemplateItemSection = ({
     title: (
       <div className="flex justify-between items-center space-x-2 dynamicColumn">
         <p>{name}</p>
-        <button
-          className="hoverComponent bg-transparent hover:opacity-75"
-          onClick={() => {
-            setDataCurrentColumn((prev) => ({
-              ...prev,
-              idx: colIdx,
-              name: name,
-            }));
-            setModalDeleteColumn(true);
-          }}
-        >
-          <TrashIconSvg color={"#4D4D4D"} size={18} />
-        </button>
+        {isAllowedToUpdateInvoiceTemplate && (
+          <button
+            className="hoverComponent bg-transparent hover:opacity-75"
+            onClick={() => {
+              setDataCurrentColumn((prev) => ({
+                ...prev,
+                idx: colIdx,
+                name: name,
+              }));
+              setModalDeleteColumn(true);
+            }}
+          >
+            <TrashIconSvg color={"#4D4D4D"} size={18} />
+          </button>
+        )}
       </div>
     ),
     render: (text, record, rowIdx) => {
@@ -191,35 +211,36 @@ const InvoiceTemplateItemSection = ({
                   ]
                 }
               </p>
-              <button
-                onClick={(e) => {
-                  // Auto save previous edited cell
-                  if (
-                    isEdit.row !== null &&
-                    isEdit.col !== null &&
-                    (isEdit.row !== rowIdx || isEdit.col !== colIdx)
-                  ) {
-                    onSaveCellValue(
-                      prevCellIndex.current,
-                      prevCellValue.current
-                    );
-                  }
+              {isAllowedToUpdateInvoiceTemplate && (
+                <button
+                  onClick={(e) => {
+                    // Auto save previous edited cell
+                    if (
+                      isEdit.row !== null &&
+                      isEdit.col !== null &&
+                      (isEdit.row !== rowIdx || isEdit.col !== colIdx)
+                    ) {
+                      onSaveCellValue(
+                        prevCellIndex.current,
+                        prevCellValue.current
+                      );
+                    }
 
-                  let tempCellValue = [];
-                  if (dataServices?.[rowIdx]?.service_template_value) {
-                    tempCellValue =
-                      dataServices?.[rowIdx]?.service_template_value?.details?.[
-                        colIdx
-                      ];
-                  }
-                  setCurrentCellIndex({ row: rowIdx, col: colIdx });
-                  setCurrentCellValue(tempCellValue);
-                  setIsEdit({ row: rowIdx, col: colIdx });
-                }}
-                className="bg-transparent hover:opacity-75"
-              >
-                <EditSquareIconSvg size={24} color={"#CCCCCC"} />
-              </button>
+                    let tempCellValue = [];
+                    if (dataServices?.[rowIdx]?.service_template_value) {
+                      tempCellValue =
+                        dataServices?.[rowIdx]?.service_template_value
+                          ?.details?.[colIdx];
+                    }
+                    setCurrentCellIndex({ row: rowIdx, col: colIdx });
+                    setCurrentCellValue(tempCellValue);
+                    setIsEdit({ row: rowIdx, col: colIdx });
+                  }}
+                  className="bg-transparent hover:opacity-75"
+                >
+                  <EditSquareIconSvg size={24} color={"#CCCCCC"} />
+                </button>
+              )}
             </div>
           )}
         </>
@@ -362,17 +383,19 @@ const InvoiceTemplateItemSection = ({
             },
           },
           ...dynamicColumns,
-          {
-            title: (
-              <button
-                onClick={() => setModalAddColumn(true)}
-                className="bg-transparent hover:opacity-75"
-              >
-                <SquarePlusIconSvg color={"#4D4D4D"} size={20} />
-              </button>
-            ),
-            dataIndex: "actionButton",
-          },
+          isAllowedToUpdateInvoiceTemplate
+            ? {
+                title: (
+                  <button
+                    onClick={() => setModalAddColumn(true)}
+                    className="bg-transparent hover:opacity-75"
+                  >
+                    <SquarePlusIconSvg color={"#4D4D4D"} size={20} />
+                  </button>
+                ),
+                dataIndex: "actionButton",
+              }
+            : {},
         ]}
       />
 
