@@ -3,16 +3,7 @@ import React, { useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  COMPANY_CLIENTS_GET,
-  CONTRACTS_COUNT_GET,
-  CONTRACTS_GET,
-  CONTRACT_ADD,
-  CONTRACT_DELETE,
-  CONTRACT_GET,
-  CONTRACT_UPDATE,
-  RECRUITMENT_STATUSES_LIST_GET,
-} from "lib/features";
+import { CONTRACT_TEMPLATE_GET } from "lib/features";
 
 import {
   BellRingingIconSvg,
@@ -25,9 +16,7 @@ const ContractActionSection = ({ contractId, invoiceTemplate }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
-  const isAllowedToGetContract = hasPermission(CONTRACT_GET);
-  const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
-  const isAllowedToDeleteContract = hasPermission(CONTRACT_DELETE);
+  const isAllowedToGetContractTemplate = hasPermission(CONTRACT_TEMPLATE_GET);
 
   const rt = useRouter();
 
@@ -67,7 +56,10 @@ const ContractActionSection = ({ contractId, invoiceTemplate }) => {
 
       <button
         onClick={() => rt.push(`${contractId}/invoice-template`)}
-        className="flex flex-row p-2 lg:p-4 bg-backdrop rounded-md items-center hover:opacity-75"
+        disabled={!isAllowedToGetContractTemplate}
+        className={`flex flex-row p-2 lg:p-4 bg-backdrop rounded-md items-center ${
+          isAllowedToGetContractTemplate ? "hover:opacity-75" : "cursor-no-drop"
+        }`}
       >
         <FileTextIconSvg size={32} color={"#35763B"} />
         <div className="ml-4">

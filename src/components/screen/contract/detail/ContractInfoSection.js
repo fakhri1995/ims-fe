@@ -166,6 +166,7 @@ const ContractInfoSection = ({
                 type={"default"}
                 color="danger"
                 onClick={() => setModalDelete(true)}
+                disabled={!isAllowedToDeleteContract}
               >
                 <div className="flex space-x-2 items-center">
                   <DeleteOutlined />
