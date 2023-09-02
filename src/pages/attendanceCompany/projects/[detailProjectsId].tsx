@@ -79,19 +79,29 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
   const isAllowedToGetAsAdmin = hasPermission(ATTENDANCE_USER_ADMIN_GET);
   const isAllowedToGetAsUser = hasPermission(ATTENDANCE_USER_GET);
   const isAllowedToGet = isAllowedToGetAsAdmin || isAllowedToGetAsUser;
+  const router = useRouter();
+  const userId = router.query.detailProjectsId as unknown as number;
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
-    user_id: withDefault(NumberParam, 35),
+    user_id: withDefault(NumberParam, userId),
     project_id: withDefault(NumberParam, undefined),
     has_project: withDefault(NumberParam, undefined),
     status_ids: withDefault(NumberParam, undefined),
     keyword: withDefault(StringParam, undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
   });
-  const [showButtonFilter, setShowButtonFilter] = useState(true);
 
+  const [queryParams2, setQueryParams2] = useState({
+    page: 1,
+    rows: 10,
+    user_id: userId,
+    status_ids: undefined,
+    keyword: undefined,
+  });
+  const [showButtonFilter, setShowButtonFilter] = useState(true);
+  const [typeDefault, setTypeDefault] = useState(null);
   const [dataTasks, setDataTasks] = useState([]);
   // const [dataTasks, setDataTasks] = useState([
   //   {
@@ -229,8 +239,7 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
       status: 3,
     },
   ]);
-  const router = useRouter();
-  const userId = router.query.detailProjectsId as unknown as number;
+
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Dashboard Kehadiran",
@@ -247,10 +256,19 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
     }
   }, [isAllowedToGet]);
   useEffect(() => {
-    getProjects();
     getProjectStatus();
     getDetailUser();
   }, []);
+
+  useEffect(() => {
+    getProjects();
+  }, [
+    queryParams2.page,
+    queryParams2.rows,
+    queryParams2.keyword,
+    queryParams2.status_ids,
+    typeDefault,
+  ]);
 
   useEffect(() => {
     getProjectsTask();
@@ -261,6 +279,7 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
     queryParams.rows,
     queryParams.keyword,
     queryParams.status_ids,
+    typeDefault,
   ]);
 
   const getProjectsTask = () => {
@@ -283,15 +302,30 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
       });
   };
   const getProjects = () => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects?user_id=${userId}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(token),
-        },
-      }
-    )
+    let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects?`;
+    url +=
+      `page=` +
+      queryParams2.page +
+      `&rows=` +
+      queryParams2.rows +
+      `&user_id=` +
+      userId;
+    if (queryParams2.status_ids != undefined && typeDefault != "Tugas") {
+      url += `&status_ids=` + queryParams2.status_ids;
+    }
+    if (
+      queryParams2.keyword != undefined &&
+      queryParams2.keyword != "" &&
+      typeDefault != "Tugas"
+    ) {
+      url += `&keyword=` + queryParams2.keyword;
+    }
+    fetch(url, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(token),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -363,15 +397,79 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
     });
   };
   const onChangeStatus = (value) => {
-    setQueryParams({
-      status_ids: value,
-    });
+    if (typeDefault == "Tugas") {
+      setQueryParams({
+        status_ids: value,
+      });
+    } else {
+      setQueryParams2({
+        ...queryParams2,
+        status_ids: value,
+      });
+    }
+  };
+
+  const onChangeType = (value) => {
+    setTypeDefault(value);
+    if (value == "Tugas") {
+      if (queryParams2.keyword && queryParams2.status_ids) {
+        setQueryParams({
+          status_ids: queryParams2.status_ids,
+          keyword: queryParams2.keyword,
+        });
+      } else if (queryParams2.keyword) {
+        setQueryParams({
+          keyword: queryParams2.keyword,
+        });
+      } else if (queryParams2.status_ids) {
+        setQueryParams({
+          status_ids: queryParams2.status_ids,
+        });
+      }
+      setQueryParams2({
+        ...queryParams2,
+        keyword: undefined,
+        status_ids: undefined,
+      });
+    } else {
+      if (queryParams.keyword && queryParams.status_ids) {
+        setQueryParams2({
+          ...queryParams2,
+          status_ids: queryParams.status_ids,
+          keyword: queryParams.keyword,
+        });
+      } else if (queryParams2.keyword) {
+        setQueryParams2({
+          ...queryParams2,
+          keyword: queryParams.keyword,
+        });
+      } else if (queryParams2.status_ids) {
+        setQueryParams2({
+          ...queryParams2,
+          status_ids: queryParams.status_ids,
+        });
+      }
+      setQueryParams({
+        status_ids: undefined,
+        keyword: undefined,
+      });
+    }
   };
 
   const onChangeSearch = (e) => {
-    setQueryParams({
-      keyword: e.target.value === "" ? undefined : e.target.value,
-    });
+    if (typeDefault == "Tugas") {
+      setQueryParams({
+        keyword: e.target.value === "" ? undefined : e.target.value,
+      });
+    } else {
+      setQueryParams2({
+        ...queryParams2,
+        keyword: e.target.value === "" ? undefined : e.target.value,
+      });
+      setQueryParams({
+        keyword: undefined,
+      });
+    }
   };
 
   return (
@@ -479,11 +577,12 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                 placeholder="Proyek"
                 style={{ width: `100%` }}
                 allowClear
+                onChange={(e) => onChangeType(e)}
                 // showSearch
                 optionFilterProp="children"
               >
                 {datafiltertipetasks.map((doc, idx) => (
-                  <Select.Option key={idx} value={doc.id}>
+                  <Select.Option key={idx} value={doc.name}>
                     {doc.name}
                   </Select.Option>
                 ))}
@@ -501,6 +600,9 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                 style={{ width: `100%` }}
                 optionFilterProp="children"
               >
+                <Select.Option key={0} value={null}>
+                  Semua Status
+                </Select.Option>
                 {dataStatusList?.map((status) => (
                   <Select.Option key={status.id} value={status.id}>
                     {status.name}
@@ -514,7 +616,9 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                 onChange={(e) => onChangeSearch(e)}
                 prefix={<SearchIconSvg size={16} color={"#CCCCCC"} />}
                 style={{ width: `100%` }}
-                placeholder="Cari proyek ...."
+                placeholder={
+                  typeDefault == "Tugas" ? "Cari Tugas..." : "Cari proyek ...."
+                }
                 allowClear
               />
             </div>
@@ -670,22 +774,22 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                 },
               ]}
               loading={loadingTasks}
-              // onChange={(pagination, _, sorter) => {
-              //   const sortTypePayload =
-              //     sorter.order === "ascend"
-              //       ? "asc"
-              //       : sorter.order === "descend"
-              //       ? "desc"
-              //       : undefined;
+              onChange={(pagination, _, sorter) => {
+                // const sortTypePayload =
+                //   sorter.order === "ascend"
+                //     ? "asc"
+                //     : sorter.order === "descend"
+                //     ? "desc"
+                //     : undefined;
 
-              //   setQueryParams({
-              //     sort_type: sortTypePayload,
-              //     sort_by:
-              //       sortTypePayload === undefined ? undefined : sorter.field,
-              //     page: pagination.current,
-              //     rows: pagination.pageSize,
-              //   });
-              // }}
+                setQueryParams({
+                  // sort_type: sortTypePayload,
+                  // sort_by:
+                  //   sortTypePayload === undefined ? undefined : sorter.field,
+                  page: pagination.current,
+                  rows: pagination.pageSize,
+                });
+              }}
             ></Table>
             {/* {
                               dataProjects.map((project, index) => (

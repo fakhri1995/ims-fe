@@ -1,6 +1,6 @@
 import { TeamOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
-import type { FC } from "react";
+import { type FC, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
 import { useAccessControl } from "contexts/access-control";
@@ -25,13 +25,14 @@ export const AttendanceCompanyTodayStatCard: FC<
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
   const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
-
+  // const [isLoading,setIsLoading] = useState(true)
   const { data, isLoading } = useQuery(
-    [AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET],
-    () => AttendanceService.findAsAdmin(axiosClient),
+    [AttendanceServiceQueryKeys.ATTENDANCES_CLIENT_GET],
+    () => AttendanceService.findAsClient(axiosClient),
     {
-      enabled: isAllowedToGetAttendancesUsers,
+      enabled: true,
       select: (response) => {
+        console.log("hasil response ", response);
         return {
           jumlah_hadir: response.data.data.users_attendances_count,
           jumlah_absen: response.data.data.absent_users_count,
@@ -72,7 +73,7 @@ export const AttendanceCompanyTodayStatCard: FC<
               <h4 className="text-5xl py-4 mb-2 text-mono80">
                 {data?.jumlah_absen || 0}
               </h4>
-
+              {console.log("datanua ", data)}
               <div>
                 <span className="font-bold text-mono30 text-s flex items-center">
                   <TeamOutlined rev={""} className="mr-1" /> Orang
