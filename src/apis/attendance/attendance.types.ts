@@ -15,6 +15,8 @@ export enum AttendanceServiceQueryKeys {
 
   /** Detail attendance */
   ATTENDANCE_USER_GET = "ATTENDANCE_USER_GET",
+
+  ATTENDANCES_CLIENT_GET = "ATTENDANCES_CLIENT_GET",
 }
 
 export type AttendanceExportExcelDataCriteria = {
