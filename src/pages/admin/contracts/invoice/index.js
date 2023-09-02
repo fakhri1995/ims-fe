@@ -541,7 +541,11 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
 
               <Button
                 type={"primary"}
-                disabled={!record.id}
+                disabled={
+                  !record.id ||
+                  !isAllowedToGetInvoice ||
+                  !isAllowedToGetCompanyDetail
+                }
                 onClick={(event) => handleDownloadClick(event, record)}
                 icon={<DownloadIconSvg size={20} color={"#FFFFFF"} />}
                 className="bg-secondary100 border-secondary100 hover:bg-secondary 

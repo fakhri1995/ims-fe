@@ -450,7 +450,9 @@ const ContractInvoiceFormIndex = ({
                       <ButtonSys
                         type={"primary"}
                         color={"secondary100"}
-                        disabled={!isAllowedToGetInvoice}
+                        disabled={
+                          !isAllowedToGetInvoice || !isAllowedToGetCompanyDetail
+                        }
                       >
                         <div className="flex space-x-2 items-center">
                           <p>Unduh Draft</p>
@@ -488,7 +490,9 @@ const ContractInvoiceFormIndex = ({
                     <ButtonSys
                       type={"primary"}
                       color={"secondary100"}
-                      disabled={!isAllowedToGetInvoice}
+                      disabled={
+                        !isAllowedToGetInvoice || !isAllowedToGetCompanyDetail
+                      }
                     >
                       <div className="flex space-x-2 items-center">
                         <p>Unduh</p>
