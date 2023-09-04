@@ -22,15 +22,23 @@ const ContractActionSection = ({ contractId, invoiceTemplate }) => {
 
   return (
     <>
-      {/* <div className="flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center">
+      <button
+        onClick={() => rt.push(`${contractId}/addendum/create`)}
+        disabled={!isAllowedToGetContractTemplate}
+        className={`flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center ${
+          isAllowedToGetContractTemplate ? "hover:opacity-75" : "cursor-no-drop"
+        }`}
+      >
         <WritingIconSvg size={32} color={"#35763B"} />
         <div className="ml-4">
           <p className="mb-2 mig-caption--bold text-primary100">
             Tambah Adendum Kontrak
           </p>
-          <p className="mig-caption text-primary75">s.d. 05 Desember 2022</p>
+          <p className="mig-caption text-primary75 text-left">
+            s.d. 05 Desember 2022
+          </p>
         </div>
-      </div> */}
+      </button>
 
       {/* <div className="flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center">
         <CutIconSvg size={32} color={"#35763B"} />

@@ -3,7 +3,6 @@ import { Collapse, Tabs } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { useMemo } from "react";
 import { useQuery } from "react-query";
 
 import Layout from "components/layout-dashboard";
@@ -18,7 +17,6 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   CONTRACTS_GET,
-  CONTRACT_ADD,
   CONTRACT_DELETE,
   CONTRACT_GET,
   CONTRACT_UPDATE,
@@ -34,7 +32,6 @@ import {
   LineElement,
   LinearScale,
   PointElement,
-  TooltipChart,
 } from "chart.js";
 import httpcookie from "cookie";
 
@@ -154,7 +151,7 @@ const ContractDetailIndex = ({
             </Collapse.Panel>
           </Collapse>
         ) : (
-          <section className="md:col-span-12 grid grid-cols-1 gap-4 lg:gap-6 shadow-md rounded-md bg-white p-4 lg:p-6">
+          <section className="md:col-span-12 grid grid-cols-2 gap-4 lg:gap-6 shadow-md rounded-md bg-white p-4 lg:p-6">
             <ContractActionSection
               contractId={contractId}
               invoiceTemplate={dataContract?.invoice_template}

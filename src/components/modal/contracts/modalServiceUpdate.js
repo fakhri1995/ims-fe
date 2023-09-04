@@ -55,7 +55,7 @@ const ModalServiceUpdate = ({
       }
       setDataService(tempService);
     }
-  }, [dataContractUpdate.services, visible]);
+  }, [dataContractUpdate?.services, visible]);
 
   // 2.2. Get Contract Service Type List
   const { data: dataServiceTypeList, isLoading: loadingServiceTypeList } =
