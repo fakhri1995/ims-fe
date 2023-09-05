@@ -331,7 +331,11 @@ const RadioRequired = ({
       >
         <div className="flex flex-col">
           {options.map((doc, idx) => {
-            return <Radio value={doc.value}>{doc.title}</Radio>;
+            return (
+              <Radio key={doc.value} value={doc.value}>
+                {doc.title}
+              </Radio>
+            );
           })}
         </div>
       </Radio.Group>
