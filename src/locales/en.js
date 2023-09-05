@@ -2,7 +2,7 @@ export default {
   language: "Language",
   solutions: "Solutions",
   aboutus: "About Us",
-  career: "Career in MIG",
+  career: "Career at MIG",
   contactus: "Contact Us",
   landingpagemetatitle:
     "Mitramas Infosys Global: Hardware, Software, IT Outsourcing.",
@@ -34,7 +34,7 @@ export default {
   ctacontactuslandingpage: "Contact Us",
   ctalearnmorelandingpage: "Learn More",
   companies: "companies",
-  landingpagesection2: `MIG catalyzes the growth of your core business with `,
+  landingpagesection2: `Mitramas Infosys Global catalyzes the growth of your core business with `,
   landingpagesection3: `We provide you with ✔️ Cutting-edge resources
     ✔️ Efficient and competitive cost
     ✔️ Guaranteed level of service`,
@@ -445,7 +445,7 @@ export default {
   contactoursalesteam: `Contact our sales team`,
   navbarsolutions: `Solutions`,
   navbaraboutus: ` About Us`,
-  navbarcareerinmig: `Career in MIG`,
+  navbarcareerinmig: `Career at MIG`,
   navbarcustomerstories: `Customer Stories`,
   navbarcontactus: `Contact Us`,
   footercompany: `Company`,

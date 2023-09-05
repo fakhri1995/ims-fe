@@ -48,6 +48,12 @@ export class AttendanceService {
     );
   }
 
+  static async findAsClient(axiosClient: AxiosInstance) {
+    return await axiosClient.get<IGetAttendanceUsersSucceedResponse>(
+      "/getAttendancesClient"
+    );
+  }
+
   /**
    * Retrieve all attendances with pagination as an Admin.
    *

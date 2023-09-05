@@ -967,7 +967,7 @@ function layout({ children }) {
                           "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
-                        Career&nbsp;in&nbsp;MIG
+                        Career&nbsp;at&nbsp;MIG
                       </p>
                     ) : (
                       <p
@@ -1145,7 +1145,7 @@ function layout({ children }) {
                         }
                       >
                         {locale == "en" ? "Career" : "Karir"}&nbsp;
-                        {locale == "en" ? "in" : "di"}&nbsp;Mig
+                        {locale == "en" ? "at" : "di"}&nbsp;Mig
                       </p>
                     </Link>
                     {countStories > 0 && (

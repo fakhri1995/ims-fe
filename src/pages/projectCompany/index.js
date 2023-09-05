@@ -401,7 +401,7 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
 
     setLoadingChart(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsCount`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientProjectsCount`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -430,12 +430,15 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     if (!dateState.from || !dateState.to) {
       setLoadingChart(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsDeadline`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientProjectsDeadline`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
         .then((res) => res.json())
         .then((res2) => {
           setDataProjectDeadline(res2.data); // "Deadline Proyek Bulan Ini" chart's data source
@@ -522,7 +525,7 @@ const ProjectCompanyIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingChart(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsDeadline?from=${fromDate}&to=${toDate}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientProjectsDeadline?from=${fromDate}&to=${toDate}`,
       {
         method: `GET`,
         headers: {

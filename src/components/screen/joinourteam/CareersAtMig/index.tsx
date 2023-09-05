@@ -53,10 +53,10 @@ export const CareersAtMig: FC = () => {
           {t.vacancylistsectiondescriptionbelow3}{" "}
           <a
             style={{ lineHeight: "150%" }}
-            href="mailto:recruitment@mitrasolusi.group"
+            href="mailto:hiring@mitrasolusi.group"
             className="text-base text-blackmig font-semibold"
           >
-            recruitment@mitrasolusi.group
+            hiring@mitrasolusi.group
           </a>{" "}
           {t.vacancylistsectiondescriptionbelow2}
         </p>
