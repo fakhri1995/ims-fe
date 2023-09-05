@@ -776,7 +776,6 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
         dataIds = dataIds + dataTemp[a].id;
       }
     }
-    console.log("hasil handle id ", dataIds);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectCategoryListClient`,
       {
@@ -848,9 +847,9 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
       idpage={companyid}
       fixedBreadcrumbValues={breadcrumbValues}
     >
-      <div className="grid grid-cols-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12">
         {praloadingedit ? null : (
-          <div className="col-span-3 flex flex-col shadow-md rounded bg-white m-3">
+          <div className="col-span-3 flex flex-col shadow-md rounded bg-white mx-5 my-2 lg:m-3">
             <Spin spinning={editloading}>
               <Form form={instanceForm} initialValues={displaydata}>
                 <div className="max-h-24 relative">
@@ -1284,8 +1283,8 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                 </Label>
               </div>
             </div>
-            <div className="flex mt-5">
-              <div className="w-4/12 p-5 rounded-md bg-state2 flex justify-between items-center mx-2">
+            <div className="flex flex-col md:flex-row mt-5 gap-2">
+              <div className="md:w-4/12 p-5 rounded-md bg-state2 flex justify-between items-center">
                 <LocationIconSvg size={50} color={"#FFFFFF"} />
                 <div className="flex flex-col items-center">
                   <p className="text-2xl text-white font-bold mb-0">
@@ -1294,7 +1293,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                   <p className="text-sm text-white mb-0">Induk</p>
                 </div>
               </div>
-              <div className="w-4/12 p-5 rounded-md bg-state3 flex justify-between items-center mx-2">
+              <div className="md:w-4/12 p-5 rounded-md bg-state3 flex justify-between items-center">
                 <SubLocationIconSvg size={50} color={"#FFFFFF"} />
                 <div className="flex flex-col items-center">
                   <p className="text-2xl text-white font-bold mb-0">
@@ -1303,7 +1302,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                   <p className="text-sm text-white mb-0">Sub Induk 1</p>
                 </div>
               </div>
-              <div className="w-4/12 p-5 rounded-md bg-state4 flex justify-between items-center mx-2">
+              <div className="md:w-4/12 p-5 rounded-md bg-state4 flex justify-between items-center">
                 <SubLocationIconSvg size={50} color={"#FFFFFF"} />
                 <div className="flex flex-col items-center">
                   <p className="text-2xl text-white font-bold mb-0">
@@ -1351,8 +1350,8 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
               </div>
             </div>
           ) : (
-            <div className="flex">
-              <div className="w-6/12 flex flex-col mx-2">
+            <div className="flex flex-col lg:flex-row gap-5 lg:gap-0">
+              <div className="lg:w-6/12 flex flex-col mx-2">
                 {/* Bank */}
                 <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5">
                   <div className="flex justify-between items-center">
@@ -1658,7 +1657,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                   })}
                 </div>
               </div>
-              <div className="w-6/12 flex flex-col">
+              <div className="lg:w-6/12 flex flex-col">
                 {/* TAG PROYEK */}
                 <div className={"shadow-md rounded-md bg-white p-8 mx-2 mb-6"}>
                   <div className="flex flex-row justify-between mb-6">
