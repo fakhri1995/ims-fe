@@ -24,6 +24,7 @@ import {
 
 import { ContractService } from "apis/contract";
 
+import ContractAddendumSection from "../../../../components/screen/contract/detail/ContractAddendumSection";
 import {
   ArcElement,
   BarElement,
@@ -74,6 +75,7 @@ const ContractDetailIndex = ({
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
   const [isMobileView, setIsMobileView] = useState(false);
+  const [currentVersionId, setCurrentVersionId] = useState(0);
 
   // 3. Use Effect & Use Query
   // Responsive view for action button section
@@ -113,6 +115,7 @@ const ContractDetailIndex = ({
     return null;
   }
 
+  // console.log({ currentVersionId });
   return (
     <Layout
       tok={initProps}
@@ -146,6 +149,7 @@ const ContractDetailIndex = ({
                 <ContractActionSection
                   contractId={contractId}
                   invoiceTemplate={dataContract?.invoice_template}
+                  contractEndDate={dataContract?.end_date}
                 />
               </section>
             </Collapse.Panel>
@@ -155,13 +159,24 @@ const ContractDetailIndex = ({
             <ContractActionSection
               contractId={contractId}
               invoiceTemplate={dataContract?.invoice_template}
+              contractEndDate={dataContract?.end_date}
             />
           </section>
         )}
 
         {/* Catatan & Aktivitas */}
-        <section className="md:col-span-4 h-max shadow-md rounded-md bg-white p-6 order-last md:order-none">
-          <Tabs defaultActiveKey={1} className="tabResponsive">
+        <section className="md:col-span-4 h-max order-last md:order-none">
+          <ContractAddendumSection
+            dataServices={dataContract?.services}
+            loading={loadingDataContract}
+            currentVersion={currentVersionId}
+            setCurrentVersion={setCurrentVersionId}
+          />
+
+          <Tabs
+            defaultActiveKey={1}
+            className="tabResponsive shadow-md rounded-md bg-white p-6"
+          >
             <Tabs.TabPane tab="Catatan" key={1}>
               <ContractNotesSection
                 initProps={initProps}

@@ -5,6 +5,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { CONTRACT_TEMPLATE_GET } from "lib/features";
 
+import { momentFormatDate } from "../../../../lib/helper";
 import {
   BellRingingIconSvg,
   CutIconSvg,
@@ -12,7 +13,11 @@ import {
   WritingIconSvg,
 } from "../../../icon";
 
-const ContractActionSection = ({ contractId, invoiceTemplate }) => {
+const ContractActionSection = ({
+  contractId,
+  contractEndDate,
+  invoiceTemplate,
+}) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -35,7 +40,7 @@ const ContractActionSection = ({ contractId, invoiceTemplate }) => {
             Tambah Adendum Kontrak
           </p>
           <p className="mig-caption text-primary75 text-left">
-            s.d. 05 Desember 2022
+            s.d. {momentFormatDate(contractEndDate)}
           </p>
         </div>
       </button>

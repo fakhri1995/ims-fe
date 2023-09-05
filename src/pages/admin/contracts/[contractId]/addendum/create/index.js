@@ -71,8 +71,7 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
-  pathTitleArr.splice(1, 3);
-  pathTitleArr.splice(1, 2, "Kontrak", "Tambah Kontrak");
+  pathTitleArr.splice(1, 4, "Kontrak", "Detail Kontrak", "Tambah Adendum");
 
   // 1. Use State
   const [dataAddendum, setDataAddendum] = useState({
