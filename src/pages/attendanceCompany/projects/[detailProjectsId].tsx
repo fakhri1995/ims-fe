@@ -509,7 +509,7 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                 className={
                   statusSelected == task.id
                     ? "px-4 py-3 bg-backdrop rounded-[5px]"
-                    : "px-4 py-3 bg-white rounded-[5px]"
+                    : "px-4 py-3 bg-white rounded-[5px] hover:cursor-pointer"
                 }
               >
                 <div className={"flex justify-between"}>
@@ -627,7 +627,11 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
             <div className={"mt-6 flex flex-row gap-4"}>
               <div
                 className={
-                  "rounded-[48px] px-4 py-2 border border-mono50 hover:cursor-pointer"
+                  queryParams.has_project == 0
+                    ? "rounded-[48px] px-4 py-2 border border-mono50 hover:cursor-pointer"
+                    : queryParams.has_project == 1
+                    ? "rounded-[48px] px-4 py-2 bg-backdrop border border-mono50"
+                    : "rounded-[48px] px-4 py-2 border border-mono50 hover:cursor-pointer"
                 }
                 onClick={() => onClikButtonFilter(1)}
               >
@@ -637,7 +641,11 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
               </div>
               <div
                 className={
-                  "rounded-[48px] px-4 py-2 border border-mono50 hover:cursor-pointer"
+                  queryParams.has_project == 0
+                    ? "rounded-[48px] px-4 py-2 border bg-backdrop border-mono50"
+                    : queryParams.has_project == 1
+                    ? "rounded-[48px] px-4 py-2  border border-mono50 hover:cursor-pointer"
+                    : "rounded-[48px] px-4 py-2 border border-mono50 hover:cursor-pointer"
                 }
                 onClick={() => onClikButtonFilter(0)}
               >
