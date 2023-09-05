@@ -78,9 +78,9 @@ const AttendanceMarkers: FC = () => {
 
   const { data } = useQuery(
     [AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET],
-    () => AttendanceService.findAsAdmin(axiosClient),
+    () => AttendanceService.findAsClient(axiosClient),
     {
-      enabled: isAllowedToGetAttendancesUsers,
+      enabled: true,
       select: (response) =>
         response.data.data.users_attendances.map((attendance) => ({
           staffName: attendance.user.name,
