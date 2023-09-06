@@ -820,9 +820,9 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
       pathArr={patharr}
       st={st}
     >
-      <div className="grid grid-cols-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12">
         {praloadingedit ? null : (
-          <div className="col-span-3 flex flex-col shadow-md rounded bg-white m-3">
+          <div className="col-span-3 flex flex-col shadow-md rounded bg-white mx-5 my-2 lg:m-3">
             <Spin spinning={editloading}>
               <Form form={instanceForm} initialValues={displaydata}>
                 <div className="max-h-24 relative">
@@ -1152,8 +1152,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 </Label>
               </div>
             </div>
-            <div className="flex mt-5">
-              <div className="w-4/12 p-5 rounded-md bg-state2 flex justify-between items-center mx-2">
+            <div className="flex flex-col md:flex-row mt-5 gap-2">
+              <div className="md:w-4/12 p-5 rounded-md bg-state2 flex justify-between items-center ">
                 <LocationIconSvg size={50} color={"#FFFFFF"} />
                 <div className="flex flex-col items-center">
                   <p className="text-2xl text-white font-bold mb-0">
@@ -1162,7 +1162,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                   <p className="text-sm text-white mb-0">Induk</p>
                 </div>
               </div>
-              <div className="w-4/12 p-5 rounded-md bg-state3 flex justify-between items-center mx-2">
+              <div className="md:w-4/12 p-5 rounded-md bg-state3 flex justify-between items-center ">
                 <SubLocationIconSvg size={50} color={"#FFFFFF"} />
                 <div className="flex flex-col items-center">
                   <p className="text-2xl text-white font-bold mb-0">
@@ -1171,7 +1171,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                   <p className="text-sm text-white mb-0">Sub Induk 1</p>
                 </div>
               </div>
-              <div className="w-4/12 p-5 rounded-md bg-state4 flex justify-between items-center mx-2">
+              <div className="md:w-4/12 p-5 rounded-md bg-state4 flex justify-between items-center ">
                 <SubLocationIconSvg size={50} color={"#FFFFFF"} />
                 <div className="flex flex-col items-center">
                   <p className="text-2xl text-white font-bold mb-0">
@@ -1485,11 +1485,11 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
               </ModalCore>
             </div>
           ) : (
-            <div className="flex">
-              <div className="w-6/12 flex flex-col mx-2">
+            <div className="flex flex-col md:flex-row gap-5 md:gap-0">
+              <div className="md:w-6/12 flex flex-col mx-2">
                 {/* Bank */}
                 <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5">
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center">
                     <H1>Akun Bank</H1>
                     <Buttonsys
                       type="primary"
@@ -1790,7 +1790,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 </div>
               </div>
               {/* Aktivitas */}
-              <div className="w-6/12 flex flex-col shadow-md rounded-md bg-white p-8 mx-2">
+              <div className="md:w-6/12 flex flex-col shadow-md rounded-md bg-white p-8 mx-2">
                 <div className="mb-8">
                   <H1>Aktivitas</H1>
                 </div>

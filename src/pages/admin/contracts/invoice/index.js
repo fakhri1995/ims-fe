@@ -223,6 +223,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       total_max: selectedPriceRange[1],
       client_ids: selectedCompany,
       is_posted: selectedStatus,
+      page: 1,
     });
   };
 
@@ -629,10 +630,9 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     placeholder="Cari..."
                     allowClear
                     onChange={(e) => {
-                      setTimeout(
-                        () => setSearchingFilterInvoices(e.target.value),
-                        1000
-                      );
+                      setTimeout(() => {
+                        setSearchingFilterInvoices(e.target.value);
+                      }, 1000);
                     }}
                     onKeyPress={onKeyPressHandler}
                     disabled={!isAllowedToGetInvoices}
