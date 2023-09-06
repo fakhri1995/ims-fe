@@ -67,7 +67,7 @@ Chart.register(
 );
 
 export const contractInfoString = {
-  contract_number: "No. Kontrak",
+  code_number: "No. Kontrak",
   title: "Judul Kontrak",
   client: "Klien",
   requester: "Requester",
@@ -83,6 +83,7 @@ const ContractInvoiceTemplateIndex = ({
   sidemenu,
   initProps,
   contractId,
+  contractHistoryId,
 }) => {
   // 1. Init
   /**
@@ -132,12 +133,13 @@ const ContractInvoiceTemplateIndex = ({
   // 3.1. Get contract template detail
   const { data: dataContractTemplate, isLoading: loadingDataContractTemplate } =
     useQuery(
-      [CONTRACT_TEMPLATE_GET, refresh, contractId],
+      [CONTRACT_TEMPLATE_GET, refresh, contractId, contractHistoryId],
       () =>
         ContractService.getContractTemplate(
           initProps,
           isAllowedToGetContractTemplate,
-          contractId
+          contractId,
+          contractHistoryId
         ),
       {
         enabled: isAllowedToGetContractTemplate,
@@ -460,8 +462,9 @@ const ContractInvoiceTemplateIndex = ({
   );
 };
 
-export async function getServerSideProps({ req, res, params }) {
-  const contractId = params.contractId;
+export async function getServerSideProps({ req, res, params, query }) {
+  const { ver: contractHistoryId, contractId } = query;
+
   let initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -500,6 +503,7 @@ export async function getServerSideProps({ req, res, params }) {
       dataProfile,
       sidemenu: "contract-list",
       contractId,
+      contractHistoryId,
     },
   };
 }
