@@ -1346,6 +1346,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     triggertaskdetailcreate,
     loadingeditable,
     loadingcheckin,
+    taskid,
   ]);
 
   useEffect(() => {
