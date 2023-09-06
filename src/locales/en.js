@@ -52,14 +52,14 @@ export default {
     "We can create a custom solution that fits your tech needs perfectly.",
   hardwarecustomizetextcta: "Contact our team",
   talentsubtitlelanding: "",
-  joinmigsection: "Looking for jobs instead? Apply for Jobs",
+  joinmigsection: "Looking for jobs instead?",
   joinmigsubtitle: "As a MIGhty talent, you'll get these benefits:",
   joinmigpoint1: "Hands-on experience from a variety of leading industries.",
   joinmigpoint2:
     "Opportunities to find solutions and make a difference, with our support.",
   joinmigpoint3:
     "Resources to enhance your personal and professional development.",
-  joinmigcta: "Know More",
+  joinmigcta: "Join Us",
   contactuscta: "Contact Us",
   contactussectiontitle: "Enjoy seamless tech solutions without the hassle.",
   contactussectionsubtitle1: "What technology solutions are you looking for?",
