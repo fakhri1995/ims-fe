@@ -1,26 +1,53 @@
 import { Table, Tabs } from "antd";
 import React from "react";
 import { useState } from "react";
+import { useQuery } from "react-query";
 
+import { CONTRACT_HISTORIES_GET } from "lib/features";
+
+import { ContractService } from "apis/contract";
+
+import { momentFormatDate } from "../../../../lib/helper";
 import { EyeIconSvg } from "../../../icon";
 import ModalAddendumDetail from "../../../modal/contracts/modalAddendumDetail";
 
 const ContractAddendumSection = ({
-  dataServices,
-  loading,
   currentVersion,
   setCurrentVersion,
+  isAllowedToGetContractHistories,
+  contractId,
+  initProps,
 }) => {
   const [modalDetail, setModalDetail] = useState(false);
   const [rowState, setRowState] = useState(0);
+
+  // Get contract histories
+  const {
+    data: dataContractHistories,
+    isLoading: loadingDataContractHistories,
+  } = useQuery(
+    [CONTRACT_HISTORIES_GET],
+    () =>
+      ContractService.getContractHistories(
+        initProps,
+        isAllowedToGetContractHistories,
+        contractId
+      ),
+    {
+      enabled: isAllowedToGetContractHistories,
+      refetchOnMount: true,
+      select: (response) => response.data.addendum,
+    }
+  );
+
   return (
     <section className="grid grid-cols-1 w-full shadow-md rounded-md bg-white p-6 mb-4 gap-6">
       <h4 className="mig-heading--4">Daftar Kontrak</h4>
       <Table
         className="tableBordered border-2 rounded-md "
-        dataSource={dataServices}
+        dataSource={dataContractHistories}
         rowKey={(record) => record.id}
-        loading={loading}
+        loading={loadingDataContractHistories}
         scroll={{ x: 200 }}
         pagination={{
           pageSize: 5,
@@ -52,13 +79,15 @@ const ContractAddendumSection = ({
           },
           {
             title: "Kontrak",
-            dataIndex: ["addendum", "name"],
-            render: (text) => <p className="">{text}</p>,
+            dataIndex: "category",
+            render: (text, record, index) => (
+              <p className="">{text == "addendum" && `Adendum ${index + 1}`}</p>
+            ),
           },
           {
             title: "Tanggal Berlaku",
-            dataIndex: ["addendum", "start_date"],
-            render: (text) => <p className="">{text}</p>,
+            dataIndex: ["start_date"],
+            render: (text) => <p className="">{momentFormatDate(text)}</p>,
           },
 
           {
@@ -66,7 +95,10 @@ const ContractAddendumSection = ({
             dataIndex: "no",
             render: (text, record) => (
               <button
-                onClick={() => setModalDetail(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setModalDetail(true);
+                }}
                 className="bg-white rounded-md p-2 flex items-center 
                 justify-center w-8 h-8"
               >

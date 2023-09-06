@@ -19,6 +19,11 @@ import {
   CONTRACTS_GET,
   CONTRACT_DELETE,
   CONTRACT_GET,
+  CONTRACT_HISTORIES_GET,
+  CONTRACT_HISTORY_ADD,
+  CONTRACT_HISTORY_DELETE,
+  CONTRACT_HISTORY_GET,
+  CONTRACT_HISTORY_UPDATE,
   CONTRACT_UPDATE,
 } from "lib/features";
 
@@ -58,10 +63,17 @@ const ContractDetailIndex = ({
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
-  const isAllowedToGetContracts = hasPermission(CONTRACTS_GET);
   const isAllowedToGetContract = hasPermission(CONTRACT_GET);
-  const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
-  const isAllowedToDeleteContract = hasPermission(CONTRACT_DELETE);
+
+  const isAllowedToGetContractHistories = hasPermission(CONTRACT_HISTORIES_GET);
+  const isAllowedToGetContractHistory = hasPermission(CONTRACT_HISTORY_GET);
+  const isAllowedToAddContractHistory = hasPermission(CONTRACT_HISTORY_ADD);
+  const isAllowedToUpdateContractHistory = hasPermission(
+    CONTRACT_HISTORY_UPDATE
+  );
+  const isAllowedToDeleteContractHistory = hasPermission(
+    CONTRACT_HISTORY_DELETE
+  );
 
   const rt = useRouter();
   // Breadcrumb url
@@ -148,6 +160,7 @@ const ContractDetailIndex = ({
               <section className="grid grid-cols-1 gap-2">
                 <ContractActionSection
                   contractId={contractId}
+                  contractHistoryId={dataContract?.contract_history_id_active}
                   invoiceTemplate={dataContract?.invoice_template}
                   contractEndDate={dataContract?.end_date}
                 />
@@ -158,6 +171,7 @@ const ContractDetailIndex = ({
           <section className="md:col-span-12 grid grid-cols-2 gap-4 lg:gap-6 shadow-md rounded-md bg-white p-4 lg:p-6">
             <ContractActionSection
               contractId={contractId}
+              contractHistoryId={dataContract?.contract_history_id_active}
               invoiceTemplate={dataContract?.invoice_template}
               contractEndDate={dataContract?.end_date}
             />
@@ -167,10 +181,11 @@ const ContractDetailIndex = ({
         {/* Catatan & Aktivitas */}
         <section className="md:col-span-4 h-max order-last md:order-none">
           <ContractAddendumSection
-            dataServices={dataContract?.services}
-            loading={loadingDataContract}
             currentVersion={currentVersionId}
             setCurrentVersion={setCurrentVersionId}
+            isAllowedToGetContractHistories={isAllowedToGetContractHistories}
+            contractId={contractId}
+            initProps={initProps}
           />
 
           <Tabs
