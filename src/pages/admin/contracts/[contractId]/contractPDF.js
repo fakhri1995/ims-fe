@@ -235,7 +235,7 @@ export const ContractPDFTemplate = ({ dataContract }) => {
         <View style={styles.rowSection}>
           <View style={{ width: "50%" }}>
             <Text style={styles.textHeading}>KONTRAK</Text>
-            <Text>NO. {dataContract?.contract_number?.toUpperCase()}</Text>
+            <Text>NO. {dataContract?.code_number?.toUpperCase()}</Text>
             <Text>
               TANGGAL DIBUAT :{" "}
               {momentFormatDate(dataContract?.initial_date).toUpperCase()}

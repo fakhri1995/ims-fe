@@ -155,7 +155,7 @@ const ContractInfoSection = ({
           <div className="col-span-2 flex flex-col lg:flex-row lg:justify-between ">
             <div className="flex space-x-2 items-center mb-4 lg:mb-0">
               <h4 className="mig-heading--4">
-                {dataContract?.contract_number || "-"}
+                {dataContract?.code_number || "-"}
               </h4>
               <p className="bg-backdrop text-primary100 px-2 py-1 rounded-md font-bold">
                 Aktif
@@ -176,7 +176,7 @@ const ContractInfoSection = ({
 
               <PDFDownloadLink
                 document={<ContractPDFTemplate dataContract={dataContract} />}
-                fileName={`Contract_${dataContract?.contract_number}.pdf`}
+                fileName={`Contract_${dataContract?.code_number}.pdf`}
               >
                 {({ blob, url, loading, error }) => (
                   <Spin spinning={loading}>
@@ -262,7 +262,7 @@ const ContractInfoSection = ({
         >
           <p className="mb-4">
             Apakah Anda yakin ingin melanjutkan penghapusan kontrak{" "}
-            <strong>{dataContract?.contract_number}</strong>?
+            <strong>{dataContract?.code_number}</strong>?
           </p>
         </ModalHapus2>
       </AccessControl>
