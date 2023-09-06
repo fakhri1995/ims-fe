@@ -19,7 +19,7 @@ import {
   COMPANY_CLIENTS_GET,
   CONTRACT_DELETE,
   CONTRACT_GET,
-  CONTRACT_UPDATE,
+  CONTRACT_HISTORY_ADD,
   REQUESTERS_GET,
 } from "lib/features";
 
@@ -57,7 +57,7 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     useAccessControl();
 
   const isAllowedToGetContract = hasPermission(CONTRACT_GET);
-  const isAllowedToAddAddendum = hasPermission(CONTRACT_UPDATE);
+  const isAllowedToAddAddendum = hasPermission(CONTRACT_HISTORY_ADD);
   const isAllowedToDeleteContract = hasPermission(CONTRACT_DELETE);
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
   const isAllowedToGetRequesters = hasPermission(REQUESTERS_GET);
@@ -75,7 +75,7 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // 1. Use State
   const [dataAddendum, setDataAddendum] = useState({
-    contract_number: "",
+    code_number: "",
     title: "",
     client_id: 0,
     requester_id: 0,
@@ -113,7 +113,7 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   useEffect(() => {
     if (isFetchedContract) {
-      setDataAddendum(dataContract);
+      setDataAddendum({ ...dataContract, contract_id: contractId });
     }
   }, [dataContract]);
 
@@ -140,7 +140,7 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 2.4. Disable "Simpan Kontrak" button if any required field is empty
   useEffect(() => {
     const requiredContractFields = [
-      { data: dataAddendum?.contract_number, name: "No Kontrak" },
+      { data: dataAddendum?.code_number, name: "No Kontrak" },
       { data: dataAddendum?.title, name: "Judul Kontrak" },
       { data: dataAddendum?.client_id, name: "Klien" },
       { data: dataAddendum?.requester_id, name: "Requester" },
@@ -180,13 +180,24 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     /** Setup form data to be sent in API */
 
-    // let payload = { ...data };
+    // let payload = {
+    //   contract_id: data.contract_id,
+    //   code_number: data.code_number,
+    //   title: data.title,
+    //   client_id: data.client_id,
+    //   requester_id: data.requester_id,
+    //   initial_date: data.initial_date,
+    //   start_date: data.start_date,
+    //   end_date: data.end_date,
+    //   is_posted: data.is_posted,
+    //   extras: data.extras,
+    // };
 
     // convert object to form data
     const payloadFormData = objectToFormDataNew(data);
 
     setLoadingAdd(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addContractAddendum`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addContractHistory`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -269,7 +280,7 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           {/* Form Body */}
           <Form.Item
             label="No Adendum Kontrak"
-            name={"contract_number"}
+            name={"code_number"}
             rules={[
               {
                 required: true,
@@ -280,8 +291,8 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           >
             <div>
               <Input
-                value={dataAddendum?.contract_number}
-                name={"contract_number"}
+                value={dataAddendum?.code_number}
+                name={"code_number"}
                 onChange={onChangeInput}
                 placeholder="Masukkan nomor kontrak"
               />
@@ -519,8 +530,9 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                   name={item?.name}
                   value={item?.value}
                   idx={idx}
-                  dataAddendum={dataAddendum}
-                  setDataAddendum={setDataAddendum}
+                  dataContractUpdate={dataAddendum}
+                  setDataContractUpdate={setDataAddendum}
+                  isAddendumForm={true}
                 />
               ) : null
             )}
@@ -532,8 +544,8 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             <Tabs.TabPane tab="Service">
               <ContractServiceForm
                 initProps={initProps}
-                dataAddendum={dataAddendum}
-                setDataAddendum={setDataAddendum}
+                dataContractUpdate={dataAddendum}
+                setDataContractUpdate={setDataAddendum}
                 loading={loadingDataContract}
               />
             </Tabs.TabPane>

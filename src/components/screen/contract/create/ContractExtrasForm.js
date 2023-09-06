@@ -33,6 +33,7 @@ const ContractExtrasForm = ({
   idx,
   dataContractUpdate,
   setDataContractUpdate,
+  isAddendumForm,
 }) => {
   // Use State
   const [fileList, setFileList] = useState([]);
@@ -123,7 +124,7 @@ const ContractExtrasForm = ({
                 value={value}
                 onChange={(e) => {
                   let newValue = e.target.value;
-                  const tempExtras = [...dataContractUpdate.extras];
+                  const tempExtras = [...dataContractUpdate?.extras];
                   tempExtras[idx].value = newValue;
                   setDataContractUpdate((prev) => ({
                     ...prev,
@@ -153,7 +154,7 @@ const ContractExtrasForm = ({
                       value={item}
                       onChange={(e) => {
                         valueList.splice(valIdx, 1, e.target.value);
-                        const tempExtras = [...dataContractUpdate.extras];
+                        const tempExtras = [...dataContractUpdate?.extras];
                         tempExtras[idx].value = valueList;
                         setDataContractUpdate((prev) => ({
                           ...prev,
@@ -169,7 +170,7 @@ const ContractExtrasForm = ({
                         className="bg-transparent hover:opacity-70"
                         onClick={(e) => {
                           valueList.splice(valIdx, 1);
-                          const tempExtras = [...dataContractUpdate.extras];
+                          const tempExtras = [...dataContractUpdate?.extras];
                           tempExtras[idx].value = valueList;
                           setDataContractUpdate((prev) => ({
                             ...prev,
@@ -189,7 +190,7 @@ const ContractExtrasForm = ({
                 type={"default"}
                 onClick={() => {
                   valueList.push("");
-                  const tempExtras = [...dataContractUpdate.extras];
+                  const tempExtras = [...dataContractUpdate?.extras];
                   tempExtras[idx].value = valueList;
                   setDataContractUpdate((prev) => ({
                     ...prev,
@@ -255,7 +256,7 @@ const ContractExtrasForm = ({
           value={name}
           onChange={(e) => {
             let newName = e.target.value;
-            const tempExtras = [...dataContractUpdate.extras];
+            const tempExtras = [...dataContractUpdate?.extras];
             tempExtras[idx].name = newName;
             setDataContractUpdate((prev) => ({
               ...prev,
@@ -270,7 +271,7 @@ const ContractExtrasForm = ({
           name={"type"}
           value={type}
           onChange={(value) => {
-            const tempExtras = [...dataContractUpdate.extras];
+            const tempExtras = [...dataContractUpdate?.extras];
             tempExtras[idx].type = value;
             tempExtras[idx].value = null;
             setDataContractUpdate((prev) => ({
@@ -310,7 +311,7 @@ const ContractExtrasForm = ({
           type="button"
           className="bg-transparent hover:opacity-70"
           onClick={() => {
-            const tempExtras = [...dataContractUpdate.extras];
+            const tempExtras = [...dataContractUpdate?.extras];
             const copiedItem = { ...tempExtras[idx] };
             tempExtras.splice(idx, 0, copiedItem);
             setDataContractUpdate((prev) => ({
@@ -330,13 +331,18 @@ const ContractExtrasForm = ({
           okText={"Ya"}
           cancelText={"Tidak"}
           onConfirm={() => {
-            const tempExtras = [...dataContractUpdate.extras];
+            const tempExtras = [...dataContractUpdate?.extras];
             // TODO: recheck if API is fixed
-            if (tempExtras[idx].key) {
+            if (isAddendumForm) {
+              tempExtras.splice(idx, 1);
+            } else if (tempExtras[idx].key) {
+              // use in non-adendum form
               tempExtras[idx].is_deleted = 1;
             } else {
+              // use in new extra (never been saved yet)
               tempExtras.splice(idx, 1);
             }
+
             setDataContractUpdate((prev) => ({
               ...prev,
               extras: tempExtras,
