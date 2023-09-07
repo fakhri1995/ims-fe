@@ -243,6 +243,7 @@ const ContractInvoiceTemplateIndex = ({
     }
 
     const payload = {
+      contract_history_id: Number(contractHistoryId),
       contract_id: Number(contractId),
       invoice_period: period,
       invoice_template: dataInvoice.map((item) => item.name),
