@@ -11,14 +11,10 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  COMPANY_CLIENTS_GET,
-  CONTRACTS_COUNT_GET,
-  CONTRACTS_GET,
-  CONTRACT_ADD,
   CONTRACT_DELETE,
   CONTRACT_GET,
+  CONTRACT_HISTORY_DELETE,
   CONTRACT_UPDATE,
-  RECRUITMENT_STATUSES_LIST_GET,
 } from "lib/features";
 
 import {
@@ -44,8 +40,11 @@ export const { TEXT, LIST, FILE } = extrasType;
 const ContractInfoSection = ({
   initProps,
   contractId,
+  contractHistoryId,
   dataContract,
   loadingDataContract,
+  isAddendum,
+  setRefresh,
 }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
@@ -53,6 +52,9 @@ const ContractInfoSection = ({
   const isAllowedToGetContract = hasPermission(CONTRACT_GET);
   const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
   const isAllowedToDeleteContract = hasPermission(CONTRACT_DELETE);
+  const isAllowedToDeleteContractHistory = hasPermission(
+    CONTRACT_HISTORY_DELETE
+  );
 
   const rt = useRouter();
 
@@ -85,6 +87,7 @@ const ContractInfoSection = ({
         if (response.success) {
           setModalDelete(false);
           rt.push(`/admin/contracts`);
+          setRefresh((prev) => prev + 1);
           setTimeout(
             () =>
               notification.success({
@@ -102,7 +105,53 @@ const ContractInfoSection = ({
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menghapus proyek. ${err.response}`,
+          message: `Gagal menghapus kontrak. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingDelete(false));
+  };
+
+  const handleDeleteContractHistory = () => {
+    if (!isAllowedToDeleteContractHistory) {
+      permissionWarningNotification("Menghapus", "Riwayat Kontrak");
+      return;
+    }
+
+    setLoadingDelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContractHistory?id=${contractHistoryId}`,
+      {
+        method: `DELETE`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          setModalDelete(false);
+          setRefresh((prev) => prev + 1);
+          setTimeout(
+            () =>
+              notification.success({
+                message: response.message,
+                duration: 3,
+              }),
+            1000
+          );
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus riwayat kontrak. ${err.response}`,
           duration: 3,
         });
       })
@@ -143,8 +192,6 @@ const ContractInfoSection = ({
         );
     }
   };
-
-  // console.log({ loadingDataContract });
 
   return (
     <section className="grid grid-cols-2 shadow-md rounded-md bg-white p-6 mb-4 gap-6">
@@ -253,17 +300,26 @@ const ContractInfoSection = ({
           title={`Peringatan`}
           visible={modalDelete}
           onvisible={setModalDelete}
-          onOk={handleDeleteContract}
+          onOk={() =>
+            isAddendum ? handleDeleteContractHistory() : handleDeleteContract()
+          }
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"kontrak"}
+          itemName={isAddendum ? "adendum" : "kontrak"}
           loading={loadingDelete}
         >
-          <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan kontrak{" "}
-            <strong>{dataContract?.code_number}</strong>?
-          </p>
+          {isAddendum ? (
+            <p className="mb-4">
+              Apakah Anda yakin ingin melanjutkan penghapusan adendum kontrak{" "}
+              <strong>{dataContract?.code_number}</strong>?
+            </p>
+          ) : (
+            <p className="mb-4">
+              Apakah Anda yakin ingin melanjutkan penghapusan kontrak{" "}
+              <strong>{dataContract?.code_number}</strong>?
+            </p>
+          )}
         </ModalHapus2>
       </AccessControl>
     </section>
