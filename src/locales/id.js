@@ -74,7 +74,7 @@ export default {
   softwaredescription:
     "Membuat ide Anda menjadi nyata. Tim kami siap membantu menciptakan platform yang sesuai dengan kebutuhan Anda.",
   softwarebuttontitle: "Bangun Software",
-  joinmigsection: "Sedang mencari pekerjaan? Lamar pekerjaan sekarang",
+  joinmigsection: "Sedang mencari pekerjaan?",
   joinmigsubtitle: "Gabung jadi talent MIGhty, dapatkan keuntungan ini:",
   contactuscta: "Hubungi Kami",
   joinmigpoint1:
