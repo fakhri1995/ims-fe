@@ -269,7 +269,7 @@ const NotificationItem: FC<INotificationItem> = ({
     e.preventDefault();
 
     const hardRedirect = () => {
-      router.push(hrefValue).then(() => router.reload());
+      router.push(hrefValue);
     };
 
     if (!Boolean(isRead)) {
@@ -308,7 +308,7 @@ const NotificationItem: FC<INotificationItem> = ({
 
   const hrefValue = generateNotificationRedirectUrl(
     notificationableId,
-    notificationableTypeValue.toLowerCase() as "task" | "ticket"
+    notificationableTypeValue.toLowerCase() as "task" | "ticket" | "projecttask"
   );
 
   const notificationContent = (

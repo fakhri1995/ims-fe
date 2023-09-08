@@ -604,12 +604,14 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     setQueryParams({
                       month: date.format("M"),
                       year: date.format("YYYY"),
+                      page: 1,
                     });
                     setSelectedMonthYear(date);
                   } else {
                     setQueryParams({
                       month: moment().format("M"),
                       year: moment().format("YYYY"),
+                      page: 1,
                     });
                     setSelectedMonthYear(moment());
                   }

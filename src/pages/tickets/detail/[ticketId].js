@@ -507,6 +507,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
     // refreshclosedassignticket,
     refreshcloseddeadlineticket,
     isAllowedToGetTicketDetail,
+    ticketid,
   ]);
 
   /** Data fetching for "Aktivitas" card data source (Aktivitas Log) */

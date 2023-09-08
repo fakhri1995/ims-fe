@@ -137,13 +137,15 @@ export const generateStaticAssetUrl = (path: string) => {
  */
 export const generateNotificationRedirectUrl = (
   notificationableId: number,
-  notificationableType: "task" | "ticket"
+  notificationableType: "task" | "ticket" | "projecttask"
 ) => {
   switch (notificationableType) {
     case "task":
       return `/tasks/detail/${notificationableId}?prevpath=mytask`;
     case "ticket":
       return `/tickets/detail/${notificationableId}`;
+    case "projecttask":
+      return `/projects?showtaskid=${notificationableId}`;
   }
 };
 

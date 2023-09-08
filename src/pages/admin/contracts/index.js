@@ -313,16 +313,15 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
     {
       title: "Nomor Kontrak",
-      key: "contract_number",
-      dataIndex: "contract_number",
+      key: "code_number",
+      dataIndex: "code_number",
       render: (text, record, index) => {
         return {
           children: <div className="xl:w-40">{text || "-"}</div>,
         };
       },
       sorter: isAllowedToGetContracts
-        ? (a, b) =>
-            a.contract_number?.toLowerCase() > b.contract_number?.toLowerCase()
+        ? (a, b) => a.code_number?.toLowerCase() > b.code_number?.toLowerCase()
         : false,
     },
     {
@@ -728,7 +727,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         >
           <p className="mb-4">
             Apakah Anda yakin ingin melanjutkan penghapusan kontrak{" "}
-            <strong>{dataRowClicked?.contract_number}</strong>?
+            <strong>{dataRowClicked?.code_number}</strong>?
           </p>
         </ModalHapus2>
       </AccessControl>

@@ -43,7 +43,8 @@ const ModalInvoiceCreate = ({
       setDataInvoiceDraft({
         invoice_name: dataContract?.title,
         invoice_raise_at: moment(new Date()).format("YYYY-MM-DD"),
-        contract_template_id: dataContract?.id,
+        contract_template_id: dataContract?.contract_id,
+        contract_history_id: dataContract?.id,
       });
     }
   }, [dataContract, visible]);
@@ -108,9 +109,6 @@ const ModalInvoiceCreate = ({
       })
       .finally(() => setLoading(false));
   };
-
-  // console.log({ dataInvoiceDraft });
-  // console.log({ dataContract });
 
   return !modalConfirm ? (
     <Modal
