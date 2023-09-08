@@ -113,7 +113,11 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   useEffect(() => {
     if (isFetchedContract) {
-      setDataAddendum({ ...dataContract, contract_id: contractId });
+      setDataAddendum({
+        ...dataContract,
+        contract_id: contractId,
+        code_number: "",
+      });
     }
   }, [dataContract]);
 
@@ -137,7 +141,7 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   );
 
-  // 2.4. Disable "Simpan Kontrak" button if any required field is empty
+  // 2.4. Disable "Simpan Adendum" button if any required field is empty
   useEffect(() => {
     const requiredContractFields = [
       { data: dataAddendum?.code_number, name: "No Kontrak" },

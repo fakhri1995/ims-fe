@@ -30,7 +30,7 @@ const ContractAddendumSection = ({
     data: dataContractHistories,
     isLoading: loadingDataContractHistories,
   } = useQuery(
-    [CONTRACT_HISTORIES_GET, contractId, refresh],
+    [CONTRACT_HISTORIES_GET, contractId, refresh, currentVersion],
     () =>
       ContractService.getContractHistories(
         initProps,

@@ -136,7 +136,12 @@ const ContractDetailIndex = ({
       setCurrentHistoryId(dataContract?.contract_history_id_active);
       setDataDisplayedContarct(dataContract);
     }
-  }, [dataContract?.id, loadingDataContract, refresh]);
+  }, [
+    dataContract?.id,
+    loadingDataContract,
+    refresh,
+    dataContract?.contract_history_id_active,
+  ]);
 
   // Get selected contract version
   useEffect(() => {
