@@ -1,4 +1,4 @@
-import { Modal, notification } from "antd";
+import { Modal, Spin, notification } from "antd";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
@@ -59,10 +59,11 @@ const ModalAddendumDetail = ({
       ContractService.getContractHistoryLogs(
         initProps,
         isAllowedToGetContractHistoryLogs,
-        contractHistoryId
+        contractHistoryId,
+        visible
       ),
     {
-      // enabled: isAllowedToGetContractHistoryLogs,
+      enabled: isAllowedToGetContractHistoryLogs,
       refetchOnMount: true,
       select: (response) => response.data.data?.[0],
     }
@@ -106,20 +107,40 @@ const ModalAddendumDetail = ({
     // Remove unchanged value
     dataLogs?.forEach((data, idx) => {
       // TODO: handle extras
+      if (data.name == "Isian") {
+        let isExtrasSame = true;
 
-      if (data.newValue == data.oldValue) {
-        dataLogs.splice(idx, 1);
+        if (data?.oldValue?.length === data?.newValue?.length) {
+          for (let item in data?.oldValue) {
+            if (
+              data?.oldValue?.[item]?.key != data?.newValue?.[item]?.key ||
+              data?.oldValue?.[item]?.name != data?.newValue?.[item]?.name ||
+              data?.oldValue?.[item]?.type != data?.newValue?.[item]?.type ||
+              data?.oldValue?.[item]?.value?.toString() !=
+                data?.newValue?.[item]?.value?.toString()
+            ) {
+              isExtrasSame = false;
+              break;
+            }
+          }
+        } else {
+          isExtrasSame = false;
+        }
+
+        if (isExtrasSame) {
+          dataLogs?.splice(idx, 1);
+        }
       }
 
-      // if (data.name == "Isian") {
-      //   dataLogs.splice(idx, 1);
-      // }
+      if (data?.newValue == data?.oldValue) {
+        dataLogs?.splice(idx, 1);
+      }
     });
 
     setDataLogChanges(dataLogs);
   }, [dataContractHistoryLogs]);
 
-  console.log({ dataLogChanges });
+  // console.log({ dataLogChanges });
   return (
     <Modal
       width={600}
@@ -136,43 +157,82 @@ const ModalAddendumDetail = ({
       onCancel={() => onvisible(false)}
       footer={false}
     >
-      <div className="grid gap-6">
-        {dataLogChanges.map((item) =>
-          item?.name == "Isian" ? (
-            <div className="flex justify-between items-center">
-              {item?.oldValue?.map((val) => (
-                <div key={val?.key} className="w-5/12">
-                  <h5 className="mig-caption--bold">{val?.name || "-"}</h5>
-                  {getExtrasDetail(val?.type, val?.value)}
-                </div>
-              ))}
+      <div>
+        <Spin spinning={loadingDataContractHistoryLogs}>
+          <div className="grid grid-cols-1 gap-6">
+            {dataLogChanges.map((item) =>
+              item?.name == "Isian" ? (
+                // Extras attribute
+                <div
+                  key={item?.name}
+                  className="flex justify-between items-center "
+                >
+                  <div className="w-5/12 space-y-3">
+                    {item?.oldValue?.length ? (
+                      item?.oldValue?.map((val, idx) => (
+                        <div key={idx} className=" text-mono50">
+                          <h5 className="mig-caption--bold text-mono50">
+                            {val?.name || "-"}
+                          </h5>
+                          {getExtrasDetail(val?.type, val?.value)}
+                        </div>
+                      ))
+                    ) : (
+                      <div className=" text-mono50">
+                        <h5 className="mig-caption--bold text-mono50">
+                          Informasi Tambahan
+                        </h5>
+                        <p>-</p>
+                      </div>
+                    )}
+                  </div>
 
-              <div className="w-2/12 text-center">
-                <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
-              </div>
-              {item?.newValue?.map((val) => (
-                <div key={val?.key} className="w-5/12">
-                  <h5 className="mig-caption--bold">{val?.name || "-"}</h5>
-                  {getExtrasDetail(val?.type, val?.value)}
+                  <div className="w-2/12 text-center">
+                    <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
+                  </div>
+
+                  <div className="w-5/12 space-y-3">
+                    {item?.newValue?.length ? (
+                      item?.newValue?.map((val, idx) => (
+                        <div key={idx} className="">
+                          <h5 className="mig-caption--bold">
+                            {val?.name || "-"}
+                          </h5>
+                          {getExtrasDetail(val?.type, val?.value)}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="">
+                        <h5 className="mig-caption--bold">
+                          Informasi Tambahan
+                        </h5>
+                        <p>-</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center">
-              <div className="w-5/12">
-                <p className="mig-caption--bold">{item?.name}</p>
-                <p>{item?.oldValue}</p>
-              </div>
-              <div className="w-2/12 text-center">
-                <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
-              </div>
-              <div className="w-5/12">
-                <p className="mig-caption--bold">{item?.name}</p>
-                <p>{item?.newValue}</p>
-              </div>
-            </div>
-          )
-        )}
+              ) : (
+                // Attributes other than extras
+                <div
+                  key={item?.name}
+                  className="flex justify-between items-center"
+                >
+                  <div className="w-5/12 text-mono50">
+                    <p className="mig-caption--bold">{item?.name}</p>
+                    <p>{item?.oldValue}</p>
+                  </div>
+                  <div className="w-2/12 text-center">
+                    <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
+                  </div>
+                  <div className="w-5/12">
+                    <p className="mig-caption--bold">{item?.name}</p>
+                    <p>{item?.newValue}</p>
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+        </Spin>
       </div>
     </Modal>
   );

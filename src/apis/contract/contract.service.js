@@ -354,7 +354,8 @@ export class ContractService {
   static getContractHistoryLogs = async (
     initProps,
     feature,
-    contractHistoryId
+    contractHistoryId,
+    visible
   ) => {
     if (!feature) {
       permissionWarningNotification(
@@ -363,6 +364,11 @@ export class ContractService {
       );
       return;
     }
+
+    if (!visible) {
+      return;
+    }
+
     const apiRes = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractHistoryLogs?contract_history_id=${contractHistoryId}`,
       {
