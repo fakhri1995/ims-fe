@@ -93,9 +93,10 @@ const ContractDetailIndex = ({
   const [refresh, setRefresh] = useState(-1);
   const [isMobileView, setIsMobileView] = useState(false);
   const [currentHistoryId, setCurrentHistoryId] = useState(0);
-  const [dataDisplayedContract, setDataDisplayedContarct] = useState({});
+  const [dataDisplayedContract, setDataDisplayedContract] = useState({});
   const [loadingContractHistory, setLoadingContractHistory] = useState(false);
   const [isAddendum, setIsAddendum] = useState(false);
+  const [currentRowKey, setCurrentRowKey] = useState(0);
 
   // 3. Use Effect & Use Query
   // Responsive view for action button section
@@ -117,7 +118,7 @@ const ContractDetailIndex = ({
 
   // Get contract detail
   const { data: dataContract, isLoading: loadingDataContract } = useQuery(
-    [CONTRACT_GET, contractId],
+    [CONTRACT_GET, contractId, refresh],
     () =>
       ContractService.getContract(
         initProps,
@@ -134,7 +135,7 @@ const ContractDetailIndex = ({
   useEffect(() => {
     if (dataContract?.id && !loadingDataContract) {
       setCurrentHistoryId(dataContract?.contract_history_id_active);
-      setDataDisplayedContarct(dataContract);
+      setDataDisplayedContract(dataContract);
     }
   }, [
     dataContract?.id,
@@ -164,7 +165,7 @@ const ContractDetailIndex = ({
         .then((res) => res.json())
         .then((response) => {
           if (response.success) {
-            setDataDisplayedContarct(response.data);
+            setDataDisplayedContract(response.data);
           } else {
             notification.error({
               message: response.message,
@@ -182,6 +183,13 @@ const ContractDetailIndex = ({
     }
   }, [isAllowedToGetContractHistory, currentHistoryId]);
 
+  useEffect(() => {
+    return () => {
+      setCurrentHistoryId(0);
+    };
+  }, []);
+
+  // console.log("id di detail contract", currentHistoryId);
   return (
     <Layout
       tok={initProps}
@@ -242,6 +250,8 @@ const ContractDetailIndex = ({
             initProps={initProps}
             refresh={refresh}
             setIsAddendum={setIsAddendum}
+            currentKey={currentRowKey}
+            setCurrentKey={setCurrentRowKey}
           />
 
           <Tabs

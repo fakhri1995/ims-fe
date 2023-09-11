@@ -1,32 +1,133 @@
-import { DeleteOutlined } from "@ant-design/icons";
 import { Modal, notification } from "antd";
 import React, { useState } from "react";
+import { useEffect } from "react";
+import { useQuery } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
-import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
-import ButtonSys from "../../button";
+import { useAccessControl } from "contexts/access-control";
+
+import { CONTRACT_HISTORY_LOGS_GET } from "lib/features";
+
+import { ContractService } from "apis/contract";
+
 import { ArrowNarrowRightIconSvg } from "../../icon";
+import { getExtrasDetail } from "../../screen/contract/detail/ContractInfoSection";
 import { ModalHapus2 } from "../modalCustom";
+
+const addendumLogDetailLabel = {
+  id: "ID History Kontrak",
+  code_number: "Nomor Kontrak",
+  title: "Judul Kontrak",
+  client_id: "ID Klien",
+  requester_id: "ID Requester",
+  initial_date: "Tanggal Dibuat",
+  start_date: "Tanggal Mulai",
+  end_date: "Tanggal Selesai",
+  extras: "Isian",
+};
 
 const ModalAddendumDetail = ({
   initProps,
   visible,
   onvisible,
-  // dataNote,
-  // setRefreshNotes,
+  contractHistoryId,
+  versionLabel,
+  contractNumber,
 }) => {
-  // 1. USE STATE
+  // 1. Access Control
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
 
-  // 2. HANDLER
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetContractHistoryLogs = hasPermission(
+    CONTRACT_HISTORY_LOGS_GET
+  );
 
+  // 2. Use State
+  const [dataLogChanges, setDataLogChanges] = useState([]);
+
+  // 3. Use Effect & Use Query
+  // Get contract history logs
+  const {
+    data: dataContractHistoryLogs,
+    isLoading: loadingDataContractHistoryLogs,
+  } = useQuery(
+    [CONTRACT_HISTORY_LOGS_GET, contractHistoryId],
+    () =>
+      ContractService.getContractHistoryLogs(
+        initProps,
+        isAllowedToGetContractHistoryLogs,
+        contractHistoryId
+      ),
+    {
+      // enabled: isAllowedToGetContractHistoryLogs,
+      refetchOnMount: true,
+      select: (response) => response.data.data?.[0],
+    }
+  );
+
+  // Construct data to track changes in addendum
+  useEffect(() => {
+    const dataLogNew = dataContractHistoryLogs?.properties?.new;
+    const dataLogOld = dataContractHistoryLogs?.properties?.old;
+
+    // Restructure log data from API response
+    let dataLogs = [];
+    if (dataLogOld) {
+      // add object of each log attribute to a list
+      Object.entries(dataLogOld)?.forEach((logData) => {
+        if (addendumLogDetailLabel[logData[0]]) {
+          let rowTable = {};
+
+          // add raw attribute name
+          rowTable.name = logData[0];
+
+          // add old value
+          rowTable.oldValue = logData[1] || "-";
+
+          dataLogs.push(rowTable);
+        }
+      });
+
+      // add new value to table list
+      if (dataLogNew) {
+        dataLogs?.forEach((item, idx) => {
+          // add new value
+          dataLogs[idx].newValue = dataLogNew[item?.name] || "-";
+
+          // map raw attribute name to be more readable for user
+          dataLogs[idx].name = addendumLogDetailLabel[item?.name];
+        });
+      }
+    }
+
+    // Remove unchanged value
+    dataLogs?.forEach((data, idx) => {
+      // TODO: handle extras
+
+      if (data.newValue == data.oldValue) {
+        dataLogs.splice(idx, 1);
+      }
+
+      // if (data.name == "Isian") {
+      //   dataLogs.splice(idx, 1);
+      // }
+    });
+
+    setDataLogChanges(dataLogs);
+  }, [dataContractHistoryLogs]);
+
+  console.log({ dataLogChanges });
   return (
     <Modal
       width={600}
       title={
         <div className="flex space-x-2 mr-5">
-          <p className="mig-heading--4 text-mono30">[no]/CNTR/BKP/III/2020</p>
+          <p className="mig-heading--4 text-mono30">{contractNumber}</p>
           <p className="bg-backdrop text-primary100 px-2 py-1 rounded-md font-bold">
-            Addendum 1
+            {versionLabel}
           </p>
         </div>
       }
@@ -35,20 +136,43 @@ const ModalAddendumDetail = ({
       onCancel={() => onvisible(false)}
       footer={false}
     >
-      <div className="">
-        <div className="flex justify-between items-center">
-          <div className="w-5/12">
-            <p className="mig-caption--bold">Klien</p>
-            <p>PT. Mitramas</p>
-          </div>
-          <div className="w-2/12 text-center">
-            <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
-          </div>
-          <div className="w-5/12">
-            <p className="mig-caption--bold">Klien</p>
-            <p>PT. BKP</p>
-          </div>
-        </div>
+      <div className="grid gap-6">
+        {dataLogChanges.map((item) =>
+          item?.name == "Isian" ? (
+            <div className="flex justify-between items-center">
+              {item?.oldValue?.map((val) => (
+                <div key={val?.key} className="w-5/12">
+                  <h5 className="mig-caption--bold">{val?.name || "-"}</h5>
+                  {getExtrasDetail(val?.type, val?.value)}
+                </div>
+              ))}
+
+              <div className="w-2/12 text-center">
+                <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
+              </div>
+              {item?.newValue?.map((val) => (
+                <div key={val?.key} className="w-5/12">
+                  <h5 className="mig-caption--bold">{val?.name || "-"}</h5>
+                  {getExtrasDetail(val?.type, val?.value)}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex justify-between items-center">
+              <div className="w-5/12">
+                <p className="mig-caption--bold">{item?.name}</p>
+                <p>{item?.oldValue}</p>
+              </div>
+              <div className="w-2/12 text-center">
+                <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
+              </div>
+              <div className="w-5/12">
+                <p className="mig-caption--bold">{item?.name}</p>
+                <p>{item?.newValue}</p>
+              </div>
+            </div>
+          )
+        )}
       </div>
     </Modal>
   );

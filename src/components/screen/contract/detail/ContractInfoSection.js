@@ -37,6 +37,37 @@ const extrasType = {
 
 export const { TEXT, LIST, FILE } = extrasType;
 
+// Conditional render
+export const getExtrasDetail = (type, value) => {
+  switch (type) {
+    case TEXT:
+      return <p>{value}</p>;
+
+    case LIST:
+      return (
+        <ul>
+          {value?.map((item, idx) => (
+            <li key={idx}>{item}</li>
+          ))}
+        </ul>
+      );
+
+    case FILE:
+      return (
+        <div className="flex space-x-2 items-center">
+          <FileTextIconSvg size={24} color={"#35763B"} />
+          <a
+            href={generateStaticAssetUrl(value?.link)}
+            target="_blank"
+            className="text-primary100 truncate"
+          >
+            {getFileName(value?.link)}
+          </a>
+        </div>
+      );
+  }
+};
+
 const ContractInfoSection = ({
   initProps,
   contractId,
@@ -162,37 +193,7 @@ const ContractInfoSection = ({
     return null;
   }
 
-  // Conditional render
-  const getExtrasDetail = (type, value) => {
-    switch (type) {
-      case TEXT:
-        return <p>{value}</p>;
-
-      case LIST:
-        return (
-          <ul>
-            {value?.map((item, idx) => (
-              <li key={idx}>{item}</li>
-            ))}
-          </ul>
-        );
-
-      case FILE:
-        return (
-          <div className="flex space-x-2 items-center">
-            <FileTextIconSvg size={24} color={"#35763B"} />
-            <a
-              href={generateStaticAssetUrl(value?.link)}
-              target="_blank"
-              className="text-primary100 truncate"
-            >
-              {getFileName(value?.link)}
-            </a>
-          </div>
-        );
-    }
-  };
-
+  // console.log("id di info section", contractHistoryId);
   return (
     <section className="grid grid-cols-1 shadow-md rounded-md bg-white p-6 mb-4 gap-6">
       {/* Header */}
