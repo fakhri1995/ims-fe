@@ -76,6 +76,7 @@ const ContractInfoSection = ({
   loadingDataContract,
   isAddendum,
   setRefresh,
+  versionLabel,
 }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
@@ -92,8 +93,6 @@ const ContractInfoSection = ({
   // Use State
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
-
-  // Use Query
 
   // Handler
   const handleDeleteContract = () => {
@@ -193,54 +192,57 @@ const ContractInfoSection = ({
     return null;
   }
 
+  // console.log({ dataContract });
   // console.log("id di info section", contractHistoryId);
   return (
     <section className="grid grid-cols-1 shadow-md rounded-md bg-white p-6 mb-4 gap-6">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:justify-between ">
-        <div className="flex space-x-2 items-center mb-4 lg:mb-0">
-          <h4 className="mig-heading--4">{dataContract?.code_number || "-"}</h4>
-          <p className="bg-backdrop text-primary100 px-2 py-1 rounded-md font-bold">
-            Aktif
-          </p>
-        </div>
-        <div className="flex flex-col xl:flex-row xl:items-center gap-2">
-          <ButtonSys
-            type={"default"}
-            color="danger"
-            onClick={() => setModalDelete(true)}
-            disabled={!isAllowedToDeleteContract}
-          >
-            <div className="flex space-x-2 items-center">
-              <DeleteOutlined />
-              <p>Hapus Kontrak</p>
-            </div>
-          </ButtonSys>
+      <Spin spinning={loadingDataContract}>
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-6 gap-6">
+          <div className="flex space-x-2 items-center ">
+            <h4 className="mig-heading--4">
+              {dataContract?.code_number || "-"}
+            </h4>
+            <p className="bg-backdrop text-primary100 px-2 py-1 rounded-md font-bold">
+              {versionLabel == "Utama" ? "Aktif" : versionLabel}
+            </p>
+          </div>
+          <div className="flex flex-col xl:flex-row xl:items-center gap-2">
+            <ButtonSys
+              type={"default"}
+              color="danger"
+              onClick={() => setModalDelete(true)}
+              disabled={!isAllowedToDeleteContract}
+            >
+              <div className="flex space-x-2 items-center">
+                <DeleteOutlined />
+                <p>Hapus Kontrak</p>
+              </div>
+            </ButtonSys>
 
-          <PDFDownloadLink
-            document={<ContractPDFTemplate dataContract={dataContract} />}
-            fileName={`Contract_${dataContract?.code_number}.pdf`}
-          >
-            {({ blob, url, loading, error }) => (
-              <Spin spinning={loading}>
-                <ButtonSys
-                  type={"default"}
-                  disabled={!isAllowedToGetContract}
-                  fullWidth
-                >
-                  <div className="flex space-x-2 items-center">
-                    <PrinterOutlined />
-                    <p>Cetak Kontrak</p>
-                  </div>
-                </ButtonSys>
-              </Spin>
-            )}
-          </PDFDownloadLink>
+            <PDFDownloadLink
+              document={<ContractPDFTemplate dataContract={dataContract} />}
+              fileName={`Contract_${dataContract?.code_number}.pdf`}
+            >
+              {({ blob, url, loading, error }) => (
+                <Spin spinning={loading}>
+                  <ButtonSys
+                    type={"default"}
+                    disabled={!isAllowedToGetContract}
+                    fullWidth
+                  >
+                    <div className="flex space-x-2 items-center">
+                      <PrinterOutlined />
+                      <p>Cetak Kontrak</p>
+                    </div>
+                  </ButtonSys>
+                </Spin>
+              )}
+            </PDFDownloadLink>
+          </div>
         </div>
-      </div>
 
-      {/* Body */}
-      <Spin className="grid grid-cols-2" spinning={loadingDataContract}>
+        {/* Body */}
         <div className="grid grid-cols-2 gap-6">
           <div className="col-span-2">
             <h5 className="mig-caption--bold mb-2">Judul Kontrak</h5>

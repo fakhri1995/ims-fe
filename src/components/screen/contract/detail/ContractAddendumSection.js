@@ -17,8 +17,20 @@ import { momentFormatDate } from "../../../../lib/helper";
 import { EyeIconSvg } from "../../../icon";
 import ModalAddendumDetail from "../../../modal/contracts/modalAddendumDetail";
 
+export const getContractVersionLabel = (category, rowNum) => {
+  switch (category) {
+    case "main":
+      return "Utama";
+
+    case "initial":
+      return "Inisiasi";
+
+    case "addendum":
+      return `Adendum ${rowNum}`;
+  }
+};
+
 const ContractAddendumSection = ({
-  currentVersion,
   setCurrentVersion,
   isAllowedToGetContractHistories,
   contractId,
@@ -68,19 +80,6 @@ const ContractAddendumSection = ({
     }
   }, [dataContractHistories]);
 
-  const getContractVersionLabel = (category, addendumNum) => {
-    switch (category) {
-      case "main":
-        return "Utama";
-
-      case "initial":
-        return "Inisiasi";
-
-      case "addendum":
-        return `Adendum ${addendumNum}`;
-    }
-  };
-
   // console.log("id di addendum section", currentVersion);
   return (
     <section className="grid grid-cols-1 w-full shadow-md rounded-md bg-white p-6 mb-4 gap-6">
@@ -89,9 +88,8 @@ const ContractAddendumSection = ({
         className="tableBordered border-2 rounded-md "
         dataSource={contractVersionList?.map((item, idx) => ({
           ...item,
-          key: idx === 0 ? "0" : item?.id,
+          key: idx + 1,
           category: idx === 0 ? "main" : item?.category,
-          rowNum: idx + 1,
         }))}
         rowKey={(record) => record.key}
         loading={loadingDataContractHistories}
@@ -129,14 +127,14 @@ const ContractAddendumSection = ({
           {
             title: "No.",
             dataIndex: "no",
-            render: (text, record) => <p>{record?.rowNum}</p>,
+            render: (text, record) => <p>{record?.key}</p>,
           },
           {
             title: "Kontrak",
             dataIndex: "category",
             render: (text, record) => (
               <p className="">
-                {getContractVersionLabel(text, record?.rowNum - 2)}
+                {getContractVersionLabel(text, record?.key - 2)}
               </p>
             ),
           },
@@ -154,7 +152,7 @@ const ContractAddendumSection = ({
                   e.stopPropagation();
                   setCurrentModalData({
                     history_id: record?.id,
-                    rowNum: record?.rowNum,
+                    key: record?.key,
                     category: record?.category,
                     code_number: record?.code_number,
                   });
@@ -178,7 +176,7 @@ const ContractAddendumSection = ({
           contractHistoryId={currentModalData?.history_id}
           versionLabel={getContractVersionLabel(
             currentModalData?.category,
-            currentModalData?.rowNum - 2
+            currentModalData?.key - 2
           )}
           contractNumber={currentModalData?.code_number}
         />

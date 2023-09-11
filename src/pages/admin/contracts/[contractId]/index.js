@@ -29,7 +29,9 @@ import {
 
 import { ContractService } from "apis/contract";
 
-import ContractAddendumSection from "../../../../components/screen/contract/detail/ContractAddendumSection";
+import ContractAddendumSection, {
+  getContractVersionLabel,
+} from "../../../../components/screen/contract/detail/ContractAddendumSection";
 import { permissionWarningNotification } from "../../../../lib/helper";
 import {
   ArcElement,
@@ -243,7 +245,6 @@ const ContractDetailIndex = ({
         {/* Catatan & Aktivitas */}
         <section className="md:col-span-4 h-max order-last md:order-none">
           <ContractAddendumSection
-            currentVersion={currentHistoryId}
             setCurrentVersion={setCurrentHistoryId}
             isAllowedToGetContractHistories={isAllowedToGetContractHistories}
             contractId={contractId}
@@ -284,6 +285,10 @@ const ContractDetailIndex = ({
             loadingDataContract={loadingContractHistory}
             isAddendum={isAddendum}
             setRefresh={setRefresh}
+            versionLabel={getContractVersionLabel(
+              currentRowKey == 1 ? "main" : dataDisplayedContract?.category,
+              currentRowKey - 2
+            )}
           />
 
           <ContractServiceSection
