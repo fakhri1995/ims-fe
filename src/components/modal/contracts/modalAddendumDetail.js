@@ -106,7 +106,6 @@ const ModalAddendumDetail = ({
 
     // Remove unchanged value
     dataLogs?.forEach((data, idx) => {
-      // TODO: handle extras
       if (data.name == "Isian") {
         let isExtrasSame = true;
 
@@ -140,7 +139,6 @@ const ModalAddendumDetail = ({
     setDataLogChanges(dataLogs);
   }, [dataContractHistoryLogs]);
 
-  // console.log({ dataLogChanges });
   return (
     <Modal
       width={600}

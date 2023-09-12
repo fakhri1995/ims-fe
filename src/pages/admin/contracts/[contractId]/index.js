@@ -98,7 +98,7 @@ const ContractDetailIndex = ({
   const [dataDisplayedContract, setDataDisplayedContract] = useState({});
   const [loadingContractHistory, setLoadingContractHistory] = useState(false);
   const [isAddendum, setIsAddendum] = useState(false);
-  const [currentRowKey, setCurrentRowKey] = useState(0);
+  const [currentRowKey, setCurrentRowKey] = useState(1);
 
   // 3. Use Effect & Use Query
   // Responsive view for action button section
@@ -138,6 +138,7 @@ const ContractDetailIndex = ({
     if (dataContract?.id && !loadingDataContract) {
       setCurrentHistoryId(dataContract?.contract_history_id_active);
       setDataDisplayedContract(dataContract);
+      setCurrentRowKey(1);
     }
   }, [
     dataContract?.id,
@@ -185,12 +186,7 @@ const ContractDetailIndex = ({
     }
   }, [isAllowedToGetContractHistory, currentHistoryId]);
 
-  useEffect(() => {
-    return () => {
-      setCurrentHistoryId(0);
-    };
-  }, []);
-
+  // console.log({ currentHistoryId });
   // console.log("id di detail contract", currentHistoryId);
   return (
     <Layout

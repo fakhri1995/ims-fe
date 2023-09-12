@@ -192,7 +192,6 @@ const ContractInfoSection = ({
     return null;
   }
 
-  // console.log({ dataContract });
   // console.log("id di info section", contractHistoryId);
   return (
     <section className="grid grid-cols-1 shadow-md rounded-md bg-white p-6 mb-4 gap-6">
