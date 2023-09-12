@@ -16,15 +16,9 @@ import ContractServiceSection from "components/screen/contract/detail/ContractSe
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  CONTRACTS_GET,
-  CONTRACT_DELETE,
   CONTRACT_GET,
   CONTRACT_HISTORIES_GET,
-  CONTRACT_HISTORY_ADD,
-  CONTRACT_HISTORY_DELETE,
   CONTRACT_HISTORY_GET,
-  CONTRACT_HISTORY_UPDATE,
-  CONTRACT_UPDATE,
 } from "lib/features";
 
 import { ContractService } from "apis/contract";
@@ -74,13 +68,6 @@ const ContractDetailIndex = ({
 
   const isAllowedToGetContractHistories = hasPermission(CONTRACT_HISTORIES_GET);
   const isAllowedToGetContractHistory = hasPermission(CONTRACT_HISTORY_GET);
-  const isAllowedToAddContractHistory = hasPermission(CONTRACT_HISTORY_ADD);
-  const isAllowedToUpdateContractHistory = hasPermission(
-    CONTRACT_HISTORY_UPDATE
-  );
-  const isAllowedToDeleteContractHistory = hasPermission(
-    CONTRACT_HISTORY_DELETE
-  );
 
   const rt = useRouter();
   // Breadcrumb url
