@@ -332,19 +332,7 @@ const ContractExtrasForm = ({
           cancelText={"Tidak"}
           onConfirm={() => {
             const tempExtras = [...dataContractUpdate?.extras];
-            // TODO: recheck if API is fixed
-
-            // if (tempExtras[idx].key) {
-            //   tempExtras[idx].is_deleted = 1;
-            // } else {
-            //   // use in new extra (never been saved yet)
-            //   tempExtras.splice(idx, 1);
-            // }
-
-            if (isAddendumForm) {
-              tempExtras.splice(idx, 1);
-            } else if (tempExtras[idx].key) {
-              // use in non-adendum form
+            if (tempExtras[idx].key) {
               tempExtras[idx].is_deleted = 1;
             } else {
               // use in new extra (never been saved yet)

@@ -4,7 +4,12 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
 
-import { CONTRACT_HISTORIES_GET } from "lib/features";
+import { AccessControl } from "components/features/AccessControl";
+
+import {
+  CONTRACT_HISTORIES_GET,
+  CONTRACT_HISTORY_LOGS_GET,
+} from "lib/features";
 
 import { ContractService } from "apis/contract";
 
@@ -12,25 +17,40 @@ import { momentFormatDate } from "../../../../lib/helper";
 import { EyeIconSvg } from "../../../icon";
 import ModalAddendumDetail from "../../../modal/contracts/modalAddendumDetail";
 
+export const getContractVersionLabel = (category, rowNum) => {
+  switch (category) {
+    case "main":
+      return "Utama";
+
+    case "initial":
+      return "Inisiasi";
+
+    case "addendum":
+      return `Adendum ${rowNum}`;
+  }
+};
+
 const ContractAddendumSection = ({
-  currentVersion,
   setCurrentVersion,
   isAllowedToGetContractHistories,
   contractId,
   initProps,
   refresh,
   setIsAddendum,
+  currentKey,
+  setCurrentKey,
 }) => {
   const [modalDetail, setModalDetail] = useState(false);
   const [rowState, setRowState] = useState(0);
   const [contractVersionList, setContractVersionList] = useState([]);
+  const [currentModalData, setCurrentModalData] = useState({});
 
   // Get contract histories
   const {
     data: dataContractHistories,
     isLoading: loadingDataContractHistories,
   } = useQuery(
-    [CONTRACT_HISTORIES_GET, contractId, refresh, currentVersion],
+    [CONTRACT_HISTORIES_GET, contractId, refresh],
     () =>
       ContractService.getContractHistories(
         initProps,
@@ -39,12 +59,15 @@ const ContractAddendumSection = ({
       ),
     {
       enabled: isAllowedToGetContractHistories,
-      refetchOnMount: false,
+      refetchOnMount: true,
       select: (response) => response.data,
     }
   );
 
   // Construct array for table Daftar Kontrak
+  // Utama: last item from addendum or initial
+  // Inisiasi: initial
+  // Adendum 1-n: items in addendum
   useEffect(() => {
     if (!loadingDataContractHistories) {
       setContractVersionList([
@@ -57,6 +80,7 @@ const ContractAddendumSection = ({
     }
   }, [dataContractHistories]);
 
+  // console.log("id di addendum section", currentVersion);
   return (
     <section className="grid grid-cols-1 w-full shadow-md rounded-md bg-white p-6 mb-4 gap-6">
       <h4 className="mig-heading--4">Daftar Kontrak</h4>
@@ -64,9 +88,8 @@ const ContractAddendumSection = ({
         className="tableBordered border-2 rounded-md "
         dataSource={contractVersionList?.map((item, idx) => ({
           ...item,
-          key: idx === 0 ? "0" : item?.id,
+          key: idx + 1,
           category: idx === 0 ? "main" : item?.category,
-          rowNum: idx + 1,
         }))}
         rowKey={(record) => record.key}
         loading={loadingDataContractHistories}
@@ -83,6 +106,7 @@ const ContractAddendumSection = ({
             onClick: () => {
               if (record.id) {
                 setCurrentVersion(record?.id);
+                setCurrentKey(record.key);
 
                 if (record?.category == "addendum") {
                   setIsAddendum(true);
@@ -95,7 +119,7 @@ const ContractAddendumSection = ({
         }}
         rowClassName={(record, idx) => {
           return `${record.id === rowState && `cursor-pointer `} ${
-            record.id === currentVersion && `bg-[#EBF2EC]`
+            record.key === currentKey && `bg-[#EBF2EC]`
           } 
           }`;
         }}
@@ -103,16 +127,14 @@ const ContractAddendumSection = ({
           {
             title: "No.",
             dataIndex: "no",
-            render: (text, record) => <p>{record?.rowNum}</p>,
+            render: (text, record) => <p>{record?.key}</p>,
           },
           {
             title: "Kontrak",
             dataIndex: "category",
             render: (text, record) => (
               <p className="">
-                {text == "main" && `Utama`}
-                {text == "initial" && `Inisiasi`}
-                {text == "addendum" && `Adendum ${record?.rowNum - 2}`}
+                {getContractVersionLabel(text, record?.key - 2)}
               </p>
             ),
           },
@@ -128,6 +150,12 @@ const ContractAddendumSection = ({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  setCurrentModalData({
+                    history_id: record?.id,
+                    key: record?.key,
+                    category: record?.category,
+                    code_number: record?.code_number,
+                  });
                   setModalDetail(true);
                 }}
                 className="bg-white rounded-md p-2 flex items-center 
@@ -140,7 +168,19 @@ const ContractAddendumSection = ({
         ]}
       />
 
-      <ModalAddendumDetail visible={modalDetail} onvisible={setModalDetail} />
+      <AccessControl hasPermission={CONTRACT_HISTORY_LOGS_GET}>
+        <ModalAddendumDetail
+          initProps={initProps}
+          visible={modalDetail}
+          onvisible={setModalDetail}
+          contractHistoryId={currentModalData?.history_id}
+          versionLabel={getContractVersionLabel(
+            currentModalData?.category,
+            currentModalData?.key - 2
+          )}
+          contractNumber={currentModalData?.code_number}
+        />
+      </AccessControl>
     </section>
   );
 };

@@ -16,20 +16,16 @@ import ContractServiceSection from "components/screen/contract/detail/ContractSe
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  CONTRACTS_GET,
-  CONTRACT_DELETE,
   CONTRACT_GET,
   CONTRACT_HISTORIES_GET,
-  CONTRACT_HISTORY_ADD,
-  CONTRACT_HISTORY_DELETE,
   CONTRACT_HISTORY_GET,
-  CONTRACT_HISTORY_UPDATE,
-  CONTRACT_UPDATE,
 } from "lib/features";
 
 import { ContractService } from "apis/contract";
 
-import ContractAddendumSection from "../../../../components/screen/contract/detail/ContractAddendumSection";
+import ContractAddendumSection, {
+  getContractVersionLabel,
+} from "../../../../components/screen/contract/detail/ContractAddendumSection";
 import { permissionWarningNotification } from "../../../../lib/helper";
 import {
   ArcElement,
@@ -72,13 +68,6 @@ const ContractDetailIndex = ({
 
   const isAllowedToGetContractHistories = hasPermission(CONTRACT_HISTORIES_GET);
   const isAllowedToGetContractHistory = hasPermission(CONTRACT_HISTORY_GET);
-  const isAllowedToAddContractHistory = hasPermission(CONTRACT_HISTORY_ADD);
-  const isAllowedToUpdateContractHistory = hasPermission(
-    CONTRACT_HISTORY_UPDATE
-  );
-  const isAllowedToDeleteContractHistory = hasPermission(
-    CONTRACT_HISTORY_DELETE
-  );
 
   const rt = useRouter();
   // Breadcrumb url
@@ -93,9 +82,10 @@ const ContractDetailIndex = ({
   const [refresh, setRefresh] = useState(-1);
   const [isMobileView, setIsMobileView] = useState(false);
   const [currentHistoryId, setCurrentHistoryId] = useState(0);
-  const [dataDisplayedContract, setDataDisplayedContarct] = useState({});
+  const [dataDisplayedContract, setDataDisplayedContract] = useState({});
   const [loadingContractHistory, setLoadingContractHistory] = useState(false);
   const [isAddendum, setIsAddendum] = useState(false);
+  const [currentRowKey, setCurrentRowKey] = useState(1);
 
   // 3. Use Effect & Use Query
   // Responsive view for action button section
@@ -117,7 +107,7 @@ const ContractDetailIndex = ({
 
   // Get contract detail
   const { data: dataContract, isLoading: loadingDataContract } = useQuery(
-    [CONTRACT_GET, contractId],
+    [CONTRACT_GET, contractId, refresh],
     () =>
       ContractService.getContract(
         initProps,
@@ -134,7 +124,8 @@ const ContractDetailIndex = ({
   useEffect(() => {
     if (dataContract?.id && !loadingDataContract) {
       setCurrentHistoryId(dataContract?.contract_history_id_active);
-      setDataDisplayedContarct(dataContract);
+      setDataDisplayedContract(dataContract);
+      setCurrentRowKey(1);
     }
   }, [
     dataContract?.id,
@@ -164,7 +155,7 @@ const ContractDetailIndex = ({
         .then((res) => res.json())
         .then((response) => {
           if (response.success) {
-            setDataDisplayedContarct(response.data);
+            setDataDisplayedContract(response.data);
           } else {
             notification.error({
               message: response.message,
@@ -182,6 +173,8 @@ const ContractDetailIndex = ({
     }
   }, [isAllowedToGetContractHistory, currentHistoryId]);
 
+  // console.log({ currentHistoryId });
+  // console.log("id di detail contract", currentHistoryId);
   return (
     <Layout
       tok={initProps}
@@ -235,13 +228,14 @@ const ContractDetailIndex = ({
         {/* Catatan & Aktivitas */}
         <section className="md:col-span-4 h-max order-last md:order-none">
           <ContractAddendumSection
-            currentVersion={currentHistoryId}
             setCurrentVersion={setCurrentHistoryId}
             isAllowedToGetContractHistories={isAllowedToGetContractHistories}
             contractId={contractId}
             initProps={initProps}
             refresh={refresh}
             setIsAddendum={setIsAddendum}
+            currentKey={currentRowKey}
+            setCurrentKey={setCurrentRowKey}
           />
 
           <Tabs
@@ -274,6 +268,10 @@ const ContractDetailIndex = ({
             loadingDataContract={loadingContractHistory}
             isAddendum={isAddendum}
             setRefresh={setRefresh}
+            versionLabel={getContractVersionLabel(
+              currentRowKey == 1 ? "main" : dataDisplayedContract?.category,
+              currentRowKey - 2
+            )}
           />
 
           <ContractServiceSection
