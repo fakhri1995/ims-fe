@@ -10,6 +10,7 @@ import { CONTRACT_HISTORY_LOGS_GET } from "lib/features";
 
 import { ContractService } from "apis/contract";
 
+import { currency } from "../../../lib/helper";
 import { ArrowNarrowRightIconSvg } from "../../icon";
 import { getExtrasDetail } from "../../screen/contract/detail/ContractInfoSection";
 import { ModalHapus2 } from "../modalCustom";
@@ -24,6 +25,7 @@ const addendumLogDetailLabel = {
   start_date: "Tanggal Mulai",
   end_date: "Tanggal Selesai",
   extras: "Isian",
+  services: "Service",
 };
 
 const ModalAddendumDetail = ({
@@ -106,6 +108,7 @@ const ModalAddendumDetail = ({
 
     // Remove unchanged value
     dataLogs?.forEach((data, idx) => {
+      // Handle extras
       if (data.name == "Isian") {
         let isExtrasSame = true;
 
@@ -131,6 +134,36 @@ const ModalAddendumDetail = ({
         }
       }
 
+      // Handle services
+      if (data?.name == "Service") {
+        let isServiceSame = true;
+
+        if (data?.oldValue?.length === data?.newValue?.length) {
+          for (let item in data?.oldValue) {
+            if (
+              data?.oldValue?.[item]?.id != data?.newValue?.[item]?.id ||
+              data?.oldValue?.[item]?.product_id !=
+                data?.newValue?.[item]?.product_id ||
+              data?.oldValue?.[item]?.pax != data?.newValue?.[item]?.pax ||
+              data?.oldValue?.[item]?.price != data?.newValue?.[item]?.price ||
+              data?.oldValue?.[item]?.unit != data?.newValue?.[item]?.unit ||
+              data?.oldValue?.[item]?.subtotal !=
+                data?.newValue?.[item]?.subtotal
+            ) {
+              isServiceSame = false;
+              break;
+            }
+          }
+        } else {
+          isServiceSame = false;
+        }
+
+        if (isServiceSame) {
+          dataLogs?.splice(idx, 1);
+        }
+      }
+
+      // Handle attributes other than extras and services
       if (data?.newValue == data?.oldValue) {
         dataLogs?.splice(idx, 1);
       }
@@ -158,59 +191,118 @@ const ModalAddendumDetail = ({
       <div>
         <Spin spinning={loadingDataContractHistoryLogs}>
           <div className="grid grid-cols-1 gap-6">
-            {dataLogChanges.map((item) =>
-              item?.name == "Isian" ? (
+            {dataLogChanges.map((item) => {
+              // get the biggest extras array length to be use as num of iteration
+              let iterNum = 0;
+              if (item?.name == "Isian" || item?.name == "Service") {
+                iterNum = Math.max(
+                  item?.oldValue?.length,
+                  item?.newValue?.length
+                );
+              }
+
+              return item?.name == "Isian" ? (
                 // Extras attribute
-                <div
-                  key={item?.name}
-                  className="flex justify-between items-center "
-                >
-                  <div className="w-5/12 space-y-3">
-                    {item?.oldValue?.length ? (
-                      item?.oldValue?.map((val, idx) => (
-                        <div key={idx} className=" text-mono50">
-                          <h5 className="mig-caption--bold text-mono50">
-                            {val?.name || "-"}
-                          </h5>
-                          {getExtrasDetail(val?.type, val?.value)}
-                        </div>
-                      ))
-                    ) : (
-                      <div className=" text-mono50">
+                Array.from({ length: iterNum }, (_, idx) => (
+                  <div key={idx} className="flex justify-between items-center ">
+                    <div className="w-5/12 space-y-3">
+                      <div key={idx} className=" text-mono50">
                         <h5 className="mig-caption--bold text-mono50">
-                          Informasi Tambahan
+                          {item?.oldValue?.[idx]?.name || `Isian ${idx + 1}`}
                         </h5>
-                        <p>-</p>
+                        {item?.oldValue?.[idx]?.value
+                          ? getExtrasDetail(
+                              item?.oldValue?.[idx]?.type,
+                              item?.oldValue?.[idx]?.value
+                            )
+                          : "-"}
                       </div>
-                    )}
-                  </div>
+                    </div>
 
-                  <div className="w-2/12 text-center">
-                    <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
-                  </div>
+                    <div className="w-2/12 text-center">
+                      <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
+                    </div>
 
-                  <div className="w-5/12 space-y-3">
-                    {item?.newValue?.length ? (
-                      item?.newValue?.map((val, idx) => (
-                        <div key={idx} className="">
-                          <h5 className="mig-caption--bold">
-                            {val?.name || "-"}
-                          </h5>
-                          {getExtrasDetail(val?.type, val?.value)}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="">
+                    <div className="w-5/12 space-y-3">
+                      <div key={idx} className="">
                         <h5 className="mig-caption--bold">
-                          Informasi Tambahan
+                          {item?.newValue?.[idx]?.name || `Isian ${idx + 1}`}
                         </h5>
-                        <p>-</p>
+                        {item?.newValue?.[idx]?.value
+                          ? getExtrasDetail(
+                              item?.newValue?.[idx]?.type,
+                              item?.newValue?.[idx]?.value
+                            )
+                          : "-"}
                       </div>
-                    )}
+                    </div>
                   </div>
-                </div>
+                ))
+              ) : item?.name == "Service" ? (
+                // Service Attribute
+                Array.from({ length: iterNum }, (_, idx) => (
+                  <div key={idx} className="flex justify-between items-center ">
+                    <div className="w-5/12 space-y-3">
+                      <div key={idx} className=" text-mono50">
+                        <h5 className="mig-caption--bold text-mono50">
+                          {`Service ${idx + 1}`}
+                        </h5>
+                        {item?.oldValue?.[idx]?.product_id ? (
+                          <div className="grid grid-cols-1 gap-2">
+                            <p>
+                              ID Produk: {item?.oldValue?.[idx]?.product_id}
+                            </p>
+                            <p>Pax: {item?.oldValue?.[idx]?.pax}</p>
+                            <p>
+                              Harga: {currency(item?.oldValue?.[idx]?.price)}/
+                              {item?.oldValue?.[idx]?.unit}
+                            </p>
+
+                            <p>
+                              Subtotal:{" "}
+                              {currency(item?.oldValue?.[idx]?.subtotal)}
+                            </p>
+                          </div>
+                        ) : (
+                          <p>-</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="w-2/12 text-center">
+                      <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
+                    </div>
+
+                    <div className="w-5/12 space-y-3">
+                      <div key={idx} className="">
+                        <h5 className="mig-caption--bold">
+                          {`Service ${idx + 1}`}
+                        </h5>
+                        {item?.newValue?.[idx]?.product_id ? (
+                          <div className="grid grid-cols-1 gap-2">
+                            <p>
+                              ID Produk: {item?.newValue?.[idx]?.product_id}
+                            </p>
+                            <p>Pax: {item?.newValue?.[idx]?.pax}</p>
+                            <p>
+                              Harga: {currency(item?.newValue?.[idx]?.price)}/
+                              {item?.newValue?.[idx]?.unit}
+                            </p>
+
+                            <p>
+                              Subtotal:{" "}
+                              {currency(item?.newValue?.[idx]?.subtotal)}
+                            </p>
+                          </div>
+                        ) : (
+                          <p>-</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
               ) : (
-                // Attributes other than extras
+                // Attributes other than extras and service
                 <div
                   key={item?.name}
                   className="flex justify-between items-center"
@@ -227,8 +319,8 @@ const ModalAddendumDetail = ({
                     <p>{item?.newValue}</p>
                   </div>
                 </div>
-              )
-            )}
+              );
+            })}
           </div>
         </Spin>
       </div>
