@@ -1,3 +1,4 @@
+import { CloseCircleOutlined } from "@ant-design/icons";
 import {
   DatePicker,
   Form,
@@ -17,7 +18,7 @@ import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { GROUPS_GET, USERS_GET } from "lib/features";
+import { GROUPS_GET, PROJECT_CATEGORIES_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import { generateStaticAssetUrl } from "../../../lib/helper";
@@ -46,6 +47,7 @@ const ModalProjectTaskCreate = ({
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
   const [form] = Form.useForm();
   const searchTimeoutRef = useRef(null);
+  const [loadingTagList, setLoadingTagList] = useState(false);
 
   // 1. USE STATE
   const [dataTask, setDataTask] = useState({
@@ -55,17 +57,19 @@ const ModalProjectTaskCreate = ({
     end_date: "",
     task_staffs: [],
     description: "",
+    categories: [],
   });
 
   const [loading, setLoading] = useState(false);
   const [isDetailOn, setIsDetailOn] = useState(false);
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
   const [isStaffsFromAgents, setIsStaffsFromAgents] = useState(false);
-
+  const isAllowedToGetTagList = hasPermission(PROJECT_CATEGORIES_GET);
   const [dataProjectList, setDataProjectList] = useState([]);
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
-
+  const [tagList, setTagList] = useState([]);
+  const [searchField, setSearchField] = useState("");
   // 2. USE EFFECT
   // 2.1. Set default project if used in project detail page
   useEffect(() => {
@@ -217,6 +221,50 @@ const ModalProjectTaskCreate = ({
     }
   }, [visible]);
 
+  const handleGetTagList = (value) => {
+    if (!isAllowedToGetTagList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Kategori Proyek");
+      return;
+    }
+
+    setLoadingTagList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList?name=${value}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setTagList(response2.data);
+        } else {
+          notification.error({
+            message: `${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingTagList(false));
+  };
+
+  const onSearchTags = (value) => {
+    if (value) {
+      handleGetTagList(value);
+    } else {
+      setTagList([]);
+    }
+    setSearchField(value);
+  };
   // 3. HANDLER
   const clearData = () => {
     setDataTask({
@@ -226,6 +274,7 @@ const ModalProjectTaskCreate = ({
       end_date: "",
       task_staffs: [],
       description: "",
+      categories: [],
     });
     setSelectedGroups([]);
     form.resetFields();
@@ -281,6 +330,7 @@ const ModalProjectTaskCreate = ({
       ...dataTask,
       id: taskId,
       task_staffs: dataTask?.task_staffs?.map((staff) => Number(staff.key)),
+      categories: dataTask?.categories?.map((item) => item?.name),
     };
 
     setLoading(true);
@@ -387,13 +437,13 @@ const ModalProjectTaskCreate = ({
         </div>
       }
       visible={visible}
-      onCancel={handleDeleteTask}
+      onCancel={handleClose}
       maskClosable={false}
       footer={
         <Spin spinning={loading}>
           <div className="flex space-x-2 justify-end items-center">
             <button
-              onClick={handleDeleteTask}
+              onClick={handleClose}
               className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
             >
               Batal
@@ -663,6 +713,87 @@ const ModalProjectTaskCreate = ({
                   }));
                 }}
               />
+            </Form.Item>
+            <Form.Item label="Tag Proyek" name={"tag"}>
+              <>
+                {/* List of Selected Tag */}
+                <div className="">
+                  {dataTask?.categories?.map((tag, idx) => (
+                    <Tag
+                      key={tag?.key}
+                      closable
+                      onClose={() => {
+                        let tempTags = [...dataTask.categories];
+                        tempTags.splice(idx, 1);
+                        setDataTask((prev) => ({
+                          ...prev,
+                          categories: tempTags,
+                        }));
+                      }}
+                      color="#35763B1A"
+                      closeIcon={<CloseCircleOutlined rev={""} />}
+                      className="text-primary100 mb-3"
+                    >
+                      {tag?.name}
+                    </Tag>
+                  ))}
+                </div>
+
+                {/* Input Tag */}
+                <Select
+                  showSearch
+                  allowClear
+                  mode="multiple"
+                  className="w-full dontShow"
+                  placeholder="Cari Tag..."
+                  defaultActiveFirstOption={false}
+                  value={dataTask?.categories}
+                  optionFilterProp="children"
+                  notFoundContent={null}
+                  disabled={!isAllowedToGetTagList}
+                  onSearch={onSearchTags}
+                  onChange={(values, options) => {
+                    let tempTags = [...dataTask?.categories];
+                    for (let newTag of options) {
+                      if (
+                        newTag?.name &&
+                        !tempTags
+                          ?.map((tag) => tag?.name?.toLowerCase())
+                          ?.includes(newTag?.name?.toLowerCase())
+                      ) {
+                        tempTags.push(newTag);
+                      }
+                    }
+
+                    if (values) {
+                      setDataTask((prev) => ({
+                        ...prev,
+                        categories: tempTags,
+                      }));
+                      setSearchField("");
+                    }
+                  }}
+                >
+                  {tagList?.map((tag) => (
+                    <Select.Option
+                      key={tag?.id || tag?.name}
+                      value={tag?.name}
+                      name={tag?.name}
+                    >
+                      {tag?.name}
+                    </Select.Option>
+                  ))}
+                  {searchField && (
+                    <Select.Option
+                      key={searchField}
+                      value={searchField}
+                      name={searchField}
+                    >
+                      {searchField}
+                    </Select.Option>
+                  )}
+                </Select>
+              </>
             </Form.Item>
           </div>
         )}
