@@ -82,34 +82,32 @@ const ModalAddendumDetail = ({
       // add object of each log attribute to a list
       Object.entries(dataLogOld)?.forEach((logData) => {
         if (addendumLogDetailLabel[logData[0]]) {
-          let rowTable = {};
+          let dataLog = {};
 
           // add raw attribute name
-          rowTable.name = logData[0];
+          dataLog.name = logData[0];
 
           // add old value
-          rowTable.oldValue = logData[1] || "-";
+          dataLog.oldValue = logData[1] || "-";
 
-          dataLogs.push(rowTable);
+          dataLogs.push(dataLog);
         }
       });
 
-      // add new value to table list
-      if (dataLogNew) {
-        dataLogs?.forEach((item, idx) => {
-          // add new value
-          dataLogs[idx].newValue = dataLogNew[item?.name] || "-";
+      // add new value to list of changes
+      dataLogs?.forEach((item, idx) => {
+        // add new value
+        dataLogs[idx].newValue = dataLogNew[item?.name] || "-";
 
-          // map raw attribute name to be more readable for user
-          dataLogs[idx].name = addendumLogDetailLabel[item?.name];
-        });
-      }
+        // map raw attribute name to a more readable text for user
+        dataLogs[idx].name = addendumLogDetailLabel[item?.name];
+      });
     }
 
     // Remove unchanged value
     dataLogs?.forEach((data, idx) => {
-      // Handle extras
-      if (data.name == "Isian") {
+      if (data.name.toLowerCase() == "isian") {
+        // Handle extras
         let isExtrasSame = true;
 
         if (data?.oldValue?.length === data?.newValue?.length) {
@@ -118,8 +116,8 @@ const ModalAddendumDetail = ({
               data?.oldValue?.[item]?.key != data?.newValue?.[item]?.key ||
               data?.oldValue?.[item]?.name != data?.newValue?.[item]?.name ||
               data?.oldValue?.[item]?.type != data?.newValue?.[item]?.type ||
-              data?.oldValue?.[item]?.value?.toString() !=
-                data?.newValue?.[item]?.value?.toString()
+              JSON.stringify(data?.oldValue?.[item]?.value) !=
+                JSON.stringify(data?.newValue?.[item]?.value)
             ) {
               isExtrasSame = false;
               break;
@@ -132,22 +130,19 @@ const ModalAddendumDetail = ({
         if (isExtrasSame) {
           dataLogs?.splice(idx, 1);
         }
-      }
-
-      // Handle services
-      if (data?.name == "Service") {
+      } else if (data.name.toLowerCase() == "service") {
+        // Handle services
         let isServiceSame = true;
 
         if (data?.oldValue?.length === data?.newValue?.length) {
           for (let item in data?.oldValue) {
             if (
-              data?.oldValue?.[item]?.id != data?.newValue?.[item]?.id ||
-              data?.oldValue?.[item]?.product_id !=
+              data?.oldValue?.[item]?.product_id !==
                 data?.newValue?.[item]?.product_id ||
-              data?.oldValue?.[item]?.pax != data?.newValue?.[item]?.pax ||
-              data?.oldValue?.[item]?.price != data?.newValue?.[item]?.price ||
-              data?.oldValue?.[item]?.unit != data?.newValue?.[item]?.unit ||
-              data?.oldValue?.[item]?.subtotal !=
+              data?.oldValue?.[item]?.pax !== data?.newValue?.[item]?.pax ||
+              data?.oldValue?.[item]?.price !== data?.newValue?.[item]?.price ||
+              data?.oldValue?.[item]?.unit !== data?.newValue?.[item]?.unit ||
+              data?.oldValue?.[item]?.subtotal !==
                 data?.newValue?.[item]?.subtotal
             ) {
               isServiceSame = false;
@@ -171,6 +166,118 @@ const ModalAddendumDetail = ({
 
     setDataLogChanges(dataLogs);
   }, [dataContractHistoryLogs]);
+
+  const displayDataChanges = (data, iterNum) => {
+    switch (data?.name) {
+      case "Isian": // Extras attribute
+        return Array.from({ length: iterNum }, (_, idx) => (
+          <div key={idx} className="flex justify-between items-center ">
+            <div className="w-5/12 space-y-3">
+              <div key={idx} className=" text-mono50">
+                <h5 className="mig-caption--bold text-mono50">
+                  {data?.oldValue?.[idx]?.name || `Isian ${idx + 1}`}
+                </h5>
+                {data?.oldValue?.[idx]?.value
+                  ? getExtrasDetail(
+                      data?.oldValue?.[idx]?.type,
+                      data?.oldValue?.[idx]?.value
+                    )
+                  : "-"}
+              </div>
+            </div>
+
+            <div className="w-2/12 text-center">
+              <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
+            </div>
+
+            <div className="w-5/12 space-y-3">
+              <div key={idx} className="">
+                <h5 className="mig-caption--bold">
+                  {data?.newValue?.[idx]?.name || `Isian ${idx + 1}`}
+                </h5>
+                {data?.newValue?.[idx]?.value
+                  ? getExtrasDetail(
+                      data?.newValue?.[idx]?.type,
+                      data?.newValue?.[idx]?.value
+                    )
+                  : "-"}
+              </div>
+            </div>
+          </div>
+        ));
+
+      case "Service": //Service Attribute
+        return Array.from({ length: iterNum }, (_, idx) => (
+          <div key={idx} className="flex justify-between items-center ">
+            <div className="w-5/12 space-y-3">
+              <div key={idx} className=" text-mono50">
+                <h5 className="mig-caption--bold text-mono50">
+                  {`Service ${idx + 1}`}
+                </h5>
+                {data?.oldValue?.[idx]?.product_id ? (
+                  <div className="grid grid-cols-1 gap-2">
+                    <p>ID Produk: {data?.oldValue?.[idx]?.product_id}</p>
+                    <p>Pax: {data?.oldValue?.[idx]?.pax}</p>
+                    <p>
+                      Harga: {currency(data?.oldValue?.[idx]?.price)}/
+                      {data?.oldValue?.[idx]?.unit}
+                    </p>
+
+                    <p>Subtotal: {currency(data?.oldValue?.[idx]?.subtotal)}</p>
+                  </div>
+                ) : (
+                  <p>-</p>
+                )}
+              </div>
+            </div>
+
+            <div className="w-2/12 text-center">
+              <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
+            </div>
+
+            <div className="w-5/12 space-y-3">
+              <div key={idx} className="">
+                <h5 className="mig-caption--bold">{`Service ${idx + 1}`}</h5>
+                {data?.newValue?.[idx]?.product_id ? (
+                  <div className="grid grid-cols-1 gap-2">
+                    <p>ID Produk: {data?.newValue?.[idx]?.product_id}</p>
+                    <p>Pax: {data?.newValue?.[idx]?.pax}</p>
+                    <p>
+                      Harga: {currency(data?.newValue?.[idx]?.price)}/
+                      {data?.newValue?.[idx]?.unit}
+                    </p>
+
+                    <p>Subtotal: {currency(data?.newValue?.[idx]?.subtotal)}</p>
+                  </div>
+                ) : (
+                  <p>-</p>
+                )}
+              </div>
+            </div>
+          </div>
+        ));
+
+      default:
+        // Attributes other than extras and service
+        return (
+          <div key={data?.name} className="flex justify-between items-center">
+            <div className="w-5/12 text-mono50">
+              <p className="mig-caption--bold">{data?.name}</p>
+              <p>{data?.oldValue}</p>
+            </div>
+            <div className="w-2/12 text-center">
+              <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
+            </div>
+            <div className="w-5/12">
+              <p className="mig-caption--bold">{data?.name}</p>
+              <p>{data?.newValue}</p>
+            </div>
+          </div>
+        );
+    }
+  };
+
+  // console.log({ dataLogChanges });
 
   return (
     <Modal
@@ -201,125 +308,7 @@ const ModalAddendumDetail = ({
                 );
               }
 
-              return item?.name == "Isian" ? (
-                // Extras attribute
-                Array.from({ length: iterNum }, (_, idx) => (
-                  <div key={idx} className="flex justify-between items-center ">
-                    <div className="w-5/12 space-y-3">
-                      <div key={idx} className=" text-mono50">
-                        <h5 className="mig-caption--bold text-mono50">
-                          {item?.oldValue?.[idx]?.name || `Isian ${idx + 1}`}
-                        </h5>
-                        {item?.oldValue?.[idx]?.value
-                          ? getExtrasDetail(
-                              item?.oldValue?.[idx]?.type,
-                              item?.oldValue?.[idx]?.value
-                            )
-                          : "-"}
-                      </div>
-                    </div>
-
-                    <div className="w-2/12 text-center">
-                      <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
-                    </div>
-
-                    <div className="w-5/12 space-y-3">
-                      <div key={idx} className="">
-                        <h5 className="mig-caption--bold">
-                          {item?.newValue?.[idx]?.name || `Isian ${idx + 1}`}
-                        </h5>
-                        {item?.newValue?.[idx]?.value
-                          ? getExtrasDetail(
-                              item?.newValue?.[idx]?.type,
-                              item?.newValue?.[idx]?.value
-                            )
-                          : "-"}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : item?.name == "Service" ? (
-                // Service Attribute
-                Array.from({ length: iterNum }, (_, idx) => (
-                  <div key={idx} className="flex justify-between items-center ">
-                    <div className="w-5/12 space-y-3">
-                      <div key={idx} className=" text-mono50">
-                        <h5 className="mig-caption--bold text-mono50">
-                          {`Service ${idx + 1}`}
-                        </h5>
-                        {item?.oldValue?.[idx]?.product_id ? (
-                          <div className="grid grid-cols-1 gap-2">
-                            <p>
-                              ID Produk: {item?.oldValue?.[idx]?.product_id}
-                            </p>
-                            <p>Pax: {item?.oldValue?.[idx]?.pax}</p>
-                            <p>
-                              Harga: {currency(item?.oldValue?.[idx]?.price)}/
-                              {item?.oldValue?.[idx]?.unit}
-                            </p>
-
-                            <p>
-                              Subtotal:{" "}
-                              {currency(item?.oldValue?.[idx]?.subtotal)}
-                            </p>
-                          </div>
-                        ) : (
-                          <p>-</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="w-2/12 text-center">
-                      <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
-                    </div>
-
-                    <div className="w-5/12 space-y-3">
-                      <div key={idx} className="">
-                        <h5 className="mig-caption--bold">
-                          {`Service ${idx + 1}`}
-                        </h5>
-                        {item?.newValue?.[idx]?.product_id ? (
-                          <div className="grid grid-cols-1 gap-2">
-                            <p>
-                              ID Produk: {item?.newValue?.[idx]?.product_id}
-                            </p>
-                            <p>Pax: {item?.newValue?.[idx]?.pax}</p>
-                            <p>
-                              Harga: {currency(item?.newValue?.[idx]?.price)}/
-                              {item?.newValue?.[idx]?.unit}
-                            </p>
-
-                            <p>
-                              Subtotal:{" "}
-                              {currency(item?.newValue?.[idx]?.subtotal)}
-                            </p>
-                          </div>
-                        ) : (
-                          <p>-</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                // Attributes other than extras and service
-                <div
-                  key={item?.name}
-                  className="flex justify-between items-center"
-                >
-                  <div className="w-5/12 text-mono50">
-                    <p className="mig-caption--bold">{item?.name}</p>
-                    <p>{item?.oldValue}</p>
-                  </div>
-                  <div className="w-2/12 text-center">
-                    <ArrowNarrowRightIconSvg color={"#35763B"} size={24} />
-                  </div>
-                  <div className="w-5/12">
-                    <p className="mig-caption--bold">{item?.name}</p>
-                    <p>{item?.newValue}</p>
-                  </div>
-                </div>
-              );
+              return displayDataChanges(item, iterNum);
             })}
           </div>
         </Spin>
