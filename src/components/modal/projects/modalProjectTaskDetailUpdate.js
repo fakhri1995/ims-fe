@@ -1,4 +1,4 @@
-import { DeleteOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
   Avatar,
   DatePicker,
@@ -21,7 +21,7 @@ import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { GROUPS_GET, USERS_GET } from "lib/features";
+import { GROUPS_GET, PROJECT_CATEGORIES_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
@@ -56,7 +56,7 @@ const ModalProjectTaskDetailUpdate = ({
 
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
-
+  const isAllowedToGetTagList = hasPermission(PROJECT_CATEGORIES_GET);
   const [form] = Form.useForm();
   const rt = useRouter();
   const searchTimeoutRef = useRef(null);
@@ -77,6 +77,7 @@ const ModalProjectTaskDetailUpdate = ({
     end_date: "",
     task_staffs: [],
     description: "",
+    categories: [],
   });
   const [dataTaskUpdate, setDataTaskUpdate] = useState({});
 
@@ -89,7 +90,9 @@ const ModalProjectTaskDetailUpdate = ({
   // Option data
   const [dataProjectList, setDataProjectList] = useState([]);
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
-
+  const [loadingTagList, setLoadingTagList] = useState(false);
+  const [tagList, setTagList] = useState([]);
+  const [searchField, setSearchField] = useState("");
   // Selected data
   const [currentStatus, setCurrentStatus] = useState({});
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -179,6 +182,49 @@ const ModalProjectTaskDetailUpdate = ({
       });
   }, [isAllowedToGetProjects]);
 
+  const handleGetTagList = (value) => {
+    if (!isAllowedToGetTagList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Kategori Proyek");
+      return;
+    }
+
+    setLoadingTagList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList?name=${value}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setTagList(response2.data);
+        } else {
+          notification.error({
+            message: `${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingTagList(false));
+  };
+  const onSearchTags = (value) => {
+    if (value) {
+      handleGetTagList(value);
+    } else {
+      setTagList([]);
+    }
+    setSearchField(value);
+  };
   // 2.3. Get users or groups for task staff options
   useEffect(() => {
     if (!visible || currentState !== "edit") {
@@ -384,12 +430,16 @@ const ModalProjectTaskDetailUpdate = ({
       permissionWarningNotification("Mengubah", "Task");
       return;
     }
+    const projectCategoryNames = dataTaskUpdate?.categories?.map(
+      (item) => item?.name
+    );
 
     const payload = {
       ...dataTaskUpdate,
       task_staffs: dataTaskUpdate.task_staffs?.map((staff) =>
         Number(staff.key)
       ),
+      categories: projectCategoryNames,
     };
 
     setLoadingSave(true);
@@ -1032,6 +1082,86 @@ const ModalProjectTaskDetailUpdate = ({
                 />
               </>
             </Form.Item>
+          </div>
+          <div className="md:col-span-2">
+            <p className="mb-2">Tag Proyek</p>
+            {/* List of Selected Tag */}
+            <div className="">
+              {dataTaskUpdate?.categories?.map((item, idx) => (
+                <Tag
+                  key={item?.key}
+                  closable
+                  onClose={() => {
+                    let tempTags = [...dataTaskUpdate?.categories];
+                    tempTags.splice(idx, 1);
+                    setDataTaskUpdate((prev) => ({
+                      ...prev,
+                      categories: tempTags,
+                    }));
+                  }}
+                  color="#35763B1A"
+                  closeIcon={<ClockCircleOutlined rev={""} />}
+                  className="text-primary100 mb-3"
+                >
+                  {item?.name}
+                </Tag>
+              ))}
+            </div>
+
+            {/* Input Tag */}
+            <Select
+              showSearch
+              allowClear
+              mode="multiple"
+              className="w-full dontShow"
+              placeholder="Cari atau Tambah Tag..."
+              value={dataTaskUpdate?.categories}
+              notFoundContent={null}
+              disabled={!isAllowedToGetTagList}
+              optionFilterProp="children"
+              onSearch={onSearchTags}
+              onChange={(value, option) => {
+                let tempTags = [...dataTaskUpdate?.categories];
+
+                for (let newTag of option) {
+                  if (
+                    newTag?.key &&
+                    !tempTags
+                      ?.map((tag) => tag?.name?.toLowerCase())
+                      ?.includes(newTag?.name?.toLowerCase())
+                  ) {
+                    tempTags.push(newTag);
+                  }
+                }
+
+                if (value) {
+                  setDataTaskUpdate((prev) => ({
+                    ...prev,
+                    categories: tempTags,
+                  }));
+                  setSearchField("");
+                }
+              }}
+            >
+              {tagList?.map((tag) => (
+                <Select.Option
+                  key={tag?.id || tag?.name}
+                  value={tag?.name}
+                  name={tag?.name}
+                >
+                  {tag?.name}
+                </Select.Option>
+              ))}
+              {searchField && (
+                <Select.Option
+                  key={searchField}
+                  value={searchField}
+                  name={searchField}
+                >
+                  {searchField}
+                </Select.Option>
+              )}
+            </Select>
           </div>
         </Form>
       );
