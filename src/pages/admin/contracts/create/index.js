@@ -76,7 +76,7 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // 1. Use State
   const [dataContractUpdate, setDataContractUpdate] = useState({
-    contract_number: "",
+    code_number: "",
     title: "",
     client_id: 0,
     requester_id: 0,
@@ -142,7 +142,7 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 2.4. Disable "Simpan Kontrak" button if any required field is empty
   useEffect(() => {
     const requiredContractFields = [
-      { data: dataContractUpdate.contract_number, name: "No Kontrak" },
+      { data: dataContractUpdate.code_number, name: "No Kontrak" },
       { data: dataContractUpdate.title, name: "Judul Kontrak" },
       { data: dataContractUpdate.client_id, name: "Klien" },
       { data: dataContractUpdate.requester_id, name: "Requester" },
@@ -172,10 +172,6 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       [name]: value,
     }));
   };
-
-  // for (const value of objectToFormDataNew(dataContractUpdate).entries()) {
-  //   console.log(value);
-  // }
 
   // Save Employee Contract
   const handleUpdateContract = (contractData, isPosted) => {
@@ -319,8 +315,7 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 onClick={() => handleUpdateContract(dataContractUpdate, 0)}
                 disabled={
                   !isAllowedToUpdateContract ||
-                  (!dataContractUpdate.contract_number &&
-                    !dataContractUpdate.title)
+                  (!dataContractUpdate.code_number && !dataContractUpdate.title)
                 }
               >
                 <div className="flex flex-row space-x-2">
@@ -344,7 +339,7 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           {/* Form Body */}
           <Form.Item
             label="No Kontrak"
-            name={"contract_number"}
+            name={"code_number"}
             rules={[
               {
                 required: true,
@@ -355,8 +350,8 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           >
             <div>
               <Input
-                value={dataContractUpdate?.contract_number}
-                name={"contract_number"}
+                value={dataContractUpdate?.code_number}
+                name={"code_number"}
                 onChange={onChangeInput}
                 placeholder="Masukkan nomor kontrak"
               />

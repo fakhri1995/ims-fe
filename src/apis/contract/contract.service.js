@@ -193,14 +193,19 @@ export class ContractService {
     return apiRes;
   };
 
-  static getContractTemplate = async (initProps, feature, contractId) => {
+  static getContractTemplate = async (
+    initProps,
+    feature,
+    contractId,
+    contractHistoryId
+  ) => {
     if (!feature) {
       permissionWarningNotification("Mendapatkan", "Data Contract Template");
       return;
     }
 
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractTemplate?contract_id=${contractId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractTemplate?contract_id=${contractId}&contract_history_id=${contractHistoryId}`,
       {
         method: `GET`,
         headers: {
@@ -241,6 +246,131 @@ export class ContractService {
 
     const apiRes = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractInvoices${payload}&keyword=${keyword}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          return res2;
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+
+    return apiRes;
+  };
+
+  static getContractHistories = async (initProps, feature, contractId) => {
+    if (!feature) {
+      permissionWarningNotification("Mendapatkan", "Daftar Contract History");
+      return;
+    }
+
+    const apiRes = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractHistories?contract_id=${contractId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          return res2;
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+
+    return apiRes;
+  };
+
+  static getContractHistory = async (
+    initProps,
+    feature,
+    contractId,
+    contractHistoryId
+  ) => {
+    if (!feature) {
+      permissionWarningNotification("Mendapatkan", "Detail Contract History");
+      return;
+    }
+
+    const apiRes = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractHistory?contract_id=${contractId}&history_id=${contractHistoryId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          return res2;
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+
+    return apiRes;
+  };
+
+  static getContractHistoryLogs = async (
+    initProps,
+    feature,
+    contractHistoryId,
+    visible
+  ) => {
+    if (!feature) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Detail Contract History Logs"
+      );
+      return;
+    }
+
+    if (!visible) {
+      return;
+    }
+
+    const apiRes = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractHistoryLogs?contract_history_id=${contractHistoryId}`,
       {
         method: `GET`,
         headers: {

@@ -15,6 +15,7 @@ import {
 
 const ContractActionSection = ({
   contractId,
+  contractHistoryId,
   contractEndDate,
   invoiceTemplate,
 }) => {
@@ -68,7 +69,9 @@ const ContractActionSection = ({
       </div> */}
 
       <button
-        onClick={() => rt.push(`${contractId}/invoice-template`)}
+        onClick={() =>
+          rt.push(`${contractId}/invoice-template?ver=${contractHistoryId}`)
+        }
         disabled={!isAllowedToGetContractTemplate}
         className={`flex flex-row p-2 lg:p-4 bg-backdrop rounded-md items-center ${
           isAllowedToGetContractTemplate ? "hover:opacity-75" : "cursor-no-drop"

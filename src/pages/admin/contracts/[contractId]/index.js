@@ -1,5 +1,5 @@
 import { RightOutlined } from "@ant-design/icons";
-import { Collapse, Tabs } from "antd";
+import { Collapse, Tabs, notification } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
@@ -16,15 +16,17 @@ import ContractServiceSection from "components/screen/contract/detail/ContractSe
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  CONTRACTS_GET,
-  CONTRACT_DELETE,
   CONTRACT_GET,
-  CONTRACT_UPDATE,
+  CONTRACT_HISTORIES_GET,
+  CONTRACT_HISTORY_GET,
 } from "lib/features";
 
 import { ContractService } from "apis/contract";
 
-import ContractAddendumSection from "../../../../components/screen/contract/detail/ContractAddendumSection";
+import ContractAddendumSection, {
+  getContractVersionLabel,
+} from "../../../../components/screen/contract/detail/ContractAddendumSection";
+import { permissionWarningNotification } from "../../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -58,10 +60,14 @@ const ContractDetailIndex = ({
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
-  const isAllowedToGetContracts = hasPermission(CONTRACTS_GET);
+  if (isAccessControlPending) {
+    return null;
+  }
+
   const isAllowedToGetContract = hasPermission(CONTRACT_GET);
-  const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
-  const isAllowedToDeleteContract = hasPermission(CONTRACT_DELETE);
+
+  const isAllowedToGetContractHistories = hasPermission(CONTRACT_HISTORIES_GET);
+  const isAllowedToGetContractHistory = hasPermission(CONTRACT_HISTORY_GET);
 
   const rt = useRouter();
   // Breadcrumb url
@@ -75,7 +81,11 @@ const ContractDetailIndex = ({
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
   const [isMobileView, setIsMobileView] = useState(false);
-  const [currentVersionId, setCurrentVersionId] = useState(0);
+  const [currentHistoryId, setCurrentHistoryId] = useState(0);
+  const [dataDisplayedContract, setDataDisplayedContract] = useState({});
+  const [loadingContractHistory, setLoadingContractHistory] = useState(false);
+  const [isAddendum, setIsAddendum] = useState(false);
+  const [currentRowKey, setCurrentRowKey] = useState(1);
 
   // 3. Use Effect & Use Query
   // Responsive view for action button section
@@ -97,7 +107,7 @@ const ContractDetailIndex = ({
 
   // Get contract detail
   const { data: dataContract, isLoading: loadingDataContract } = useQuery(
-    [CONTRACT_GET],
+    [CONTRACT_GET, contractId, refresh],
     () =>
       ContractService.getContract(
         initProps,
@@ -111,11 +121,60 @@ const ContractDetailIndex = ({
     }
   );
 
-  if (isAccessControlPending) {
-    return null;
-  }
+  useEffect(() => {
+    if (dataContract?.id && !loadingDataContract) {
+      setCurrentHistoryId(dataContract?.contract_history_id_active);
+      setDataDisplayedContract(dataContract);
+      setCurrentRowKey(1);
+    }
+  }, [
+    dataContract?.id,
+    loadingDataContract,
+    refresh,
+    dataContract?.contract_history_id_active,
+  ]);
 
-  // console.log({ currentVersionId });
+  // Get selected contract version
+  useEffect(() => {
+    if (!isAllowedToGetContractHistory) {
+      permissionWarningNotification("Mendapatkan", "Detail Contract History");
+      return;
+    }
+
+    if (currentHistoryId) {
+      setLoadingContractHistory(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractHistory?contract_id=${contractId}&history_id=${currentHistoryId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((response) => {
+          if (response.success) {
+            setDataDisplayedContract(response.data);
+          } else {
+            notification.error({
+              message: response.message,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `Gagal mendapatkan contract history. ${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => setLoadingContractHistory(false));
+    }
+  }, [isAllowedToGetContractHistory, currentHistoryId]);
+
+  // console.log({ currentHistoryId });
+  // console.log("id di detail contract", currentHistoryId);
   return (
     <Layout
       tok={initProps}
@@ -148,6 +207,7 @@ const ContractDetailIndex = ({
               <section className="grid grid-cols-1 gap-2">
                 <ContractActionSection
                   contractId={contractId}
+                  contractHistoryId={dataContract?.contract_history_id_active}
                   invoiceTemplate={dataContract?.invoice_template}
                   contractEndDate={dataContract?.end_date}
                 />
@@ -158,6 +218,7 @@ const ContractDetailIndex = ({
           <section className="md:col-span-12 grid grid-cols-2 gap-4 lg:gap-6 shadow-md rounded-md bg-white p-4 lg:p-6">
             <ContractActionSection
               contractId={contractId}
+              contractHistoryId={dataContract?.contract_history_id_active}
               invoiceTemplate={dataContract?.invoice_template}
               contractEndDate={dataContract?.end_date}
             />
@@ -167,10 +228,14 @@ const ContractDetailIndex = ({
         {/* Catatan & Aktivitas */}
         <section className="md:col-span-4 h-max order-last md:order-none">
           <ContractAddendumSection
-            dataServices={dataContract?.services}
-            loading={loadingDataContract}
-            currentVersion={currentVersionId}
-            setCurrentVersion={setCurrentVersionId}
+            setCurrentVersion={setCurrentHistoryId}
+            isAllowedToGetContractHistories={isAllowedToGetContractHistories}
+            contractId={contractId}
+            initProps={initProps}
+            refresh={refresh}
+            setIsAddendum={setIsAddendum}
+            currentKey={currentRowKey}
+            setCurrentKey={setCurrentRowKey}
           />
 
           <Tabs
@@ -198,13 +263,20 @@ const ContractDetailIndex = ({
           <ContractInfoSection
             initProps={initProps}
             contractId={contractId}
-            dataContract={dataContract}
-            loadingDataContract={loadingDataContract}
+            contractHistoryId={currentHistoryId}
+            dataContract={dataDisplayedContract}
+            loadingDataContract={loadingContractHistory}
+            isAddendum={isAddendum}
+            setRefresh={setRefresh}
+            versionLabel={getContractVersionLabel(
+              currentRowKey == 1 ? "main" : dataDisplayedContract?.category,
+              currentRowKey - 2
+            )}
           />
 
           <ContractServiceSection
-            dataServices={dataContract?.services}
-            loading={loadingDataContract}
+            dataServices={dataDisplayedContract?.services}
+            loading={loadingContractHistory}
           />
         </div>
       </div>

@@ -149,6 +149,8 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     []
   );
 
+  const { showtaskid } = rt.query;
+
   // 2. useState
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
@@ -502,6 +504,14 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  // 3.9. Show modal task from notification (URL: /projects?showtaskid=[taskId])
+  useEffect(() => {
+    if (showtaskid) {
+      setCurrentTaskId(showtaskid);
+      setModalDetailTask(true);
+    }
+  }, [showtaskid]);
 
   // 4. Event
   const onFilterProjects = () => {

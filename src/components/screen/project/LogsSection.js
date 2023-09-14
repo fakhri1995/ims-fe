@@ -121,7 +121,7 @@ const LogsSection = ({
             </div>
           }
         >
-          <div className="grid gap-2 lg:gap-6">
+          <div className="grid grid-cols-1 gap-2 lg:gap-6">
             {/* Search by keyword (kata kunci) */}
             <div className="">
               <Input
@@ -177,7 +177,7 @@ const LogsSection = ({
                         className="grid grid-cols-1 cursor-pointer"
                       >
                         <div className="flex justify-between items-center mb-2">
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2 w-2/3">
                             <img
                               src={generateStaticAssetUrl(
                                 log?.causer?.profile_image?.link ??
@@ -191,7 +191,7 @@ const LogsSection = ({
                               {log?.causer?.roles?.[0]?.name}
                             </p>
                           </div>
-                          <p className="text-right">
+                          <p className="text-right w-1/3">
                             {momentFormatDate(
                               log?.created_at,
                               "-",
