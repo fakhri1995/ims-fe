@@ -78,6 +78,7 @@ const ModalAddendumDetail = ({
 
     // Restructure log data from API response
     let dataLogs = [];
+    let finalLogs = [];
     if (dataLogOld) {
       // add object of each log attribute to a list
       Object.entries(dataLogOld)?.forEach((logData) => {
@@ -127,8 +128,8 @@ const ModalAddendumDetail = ({
           isExtrasSame = false;
         }
 
-        if (isExtrasSame) {
-          dataLogs?.splice(idx, 1);
+        if (!isExtrasSame) {
+          finalLogs[idx] = data;
         }
       } else if (data.name.toLowerCase() == "service") {
         // Handle services
@@ -153,18 +154,18 @@ const ModalAddendumDetail = ({
           isServiceSame = false;
         }
 
-        if (isServiceSame) {
-          dataLogs?.splice(idx, 1);
+        if (!isServiceSame) {
+          finalLogs[idx] = data;
         }
       }
 
-      // Handle attributes other than extras and services
-      if (data?.newValue == data?.oldValue) {
-        dataLogs?.splice(idx, 1);
+      // Handle attributes other than extras and services      
+      if (data?.newValue != data?.oldValue) {
+        finalLogs[idx] = data;       
       }
     });
 
-    setDataLogChanges(dataLogs);
+    setDataLogChanges(finalLogs);
   }, [dataContractHistoryLogs]);
 
   const displayDataChanges = (data, iterNum) => {
@@ -179,9 +180,9 @@ const ModalAddendumDetail = ({
                 </h5>
                 {data?.oldValue?.[idx]?.value
                   ? getExtrasDetail(
-                      data?.oldValue?.[idx]?.type,
-                      data?.oldValue?.[idx]?.value
-                    )
+                    data?.oldValue?.[idx]?.type,
+                    data?.oldValue?.[idx]?.value
+                  )
                   : "-"}
               </div>
             </div>
@@ -197,9 +198,9 @@ const ModalAddendumDetail = ({
                 </h5>
                 {data?.newValue?.[idx]?.value
                   ? getExtrasDetail(
-                      data?.newValue?.[idx]?.type,
-                      data?.newValue?.[idx]?.value
-                    )
+                    data?.newValue?.[idx]?.type,
+                    data?.newValue?.[idx]?.value
+                  )
                   : "-"}
               </div>
             </div>
