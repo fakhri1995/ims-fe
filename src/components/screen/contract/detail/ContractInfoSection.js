@@ -215,7 +215,7 @@ const ContractInfoSection = ({
             >
               <div className="flex space-x-2 items-center">
                 <DeleteOutlined />
-                <p>Hapus Kontrak</p>
+                {isAddendum ? <p>Hapus Adendum</p> : <p>Hapus Kontrak</p>}
               </div>
             </ButtonSys>
 

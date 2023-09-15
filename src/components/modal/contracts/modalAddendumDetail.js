@@ -13,10 +13,8 @@ import { ContractService } from "apis/contract";
 import { currency } from "../../../lib/helper";
 import { ArrowNarrowRightIconSvg } from "../../icon";
 import { getExtrasDetail } from "../../screen/contract/detail/ContractInfoSection";
-import { ModalHapus2 } from "../modalCustom";
 
 const addendumLogDetailLabel = {
-  id: "ID History Kontrak",
   code_number: "Nomor Kontrak",
   title: "Judul Kontrak",
   client_id: "ID Klien",
