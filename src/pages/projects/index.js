@@ -1,6 +1,7 @@
 import {
   CaretDownOutlined,
   CaretUpOutlined,
+  DownloadOutlined,
   UpOutlined,
 } from "@ant-design/icons";
 import {
@@ -31,6 +32,8 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
 import {
   PROJECTS_COUNT_GET,
   PROJECTS_DEADLINE_GET,
@@ -52,12 +55,15 @@ import {
   PROJECT_UPDATE,
 } from "lib/features";
 
+import { ProjectService } from "apis/project";
+
 import ButtonSys from "../../components/button";
 import TaskCard from "../../components/cards/project/TaskCard";
 import {
   AdjusmentsHorizontalIconSvg,
   CalendartimeIconSvg,
   ClipboardListIconSvg,
+  DownloadIconSvg,
   PlusIconSvg,
   SearchIconSvg,
 } from "../../components/icon";
@@ -70,6 +76,7 @@ import ModalStatusManage from "../../components/modal/projects/modalStatusManage
 import { TableCustomProjectList } from "../../components/table/tableCustom";
 import {
   createKeyPressHandler,
+  downloadFile,
   momentFormatDate,
   permissionWarningNotification,
 } from "../../lib/helper";
@@ -130,7 +137,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   const isAllowedToGetTagList = hasPermission(PROJECT_CATEGORIES_GET);
-
+  const axiosClient = useAxiosClient();
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
@@ -522,7 +529,16 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       category_ids: selectedCategory,
     });
   };
+  const exportExcelProject = async () => {
+    const { file, fileName } = await ProjectService.exportExcelData(
+      axiosClient
+    );
+    downloadFile(file, fileName);
 
+    notification.success({
+      message: `Berhasil mengunduh file ${fileName}`,
+    });
+  };
   const { onKeyPressHandler } = createKeyPressHandler(
     onFilterProjects,
     "Enter"
@@ -1139,16 +1155,23 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
 
           {/* Kelola Status Task & Proyek */}
-          <div className="">
+          <div className="flex justify-between">
             <button
               onClick={() => setModalManageStatus(true)}
-              className="mig-platform--p-0 px-4 py-2 w-full flex space-x-2 items-center text-white bg-mono50 disabled:bg-gray-200 hover:bg-opacity-75 overflow-hidden"
+              className="mig-platform--p-0 px-4 py-2 w-[85%] flex space-x-2 items-center text-white bg-mono50 disabled:bg-gray-200 hover:bg-opacity-75 overflow-hidden"
               disabled={!isAllowedToEditStatus}
             >
               <AdjusmentsHorizontalIconSvg color={"#ffffff"} size={32} />
               <p className="font-bold text-sm text-left">
                 Kelola Status Task & Proyek
               </p>
+            </button>
+            <button
+              onClick={() => exportExcelProject()}
+              className="mig-platform--p-0 px-4 py-2 w-[10%] flex space-x-2 items-center justify-center bg-primary100 disabled:bg-gray-200 hover:bg-opacity-75 overflow-hidden"
+              disabled={!isAllowedToEditStatus}
+            >
+              <DownloadIconSvg size={24} color={"#ffffff"} />
             </button>
           </div>
 

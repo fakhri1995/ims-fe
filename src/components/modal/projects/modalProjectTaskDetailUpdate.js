@@ -730,6 +730,22 @@ const ModalProjectTaskDetailUpdate = ({
                 {dataTask.description ? parse(dataTask.description) : "-"}
               </div>
             </div>
+            <div className="flex flex-col space-y-2 md:col-span-2">
+              <p className="mig-caption--bold">Tag</p>
+              <div className="flex flex-wrap">
+                {dataTask?.categories?.length
+                  ? dataTask?.categories?.map((tag) => (
+                      <Tag
+                        key={tag?.id}
+                        color="#35763B1A"
+                        className="text-primary100 mb-3"
+                      >
+                        {tag?.name}
+                      </Tag>
+                    ))
+                  : "-"}
+              </div>
+            </div>
           </div>
         </Spin>
       );

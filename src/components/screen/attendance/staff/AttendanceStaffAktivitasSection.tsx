@@ -364,7 +364,7 @@ export const AttendanceStaffAktivitasSection: FC<
               getDataTaskActivities();
             } else {
               notification.error({
-                message: `Task Gagal ditambahkan ke aktivitas!`,
+                message: response2.message,
                 duration: 3,
               });
             }

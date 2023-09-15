@@ -102,8 +102,9 @@ const TaskCard = ({
             duration: 3,
           });
         } else {
+          console.log("masuk ini bro ", response2);
           notification.error({
-            message: `Task Gagal ditambahkan ke aktivitas!`,
+            message: response2.message,
             duration: 3,
           });
         }
