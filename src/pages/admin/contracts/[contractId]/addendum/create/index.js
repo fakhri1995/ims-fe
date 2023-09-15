@@ -295,7 +295,6 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           >
             <div>
               <Input
-                // value={dataAddendum?.code_number}
                 name={"code_number"}
                 onChange={onChangeInput}
                 placeholder="Masukkan nomor kontrak"
