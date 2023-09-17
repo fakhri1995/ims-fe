@@ -488,11 +488,20 @@ export const AttendanceStaffAktivitasSection: FC<
   };
   const handleSelectAllTask = () => {
     let dataTemp = [];
+    let dataTemp2 = [];
     for (let a = 0; a < displayDataImport.length; a++) {
       dataTemp.push(displayDataImport[a].id);
+      dataTemp2.push({
+        id: displayDataImport[a].id,
+        ticket_number: displayDataImport[a].ticket_number,
+        name: displayDataImport[a].name,
+        start_date: displayDataImport[a].start_date,
+        end_date: displayDataImport[a].end_date,
+        is_selected: true,
+      });
     }
     setDataTaskSelected(dataTemp);
-    setDisplayDataImportTemp(displayDataImport);
+    setDisplayDataImportTemp(dataTemp2);
   };
 
   const handleUnSelectAllTask = () => {
