@@ -126,6 +126,7 @@ const ContractDetailIndex = ({
       setCurrentHistoryId(dataContract?.contract_history_id_active);
       setDataDisplayedContract(dataContract);
       setCurrentRowKey(1);
+      setIsAddendum(false);
     }
   }, [
     dataContract?.id,

@@ -13,10 +13,8 @@ import { ContractService } from "apis/contract";
 import { currency } from "../../../lib/helper";
 import { ArrowNarrowRightIconSvg } from "../../icon";
 import { getExtrasDetail } from "../../screen/contract/detail/ContractInfoSection";
-import { ModalHapus2 } from "../modalCustom";
 
 const addendumLogDetailLabel = {
-  id: "ID History Kontrak",
   code_number: "Nomor Kontrak",
   title: "Judul Kontrak",
   client_id: "ID Klien",
@@ -78,6 +76,7 @@ const ModalAddendumDetail = ({
 
     // Restructure log data from API response
     let dataLogs = [];
+    let finalLogs = [];
     if (dataLogOld) {
       // add object of each log attribute to a list
       Object.entries(dataLogOld)?.forEach((logData) => {
@@ -94,7 +93,7 @@ const ModalAddendumDetail = ({
         }
       });
 
-      // add new value to list of changes
+      // add new value to list
       dataLogs?.forEach((item, idx) => {
         // add new value
         dataLogs[idx].newValue = dataLogNew[item?.name] || "-";
@@ -104,67 +103,87 @@ const ModalAddendumDetail = ({
       });
     }
 
-    // Remove unchanged value
+    // Create finalLogs which consist of only attributes that have been changed
     dataLogs?.forEach((data, idx) => {
+      // get largest length between oldValue and newValue in extras & services
+      let maxValueLen = 0;
+      if (
+        data?.name?.toLowerCase() == "isian" ||
+        data?.name?.toLowerCase() == "service"
+      ) {
+        maxValueLen = Math.max(data?.oldValue?.length, data?.newValue?.length);
+      }
+
       if (data.name.toLowerCase() == "isian") {
         // Handle extras
-        let isExtrasSame = true;
 
-        if (data?.oldValue?.length === data?.newValue?.length) {
-          for (let item in data?.oldValue) {
-            if (
-              data?.oldValue?.[item]?.key != data?.newValue?.[item]?.key ||
-              data?.oldValue?.[item]?.name != data?.newValue?.[item]?.name ||
-              data?.oldValue?.[item]?.type != data?.newValue?.[item]?.type ||
-              JSON.stringify(data?.oldValue?.[item]?.value) !=
-                JSON.stringify(data?.newValue?.[item]?.value)
-            ) {
-              isExtrasSame = false;
-              break;
-            }
+        let finalNewValue = [];
+        let finalOldValue = [];
+
+        // Only display extra that changed
+        for (let item = 0; item < maxValueLen; item++) {
+          if (
+            data?.oldValue?.[item]?.key != data?.newValue?.[item]?.key ||
+            data?.oldValue?.[item]?.name != data?.newValue?.[item]?.name ||
+            data?.oldValue?.[item]?.type != data?.newValue?.[item]?.type ||
+            JSON.stringify(data?.oldValue?.[item]?.value) !=
+              JSON.stringify(data?.newValue?.[item]?.value)
+          ) {
+            finalOldValue.push({
+              ...data?.oldValue?.[item],
+              extra_idx: item + 1,
+            });
+            finalNewValue.push({
+              ...data?.newValue?.[item],
+              extra_idx: item + 1,
+            });
           }
-        } else {
-          isExtrasSame = false;
         }
 
-        if (isExtrasSame) {
-          dataLogs?.splice(idx, 1);
-        }
+        finalLogs[idx] = {
+          name: data?.name,
+          oldValue: finalOldValue,
+          newValue: finalNewValue,
+        };
       } else if (data.name.toLowerCase() == "service") {
         // Handle services
-        let isServiceSame = true;
+        let finalNewValue = [];
+        let finalOldValue = [];
 
-        if (data?.oldValue?.length === data?.newValue?.length) {
-          for (let item in data?.oldValue) {
-            if (
-              data?.oldValue?.[item]?.product_id !==
-                data?.newValue?.[item]?.product_id ||
-              data?.oldValue?.[item]?.pax !== data?.newValue?.[item]?.pax ||
-              data?.oldValue?.[item]?.price !== data?.newValue?.[item]?.price ||
-              data?.oldValue?.[item]?.unit !== data?.newValue?.[item]?.unit ||
-              data?.oldValue?.[item]?.subtotal !==
-                data?.newValue?.[item]?.subtotal
-            ) {
-              isServiceSame = false;
-              break;
-            }
+        // Only display service that changed
+        for (let item = 0; item < maxValueLen; item++) {
+          if (
+            data?.oldValue?.[item]?.product_id !=
+              data?.newValue?.[item]?.product_id ||
+            data?.oldValue?.[item]?.pax != data?.newValue?.[item]?.pax ||
+            data?.oldValue?.[item]?.price != data?.newValue?.[item]?.price ||
+            data?.oldValue?.[item]?.unit != data?.newValue?.[item]?.unit ||
+            data?.oldValue?.[item]?.subtotal != data?.newValue?.[item]?.subtotal
+          ) {
+            finalOldValue.push({
+              ...data?.oldValue?.[item],
+              service_idx: item + 1,
+            });
+            finalNewValue.push({
+              ...data?.newValue?.[item],
+              service_idx: item + 1,
+            });
           }
-        } else {
-          isServiceSame = false;
         }
 
-        if (isServiceSame) {
-          dataLogs?.splice(idx, 1);
+        finalLogs[idx] = {
+          name: data?.name,
+          oldValue: finalOldValue,
+          newValue: finalNewValue,
+        };
+      } else {
+        // Handle attributes other than extras and services
+        if (data?.newValue != data?.oldValue) {
+          finalLogs[idx] = data;
         }
-      }
-
-      // Handle attributes other than extras and services
-      if (data?.newValue == data?.oldValue) {
-        dataLogs?.splice(idx, 1);
       }
     });
-
-    setDataLogChanges(dataLogs);
+    setDataLogChanges(finalLogs);
   }, [dataContractHistoryLogs]);
 
   const displayDataChanges = (data, iterNum) => {
@@ -173,9 +192,10 @@ const ModalAddendumDetail = ({
         return Array.from({ length: iterNum }, (_, idx) => (
           <div key={idx} className="flex justify-between items-center ">
             <div className="w-5/12 space-y-3">
-              <div key={idx} className=" text-mono50">
+              <div className=" text-mono50">
                 <h5 className="mig-caption--bold text-mono50">
-                  {data?.oldValue?.[idx]?.name || `Isian ${idx + 1}`}
+                  {data?.oldValue?.[idx]?.name ||
+                    `Isian ${data?.oldValue?.[idx]?.extra_idx}`}
                 </h5>
                 {data?.oldValue?.[idx]?.value
                   ? getExtrasDetail(
@@ -191,9 +211,10 @@ const ModalAddendumDetail = ({
             </div>
 
             <div className="w-5/12 space-y-3">
-              <div key={idx} className="">
+              <div>
                 <h5 className="mig-caption--bold">
-                  {data?.newValue?.[idx]?.name || `Isian ${idx + 1}`}
+                  {data?.newValue?.[idx]?.name ||
+                    `Isian ${data?.newValue?.[idx]?.extra_idx}`}
                 </h5>
                 {data?.newValue?.[idx]?.value
                   ? getExtrasDetail(
@@ -210,9 +231,9 @@ const ModalAddendumDetail = ({
         return Array.from({ length: iterNum }, (_, idx) => (
           <div key={idx} className="flex justify-between items-center ">
             <div className="w-5/12 space-y-3">
-              <div key={idx} className=" text-mono50">
+              <div className="text-mono50">
                 <h5 className="mig-caption--bold text-mono50">
-                  {`Service ${idx + 1}`}
+                  {`Service ${data?.oldValue?.[idx]?.service_idx}`}
                 </h5>
                 {data?.oldValue?.[idx]?.product_id ? (
                   <div className="grid grid-cols-1 gap-2">
@@ -236,8 +257,8 @@ const ModalAddendumDetail = ({
             </div>
 
             <div className="w-5/12 space-y-3">
-              <div key={idx} className="">
-                <h5 className="mig-caption--bold">{`Service ${idx + 1}`}</h5>
+              <div>
+                <h5 className="mig-caption--bold">{`Service  ${data?.oldValue?.[idx]?.service_idx}`}</h5>
                 {data?.newValue?.[idx]?.product_id ? (
                   <div className="grid grid-cols-1 gap-2">
                     <p>ID Produk: {data?.newValue?.[idx]?.product_id}</p>
@@ -302,10 +323,7 @@ const ModalAddendumDetail = ({
               // get the biggest extras array length to be use as num of iteration
               let iterNum = 0;
               if (item?.name == "Isian" || item?.name == "Service") {
-                iterNum = Math.max(
-                  item?.oldValue?.length,
-                  item?.newValue?.length
-                );
+                iterNum = item?.oldValue?.length;
               }
 
               return displayDataChanges(item, iterNum);
