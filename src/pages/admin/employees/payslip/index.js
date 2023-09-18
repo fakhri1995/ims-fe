@@ -24,6 +24,7 @@ import { useAccessControl } from "contexts/access-control";
 import {
   COMPANY_CLIENTS_GET,
   EMPLOYEES_PAYSLIPS_POST,
+  EMPLOYEE_CONTRACT_SALARY_READ,
   EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
   EMPLOYEE_PAYSLIP_DOWNLOAD,
@@ -81,15 +82,17 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   /**
    * Dependencies
    */
-  const { hasPermission, isPending: isAccessControlPending } =
-    useAccessControl();
+  const {
+    hasRole,
+    hasPermission,
+    isPending: isAccessControlPending,
+  } = useAccessControl();
   if (isAccessControlPending) {
     return null;
   }
   const isAllowedToGetPayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
   const isAllowedToUpdatePayslip = hasPermission(EMPLOYEE_PAYSLIP_UPDATE);
 
-  const isAllowedToAddPayslip = hasPermission(EMPLOYEE_PAYSLIP_ADD);
   const isAllowedToPostPayslips = hasPermission(EMPLOYEES_PAYSLIPS_POST);
   const isAllowedToRaisePayslip = hasPermission(EMPLOYEE_PAYSLIP_RAISE);
   const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
@@ -110,6 +113,11 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetPayslipStatusCount = hasPermission(
     EMPLOYEE_PAYSLIP_STATUS_COUNT_GET
   );
+
+  const getIsAllowedToSeeSalary = (currentEmployeeId) =>
+    (!hasRole("Super Admin") ||
+      currentEmployeeId == dataProfile?.data?.employee?.id) &&
+    hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
 
   // 1. Init
   const rt = useRouter();
@@ -667,7 +675,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 ) : (
                   <ButtonSys
                     type={"default"}
-                    disabled={!isAllowedToUpdatePayslip}
+                    disabled={
+                      !isAllowedToUpdatePayslip ||
+                      !getIsAllowedToSeeSalary(record?.id)
+                    }
                     onClick={(event) => {
                       event.stopPropagation();
                       rt.push(

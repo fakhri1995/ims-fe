@@ -297,6 +297,8 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
               <EmployeeContractDetail
                 dataEmployee={dataEmployee}
                 initProps={initProps}
+                myEmployeeId={employeeId}
+                employeeId={employeeId}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="4">

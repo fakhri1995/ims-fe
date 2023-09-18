@@ -45,6 +45,7 @@ import { defaultSalaryVar } from "../../../../modal/payslips/modalSalaryVarAdd";
 
 const EmployeeContractDetail = ({
   employeeId,
+  myEmployeeId,
   isAllowedToUpdateEmployeeContract,
   isAllowedToDeleteEmployeeContract,
   dataEmployee,
@@ -67,7 +68,8 @@ const EmployeeContractDetail = ({
 
   const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
   const isAllowedToSeeSalary =
-    !hasRole("Super Admin") && hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
+    (!hasRole("Super Admin") || employeeId == myEmployeeId) &&
+    hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
 
   const rt = useRouter();
 
@@ -217,7 +219,7 @@ const EmployeeContractDetail = ({
                   </Tag>
                 )}
                 <div className="space-x-1">
-                  {isAllowedToUpdateEmployeeContract && (
+                  {isAllowedToUpdateEmployeeContract && isAllowedToSeeSalary && (
                     <button
                       className="bg-transparent hover:opacity-70"
                       onClick={(e) => {
@@ -339,16 +341,16 @@ const EmployeeContractDetail = ({
                       <p className="mig-caption--medium text-mono80">
                         Gaji Pokok
                       </p>
-                      {isAllowedToSeeSalary ? (
-                        <p>
-                          Rp
-                          {Number(dataContract?.gaji_pokok).toLocaleString(
-                            "id-ID"
-                          )}
-                        </p>
-                      ) : (
-                        <p>hidden</p>
-                      )}
+                      <p
+                        className={
+                          !isAllowedToSeeSalary ? `blur-text` : undefined
+                        }
+                      >
+                        Rp
+                        {Number(dataContract?.gaji_pokok).toLocaleString(
+                          "id-ID"
+                        )}
+                      </p>
                     </div>
 
                     {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
@@ -364,7 +366,11 @@ const EmployeeContractDetail = ({
                             <p className="mig-caption--medium text-mono80">
                               {item.title}
                             </p>
-                            <p>
+                            <p
+                              className={
+                                !isAllowedToSeeSalary ? `blur-text` : undefined
+                              }
+                            >
                               Rp
                               {dataContract[item.attrName] !== null
                                 ? Number(
@@ -385,8 +391,11 @@ const EmployeeContractDetail = ({
                           <p className="mig-caption--medium text-mono80">
                             {variable?.column?.name}
                           </p>
-                          <p>
-                            {" "}
+                          <p
+                            className={
+                              !isAllowedToSeeSalary ? `blur-text` : undefined
+                            }
+                          >
                             Rp{Number(variable?.value).toLocaleString("id-ID")}
                           </p>
                         </div>
@@ -407,7 +416,11 @@ const EmployeeContractDetail = ({
                           <p className="mig-caption--medium text-mono80">
                             {item.title}
                           </p>
-                          <p>
+                          <p
+                            className={
+                              !isAllowedToSeeSalary ? `blur-text` : undefined
+                            }
+                          >
                             Rp
                             {dataContract[item.attrName] !== null
                               ? Number(
@@ -428,7 +441,11 @@ const EmployeeContractDetail = ({
                           <p className="mig-caption--medium text-mono80">
                             {variable?.column?.name}
                           </p>
-                          <p>
+                          <p
+                            className={
+                              !isAllowedToSeeSalary ? `blur-text` : undefined
+                            }
+                          >
                             Rp{Number(variable?.value).toLocaleString("id-ID")}
                           </p>
                         </div>

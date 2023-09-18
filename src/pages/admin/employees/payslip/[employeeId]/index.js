@@ -24,6 +24,7 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  EMPLOYEE_CONTRACT_SALARY_READ,
   EMPLOYEE_GET,
   EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
@@ -60,8 +61,11 @@ const EmployeePayslipDetailIndex = ({
   /**
    * Dependencies
    */
-  const { hasPermission, isPending: isAccessControlPending } =
-    useAccessControl();
+  const {
+    hasRole,
+    hasPermission,
+    isPending: isAccessControlPending,
+  } = useAccessControl();
 
   if (isAccessControlPending) {
     return null;
@@ -73,6 +77,10 @@ const EmployeePayslipDetailIndex = ({
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToGetPayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
   const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
+  const isAllowedToSeeSalary =
+    (!hasRole("Super Admin") ||
+      employeeId == dataProfile?.data?.employee?.id) &&
+    hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
 
   //INIT
   const rt = useRouter();
@@ -185,6 +193,7 @@ const EmployeePayslipDetailIndex = ({
             const resData = response2.data;
 
             setDataEmployee(resData);
+            setPayslipId(resData?.last_month_payslip?.id);
             if (resData?.last_month_payslip) {
               if (resData?.last_month_payslip?.is_posted) {
                 setPayslipStatus(2);
@@ -416,7 +425,9 @@ const EmployeePayslipDetailIndex = ({
       render: (text, record, index) => {
         return {
           children: (
-            <>{record.total_gross_penerimaan?.toLocaleString("id-ID") || "-"}</>
+            <p className={!isAllowedToSeeSalary ? `blur-text` : undefined}>
+              {record.total_gross_penerimaan?.toLocaleString("id-ID") || "-"}
+            </p>
           ),
         };
       },
@@ -427,9 +438,9 @@ const EmployeePayslipDetailIndex = ({
       render: (text, record, index) => {
         return {
           children: (
-            <>
+            <p className={!isAllowedToSeeSalary ? `blur-text` : undefined}>
               {record.total_gross_pengurangan?.toLocaleString("id-ID") || "-"}
-            </>
+            </p>
           ),
         };
       },
@@ -439,7 +450,11 @@ const EmployeePayslipDetailIndex = ({
       dataIndex: "take_home_pay",
       render: (text, record, index) => {
         return {
-          children: <>{record.take_home_pay?.toLocaleString("id-ID") || "-"}</>,
+          children: (
+            <p className={!isAllowedToSeeSalary ? `blur-text` : undefined}>
+              {record.take_home_pay?.toLocaleString("id-ID") || "-"}
+            </p>
+          ),
         };
       },
     },
@@ -480,8 +495,8 @@ const EmployeePayslipDetailIndex = ({
               {record.is_posted ? (
                 <div className="flex flex-row space-x-2 items-center">
                   <ButtonSys
-                    type={isAllowedToGetPayslip ? "default" : "primary"}
-                    disabled={!isAllowedToGetPayslip}
+                    type={"default"}
+                    disabled={!isAllowedToGetPayslip || !isAllowedToSeeSalary}
                     onClick={(event) => {
                       event.stopPropagation();
                       setPayslipId(record.id);
@@ -492,7 +507,11 @@ const EmployeePayslipDetailIndex = ({
                   </ButtonSys>
                   <ButtonSys
                     type={"default"}
-                    disabled={!isAllowedToGetPayslip || loadingDownload}
+                    disabled={
+                      !isAllowedToGetPayslip ||
+                      loadingDownload ||
+                      !isAllowedToSeeSalary
+                    }
                     onClick={(event) => {
                       event.stopPropagation();
                       handleDownloadPayslip(record);
@@ -503,8 +522,8 @@ const EmployeePayslipDetailIndex = ({
                 </div>
               ) : (
                 <ButtonSys
-                  type={isAllowedToUpdatePayslip ? "default" : "primary"}
-                  disabled={!isAllowedToUpdatePayslip}
+                  type={"default"}
+                  disabled={!isAllowedToUpdatePayslip || !isAllowedToSeeSalary}
                   onClick={(event) => {
                     event.stopPropagation();
                     rt.push(`${employeeId}/addPayslip?id=${record.id}`);
@@ -584,20 +603,20 @@ const EmployeePayslipDetailIndex = ({
               </div>
               {payslipStatus === 0 ? (
                 <ButtonSys
-                  type={!isAllowedToAddPayslip ? "primary" : "default"}
+                  type={"default"}
                   onClick={onAddPayslipButtonClicked}
-                  disabled={!isAllowedToAddPayslip}
+                  disabled={!isAllowedToAddPayslip || !isAllowedToSeeSalary}
                 >
                   <FileAddOutlined />
                   <p className="ml-2">Buat Slip Gaji</p>
                 </ButtonSys>
               ) : payslipStatus === 1 ? (
                 <ButtonSys
-                  type={!isAllowedToUpdatePayslip ? "primary" : "default"}
+                  type={"default"}
                   onClick={() =>
                     rt.push(`${employeeId}/addPayslip?id=${payslipId}`)
                   }
-                  disabled={!isAllowedToUpdatePayslip}
+                  disabled={!isAllowedToUpdatePayslip || !isAllowedToSeeSalary}
                 >
                   <EditOutlined />
                   <p className="ml-2">Edit Draft</p>
@@ -608,7 +627,11 @@ const EmployeePayslipDetailIndex = ({
                   onClick={() =>
                     handleDownloadPayslip(dataEmployee?.last_month_payslip)
                   }
-                  disabled={!isAllowedToDownloadPayslip || loadingDownload}
+                  disabled={
+                    !isAllowedToDownloadPayslip ||
+                    loadingDownload ||
+                    !isAllowedToSeeSalary
+                  }
                 >
                   <DownloadOutlined />
                   <p className="ml-2">Unduh Slip Gaji</p>
@@ -681,6 +704,7 @@ const EmployeePayslipDetailIndex = ({
             total={dataRawPayslips?.total}
             queryParams={queryParams}
             setQueryParams={setQueryParams}
+            isAllowedToSeeSalary={isAllowedToSeeSalary}
           />
         </div>
       </div>
