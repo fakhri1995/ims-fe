@@ -60,7 +60,6 @@ const EmployeeDetailIndex = ({
 
   const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
   const isAllowedToUpdateEmployee = hasPermission(EMPLOYEE_UPDATE);
-  const isAllowedToDeleteEmployee = hasPermission(EMPLOYEE_DELETE);
   const isAllowedToAddEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_ADD);
   const isAllowedToUpdateEmployeeContract = hasPermission(
     EMPLOYEE_CONTRACT_UPDATE
@@ -384,7 +383,6 @@ const EmployeeDetailIndex = ({
             <EmployeeProfileSummary dataEmployee={dataEmployee} />
           </div>
         </div>
-
         {/* Employee detail */}
         <div className="shadow-lg rounded-md bg-white md:p-4 mt-8 p-3">
           <Tabs
@@ -404,6 +402,7 @@ const EmployeeDetailIndex = ({
             <Tabs.TabPane tab="Kontrak Karyawan" key="2">
               <EmployeeContractDetail
                 initProps={initProps}
+                myEmployeeId={dataProfile?.data?.employee?.id}
                 employeeId={employeeId}
                 isAllowedToUpdateEmployeeContract={
                   isAllowedToUpdateEmployeeContract
