@@ -1,4 +1,5 @@
 import { Modal } from "antd";
+import moment from "moment";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import "react-quill/dist/quill.snow.css";
@@ -30,6 +31,7 @@ const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
 
     // Restructure log data from API response
     let dataTable = [];
+    let finalTable = [];
     let dataLogName = dataLogNew || dataLogOld;
     if (dataLogName) {
       // add object of each log attribute to a list
@@ -42,9 +44,9 @@ const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
       // add new value to table list
       if (dataLogNew) {
         Object.entries(dataLogNew)?.forEach((newData, idx) => {
-          dataTable[idx].newValue = newData[1]
-            ?.toString()
-            ?.replace(/(<([^>]+)>)/gi, ""); // remove html tag
+          dataTable[idx].newValue =
+            newData[1]?.toString()?.replace(/(<([^>]+)>)/gi, "") || // remove html tag
+            "-";
         });
       } else {
         dataTable.forEach((logData, idx) => {
@@ -55,9 +57,9 @@ const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
       // add old value to table list
       if (dataLogOld) {
         Object.entries(dataLogOld)?.forEach((oldData, idx) => {
-          dataTable[idx].oldValue = oldData[1]
-            ?.toString()
-            ?.replace(/(<([^>]+)>)/gi, ""); // remove html tag
+          dataTable[idx].oldValue =
+            oldData[1]?.toString()?.replace(/(<([^>]+)>)/gi, "") || // remove html tag
+            "-";
         });
       } else {
         dataTable.forEach((logData, idx) => {
@@ -67,12 +69,12 @@ const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
     }
 
     dataTable?.forEach((data, idx) => {
-      if (data.newValue == data.oldValue) {
-        dataTable.splice(idx, 1);
+      if (data.newValue != data.oldValue) {
+        finalTable[idx] = data;
       }
     });
 
-    setDataTableLog(dataTable);
+    setDataTableLog(finalTable);
   }, [dataLog]);
 
   // console.log({ dataTableLog });
@@ -121,13 +123,39 @@ const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
           </thead>
 
           <tbody>
-            {dataTableLog?.map((log) => (
-              <tr key={log.name} className="grid grid-cols-3">
-                <td className="p-2 font-bold border">{log?.name ?? "-"}</td>
-                <td className="p-2 border">{log?.oldValue ?? "-"}</td>
-                <td className="p-2 border">{log?.newValue ?? "-"}</td>
-              </tr>
-            ))}
+            {dataTableLog?.map((log) =>
+              [
+                "Tanggal Dimulai",
+                "Ekspektasi Tanggal Selesai",
+                "Tanggal Dibuat",
+                "Tanggal Diubah",
+                "Tanggal Dihapus",
+              ].includes(log?.name) ? (
+                <tr key={log.name} className="grid grid-cols-3">
+                  <td className="p-2 font-bold border">{log?.name ?? "-"}</td>
+                  <td className="p-2 border">
+                    {momentFormatDate(
+                      log?.oldValue,
+                      "-",
+                      "DD MMMM YYYY, HH:mm"
+                    )}
+                  </td>
+                  <td className="p-2 border">
+                    {momentFormatDate(
+                      log?.newValue,
+                      "-",
+                      "DD MMMM YYYY, HH:mm"
+                    )}
+                  </td>
+                </tr>
+              ) : (
+                <tr key={log.name} className="grid grid-cols-3">
+                  <td className="p-2 font-bold border">{log?.name ?? "-"}</td>
+                  <td className="p-2 border">{log?.oldValue ?? "-"}</td>
+                  <td className="p-2 border">{log?.newValue ?? "-"}</td>
+                </tr>
+              )
+            )}
           </tbody>
         </table>
       </div>
