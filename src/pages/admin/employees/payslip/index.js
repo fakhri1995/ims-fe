@@ -114,11 +114,6 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     EMPLOYEE_PAYSLIP_STATUS_COUNT_GET
   );
 
-  const getIsAllowedToSeeSalary = (currentEmployeeId) =>
-    (!hasRole("Super Admin") ||
-      currentEmployeeId == dataProfile?.data?.employee?.id) &&
-    hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
-
   // 1. Init
   const rt = useRouter();
   // Breadcrumb url
@@ -675,10 +670,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 ) : (
                   <ButtonSys
                     type={"default"}
-                    disabled={
-                      !isAllowedToUpdatePayslip ||
-                      !getIsAllowedToSeeSalary(record?.id)
-                    }
+                    disabled={!isAllowedToUpdatePayslip}
                     onClick={(event) => {
                       event.stopPropagation();
                       rt.push(

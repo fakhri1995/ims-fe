@@ -496,7 +496,7 @@ const EmployeePayslipDetailIndex = ({
                 <div className="flex flex-row space-x-2 items-center">
                   <ButtonSys
                     type={"default"}
-                    disabled={!isAllowedToGetPayslip || !isAllowedToSeeSalary}
+                    disabled={!isAllowedToGetPayslip}
                     onClick={(event) => {
                       event.stopPropagation();
                       setPayslipId(record.id);
@@ -507,11 +507,7 @@ const EmployeePayslipDetailIndex = ({
                   </ButtonSys>
                   <ButtonSys
                     type={"default"}
-                    disabled={
-                      !isAllowedToGetPayslip ||
-                      loadingDownload ||
-                      !isAllowedToSeeSalary
-                    }
+                    disabled={!isAllowedToGetPayslip || loadingDownload}
                     onClick={(event) => {
                       event.stopPropagation();
                       handleDownloadPayslip(record);
@@ -523,7 +519,7 @@ const EmployeePayslipDetailIndex = ({
               ) : (
                 <ButtonSys
                   type={"default"}
-                  disabled={!isAllowedToUpdatePayslip || !isAllowedToSeeSalary}
+                  disabled={!isAllowedToUpdatePayslip}
                   onClick={(event) => {
                     event.stopPropagation();
                     rt.push(`${employeeId}/addPayslip?id=${record.id}`);
@@ -605,7 +601,7 @@ const EmployeePayslipDetailIndex = ({
                 <ButtonSys
                   type={"default"}
                   onClick={onAddPayslipButtonClicked}
-                  disabled={!isAllowedToAddPayslip || !isAllowedToSeeSalary}
+                  disabled={!isAllowedToAddPayslip}
                 >
                   <FileAddOutlined />
                   <p className="ml-2">Buat Slip Gaji</p>
@@ -616,7 +612,7 @@ const EmployeePayslipDetailIndex = ({
                   onClick={() =>
                     rt.push(`${employeeId}/addPayslip?id=${payslipId}`)
                   }
-                  disabled={!isAllowedToUpdatePayslip || !isAllowedToSeeSalary}
+                  disabled={!isAllowedToUpdatePayslip}
                 >
                   <EditOutlined />
                   <p className="ml-2">Edit Draft</p>
@@ -627,11 +623,7 @@ const EmployeePayslipDetailIndex = ({
                   onClick={() =>
                     handleDownloadPayslip(dataEmployee?.last_month_payslip)
                   }
-                  disabled={
-                    !isAllowedToDownloadPayslip ||
-                    loadingDownload ||
-                    !isAllowedToSeeSalary
-                  }
+                  disabled={!isAllowedToDownloadPayslip || loadingDownload}
                 >
                   <DownloadOutlined />
                   <p className="ml-2">Unduh Slip Gaji</p>
@@ -704,7 +696,6 @@ const EmployeePayslipDetailIndex = ({
             total={dataRawPayslips?.total}
             queryParams={queryParams}
             setQueryParams={setQueryParams}
-            isAllowedToSeeSalary={isAllowedToSeeSalary}
           />
         </div>
       </div>
@@ -717,6 +708,8 @@ const EmployeePayslipDetailIndex = ({
           onvisible={setDrawerDetail}
           isAllowedToGetPayslip={isAllowedToGetPayslip}
           payslipId={payslipId}
+          employeeId={employeeId}
+          myEmployeeId={dataProfile?.data?.employee?.id}
         />
       </AccessControl>
     </LayoutDashboard>

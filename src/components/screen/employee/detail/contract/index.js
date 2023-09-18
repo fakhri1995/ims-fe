@@ -219,7 +219,7 @@ const EmployeeContractDetail = ({
                   </Tag>
                 )}
                 <div className="space-x-1">
-                  {isAllowedToUpdateEmployeeContract && isAllowedToSeeSalary && (
+                  {isAllowedToUpdateEmployeeContract && (
                     <button
                       className="bg-transparent hover:opacity-70"
                       onClick={(e) => {

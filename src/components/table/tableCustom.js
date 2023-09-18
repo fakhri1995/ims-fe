@@ -1845,7 +1845,6 @@ const TableCustomPayslipEmployeeList = ({
   total,
   queryParams,
   setQueryParams,
-  isAllowedToSeeSalary,
 }) => {
   const [rowstate, setrowstate] = useState(0);
   return (
@@ -1884,7 +1883,6 @@ const TableCustomPayslipEmployeeList = ({
           onClick: () => {
             record?.is_posted === 0 &&
               record.id &&
-              isAllowedToSeeSalary &&
               rt.push(
                 `/admin/employees/payslip/${record.employee_id}/addPayslip?id=${record.id}`
               );
