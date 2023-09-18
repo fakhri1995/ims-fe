@@ -60,7 +60,6 @@ const EmployeeDetailIndex = ({
 
   const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
   const isAllowedToUpdateEmployee = hasPermission(EMPLOYEE_UPDATE);
-  const isAllowedToDeleteEmployee = hasPermission(EMPLOYEE_DELETE);
   const isAllowedToAddEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_ADD);
   const isAllowedToUpdateEmployeeContract = hasPermission(
     EMPLOYEE_CONTRACT_UPDATE
