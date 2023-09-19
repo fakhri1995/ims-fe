@@ -34,8 +34,7 @@ const DrawerPayslipDetail = ({
   }
 
   const isAllowedToSeeSalary =
-    (!hasRole("Super Admin") || employeeId == myEmployeeId) &&
-    hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
+    employeeId == myEmployeeId || hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
 
   // useState
   const [detailPayslip, setDetailPayslip] = useState({
