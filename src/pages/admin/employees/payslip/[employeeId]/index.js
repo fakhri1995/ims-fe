@@ -24,6 +24,7 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  EMPLOYEE_CONTRACT_SALARY_READ,
   EMPLOYEE_GET,
   EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
@@ -60,8 +61,11 @@ const EmployeePayslipDetailIndex = ({
   /**
    * Dependencies
    */
-  const { hasPermission, isPending: isAccessControlPending } =
-    useAccessControl();
+  const {
+    hasRole,
+    hasPermission,
+    isPending: isAccessControlPending,
+  } = useAccessControl();
 
   if (isAccessControlPending) {
     return null;
@@ -73,6 +77,10 @@ const EmployeePayslipDetailIndex = ({
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToGetPayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
   const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
+  const isAllowedToSeeSalary =
+    (!hasRole("Super Admin") ||
+      employeeId == dataProfile?.data?.employee?.id) &&
+    hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
 
   //INIT
   const rt = useRouter();
@@ -185,6 +193,7 @@ const EmployeePayslipDetailIndex = ({
             const resData = response2.data;
 
             setDataEmployee(resData);
+            setPayslipId(resData?.last_month_payslip?.id);
             if (resData?.last_month_payslip) {
               if (resData?.last_month_payslip?.is_posted) {
                 setPayslipStatus(2);
@@ -416,7 +425,9 @@ const EmployeePayslipDetailIndex = ({
       render: (text, record, index) => {
         return {
           children: (
-            <>{record.total_gross_penerimaan?.toLocaleString("id-ID") || "-"}</>
+            <p className={!isAllowedToSeeSalary ? `blur-text` : undefined}>
+              {record.total_gross_penerimaan?.toLocaleString("id-ID") || "-"}
+            </p>
           ),
         };
       },
@@ -427,9 +438,9 @@ const EmployeePayslipDetailIndex = ({
       render: (text, record, index) => {
         return {
           children: (
-            <>
+            <p className={!isAllowedToSeeSalary ? `blur-text` : undefined}>
               {record.total_gross_pengurangan?.toLocaleString("id-ID") || "-"}
-            </>
+            </p>
           ),
         };
       },
@@ -439,7 +450,11 @@ const EmployeePayslipDetailIndex = ({
       dataIndex: "take_home_pay",
       render: (text, record, index) => {
         return {
-          children: <>{record.take_home_pay?.toLocaleString("id-ID") || "-"}</>,
+          children: (
+            <p className={!isAllowedToSeeSalary ? `blur-text` : undefined}>
+              {record.take_home_pay?.toLocaleString("id-ID") || "-"}
+            </p>
+          ),
         };
       },
     },
@@ -480,7 +495,7 @@ const EmployeePayslipDetailIndex = ({
               {record.is_posted ? (
                 <div className="flex flex-row space-x-2 items-center">
                   <ButtonSys
-                    type={isAllowedToGetPayslip ? "default" : "primary"}
+                    type={"default"}
                     disabled={!isAllowedToGetPayslip}
                     onClick={(event) => {
                       event.stopPropagation();
@@ -503,7 +518,7 @@ const EmployeePayslipDetailIndex = ({
                 </div>
               ) : (
                 <ButtonSys
-                  type={isAllowedToUpdatePayslip ? "default" : "primary"}
+                  type={"default"}
                   disabled={!isAllowedToUpdatePayslip}
                   onClick={(event) => {
                     event.stopPropagation();
@@ -584,7 +599,7 @@ const EmployeePayslipDetailIndex = ({
               </div>
               {payslipStatus === 0 ? (
                 <ButtonSys
-                  type={!isAllowedToAddPayslip ? "primary" : "default"}
+                  type={"default"}
                   onClick={onAddPayslipButtonClicked}
                   disabled={!isAllowedToAddPayslip}
                 >
@@ -593,7 +608,7 @@ const EmployeePayslipDetailIndex = ({
                 </ButtonSys>
               ) : payslipStatus === 1 ? (
                 <ButtonSys
-                  type={!isAllowedToUpdatePayslip ? "primary" : "default"}
+                  type={"default"}
                   onClick={() =>
                     rt.push(`${employeeId}/addPayslip?id=${payslipId}`)
                   }
@@ -693,6 +708,8 @@ const EmployeePayslipDetailIndex = ({
           onvisible={setDrawerDetail}
           isAllowedToGetPayslip={isAllowedToGetPayslip}
           payslipId={payslipId}
+          employeeId={employeeId}
+          myEmployeeId={dataProfile?.data?.employee?.id}
         />
       </AccessControl>
     </LayoutDashboard>

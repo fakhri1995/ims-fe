@@ -759,3 +759,9 @@ ol {
 // .ant-table-thead > tr > th {
 //   background-color: white;
 // }
+
+.blur-text {
+  color: transparent;
+  text-shadow: 0 0 10px #000;
+  user-select: none;
+}
