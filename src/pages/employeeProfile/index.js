@@ -250,7 +250,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
                   </div>
                 )}
               </div>
-              {dataEmployee?.last_month_payslip?.is_posted && (
+              {Boolean(dataEmployee?.last_month_payslip?.is_posted) && (
                 <ButtonSys
                   type={"primary"}
                   onClick={() => setModalDownload(true)}

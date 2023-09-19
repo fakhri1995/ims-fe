@@ -34,7 +34,6 @@ import {
   UploadIconSvg,
 } from "../../../../../components/icon";
 import {
-  beforeUploadFileMaxSize,
   generateStaticAssetUrl,
   getFileName,
   momentFormatDate,
@@ -67,9 +66,9 @@ const EmployeeContractDetail = ({
   }
 
   const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
+
   const isAllowedToSeeSalary =
-    (!hasRole("Super Admin") || employeeId == myEmployeeId) &&
-    hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
+    employeeId == myEmployeeId || hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
 
   const rt = useRouter();
 

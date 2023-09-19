@@ -78,8 +78,7 @@ const EmployeePayslipDetailIndex = ({
   const isAllowedToGetPayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
   const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
   const isAllowedToSeeSalary =
-    (!hasRole("Super Admin") ||
-      employeeId == dataProfile?.data?.employee?.id) &&
+    employeeId == dataProfile?.data?.employee?.id ||
     hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
 
   //INIT
