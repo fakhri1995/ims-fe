@@ -5,6 +5,8 @@ import convertTerbilang from "terbilang-ts";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { EMPLOYEE_CONTRACT_SALARY_READ } from "lib/features";
+
 import { momentFormatDate } from "../../../lib/helper";
 import { defaultSalaryVar } from "../../modal/payslips/modalSalaryVarAdd";
 import DrawerCore from "../drawerCore";
@@ -15,16 +17,25 @@ const DrawerPayslipDetail = ({
   onvisible,
   isAllowedToGetPayslip,
   payslipId,
+  employeeId,
+  myEmployeeId,
 }) => {
   /**
    * Dependencies
    */
-  const { hasPermission, isPending: isAccessControlPending } =
-    useAccessControl();
+  const {
+    hasRole,
+    hasPermission,
+    isPending: isAccessControlPending,
+  } = useAccessControl();
 
   if (isAccessControlPending) {
     return null;
   }
+
+  const isAllowedToSeeSalary =
+    (!hasRole("Super Admin") || employeeId == myEmployeeId) &&
+    hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
 
   // useState
   const [detailPayslip, setDetailPayslip] = useState({
@@ -154,7 +165,7 @@ const DrawerPayslipDetail = ({
           <div className="flex flex-col col-span-2">
             <p className="mig-caption--medium text-mono80">Jumlah Diterima</p>
             <div className="flex flex-row">
-              <p>
+              <p className={!isAllowedToSeeSalary ? `blur-text` : undefined}>
                 Rp{detailPayslip?.take_home_pay.toLocaleString("id-ID")} (
                 {convertTerbilang(detailPayslip?.take_home_pay) || "Nol"}{" "}
                 Rupiah)
@@ -194,7 +205,10 @@ const DrawerPayslipDetail = ({
                     title: "PENERIMAAN (IDR)",
                     dataIndex: "value",
                     render: (text) => (
-                      <p className="font-bold text-right">
+                      <p
+                        className={`font-bold text-right 
+                        ${!isAllowedToSeeSalary ? `blur-text` : undefined}`}
+                      >
                         {Number(text)?.toLocaleString("id-ID") || "-"}
                       </p>
                     ),
@@ -209,7 +223,8 @@ const DrawerPayslipDetail = ({
                       </Table.Summary.Cell>
                       <Table.Summary.Cell
                         index={1}
-                        className="font-bold text-right"
+                        className={`font-bold text-right 
+                        ${!isAllowedToSeeSalary ? `blur-text` : undefined}`}
                       >
                         {detailPayslip?.total_gross_penerimaan?.toLocaleString(
                           "id-ID"
@@ -243,7 +258,10 @@ const DrawerPayslipDetail = ({
                     title: "PENGURANGAN (IDR)",
                     dataIndex: "value",
                     render: (text) => (
-                      <p className="font-bold text-right">
+                      <p
+                        className={`font-bold text-right 
+                      ${!isAllowedToSeeSalary ? `blur-text` : undefined}`}
+                      >
                         {Number(text)?.toLocaleString("id-ID") || "-"}
                       </p>
                     ),
@@ -258,7 +276,8 @@ const DrawerPayslipDetail = ({
                       </Table.Summary.Cell>
                       <Table.Summary.Cell
                         index={1}
-                        className="font-bold text-right"
+                        className={`font-bold text-right 
+                        ${!isAllowedToSeeSalary ? `blur-text` : undefined}`}
                       >
                         {detailPayslip?.total_gross_pengurangan?.toLocaleString(
                           "id-ID"
