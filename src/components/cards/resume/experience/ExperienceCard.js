@@ -1,17 +1,16 @@
+import { HolderOutlined } from "@ant-design/icons";
+import { DndContext } from "@dnd-kit/core";
 import {
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Spin,
-  Steps,
-  Timeline,
-  notification,
-} from "antd";
-import TextArea from "antd/lib/input/TextArea";
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
+import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { DatePicker, Input, Timeline } from "antd";
 import moment from "moment";
 import dynamic from "next/dynamic";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import "react-quill/dist/quill.snow.css";
 
@@ -45,9 +44,11 @@ const ExperienceCard = ({
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
 }) => {
+  // 1. State
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [experienceList, setExperienceList] = useState([]);
 
   const [dataUpdateExp, setDataUpdateExp] = useState({
     id: null,
@@ -57,8 +58,15 @@ const ExperienceCard = ({
     end_date: "",
     description: "",
     resume_id: null,
+    after_id: null,
   });
 
+  // 2. Use Effect
+  useEffect(() => {
+    setExperienceList(dataDisplay);
+  }, [dataDisplay]);
+
+  // 3. Handler
   const clearDataUpdate = () => {
     setDataUpdateExp({
       id: null,
@@ -68,6 +76,7 @@ const ExperienceCard = ({
       end_date: "",
       description: "",
       resume_id: null,
+      after_id: null,
     });
   };
 
@@ -89,28 +98,105 @@ const ExperienceCard = ({
     "link",
   ];
 
-  // console.log({ dataUpdateExp });
+  const onDragEnd = async ({ active, over }) => {
+    let activeIndex,
+      overIndex = 0;
+    let updatedExperienceList = [];
+
+    if (active?.id !== over?.id) {
+      // Display reordered experience list
+      setExperienceList((prev) => {
+        activeIndex = prev.findIndex((i) => i.id === active.id);
+        overIndex = prev.findIndex((i) => i.id === over?.id);
+        updatedExperienceList = arrayMove(prev, activeIndex, overIndex);
+        return updatedExperienceList;
+      });
+
+      // Update a experience after_id when reordered
+      let prevIndex = overIndex - 1; // get experience above the reordered experience
+      // if the reordered experience moved to the first order, then set after_id as 0
+      let prevId = prevIndex < 0 ? 0 : updatedExperienceList[prevIndex]?.id;
+      let currentExp = experienceList?.find((exp) => exp.id === active.id);
+
+      let updatedExp = {
+        id: active?.id,
+        role: currentExp?.role,
+        company: currentExp?.company,
+        start_date: currentExp?.start_date,
+        end_date: currentExp?.end_date,
+        description: currentExp?.description,
+        resume_id: currentExp?.resume_id,
+        after_id: prevId,
+      };
+      setDataUpdateExp(updatedExp);
+      await handleUpdateSection("experience", updatedExp);
+      clearDataUpdate();
+    }
+  };
+
+  // Sortable Experience Block
+  const SortableItem = ({ id, exp }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({ id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+    return (
+      <li ref={setNodeRef} style={style}>
+        <ExperienceBlock
+          exp={exp}
+          dataUpdateExp={dataUpdateExp}
+          setDataUpdateExp={setDataUpdateExp}
+          handleUpdateSection={handleUpdateSection}
+          clearDataUpdate={clearDataUpdate}
+          setModalDelete={setModalDelete}
+          isAdd={isAdd}
+          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+          isAllowedToDeleteSection={isAllowedToDeleteSection}
+          modules={modules}
+          formats={formats}
+          {...listeners}
+          {...attributes}
+        />
+      </li>
+    );
+  };
+
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <h4 className="mig-heading--4">Experience</h4>
       <hr className="my-4" />
       <Timeline>
-        {dataDisplay.experiences?.map((exp) => (
-          <ExperienceBlock
-            key={exp.id}
-            exp={exp}
-            dataUpdateExp={dataUpdateExp}
-            setDataUpdateExp={setDataUpdateExp}
-            handleUpdateSection={handleUpdateSection}
-            clearDataUpdate={clearDataUpdate}
-            setModalDelete={setModalDelete}
-            isAdd={isAdd}
-            isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
-            isAllowedToDeleteSection={isAllowedToDeleteSection}
-            modules={modules}
-            formats={formats}
-          />
-        ))}
+        <DndContext
+          onDragEnd={onDragEnd}
+          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+        >
+          <SortableContext items={dataDisplay?.map((i) => i.id)}>
+            {dataDisplay?.map((exp, idx) =>
+              dataUpdateExp?.id == exp?.id ? (
+                <ExperienceBlock
+                  key={exp.id}
+                  exp={exp}
+                  dataUpdateExp={dataUpdateExp}
+                  setDataUpdateExp={setDataUpdateExp}
+                  handleUpdateSection={handleUpdateSection}
+                  clearDataUpdate={clearDataUpdate}
+                  setModalDelete={setModalDelete}
+                  isAdd={isAdd}
+                  isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+                  isAllowedToDeleteSection={isAllowedToDeleteSection}
+                  modules={modules}
+                  formats={formats}
+                  afterId={experienceList[idx - 1]?.id}
+                />
+              ) : (
+                <SortableItem key={exp.id} id={exp.id} exp={exp} />
+              )
+            )}
+          </SortableContext>
+        </DndContext>
       </Timeline>
 
       {/* Input Experience */}
@@ -130,11 +216,14 @@ const ExperienceCard = ({
             />
             <button
               onClick={() => {
-                handleAddSection("experience", dataUpdateExp);
+                handleAddSection("experience", {
+                  ...dataUpdateExp,
+                  after_id: experienceList[experienceList.length - 1]?.id,
+                });
                 setIsAdd(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <CheckIconSvg size={24} color={"#35763B"} />
             </button>
@@ -143,7 +232,7 @@ const ExperienceCard = ({
                 setIsAdd(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
