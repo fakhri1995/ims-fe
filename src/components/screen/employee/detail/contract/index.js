@@ -21,7 +21,11 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { EMPLOYEE_CONTRACT_DELETE, EMPLOYEE_CONTRACT_GET } from "lib/features";
+import {
+  EMPLOYEE_CONTRACT_DELETE,
+  EMPLOYEE_CONTRACT_GET,
+  EMPLOYEE_CONTRACT_SALARY_READ,
+} from "lib/features";
 
 import {
   EditIconSvg,
@@ -30,7 +34,6 @@ import {
   UploadIconSvg,
 } from "../../../../../components/icon";
 import {
-  beforeUploadFileMaxSize,
   generateStaticAssetUrl,
   getFileName,
   momentFormatDate,
@@ -41,6 +44,7 @@ import { defaultSalaryVar } from "../../../../modal/payslips/modalSalaryVarAdd";
 
 const EmployeeContractDetail = ({
   employeeId,
+  myEmployeeId,
   isAllowedToUpdateEmployeeContract,
   isAllowedToDeleteEmployeeContract,
   dataEmployee,
@@ -51,8 +55,11 @@ const EmployeeContractDetail = ({
    * Dependencies
    */
 
-  const { hasPermission, isPending: isAccessControlPending } =
-    useAccessControl();
+  const {
+    hasRole,
+    hasPermission,
+    isPending: isAccessControlPending,
+  } = useAccessControl();
 
   if (isAccessControlPending) {
     return null;
@@ -60,7 +67,9 @@ const EmployeeContractDetail = ({
 
   const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
 
-  const [instanceForm] = Form.useForm();
+  const isAllowedToSeeSalary =
+    employeeId == myEmployeeId || hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
+
   const rt = useRouter();
 
   // 1. USE STATE
@@ -327,10 +336,15 @@ const EmployeeContractDetail = ({
                   <p className="mig-heading--5 mb-2">BENEFIT PENERIMAAN</p>
                   <div className="space-y-2">
                     <div className="space-y-1 md:col-span-2">
+                      {/* TODO: change interface if design is done */}
                       <p className="mig-caption--medium text-mono80">
                         Gaji Pokok
                       </p>
-                      <p>
+                      <p
+                        className={
+                          !isAllowedToSeeSalary ? `blur-text` : undefined
+                        }
+                      >
                         Rp
                         {Number(dataContract?.gaji_pokok).toLocaleString(
                           "id-ID"
@@ -351,7 +365,11 @@ const EmployeeContractDetail = ({
                             <p className="mig-caption--medium text-mono80">
                               {item.title}
                             </p>
-                            <p>
+                            <p
+                              className={
+                                !isAllowedToSeeSalary ? `blur-text` : undefined
+                              }
+                            >
                               Rp
                               {dataContract[item.attrName] !== null
                                 ? Number(
@@ -372,8 +390,11 @@ const EmployeeContractDetail = ({
                           <p className="mig-caption--medium text-mono80">
                             {variable?.column?.name}
                           </p>
-                          <p>
-                            {" "}
+                          <p
+                            className={
+                              !isAllowedToSeeSalary ? `blur-text` : undefined
+                            }
+                          >
                             Rp{Number(variable?.value).toLocaleString("id-ID")}
                           </p>
                         </div>
@@ -394,7 +415,11 @@ const EmployeeContractDetail = ({
                           <p className="mig-caption--medium text-mono80">
                             {item.title}
                           </p>
-                          <p>
+                          <p
+                            className={
+                              !isAllowedToSeeSalary ? `blur-text` : undefined
+                            }
+                          >
                             Rp
                             {dataContract[item.attrName] !== null
                               ? Number(
@@ -415,7 +440,11 @@ const EmployeeContractDetail = ({
                           <p className="mig-caption--medium text-mono80">
                             {variable?.column?.name}
                           </p>
-                          <p>
+                          <p
+                            className={
+                              !isAllowedToSeeSalary ? `blur-text` : undefined
+                            }
+                          >
                             Rp{Number(variable?.value).toLocaleString("id-ID")}
                           </p>
                         </div>

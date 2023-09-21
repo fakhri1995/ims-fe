@@ -364,7 +364,7 @@ export const AttendanceStaffAktivitasSection: FC<
               getDataTaskActivities();
             } else {
               notification.error({
-                message: `Task Gagal ditambahkan ke aktivitas!`,
+                message: response2.message,
                 duration: 3,
               });
             }
@@ -488,11 +488,22 @@ export const AttendanceStaffAktivitasSection: FC<
   };
   const handleSelectAllTask = () => {
     let dataTemp = [];
+    let dataTemp2 = [];
     for (let a = 0; a < displayDataImport.length; a++) {
       dataTemp.push(displayDataImport[a].id);
+      console.log("data ke ", displayDataImport[a]);
+      dataTemp2.push({
+        id: displayDataImport[a].id,
+        ticket_number: displayDataImport[a].ticket_number,
+        name: displayDataImport[a].name,
+        project_name: displayDataImport[a].project_name,
+        start_date: displayDataImport[a].start_date,
+        end_date: displayDataImport[a].end_date,
+        is_selected: true,
+      });
     }
     setDataTaskSelected(dataTemp);
-    setDisplayDataImportTemp(displayDataImport);
+    setDisplayDataImportTemp(dataTemp2);
   };
 
   const handleUnSelectAllTask = () => {
@@ -502,6 +513,7 @@ export const AttendanceStaffAktivitasSection: FC<
         id: displayDataImportTemp[a].id,
         ticket_number: displayDataImportTemp[a].ticket_number,
         name: displayDataImportTemp[a].name,
+        project_name: displayDataImportTemp[a].project_name,
         start_date: displayDataImportTemp[a].start_date,
         end_date: displayDataImportTemp[a].end_date,
         is_selected: false,
@@ -519,6 +531,7 @@ export const AttendanceStaffAktivitasSection: FC<
           id: displayDataImportTemp[a].id,
           ticket_number: displayDataImportTemp[a].ticket_number,
           name: displayDataImportTemp[a].name,
+          project_name: displayDataImportTemp[a].project_name,
           start_date: displayDataImportTemp[a].start_date,
           end_date: displayDataImportTemp[a].end_date,
           is_selected: value.target.checked,
@@ -528,6 +541,7 @@ export const AttendanceStaffAktivitasSection: FC<
           id: displayDataImportTemp[a].id,
           ticket_number: displayDataImportTemp[a].ticket_number,
           name: displayDataImportTemp[a].name,
+          project_name: displayDataImportTemp[a].project_name,
           start_date: displayDataImportTemp[a].start_date,
           end_date: displayDataImportTemp[a].end_date,
           is_selected: displayDataImportTemp[a].is_selected,

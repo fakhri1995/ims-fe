@@ -5,6 +5,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import { getClientToken } from "lib/auth";
 import { ROLE_SUPER_ADMIN } from "lib/constants";
+import { EMPLOYEE_CONTRACT_SALARY_READ } from "lib/features";
 
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
@@ -106,11 +107,17 @@ export const AccessControlProvider: FC = ({ children }) => {
 
   const hasPermission = useCallback<IAccessControlCtx["hasPermission"]>(
     (permission) => {
-      if (shouldBypass) {
-        return true;
-      }
-
       let isPermissionsSatisfied = false;
+
+      // Handle permission for EMPLOYEE_CONTRACT_SALARY_READ in Super Admin
+      if (permission === EMPLOYEE_CONTRACT_SALARY_READ && shouldBypass) {
+        isPermissionsSatisfied = permission in permissionsRecord;
+      } else {
+        // All features except EMPLOYEE_CONTRACT_SALARY_READ are accessible in Super Admin
+        if (shouldBypass) {
+          return true;
+        }
+      }
 
       if (typeof permission === "string") {
         isPermissionsSatisfied = permission in permissionsRecord;

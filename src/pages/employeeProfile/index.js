@@ -250,7 +250,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
                   </div>
                 )}
               </div>
-              {dataEmployee?.last_month_payslip?.is_posted && (
+              {Boolean(dataEmployee?.last_month_payslip?.is_posted) && (
                 <ButtonSys
                   type={"primary"}
                   onClick={() => setModalDownload(true)}
@@ -297,6 +297,8 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
               <EmployeeContractDetail
                 dataEmployee={dataEmployee}
                 initProps={initProps}
+                myEmployeeId={employeeId}
+                employeeId={employeeId}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="4">
