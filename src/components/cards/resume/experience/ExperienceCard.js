@@ -173,8 +173,8 @@ const ExperienceCard = ({
           onDragEnd={onDragEnd}
           modifiers={[restrictToVerticalAxis, restrictToParentElement]}
         >
-          <SortableContext items={dataDisplay?.map((i) => i.id)}>
-            {dataDisplay?.map((exp, idx) =>
+          <SortableContext items={experienceList?.map((i) => i.id)}>
+            {experienceList?.map((exp, idx) =>
               dataUpdateExp?.id == exp?.id ? (
                 <ExperienceBlock
                   key={exp.id}

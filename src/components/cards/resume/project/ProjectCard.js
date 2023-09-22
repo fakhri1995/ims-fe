@@ -134,8 +134,8 @@ const ProjectCard = ({
         onDragEnd={onDragEnd}
         modifiers={[restrictToVerticalAxis, restrictToParentElement]}
       >
-        <SortableContext items={dataDisplay?.map((p) => p.id)}>
-          {dataDisplay?.map((project, idx) =>
+        <SortableContext items={projectList?.map((p) => p.id)}>
+          {projectList?.map((project, idx) =>
             dataUpdateProj?.id == project?.id ? (
               <ProjectBlock
                 key={project.id}
@@ -156,21 +156,6 @@ const ProjectCard = ({
           )}
         </SortableContext>
       </DndContext>
-
-      {/* {dataDisplay.projects?.map((project) => (
-        <ProjectBlock
-          key={project.id}
-          project={project}
-          dataUpdateProj={dataUpdateProj}
-          setDataUpdateProj={setDataUpdateProj}
-          handleUpdateSection={handleUpdateSection}
-          clearDataUpdate={clearDataUpdate}
-          setModalDelete={setModalDelete}
-          isAdd={isAdd}
-          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
-          isAllowedToDeleteSection={isAllowedToDeleteSection}
-        />
-      ))} */}
 
       {/* Input Add Project */}
       {isAdd ? (
