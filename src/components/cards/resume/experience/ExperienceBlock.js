@@ -33,6 +33,8 @@ const ExperienceBlock = ({
   isAllowedToDeleteSection,
   modules,
   formats,
+  afterId,
+  ...draggable
 }) => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -62,12 +64,15 @@ const ExperienceBlock = ({
             <button
               onClick={() => {
                 if (dataUpdateExp.id) {
-                  handleUpdateSection("experience", dataUpdateExp);
+                  handleUpdateSection("experience", {
+                    ...dataUpdateExp,
+                    after_id: afterId,
+                  });
                 }
                 setIsUpdate(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <CheckIconSvg size={24} color={"#35763B"} />
             </button>
@@ -76,7 +81,7 @@ const ExperienceBlock = ({
                 setIsUpdate(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
@@ -146,7 +151,8 @@ const ExperienceBlock = ({
         </div>
       ) : (
         <div className="flex justify-between">
-          <div className="flex flex-col">
+          {/* Read state */}
+          <div className="flex flex-col cursor-move" {...draggable}>
             <p className="text-primary100 font-bold mb-1">{exp.role}</p>
             <p className="text-mono50 mb-1">
               {exp.company} ·&nbsp;
@@ -165,7 +171,7 @@ const ExperienceBlock = ({
                     setIsUpdate(true);
                     setDataUpdateExp(exp);
                   }}
-                  className="bg-transparent"
+                  className="bg-transparent hover:opacity-75"
                   value={exp.id}
                 >
                   <EditIconSvg size={18} color="#4D4D4D" />
@@ -177,7 +183,7 @@ const ExperienceBlock = ({
                     setDataUpdateExp(exp);
                     setModalDelete(true);
                   }}
-                  className="bg-transparent"
+                  className="bg-transparent hover:opacity-75"
                 >
                   <TrashIconSvg size={18} color="#4D4D4D" />
                 </button>

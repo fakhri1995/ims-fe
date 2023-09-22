@@ -56,7 +56,7 @@ const CertificationBlock = ({
                 setIsUpdate(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <CheckIconSvg size={24} color={"#35763B"} />
             </button>
@@ -65,7 +65,7 @@ const CertificationBlock = ({
                 setIsUpdate(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
@@ -117,7 +117,7 @@ const CertificationBlock = ({
                     setIsUpdate(true);
                     setDataUpdateCert(certif);
                   }}
-                  className="bg-transparent"
+                  className="bg-transparent hover:opacity-75"
                 >
                   <EditIconSvg size={18} color="#4D4D4D" />
                 </button>
@@ -128,7 +128,7 @@ const CertificationBlock = ({
                     setDataUpdateCert(certif);
                     setModalDelete(true);
                   }}
-                  className="bg-transparent"
+                  className="bg-transparent hover:opacity-75"
                 >
                   <TrashIconSvg size={18} color="#4D4D4D" />
                 </button>

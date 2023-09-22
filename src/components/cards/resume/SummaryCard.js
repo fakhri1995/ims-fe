@@ -127,7 +127,7 @@ const SummaryCard = ({
           <Spin />
         </div>
       ) : isAddDescription ? (
-        <div className="flex flex-row space-x-4 mt-6">
+        <div className="flex flex-row gap-4 mt-6">
           <div className={"w-11/12"}>
             <ReactQuill
               theme="snow"
@@ -143,7 +143,7 @@ const SummaryCard = ({
               }}
             />
           </div>
-          <div className={"w-1/12 justify-center space-x-4"}>
+          <div className={"flex flex-nowrap justify-center items-start gap-2"}>
             <button
               onClick={() => {
                 if (dataSummary.id) {
@@ -154,7 +154,7 @@ const SummaryCard = ({
                 setIsAddDescription(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <CheckIconSvg size={24} color={"#35763B"} />
             </button>
@@ -162,7 +162,7 @@ const SummaryCard = ({
               onClick={() => {
                 setIsAddDescription(false);
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>

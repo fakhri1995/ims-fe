@@ -275,7 +275,7 @@ const BasicInfoCard = ({
                 setIsShowInput(true);
               }}
               disabled={!isAllowedToUpdateCandidate}
-              className="bg-transparent flex items-center"
+              className="bg-transparent flex items-center hover:opacity-75"
             >
               <EditIconSvg size={18} color={"#4D4D4D"} />
             </button>

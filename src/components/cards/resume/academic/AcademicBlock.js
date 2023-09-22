@@ -56,7 +56,7 @@ const AcademicBlock = ({
                 setIsUpdate(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <CheckIconSvg size={24} color={"#35763B"} />
             </button>
@@ -65,7 +65,7 @@ const AcademicBlock = ({
                 setIsUpdate(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
@@ -129,7 +129,7 @@ const AcademicBlock = ({
                     setIsUpdate(true);
                     setDataUpdateEdu(edu);
                   }}
-                  className="bg-transparent"
+                  className="bg-transparent hover:opacity-75"
                   value={edu?.id}
                 >
                   <EditIconSvg size={18} color="#4D4D4D" />
@@ -141,7 +141,7 @@ const AcademicBlock = ({
                     setDataUpdateEdu(edu);
                     setModalDelete(true);
                   }}
-                  className="bg-transparent"
+                  className="bg-transparent hover:opacity-75"
                 >
                   <TrashIconSvg size={18} color="#4D4D4D" />
                 </button>

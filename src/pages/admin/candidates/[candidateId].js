@@ -543,7 +543,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
             {/* SECTION EXPERIENCE */}
             <ExperienceCard
-              dataDisplay={dataDisplay}
+              dataDisplay={dataDisplay?.experiences}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -555,7 +555,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
             {/* SECTION PROJECT */}
             <ProjectCard
-              dataDisplay={dataDisplay}
+              dataDisplay={dataDisplay?.projects}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}

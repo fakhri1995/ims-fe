@@ -54,7 +54,7 @@ const AchievementBlock = ({
                 setIsUpdate(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <CheckIconSvg size={24} color={"#35763B"} />
             </button>
@@ -63,7 +63,7 @@ const AchievementBlock = ({
                 setIsUpdate(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
@@ -117,7 +117,7 @@ const AchievementBlock = ({
                     setIsUpdate(true);
                     setDataUpdateAchiev(achievement);
                   }}
-                  className="bg-transparent"
+                  className="bg-transparent hover:opacity-75"
                 >
                   <EditIconSvg size={18} color="#4D4D4D" />
                 </button>
@@ -128,7 +128,7 @@ const AchievementBlock = ({
                     setDataUpdateAchiev(achievement);
                     setModalDelete(true);
                   }}
-                  className="bg-transparent"
+                  className="bg-transparent hover:opacity-75"
                 >
                   <TrashIconSvg size={18} color="#4D4D4D" />
                 </button>
