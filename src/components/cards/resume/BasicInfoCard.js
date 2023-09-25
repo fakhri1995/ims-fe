@@ -324,11 +324,7 @@ const BasicInfoCard = ({
         </div>
       </div>
       <hr />
-      {praloading ? (
-        <div className=" flex justify-center">
-          <Spin />
-        </div>
-      ) : (
+      <Spin spinning={praloading}>
         <div className="flex flex-col lg:flex-row justify-between">
           <div className="flex flex-col mt-3">
             <p className="text-xs text-gray-300 mb-2">Role</p>
@@ -361,7 +357,7 @@ const BasicInfoCard = ({
             </div>
           </div>
         </div>
-      )}
+      </Spin>
       <AccessControl hasPermission={RESUME_GET}>
         <ModalCore
           title={"Unduh Resume"}

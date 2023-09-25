@@ -101,24 +101,24 @@ const ExperienceCard = ({
   const onDragEnd = async ({ active, over }) => {
     let activeIndex,
       overIndex = 0;
-    let updatedExperienceList = [];
+    let updatedList = [];
 
     if (active?.id !== over?.id) {
-      // Display reordered experience list
+      // Display reordered item list
       setExperienceList((prev) => {
         activeIndex = prev.findIndex((i) => i.id === active.id);
         overIndex = prev.findIndex((i) => i.id === over?.id);
-        updatedExperienceList = arrayMove(prev, activeIndex, overIndex);
-        return updatedExperienceList;
+        updatedList = arrayMove(prev, activeIndex, overIndex);
+        return updatedList;
       });
 
-      // Update a experience after_id when reordered
-      let prevIndex = overIndex - 1; // get experience above the reordered experience
-      // if the reordered experience moved to the first order, then set after_id as 0
-      let prevId = prevIndex < 0 ? 0 : updatedExperienceList[prevIndex]?.id;
+      // Update a item after_id when reordered
+      let prevIndex = overIndex - 1; // get item above the reordered item
+      // if the reordered item moved to the first order, then set after_id as 0
+      let prevId = prevIndex < 0 ? 0 : updatedList[prevIndex]?.id;
       let currentExp = experienceList?.find((exp) => exp.id === active.id);
 
-      let updatedExp = {
+      let updatedItem = {
         id: active?.id,
         role: currentExp?.role,
         company: currentExp?.company,
@@ -128,13 +128,12 @@ const ExperienceCard = ({
         resume_id: currentExp?.resume_id,
         after_id: prevId,
       };
-      setDataUpdateExp(updatedExp);
-      await handleUpdateSection("experience", updatedExp);
+      await handleUpdateSection("experience", updatedItem);
       clearDataUpdate();
     }
   };
 
-  // Sortable Experience Block
+  // Sortable Block
   const SortableItem = ({ id, exp }) => {
     const { attributes, listeners, setNodeRef, transform, transition } =
       useSortable({ id });

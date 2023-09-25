@@ -11,16 +11,19 @@ import {
   XIconSvg,
 } from "../../../icon";
 
-const AchievementBlock = ({
-  achievement,
-  dataUpdateAchiev,
-  setDataUpdateAchiev,
+const GeneralBlock = ({
+  training,
+  dataUpdateTrain,
+  setDataUpdateTrain,
   handleUpdateSection,
   clearDataUpdate,
   setModalDelete,
   isAdd,
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
+  sectionName,
+  afterId,
+  ...draggable
 }) => {
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -31,16 +34,20 @@ const AchievementBlock = ({
   }, [isAdd]);
 
   return (
-    <div key={achievement.id} className="flex flex-row mb-3">
+    <div className="flex flex-row mb-3">
       {isUpdate ? (
         <div className="flex flex-col space-y-4 mt-2 mb-4 w-full">
           <div className="flex flex-row space-x-4">
             <Input
-              placeholder="Achievement name"
-              value={dataUpdateAchiev.name}
+              placeholder={
+                sectionName === "achievement"
+                  ? "Achievement name"
+                  : "Course or program name"
+              }
+              value={dataUpdateTrain.name}
               onChange={(e) => {
                 let input = e.target.value;
-                setDataUpdateAchiev((prev) => ({
+                setDataUpdateTrain((prev) => ({
                   ...prev,
                   name: input,
                 }));
@@ -48,8 +55,8 @@ const AchievementBlock = ({
             ></Input>
             <button
               onClick={() => {
-                if (dataUpdateAchiev.id) {
-                  handleUpdateSection("achievement", dataUpdateAchiev);
+                if (dataUpdateTrain.id) {
+                  handleUpdateSection(sectionName, dataUpdateTrain);
                 }
                 setIsUpdate(false);
                 clearDataUpdate();
@@ -74,12 +81,10 @@ const AchievementBlock = ({
               picker="year"
               placeholder="Year"
               className="w-1/3"
-              value={
-                dataUpdateAchiev.year ? moment(dataUpdateAchiev.year) : null
-              }
+              value={dataUpdateTrain.year ? moment(dataUpdateTrain.year) : null}
               onChange={(date) => {
                 let input = date ? date.format("YYYY-MM-DD") : null;
-                setDataUpdateAchiev((prev) => ({
+                setDataUpdateTrain((prev) => ({
                   ...prev,
                   year: input,
                 }));
@@ -87,10 +92,10 @@ const AchievementBlock = ({
             />
             <Input
               placeholder="Company or organization"
-              value={dataUpdateAchiev.organizer}
+              value={dataUpdateTrain.organizer}
               onChange={(e) => {
                 let input = e.target.value;
-                setDataUpdateAchiev((prev) => ({
+                setDataUpdateTrain((prev) => ({
                   ...prev,
                   organizer: input,
                 }));
@@ -100,32 +105,35 @@ const AchievementBlock = ({
           </div>
         </div>
       ) : (
-        <>
+        <div className="flex w-full">
           {/* Read State */}
-          <p className="text-center text-primary100 font-bold w-1/4">
-            {achievement.year ? achievement.year.slice(0, 4) : "-"}
-          </p>
-          <div className="flex flex-col w-2/4">
-            <p className="font-bold text-mono30">{achievement.name}</p>
-            <p className="text-mono50">{achievement.organizer}</p>
+          <div className="flex w-3/4 cursor-move" {...draggable}>
+            <p className="text-center text-primary100 font-bold w-1/3">
+              {training.year ? training.year.slice(0, 4) : "-"}
+            </p>
+            <div className="flex flex-col w-2/3">
+              <p className="font-bold text-mono30">{training.name}</p>
+              <p className="text-mono50">{training.organizer}</p>
+            </div>
           </div>
           {!isAdd && (
             <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
               {isAllowedToUpdateCandidate && (
                 <button
-                  onClick={(event) => {
+                  onClick={() => {
                     setIsUpdate(true);
-                    setDataUpdateAchiev(achievement);
+                    setDataUpdateTrain(training);
                   }}
                   className="bg-transparent hover:opacity-75"
                 >
                   <EditIconSvg size={18} color="#4D4D4D" />
                 </button>
               )}
+
               {isAllowedToDeleteSection && (
                 <button
                   onClick={() => {
-                    setDataUpdateAchiev(achievement);
+                    setDataUpdateTrain(training);
                     setModalDelete(true);
                   }}
                   className="bg-transparent hover:opacity-75"
@@ -135,10 +143,10 @@ const AchievementBlock = ({
               )}
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );
 };
 
-export default AchievementBlock;
+export default GeneralBlock;
