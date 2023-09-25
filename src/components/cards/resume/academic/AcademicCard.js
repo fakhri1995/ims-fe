@@ -1,3 +1,11 @@
+import { DndContext } from "@dnd-kit/core";
+import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
+import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   DatePicker,
   Form,
@@ -9,7 +17,7 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -37,8 +45,11 @@ const AcademicCard = ({
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
 }) => {
+  // 1. State
   const [isAdd, setIsAdd] = useState(false);
+  const [updateIdx, setUpdateIdx] = useState(-1);
   const [modalDelete, setModalDelete] = useState(false);
+  const [academicList, setAcademicList] = useState([]);
 
   const [dataUpdateEdu, setDataUpdateEdu] = useState({
     id: null,
@@ -49,6 +60,12 @@ const AcademicCard = ({
     resume_id: null,
   });
 
+  // 2. use Effect
+  useEffect(() => {
+    setAcademicList(dataDisplay);
+  }, [dataDisplay]);
+
+  // 3. Handler
   const clearDataUpdate = () => {
     setDataUpdateEdu({
       id: null,
@@ -60,26 +77,96 @@ const AcademicCard = ({
     });
   };
 
+  const onDragEnd = async ({ active, over }) => {
+    let activeIndex,
+      overIndex = 0;
+    let updatedList = [];
+
+    if (active?.id !== over?.id) {
+      // Display reordered item list
+      setAcademicList((prev) => {
+        activeIndex = prev.findIndex((i) => i.id === active.id);
+        overIndex = prev.findIndex((i) => i.id === over?.id);
+        updatedList = arrayMove(prev, activeIndex, overIndex);
+        return updatedList;
+      });
+
+      // Update item after_id when reordered
+      let prevIndex = overIndex - 1; // get item above the reordered item
+      // if the reordered item moved to the first order, then set after_id as 0
+      let prevId = prevIndex < 0 ? 0 : updatedList[prevIndex]?.id;
+      let currentItem = academicList?.find((edu) => edu.id === active.id);
+
+      let updatedItem = {
+        ...currentItem,
+        id: active?.id,
+        after_id: prevId,
+      };
+      await handleUpdateSection("education", updatedItem);
+      clearDataUpdate();
+    }
+  };
+
+  // Sortable Block
+  const SortableItem = ({ id, edu }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({ id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+    return (
+      <li ref={setNodeRef} style={style}>
+        <AcademicBlock
+          edu={edu}
+          dataUpdateEdu={dataUpdateEdu}
+          setDataUpdateEdu={setDataUpdateEdu}
+          handleUpdateSection={handleUpdateSection}
+          clearDataUpdate={clearDataUpdate}
+          setModalDelete={setModalDelete}
+          isAdd={isAdd}
+          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+          isAllowedToDeleteSection={isAllowedToDeleteSection}
+          {...listeners}
+          {...attributes}
+        />
+      </li>
+    );
+  };
+
   // console.log(dataUpdateEdu)
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <h4 className="mig-heading--4">Academic History</h4>
       <hr className="my-4" />
       <Timeline>
-        {dataDisplay.educations?.map((edu) => (
-          <AcademicBlock
-            key={edu.id}
-            edu={edu}
-            dataUpdateEdu={dataUpdateEdu}
-            setDataUpdateEdu={setDataUpdateEdu}
-            handleUpdateSection={handleUpdateSection}
-            clearDataUpdate={clearDataUpdate}
-            setModalDelete={setModalDelete}
-            isAdd={isAdd}
-            isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
-            isAllowedToDeleteSection={isAllowedToDeleteSection}
-          />
-        ))}
+        <DndContext
+          onDragEnd={onDragEnd}
+          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+        >
+          <SortableContext items={academicList?.map((i) => i.id)}>
+            {academicList?.map((edu, idx) =>
+              dataUpdateEdu?.id == edu.id ? (
+                <AcademicBlock
+                  key={edu.id}
+                  edu={edu}
+                  dataUpdateEdu={dataUpdateEdu}
+                  setDataUpdateEdu={setDataUpdateEdu}
+                  handleUpdateSection={handleUpdateSection}
+                  clearDataUpdate={clearDataUpdate}
+                  setModalDelete={setModalDelete}
+                  isAdd={isAdd}
+                  isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+                  isAllowedToDeleteSection={isAllowedToDeleteSection}
+                  afterId={academicList[idx - 1]?.id}
+                />
+              ) : (
+                <SortableItem key={edu.id} id={edu.id} edu={edu} />
+              )
+            )}
+          </SortableContext>
+        </DndContext>
       </Timeline>
 
       {/* Input Add Academic */}
@@ -99,7 +186,10 @@ const AcademicCard = ({
             ></Input>
             <button
               onClick={() => {
-                handleAddSection("education", dataUpdateEdu);
+                handleAddSection("education", {
+                  ...dataUpdateEdu,
+                  after_id: academicList[academicList.length - 1]?.id,
+                });
                 setIsAdd(false);
                 clearDataUpdate();
               }}

@@ -21,6 +21,8 @@ const AcademicBlock = ({
   isAdd,
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
+  afterId,
+  ...draggable
 }) => {
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -113,7 +115,8 @@ const AcademicBlock = ({
         </div>
       ) : (
         <div className="flex justify-between">
-          <div className="flex flex-col">
+          {/* Read state */}
+          <div className="flex flex-col cursor-move" {...draggable}>
             <p className="text-primary100 font-bold mb-1">{edu?.university}</p>
             <p className="text-mono50 mb-1">
               {edu?.major} ·&nbsp;
