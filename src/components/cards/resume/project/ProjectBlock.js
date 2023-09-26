@@ -1,8 +1,6 @@
-import { DatePicker, Input, Timeline } from "antd";
+import { DatePicker, Input } from "antd";
 import moment from "moment";
 import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
 
 import {
   CheckIconSvg,
@@ -18,23 +16,17 @@ const ProjectBlock = ({
   handleUpdateSection,
   clearDataUpdate,
   setModalDelete,
-  isAdd,
+  editIdx,
+  setEditIdx,
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
   afterId,
   ...draggable
 }) => {
-  const [isUpdate, setIsUpdate] = useState(false);
-
-  useEffect(() => {
-    if (isAdd === true) {
-      setIsUpdate(false);
-    }
-  }, [isAdd]);
-
   return (
     <div className="flex flex-row mb-3">
-      {isUpdate ? (
+      {editIdx === project.id ? (
+        // Edit state
         <div className="flex flex-col space-y-4 mt-2 mb-4 w-full">
           <div className="flex flex-row space-x-4">
             <Input
@@ -56,7 +48,6 @@ const ProjectBlock = ({
                     after_id: afterId,
                   });
                 }
-                setIsUpdate(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -65,7 +56,6 @@ const ProjectBlock = ({
             </button>
             <button
               onClick={() => {
-                setIsUpdate(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -114,33 +104,31 @@ const ProjectBlock = ({
               <p className="text-mono50">{project.description}</p>
             </div>
           </div>
-          {!isAdd && (
-            <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
-              {isAllowedToUpdateCandidate && (
-                <button
-                  onClick={() => {
-                    setIsUpdate(true);
-                    setDataUpdateProj(project);
-                  }}
-                  className="bg-transparent hover:opacity-75"
-                >
-                  <EditIconSvg size={18} color="#4D4D4D" />
-                </button>
-              )}
+          <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
+            {isAllowedToUpdateCandidate && (
+              <button
+                onClick={() => {
+                  setDataUpdateProj(project);
+                  setEditIdx(project.id);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <EditIconSvg size={18} color="#4D4D4D" />
+              </button>
+            )}
 
-              {isAllowedToDeleteSection && (
-                <button
-                  onClick={() => {
-                    setDataUpdateProj(project);
-                    setModalDelete(true);
-                  }}
-                  className="bg-transparent hover:opacity-75"
-                >
-                  <TrashIconSvg size={18} color="#4D4D4D" />
-                </button>
-              )}
-            </div>
-          )}
+            {isAllowedToDeleteSection && (
+              <button
+                onClick={() => {
+                  setDataUpdateProj(project);
+                  setModalDelete(true);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <TrashIconSvg size={18} color="#4D4D4D" />
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>

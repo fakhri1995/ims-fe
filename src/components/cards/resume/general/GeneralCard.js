@@ -8,8 +8,9 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { DatePicker, Input } from "antd";
 import moment from "moment";
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -18,9 +19,10 @@ import { RESUME_SECTION_DELETE } from "lib/features";
 import ButtonSys from "../../../button";
 import { CheckIconSvg, XIconSvg } from "../../../icon";
 import { ModalHapus2 } from "../../../modal/modalCustom";
-import ProjectBlock from "./ProjectBlock";
+import GeneralBlock from "./GeneralBlock";
 
-const ProjectCard = ({
+// Currently use for Training, Certifications, and Achievements section in resume
+const GeneralCard = ({
   dataDisplay,
   handleAddSection,
   handleUpdateSection,
@@ -29,77 +31,72 @@ const ProjectCard = ({
   isAllowedToAddSection,
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
+  sectionName,
 }) => {
   // 1. State
   const [modalDelete, setModalDelete] = useState(false);
-  const [projectList, setProjectList] = useState([]);
+  const [itemList, setItemList] = useState([]);
   const [editIdx, setEditIdx] = useState(null); // if value -1 --> add state
 
-  const [dataUpdateProj, setDataUpdateProj] = useState({
+  const [dataUpdateDetail, setDataUpdateDetail] = useState({
     id: null,
     name: "",
+    organizer: "",
     year: "",
-    description: "",
     resume_id: null,
-    after_id: null,
   });
 
   // 2. Use Effect
   useEffect(() => {
-    setProjectList(dataDisplay);
+    setItemList(dataDisplay);
   }, [dataDisplay]);
 
   // 3. Handler
   const clearDataUpdate = () => {
-    setDataUpdateProj({
+    setDataUpdateDetail({
       id: null,
       name: "",
+      organizer: "",
       year: "",
-      description: "",
       resume_id: null,
-      after_id: null,
     });
-
     setEditIdx(null);
   };
 
   const onDragEnd = async ({ active, over }) => {
     let activeIndex,
       overIndex = 0;
-    let updatedProjectList = [];
+    let updatedList = [];
 
     if (active?.id !== over?.id) {
-      // Display reordered project list
-      setProjectList((prev) => {
+      // Display reordered item list
+      setItemList((prev) => {
         activeIndex = prev.findIndex((i) => i.id === active.id);
         overIndex = prev.findIndex((i) => i.id === over?.id);
-        updatedProjectList = arrayMove(prev, activeIndex, overIndex);
-        return updatedProjectList;
+        updatedList = arrayMove(prev, activeIndex, overIndex);
+        return updatedList;
       });
 
-      // Update a project after_id when reordered
-      let prevIndex = overIndex - 1; // get project above the reordered project
-      // if the reordered project moved to the first order, then set after_id as 0
-      let prevId = prevIndex < 0 ? 0 : updatedProjectList[prevIndex]?.id;
-      let currentItem = projectList?.find(
-        (project) => project.id === active.id
-      );
+      // Update item after_id when reordered
+      let prevIndex = overIndex - 1; // get item above the reordered item
+      // if the reordered item moved to the first order, then set after_id as 0
+      let prevId = prevIndex < 0 ? 0 : updatedList[prevIndex]?.id;
+      let currentItem = itemList?.find((i) => i.id === active.id);
 
-      let updatedProject = {
+      let updatedItem = {
         ...currentItem,
         id: active?.id,
         after_id: prevId,
       };
-      setDataUpdateProj(updatedProject);
-      await handleUpdateSection("project", updatedProject);
+      await handleUpdateSection(sectionName, updatedItem);
       clearDataUpdate();
     }
   };
 
-  // Sortable Project Block
+  // Sortable Block
   const SortableItem = ({ data }) => {
     const { attributes, listeners, setNodeRef, transform, transition } =
-      useSortable({ id: data.id });
+      useSortable({ id: data?.id });
 
     const style = {
       transform: CSS.Transform.toString(transform),
@@ -107,10 +104,10 @@ const ProjectCard = ({
     };
     return (
       <div ref={setNodeRef} style={style}>
-        <ProjectBlock
-          project={data}
-          dataUpdateProj={dataUpdateProj}
-          setDataUpdateProj={setDataUpdateProj}
+        <GeneralBlock
+          detail={data}
+          dataUpdate={dataUpdateDetail}
+          setDataUpdate={setDataUpdateDetail}
           handleUpdateSection={handleUpdateSection}
           clearDataUpdate={clearDataUpdate}
           setModalDelete={setModalDelete}
@@ -118,6 +115,7 @@ const ProjectCard = ({
           setEditIdx={setEditIdx}
           isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
           isAllowedToDeleteSection={isAllowedToDeleteSection}
+          sectionName={sectionName}
           {...listeners}
           {...attributes}
         />
@@ -126,21 +124,27 @@ const ProjectCard = ({
   };
 
   return (
-    <div className="shadow-lg rounded-md bg-white p-5">
-      <h4 className="mig-heading--4">Projects</h4>
+    <div className="shadow-lg rounded-md bg-white p-5 row-span-1">
+      <h4 className="mig-heading--4">
+        {sectionName == "training"
+          ? "Training"
+          : sectionName == "certificate"
+          ? "Certifications"
+          : "Achievements"}
+      </h4>
       <hr className="my-4" />
       <DndContext
         onDragEnd={onDragEnd}
         modifiers={[restrictToVerticalAxis, restrictToParentElement]}
       >
-        <SortableContext items={projectList?.map((p) => p.id)}>
-          {projectList?.map((project, idx) =>
-            editIdx === project?.id ? (
-              <ProjectBlock
-                key={project.id}
-                project={project}
-                dataUpdateProj={dataUpdateProj}
-                setDataUpdateProj={setDataUpdateProj}
+        <SortableContext items={itemList?.map((p) => p.id)}>
+          {itemList?.map((item, idx) =>
+            editIdx === item.id ? (
+              <GeneralBlock
+                key={item.id}
+                detail={item}
+                dataUpdate={dataUpdateDetail}
+                setDataUpdate={setDataUpdateDetail}
                 handleUpdateSection={handleUpdateSection}
                 clearDataUpdate={clearDataUpdate}
                 setModalDelete={setModalDelete}
@@ -148,25 +152,29 @@ const ProjectCard = ({
                 setEditIdx={setEditIdx}
                 isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
                 isAllowedToDeleteSection={isAllowedToDeleteSection}
-                afterId={projectList[idx - 1]?.id}
+                afterId={itemList[idx - 1]?.id}
+                sectionName={sectionName}
               />
             ) : (
-              <SortableItem key={project.id} data={project} />
+              <SortableItem key={item.id} data={item} />
             )
           )}
         </SortableContext>
       </DndContext>
-
-      {/* Input Add Project */}
+      {/* Input Add Training */}
       {editIdx === -1 ? (
         <div className="flex flex-col space-y-4 mt-8 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
-              placeholder="Project name"
-              value={dataUpdateProj?.name}
+              placeholder={
+                sectionName === "achievement"
+                  ? "Achievement name"
+                  : "Course or program name"
+              }
+              value={dataUpdateDetail?.name}
               onChange={(e) => {
                 let input = e.target.value;
-                setDataUpdateProj((prev) => ({
+                setDataUpdateDetail((prev) => ({
                   ...prev,
                   name: input,
                 }));
@@ -174,9 +182,9 @@ const ProjectCard = ({
             ></Input>
             <button
               onClick={() => {
-                handleAddSection("project", {
-                  ...dataUpdateProj,
-                  after_id: projectList[projectList.length - 1]?.id,
+                handleAddSection(sectionName, {
+                  ...dataUpdateDetail,
+                  after_id: itemList[itemList.length - 1]?.id,
                 });
                 clearDataUpdate();
               }}
@@ -199,23 +207,25 @@ const ProjectCard = ({
               picker="year"
               placeholder="Year"
               className="w-1/3"
-              value={dataUpdateProj?.year ? moment(dataUpdateProj?.year) : null}
+              value={
+                dataUpdateDetail?.year ? moment(dataUpdateDetail.year) : null
+              }
               onChange={(date) => {
                 let input = date?.format("YYYY-MM-DD");
-                setDataUpdateProj((prev) => ({
+                setDataUpdateDetail((prev) => ({
                   ...prev,
                   year: input,
                 }));
               }}
             />
             <Input
-              placeholder="Description"
-              value={dataUpdateProj?.description}
+              placeholder="Company or organization"
+              value={dataUpdateDetail?.organizer}
               onChange={(e) => {
                 let input = e.target.value;
-                setDataUpdateProj((prev) => ({
+                setDataUpdateDetail((prev) => ({
                   ...prev,
-                  description: input,
+                  organizer: input,
                 }));
               }}
               className="w-2/3"
@@ -232,19 +242,18 @@ const ProjectCard = ({
             }}
           >
             <p className="text-primary100 hover:text-primary75">
-              + Add project
+              + Add {sectionName}
             </p>
           </ButtonSys>
         )
       )}
-
       <AccessControl hasPermission={RESUME_SECTION_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
           visible={modalDelete}
           onvisible={setModalDelete}
           onOk={() => {
-            handleDeleteSection("project", dataUpdateProj.id);
+            handleDeleteSection(sectionName, dataUpdateDetail?.id);
             setModalDelete(false);
           }}
           onCancel={() => {
@@ -254,8 +263,8 @@ const ProjectCard = ({
           loading={loadingDelete}
         >
           <p className="mb-4">
-            Apakah Anda yakin ingin menghapus data proyek{" "}
-            <strong>{dataUpdateProj.name}</strong>?
+            Apakah Anda yakin ingin menghapus data {sectionName}{" "}
+            <strong>{dataUpdateDetail?.name}</strong>?
           </p>
         </ModalHapus2>
       </AccessControl>
@@ -263,4 +272,4 @@ const ProjectCard = ({
   );
 };
 
-export default ProjectCard;
+export default GeneralCard;

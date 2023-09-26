@@ -1,4 +1,3 @@
-import { HolderOutlined } from "@ant-design/icons";
 import { DndContext } from "@dnd-kit/core";
 import {
   restrictToParentElement,
@@ -19,14 +18,8 @@ import { AccessControl } from "components/features/AccessControl";
 import { RESUME_SECTION_DELETE } from "lib/features";
 
 import ButtonSys from "../../../button";
-import {
-  CheckIconSvg,
-  EditIconSvg,
-  TrashIconSvg,
-  XIconSvg,
-} from "../../../icon";
+import { CheckIconSvg, XIconSvg } from "../../../icon";
 import { ModalHapus2 } from "../../../modal/modalCustom";
-import { H2 } from "../../../typography";
 import ExperienceBlock from "./ExperienceBlock";
 
 // Quill library for text editor has to be imported dynamically
@@ -45,10 +38,10 @@ const ExperienceCard = ({
   isAllowedToDeleteSection,
 }) => {
   // 1. State
-  const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [experienceList, setExperienceList] = useState([]);
+  const [editIdx, setEditIdx] = useState(null); // if value -1 --> add state
 
   const [dataUpdateExp, setDataUpdateExp] = useState({
     id: null,
@@ -78,6 +71,7 @@ const ExperienceCard = ({
       resume_id: null,
       after_id: null,
     });
+    setEditIdx(null);
   };
 
   // Text Editor Config
@@ -101,40 +95,34 @@ const ExperienceCard = ({
   const onDragEnd = async ({ active, over }) => {
     let activeIndex,
       overIndex = 0;
-    let updatedExperienceList = [];
+    let updatedList = [];
 
     if (active?.id !== over?.id) {
-      // Display reordered experience list
+      // Display reordered item list
       setExperienceList((prev) => {
         activeIndex = prev.findIndex((i) => i.id === active.id);
         overIndex = prev.findIndex((i) => i.id === over?.id);
-        updatedExperienceList = arrayMove(prev, activeIndex, overIndex);
-        return updatedExperienceList;
+        updatedList = arrayMove(prev, activeIndex, overIndex);
+        return updatedList;
       });
 
-      // Update a experience after_id when reordered
-      let prevIndex = overIndex - 1; // get experience above the reordered experience
-      // if the reordered experience moved to the first order, then set after_id as 0
-      let prevId = prevIndex < 0 ? 0 : updatedExperienceList[prevIndex]?.id;
-      let currentExp = experienceList?.find((exp) => exp.id === active.id);
+      // Update a item after_id when reordered
+      let prevIndex = overIndex - 1; // get item above the reordered item
+      // if the reordered item moved to the first order, then set after_id as 0
+      let prevId = prevIndex < 0 ? 0 : updatedList[prevIndex]?.id;
+      let currenItem = experienceList?.find((exp) => exp.id === active.id);
 
-      let updatedExp = {
+      let updatedItem = {
+        ...currenItem,
         id: active?.id,
-        role: currentExp?.role,
-        company: currentExp?.company,
-        start_date: currentExp?.start_date,
-        end_date: currentExp?.end_date,
-        description: currentExp?.description,
-        resume_id: currentExp?.resume_id,
         after_id: prevId,
       };
-      setDataUpdateExp(updatedExp);
-      await handleUpdateSection("experience", updatedExp);
+      await handleUpdateSection("experience", updatedItem);
       clearDataUpdate();
     }
   };
 
-  // Sortable Experience Block
+  // Sortable Block
   const SortableItem = ({ id, exp }) => {
     const { attributes, listeners, setNodeRef, transform, transition } =
       useSortable({ id });
@@ -152,7 +140,8 @@ const ExperienceCard = ({
           handleUpdateSection={handleUpdateSection}
           clearDataUpdate={clearDataUpdate}
           setModalDelete={setModalDelete}
-          isAdd={isAdd}
+          editIdx={editIdx}
+          setEditIdx={setEditIdx}
           isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
           isAllowedToDeleteSection={isAllowedToDeleteSection}
           modules={modules}
@@ -175,7 +164,7 @@ const ExperienceCard = ({
         >
           <SortableContext items={experienceList?.map((i) => i.id)}>
             {experienceList?.map((exp, idx) =>
-              dataUpdateExp?.id == exp?.id ? (
+              editIdx === exp?.id ? (
                 <ExperienceBlock
                   key={exp.id}
                   exp={exp}
@@ -184,7 +173,8 @@ const ExperienceCard = ({
                   handleUpdateSection={handleUpdateSection}
                   clearDataUpdate={clearDataUpdate}
                   setModalDelete={setModalDelete}
-                  isAdd={isAdd}
+                  editIdx={editIdx}
+                  setEditIdx={setEditIdx}
                   isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
                   isAllowedToDeleteSection={isAllowedToDeleteSection}
                   modules={modules}
@@ -199,8 +189,8 @@ const ExperienceCard = ({
         </DndContext>
       </Timeline>
 
-      {/* Input Experience */}
-      {isAdd ? (
+      {/* Input Add Experience */}
+      {editIdx === -1 ? (
         <div className="flex flex-col space-y-4 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -220,7 +210,6 @@ const ExperienceCard = ({
                   ...dataUpdateExp,
                   after_id: experienceList[experienceList.length - 1]?.id,
                 });
-                setIsAdd(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -229,7 +218,6 @@ const ExperienceCard = ({
             </button>
             <button
               onClick={() => {
-                setIsAdd(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -308,7 +296,7 @@ const ExperienceCard = ({
               type={"dashed"}
               onClick={() => {
                 clearDataUpdate();
-                setIsAdd(true);
+                setEditIdx(-1);
               }}
             >
               <p className="text-primary100 hover:text-primary75">
