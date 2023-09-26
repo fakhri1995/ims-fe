@@ -1,8 +1,6 @@
-import { DatePicker, Input, Timeline } from "antd";
+import { DatePicker, Input, InputNumber, Timeline } from "antd";
 import moment from "moment";
 import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
 
 import {
   CheckIconSvg,
@@ -18,25 +16,17 @@ const AcademicBlock = ({
   handleUpdateSection,
   clearDataUpdate,
   setModalDelete,
-  isAdd,
+  editIdx,
+  setEditIdx,
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
   afterId,
   ...draggable
 }) => {
-  const [isUpdate, setIsUpdate] = useState(false);
-
-  useEffect(() => {
-    if (isAdd === true) {
-      setIsUpdate(false);
-    }
-  }, [isAdd]);
-
-  // console.log(dataUpdateEdu)
-
   return (
     <Timeline.Item color="#35763B">
-      {isUpdate ? (
+      {editIdx === edu.id ? (
+        // Edit state
         <div className="flex flex-col space-y-4 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -53,9 +43,11 @@ const AcademicBlock = ({
             <button
               onClick={() => {
                 if (dataUpdateEdu.id) {
-                  handleUpdateSection("education", dataUpdateEdu);
+                  handleUpdateSection("education", {
+                    ...dataUpdateEdu,
+                    after_id: afterId,
+                  });
                 }
-                setIsUpdate(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -64,7 +56,6 @@ const AcademicBlock = ({
             </button>
             <button
               onClick={() => {
-                setIsUpdate(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -99,14 +90,16 @@ const AcademicBlock = ({
                 }));
               }}
             />
-            <Input
+            <InputNumber
               placeholder="GPA"
+              min={0.0}
+              max={4.0}
+              step={"0.01"}
               value={dataUpdateEdu.gpa}
-              onChange={(e) => {
-                let input = e.target.value;
+              onChange={(value) => {
                 setDataUpdateEdu((prev) => ({
                   ...prev,
-                  gpa: input,
+                  gpa: value,
                 }));
               }}
               className="w-1/2"
@@ -124,33 +117,31 @@ const AcademicBlock = ({
             </p>
             {edu?.gpa && <p className="text-mono50">GPA {edu?.gpa}</p>}
           </div>
-          {!isAdd && (
-            <div className="flex flex-row space-x-2 items-start">
-              {isAllowedToUpdateCandidate && (
-                <button
-                  onClick={() => {
-                    setIsUpdate(true);
-                    setDataUpdateEdu(edu);
-                  }}
-                  className="bg-transparent hover:opacity-75"
-                  value={edu?.id}
-                >
-                  <EditIconSvg size={18} color="#4D4D4D" />
-                </button>
-              )}
-              {isAllowedToDeleteSection && (
-                <button
-                  onClick={() => {
-                    setDataUpdateEdu(edu);
-                    setModalDelete(true);
-                  }}
-                  className="bg-transparent hover:opacity-75"
-                >
-                  <TrashIconSvg size={18} color="#4D4D4D" />
-                </button>
-              )}
-            </div>
-          )}
+          <div className="flex flex-row space-x-2 items-start">
+            {isAllowedToUpdateCandidate && (
+              <button
+                onClick={() => {
+                  setDataUpdateEdu(edu);
+                  setEditIdx(edu.id);
+                }}
+                className="bg-transparent hover:opacity-75"
+                value={edu?.id}
+              >
+                <EditIconSvg size={18} color="#4D4D4D" />
+              </button>
+            )}
+            {isAllowedToDeleteSection && (
+              <button
+                onClick={() => {
+                  setDataUpdateEdu(edu);
+                  setModalDelete(true);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <TrashIconSvg size={18} color="#4D4D4D" />
+              </button>
+            )}
+          </div>
         </div>
       )}
     </Timeline.Item>

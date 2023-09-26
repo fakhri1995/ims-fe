@@ -34,11 +34,11 @@ const GeneralCard = ({
   sectionName,
 }) => {
   // 1. State
-  const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [itemList, setItemList] = useState([]);
+  const [editIdx, setEditIdx] = useState(null); // if value -1 --> add state
 
-  const [dataUpdateTrain, setDataUpdateTrain] = useState({
+  const [dataUpdateDetail, setDataUpdateDetail] = useState({
     id: null,
     name: "",
     organizer: "",
@@ -53,13 +53,14 @@ const GeneralCard = ({
 
   // 3. Handler
   const clearDataUpdate = () => {
-    setDataUpdateTrain({
+    setDataUpdateDetail({
       id: null,
       name: "",
       organizer: "",
       year: "",
       resume_id: null,
     });
+    setEditIdx(null);
   };
 
   const onDragEnd = async ({ active, over }) => {
@@ -104,14 +105,14 @@ const GeneralCard = ({
     return (
       <div ref={setNodeRef} style={style}>
         <GeneralBlock
-          key={data.id}
-          training={data}
-          dataUpdateTrain={dataUpdateTrain}
-          setDataUpdateTrain={setDataUpdateTrain}
+          detail={data}
+          dataUpdate={dataUpdateDetail}
+          setDataUpdate={setDataUpdateDetail}
           handleUpdateSection={handleUpdateSection}
           clearDataUpdate={clearDataUpdate}
           setModalDelete={setModalDelete}
-          isAdd={isAdd}
+          editIdx={editIdx}
+          setEditIdx={setEditIdx}
           isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
           isAllowedToDeleteSection={isAllowedToDeleteSection}
           sectionName={sectionName}
@@ -137,30 +138,31 @@ const GeneralCard = ({
         modifiers={[restrictToVerticalAxis, restrictToParentElement]}
       >
         <SortableContext items={itemList?.map((p) => p.id)}>
-          {itemList?.map((training, idx) =>
-            dataUpdateTrain?.id == training.id ? (
+          {itemList?.map((item, idx) =>
+            editIdx === item.id ? (
               <GeneralBlock
-                key={training.id}
-                training={training}
-                dataUpdateTrain={dataUpdateTrain}
-                setDataUpdateTrain={setDataUpdateTrain}
+                key={item.id}
+                detail={item}
+                dataUpdate={dataUpdateDetail}
+                setDataUpdate={setDataUpdateDetail}
                 handleUpdateSection={handleUpdateSection}
                 clearDataUpdate={clearDataUpdate}
                 setModalDelete={setModalDelete}
-                isAdd={isAdd}
+                editIdx={editIdx}
+                setEditIdx={setEditIdx}
                 isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
                 isAllowedToDeleteSection={isAllowedToDeleteSection}
                 afterId={itemList[idx - 1]?.id}
                 sectionName={sectionName}
               />
             ) : (
-              <SortableItem key={training.id} data={training} />
+              <SortableItem key={item.id} data={item} />
             )
           )}
         </SortableContext>
       </DndContext>
       {/* Input Add Training */}
-      {isAdd ? (
+      {editIdx === -1 ? (
         <div className="flex flex-col space-y-4 mt-8 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -169,10 +171,10 @@ const GeneralCard = ({
                   ? "Achievement name"
                   : "Course or program name"
               }
-              value={dataUpdateTrain?.name}
+              value={dataUpdateDetail?.name}
               onChange={(e) => {
                 let input = e.target.value;
-                setDataUpdateTrain((prev) => ({
+                setDataUpdateDetail((prev) => ({
                   ...prev,
                   name: input,
                 }));
@@ -180,8 +182,10 @@ const GeneralCard = ({
             ></Input>
             <button
               onClick={() => {
-                handleAddSection(sectionName, dataUpdateTrain);
-                setIsAdd(false);
+                handleAddSection(sectionName, {
+                  ...dataUpdateDetail,
+                  after_id: itemList[itemList.length - 1]?.id,
+                });
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -190,7 +194,6 @@ const GeneralCard = ({
             </button>
             <button
               onClick={() => {
-                setIsAdd(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -205,11 +208,11 @@ const GeneralCard = ({
               placeholder="Year"
               className="w-1/3"
               value={
-                dataUpdateTrain?.year ? moment(dataUpdateTrain.year) : null
+                dataUpdateDetail?.year ? moment(dataUpdateDetail.year) : null
               }
               onChange={(date) => {
                 let input = date?.format("YYYY-MM-DD");
-                setDataUpdateTrain((prev) => ({
+                setDataUpdateDetail((prev) => ({
                   ...prev,
                   year: input,
                 }));
@@ -217,10 +220,10 @@ const GeneralCard = ({
             />
             <Input
               placeholder="Company or organization"
-              value={dataUpdateTrain?.organizer}
+              value={dataUpdateDetail?.organizer}
               onChange={(e) => {
                 let input = e.target.value;
-                setDataUpdateTrain((prev) => ({
+                setDataUpdateDetail((prev) => ({
                   ...prev,
                   organizer: input,
                 }));
@@ -235,7 +238,7 @@ const GeneralCard = ({
             type={"dashed"}
             onClick={() => {
               clearDataUpdate();
-              setIsAdd(true);
+              setEditIdx(-1);
             }}
           >
             <p className="text-primary100 hover:text-primary75">
@@ -250,7 +253,7 @@ const GeneralCard = ({
           visible={modalDelete}
           onvisible={setModalDelete}
           onOk={() => {
-            handleDeleteSection(sectionName, dataUpdateTrain?.id);
+            handleDeleteSection(sectionName, dataUpdateDetail?.id);
             setModalDelete(false);
           }}
           onCancel={() => {
@@ -261,7 +264,7 @@ const GeneralCard = ({
         >
           <p className="mb-4">
             Apakah Anda yakin ingin menghapus data {sectionName}{" "}
-            <strong>{dataUpdateTrain?.name}</strong>?
+            <strong>{dataUpdateDetail?.name}</strong>?
           </p>
         </ModalHapus2>
       </AccessControl>

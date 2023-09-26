@@ -31,9 +31,9 @@ const ProjectCard = ({
   isAllowedToDeleteSection,
 }) => {
   // 1. State
-  const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [projectList, setProjectList] = useState([]);
+  const [editIdx, setEditIdx] = useState(null); // if value -1 --> add state
 
   const [dataUpdateProj, setDataUpdateProj] = useState({
     id: null,
@@ -59,6 +59,8 @@ const ProjectCard = ({
       resume_id: null,
       after_id: null,
     });
+
+    setEditIdx(null);
   };
 
   const onDragEnd = async ({ active, over }) => {
@@ -79,16 +81,13 @@ const ProjectCard = ({
       let prevIndex = overIndex - 1; // get project above the reordered project
       // if the reordered project moved to the first order, then set after_id as 0
       let prevId = prevIndex < 0 ? 0 : updatedProjectList[prevIndex]?.id;
-      let currentProject = projectList?.find(
+      let currentItem = projectList?.find(
         (project) => project.id === active.id
       );
 
       let updatedProject = {
+        ...currentItem,
         id: active?.id,
-        name: currentProject?.name,
-        year: currentProject?.year,
-        description: currentProject?.description,
-        resume_id: currentProject?.resume_id,
         after_id: prevId,
       };
       setDataUpdateProj(updatedProject);
@@ -109,14 +108,14 @@ const ProjectCard = ({
     return (
       <div ref={setNodeRef} style={style}>
         <ProjectBlock
-          key={data.id}
           project={data}
           dataUpdateProj={dataUpdateProj}
           setDataUpdateProj={setDataUpdateProj}
           handleUpdateSection={handleUpdateSection}
           clearDataUpdate={clearDataUpdate}
           setModalDelete={setModalDelete}
-          isAdd={isAdd}
+          editIdx={editIdx}
+          setEditIdx={setEditIdx}
           isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
           isAllowedToDeleteSection={isAllowedToDeleteSection}
           {...listeners}
@@ -136,7 +135,7 @@ const ProjectCard = ({
       >
         <SortableContext items={projectList?.map((p) => p.id)}>
           {projectList?.map((project, idx) =>
-            dataUpdateProj?.id == project?.id ? (
+            editIdx === project?.id ? (
               <ProjectBlock
                 key={project.id}
                 project={project}
@@ -145,7 +144,8 @@ const ProjectCard = ({
                 handleUpdateSection={handleUpdateSection}
                 clearDataUpdate={clearDataUpdate}
                 setModalDelete={setModalDelete}
-                isAdd={isAdd}
+                editIdx={editIdx}
+                setEditIdx={setEditIdx}
                 isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
                 isAllowedToDeleteSection={isAllowedToDeleteSection}
                 afterId={projectList[idx - 1]?.id}
@@ -158,7 +158,7 @@ const ProjectCard = ({
       </DndContext>
 
       {/* Input Add Project */}
-      {isAdd ? (
+      {editIdx === -1 ? (
         <div className="flex flex-col space-y-4 mt-8 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -178,7 +178,6 @@ const ProjectCard = ({
                   ...dataUpdateProj,
                   after_id: projectList[projectList.length - 1]?.id,
                 });
-                setIsAdd(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -187,7 +186,6 @@ const ProjectCard = ({
             </button>
             <button
               onClick={() => {
-                setIsAdd(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -230,7 +228,7 @@ const ProjectCard = ({
             type={"dashed"}
             onClick={() => {
               clearDataUpdate();
-              setIsAdd(true);
+              setEditIdx(-1);
             }}
           >
             <p className="text-primary100 hover:text-primary75">

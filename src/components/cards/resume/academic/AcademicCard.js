@@ -6,16 +6,7 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import {
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Spin,
-  Steps,
-  Timeline,
-  notification,
-} from "antd";
+import { DatePicker, Input, InputNumber, Timeline } from "antd";
 import moment from "moment";
 import React, { useEffect } from "react";
 import { useState } from "react";
@@ -25,14 +16,8 @@ import { AccessControl } from "components/features/AccessControl";
 import { RESUME_SECTION_DELETE } from "lib/features";
 
 import ButtonSys from "../../../button";
-import {
-  CheckIconSvg,
-  EditIconSvg,
-  TrashIconSvg,
-  XIconSvg,
-} from "../../../icon";
+import { CheckIconSvg, XIconSvg } from "../../../icon";
 import { ModalHapus2 } from "../../../modal/modalCustom";
-import { H2 } from "../../../typography";
 import AcademicBlock from "./AcademicBlock";
 
 const AcademicCard = ({
@@ -46,10 +31,9 @@ const AcademicCard = ({
   isAllowedToDeleteSection,
 }) => {
   // 1. State
-  const [isAdd, setIsAdd] = useState(false);
-  const [updateIdx, setUpdateIdx] = useState(-1);
   const [modalDelete, setModalDelete] = useState(false);
   const [academicList, setAcademicList] = useState([]);
+  const [editIdx, setEditIdx] = useState(null); // if value -1 --> add state
 
   const [dataUpdateEdu, setDataUpdateEdu] = useState({
     id: null,
@@ -75,6 +59,7 @@ const AcademicCard = ({
       graduation_year: "",
       resume_id: 12,
     });
+    setEditIdx(null);
   };
 
   const onDragEnd = async ({ active, over }) => {
@@ -108,9 +93,9 @@ const AcademicCard = ({
   };
 
   // Sortable Block
-  const SortableItem = ({ id, edu }) => {
+  const SortableItem = ({ data }) => {
     const { attributes, listeners, setNodeRef, transform, transition } =
-      useSortable({ id });
+      useSortable({ id: data.id });
 
     const style = {
       transform: CSS.Transform.toString(transform),
@@ -119,13 +104,14 @@ const AcademicCard = ({
     return (
       <li ref={setNodeRef} style={style}>
         <AcademicBlock
-          edu={edu}
+          edu={data}
           dataUpdateEdu={dataUpdateEdu}
           setDataUpdateEdu={setDataUpdateEdu}
           handleUpdateSection={handleUpdateSection}
           clearDataUpdate={clearDataUpdate}
           setModalDelete={setModalDelete}
-          isAdd={isAdd}
+          editIdx={editIdx}
+          setEditIdx={setEditIdx}
           isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
           isAllowedToDeleteSection={isAllowedToDeleteSection}
           {...listeners}
@@ -147,7 +133,7 @@ const AcademicCard = ({
         >
           <SortableContext items={academicList?.map((i) => i.id)}>
             {academicList?.map((edu, idx) =>
-              dataUpdateEdu?.id == edu.id ? (
+              editIdx === edu.id ? (
                 <AcademicBlock
                   key={edu.id}
                   edu={edu}
@@ -156,13 +142,14 @@ const AcademicCard = ({
                   handleUpdateSection={handleUpdateSection}
                   clearDataUpdate={clearDataUpdate}
                   setModalDelete={setModalDelete}
-                  isAdd={isAdd}
+                  editIdx={editIdx}
+                  setEditIdx={setEditIdx}
                   isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
                   isAllowedToDeleteSection={isAllowedToDeleteSection}
                   afterId={academicList[idx - 1]?.id}
                 />
               ) : (
-                <SortableItem key={edu.id} id={edu.id} edu={edu} />
+                <SortableItem key={edu.id} data={edu} />
               )
             )}
           </SortableContext>
@@ -170,7 +157,7 @@ const AcademicCard = ({
       </Timeline>
 
       {/* Input Add Academic */}
-      {isAdd ? (
+      {editIdx === -1 ? (
         <div className="flex flex-col space-y-4 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -190,7 +177,6 @@ const AcademicCard = ({
                   ...dataUpdateEdu,
                   after_id: academicList[academicList.length - 1]?.id,
                 });
-                setIsAdd(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -199,7 +185,6 @@ const AcademicCard = ({
             </button>
             <button
               onClick={() => {
-                setIsAdd(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -234,14 +219,16 @@ const AcademicCard = ({
                 }));
               }}
             />
-            <Input
+            <InputNumber
               placeholder="GPA"
+              min={0.0}
+              max={4.0}
+              step={"0.01"}
               value={dataUpdateEdu?.gpa}
-              onChange={(e) => {
-                let input = e.target.value;
+              onChange={(value) => {
                 setDataUpdateEdu((prev) => ({
                   ...prev,
-                  gpa: input,
+                  gpa: value,
                 }));
               }}
               className="w-1/2"
@@ -254,7 +241,7 @@ const AcademicCard = ({
             type={"dashed"}
             onClick={() => {
               clearDataUpdate();
-              setIsAdd(true);
+              setEditIdx(-1);
             }}
           >
             <p className="text-primary100 hover:text-primary75">

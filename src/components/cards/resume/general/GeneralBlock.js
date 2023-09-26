@@ -1,8 +1,6 @@
 import { DatePicker, Input, Timeline } from "antd";
 import moment from "moment";
 import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
 
 import {
   CheckIconSvg,
@@ -12,30 +10,24 @@ import {
 } from "../../../icon";
 
 const GeneralBlock = ({
-  training,
-  dataUpdateTrain,
-  setDataUpdateTrain,
+  detail,
+  dataUpdate,
+  setDataUpdate,
   handleUpdateSection,
   clearDataUpdate,
   setModalDelete,
-  isAdd,
+  editIdx,
+  setEditIdx,
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
   sectionName,
   afterId,
   ...draggable
 }) => {
-  const [isUpdate, setIsUpdate] = useState(false);
-
-  useEffect(() => {
-    if (isAdd === true) {
-      setIsUpdate(false);
-    }
-  }, [isAdd]);
-
   return (
     <div className="flex flex-row mb-3">
-      {isUpdate ? (
+      {editIdx === detail.id ? (
+        // Edit state
         <div className="flex flex-col space-y-4 mt-2 mb-4 w-full">
           <div className="flex flex-row space-x-4">
             <Input
@@ -44,10 +36,10 @@ const GeneralBlock = ({
                   ? "Achievement name"
                   : "Course or program name"
               }
-              value={dataUpdateTrain.name}
+              value={dataUpdate.name}
               onChange={(e) => {
                 let input = e.target.value;
-                setDataUpdateTrain((prev) => ({
+                setDataUpdate((prev) => ({
                   ...prev,
                   name: input,
                 }));
@@ -55,10 +47,12 @@ const GeneralBlock = ({
             ></Input>
             <button
               onClick={() => {
-                if (dataUpdateTrain.id) {
-                  handleUpdateSection(sectionName, dataUpdateTrain);
+                if (dataUpdate.id) {
+                  handleUpdateSection(sectionName, {
+                    ...dataUpdate,
+                    after_id: afterId,
+                  });
                 }
-                setIsUpdate(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -67,7 +61,6 @@ const GeneralBlock = ({
             </button>
             <button
               onClick={() => {
-                setIsUpdate(false);
                 clearDataUpdate();
               }}
               className="bg-transparent hover:opacity-75"
@@ -81,10 +74,10 @@ const GeneralBlock = ({
               picker="year"
               placeholder="Year"
               className="w-1/3"
-              value={dataUpdateTrain.year ? moment(dataUpdateTrain.year) : null}
+              value={dataUpdate.year ? moment(dataUpdate.year) : null}
               onChange={(date) => {
                 let input = date ? date.format("YYYY-MM-DD") : null;
-                setDataUpdateTrain((prev) => ({
+                setDataUpdate((prev) => ({
                   ...prev,
                   year: input,
                 }));
@@ -92,10 +85,10 @@ const GeneralBlock = ({
             />
             <Input
               placeholder="Company or organization"
-              value={dataUpdateTrain.organizer}
+              value={dataUpdate.organizer}
               onChange={(e) => {
                 let input = e.target.value;
-                setDataUpdateTrain((prev) => ({
+                setDataUpdate((prev) => ({
                   ...prev,
                   organizer: input,
                 }));
@@ -109,40 +102,38 @@ const GeneralBlock = ({
           {/* Read State */}
           <div className="flex w-3/4 cursor-move" {...draggable}>
             <p className="text-center text-primary100 font-bold w-1/3">
-              {training.year ? training.year.slice(0, 4) : "-"}
+              {detail.year ? detail.year.slice(0, 4) : "-"}
             </p>
             <div className="flex flex-col w-2/3">
-              <p className="font-bold text-mono30">{training.name}</p>
-              <p className="text-mono50">{training.organizer}</p>
+              <p className="font-bold text-mono30">{detail.name}</p>
+              <p className="text-mono50">{detail.organizer}</p>
             </div>
           </div>
-          {!isAdd && (
-            <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
-              {isAllowedToUpdateCandidate && (
-                <button
-                  onClick={() => {
-                    setIsUpdate(true);
-                    setDataUpdateTrain(training);
-                  }}
-                  className="bg-transparent hover:opacity-75"
-                >
-                  <EditIconSvg size={18} color="#4D4D4D" />
-                </button>
-              )}
+          <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
+            {isAllowedToUpdateCandidate && (
+              <button
+                onClick={() => {
+                  setDataUpdate(detail);
+                  setEditIdx(detail.id);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <EditIconSvg size={18} color="#4D4D4D" />
+              </button>
+            )}
 
-              {isAllowedToDeleteSection && (
-                <button
-                  onClick={() => {
-                    setDataUpdateTrain(training);
-                    setModalDelete(true);
-                  }}
-                  className="bg-transparent hover:opacity-75"
-                >
-                  <TrashIconSvg size={18} color="#4D4D4D" />
-                </button>
-              )}
-            </div>
-          )}
+            {isAllowedToDeleteSection && (
+              <button
+                onClick={() => {
+                  setDataUpdate(detail);
+                  setModalDelete(true);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <TrashIconSvg size={18} color="#4D4D4D" />
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>
