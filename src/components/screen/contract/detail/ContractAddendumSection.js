@@ -144,7 +144,6 @@ const ContractAddendumSection = ({
             render: (text) => <p className="">{momentFormatDate(text)}</p>,
           },
           {
-            // title: "Harga",
             dataIndex: "no",
             render: (text, record) => (
               <button
