@@ -8,7 +8,7 @@ import {
   Select,
   Spin,
   Switch,
-  TreeSelect,
+  TimePicker,
   notification,
 } from "antd";
 import moment from "moment";
@@ -129,6 +129,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     fax: "",
     email: "",
     website: "",
+    check_in_time: null,
+    autocheckout: null,
     role: "",
     induk_level_1_count: "",
     induk_level_2_count: "",
@@ -149,6 +151,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     fax: "",
     email: "",
     website: "",
+    check_in_time: null,
+    autocheckout: null,
   });
   const [hapusbankdata, sethapusbankdata] = useState({
     id: "",
@@ -689,6 +693,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         image_logo: "/image/Company.png",
         company_logo: null,
         fax: "-",
+        check_in_time: null,
+        autocheckout: null,
       });
       setpraloadingedit(false);
       return;
@@ -726,6 +732,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
           fax: res2.data.fax,
           email: res2.data.email,
           website: res2.data.website,
+          check_in_time: res2.data?.check_in_time ?? null,
+          autocheckout: res2.data?.autocheckout ?? null,
         });
         setisenabled(res2.data.is_enabled);
         return res2.data.id;
@@ -898,6 +906,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                       className="mx-1"
                       onClick={() => {
                         seteditable(false);
+                        setdisplaydata(rawdata);
                       }}
                     >
                       <Buttonsys type="default">X Batalkan</Buttonsys>
@@ -952,11 +961,11 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                     {editable ? (
                       <Input
                         name="singkatan"
-                        defaultValue={rawdata.singkatan ?? "-"}
+                        defaultValue={rawdata.singkatan}
                         onChange={onChangeInput}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{rawdata.singkatan ?? "-"}</p>
+                      <p className="mb-0">{rawdata.singkatan || "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -965,10 +974,10 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                       <Input
                         name="address"
                         onChange={onChangeInput}
-                        defaultValue={rawdata.address ?? "-"}
+                        defaultValue={rawdata.address}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{rawdata.address ?? "-"}</p>
+                      <p className="mb-0">{rawdata.address || "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -977,10 +986,10 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                       <Input
                         name="penanggung_jawab"
                         onChange={onChangeInput}
-                        defaultValue={rawdata.penanggung_jawab ?? "-"}
+                        defaultValue={rawdata.penanggung_jawab}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{rawdata.penanggung_jawab ?? "-"}</p>
+                      <p className="mb-0">{rawdata.penanggung_jawab || "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -1010,15 +1019,44 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
+                    <Label>Jam Masuk</Label>
+                    {editable ? (
+                      <TimePicker
+                        allowClear
+                        onChange={(value, dateString) => {
+                          setdisplaydata({
+                            ...displaydata,
+                            check_in_time: dateString,
+                          });
+                        }}
+                        defaultValue={
+                          moment(
+                            displaydata.check_in_time,
+                            "HH:mm:ss"
+                          ).isValid()
+                            ? moment(displaydata?.check_in_time, "HH:mm:ss")
+                            : null
+                        }
+                        format={"HH:mm:ss"}
+                      />
+                    ) : (
+                      <p className="mb-0">
+                        {moment(rawdata.check_in_time, "HH:mm:ss").isValid()
+                          ? rawdata?.check_in_time
+                          : "-"}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col mb-5">
                     <Label>NPWP</Label>
                     {editable ? (
                       <Input
                         name="npwp"
                         onChange={onChangeInput}
-                        defaultValue={rawdata.npwp ?? "-"}
+                        defaultValue={rawdata.npwp}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{rawdata.npwp ?? "-"}</p>
+                      <p className="mb-0">{rawdata.npwp || "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -1028,7 +1066,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         name="email"
                         onChange={onChangeInput}
                         prefix={<EmailIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={rawdata.email ?? "-"}
+                        defaultValue={rawdata.email}
                       ></Input>
                     ) : (
                       <div className="flex">
@@ -1039,7 +1077,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                           href={`mailto:${rawdata.email}`}
                           className="text-primary100 hover:text-primary75 truncate"
                         >
-                          {rawdata.email}
+                          {rawdata.email || "-"}
                         </a>
                       </div>
                     )}
@@ -1051,7 +1089,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         name="phone_number"
                         onChange={onChangeInput}
                         prefix={<PhoneIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={rawdata.phone_number ?? "-"}
+                        defaultValue={rawdata.phone_number}
                       ></Input>
                     ) : (
                       <div className="flex">
@@ -1062,7 +1100,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                           href={`tel:${rawdata.phone_number}`}
                           className="text-primary100 hover:text-primary75"
                         >
-                          {rawdata.phone_number}
+                          {rawdata.phone_number || "-"}
                         </a>
                       </div>
                     )}
@@ -1074,7 +1112,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         name="website"
                         onChange={onChangeInput}
                         prefix={<WebIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={rawdata.website ?? "-"}
+                        defaultValue={rawdata.website}
                       ></Input>
                     ) : (
                       <div className="flex">
@@ -1087,11 +1125,42 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                           rel="external"
                           className="text-primary100 hover:text-primary75 truncate"
                         >
-                          {rawdata.website}
+                          {rawdata.website || "-"}
                         </a>
                       </div>
                     )}
                   </div>
+                  <div className="flex flex-col mb-5">
+                    <Label>Auto Check-Out</Label>
+                    {editable ? (
+                      <div className="flex justify-between">
+                        {displaydata?.autocheckout ? (
+                          <p className="text-primary100 font-semibold mb-0">
+                            Aktif
+                          </p>
+                        ) : (
+                          <p className="font-semibold mb-0">Non Aktif</p>
+                        )}
+
+                        <Switch
+                          checked={displaydata?.autocheckout}
+                          onChange={(checked) => {
+                            setdisplaydata({
+                              ...displaydata,
+                              autocheckout: Number(checked),
+                            });
+                          }}
+                        />
+                      </div>
+                    ) : rawdata?.autocheckout ? (
+                      <p className="text-primary100 font-semibold mb-0">
+                        Aktif
+                      </p>
+                    ) : (
+                      <p className="font-semibold mb-0">Non Aktif</p>
+                    )}
+                  </div>
+
                   {/* {editable && (
                     <div className="flex justify-center items-center mb-10">
                       <Buttonsys type="primary" color="danger">

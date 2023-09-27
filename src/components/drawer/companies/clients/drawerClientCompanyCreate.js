@@ -1,5 +1,5 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { Spin, notification } from "antd";
+import { Spin, Switch, notification } from "antd";
 import moment from "moment";
 // import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ import {
   ClockIconSvg,
   EmailIconSvg,
   FaxIconSvg,
+  LogoutIconSvg,
   NotesIconSvg,
   PkpIconSvg,
   RefreshIconSvg,
@@ -63,6 +64,7 @@ const DrawerCreateClient = ({
     email: "",
     website: "",
     check_in_time: null,
+    autocheckout: null,
   });
   // const [treedata, settreedata] = useState([]);
   const [lokasiloading, setlokasiloading] = useState(false);
@@ -74,6 +76,7 @@ const DrawerCreateClient = ({
     fax: false,
     tanggal_pkp: false,
     check_in_time: false,
+    autocheckout: false,
   });
   const [disabledsave, setdisabledsave] = useState(true);
   const [disabledtrigger, setdisabledtrigger] = useState(-1);
@@ -164,13 +167,11 @@ const DrawerCreateClient = ({
                 fax: false,
                 tanggal_pkp: false,
                 check_in_time: false,
+                autocheckout: false,
               });
               setwarningphonenumber(false);
               setwarningemail(false);
               onvisible(false);
-              // rt.push(
-              //   `/company/clients/locations?id=${displaydata.id}&company_name=${displaydata.name}`
-              // );
               if (typeof onSucceed === "function") {
                 onSucceed?.call(null);
               }
@@ -224,6 +225,7 @@ const DrawerCreateClient = ({
               email: "",
               website: "",
               check_in_time: null,
+              autocheckout: null,
             });
             setdynamicattr({
               email: false,
@@ -232,13 +234,14 @@ const DrawerCreateClient = ({
               fax: false,
               tanggal_pkp: false,
               check_in_time: false,
+              autocheckout: false,
             });
             setwarningphonenumber(false);
             setwarningemail(false);
             onvisible(false);
-            // rt.push(
-            //   `/company/clients/locations?id=${displaydata.id}&company_name=${displaydata.name}`
-            // );
+            if (typeof onSucceed === "function") {
+              onSucceed?.call(null);
+            }
           } else {
             notification["error"]({
               message: res2.message,
@@ -300,6 +303,7 @@ const DrawerCreateClient = ({
           email: "",
           website: "",
           check_in_time: null,
+          autocheckout: null,
         });
         setdynamicattr({
           email: false,
@@ -308,6 +312,7 @@ const DrawerCreateClient = ({
           fax: false,
           tanggal_pkp: false,
           check_in_time: false,
+          autocheckout: false,
         });
         setwarningphonenumber(false);
         setwarningemail(false);
@@ -469,11 +474,9 @@ const DrawerCreateClient = ({
             </div>
             {!dynamicattr.email && (
               <div className="flex justify-between mb-3">
-                <div className="flex items-center">
-                  <div className="mr-2">
-                    <EmailIconSvg size={18} color={`#808080`} />
-                  </div>
-                  Email
+                <div className="flex items-center gap-2">
+                  <EmailIconSvg size={18} color={`#808080`} />
+                  <p>Email</p>
                 </div>
                 <div
                   className="cursor-pointer"
@@ -487,11 +490,9 @@ const DrawerCreateClient = ({
             )}
             {!dynamicattr.website && (
               <div className="flex justify-between mb-3">
-                <div className="flex items-center">
-                  <div className="mr-2">
-                    <WebIconSvg size={18} color={`#808080`} />
-                  </div>
-                  Website
+                <div className="flex items-center gap-2">
+                  <WebIconSvg size={18} color={`#808080`} />
+                  <p>Website</p>
                 </div>
                 <div
                   className="cursor-pointer"
@@ -505,11 +506,9 @@ const DrawerCreateClient = ({
             )}
             {!dynamicattr.npwp && (
               <div className="flex justify-between mb-3">
-                <div className="flex items-center">
-                  <div className="mr-2">
-                    <NotesIconSvg size={18} color={`#808080`} />
-                  </div>
-                  NPWP
+                <div className="flex items-center gap-2">
+                  <NotesIconSvg size={18} color={`#808080`} />
+                  <p>NPWP</p>
                 </div>
                 <div
                   className="cursor-pointer"
@@ -523,11 +522,9 @@ const DrawerCreateClient = ({
             )}
             {!dynamicattr.fax && (
               <div className="flex justify-between mb-3">
-                <div className="flex items-center">
-                  <div className="mr-2">
-                    <FaxIconSvg size={18} color={`#808080`} />
-                  </div>
-                  Fax
+                <div className="flex items-center gap-2">
+                  <FaxIconSvg size={18} color={`#808080`} />
+                  <p>Fax</p>
                 </div>
                 <div
                   className="cursor-pointer"
@@ -541,11 +538,9 @@ const DrawerCreateClient = ({
             )}
             {!dynamicattr.tanggal_pkp && (
               <div className="flex justify-between mb-3">
-                <div className="flex items-center">
-                  <div className="mr-2">
-                    <PkpIconSvg size={18} color={`#808080`} />
-                  </div>
-                  Tanggal PKP
+                <div className="flex items-center gap-2">
+                  <PkpIconSvg size={18} color={`#808080`} />
+                  <p>Tanggal PKP</p>
                 </div>
                 <div
                   className="cursor-pointer"
@@ -559,11 +554,9 @@ const DrawerCreateClient = ({
             )}
             {!dynamicattr.check_in_time && (
               <div className="flex justify-between mb-3">
-                <div className="flex items-center">
-                  <div className="mr-2">
-                    <ClockIconSvg size={18} color={`#808080`} />
-                  </div>
-                  Jam Masuk
+                <div className="flex items-center gap-2">
+                  <ClockIconSvg size={18} color={`#808080`} />
+                  <p>Jam Masuk</p>
                 </div>
                 <div
                   className="cursor-pointer"
@@ -573,6 +566,23 @@ const DrawerCreateClient = ({
                 >
                   <SquarePlusIconSvg size={18} color={`#808080`} />
                 </div>
+              </div>
+            )}
+            {!dynamicattr.autocheckout && (
+              <div className="flex justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <LogoutIconSvg size={18} color={`#808080`} />
+                  <p>Auto Check-Out</p>
+                </div>
+                <Switch
+                  checked={createdata.autocheckout}
+                  onChange={(checked) => {
+                    setcreatedata({
+                      ...createdata,
+                      autocheckout: Number(checked),
+                    });
+                  }}
+                />
               </div>
             )}
           </div>
