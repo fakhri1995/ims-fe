@@ -1,15 +1,14 @@
+import { DndContext } from "@dnd-kit/core";
 import {
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Spin,
-  Steps,
-  Timeline,
-  notification,
-} from "antd";
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
+import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { DatePicker, Input, InputNumber, Timeline } from "antd";
 import moment from "moment";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -17,14 +16,8 @@ import { AccessControl } from "components/features/AccessControl";
 import { RESUME_SECTION_DELETE } from "lib/features";
 
 import ButtonSys from "../../../button";
-import {
-  CheckIconSvg,
-  EditIconSvg,
-  TrashIconSvg,
-  XIconSvg,
-} from "../../../icon";
+import { CheckIconSvg, XIconSvg } from "../../../icon";
 import { ModalHapus2 } from "../../../modal/modalCustom";
-import { H2 } from "../../../typography";
 import AcademicBlock from "./AcademicBlock";
 
 const AcademicCard = ({
@@ -37,8 +30,10 @@ const AcademicCard = ({
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
 }) => {
-  const [isAdd, setIsAdd] = useState(false);
+  // 1. State
   const [modalDelete, setModalDelete] = useState(false);
+  const [academicList, setAcademicList] = useState([]);
+  const [editIdx, setEditIdx] = useState(null); // if value -1 --> add state
 
   const [dataUpdateEdu, setDataUpdateEdu] = useState({
     id: null,
@@ -49,6 +44,12 @@ const AcademicCard = ({
     resume_id: null,
   });
 
+  // 2. use Effect
+  useEffect(() => {
+    setAcademicList(dataDisplay);
+  }, [dataDisplay]);
+
+  // 3. Handler
   const clearDataUpdate = () => {
     setDataUpdateEdu({
       id: null,
@@ -58,6 +59,66 @@ const AcademicCard = ({
       graduation_year: "",
       resume_id: 12,
     });
+    setEditIdx(null);
+  };
+
+  const onDragEnd = async ({ active, over }) => {
+    let activeIndex,
+      overIndex = 0;
+    let updatedList = [];
+
+    if (active?.id !== over?.id) {
+      // Display reordered item list
+      setAcademicList((prev) => {
+        activeIndex = prev.findIndex((i) => i.id === active.id);
+        overIndex = prev.findIndex((i) => i.id === over?.id);
+        updatedList = arrayMove(prev, activeIndex, overIndex);
+        return updatedList;
+      });
+
+      // Update item after_id when reordered
+      let prevIndex = overIndex - 1; // get item above the reordered item
+      // if the reordered item moved to the first order, then set after_id as 0
+      let prevId = prevIndex < 0 ? 0 : updatedList[prevIndex]?.id;
+      let currentItem = academicList?.find((edu) => edu.id === active.id);
+
+      let updatedItem = {
+        ...currentItem,
+        id: active?.id,
+        after_id: prevId,
+      };
+      await handleUpdateSection("education", updatedItem);
+      clearDataUpdate();
+    }
+  };
+
+  // Sortable Block
+  const SortableItem = ({ data }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({ id: data.id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+    return (
+      <li ref={setNodeRef} style={style}>
+        <AcademicBlock
+          edu={data}
+          dataUpdateEdu={dataUpdateEdu}
+          setDataUpdateEdu={setDataUpdateEdu}
+          handleUpdateSection={handleUpdateSection}
+          clearDataUpdate={clearDataUpdate}
+          setModalDelete={setModalDelete}
+          editIdx={editIdx}
+          setEditIdx={setEditIdx}
+          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+          isAllowedToDeleteSection={isAllowedToDeleteSection}
+          {...listeners}
+          {...attributes}
+        />
+      </li>
+    );
   };
 
   // console.log(dataUpdateEdu)
@@ -66,24 +127,37 @@ const AcademicCard = ({
       <h4 className="mig-heading--4">Academic History</h4>
       <hr className="my-4" />
       <Timeline>
-        {dataDisplay.educations?.map((edu) => (
-          <AcademicBlock
-            key={edu.id}
-            edu={edu}
-            dataUpdateEdu={dataUpdateEdu}
-            setDataUpdateEdu={setDataUpdateEdu}
-            handleUpdateSection={handleUpdateSection}
-            clearDataUpdate={clearDataUpdate}
-            setModalDelete={setModalDelete}
-            isAdd={isAdd}
-            isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
-            isAllowedToDeleteSection={isAllowedToDeleteSection}
-          />
-        ))}
+        <DndContext
+          onDragEnd={onDragEnd}
+          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+        >
+          <SortableContext items={academicList?.map((i) => i.id)}>
+            {academicList?.map((edu, idx) =>
+              editIdx === edu.id ? (
+                <AcademicBlock
+                  key={edu.id}
+                  edu={edu}
+                  dataUpdateEdu={dataUpdateEdu}
+                  setDataUpdateEdu={setDataUpdateEdu}
+                  handleUpdateSection={handleUpdateSection}
+                  clearDataUpdate={clearDataUpdate}
+                  setModalDelete={setModalDelete}
+                  editIdx={editIdx}
+                  setEditIdx={setEditIdx}
+                  isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+                  isAllowedToDeleteSection={isAllowedToDeleteSection}
+                  afterId={academicList[idx - 1]?.id}
+                />
+              ) : (
+                <SortableItem key={edu.id} data={edu} />
+              )
+            )}
+          </SortableContext>
+        </DndContext>
       </Timeline>
 
       {/* Input Add Academic */}
-      {isAdd ? (
+      {editIdx === -1 ? (
         <div className="flex flex-col space-y-4 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -99,20 +173,21 @@ const AcademicCard = ({
             ></Input>
             <button
               onClick={() => {
-                handleAddSection("education", dataUpdateEdu);
-                setIsAdd(false);
+                handleAddSection("education", {
+                  ...dataUpdateEdu,
+                  after_id: academicList[academicList.length - 1]?.id,
+                });
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <CheckIconSvg size={24} color={"#35763B"} />
             </button>
             <button
               onClick={() => {
-                setIsAdd(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
@@ -144,14 +219,16 @@ const AcademicCard = ({
                 }));
               }}
             />
-            <Input
+            <InputNumber
               placeholder="GPA"
+              min={0.0}
+              max={4.0}
+              step={"0.01"}
               value={dataUpdateEdu?.gpa}
-              onChange={(e) => {
-                let input = e.target.value;
+              onChange={(value) => {
                 setDataUpdateEdu((prev) => ({
                   ...prev,
-                  gpa: input,
+                  gpa: value,
                 }));
               }}
               className="w-1/2"
@@ -164,7 +241,7 @@ const AcademicCard = ({
             type={"dashed"}
             onClick={() => {
               clearDataUpdate();
-              setIsAdd(true);
+              setEditIdx(-1);
             }}
           >
             <p className="text-primary100 hover:text-primary75">

@@ -1,17 +1,15 @@
+import { DndContext } from "@dnd-kit/core";
 import {
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Spin,
-  Steps,
-  Timeline,
-  notification,
-} from "antd";
-import TextArea from "antd/lib/input/TextArea";
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
+import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { DatePicker, Input, Timeline } from "antd";
 import moment from "moment";
 import dynamic from "next/dynamic";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import "react-quill/dist/quill.snow.css";
 
@@ -20,14 +18,8 @@ import { AccessControl } from "components/features/AccessControl";
 import { RESUME_SECTION_DELETE } from "lib/features";
 
 import ButtonSys from "../../../button";
-import {
-  CheckIconSvg,
-  EditIconSvg,
-  TrashIconSvg,
-  XIconSvg,
-} from "../../../icon";
+import { CheckIconSvg, XIconSvg } from "../../../icon";
 import { ModalHapus2 } from "../../../modal/modalCustom";
-import { H2 } from "../../../typography";
 import ExperienceBlock from "./ExperienceBlock";
 
 // Quill library for text editor has to be imported dynamically
@@ -45,9 +37,11 @@ const ExperienceCard = ({
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
 }) => {
-  const [isAdd, setIsAdd] = useState(false);
+  // 1. State
   const [modalDelete, setModalDelete] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [experienceList, setExperienceList] = useState([]);
+  const [editIdx, setEditIdx] = useState(null); // if value -1 --> add state
 
   const [dataUpdateExp, setDataUpdateExp] = useState({
     id: null,
@@ -57,8 +51,15 @@ const ExperienceCard = ({
     end_date: "",
     description: "",
     resume_id: null,
+    after_id: null,
   });
 
+  // 2. Use Effect
+  useEffect(() => {
+    setExperienceList(dataDisplay);
+  }, [dataDisplay]);
+
+  // 3. Handler
   const clearDataUpdate = () => {
     setDataUpdateExp({
       id: null,
@@ -68,7 +69,9 @@ const ExperienceCard = ({
       end_date: "",
       description: "",
       resume_id: null,
+      after_id: null,
     });
+    setEditIdx(null);
   };
 
   // Text Editor Config
@@ -89,32 +92,105 @@ const ExperienceCard = ({
     "link",
   ];
 
-  // console.log({ dataUpdateExp });
+  const onDragEnd = async ({ active, over }) => {
+    let activeIndex,
+      overIndex = 0;
+    let updatedList = [];
+
+    if (active?.id !== over?.id) {
+      // Display reordered item list
+      setExperienceList((prev) => {
+        activeIndex = prev.findIndex((i) => i.id === active.id);
+        overIndex = prev.findIndex((i) => i.id === over?.id);
+        updatedList = arrayMove(prev, activeIndex, overIndex);
+        return updatedList;
+      });
+
+      // Update a item after_id when reordered
+      let prevIndex = overIndex - 1; // get item above the reordered item
+      // if the reordered item moved to the first order, then set after_id as 0
+      let prevId = prevIndex < 0 ? 0 : updatedList[prevIndex]?.id;
+      let currenItem = experienceList?.find((exp) => exp.id === active.id);
+
+      let updatedItem = {
+        ...currenItem,
+        id: active?.id,
+        after_id: prevId,
+      };
+      await handleUpdateSection("experience", updatedItem);
+      clearDataUpdate();
+    }
+  };
+
+  // Sortable Block
+  const SortableItem = ({ id, exp }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({ id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+    return (
+      <li ref={setNodeRef} style={style}>
+        <ExperienceBlock
+          exp={exp}
+          dataUpdateExp={dataUpdateExp}
+          setDataUpdateExp={setDataUpdateExp}
+          handleUpdateSection={handleUpdateSection}
+          clearDataUpdate={clearDataUpdate}
+          setModalDelete={setModalDelete}
+          editIdx={editIdx}
+          setEditIdx={setEditIdx}
+          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+          isAllowedToDeleteSection={isAllowedToDeleteSection}
+          modules={modules}
+          formats={formats}
+          {...listeners}
+          {...attributes}
+        />
+      </li>
+    );
+  };
+
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <h4 className="mig-heading--4">Experience</h4>
       <hr className="my-4" />
       <Timeline>
-        {dataDisplay.experiences?.map((exp) => (
-          <ExperienceBlock
-            key={exp.id}
-            exp={exp}
-            dataUpdateExp={dataUpdateExp}
-            setDataUpdateExp={setDataUpdateExp}
-            handleUpdateSection={handleUpdateSection}
-            clearDataUpdate={clearDataUpdate}
-            setModalDelete={setModalDelete}
-            isAdd={isAdd}
-            isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
-            isAllowedToDeleteSection={isAllowedToDeleteSection}
-            modules={modules}
-            formats={formats}
-          />
-        ))}
+        <DndContext
+          onDragEnd={onDragEnd}
+          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+        >
+          <SortableContext items={experienceList?.map((i) => i.id)}>
+            {experienceList?.map((exp, idx) =>
+              editIdx === exp?.id ? (
+                <ExperienceBlock
+                  key={exp.id}
+                  exp={exp}
+                  dataUpdateExp={dataUpdateExp}
+                  setDataUpdateExp={setDataUpdateExp}
+                  handleUpdateSection={handleUpdateSection}
+                  clearDataUpdate={clearDataUpdate}
+                  setModalDelete={setModalDelete}
+                  editIdx={editIdx}
+                  setEditIdx={setEditIdx}
+                  isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+                  isAllowedToDeleteSection={isAllowedToDeleteSection}
+                  modules={modules}
+                  formats={formats}
+                  afterId={experienceList[idx - 1]?.id}
+                />
+              ) : (
+                <SortableItem key={exp.id} id={exp.id} exp={exp} />
+              )
+            )}
+          </SortableContext>
+        </DndContext>
       </Timeline>
 
-      {/* Input Experience */}
-      {isAdd ? (
+      {/* Input Add Experience */}
+      {editIdx === -1 ? (
         <div className="flex flex-col space-y-4 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -130,20 +206,21 @@ const ExperienceCard = ({
             />
             <button
               onClick={() => {
-                handleAddSection("experience", dataUpdateExp);
-                setIsAdd(false);
+                handleAddSection("experience", {
+                  ...dataUpdateExp,
+                  after_id: experienceList[experienceList.length - 1]?.id,
+                });
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <CheckIconSvg size={24} color={"#35763B"} />
             </button>
             <button
               onClick={() => {
-                setIsAdd(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
@@ -219,7 +296,7 @@ const ExperienceCard = ({
               type={"dashed"}
               onClick={() => {
                 clearDataUpdate();
-                setIsAdd(true);
+                setEditIdx(-1);
               }}
             >
               <p className="text-primary100 hover:text-primary75">

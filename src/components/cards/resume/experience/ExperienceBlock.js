@@ -1,10 +1,8 @@
 import { DatePicker, Input, Timeline } from "antd";
-import TextArea from "antd/lib/input/TextArea";
 import parse from "html-react-parser";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import React from "react";
-import { useEffect } from "react";
 import { useState } from "react";
 import "react-quill/dist/quill.snow.css";
 
@@ -28,24 +26,21 @@ const ExperienceBlock = ({
   handleUpdateSection,
   clearDataUpdate,
   setModalDelete,
-  isAdd,
+  editIdx,
+  setEditIdx,
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
   modules,
   formats,
+  afterId,
+  ...draggable
 }) => {
-  const [isUpdate, setIsUpdate] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
-
-  useEffect(() => {
-    if (isAdd === true) {
-      setIsUpdate(false);
-    }
-  }, [isAdd]);
 
   return (
     <Timeline.Item color="#35763B">
-      {isUpdate ? (
+      {editIdx === exp.id ? (
+        // Edit state
         <div className="flex flex-col space-y-4 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -62,21 +57,22 @@ const ExperienceBlock = ({
             <button
               onClick={() => {
                 if (dataUpdateExp.id) {
-                  handleUpdateSection("experience", dataUpdateExp);
+                  handleUpdateSection("experience", {
+                    ...dataUpdateExp,
+                    after_id: afterId,
+                  });
                 }
-                setIsUpdate(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <CheckIconSvg size={24} color={"#35763B"} />
             </button>
             <button
               onClick={() => {
-                setIsUpdate(false);
                 clearDataUpdate();
               }}
-              className="bg-transparent"
+              className="bg-transparent hover:opacity-75"
             >
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
@@ -146,7 +142,8 @@ const ExperienceBlock = ({
         </div>
       ) : (
         <div className="flex justify-between">
-          <div className="flex flex-col">
+          {/* Read state */}
+          <div className="flex flex-col cursor-move" {...draggable}>
             <p className="text-primary100 font-bold mb-1">{exp.role}</p>
             <p className="text-mono50 mb-1">
               {exp.company} ·&nbsp;
@@ -157,33 +154,31 @@ const ExperienceBlock = ({
             </p>
             <div className="text-mono50">{parse(exp.description)}</div>
           </div>
-          {!isAdd && (
-            <div className="flex flex-row space-x-2 items-start">
-              {isAllowedToUpdateCandidate && (
-                <button
-                  onClick={(event) => {
-                    setIsUpdate(true);
-                    setDataUpdateExp(exp);
-                  }}
-                  className="bg-transparent"
-                  value={exp.id}
-                >
-                  <EditIconSvg size={18} color="#4D4D4D" />
-                </button>
-              )}
-              {isAllowedToDeleteSection && (
-                <button
-                  onClick={() => {
-                    setDataUpdateExp(exp);
-                    setModalDelete(true);
-                  }}
-                  className="bg-transparent"
-                >
-                  <TrashIconSvg size={18} color="#4D4D4D" />
-                </button>
-              )}
-            </div>
-          )}
+          <div className="flex flex-row space-x-2 items-start">
+            {isAllowedToUpdateCandidate && (
+              <button
+                onClick={() => {
+                  setDataUpdateExp(exp);
+                  setEditIdx(exp.id);
+                }}
+                className="bg-transparent hover:opacity-75"
+                value={exp.id}
+              >
+                <EditIconSvg size={18} color="#4D4D4D" />
+              </button>
+            )}
+            {isAllowedToDeleteSection && (
+              <button
+                onClick={() => {
+                  setDataUpdateExp(exp);
+                  setModalDelete(true);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <TrashIconSvg size={18} color="#4D4D4D" />
+              </button>
+            )}
+          </div>
         </div>
       )}
     </Timeline.Item>

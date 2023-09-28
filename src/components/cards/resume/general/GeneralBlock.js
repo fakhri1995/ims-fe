@@ -1,4 +1,4 @@
-import { DatePicker, Input, InputNumber, Timeline } from "antd";
+import { DatePicker, Input, Timeline } from "antd";
 import moment from "moment";
 import React from "react";
 
@@ -9,10 +9,10 @@ import {
   XIconSvg,
 } from "../../../icon";
 
-const AcademicBlock = ({
-  edu,
-  dataUpdateEdu,
-  setDataUpdateEdu,
+const GeneralBlock = ({
+  detail,
+  dataUpdate,
+  setDataUpdate,
   handleUpdateSection,
   clearDataUpdate,
   setModalDelete,
@@ -20,31 +20,36 @@ const AcademicBlock = ({
   setEditIdx,
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
+  sectionName,
   afterId,
   ...draggable
 }) => {
   return (
-    <Timeline.Item color="#35763B">
-      {editIdx === edu.id ? (
+    <div className="flex flex-row mb-3">
+      {editIdx === detail.id ? (
         // Edit state
-        <div className="flex flex-col space-y-4 mb-4">
+        <div className="flex flex-col space-y-4 mt-2 mb-4 w-full">
           <div className="flex flex-row space-x-4">
             <Input
-              placeholder="University"
-              value={dataUpdateEdu.university}
+              placeholder={
+                sectionName === "achievement"
+                  ? "Achievement name"
+                  : "Course or program name"
+              }
+              value={dataUpdate.name}
               onChange={(e) => {
                 let input = e.target.value;
-                setDataUpdateEdu((prev) => ({
+                setDataUpdate((prev) => ({
                   ...prev,
-                  university: input,
+                  name: input,
                 }));
               }}
             ></Input>
             <button
               onClick={() => {
-                if (dataUpdateEdu.id) {
-                  handleUpdateSection("education", {
-                    ...dataUpdateEdu,
+                if (dataUpdate.id) {
+                  handleUpdateSection(sectionName, {
+                    ...dataUpdate,
                     after_id: afterId,
                   });
                 }
@@ -63,77 +68,64 @@ const AcademicBlock = ({
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
           </div>
-          <Input
-            placeholder="Degree"
-            value={dataUpdateEdu.major}
-            onChange={(e) => {
-              let input = e.target.value;
-              setDataUpdateEdu((prev) => ({
-                ...prev,
-                major: input,
-              }));
-            }}
-          />
-
           <div className="flex flex-row space-x-4 w-full">
             <DatePicker
+              allowClear={true}
               picker="year"
-              placeholder="Graduation Year"
-              allowClear={false}
-              className="w-1/2"
-              value={moment(dataUpdateEdu.graduation_year)}
+              placeholder="Year"
+              className="w-1/3"
+              value={dataUpdate.year ? moment(dataUpdate.year) : null}
               onChange={(date) => {
-                let input = date?.format("YYYY-MM-DD");
-                setDataUpdateEdu((prev) => ({
+                let input = date ? date.format("YYYY-MM-DD") : null;
+                setDataUpdate((prev) => ({
                   ...prev,
-                  graduation_year: moment(input),
+                  year: input,
                 }));
               }}
             />
-            <InputNumber
-              placeholder="GPA"
-              min={0.0}
-              max={4.0}
-              step={"0.01"}
-              value={dataUpdateEdu.gpa}
-              onChange={(value) => {
-                setDataUpdateEdu((prev) => ({
+            <Input
+              placeholder="Company or organization"
+              value={dataUpdate.organizer}
+              onChange={(e) => {
+                let input = e.target.value;
+                setDataUpdate((prev) => ({
                   ...prev,
-                  gpa: value,
+                  organizer: input,
                 }));
               }}
-              className="w-1/2"
-            />
+              className="w-2/3"
+            ></Input>
           </div>
         </div>
       ) : (
-        <div className="flex justify-between">
-          {/* Read state */}
-          <div className="flex flex-col cursor-move" {...draggable}>
-            <p className="text-primary100 font-bold mb-1">{edu?.university}</p>
-            <p className="text-mono50 mb-1">
-              {edu?.major} ·&nbsp;
-              <strong>{edu?.graduation_year?.slice(0, 4)}</strong>
+        <div className="flex w-full">
+          {/* Read State */}
+          <div className="flex w-3/4 cursor-move" {...draggable}>
+            <p className="text-center text-primary100 font-bold w-1/3">
+              {detail.year ? detail.year.slice(0, 4) : "-"}
             </p>
-            {edu?.gpa && <p className="text-mono50">GPA {edu?.gpa}</p>}
+            <div className="flex flex-col w-2/3">
+              <p className="font-bold text-mono30">{detail.name}</p>
+              <p className="text-mono50">{detail.organizer}</p>
+            </div>
           </div>
-          <div className="flex flex-row space-x-2 items-start">
+          <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
             {isAllowedToUpdateCandidate && (
               <button
                 onClick={() => {
-                  setDataUpdateEdu(edu);
-                  setEditIdx(edu.id);
+                  setDataUpdate(detail);
+                  setEditIdx(detail.id);
                 }}
                 className="bg-transparent hover:opacity-75"
-                value={edu?.id}
               >
                 <EditIconSvg size={18} color="#4D4D4D" />
               </button>
             )}
+
             {isAllowedToDeleteSection && (
               <button
                 onClick={() => {
-                  setDataUpdateEdu(edu);
+                  setDataUpdate(detail);
                   setModalDelete(true);
                 }}
                 className="bg-transparent hover:opacity-75"
@@ -144,8 +136,8 @@ const AcademicBlock = ({
           </div>
         </div>
       )}
-    </Timeline.Item>
+    </div>
   );
 };
 
-export default AcademicBlock;
+export default GeneralBlock;

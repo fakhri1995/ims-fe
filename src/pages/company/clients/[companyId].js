@@ -130,6 +130,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
     email: "",
     website: "",
     check_in_time: null,
+    autocheckout: null,
     role: "",
     induk_level_1_count: "",
     induk_level_2_count: "",
@@ -152,6 +153,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
     email: "",
     website: "",
     check_in_time: null,
+    autocheckout: null,
   });
   const [hapusbankdata, sethapusbankdata] = useState({
     id: "",
@@ -579,6 +581,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
         image_logo: "/image/Company.png",
         fax: "-",
         check_in_time: null,
+        autocheckout: null,
       });
       setpraloadingedit(false);
       return;
@@ -617,6 +620,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
           email: res2.data.email,
           website: res2.data.website,
           check_in_time: res2.data?.check_in_time ?? null,
+          autocheckout: res2.data?.autocheckout ?? null,
         });
         setisenabled(res2.data.is_enabled);
         return res2.data.id;
@@ -995,11 +999,11 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                     {editable ? (
                       <Input
                         name="singkatan"
-                        defaultValue={rawdata?.singkatan ?? "-"}
+                        defaultValue={rawdata?.singkatan || "-"}
                         onChange={onChangeInput}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{rawdata?.singkatan ?? "-"}</p>
+                      <p className="mb-0">{rawdata?.singkatan || "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -1008,10 +1012,10 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       <Input
                         name="address"
                         onChange={onChangeInput}
-                        defaultValue={rawdata?.address ?? "-"}
+                        defaultValue={rawdata?.address || "-"}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{rawdata?.address ?? "-"}</p>
+                      <p className="mb-0">{rawdata?.address || "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -1020,10 +1024,10 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       <Input
                         name="penanggung_jawab"
                         onChange={onChangeInput}
-                        defaultValue={rawdata?.penanggung_jawab ?? "-"}
+                        defaultValue={rawdata?.penanggung_jawab || "-"}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{rawdata?.penanggung_jawab ?? "-"}</p>
+                      <p className="mb-0">{rawdata?.penanggung_jawab || "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -1088,10 +1092,10 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       <Input
                         name="npwp"
                         onChange={onChangeInput}
-                        defaultValue={rawdata?.npwp ?? "-"}
+                        defaultValue={rawdata?.npwp || "-"}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{rawdata?.npwp ?? "-"}</p>
+                      <p className="mb-0">{rawdata?.npwp || "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -1101,7 +1105,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                         name="email"
                         onChange={onChangeInput}
                         prefix={<EmailIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={rawdata?.email ?? "-"}
+                        defaultValue={rawdata?.email || "-"}
                       ></Input>
                     ) : (
                       <div className="flex items-center">
@@ -1112,7 +1116,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                           href={`mailto:${rawdata?.email}`}
                           className="text-primary100 hover:text-primary75 truncate"
                         >
-                          {rawdata?.email}
+                          {rawdata?.email || "-"}
                         </a>
                       </div>
                     )}
@@ -1124,7 +1128,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                         name="phone_number"
                         onChange={onChangeInput}
                         prefix={<PhoneIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={rawdata?.phone_number ?? "-"}
+                        defaultValue={rawdata?.phone_number || "-"}
                       ></Input>
                     ) : (
                       <div className="flex items-center">
@@ -1135,7 +1139,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                           href={`tel:${rawdata?.phone_number}`}
                           className="text-primary100 hover:text-primary75"
                         >
-                          {rawdata?.phone_number}
+                          {rawdata?.phone_number || "-"}
                         </a>
                       </div>
                     )}
@@ -1147,7 +1151,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                         name="website"
                         onChange={onChangeInput}
                         prefix={<WebIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={rawdata?.website ?? "-"}
+                        defaultValue={rawdata?.website || "-"}
                       ></Input>
                     ) : (
                       <div className="flex items-center">
@@ -1160,11 +1164,42 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                           rel="external"
                           className="text-primary100 hover:text-primary75 truncate"
                         >
-                          {rawdata?.website}
+                          {rawdata?.website || "-"}
                         </a>
                       </div>
                     )}
                   </div>
+                  <div className="flex flex-col mb-5">
+                    <Label>Auto Check-Out</Label>
+                    {editable ? (
+                      <div className="flex justify-between">
+                        {displaydata?.autocheckout ? (
+                          <p className="text-primary100 font-semibold mb-0">
+                            Aktif
+                          </p>
+                        ) : (
+                          <p className="font-semibold mb-0">Non Aktif</p>
+                        )}
+
+                        <Switch
+                          defaultChecked={displaydata?.autocheckout}
+                          onChange={(checked) => {
+                            setdisplaydata({
+                              ...displaydata,
+                              autocheckout: Number(checked),
+                            });
+                          }}
+                        />
+                      </div>
+                    ) : rawdata?.autocheckout ? (
+                      <p className="text-primary100 font-semibold mb-0">
+                        Aktif
+                      </p>
+                    ) : (
+                      <p className="font-semibold mb-0">Non Aktif</p>
+                    )}
+                  </div>
+
                   {/* {editable && (
                     <div className="flex justify-center items-center mb-10">
                       <Buttonsys type="primary" color="danger">
@@ -1368,7 +1403,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                   </div>
                   {banks.map((doc, idx) => {
                     return (
-                      <div className="flex mt-5">
+                      <div key={doc.id} className="flex mt-5">
                         {/* <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain> */}
                         <div
                           style={
@@ -1645,7 +1680,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                   {rawdata?.relationship_inventories.map((doc, idx) => {
                     if (idx <= 2) {
                       return (
-                        <div className="flex items-center mt-5">
+                        <div key={idx} className="flex items-center mt-5">
                           <ShareIconSvg size={25} color={`#000000`} />
                           <div className="flex flex-col ml-2">
                             <H2>{doc.relationship_total}</H2>
@@ -1700,7 +1735,10 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       ) : (
                         <div className={"flex flex-row flex-wrap gap-2"}>
                           {tagProyek?.map((tag, idx) => (
-                            <div className={"bg-primary100 rounded-[5px] p-2"}>
+                            <div
+                              key={idx}
+                              className={"bg-primary100 rounded-[5px] p-2"}
+                            >
                               <p
                                 className={
                                   "text-[10px] text-white font-bold leading-4"
@@ -1738,6 +1776,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                         <div className={"flex flex-row flex-wrap gap-2"}>
                           {dataTag?.map((tag, idx) => (
                             <div
+                              key={idx}
                               onClick={() => onSelectTag(tag.name, tag.id)}
                               className={
                                 "flex px-2 py-1 gap-1 rounded-[5px] bg-mono80 hover:cursor-pointer"
@@ -1780,6 +1819,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                           <div className={"flex flex-row flex-wrap gap-2"}>
                             {dataTagSelected?.map((tag, idx) => (
                               <div
+                                key={idx}
                                 onClick={() => onUnselectTag(tag.id)}
                                 className={
                                   "bg-primary100 rounded-[5px] p-2 hover:cursor-pointer"

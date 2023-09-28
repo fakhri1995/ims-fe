@@ -31,7 +31,7 @@ const InputRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
         defaultValue={defaultValue}
         value={value}
         onChange={onChangeInput}
-      ></Input>
+      />
     </div>
   );
 };
@@ -99,7 +99,7 @@ const InputNotRequired = ({
   value,
 }) => {
   return (
-    <div className="flex flex-col mb-5">
+    <div className="flex flex-col mb-5 px-3">
       <div className="flex mb-1">
         <Label>{label}</Label>
       </div>
@@ -259,7 +259,7 @@ const DateNotRequired = ({
   children,
 }) => {
   return (
-    <div className="flex flex-col mb-5">
+    <div className="flex flex-col mb-5 px-3">
       <div className="flex">
         <Label>{label}</Label>
       </div>
@@ -285,7 +285,7 @@ const TimeNotRequired = ({
   format,
 }) => {
   return (
-    <div className="flex flex-col mb-5">
+    <div className="flex flex-col mb-5 px-3">
       <div className="flex">
         <Label>{label}</Label>
       </div>
@@ -352,7 +352,7 @@ const RadioNotRequired = ({
   defaultValue,
 }) => {
   return (
-    <div className="flex flex-col mb-3">
+    <div className="flex flex-col mb-3 px-3">
       <div className="flex">
         <Label>{label}</Label>
       </div>

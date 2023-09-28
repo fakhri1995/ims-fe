@@ -36,11 +36,9 @@ import BasicInfoCard from "../../../components/cards/resume/BasicInfoCard";
 import SkillCard from "../../../components/cards/resume/SkillCard";
 import SummaryCard from "../../../components/cards/resume/SummaryCard";
 import AcademicCard from "../../../components/cards/resume/academic/AcademicCard";
-import AchievementCard from "../../../components/cards/resume/achievement/AchievementCard";
-import CertificationCard from "../../../components/cards/resume/certification/CertificationCard";
 import ExperienceCard from "../../../components/cards/resume/experience/ExperienceCard";
+import GeneralCard from "../../../components/cards/resume/general/GeneralCard";
 import ProjectCard from "../../../components/cards/resume/project/ProjectCard";
-import TrainingCard from "../../../components/cards/resume/training/TrainingCard";
 import LayoutDashboard from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import {
@@ -530,7 +528,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
           <div className="flex flex-col w-full gap-6">
             {/* SECTION ACADEMIC */}
             <AcademicCard
-              dataDisplay={dataDisplay}
+              dataDisplay={dataDisplay?.educations}
               setDataDisplay={setDataDisplay}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
@@ -543,7 +541,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
             {/* SECTION EXPERIENCE */}
             <ExperienceCard
-              dataDisplay={dataDisplay}
+              dataDisplay={dataDisplay?.experiences}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -555,7 +553,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
             {/* SECTION PROJECT */}
             <ProjectCard
-              dataDisplay={dataDisplay}
+              dataDisplay={dataDisplay?.projects}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -578,8 +576,8 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             />
 
             {/* SECTION TRAINING */}
-            <TrainingCard
-              dataDisplay={dataDisplay}
+            <GeneralCard
+              dataDisplay={dataDisplay?.trainings}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -587,11 +585,12 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
               isAllowedToAddSection={isAllowedToAddSection}
               isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
               isAllowedToDeleteSection={isAllowedToDeleteSection}
+              sectionName={"training"}
             />
 
             {/* SECTION CERTIFICATION */}
-            <CertificationCard
-              dataDisplay={dataDisplay}
+            <GeneralCard
+              dataDisplay={dataDisplay?.certificates}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -599,11 +598,12 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
               isAllowedToAddSection={isAllowedToAddSection}
               isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
               isAllowedToDeleteSection={isAllowedToDeleteSection}
+              sectionName={"certificate"}
             />
 
             {/* SECTION ACHIEVEMENT */}
-            <AchievementCard
-              dataDisplay={dataDisplay}
+            <GeneralCard
+              dataDisplay={dataDisplay?.achievements}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -611,6 +611,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
               isAllowedToAddSection={isAllowedToAddSection}
               isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
               isAllowedToDeleteSection={isAllowedToDeleteSection}
+              sectionName={"achievement"}
             />
 
             {/* SECTION ASSESSMENT RESULT */}

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { CONTRACT_TEMPLATE_GET } from "lib/features";
+import { CONTRACT_GET, CONTRACT_TEMPLATE_GET } from "lib/features";
 
 import { momentFormatDate } from "../../../../lib/helper";
 import {
@@ -23,6 +23,7 @@ const ContractActionSection = ({
     useAccessControl();
 
   const isAllowedToGetContractTemplate = hasPermission(CONTRACT_TEMPLATE_GET);
+  const isAllowedToGetContract = hasPermission(CONTRACT_GET);
 
   const rt = useRouter();
 
@@ -30,9 +31,9 @@ const ContractActionSection = ({
     <>
       <button
         onClick={() => rt.push(`${contractId}/addendum/create`)}
-        disabled={!isAllowedToGetContractTemplate}
+        disabled={!isAllowedToGetContract}
         className={`flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center ${
-          isAllowedToGetContractTemplate ? "hover:opacity-75" : "cursor-no-drop"
+          isAllowedToGetContract ? "hover:opacity-75" : "cursor-no-drop"
         }`}
       >
         <WritingIconSvg size={32} color={"#35763B"} />

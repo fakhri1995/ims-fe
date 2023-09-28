@@ -1,5 +1,5 @@
 import { Input, Popconfirm, Table } from "antd";
-import React, { useCallback, useRef } from "react";
+import React, { useRef } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -228,6 +228,7 @@ const InvoiceItemSection = ({
                       );
                     }
 
+                    // Manual save
                     let tempCellValue = [];
                     if (dataServices?.[rowIdx]?.invoice_service_value) {
                       tempCellValue =

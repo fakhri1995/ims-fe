@@ -122,52 +122,52 @@ const SummaryCard = ({
           </div>
         )}
       <hr />
-      {praloading ? (
-        <div className=" flex justify-center">
-          <Spin />
-        </div>
-      ) : isAddDescription ? (
-        <div className="flex flex-row space-x-4 mt-6">
-          <div className={"w-11/12"}>
-            <ReactQuill
-              theme="snow"
-              value={dataSummary?.description}
-              modules={modules}
-              formats={formats}
-              className="h-44 pb-10"
-              onChange={(value) => {
-                setDataSummary({
-                  ...dataSummary,
-                  description: value,
-                });
-              }}
-            />
-          </div>
-          <div className={"w-1/12 justify-center space-x-4"}>
-            <button
-              onClick={() => {
-                if (dataSummary.id) {
-                  handleUpdateSection("summary", dataSummary);
-                } else {
-                  handleAddSection("summary", dataSummary);
-                }
-                setIsAddDescription(false);
-                clearDataUpdate();
-              }}
-              className="bg-transparent"
+      {isAddDescription ? (
+        <Spin spinning={praloading}>
+          <div className="flex flex-row gap-4 mt-6">
+            <div className={"w-11/12"}>
+              <ReactQuill
+                theme="snow"
+                value={dataSummary?.description}
+                modules={modules}
+                formats={formats}
+                className="h-44 pb-10"
+                onChange={(value) => {
+                  setDataSummary({
+                    ...dataSummary,
+                    description: value,
+                  });
+                }}
+              />
+            </div>
+            <div
+              className={"flex flex-nowrap justify-center items-start gap-2"}
             >
-              <CheckIconSvg size={24} color={"#35763B"} />
-            </button>
-            <button
-              onClick={() => {
-                setIsAddDescription(false);
-              }}
-              className="bg-transparent"
-            >
-              <XIconSvg size={24} color={"#BF4A40"} />
-            </button>
+              <button
+                onClick={() => {
+                  if (dataSummary.id) {
+                    handleUpdateSection("summary", dataSummary);
+                  } else {
+                    handleAddSection("summary", dataSummary);
+                  }
+                  setIsAddDescription(false);
+                  clearDataUpdate();
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <CheckIconSvg size={24} color={"#35763B"} />
+              </button>
+              <button
+                onClick={() => {
+                  setIsAddDescription(false);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <XIconSvg size={24} color={"#BF4A40"} />
+              </button>
+            </div>
           </div>
-        </div>
+        </Spin>
       ) : (
         isAllowedToUpdateCandidate && (
           <div>

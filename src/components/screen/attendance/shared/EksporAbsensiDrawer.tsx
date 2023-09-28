@@ -56,7 +56,14 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState<
     Array<number> | undefined
   >(undefined);
-  // Use for toggle in Form Aktivitas dropdown
+
+  // default time in range picker
+  const [selectedDateRange, setSelectedDateRange] = useState({
+    start_date: moment().subtract(1, "months"),
+    end_date: moment(),
+  });
+
+  // Sorting button in Form Aktivitas dropdown
   const [isSortAsc, setIsSortAsc] = useState(false);
 
   const { data: formAktivitasData, refetch: findFormAktivitas } = useQuery(
@@ -263,10 +270,14 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     }
     const fieldData = [];
 
-    // default selected time range picker
+    // selected time in range picker
     fieldData.push({
       name: "rentang_waktu",
-      value: [moment().subtract(1, "months"), moment()],
+      value: [
+        moment(selectedDateRange.start_date),
+        moment(selectedDateRange.end_date),
+      ],
+      // value: [moment().subtract(1, "months"), moment()],
     });
 
     // default selected staff
@@ -367,7 +378,21 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
         >
           {/* Pick export date range */}
           <Form.Item name="rentang_waktu" label="Rentang Waktu">
-            <RangePicker format="DD MMM YYYY" allowClear={false} />
+            <RangePicker
+              format="DD MMM YYYY"
+              allowClear={false}
+              value={[selectedDateRange.start_date, selectedDateRange.end_date]}
+              onCalendarChange={(value) => {
+                if (value) {
+                  let startDate = value[0];
+                  let endDate = value[1];
+                  setSelectedDateRange({
+                    start_date: startDate,
+                    end_date: endDate,
+                  });
+                }
+              }}
+            />
           </Form.Item>
 
           {exportAsAdmin && (
