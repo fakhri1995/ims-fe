@@ -209,8 +209,6 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     },
   ];
   const editKategori = (id, nama) => {
-    console.log("edit kategori ", id);
-    console.log("edit aktegori 2 ", nama);
     setShowFormKategori(true);
     setCategoryId(id);
     setCategoryName(nama);
@@ -281,7 +279,6 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     },
   ];
   const deleteKategori = (id, nama) => {
-    console.log("delete kategori ");
     setShowModalDelete(true);
     setCategoryId(id);
   };
@@ -330,7 +327,6 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //3.onChange
   const onChangeSearch = (e) => {
-    console.log("change category ", e);
     setKeywordCategory(e.target.value);
   };
   const onChangeSkuSearch = (e) => {
@@ -458,14 +454,11 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     )
       .then((res) => res.json())
       .then((res2) => {
-        console.log("datanya apis ", res2);
-        console.log("datanya categories ", res2.data);
         setDisplayCategories(res2.data);
       });
   };
   const onChangeInputKategori = (nama) => {
     setCategoryName(nama.target.value);
-    console.log("on change kategori ", nama);
   };
 
   const handleClearCategory = () => {
@@ -508,7 +501,6 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       })
         .then((response) => response.json())
         .then((response2) => {
-          console.log("response add category ", response2);
           if (response2.success) {
             notification.success({
               message: categoryId
@@ -543,7 +535,6 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   const onChangeKategoriProduk = (value) => {
-    console.log("value ", value);
     setIdKategori(value);
     setQueryParams({
       category_id: value != 0 ? value : undefined,

@@ -153,7 +153,6 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         setLoadingRoleList(false);
       })
       .catch((err) => {
-        console.log(err);
         notification.error({
           message: `${err.response}`,
           duration: 3,

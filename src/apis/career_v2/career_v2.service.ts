@@ -73,7 +73,6 @@ export class CareerV2Service {
     payload: AddCareerPayload
   ) {
     const payloadFormData = objectToFormData(payload);
-    console.log(payload);
 
     return await axiosClient.post("/v2/addCareerApply", payloadFormData, {
       headers: {

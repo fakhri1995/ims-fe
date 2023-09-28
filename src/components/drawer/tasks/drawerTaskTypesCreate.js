@@ -889,7 +889,6 @@ const DrawerTaskTypesCreate = ({
                         <div
                           className="mx-1 cursor-pointer"
                           onClick={() => {
-                            console.log(idx);
                             const temp = [...datacreate.works];
                             temp.splice(idx, 1);
                             setdatacreate((prev) => ({

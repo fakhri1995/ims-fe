@@ -260,7 +260,6 @@ export async function getServerSideProps({ req, res }) {
   );
   const resjsonGM = await resourcesGM.json();
   const dataMessages = resjsonGM;
-  console.log("datanya ", dataMessages);
   return {
     props: {
       initProps,

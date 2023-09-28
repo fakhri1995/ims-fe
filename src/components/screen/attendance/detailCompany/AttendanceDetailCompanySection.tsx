@@ -141,7 +141,6 @@ export const AttendanceDetailCompanySection: FC<
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log("get data ", res2);
           setDataHistory(res2.data.last_two_month_activities);
         }
       });
@@ -159,7 +158,6 @@ export const AttendanceDetailCompanySection: FC<
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log("get attendance task ", res2);
           setDataHistoryTask(res2.data.last_two_month_activities);
         }
       });
@@ -191,7 +189,7 @@ export const AttendanceDetailCompanySection: FC<
   };
 
   const onViewProject = () => {
-    router.push(`/attendanceCompany/projects/${userId}`);
+    router.push(`/kehadiran/projects/${userId}`);
   };
   const columnsTable: ColumnsType = [
     {

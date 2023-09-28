@@ -66,13 +66,11 @@ function LayoutDashboard2({
         setloadingspin(false);
         if (res2.success) {
           jscookie.remove("token");
-          console.log("token abis logout: " + jscookie.get("token"));
           rt.push("/login");
         }
       })
       .catch((err) => {
         setloadingspin(false);
-        console.log(err.message);
       });
   };
   useEffect(() => {

@@ -608,6 +608,26 @@ const DownIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={downIconSvg}></Icon>;
 };
+const UpIconSvg = ({ size, color }) => {
+  const upIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-chevron-up"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke={color}
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M6 15l6 -6l6 6" />
+    </svg>
+  );
+  return <Icon rev={""} component={upIconSvg}></Icon>;
+};
 const ExternalLinkIconSvg = ({ size, color }) => {
   const externallinkIconSvg = () => (
     <svg
@@ -2968,6 +2988,115 @@ const TautanIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={tautanIconSvg}></Icon>;
 };
+
+const DashboardCompanyIconSvg = () => {
+  const dashboardCompanyIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+    >
+      <rect
+        x="2.66406"
+        y="2.66797"
+        width="4"
+        height="3.33333"
+        stroke="#35763B"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <rect
+        x="2.66406"
+        y="8.66797"
+        width="4"
+        height="4.66667"
+        stroke="#35763B"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <rect
+        x="9.33594"
+        y="2.66797"
+        width="4"
+        height="4.66667"
+        stroke="#35763B"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <rect
+        x="9.33594"
+        y="10"
+        width="4"
+        height="3.33333"
+        stroke="#35763B"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={dashboardCompanyIconSvg}></Icon>;
+};
+
+const NewsIconSvg = ({ size, color }) => {
+  const newsIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-news"
+      width={size ? size : "8"}
+      height={size ? size : "8"}
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke={color ? color : "#35763B"}
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11"></path>
+      <path d="M8 8l4 0"></path>
+      <path d="M8 12l4 0"></path>
+      <path d="M8 16l4 0"></path>
+    </svg>
+  );
+  return <Icon rev={""} component={newsIconSvg}></Icon>;
+};
+
+const TimelineIconSvg = ({ size, color }) => {
+  const timelineIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="17"
+      viewBox="0 0 16 17"
+      fill="none"
+    >
+      <g clip-path="url(#clip0_18738_30973)">
+        <path
+          d="M8.0026 1.83398C11.6846 1.83398 14.6693 4.81865 14.6693 8.50065C14.6693 12.1827 11.6846 15.1673 8.0026 15.1673C4.3206 15.1673 1.33594 12.1827 1.33594 8.50065C1.33594 4.81865 4.3206 1.83398 8.0026 1.83398ZM8.0026 3.16732C6.58812 3.16732 5.23156 3.72922 4.23137 4.72941C3.23117 5.72961 2.66927 7.08616 2.66927 8.50065C2.66927 9.91514 3.23117 11.2717 4.23137 12.2719C5.23156 13.2721 6.58812 13.834 8.0026 13.834C9.41709 13.834 10.7736 13.2721 11.7738 12.2719C12.774 11.2717 13.3359 9.91514 13.3359 8.50065C13.3359 7.08616 12.774 5.72961 11.7738 4.72941C10.7736 3.72922 9.41709 3.16732 8.0026 3.16732ZM8.0026 4.50065C8.16589 4.50067 8.3235 4.56062 8.44552 4.66913C8.56754 4.77763 8.6455 4.92715 8.6646 5.08932L8.66927 5.16732V8.22465L10.4739 10.0293C10.5935 10.1493 10.6629 10.3103 10.6681 10.4796C10.6733 10.6489 10.6138 10.8138 10.5018 10.9408C10.3897 11.0679 10.2336 11.1475 10.065 11.1636C9.89634 11.1796 9.72793 11.1309 9.59394 11.0273L9.53127 10.972L7.53127 8.97198C7.42766 8.86828 7.36111 8.73332 7.34194 8.58798L7.33594 8.50065V5.16732C7.33594 4.99051 7.40618 4.82094 7.5312 4.69591C7.65622 4.57089 7.82579 4.50065 8.0026 4.50065Z"
+          fill="#808080"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_18738_30973">
+          <rect
+            width="16"
+            height="16"
+            fill="white"
+            transform="translate(0 0.5)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+  return <Icon rev={""} component={timelineIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -3092,4 +3221,8 @@ export {
   ProyekCompanyIconSvg,
   KehadiranCompanyIconSvg,
   TautanIconSvg,
+  DashboardCompanyIconSvg,
+  NewsIconSvg,
+  UpIconSvg,
+  TimelineIconSvg,
 };

@@ -25,7 +25,6 @@ const Pagination = ({ items, pageSize, currentPage, onPageChange }) => {
             listStyle: "none",
           }}
         >
-          {console.log("pages ", pages)}
           {pages.map((page) => (
             <li
               key={page}

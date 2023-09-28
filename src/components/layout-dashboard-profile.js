@@ -40,16 +40,12 @@ function LayoutDashboardProfile({
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("isi dari res2: " + res2);
         if (res2.data.is_success) {
           jscookie.remove("token");
-          console.log("token abis logout: " + jscookie.get("token"));
           rt.push("/");
         }
       })
-      .catch((err) => {
-        console.log(err.message);
-      });
+      .catch((err) => {});
   };
   const menuProfile2 = () => {
     return (
