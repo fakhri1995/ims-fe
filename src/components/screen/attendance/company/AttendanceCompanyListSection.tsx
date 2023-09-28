@@ -406,7 +406,7 @@ const HadirTable: FC<ITable> = memo(
 
     const handleOnRowClicked = useCallback(
       (datum: GetAttendanceUsersPaginateDatum) => {
-        router?.push(`/attendanceCompany/detail/${datum.attendance_user.id}`);
+        router?.push(`/kehadiran/detail/${datum.attendance_user.id}`);
       },
       [router]
     );
@@ -456,9 +456,7 @@ const AbsenTable: FC<IAbsenTable> = ({ keyword }) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
   const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
-  useEffect(() => {
-    console.log("check datanya ", filteredData);
-  }, []);
+
   const { data, isLoading } = useQuery(
     [AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET],
     () => AttendanceService.findAsAdmin(axiosClient),

@@ -149,7 +149,6 @@ function layout({ children }) {
           </Button>
         </Link>
       )}
-      {console.log("jumlah article ", countStories)}
 
       {countArticle > 0 && (
         <Link href="/blog">
@@ -239,7 +238,6 @@ function layout({ children }) {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("get data testimonial ", res2);
         if (res2.success) {
           // setDataTestimonial(res2.data);
           setCountArticle(res2.data);
@@ -257,7 +255,6 @@ function layout({ children }) {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("get data testimonial ", res2);
         if (res2.success) {
           // setDataTestimonial(res2.data);
           setCountStories(res2.data);
@@ -274,7 +271,6 @@ function layout({ children }) {
   const [navbarBottom, setNavbarBottom] = useState(true); //true for hidden
 
   const handleNavbar = () => {
-    console.log("handle navbar ");
     setNavbar(!navbar);
     // setNavbarSolution(true); //true for hidden
     // setNavbarCompany(true); //true for hidden
@@ -290,17 +286,10 @@ function layout({ children }) {
   };
   const changeLanguage = (e) => {
     const locale = e;
-    console.log("change language");
-    console.log("router pathname ", router.pathname);
-    console.log("router.asPath ", router.asPath);
-    console.log("router locale ", router.locale);
     let datatemp = router.asPath;
     let datasplit = datatemp.split("/");
-    for (let a = 0; a < datasplit.length; a++) {
-      console.log("data ke ", datasplit[a]);
-    }
+    for (let a = 0; a < datasplit.length; a++) {}
     if (datasplit[2] == "customerstories" && datasplit[3] != "") {
-      console.log("masuk customerstories ");
       getDataCustomerStoriesDetail(datasplit[3], router.locale, locale);
     } else if (datasplit[2] == "blog" && datasplit[3] != "") {
       getDataCustomerStoriesDetail(datasplit[3], router.locale, locale);
@@ -310,14 +299,9 @@ function layout({ children }) {
   };
   const changeLanguageMobile = (e) => {
     const locale = e;
-    console.log("change language mobile ");
     let datatemp = router.asPath;
     let datasplit = datatemp.split("/");
-    for (let a = 0; a < datasplit.length; a++) {
-      console.log("data ke ", datasplit[a]);
-    }
     if (datasplit[2] == "customerstories" && datasplit[3] != "") {
-      console.log("masuk customerstories ");
       getDataCustomerStoriesDetail(datasplit[3], router.locale, locale);
     } else if (datasplit[2] == "blog" && datasplit[3] != "") {
       getDataCustomerStoriesDetail(datasplit[3], router.locale, locale);
@@ -337,12 +321,9 @@ function layout({ children }) {
     )
       .then((res) => res.json())
       .then((res2) => {
-        console.log("get data testimonial ", res2);
         if (res2.success) {
           //   setDataTestimonial(res2.data);
-          console.log("locale apa ", locale);
           if (locale == "en") {
-            console.log("masuk if en ");
             if (
               res2.data[0].title_id != "" &&
               res2.data[0].description_id != "" &&
@@ -350,7 +331,6 @@ function layout({ children }) {
               res2.data[0].content_id != ""
               // res2.data[0].tags_id != ""
             ) {
-              console.log("harusnya pindah halaman ", router);
               // router.push(`/id/`+router.asPath);
               let path =
                 "/migwebsite/customerstories/" + res2.data[0].page_path_id;
@@ -359,7 +339,6 @@ function layout({ children }) {
               alert("Halaman ID tidak tersedia untuk testimoni ini");
             }
           } else {
-            console.log("masuk if id ");
             if (
               res2.data[0].title != "" &&
               res2.data[0].description != "" &&
@@ -367,7 +346,6 @@ function layout({ children }) {
               res2.data[0].content != "" &&
               res2.data[0].tags != ""
             ) {
-              console.log("harusnya pindah halaman baru ", router);
               let path =
                 "/migwebsite/customerstories/" + res2.data[0].page_path;
               router.push(router.pathname, path, { locale: "en" });

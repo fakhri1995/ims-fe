@@ -49,13 +49,6 @@ const LayoutMenu = ({
   collsmall,
   handleCollSmall,
 }) => {
-  console.log("LayoutMenu.dataProfile: ", dataProfile);
-  console.log("LayoutMenu.sidemenu: ", sidemenu);
-  console.log("LayoutMenu.coll: ", coll);
-  console.log("LayoutMenu.collsmall: ", collsmall);
-  console.log("LayoutMenu.st: ", st);
-  console.log("LayoutMenu.handleCollSmall: ", handleCollSmall);
-
   const userFeat = [
     107, 108, 109, 110, 111, 112, 132, 119, 118, 117, 116, 115, 114, 133, 134,
     135, 136, 137, 138, 139, 140, 141, 142, 143,

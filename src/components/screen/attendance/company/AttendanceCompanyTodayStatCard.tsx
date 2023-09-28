@@ -32,7 +32,6 @@ export const AttendanceCompanyTodayStatCard: FC<
     {
       enabled: true,
       select: (response) => {
-        console.log("hasil response ", response);
         return {
           jumlah_hadir: response.data.data.users_attendances_count,
           jumlah_absen: response.data.data.absent_users_count,
@@ -73,7 +72,6 @@ export const AttendanceCompanyTodayStatCard: FC<
               <h4 className="text-5xl py-4 mb-2 text-mono80">
                 {data?.jumlah_absen || 0}
               </h4>
-              {console.log("datanua ", data)}
               <div>
                 <span className="font-bold text-mono30 text-s flex items-center">
                   <TeamOutlined rev={""} className="mr-1" /> Orang

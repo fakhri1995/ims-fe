@@ -1,4 +1,12 @@
+import { Empty, Input, Progress, Select, Spin } from "antd";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useEffect, useState } from "react";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
 
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
@@ -7,20 +15,55 @@ import {
   AttendanceCompanyTodayStatCard,
   CheckInOutCard,
 } from "components/screen/attendance";
+import { ClockCard } from "components/screen/client";
+import EmployeeList from "components/screen/client/EmployeeList";
 
 import { useAccessControl } from "contexts/access-control";
 
+import {
+  AlerttriangleIconSvg,
+  NewsIconSvg,
+  UserCheckIconSvg,
+  UserIconSvg,
+} from "../../components/icon";
+import KehadiranCard from "../../components/screen/client/KehadiranCard";
+import TaskCard from "../../components/screen/client/TaskCard";
+import { H1, H2, Label, Text } from "../../components/typography";
 import { ROLE_SUPER_ADMIN } from "../../lib/constants";
-import { SIDEBAR_CLIENT_ATTENDANCE } from "../../lib/features";
+import {
+  SIDEBAR_CLIENT_ATTENDANCE,
+  TASK_STATUS_LIST_GET,
+} from "../../lib/features";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Tooltip,
+} from "chart.js";
 import httpcookie from "cookie";
+
+Chart.register(
+  ArcElement,
+  Tooltip,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  BarElement,
+  PointElement
+);
 
 function DashboardIndex({ initProps, dataProfile, sidemenu }) {
   const { hasPermission, hasRole } = useAccessControl();
-  const [loading, setLoading] = useState(true);
+
+  const [loadingstatustaskdata, setloadingstatustaskdata] = useState(true);
   const pageBreadcrumbValue = [
     { name: "Dashboard Kehadiran " + dataProfile.data.company.name },
   ];
-
+  const isAllowedToGetStatusTaskList = hasPermission(TASK_STATUS_LIST_GET);
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -78,35 +121,18 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
             </div> */}
       {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) &&
       !hasRole(ROLE_SUPER_ADMIN) ? (
-        <div className="px-5 space-y-6">
-          {/* First row: real time clock, today attendance stat, maps */}
-          <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
-            {/* First column: real time clock, today attendance stat */}
-            <div className="flex flex-col w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5 space-y-6 justify-around">
-              <div className="min-h-[12rem] flex-grow">
-                <CheckInOutCard onlyShowTime />
-              </div>
-
-              <div className="min-h-[12rem] flex-grow h-full">
-                <AttendanceCompanyTodayStatCard />
-              </div>
-            </div>
-
-            {/* Second column: maps */}
-            <div className="flex w-full lg:w-3/5 xl:w-2/3 2xl:w-4/5">
-              <div className="mig-platform w-full">
-                <AttendanceCompanyLeafletMapNoSSR />
-              </div>
-            </div>
+        <div>
+          <div className="grid grid-cols-1 md:grid-cols-10 px-5 gap-x-3 gap-y-6">
+            <KehadiranCard initProps={initProps} />
+            <TaskCard initProps={initProps} />
+            {/* <div className="md:col-span-5 lg:col-span-3 flex flex-col shadow-md rounded-md"> */}
+            {/* <div className="flex items-center justify-between mb-4">
+              <H1>Waktu Lokal</H1>
+            </div> */}
+            <ClockCard onlyShowTime initProps={initProps} />
+            {/* </div> */}
           </div>
-          {/* Second row: Table all attendance */}
-          <div className="grid grid-cols-12">
-            <div className="col-span-full">
-              <AttendanceCompanyListSection
-                companyId={dataProfile.data.company.id.toString()}
-              />
-            </div>
-          </div>
+          <EmployeeList initProps={initProps} />
         </div>
       ) : (
         <h1>Selamat datang di dashboard</h1>

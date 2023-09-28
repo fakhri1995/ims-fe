@@ -63,7 +63,6 @@ const TaskCard = ({
   };
 
   const addAktifitas = (idTask) => {
-    console.log("hasil initprops ", initProps);
     let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addAttendanceTaskActivity`;
     let method = "POST";
     let payload = {
@@ -80,7 +79,6 @@ const TaskCard = ({
     })
       .then((response) => response.json())
       .then((response2) => {
-        console.log("response add inventory ", response2);
         if (response2.success) {
           notification.success({
             message: (
@@ -102,7 +100,6 @@ const TaskCard = ({
             duration: 3,
           });
         } else {
-          console.log("masuk ini bro ", response2);
           notification.error({
             message: response2.message,
             duration: 3,

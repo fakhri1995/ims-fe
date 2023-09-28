@@ -6,6 +6,7 @@ import type { FC } from "react";
 import {
   AsetIconSvg,
   CompanyIconSvg,
+  DashboardCompanyIconSvg,
   DashboardIconSvg,
   FiturIconSvg,
   FoldersIconSvg,
@@ -156,8 +157,19 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         </Menu.Item>
       )}
       {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN) && (
-        <Menu.Item key="1" icon={<KehadiranCompanyIconSvg />} title="Dashboard">
+        <Menu.Item key="1" icon={<DashboardCompanyIconSvg />} title="Dashboard">
           <Link href="/dashboard/home">
+            <p>Dashboard {dataPerusahaan}</p>
+          </Link>
+        </Menu.Item>
+      )}
+      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN) && (
+        <Menu.Item
+          key="kehadirancompany"
+          icon={<KehadiranCompanyIconSvg />}
+          title="Dashboard"
+        >
+          <Link href="/kehadiran/">
             <p>Kehadiran {dataPerusahaan}</p>
           </Link>
         </Menu.Item>

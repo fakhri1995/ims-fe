@@ -407,7 +407,6 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   };
 
   const onChangeCreateArtikel = (e) => {
-    console.log("onchange form ", e.target.name);
     setArtikelBlog({
       ...artikelBlog,
       [e.target.name]: e.target.value,
@@ -451,7 +450,6 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   };
 
   const onChangeTextContent = (text) => {
-    console.log("isi konten ", text);
     setArtikelBlog({
       ...artikelBlog,
       content: text,

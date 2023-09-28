@@ -132,7 +132,6 @@ const FormSolutionDetailIndex = ({
       )
         .then((response) => response.json())
         .then((response2) => {
-          console.log("hasil api ", response2);
           if (response2.success) {
             setDataFormSolution(response2.data);
           } else {
