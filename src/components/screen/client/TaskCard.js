@@ -1,39 +1,10 @@
-import {
-  Checkbox,
-  Empty,
-  Input,
-  Popover,
-  Progress,
-  Select,
-  Spin,
-  Table,
-  notification,
-} from "antd";
-import jscookie from "js-cookie";
-import {
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from "next-query-params";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import QueryString from "qs";
 import { useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 
-import ButtonSys from "../../../components/button";
-import {
-  AlerttriangleIconSvg,
-  DownIconSvg,
-  NewsIconSvg,
-  PakaiSewaIconSvg,
-  SearchIconSvg,
-  UpIconSvg,
-  UserCheckIconSvg,
-  UserIconSvg,
-} from "../../../components/icon";
 import { H1, H2, Label, Text } from "../../../components/typography";
+import { useAccessControl } from "../../../contexts/access-control";
+import { PROJECT_TASKS_COUNT_CLIENT_GET } from "../../../lib/features";
+import { permissionWarningNotification } from "../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -56,46 +27,17 @@ Chart.register(
 );
 
 function TaskCard({ initProps }) {
-  // const [statustaskdata, setstatustaskdata] = useState([
-  //     {
-  //       "status": 1,
-  //       "status_count": 76,
-  //       "status_name": "Overdue",
-  //       "percentage": 21.65
-  //     },
-  //     {
-  //       "status": 2,
-  //       "status_count": 194,
-  //       "status_name": "Open",
-  //       "percentage": 55.27
-  //     },
-  //     {
-  //       "status": 3,
-  //       "status_count": 1,
-  //       "status_name": "On progress",
-  //       "percentage": 0.28
-  //     },
-  //     {
-  //       "status": 4,
-  //       "status_count": 17,
-  //       "status_name": "On hold",
-  //       "percentage": 4.84
-  //     },
-  //     {
-  //       "status": 5,
-  //       "status_count": 33,
-  //       "status_name": "Completed",
-  //       "percentage": 9.4
-  //     },
-  //     {
-  //       "status": 6,
-  //       "status_count": 30,
-  //       "status_name": "Closed",
-  //       "percentage": 8.55
-  //     }])
+  const { hasPermission, hasRole } = useAccessControl();
   const [statustaskdata, setstatustaskdata] = useState([]);
   const [total, setTotal] = useState(0);
+  const isAllowedToGetProjectTaskCountCLinet = hasPermission(
+    PROJECT_TASKS_COUNT_CLIENT_GET
+  );
   useEffect(() => {
+    if (!isAllowedToGetProjectTaskCountCLinet) {
+      permissionWarningNotification("Mendapatkan", "Data Jumlah Project");
+      return;
+    }
     fetchData();
   }, []);
 
