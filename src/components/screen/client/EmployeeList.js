@@ -35,7 +35,7 @@ import {
 import { H1, H2, Label, Text } from "../../../components/typography";
 import DetailAgenCard from "./DetailAgenCard";
 
-function EmployeeList({ initProps }) {
+function EmployeeList({ initProps, companyId }) {
   const [dataStatusList, setDataStatusList] = useState([
     {
       id: 1,
@@ -52,6 +52,7 @@ function EmployeeList({ initProps }) {
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
+    company_ids: withDefault(StringParam, companyId),
     keyword: withDefault(StringParam, undefined),
     keyword_role: withDefault(StringParam, undefined),
     is_on_time: withDefault(NumberParam, undefined),
@@ -83,7 +84,7 @@ function EmployeeList({ initProps }) {
       render: (text, record, index) => {
         return {
           children: (
-            <>
+            <div className={"hover:cursor-pointer"}>
               <Popover
                 content={
                   <div>
@@ -94,7 +95,7 @@ function EmployeeList({ initProps }) {
               >
                 {text}
               </Popover>
-            </>
+            </div>
           ),
         };
       },
@@ -104,7 +105,7 @@ function EmployeeList({ initProps }) {
       dataIndex: "position",
       render: (text, record, index) => {
         return {
-          children: <>{text}</>,
+          children: <div className={"hover:cursor-pointer"}>{text}</div>,
         };
       },
     },
@@ -115,7 +116,7 @@ function EmployeeList({ initProps }) {
       render: (text, record, index) => {
         return {
           children: (
-            <div key={index} className="">
+            <div key={index} className={"hover:cursor-pointer"}>
               {record.attendance_user == null ? (
                 <div
                   className={"bg-onprogress py-0.5 px-2 rounded-[2px] w-[92px]"}
@@ -161,7 +162,7 @@ function EmployeeList({ initProps }) {
       render: (text, record, index) => {
         return {
           // children: <div className={'hover:cursor-pointer'} onClick={()=> router.push(`/kehadiran/projects/${record.id}`)}>{text}</div>,
-          children: <div>{text}</div>,
+          children: <div className={"hover:cursor-pointer"}>{text}</div>,
         };
       },
     },
@@ -172,7 +173,7 @@ function EmployeeList({ initProps }) {
       render: (text, record, index) => {
         return {
           children: (
-            <div key={index} className="flex gap-2.5">
+            <div key={index} className="flex gap-2.5 hover:cursor-pointer">
               <div
                 className={
                   "px-4 py-1 border border-secondary100 rounded-[5px] flex justify-center items-center"
@@ -664,7 +665,12 @@ function EmployeeList({ initProps }) {
             // onClick={onFilterProjects}
             // disabled={!isAllowedToGetProjects}
           >
-            <div className="flex flex-row space-x-2.5 w-full items-center">
+            <div
+              className={
+                "flex flex-row space-x-2.5 w-full items-center hover:cursor-pointer"
+              }
+              onClick={() => fetchData()}
+            >
               <SearchIconSvg size={15} color={`#ffffff`} />
               <p>Cari Agen</p>
             </div>

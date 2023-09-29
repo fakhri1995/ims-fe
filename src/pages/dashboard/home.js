@@ -132,7 +132,10 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
             <ClockCard onlyShowTime initProps={initProps} />
             {/* </div> */}
           </div>
-          <EmployeeList initProps={initProps} />
+          <EmployeeList
+            initProps={initProps}
+            companyId={dataProfile.data.company.id.toString()}
+          />
         </div>
       ) : (
         <h1>Selamat datang di dashboard</h1>
