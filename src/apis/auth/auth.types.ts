@@ -56,6 +56,7 @@ export interface Company {
   address: string;
   role: number;
   is_enabled: number;
+  check_in_time: string;
 }
 
 export interface Group {

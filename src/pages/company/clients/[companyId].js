@@ -65,6 +65,7 @@ import {
   SubLocationIconSvg,
   TrashIconSvg,
   WebIconSvg,
+  XIconSvg,
 } from "../../../components/icon";
 import { InputRequired, RadioRequired } from "../../../components/input";
 import st from "../../../components/layout-dashboard.module.css";
@@ -920,30 +921,34 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                   <Label>{rawdata?.singkatan ?? "-"}</Label>
                 </div>
                 {editable ? (
-                  <div className="flex justify-center items-center mt-5">
-                    <div
-                      className="mx-1"
+                  <div className="flex flex-wrap justify-center items-center mt-5 gap-2">
+                    <Buttonsys
+                      type="default"
                       onClick={() => {
                         seteditable(false);
                         setdisplaydata(rawdata);
                       }}
                     >
-                      <Buttonsys type="default">X Batalkan</Buttonsys>
-                    </div>
-                    <div className="mx-1" onClick={() => {}}>
-                      <Buttonsys
-                        type="primary"
-                        submit={true}
-                        onClick={() => {
-                          instanceForm.submit();
-                          setmodaledit(true);
-                        }}
-                        disabled={!isAllowedToUpdateCompany}
-                      >
+                      <div className="flex space-x-2 whitespace-nowrap">
+                        <XIconSvg size={15} color={`#35763B`} />
+                        <p>Batalkan</p>
+                      </div>
+                    </Buttonsys>
+
+                    <Buttonsys
+                      type="primary"
+                      submit={true}
+                      onClick={() => {
+                        instanceForm.submit();
+                        setmodaledit(true);
+                      }}
+                      disabled={!isAllowedToUpdateCompany}
+                    >
+                      <div className="flex space-x-2">
                         <CheckIconSvg size={15} color={`#ffffff`} />
-                        Simpan
-                      </Buttonsys>
-                    </div>
+                        <p>Simpan</p>
+                      </div>
+                    </Buttonsys>
                   </div>
                 ) : (
                   <div
@@ -1080,7 +1085,8 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       />
                     ) : (
                       <p className="mb-0">
-                        {moment(rawdata.check_in_time, "HH:mm:ss").isValid()
+                        {moment(rawdata.check_in_time, "HH:mm:ss").isValid() &&
+                        rawdata.check_in_time !== "00:00:00"
                           ? rawdata?.check_in_time
                           : "-"}
                       </p>
