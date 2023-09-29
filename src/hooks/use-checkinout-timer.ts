@@ -51,7 +51,11 @@ export const useCheckInOutTimer = (
     currentTime: formatDateToLocale(currentTime, realtimeFormat),
     /** Date hari ini dengan locale indonesia dan timezone asia jakarta */
     currentDate: formatDateToLocale(currentTime, "EEEE, d MMMM yyyy"),
-    /** Validasi apakah `currentTime` sudah melewati batas aman absen (terlambat atau tidaknya) */
-    isOverAttendTime: isAfter(currentTime, attendComparabableTime),
+    /** Validasi apakah `currentTime` sudah melewati batas aman absen (terlambat atau tidaknya),
+     * jika check in time adalah 00:00:00 (tidak ada batas aman/terlambat) maka isOverAttendTime selalu false*/
+    isOverAttendTime:
+      !attendSafeHour && !attendSafeMinute
+        ? false
+        : isAfter(currentTime, attendComparabableTime),
   };
 };

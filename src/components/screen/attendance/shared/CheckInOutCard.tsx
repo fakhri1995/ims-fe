@@ -28,6 +28,8 @@ export interface ICheckInOutCard {
   onlyShowTime?: boolean;
 
   onButtonClicked?: () => void;
+
+  checkInTime?: string;
 }
 
 /**
@@ -36,8 +38,18 @@ export interface ICheckInOutCard {
 export const CheckInOutCard: FC<ICheckInOutCard> = ({
   onlyShowTime = false,
   onButtonClicked,
+  checkInTime = "08:15:00",
 }) => {
-  const { currentTime, currentDate, isOverAttendTime } = useCheckInOutTimer();
+  const checkInArr = checkInTime?.split(":");
+  const checkInHour = Number(checkInArr[0]);
+  const checkInMin = Number(checkInArr[1]);
+
+  const { currentTime, currentDate, isOverAttendTime } = useCheckInOutTimer(
+    "HH:mm:ss",
+    checkInHour,
+    checkInMin
+  );
+
   const { hasCheckedInToday, attendeeStatus, isItSafeToCheckOut } =
     useGetAttendeeInfo(!onlyShowTime);
 
