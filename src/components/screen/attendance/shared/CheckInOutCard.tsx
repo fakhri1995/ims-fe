@@ -38,9 +38,9 @@ export interface ICheckInOutCard {
 export const CheckInOutCard: FC<ICheckInOutCard> = ({
   onlyShowTime = false,
   onButtonClicked,
-  checkInTime = "08:15:00",
+  checkInTime,
 }) => {
-  const checkInArr = checkInTime?.split(":");
+  const checkInArr = checkInTime?.split(":") || [0, 0];
   const checkInHour = Number(checkInArr[0]);
   const checkInMin = Number(checkInArr[1]);
 
