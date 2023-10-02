@@ -715,7 +715,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
 
   const getDataTagProject = () => {
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryListClient`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryListClient?id=${companyid}`,
       {
         method: `GET`,
         headers: {
@@ -782,7 +782,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
       }
     }
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectCategoryListClient`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectCategoryListClient?id=${companyid}`,
       {
         method: "PUT",
         headers: {
