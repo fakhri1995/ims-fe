@@ -10,6 +10,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import {
   ATTENDANCES_USER_GET,
   ATTENDANCE_ACTIVITIES_GET,
+  ATTENDANCE_TASK_ACTIVITIES_GET,
   ATTENDANCE_USER_ADMIN_GET,
   ATTENDANCE_USER_GET,
 } from "lib/features";
@@ -31,6 +32,7 @@ import {
   IRemoveUserAttendanceFormPayload,
   IUpdateAttendanceFormPayload,
 } from "./attendance-form-aktivitas.types";
+import { AttendanceTaskActivityService } from "./attendance-task-activity.service";
 import { AttendanceService } from "./attendance.service";
 import {
   AttendanceServiceQueryKeys,
@@ -149,6 +151,9 @@ export const useGetAttendeeInfo = (isEnabled: boolean = true) => {
   const isAllowedToGetAttendanceActivities = hasPermission(
     ATTENDANCE_ACTIVITIES_GET
   );
+  const isAllowedToGetAttendanceTaskActivities = hasPermission(
+    ATTENDANCE_TASK_ACTIVITIES_GET
+  );
 
   const [hasCheckedInToday, setHasCheckedInToday] = useState<
     boolean | undefined
@@ -189,6 +194,18 @@ export const useGetAttendeeInfo = (isEnabled: boolean = true) => {
     }
   );
 
+  const { data: todayTaskActivitiesLength } = useQuery(
+    [ATTENDANCE_TASK_ACTIVITIES_GET],
+    () => AttendanceTaskActivityService.find(axiosClient),
+    {
+      enabled: !isAllowedToGetAttendanceTaskActivities ? false : isEnabled,
+      select: (response) => {
+        const userTodayTaskActivities = response.data.data.today_activities;
+        return userTodayTaskActivities.length;
+      },
+    }
+  );
+
   const { data: attendancesLog } = useQuery(
     [AttendanceServiceQueryKeys.ATTENDANCES_USER_GET],
     () => AttendanceService.find(axiosClient),
@@ -199,8 +216,10 @@ export const useGetAttendeeInfo = (isEnabled: boolean = true) => {
   );
 
   useEffect(() => {
-    setIsItSafeToCheckOut(todayActivitiesLength > 0);
-  }, [todayActivitiesLength]);
+    setIsItSafeToCheckOut(
+      todayActivitiesLength > 0 || todayTaskActivitiesLength > 0
+    );
+  }, [todayActivitiesLength, todayTaskActivitiesLength]);
 
   useEffect(() => {
     if (!attendancesLog) {
