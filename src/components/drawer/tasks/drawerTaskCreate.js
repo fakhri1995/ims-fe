@@ -366,7 +366,6 @@ const DrawerTaskCreate = ({
     if (
       datacreate.task_type_id !== null &&
       datacreate.name !== "" &&
-      datacreate.location_id !== null &&
       datacreate.created_at !== null &&
       datacreate.deadline !== null &&
       datacreate.repeat !== -1
@@ -555,15 +554,6 @@ const DrawerTaskCreate = ({
           <div className="mb-6 px-3 flex flex-col">
             <div className="flex mb-2">
               <Label>Lokasi</Label>
-              <span className="locations"></span>
-              <style jsx>
-                {`
-                                    .locations::before{
-                                        content: '*';
-                                        color: red;
-                                    }
-                                `}
-              </style>
             </div>
             <TreeSelect
               allowClear
