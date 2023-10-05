@@ -168,13 +168,13 @@ const DrawerTaskCreate = ({
           setnowend(null);
           setrepeatable(false);
           onvisible(false);
-          notification["success"]({
-            message: res2.message,
+          notification.success({
+            message: res2.message || "Task berhasil ditambahkan",
             duration: 3,
           });
         } else {
-          notification["error"]({
-            message: res2.message,
+          notification.error({
+            message: res2.message.errorInfo[2] || "Gagal menambahkan task",
             duration: 3,
           });
         }
