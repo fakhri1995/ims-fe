@@ -20,6 +20,7 @@ const logDetailLabel = {
   updated_at: "Tanggal Diubah",
   deleted_at: "Tanggal Dihapus",
   task_staffs: "Staff Task",
+  project_staffs: "Staff Proyek",
 };
 
 const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
