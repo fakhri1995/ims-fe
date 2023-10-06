@@ -1427,8 +1427,11 @@ const ProjectDetailIndex = ({
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           setRefreshTasks={setRefreshTasks}
+          dataProfile={dataProfile}
           defaultProject={dataProject}
           taskId={currentTaskId}
+          refreshProject={refresh}
+          setRefreshProject={setRefresh}
         />
       </AccessControl>
       <AccessControl hasPermission={PROJECT_TASK_GET}>
@@ -1445,6 +1448,9 @@ const ProjectDetailIndex = ({
           setRefreshTasks={setRefreshTasks}
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
+          refreshProject={refresh}
+          setRefreshProject={setRefresh}
+          dataProfile={dataProfile}
         />
       </AccessControl>
     </LayoutDashboard>
