@@ -639,8 +639,13 @@ export const AttendanceStaffAktivitasSection: FC<
                         <p>{moment(task.updated_at).format("HH:mm")}</p>
                       </div>
                       <button
-                        className="bg-transparent hover:opacity-75 -mt-0.5"
+                        className={`bg-transparent hover:opacity-75 ${
+                          !isAllowedToDeleteActivity
+                            ? "cursor-not-allowed"
+                            : undefined
+                        }`}
                         onClick={() => handleDeleteTaskActivity(task.id)}
+                        disabled={!isAllowedToDeleteActivity}
                       >
                         <XIconSvg size={24} color="#BF4A40" />
                       </button>
