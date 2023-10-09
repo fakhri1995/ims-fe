@@ -177,6 +177,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2.2. Table Projects List (Semua Proyek)
   // filter data
   const [refreshTasks, setRefreshTasks] = useState(-1);
+  const [refreshProject, setRefreshProject] = useState(-1);
   const [loadingStatusList, setLoadingStatusList] = useState(false);
   const [dataStatusList, setDataStatusList] = useState([]);
 
@@ -1173,6 +1174,9 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
           isOutsideProject={true}
+          refreshProject={refreshProject}
+          setRefreshProject={setRefreshProject}
+          dataProfile={dataProfile}
         />
       </AccessControl>
     </LayoutDashboard>

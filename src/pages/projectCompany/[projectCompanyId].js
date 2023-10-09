@@ -1379,6 +1379,7 @@ const ProjectCompanyDetail = ({
           setRefreshTasks={setRefreshTasks}
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
+          dataProfile={dataProfile}
         />
       </AccessControl>
     </LayoutDashboard>

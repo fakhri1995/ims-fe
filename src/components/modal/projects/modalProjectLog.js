@@ -78,7 +78,7 @@ const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
     setDataTableLog(finalTable);
   }, [dataLog]);
 
-  // console.log({ dataTableLog });
+  // console.log({ dataLog });
 
   return (
     <Modal

@@ -41,8 +41,6 @@ const TaskCard = ({
     ATTENDANCE_TASK_ACTIVITY_ADD
   );
   function checkTask() {
-    // console.log('current task ',taskStaffs)
-    // console.log('current profile ',dataProfile)
     if (taskStaffs.length > 0) {
       let check = 0;
       for (let a = 0; a < taskStaffs.length; a++) {
@@ -198,7 +196,7 @@ const TaskCard = ({
                 </Avatar.Group>
               </div>
             ) : taskStaffs?.length > 0 ? (
-              <div className="flex space-x-2 items-center justify-end">
+              <div className="flex gap-2 items-center justify-end">
                 <p
                   className={`mig-caption--bold ${
                     isPastDeadline ? "text-warning" : "text-mono30"
@@ -246,7 +244,7 @@ const TaskCard = ({
             <div className={"flex justify-center"}>
               <PlusIconSvg color={"white"} size={20} />
               <p className={"text-white text-xs ml-2.5 self-center"}>
-                Tambahkan ke Aktifitas
+                Tambahkan ke Aktivitas
               </p>
             </div>
           </div>
