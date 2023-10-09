@@ -211,7 +211,7 @@ const TaskCard = ({
                         "staging/Users/default_user.png"
                     )}
                     alt={taskStaffs?.[0]?.profile_image?.description}
-                    className="w-8 h-8 bg-cover object-cover rounded-full"
+                    className="w-6 h-6 bg-cover object-cover rounded-full"
                   />
                 ) : isPastDeadline ? (
                   <div
