@@ -623,11 +623,11 @@ const ModalProjectTaskDetailUpdate = ({
   switch (currentState) {
     case "detail":
       title = (
-        <div className="grid grid-cols-6 items-center space-x-2 mr-5">
-          <p className="mig-heading--4 col-span-4">
+        <div className="flex flex-wrap justify-between items-center gap-2 md:mr-5">
+          <p className="mig-heading--4 w-7/12">
             {dataTask.name} ({dataTask.ticket_number})
           </p>
-          <div className="col-span-2">
+          <div>
             <ButtonSys
               type={"default"}
               color={"danger"}
@@ -646,27 +646,31 @@ const ModalProjectTaskDetailUpdate = ({
       );
       body = (
         <Spin spinning={loadingDataTask}>
-          <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-            <div className="flex flex-col space-y-2">
-              <p className="mig-caption--bold">Proyek:</p>
-              <p>{dataTask.project?.name ?? "-"}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 md:gap-y-6">
+            <div className="flex gap-2 col-span-2">
+              <div className="w-1/2">
+                <p className="mig-caption--bold">Proyek:</p>
+                <p>{dataTask.project?.name ?? "-"}</p>
+              </div>
+
+              {isOutsideProject && dataTask.project_id && (
+                <button
+                  onClick={() => rt.push(`/projects/${dataTask?.project_id}`)}
+                  className="flex items-start bg-transparent w-1/2 justify-end"
+                  type="button"
+                  disabled={!isAllowedToGetProject}
+                >
+                  <div className="flex space-x-2 items-center">
+                    <ExternalLinkIconSvg color={"#35763B"} size={16} />
+                    <p className="mig-caption--bold text-primary100 hover:text-primary75">
+                      Lihat Proyek Terkait
+                    </p>
+                  </div>
+                </button>
+              )}
             </div>
-            {isOutsideProject && dataTask.project_id && (
-              <button
-                onClick={() => rt.push(`/projects/${dataTask?.project_id}`)}
-                className="flex justify-end items-start bg-transparent "
-                type="button"
-                disabled={!isAllowedToGetProject}
-              >
-                <div className="flex space-x-2 items-center">
-                  <ExternalLinkIconSvg color={"#35763B"} size={16} />
-                  <p className="mig-caption--bold text-primary100 hover:text-primary75">
-                    Lihat Proyek Terkait
-                  </p>
-                </div>
-              </button>
-            )}
-            <div className="flex flex-col space-y-2 md:col-span-2">
+
+            <div className="flex flex-col space-y-2 col-span-2">
               <p className="mig-caption--bold">Status:</p>
               <div>
                 <Select
@@ -708,7 +712,7 @@ const ModalProjectTaskDetailUpdate = ({
                 </Select>
               </div>
             </div>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 col-span-2 md:col-span-1">
               <p className="mig-caption--bold">Tanggal Dimulai:</p>
               <p>
                 {momentFormatDate(
@@ -718,7 +722,7 @@ const ModalProjectTaskDetailUpdate = ({
                 )}
               </p>
             </div>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 col-span-2 md:col-span-1">
               <p className="mig-caption--bold">Ekspektasi Tanggal Selesai:</p>
               <p>
                 {momentFormatDate(
@@ -728,7 +732,7 @@ const ModalProjectTaskDetailUpdate = ({
                 )}
               </p>
             </div>
-            <div className="flex flex-col space-y-2 md:col-span-2">
+            <div className="flex flex-col space-y-2 col-span-2">
               <p className="mig-caption--bold">Staff Task:</p>
               <div className="flex items-center space-x-2">
                 {dataTask?.task_staffs?.length > 1 ? (
@@ -792,13 +796,13 @@ const ModalProjectTaskDetailUpdate = ({
                 )}
               </div>
             </div>
-            <div className="flex flex-col space-y-2 md:col-span-2">
+            <div className="flex flex-col space-y-2 col-span-2">
               <p className="mig-caption--bold">Deskripsi Task</p>
               <div>
                 {dataTask.description ? parse(dataTask.description) : "-"}
               </div>
             </div>
-            <div className="flex flex-col space-y-2 md:col-span-2">
+            <div className="flex flex-col space-y-2 col-span-2">
               <p className="mig-caption--bold">Tag</p>
               <div className="flex flex-wrap">
                 {dataTask?.categories?.length
@@ -1148,55 +1152,55 @@ const ModalProjectTaskDetailUpdate = ({
 
               {/* If self is not in task staffs and project staffs */}
               {dataStaffsOrGroups.every(
-                (item) =>
-                  item?.id !== dataProfile?.data?.id &&
-                  dataTaskUpdate.task_staffs?.every(
-                    (item) =>
-                      (item?.value || item?.id || item) !==
-                      dataProfile?.data?.id
-                  )
-              ) && (
-                <Tag
-                  closable
-                  onClose={() => {
-                    // Circle Plus Icon (add self to task and project staff)
-                    let selfUser = {
-                      children: dataProfile?.data?.name,
-                      key: dataProfile?.data?.id,
-                      name: dataProfile?.data?.name,
-                      position: dataProfile?.data?.position,
-                      profile_image: dataProfile?.data?.profile_image,
-                      value: dataProfile?.data?.id,
-                    };
+                (item) => item?.id !== dataProfile?.data?.id
+              ) &&
+                dataTaskUpdate.task_staffs?.every(
+                  (item) =>
+                    (item?.value || item?.id || item) !== dataProfile?.data?.id
+                ) && (
+                  <Tag
+                    closable
+                    onClose={() => {
+                      // Circle Plus Icon (add self to task and project staff)
+                      let selfUser = {
+                        children: dataProfile?.data?.name,
+                        key: dataProfile?.data?.id,
+                        name: dataProfile?.data?.name,
+                        position: dataProfile?.data?.position,
+                        profile_image: dataProfile?.data?.profile_image,
+                        value: dataProfile?.data?.id,
+                      };
 
-                    // add self to project staff
-                    handleAddProjectStaff(selfUser);
+                      // add self to project staff
+                      handleAddProjectStaff(selfUser);
 
-                    // add self to task staff
-                    setDataTaskUpdate((prev) => ({
-                      ...prev,
-                      task_staffs: [...prev.task_staffs, selfUser],
-                    }));
-                  }}
-                  closeIcon={<CirclePlusIconSvg size={16} color={"#808080"} />}
-                  className="flex items-center p-2 w-max mb-2 opacity-50"
-                >
-                  <div className="flex items-center space-x-2">
-                    <img
-                      src={generateStaticAssetUrl(
-                        dataProfile?.data?.profile_image?.link ??
-                          "staging/Users/default_user.png"
-                      )}
-                      alt={dataProfile?.data?.name}
-                      className="w-6 h-6 bg-cover object-cover rounded-full"
-                    />
-                    <p className="truncate">
-                      <strong>{dataProfile?.data?.name}</strong> -{" "}
-                      {dataProfile?.data?.position}
-                    </p>
-                  </div>
-                </Tag>
-              )}
+                      // add self to task staff
+                      setDataTaskUpdate((prev) => ({
+                        ...prev,
+                        task_staffs: [...prev.task_staffs, selfUser],
+                      }));
+                    }}
+                    closeIcon={
+                      <CirclePlusIconSvg size={16} color={"#808080"} />
+                    }
+                    className="flex items-center p-2 w-max mb-2 opacity-50"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <img
+                        src={generateStaticAssetUrl(
+                          dataProfile?.data?.profile_image?.link ??
+                            "staging/Users/default_user.png"
+                        )}
+                        alt={dataProfile?.data?.name}
+                        className="w-6 h-6 bg-cover object-cover rounded-full"
+                      />
+                      <p className="truncate">
+                        <strong>{dataProfile?.data?.name}</strong> -{" "}
+                        {dataProfile?.data?.position}
+                      </p>
+                    </div>
+                  </Tag>
+                )}
             </div>
           </div>
 
@@ -1328,7 +1332,7 @@ const ModalProjectTaskDetailUpdate = ({
       break;
   }
 
-  console.log({ dataTask });
+  // console.log({ dataTask });
   return modalDelete ? (
     <ModalHapus2
       title={`Perhatian`}
