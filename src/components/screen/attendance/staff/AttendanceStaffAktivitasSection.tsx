@@ -618,7 +618,7 @@ export const AttendanceStaffAktivitasSection: FC<
                   <div key={task.id} className="flex-none rounded-md ">
                     <div
                       className={
-                        "flex px-4 py-2 gap-2 border border-inputkategori"
+                        "flex items-center px-4 py-2 gap-2 border border-inputkategori"
                       }
                     >
                       <div className={"w-10/12"}>
@@ -639,8 +639,13 @@ export const AttendanceStaffAktivitasSection: FC<
                         <p>{moment(task.updated_at).format("HH:mm")}</p>
                       </div>
                       <button
-                        className="bg-transparent hover:opacity-75"
+                        className={`bg-transparent hover:opacity-75 ${
+                          !isAllowedToDeleteActivity
+                            ? "cursor-not-allowed"
+                            : undefined
+                        }`}
                         onClick={() => handleDeleteTaskActivity(task.id)}
+                        disabled={!isAllowedToDeleteActivity}
                       >
                         <XIconSvg size={24} color="#BF4A40" />
                       </button>
