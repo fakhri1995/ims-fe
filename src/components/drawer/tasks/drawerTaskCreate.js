@@ -168,13 +168,13 @@ const DrawerTaskCreate = ({
           setnowend(null);
           setrepeatable(false);
           onvisible(false);
-          notification["success"]({
-            message: res2.message,
+          notification.success({
+            message: res2.message || "Task berhasil ditambahkan",
             duration: 3,
           });
         } else {
-          notification["error"]({
-            message: res2.message,
+          notification.error({
+            message: res2.message.errorInfo[2] || "Gagal menambahkan task",
             duration: 3,
           });
         }
@@ -366,7 +366,6 @@ const DrawerTaskCreate = ({
     if (
       datacreate.task_type_id !== null &&
       datacreate.name !== "" &&
-      datacreate.location_id !== null &&
       datacreate.created_at !== null &&
       datacreate.deadline !== null &&
       datacreate.repeat !== -1
@@ -555,15 +554,6 @@ const DrawerTaskCreate = ({
           <div className="mb-6 px-3 flex flex-col">
             <div className="flex mb-2">
               <Label>Lokasi</Label>
-              <span className="locations"></span>
-              <style jsx>
-                {`
-                                    .locations::before{
-                                        content: '*';
-                                        color: red;
-                                    }
-                                `}
-              </style>
             </div>
             <TreeSelect
               allowClear

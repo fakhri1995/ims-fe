@@ -171,7 +171,7 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
             </div>
           }
         >
-          <div className="grid gap-2 lg:gap-6">
+          <div className="grid grid-cols-1 gap-2 lg:gap-6">
             {/* Search by keyword (kata kunci) */}
             <Input
               defaultValue={searchingFilterNotes}
@@ -221,7 +221,7 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
                         className="cursor-pointer grid grid-cols-1"
                       >
                         <div className="flex justify-between items-center mb-2">
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2 w-2/3">
                             <img
                               src={generateStaticAssetUrl(
                                 note?.causer?.profile_image?.link ??
@@ -235,7 +235,7 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
                               {note?.causer?.roles?.[0]?.name}
                             </p>
                           </div>
-                          <p className="text-right">
+                          <p className="text-right w-1/3">
                             {momentFormatDate(
                               note?.created_at,
                               "-",
