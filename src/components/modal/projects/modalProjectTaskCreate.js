@@ -772,55 +772,55 @@ const ModalProjectTaskCreate = ({
 
               {/* If self is not in task and project staffs */}
               {dataStaffsOrGroups.every(
-                (item) =>
-                  item?.id !== dataProfile?.data?.id &&
-                  dataTask.task_staffs?.every(
-                    (item) =>
-                      (item?.value || item?.id || item) !==
-                      dataProfile?.data?.id
-                  )
-              ) && (
-                <Tag
-                  closable
-                  onClose={() => {
-                    // Circle Plus Icon (add self to task and project staff)
-                    let selfUser = {
-                      children: dataProfile?.data?.name,
-                      key: dataProfile?.data?.id,
-                      name: dataProfile?.data?.name,
-                      position: dataProfile?.data?.position,
-                      profile_image: dataProfile?.data?.profile_image,
-                      value: dataProfile?.data?.id,
-                    };
+                (item) => item?.id !== dataProfile?.data?.id
+              ) &&
+                dataTask.task_staffs?.every(
+                  (item) =>
+                    (item?.value || item?.id || item) !== dataProfile?.data?.id
+                ) && (
+                  <Tag
+                    closable
+                    onClose={() => {
+                      // Circle Plus Icon (add self to task and project staff)
+                      let selfUser = {
+                        children: dataProfile?.data?.name,
+                        key: dataProfile?.data?.id,
+                        name: dataProfile?.data?.name,
+                        position: dataProfile?.data?.position,
+                        profile_image: dataProfile?.data?.profile_image,
+                        value: dataProfile?.data?.id,
+                      };
 
-                    // add self to project staff
-                    handleAddProjectStaff(selfUser);
+                      // add self to project staff
+                      handleAddProjectStaff(selfUser);
 
-                    // add self to task staff
-                    setDataTask((prev) => ({
-                      ...prev,
-                      task_staffs: [...prev.task_staffs, selfUser],
-                    }));
-                  }}
-                  closeIcon={<CirclePlusIconSvg size={16} color={"#808080"} />}
-                  className="flex items-center p-2 w-max mb-2 opacity-50"
-                >
-                  <div className="flex items-center space-x-2">
-                    <img
-                      src={generateStaticAssetUrl(
-                        dataProfile?.data?.profile_image?.link ??
-                          "staging/Users/default_user.png"
-                      )}
-                      alt={dataProfile?.data?.name}
-                      className="w-6 h-6 bg-cover object-cover rounded-full"
-                    />
-                    <p className="truncate">
-                      <strong>{dataProfile?.data?.name}</strong> -{" "}
-                      {dataProfile?.data?.position}
-                    </p>
-                  </div>
-                </Tag>
-              )}
+                      // add self to task staff
+                      setDataTask((prev) => ({
+                        ...prev,
+                        task_staffs: [...prev.task_staffs, selfUser],
+                      }));
+                    }}
+                    closeIcon={
+                      <CirclePlusIconSvg size={16} color={"#808080"} />
+                    }
+                    className="flex items-center p-2 w-max mb-2 opacity-50"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <img
+                        src={generateStaticAssetUrl(
+                          dataProfile?.data?.profile_image?.link ??
+                            "staging/Users/default_user.png"
+                        )}
+                        alt={dataProfile?.data?.name}
+                        className="w-6 h-6 bg-cover object-cover rounded-full"
+                      />
+                      <p className="truncate">
+                        <strong>{dataProfile?.data?.name}</strong> -{" "}
+                        {dataProfile?.data?.position}
+                      </p>
+                    </div>
+                  </Tag>
+                )}
             </div>
 
             <Form.Item label="Deskripsi Task" name={"description"}>
