@@ -37,6 +37,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import {
   PROJECTS_COUNT_GET,
   PROJECTS_DEADLINE_GET,
+  PROJECTS_EXPORT,
   PROJECTS_GET,
   PROJECT_ADD,
   PROJECT_CATEGORIES_GET,
@@ -118,6 +119,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToAddProject = hasPermission(PROJECT_ADD);
   const isAllowedToUpdateProject = hasPermission(PROJECT_UPDATE);
   const isAllowedToDeleteProject = hasPermission(PROJECT_DELETE);
+  const isAllowedToExportProjects = hasPermission(PROJECTS_EXPORT);
 
   const isAllowedToAddTask = hasPermission(PROJECT_TASK_ADD);
   const isAllowedToGetTask = hasPermission(PROJECT_TASK_GET);
@@ -825,7 +827,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             showSearch
             mode="multiple"
             defaultValue={queryParams.category_ids}
-            disabled={!isAllowedToGetProjects}
+            disabled={!isAllowedToGetTagList}
             placeholder="Semua Tag"
             style={{ width: `100%` }}
             onChange={(value) => {
@@ -1143,7 +1145,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
         <div className="grid grid-cols-2 lg:flex flex-col lg:col-span-2 gap-6">
           {/* Tambah Proyek Baru */}
-          <div className="">
+          <div className="col-span-2 md:col-span-1 lg:col-span-2">
             <button
               onClick={handleAddProject}
               className="mig-platform--p-0 px-4 py-2 w-full flex space-x-2 items-center text-white bg-primary100 disabled:bg-gray-200 hover:bg-primary75 overflow-hidden"
@@ -1155,21 +1157,21 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
 
           {/* Kelola Status Task & Proyek */}
-          <div className="flex justify-between">
+          <div className="flex gap-6 justify-between col-span-2 md:col-span-1 lg:col-span-2">
             <button
               onClick={() => setModalManageStatus(true)}
               className="mig-platform--p-0 px-4 py-2 w-[85%] flex space-x-2 items-center text-white bg-mono50 disabled:bg-gray-200 hover:bg-opacity-75 overflow-hidden"
               disabled={!isAllowedToEditStatus}
             >
               <AdjusmentsHorizontalIconSvg color={"#ffffff"} size={32} />
-              <p className="font-bold text-sm text-left">
+              <p className="font-bold text-xs text-left">
                 Kelola Status Task & Proyek
               </p>
             </button>
             <button
               onClick={() => exportExcelProject()}
               className="mig-platform--p-0 px-4 py-2 w-[10%] flex space-x-2 items-center justify-center bg-primary100 disabled:bg-gray-200 hover:bg-opacity-75 overflow-hidden"
-              disabled={!isAllowedToEditStatus}
+              disabled={!isAllowedToExportProjects}
             >
               <DownloadIconSvg size={24} color={"#ffffff"} />
             </button>
@@ -1335,6 +1337,9 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
           isOutsideProject={true}
+          refreshProject={refresh}
+          setRefreshProject={setRefresh}
+          dataProfile={dataProfile}
         />
       </AccessControl>
 

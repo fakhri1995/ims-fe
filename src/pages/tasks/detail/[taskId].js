@@ -1207,10 +1207,10 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
           task_type_id: res2.data.task_type_id,
           name: res2.data.name,
           description: res2.data.description,
-          location_id: res2.data.location.top_parent
-            ? res2.data.location.top_parent.id
+          location_id: res2.data.location?.top_parent
+            ? res2.data.location?.top_parent.id
             : res2.data.location_id,
-          subloc_id: res2.data.location.top_parent
+          subloc_id: res2.data.location?.top_parent
             ? res2.data.location_id
             : null,
           reference_id: res2.data.reference_id,
@@ -1237,7 +1237,9 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
           assetname: doc.asset_name,
         }));
         settriggersubloc(
-          res2.data.location.top_parent ? res2.data.location.top_parent.id : ""
+          res2.data.location?.top_parent
+            ? res2.data.location?.top_parent.id
+            : ""
         );
         setselecteditems(tempitems);
         setrepeatable(res2.data.repeat === 0 ? false : true);
@@ -3335,7 +3337,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 <p className="mb-0 text-sm text-gray-500">
                   {displaytask.location === null
                     ? `-`
-                    : displaytask.location.full_location}
+                    : displaytask.location?.full_location}
                 </p>
               </div>
               <div className="my-3 flex flex-col">

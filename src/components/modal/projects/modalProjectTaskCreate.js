@@ -21,9 +21,10 @@ import { useAccessControl } from "contexts/access-control";
 import { GROUPS_GET, PROJECT_CATEGORIES_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import { PROJECT_UPDATE } from "../../../lib/features";
 import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
-import { InfoCircleIconSvg } from "../../icon";
+import { CirclePlusIconSvg, InfoCircleIconSvg } from "../../icon";
 
 // Quill library for text editor has to be imported dynamically
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -41,13 +42,17 @@ const ModalProjectTaskCreate = ({
   isAddMyTask,
   dataProfile,
   taskId,
+  refreshProject,
+  setRefreshProject,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
+  const isAllowedToGetTagList = hasPermission(PROJECT_CATEGORIES_GET);
+  const isAllowedToUpdateProject = hasPermission(PROJECT_UPDATE);
+
   const [form] = Form.useForm();
   const searchTimeoutRef = useRef(null);
-  const [loadingTagList, setLoadingTagList] = useState(false);
 
   // 1. USE STATE
   const [dataTask, setDataTask] = useState({
@@ -61,15 +66,20 @@ const ModalProjectTaskCreate = ({
   });
 
   const [loading, setLoading] = useState(false);
+  const [loadingTagList, setLoadingTagList] = useState(false);
+
   const [isDetailOn, setIsDetailOn] = useState(false);
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
   const [isStaffsFromAgents, setIsStaffsFromAgents] = useState(false);
-  const isAllowedToGetTagList = hasPermission(PROJECT_CATEGORIES_GET);
+
   const [dataProjectList, setDataProjectList] = useState([]);
+  const [currentProject, setCurrentProject] = useState({});
+
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [tagList, setTagList] = useState([]);
   const [searchField, setSearchField] = useState("");
+
   // 2. USE EFFECT
   // 2.1. Set default project if used in project detail page
   useEffect(() => {
@@ -165,7 +175,10 @@ const ModalProjectTaskCreate = ({
       }
     };
 
-    // If task doesn't have a project, then staff options will be taken from users (agent) or groups
+    /**
+     * If task doesn't have a project,
+     * then staff options will be taken from users (agent) or groups
+     *  */
     if (!dataTask.project_id) {
       getStaffOptionsFromAgents();
     } else {
@@ -185,10 +198,14 @@ const ModalProjectTaskCreate = ({
       )
         .then((res) => res.json())
         .then((res2) => {
+          setCurrentProject(res2.data);
           if (res2.data?.project_staffs?.length > 0) {
             setDataStaffsOrGroups(res2.data?.project_staffs);
           } else {
-            // if project has no staff, then staff options will be taken from users (agent) or group
+            /**
+             * if project has no staff,
+             * then staff options will be taken from users (agent) or group
+             * */
             getStaffOptionsFromAgents();
           }
         })
@@ -205,6 +222,7 @@ const ModalProjectTaskCreate = ({
     isSwitchGroup,
     dataTask.project_id,
     visible,
+    refreshProject,
   ]);
 
   // 2.4. Auto fill task staff with self user id (in Tambah Task Saya)
@@ -265,6 +283,7 @@ const ModalProjectTaskCreate = ({
     }
     setSearchField(value);
   };
+
   // 3. HANDLER
   const clearData = () => {
     setDataTask({
@@ -402,6 +421,59 @@ const ModalProjectTaskCreate = ({
       .catch((err) => {
         notification.error({
           message: `Gagal menghapus task. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const handleAddProjectStaff = (newStaff) => {
+    if (!isAllowedToUpdateProject) {
+      permissionWarningNotification("Mengubah", "Proyek");
+      return;
+    }
+
+    const newProjectStaffs = [...currentProject?.project_staffs, newStaff];
+
+    const payload = {
+      ...currentProject,
+      id: currentProject?.id,
+      proposed_bys: currentProject?.proposed_bys?.map((staff) =>
+        Number(staff.id)
+      ),
+      project_staffs: newProjectStaffs.map((staff) =>
+        Number(staff.key || staff.id)
+      ),
+      categories: currentProject?.categories?.map((item) => item?.name),
+    };
+
+    setLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProject`, {
+      method: `PUT`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setRefreshProject((prev) => prev + 1);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengubah proyek. ${err.response}`,
           duration: 3,
         });
       })
@@ -697,6 +769,58 @@ const ModalProjectTaskCreate = ({
                   </Tag>
                 );
               })}
+
+              {/* If self is not in task and project staffs */}
+              {dataStaffsOrGroups.every(
+                (item) => item?.id !== dataProfile?.data?.id
+              ) &&
+                dataTask.task_staffs?.every(
+                  (item) =>
+                    (item?.value || item?.id || item) !== dataProfile?.data?.id
+                ) && (
+                  <Tag
+                    closable
+                    onClose={() => {
+                      // Circle Plus Icon (add self to task and project staff)
+                      let selfUser = {
+                        children: dataProfile?.data?.name,
+                        key: dataProfile?.data?.id,
+                        name: dataProfile?.data?.name,
+                        position: dataProfile?.data?.position,
+                        profile_image: dataProfile?.data?.profile_image,
+                        value: dataProfile?.data?.id,
+                      };
+
+                      // add self to project staff
+                      handleAddProjectStaff(selfUser);
+
+                      // add self to task staff
+                      setDataTask((prev) => ({
+                        ...prev,
+                        task_staffs: [...prev.task_staffs, selfUser],
+                      }));
+                    }}
+                    closeIcon={
+                      <CirclePlusIconSvg size={16} color={"#808080"} />
+                    }
+                    className="flex items-center p-2 w-max mb-2 opacity-50"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <img
+                        src={generateStaticAssetUrl(
+                          dataProfile?.data?.profile_image?.link ??
+                            "staging/Users/default_user.png"
+                        )}
+                        alt={dataProfile?.data?.name}
+                        className="w-6 h-6 bg-cover object-cover rounded-full"
+                      />
+                      <p className="truncate">
+                        <strong>{dataProfile?.data?.name}</strong> -{" "}
+                        {dataProfile?.data?.position}
+                      </p>
+                    </div>
+                  </Tag>
+                )}
             </div>
 
             <Form.Item label="Deskripsi Task" name={"description"}>
