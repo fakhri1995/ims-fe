@@ -31,6 +31,7 @@ import TaskCard from "../../components/screen/client/TaskCard";
 import { H1, H2, Label, Text } from "../../components/typography";
 import { ROLE_SUPER_ADMIN } from "../../lib/constants";
 import {
+  PROJECT_TASKS_COUNT_CLIENT_GET,
   SIDEBAR_CLIENT_ATTENDANCE,
   TASK_STATUS_LIST_GET,
 } from "../../lib/features";
@@ -124,7 +125,9 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
         <div>
           <div className="grid grid-cols-1 md:grid-cols-10 px-5 gap-x-3 gap-y-6">
             <KehadiranCard initProps={initProps} />
-            <TaskCard initProps={initProps} />
+            {hasPermission(PROJECT_TASKS_COUNT_CLIENT_GET) && (
+              <TaskCard initProps={initProps} />
+            )}
             {/* <div className="md:col-span-5 lg:col-span-3 flex flex-col shadow-md rounded-md"> */}
             {/* <div className="flex items-center justify-between mb-4">
               <H1>Waktu Lokal</H1>
