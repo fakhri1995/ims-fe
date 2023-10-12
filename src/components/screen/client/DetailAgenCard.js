@@ -24,7 +24,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import QueryString from "qs";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import Slider from "react-slick";
 
@@ -101,6 +101,7 @@ function DetailAgenCard({ initProps, visible, onClose, dataAgen }) {
   const isAllowedToGetProject = hasPermission(PROJECTS_GET);
   const [dataProject, setDataProject] = useState([]);
   const [dataMonth, setDataMonth] = useState([]);
+  const slider = useRef(null);
   // const [jumlahAktifitas, setJumlahAktifitas] = useState(0);
   // const [imageUrl, setImageUrl] = useState(null);
   // const [checkinTIme, setCheckInTIme] = useState(null);
@@ -121,7 +122,8 @@ function DetailAgenCard({ initProps, visible, onClose, dataAgen }) {
     infinite: false,
     speed: 500,
     slidesToShow: 7,
-    slidesToScroll: 5,
+    slidesToScroll: 7,
+    initialSlide: 8,
   };
 
   useEffect(() => {
@@ -242,36 +244,38 @@ function DetailAgenCard({ initProps, visible, onClose, dataAgen }) {
       .then((res2) => {
         if (res2.success) {
           if (month == moment().format("MM")) {
-            let dataTemp = [];
             let dataAttendanceTemp = null;
-            for (let a = 0; a < res2.data.length; a++) {
-              if (
-                moment(res2.data[a].date).isBefore(
-                  moment().format("YYYYY-MM-DD")
-                )
-              ) {
-                let dateCompare = moment(res2.data[a].date).add(4, "days");
-                if (dateCompare.isAfter(moment().format("YYYY-MM-DD"))) {
-                  dataTemp.push(res2.data[a]);
-                }
-              } else {
-                dataTemp.push(res2.data[a]);
-              }
+            // for (let a = 0; a < res2.data.length; a++) {
+            //   if (
+            //     moment(res2.data[a].date).isBefore(
+            //       moment().format("YYYYY-MM-DD")
+            //     )
+            //   ) {
+            //     let dateCompare = moment(res2.data[a].date).add(4, "days");
+            //     if (dateCompare.isAfter(moment().format("YYYY-MM-DD"))) {
+            //       dataTemp.push(res2.data[a]);
+            //     }
+            //   } else {
+            //     dataTemp.push(res2.data[a]);
+            //   }
 
-              if (
-                moment(res2.data[a].date).format("YYYY-MM-DD") ==
-                moment().format("YYYY-MM-DD")
-              ) {
-                dataAttendanceTemp = res2.data[a].attendance;
-              }
-            }
+            //   if (
+            //     moment(res2.data[a].date).format("YYYY-MM-DD") ==
+            //     moment().format("YYYY-MM-DD")
+            //   ) {
+            //     dataAttendanceTemp = res2.data[a].attendance;
+            //   }
+            // }
+            let index = moment().format("DD");
+            dataAttendanceTemp = res2.data[index - 1].attendance;
             checkAttendance(dataAttendanceTemp);
-
-            setDataMonth(dataTemp);
+            slider.current.slickGoTo(index - 4);
+            setDataMonth(res2.data);
             setAttendanceActive(moment().format("YYYY-MM-DD"));
           } else {
             setDataMonth(res2.data);
             let dataAttendanceTemp = res2.data[0].attendance;
+            slider.current.slickGoTo(0);
             checkAttendance(dataAttendanceTemp);
             setAttendanceActive(moment(res2.data[a].date).format("YYYY-MM-DD"));
           }
@@ -475,7 +479,7 @@ function DetailAgenCard({ initProps, visible, onClose, dataAgen }) {
           </div>
 
           <div className={"calendarslide"}>
-            <Slider className="mt-4 mx-4" {...settings}>
+            <Slider ref={slider} className="mt-4 mx-4" {...settings}>
               {dataMonth?.map((data) => renderDate(data))}
             </Slider>
           </div>
