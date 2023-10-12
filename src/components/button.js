@@ -69,7 +69,7 @@ const ButtonSys = ({
       color === "white" && !disabled,
     "bg-mono100 text-mono50 border-mono100 hover:opacity-75":
       color === "mono100" && !disabled,
-    "bg-secondary100 hover:bg-secondary100 text-white border-secondary100 hover:border-secondary100":
+    "bg-secondary100 text-white border-secondary100 hover:opacity-75":
       color === "secondary100" && !disabled,
     "bg-primary100 hover:bg-primary75 text-white border-primary100 hover:border-primary75":
       !color && !disabled,

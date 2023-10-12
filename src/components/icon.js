@@ -120,11 +120,11 @@ const UserIconSvg = ({ size, color }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-users"
-      width={20}
-      height={20}
+      width={size ? size : 20}
+      height={size ? size : 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#597e8d"
+      stroke={color ? color : "#597e8d"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -612,15 +612,15 @@ const UpIconSvg = ({ size, color }) => {
   const upIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-chevron-up"
+      className="icon icon-tabler icon-tabler-chevron-up"
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke={color}
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M6 15l6 -6l6 6" />
@@ -1587,6 +1587,32 @@ const TableExportIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={tableExportIconSvg}></Icon>;
 };
+
+const TableImportIconSvg = ({ size, color }) => {
+  const tableImportIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-table-import"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 21h-7a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v8" />
+      <path d="M3 10h18" />
+      <path d="M10 3v18" />
+      <path d="M19 22v-6" />
+      <path d="M22 19l-3 -3l-3 3" />
+    </svg>
+  );
+  return <Icon rev={""} component={tableImportIconSvg}></Icon>;
+};
+
 const FileExportIconSvg = ({ size, color }) => {
   const fileExportIconSvg = () => (
     <svg
@@ -1680,11 +1706,11 @@ const PlusIconSvg = ({ size, color }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-plus"
-      width={size}
-      height={size}
+      width={size ? size : 20}
+      height={size ? size : 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={color ? color : "#FFFFFF"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3047,15 +3073,15 @@ const NewsIconSvg = ({ size, color }) => {
   const newsIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-news"
+      className="icon icon-tabler icon-tabler-news"
       width={size ? size : "8"}
       height={size ? size : "8"}
       viewBox="0 0 24 24"
-      stroke-width="2"
+      strokeWidth="2"
       stroke={color ? color : "#35763B"}
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
       <path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11"></path>
@@ -3225,4 +3251,5 @@ export {
   NewsIconSvg,
   UpIconSvg,
   TimelineIconSvg,
+  TableImportIconSvg,
 };
