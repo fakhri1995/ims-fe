@@ -33,6 +33,7 @@ import { ROLE_SUPER_ADMIN } from "../../lib/constants";
 import {
   PROJECT_TASKS_COUNT_CLIENT_GET,
   SIDEBAR_CLIENT_ATTENDANCE,
+  SIDEBAR_CLIENT_DASHBOARD,
   TASK_STATUS_LIST_GET,
 } from "../../lib/features";
 import {
@@ -71,7 +72,7 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
       tok={initProps}
       sidemenu={sidemenu}
       fixedBreadcrumbValues={
-        hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN)
+        hasPermission(SIDEBAR_CLIENT_DASHBOARD) && !hasRole(ROLE_SUPER_ADMIN)
           ? pageBreadcrumbValue
           : null
       }
@@ -120,8 +121,7 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
                     </div>
                 </div>
             </div> */}
-      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) &&
-      !hasRole(ROLE_SUPER_ADMIN) ? (
+      {hasPermission(SIDEBAR_CLIENT_DASHBOARD) && !hasRole(ROLE_SUPER_ADMIN) ? (
         <div>
           <div className="grid grid-cols-1 md:grid-cols-10 px-5 gap-x-3 gap-y-6">
             <KehadiranCard initProps={initProps} />

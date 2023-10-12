@@ -38,6 +38,7 @@ import {
   SIDEBAR_ATTENDANCE_FORM_ACTIVITY,
   SIDEBAR_ATTENDANCE_MY,
   SIDEBAR_CLIENT_ATTENDANCE,
+  SIDEBAR_CLIENT_DASHBOARD,
   SIDEBAR_CLIENT_PROJECT,
   SIDEBAR_CMS,
   SIDEBAR_CMS_BLOG,
@@ -156,7 +157,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           <Link href="/dashboard/home">Dashboard</Link>
         </Menu.Item>
       )}
-      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN) && (
+      {hasPermission(SIDEBAR_CLIENT_DASHBOARD) && !hasRole(ROLE_SUPER_ADMIN) && (
         <Menu.Item key="1" icon={<DashboardCompanyIconSvg />} title="Dashboard">
           <Link href="/dashboard/home">
             <p>Dashboard {dataPerusahaan}</p>
