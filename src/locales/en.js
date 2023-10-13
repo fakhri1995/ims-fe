@@ -5,22 +5,22 @@ export default {
   career: "Career at MIG",
   contactus: "Contact Us",
   landingpagemetatitle:
-    "Mitramas Infosys Global: Hardware, Software, IT Outsourcing.",
+    "Mitramas Infosys Global: Hardware, Software, Tech Talent Solution.",
   landingpagemetadescription:
-    "Get the best laptop, PC, ATM rental, software development, and IT outsourcing services at cost-effective prices from MIG's technology solutions. Contact us!",
+    "Get the best laptop, PC, ATM rental, software development, and Tech Talent Solution services at cost-effective prices from MIG's technology solutions. Contact us!",
   hardwaremetatitle:
     "Managed Service | Rent Cost-Effective Laptops, PCs, and ATMs - MIG",
   hardwaremetadescription:
     "Lease cost-effective, well-maintained laptops, PCs, and ATMs from MIG. Personalized hardware options available. Contact us for more information.",
   talentmetatitle: "Recruitment Solution to Hire Top Tech Talent - MIG",
   talentmetadescription:
-    "Simplify your tech talent recruitment process with our IT Outsourcing, Headhunting and IT Staff Augmentation service. Speak with our team now!",
+    "Simplify your tech talent recruitment process with our Tech Talent Solution, Headhunting and IT Staff Augmentation service. Speak with our team now!",
   softwaremetatitle: "Custom-made Software to Digitalize your Business - MIG",
   softwaremetadescription:
     "Build custom software with our outstanding tech team. Improve efficiency by implementing digital technologies in your business. Book a call today!",
   aboutusmetatitle: "About Us | Mitramas Infosys Global - MIG",
   aboutusmetadescription:
-    "We are MIG, a people-centric business that offers a seamless technology experience with hardware, software, and IT outsourcing solutions.",
+    "We are MIG, a people-centric business that offers a seamless technology experience with hardware, software, and Tech Talent Solution solutions.",
   landingpagesection1:
     "Accelerate your business, fortify your tech capabilities with us",
   landingpagetitlelogo:
