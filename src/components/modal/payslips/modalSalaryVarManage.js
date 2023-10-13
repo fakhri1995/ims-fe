@@ -390,7 +390,10 @@ const ModalSalaryVarManage = ({
                   value={option.id}
                   checked={option.required}
                   onChange={(e) => {
-                    handleUpdateVariable(option, e.target.checked);
+                    handleUpdateVariable({
+                      ...option,
+                      required: e.target.checked,
+                    });
                   }}
                 >
                   {option.name}

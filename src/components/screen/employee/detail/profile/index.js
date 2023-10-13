@@ -87,12 +87,6 @@ const EmployeeProfileDetail = ({ dataEmployee }) => {
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">
-            Nomor Rekening Bank KB Bukopin
-          </p>
-          <p>{dataEmployee?.acc_number_bukopin || "-"}</p>
-        </div>
-        <div className="space-y-1">
-          <p className="mig-caption--medium text-mono80">
             Nomor BPJS Kesehatan
           </p>
           <p>{dataEmployee?.bpjs_kesehatan || "-"}</p>
@@ -102,6 +96,12 @@ const EmployeeProfileDetail = ({ dataEmployee }) => {
             Nomor BPJS Ketenagakerjaan
           </p>
           <p>{dataEmployee?.bpjs_ketenagakerjaan || "-"}</p>
+        </div>
+        <div className="space-y-1">
+          <p className="mig-caption--medium text-mono80">
+            Nomor Rekening Bank KB Bukopin
+          </p>
+          <p>{dataEmployee?.acc_number_bukopin || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">
