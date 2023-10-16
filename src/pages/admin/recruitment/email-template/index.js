@@ -91,6 +91,10 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr[pathArr.length - 1] = "Kelola Template Email";
 
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 1, "Rekrutmen");
+
   // 2. Use state
   // 2.1. Table Stage
   const [loadingEmailTemplates, setLoadingEmailTemplates] = useState(false);
@@ -377,6 +381,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       sidemenu={sidemenu}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col" id="mainWrapper">
         <div className="grid grid-cols-5 md:px-5 gap-6">
