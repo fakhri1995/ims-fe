@@ -765,3 +765,21 @@ ol {
   text-shadow: 0 0 10px #000;
   user-select: none;
 }
+.calendarmig .overflow-x-scroll::-webkit-scrollbar {
+  display: none;
+}
+.calendarslide .slick-slide {
+  padding: 0 1px;
+}
+
+.calendarslide .slick-list {
+  margin: 0 4px;
+}
+
+.custom-picker {
+  visibility: hidden;
+  height: 0;
+  padding: 0;
+  width: 0;
+  position: absolute;
+}

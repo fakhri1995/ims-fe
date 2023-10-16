@@ -33,6 +33,8 @@ import {
   UserIconSvg,
 } from "../../../components/icon";
 import { H1, H2, Label, Text } from "../../../components/typography";
+import { useAccessControl } from "../../../contexts/access-control";
+import { PROJECT_TASKS_COUNT_CLIENT_GET } from "../../../lib/features";
 import DetailAgenCard from "./DetailAgenCard";
 
 function EmployeeList({ initProps, companyId }) {
@@ -46,6 +48,10 @@ function EmployeeList({ initProps, companyId }) {
       name: "Terlambat",
     },
   ]);
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetProjectTaskCount = hasPermission(
+    PROJECT_TASKS_COUNT_CLIENT_GET
+  );
   const [rowstate, setrowstate] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const router = useRouter();
@@ -162,7 +168,11 @@ function EmployeeList({ initProps, companyId }) {
       render: (text, record, index) => {
         return {
           // children: <div className={'hover:cursor-pointer'} onClick={()=> router.push(`/kehadiran/projects/${record.id}`)}>{text}</div>,
-          children: <div className={"hover:cursor-pointer"}>{text}</div>,
+          children: (
+            <div className={"hover:cursor-pointer"}>
+              {isAllowedToGetProjectTaskCount ? text : "-"}
+            </div>
+          ),
         };
       },
     },
@@ -311,12 +321,14 @@ function EmployeeList({ initProps, companyId }) {
         });
         setDataKehadiranSelected(filteredArray);
         setQueryParams({
+          page: 1,
           is_late: undefined,
         });
       } else {
         dataTemp.push("Terlambat");
         setDataKehadiranSelected(dataTemp);
         setQueryParams({
+          page: 1,
           is_late: 1,
         });
       }
@@ -329,6 +341,7 @@ function EmployeeList({ initProps, companyId }) {
       if (dataChecked.tepat_waktu == true) {
         //remove
         setQueryParams({
+          page: 1,
           is_on_time: undefined,
         });
         var filteredArray = dataKehadiranSelected.filter(function (e) {
@@ -339,6 +352,7 @@ function EmployeeList({ initProps, companyId }) {
         dataTemp.push("Tepat Waktu");
         setDataKehadiranSelected(dataTemp);
         setQueryParams({
+          page: 1,
           is_on_time: 1,
         });
       }
@@ -355,12 +369,14 @@ function EmployeeList({ initProps, companyId }) {
         });
         setDataKehadiranSelected(filteredArray);
         setQueryParams({
+          page: 1,
           is_wfh: undefined,
         });
       } else {
         dataTemp.push("WFH");
         setDataKehadiranSelected(dataTemp);
         setQueryParams({
+          page: 1,
           is_wfh: 1,
         });
       }
@@ -373,6 +389,7 @@ function EmployeeList({ initProps, companyId }) {
       if (dataChecked.wfo == true) {
         //remove
         setQueryParams({
+          page: 1,
           is_wfo: undefined,
         });
         var filteredArray = dataKehadiranSelected.filter(function (e) {
@@ -383,6 +400,7 @@ function EmployeeList({ initProps, companyId }) {
         dataTemp.push("WFO");
         setDataKehadiranSelected(dataTemp);
         setQueryParams({
+          page: 1,
           is_wfo: 1,
         });
       }
@@ -399,12 +417,14 @@ function EmployeeList({ initProps, companyId }) {
         });
         setDataKehadiranSelected(filteredArray);
         setQueryParams({
+          page: 1,
           is_hadir: undefined,
         });
       } else {
         dataTemp.push("Belum Check In");
         setDataKehadiranSelected(dataTemp);
         setQueryParams({
+          page: 1,
           is_hadir: 0,
         });
       }
@@ -432,6 +452,7 @@ function EmployeeList({ initProps, companyId }) {
       tepat_waktu: true,
     });
     setQueryParams({
+      page: 1,
       is_hadir: 0,
       is_late: 1,
       is_on_time: 1,
@@ -451,6 +472,7 @@ function EmployeeList({ initProps, companyId }) {
       tepat_waktu: false,
     });
     setQueryParams({
+      page: 1,
       is_hadir: undefined,
       is_late: undefined,
       is_on_time: undefined,
@@ -477,11 +499,13 @@ function EmployeeList({ initProps, companyId }) {
 
   const onChangeKeyword = (e) => {
     setQueryParams({
+      page: 1,
       keyword: e.target.value === "" ? undefined : e.target.value,
     });
   };
   const onChangeKeywordRole = (e) => {
     setQueryParams({
+      page: 1,
       keyword_role: e.target.value === "" ? undefined : e.target.value,
     });
   };
