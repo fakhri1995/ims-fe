@@ -1,28 +1,13 @@
-import {
-  CloseCircleOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  ShareAltOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
-import { Input, Modal, Select, Spin, Tabs, Tag, notification } from "antd";
-import moment from "moment";
-import {
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from "next-query-params";
+import { UnorderedListOutlined } from "@ant-design/icons";
+import { Tabs } from "antd";
+import { NumberParam, useQueryParams, withDefault } from "next-query-params";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
-import { useCallback } from "react";
 import { useMemo } from "react";
-import { useEffect } from "react";
 import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
-import { AddNewFormButton } from "components/screen/resume";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -35,35 +20,14 @@ import {
   TALENT_POOL_CATEGORY_ADD,
   TALENT_POOL_FILTERS_GET,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
-
-import { CompanyService } from "apis/company";
-import { ContractService } from "apis/contract";
 
 import { TalentPoolService } from "../../../../apis/talent-pool/talent-pool.service";
 import ButtonSys from "../../../../components/button";
-import {
-  NewsIconSvg,
-  PlusIconSvg,
-  SearchIconSvg,
-  ShareIconSvg,
-  TableImportIconSvg,
-  UsersIconSvg,
-} from "../../../../components/icon";
-import Layout from "../../../../components/layout-dashboard";
+import { PlusIconSvg, UsersIconSvg } from "../../../../components/icon";
 import st from "../../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../../components/layout-dashboardNew";
-import { ModalHapus2 } from "../../../../components/modal/modalCustom";
+import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
 import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
-import {
-  TableCustomContractList,
-  TableCustomTalentPoolList,
-} from "../../../../components/table/tableCustom";
-import {
-  convertDaysToString,
-  createKeyPressHandler,
-  momentFormatDate,
-} from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
@@ -71,7 +35,6 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   /**
    * Dependencies
    */
-  const axiosClient = useAxiosClient();
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -115,6 +78,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   // filter search & selected options
   const [searchingFilterTalents, setSearchingFilterTalents] = useState("");
   const [currentCategory, setCurrentCategory] = useState("1");
+  const [modalCategoryCreate, setModalCategoryCreate] = useState(false);
   const [refresh, setRefresh] = useState(-1);
 
   // 3. UseEffect & UseQuery
@@ -160,50 +124,10 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 4. Event
-
   // 4.2. Create Contract
   // const onAddContract = useCallback(() => {
   //   handleAddContract();
   // }, []);
-
-  // const handleAddContract = () => {
-  //   // if (!isAllowedToAddTalentPoolCategory) {
-  //   //   permissionWarningNotification("Menambah", "Kontrak");
-  //   //   return;
-  //   // }
-  //   setLoadingAdd(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addContract`, {
-  //     method: "POST",
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //       "Content-Type": "application/json",
-  //     },
-  //   })
-  //     .then((response) => response.json())
-  //     .then((response2) => {
-  //       if (response2.success) {
-  //         setTimeout(() => {
-  //           rt.push(
-  //             `/admin/contracts/create?id=${response2.data?.id}&prevpath=add`
-  //           );
-  //           setLoadingAdd(false);
-  //         }, 500);
-  //       } else {
-  //         notification.error({
-  //           message: `Gagal menambahkan kontrak. ${response2.message}`,
-  //           duration: 3,
-  //         });
-  //         setLoadingAdd(false);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `Gagal menambahkan kontrak. ${err.response}`,
-  //         duration: 3,
-  //       });
-  //       setLoadingAdd(false);
-  //     });
-  // };
 
   // 4.3. Delete Contract
   // const handleDeleteContract = (id) => {
@@ -250,8 +174,6 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
     return null;
   }
 
-  console.log({ dataTalents });
-  console.log({ dataFilters });
   return (
     <LayoutDashboard
       tok={initProps}
@@ -278,7 +200,11 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <p className="mig-caption">Kelola Permintaan Klien</p>
                 </div>
               </ButtonSys>
-              <ButtonSys type={"primary"}>
+              <ButtonSys
+                type={"primary"}
+                onClick={() => setModalCategoryCreate(true)}
+                disabled={!isAllowedToAddTalentPoolCategory}
+              >
                 <div className="flex gap-2 items-center">
                   <PlusIconSvg size={16} />
                   <p className="mig-caption">Tambah Kategori</p>
@@ -324,6 +250,16 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           </Tabs>
         </div>
       </div>
+
+      <AccessControl hasPermission={TALENT_POOL_CATEGORY_ADD}>
+        <ModalCategoryCreate
+          initProps={initProps}
+          visible={modalCategoryCreate}
+          onvisible={setModalCategoryCreate}
+          isAllowedToAddCategory={isAllowedToAddTalentPoolCategory}
+          setRefreshCategory={setRefresh}
+        />
+      </AccessControl>
 
       {/* Modal Delete Talent */}
       {/* <AccessControl hasPermission={CONTRACT_DELETE}>

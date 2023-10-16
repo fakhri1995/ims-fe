@@ -16,13 +16,8 @@ import {
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
-import { useCallback } from "react";
-import { useMemo } from "react";
-import { useEffect } from "react";
-import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
-import { AccessControl } from "components/features/AccessControl";
 import {
   NewsIconSvg,
   PlusIconSvg,
@@ -58,12 +53,6 @@ import {
   createKeyPressHandler,
   momentFormatDate,
 } from "lib/helper";
-
-import { CompanyService } from "apis/company";
-import { ContractService } from "apis/contract";
-import { TalentPoolService } from "apis/talent-pool/talent-pool.service";
-
-import httpcookie from "cookie";
 
 const TalentPoolSection = ({
   isAllowedToGetTalentPools,
@@ -159,17 +148,34 @@ const TalentPoolSection = ({
       render: (skills) => {
         return {
           children: (
-            <div className="flex flex-wrap gap-2">
-              {skills?.map((skill) => (
-                <Tag
-                  key={skill.id}
-                  color="#35763B1A"
-                  className="text-primary100 mb-3 rounded-md"
-                >
-                  {skill.name}
-                </Tag>
-              ))}
-            </div>
+            <>
+              {skills?.length > 3 ? (
+                <div className="flex flex-wrap gap-2">
+                  {skills?.slice(0, 3)?.map((skill) => (
+                    <Tag
+                      key={skill.id}
+                      color="#35763B1A"
+                      className="text-primary100 rounded-md"
+                    >
+                      {skill.name}
+                    </Tag>
+                  ))}
+                  ..
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {skills?.map((skill) => (
+                    <Tag
+                      key={skill.id}
+                      color="#35763B1A"
+                      className="text-primary100 rounded-md"
+                    >
+                      {skill.name}
+                    </Tag>
+                  ))}
+                </div>
+              )}
+            </>
           ),
         };
       },
