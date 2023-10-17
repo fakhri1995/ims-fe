@@ -829,7 +829,7 @@ const EmployeeContractForm = ({
             {defaultSalaryVar
               ?.filter(
                 (v) =>
-                  dataContract[v.attrName] !== null && v.attrName !== "pph21"
+                  dataContract[v.attrName] !== false && v.attrName !== "pph21"
               )
               ?.map((item) => (
                 <Form.Item
@@ -854,7 +854,7 @@ const EmployeeContractForm = ({
                 </Form.Item>
               ))}
 
-            {dataContract?.pph21 !== null && (
+            {dataContract?.pph21 !== false && (
               <Form.Item
                 label="PPh 21"
                 name={"pph21"}
@@ -923,7 +923,7 @@ const EmployeeContractForm = ({
         {/* Default "Pengurangan" salary variable field (BPJS) */}
         {defaultSalaryVar
           ?.filter(
-            (v) => dataContract[v.attrName] !== null && v.attrName !== "pph21"
+            (v) => dataContract[v.attrName] !== false && v.attrName !== "pph21"
           )
           ?.map((item) => (
             <Form.Item
@@ -949,7 +949,7 @@ const EmployeeContractForm = ({
           ))}
 
         {/* Pph 21 field */}
-        {dataContract?.pph21 !== null && (
+        {dataContract?.pph21 !== false && (
           <Form.Item
             label="PPh 21"
             name={"pph21"}

@@ -110,7 +110,7 @@ const EmployeeContractEditIndex = ({
         dataContract.contract_end_at &&
         dataContract.placement &&
         dataContract.gaji_pokok &&
-        Number(dataContract.pph21 !== null ? dataContract.pph21 : true) &&
+        Number(dataContract.pph21 !== false ? dataContract.pph21 : true) &&
         isNotResign
     );
 
