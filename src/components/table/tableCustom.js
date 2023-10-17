@@ -2185,6 +2185,55 @@ const TableCustomInvoiceList = ({
   );
 };
 
+const TableCustomTalentPoolList = ({
+  rt,
+  dataSource,
+  columns,
+  loading,
+  total,
+  queryParams,
+  setQueryParams,
+}) => {
+  const [rowstate, setrowstate] = useState(0);
+  return (
+    <Table
+      dataSource={dataSource}
+      columns={columns}
+      rowKey={(record) => record.id}
+      loading={loading}
+      scroll={{ x: 200 }}
+      pagination={{
+        current: queryParams.page,
+        pageSize: queryParams.rows,
+        total: total,
+        showSizeChanger: true,
+      }}
+      onChange={(pagination, filters, sorter, extra) => {
+        setQueryParams({
+          page: pagination.current,
+          rows: pagination.pageSize,
+        });
+      }}
+      onRow={(record, rowIndex) => {
+        return {
+          onMouseOver: () => {
+            setrowstate(record.id);
+          },
+          onClick: () => {
+            record.id &&
+              record.is_posted &&
+              rt.push(`/admin/talent-pools/${record.id}`);
+          },
+        };
+      }}
+      rowClassName={(record, idx) => {
+        return `${record.id === rowstate && `cursor-pointer`}
+        }`;
+      }}
+    />
+  );
+};
+
 export {
   TableCustom,
   TableCustomRelasi,
@@ -2212,4 +2261,5 @@ export {
   TableCustomTaskList,
   TableCustomContractList,
   TableCustomInvoiceList,
+  TableCustomTalentPoolList,
 };
