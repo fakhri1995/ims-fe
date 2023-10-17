@@ -467,7 +467,10 @@ const ModalSalaryVarAdd = ({
               {defaultSalaryVar.map((item) => (
                 <Checkbox
                   key={item.attrName}
-                  checked={dataPayslip[item.attrName] !== null}
+                  checked={
+                    dataPayslip[item.attrName] !== null &&
+                    dataPayslip[item.attrName] !== false
+                  }
                   onChange={(e) => {
                     setDataPayslip((prev) => ({
                       ...prev,
