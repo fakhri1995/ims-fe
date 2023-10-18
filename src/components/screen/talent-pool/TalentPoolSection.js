@@ -10,6 +10,7 @@ import React from "react";
 import { useState } from "react";
 
 import ButtonSys from "components/button";
+import { AccessControl } from "components/features/AccessControl";
 import {
   NewsIconSvg,
   PlusIconSvg,
@@ -34,6 +35,8 @@ import {
   momentFormatDate,
 } from "lib/helper";
 
+import { TALENT_POOL_ADD, TALENT_POOL_DELETE } from "../../../lib/features";
+import { ModalHapus2 } from "../../modal/modalCustom";
 import ModalTalentAdd from "../../modal/talent-pool/modalTalentAdd";
 
 const TalentPoolSection = ({
@@ -41,8 +44,10 @@ const TalentPoolSection = ({
   isAllowedToGetTalentPools,
   isAllowedToGetTalentPoolFilters,
   isAllowedToAddTalentPool,
+  isAllowedToDeleteTalentPool,
   queryParams,
   setQueryParams,
+  category,
   dataTalents,
   loadingTalents,
   searchingFilterTalents,
@@ -54,6 +59,9 @@ const TalentPoolSection = ({
 
   // 2. Use state
   const [modalTalentAdd, setModalTalentAdd] = useState(false);
+  const [modalTalentDelete, setModalTalentDelete] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 2.1. Table Contract
   // filter search & selected options
@@ -80,6 +88,47 @@ const TalentPoolSection = ({
     onFilterTalentPools,
     "Enter"
   );
+
+  // 4.2. Delete Talent
+  const handleDelete = (id) => {
+    if (!isAllowedToDeleteTalentPool) {
+      permissionWarningNotification("Menghapus", "Talent");
+      return;
+    }
+
+    setLoadingDelete(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTalentPool?id=${id}`, {
+      method: `DELETE`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          setRefresh((prev) => prev + 1);
+          setModalTalentDelete(false);
+
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus talent. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingDelete(false));
+  };
 
   // Talent Pool Table columns
   const columnTalents = [
@@ -190,14 +239,14 @@ const TalentPoolSection = ({
                 <ButtonSys
                   type={"default"}
                   color={"danger"}
-                  // disabled={!isAllowedToDeleteTalent}
+                  disabled={!isAllowedToDeleteTalentPool}
                   onClick={(event) => {
                     event.stopPropagation();
                     setDataRowClicked(record);
-                    setModalDelete(true);
+                    setModalTalentDelete(true);
                   }}
                 >
-                  <DeleteOutlined />
+                  <DeleteOutlined rev={""} />
                 </ButtonSys>
               </div>
             </>
@@ -377,13 +426,34 @@ const TalentPoolSection = ({
         </ButtonSys>
       </div>
 
-      <ModalTalentAdd
-        initProps={initProps}
-        visible={modalTalentAdd}
-        onvisible={setModalTalentAdd}
-        categoryId={queryParams?.category_id}
-        setRefreshTalentPool={setRefresh}
-      />
+      <AccessControl hasPermission={TALENT_POOL_ADD}>
+        <ModalTalentAdd
+          initProps={initProps}
+          visible={modalTalentAdd}
+          onvisible={setModalTalentAdd}
+          category={category}
+          setRefreshTalentPool={setRefresh}
+        />
+      </AccessControl>
+
+      <AccessControl hasPermission={TALENT_POOL_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalTalentDelete}
+          onvisible={setModalTalentDelete}
+          onOk={handleDelete}
+          onCancel={() => {
+            setModalTalentDelete(false);
+          }}
+          itemName={"talent"}
+          loading={loadingDelete}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin melanjutkan penghapusan talent dengan nama{" "}
+            <strong>{dataRowClicked?.resume?.name}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
     </div>
   );
 };

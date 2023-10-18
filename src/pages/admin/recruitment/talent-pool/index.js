@@ -26,7 +26,7 @@ import st from "../../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../../components/layout-dashboardNew";
 import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
 import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
-import { TALENT_POOL_ADD } from "../../../../lib/features";
+import { TALENT_POOL_ADD, TALENT_POOL_DELETE } from "../../../../lib/features";
 import httpcookie from "cookie";
 
 const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
@@ -39,6 +39,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const isAllowedToGetTalentPools = hasPermission(TALENT_POOLS_GET);
   const isAllowedToAddTalentPool = hasPermission(TALENT_POOL_ADD);
+  const isAllowedToDeleteTalentPool = hasPermission(TALENT_POOL_DELETE);
   const isAllowedToGetTalentPoolFilters = hasPermission(
     TALENT_POOL_FILTERS_GET
   );
@@ -130,47 +131,6 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   //   handleAddContract();
   // }, []);
 
-  // 4.3. Delete Contract
-  // const handleDeleteContract = (id) => {
-  //   if (!isAllowedToGetTalentPoolCategories) {
-  //     permissionWarningNotification("Menghapus", "Kontrak");
-  //     return;
-  //   }
-
-  //   setLoadingDelete(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${id}`, {
-  //     method: `DELETE`,
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //       "Content-Type": "application/json",
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((response) => {
-  //       if (response.success) {
-  //         setRefresh((prev) => prev + 1);
-  //         setModalDelete(false);
-
-  //         notification.success({
-  //           message: response.message,
-  //           duration: 3,
-  //         });
-  //       } else {
-  //         notification.error({
-  //           message: response.message,
-  //           duration: 3,
-  //         });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `Gagal menghapus proyek. ${err.response}`,
-  //         duration: 3,
-  //       });
-  //     })
-  //     .finally(() => setLoadingDelete(false));
-  // };
-
   if (isAccessControlPending) {
     return null;
   }
@@ -240,8 +200,10 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
                     isAllowedToGetTalentPoolFilters
                   }
                   isAllowedToAddTalentPool={isAllowedToAddTalentPool}
+                  isAllowedToDeleteTalentPool={isAllowedToDeleteTalentPool}
                   queryParams={queryParams}
                   setQueryParams={setQueryParams}
+                  category={category}
                   dataTalents={dataTalents}
                   loadingTalents={loadingTalents}
                   searchingFilterTalents={searchingFilterTalents}
@@ -264,25 +226,6 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           setRefreshCategory={setRefresh}
         />
       </AccessControl>
-
-      {/* Modal Delete Talent */}
-      {/* <AccessControl hasPermission={CONTRACT_DELETE}>
-        <ModalHapus2
-          title={`Peringatan`}
-          visible={modalDelete}
-          onvisible={setModalDelete}
-          onOk={() => handleDeletTalent(dataRowClicked?.id)}
-          onCancel={() => {
-            setModalDelete(false);
-          }}
-          itemName={"talent"}
-          loading={loadingDelete}>
-          <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan talent{" "}
-            <strong>{dataRowClicked?.code_number}</strong>?
-          </p>
-        </ModalHapus2>
-      </AccessControl> */}
     </LayoutDashboard>
   );
 };
