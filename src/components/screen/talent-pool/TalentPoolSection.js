@@ -3,16 +3,8 @@ import {
   DeleteOutlined,
   EditOutlined,
   ShareAltOutlined,
-  UnorderedListOutlined,
 } from "@ant-design/icons";
 import { Input, Modal, Select, Spin, Tabs, Tag, notification } from "antd";
-import moment from "moment";
-import {
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from "next-query-params";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -26,19 +18,7 @@ import {
   TableImportIconSvg,
   UsersIconSvg,
 } from "components/icon";
-import Layout from "components/layout-dashboard";
-import st from "components/layout-dashboard.module.css";
-import LayoutDashboard from "components/layout-dashboardNew";
-import { ModalHapus2 } from "components/modal/modalCustom";
-import { AddNewFormButton } from "components/screen/resume";
-import {
-  TableCustomContractList,
-  TableCustomTalentPoolList,
-} from "components/table/tableCustom";
-
-import { useAccessControl } from "contexts/access-control";
-
-import { useAxiosClient } from "hooks/use-axios-client";
+import { TableCustomTalentPoolList } from "components/table/tableCustom";
 
 import {
   TALENT_POOLS_GET,
@@ -54,9 +34,13 @@ import {
   momentFormatDate,
 } from "lib/helper";
 
+import ModalTalentAdd from "../../modal/talent-pool/modalTalentAdd";
+
 const TalentPoolSection = ({
+  initProps,
   isAllowedToGetTalentPools,
   isAllowedToGetTalentPoolFilters,
+  isAllowedToAddTalentPool,
   queryParams,
   setQueryParams,
   dataTalents,
@@ -64,10 +48,13 @@ const TalentPoolSection = ({
   searchingFilterTalents,
   setSearchingFilterTalents,
   dataFilters,
+  setRefresh,
 }) => {
   const rt = useRouter();
 
   // 2. Use state
+  const [modalTalentAdd, setModalTalentAdd] = useState(false);
+
   // 2.1. Table Contract
   // filter search & selected options
   // const [searchingFilterTalents, setSearchingFilterTalents] = useState("");
@@ -81,7 +68,6 @@ const TalentPoolSection = ({
   // 4.1. Filter Table
   const onFilterTalentPools = () => {
     setQueryParams({
-      // category_id: currentCategory,
       role: selectedRole,
       skill: selectedSkill,
       year: selectedExpYear,
@@ -373,7 +359,11 @@ const TalentPoolSection = ({
       </div>
 
       <div className="flex gap-6 justify-center items-center">
-        <ButtonSys type={"primary"}>
+        <ButtonSys
+          type={"primary"}
+          disabled={!isAllowedToAddTalentPool}
+          onClick={() => setModalTalentAdd(true)}
+        >
           <div className="flex gap-2 items-center">
             <TableImportIconSvg color={"#FFFFFF"} size={16} />
             <p className="mig-caption">Tambahkan Talent</p>
@@ -386,6 +376,14 @@ const TalentPoolSection = ({
           </div>
         </ButtonSys>
       </div>
+
+      <ModalTalentAdd
+        initProps={initProps}
+        visible={modalTalentAdd}
+        onvisible={setModalTalentAdd}
+        categoryId={queryParams?.category_id}
+        setRefreshTalentPool={setRefresh}
+      />
     </div>
   );
 };

@@ -407,3 +407,13 @@ export const convertDaysToString = (dayTotal: number) => {
 /** Calculate subtotal */
 export const countSubTotal = (pax: number, price: number) =>
   Number(pax) * Number(price);
+
+export const getNameInitial = (text: string) => {
+  const textArr = text.split(" ");
+  const initial = textArr.reduce(
+    (acc, word) => acc + word[0].toUpperCase(),
+    ""
+  );
+
+  return initial;
+};

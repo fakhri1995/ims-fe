@@ -11,8 +11,6 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { useAxiosClient } from "hooks/use-axios-client";
-
 import {
   TALENT_POOLS_GET,
   TALENT_POOL_CANDIDATES_GET,
@@ -28,6 +26,7 @@ import st from "../../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../../components/layout-dashboardNew";
 import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
 import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
+import { TALENT_POOL_ADD } from "../../../../lib/features";
 import httpcookie from "cookie";
 
 const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
@@ -39,9 +38,11 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
     useAccessControl();
 
   const isAllowedToGetTalentPools = hasPermission(TALENT_POOLS_GET);
+  const isAllowedToAddTalentPool = hasPermission(TALENT_POOL_ADD);
   const isAllowedToGetTalentPoolFilters = hasPermission(
     TALENT_POOL_FILTERS_GET
   );
+
   const isAllowedToGetTalentPoolCandidates = hasPermission(
     TALENT_POOL_CANDIDATES_GET
   );
@@ -233,10 +234,12 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
               >
                 {/* Talent Pool per Category */}
                 <TalentPoolSection
+                  initProps={initProps}
                   isAllowedToGetTalentPools={isAllowedToGetTalentPools}
                   isAllowedToGetTalentPoolFilters={
                     isAllowedToGetTalentPoolFilters
                   }
+                  isAllowedToAddTalentPool={isAllowedToAddTalentPool}
                   queryParams={queryParams}
                   setQueryParams={setQueryParams}
                   dataTalents={dataTalents}
@@ -244,6 +247,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
                   searchingFilterTalents={searchingFilterTalents}
                   setSearchingFilterTalents={setSearchingFilterTalents}
                   dataFilters={dataFilters}
+                  setRefresh={setRefresh}
                 />
               </Tabs.TabPane>
             ))}

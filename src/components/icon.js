@@ -1596,7 +1596,7 @@ const TableImportIconSvg = ({ size, color }) => {
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
-      strokWidth="1.5"
+      strokeWidth="1.5"
       stroke={color ? color : "#4D4D4D"}
       fill="none"
       strokeLinecap="round"

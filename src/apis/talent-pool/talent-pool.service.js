@@ -119,7 +119,7 @@ export class TalentPoolService {
     return apiRes;
   };
 
-  static getCandidates = async (initProps, feature, queryParams) => {
+  static getCandidates = async (initProps, feature, queryParams, keyword) => {
     if (!feature) {
       permissionWarningNotification(
         "Mendapatkan",
@@ -133,7 +133,7 @@ export class TalentPoolService {
     });
 
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTalentPoolCandidates${payload}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTalentPoolCandidates${payload}&keyword=${keyword}`,
       {
         method: `GET`,
         headers: {
