@@ -1,11 +1,9 @@
-import { InfoCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import {
   Checkbox,
-  Form,
   Input,
-  InputNumber,
   Modal,
-  Select,
+  Popover,
   Spin,
   Table,
   notification,
@@ -35,13 +33,14 @@ import {
 } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { AlertCircleIconSvg, PlusIconSvg } from "../../icon";
+import CandidateDetailCard from "../../screen/talent-pool/CandidateDetailCard";
 import { ModalUbah } from "../modalCustom";
 
 const ModalTalentAdd = ({
   initProps,
   visible,
   onvisible,
-  categoryId,
+  category,
   setRefreshTalentPool,
 }) => {
   const { hasPermission, isPending: isAccessControlPending } =
@@ -53,32 +52,20 @@ const ModalTalentAdd = ({
   const isAllowedToGetCandidates = hasPermission(TALENT_POOL_CANDIDATES_GET);
   const isAllowedToAddTalentPool = hasPermission(TALENT_POOL_ADD);
 
-  const [form] = Form.useForm();
-
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
-    category_id: withDefault(NumberParam, categoryId),
+    category_id: withDefault(NumberParam, category?.id),
   });
 
   // 1. USE STATE
-  const category = { name: "", description: "" };
   const [loading, setLoading] = useState(false);
-  const [disableAdd, setDisableAdd] = useState(true);
-  const [dataCategory, setDataCategory] = useState(category);
   const [modalConfirm, setModalConfirm] = useState(false);
   const [searchCandidate, setSearchCandidate] = useState("");
   const [selectedCandidates, setSelectedCandidates] = useState([]); // talent pool candidate id is same as resume id
+  const [rowState, setRowState] = useState(0);
 
   // 2. USE QUERY & USE EFFECT
-  useEffect(() => {
-    const requiredFields = ["name", "category"];
-    const allFieldIsFilled = requiredFields.every((item) => dataCategory[item]);
-    if (allFieldIsFilled) {
-      setDisableAdd(false);
-    }
-  }, [dataCategory]);
-
   const { data: dataRawCandidates, isLoading: loadingCandidates } = useQuery(
     [TALENT_POOL_CANDIDATES_GET, queryParams, searchCandidate],
     () =>
@@ -94,10 +81,16 @@ const ModalTalentAdd = ({
     }
   );
 
+  useEffect(() => {
+    return () => {
+      clearData();
+    };
+  }, []);
+
   // 3. HANDLER
   const clearData = () => {
-    setDataCategory(category);
-    form.resetFields();
+    setSelectedCandidates([]);
+    setSearchCandidate("");
   };
 
   const handleClose = () => {
@@ -111,7 +104,7 @@ const ModalTalentAdd = ({
   };
 
   const handleSelect = (e) => {
-    const currentSelected = e.target.value; // object of name & id
+    const currentSelected = e.target.value;
     if (e.target.checked) {
       setSelectedCandidates((prev) => [...prev, currentSelected]);
     } else {
@@ -131,13 +124,13 @@ const ModalTalentAdd = ({
 
   const handleAddTalent = () => {
     if (!isAllowedToAddTalentPool) {
-      permissionWarningNotification("Membuat", "Kategori");
+      permissionWarningNotification("Menambah", "Talent Pool");
       return;
     }
 
     const payload = {
       resume_ids: selectedCandidates.map((item) => item.id),
-      category_id: categoryId,
+      category_id: category?.id,
     };
     setLoading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTalentPool`, {
@@ -166,7 +159,7 @@ const ModalTalentAdd = ({
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menambah kategori. ${err.response}`,
+          message: `Gagal menambah talent pool. ${err.response}`,
           duration: 3,
         });
       })
@@ -237,7 +230,7 @@ const ModalTalentAdd = ({
 
         <Table
           rowKey={(record) => record.id}
-          className="tableProjectTask p-2"
+          className="tableTalentCandidate"
           dataSource={dataRawCandidates?.data}
           loading={loadingCandidates}
           pagination={{
@@ -252,38 +245,65 @@ const ModalTalentAdd = ({
               rows: pagination.pageSize,
             });
           }}
+          // onRow={(record) => {
+          //   return {
+          //     onMouseOver: (event) => {
+          //       console.log(event);
+          //       setRowState(record.id);
+          //     },
+          //   };
+          // }}
           columns={[
             {
               title: undefined,
               dataIndex: "candidate",
               key: "candidate",
               render: (_, record) => {
+                const isChecked = selectedCandidates.some(
+                  (item) => item.id === record.id
+                );
                 return (
                   //  Card kandidat
-                  <div className="p-3 bg-mono100 hover:bg-backdrop rounded-md flex items-center">
-                    <div className="flex gap-3 items-center w-11/12">
-                      <div
-                        className="rounded-full w-12 h-12 flex justify-center items-center 
+                  <Popover
+                    className="popoverTalentCandidate"
+                    content={<CandidateDetailCard candidateData={record} />}
+                    placement="bottom"
+                    trigger={"click"}
+                  >
+                    <div
+                      className={`p-3 relative hover:bg-backdrop rounded-md flex items-center mb-2 ${
+                        isChecked ? "bg-backdrop" : "bg-mono100"
+                      }`}
+                    >
+                      <div className="flex gap-3 items-center w-11/12">
+                        <div
+                          className="rounded-full w-12 h-12 flex justify-center items-center 
                       bg-white mig-caption--bold p-1"
-                      >
-                        {getNameInitial(record?.name)}
+                        >
+                          {getNameInitial(record?.name)}
+                        </div>
+                        <div>
+                          <p className="font-medium">{record?.name}</p>
+                          <p className="mig-caption text-mono50">
+                            {record?.last_assessment?.name}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium">{record?.name}</p>
-                        <p className="mig-caption text-mono50">
-                          {record?.last_assessment?.name}
-                        </p>
-                      </div>
+                      <Checkbox
+                        key={record.id}
+                        value={record}
+                        checked={isChecked}
+                        onChange={handleSelect}
+                      />
+
+                      {/* <div
+                      className={`absolute w-full h-full z-50 ${
+                        rowState === record.id ? "block" : "hidden"
+                      }`}>
+                      <CandidateDetailCard candidateData={record} />
+                    </div> */}
                     </div>
-                    <Checkbox
-                      key={record.id}
-                      value={record}
-                      checked={selectedCandidates.some(
-                        (item) => item.id === record.id
-                      )}
-                      onChange={handleSelect}
-                    />
-                  </div>
+                  </Popover>
                 );
               },
             },
@@ -322,7 +342,7 @@ const ModalTalentAdd = ({
         </ol>
         <p>
           Apakah Anda yakin ingin menambahkannya sebagai talent{" "}
-          <strong>nama kategori</strong>?
+          <strong>{category?.name}</strong>?
         </p>
       </div>
     </ModalUbah>

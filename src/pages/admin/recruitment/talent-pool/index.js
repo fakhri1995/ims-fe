@@ -81,12 +81,13 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [searchingFilterTalents, setSearchingFilterTalents] = useState("");
   const [currentCategory, setCurrentCategory] = useState("1");
   const [modalCategoryCreate, setModalCategoryCreate] = useState(false);
-  const [refresh, setRefresh] = useState(-1);
+  const [refreshCategory, setRefreshCategory] = useState(-1);
+  const [refreshPool, setRefreshPool] = useState(-1);
 
   // 3. UseEffect & UseQuery
   // 3.1. Get Talent Pool Categories
   const { data: dataCategories, isLoading: loadingCategories } = useQuery(
-    [TALENT_POOL_CATEGORIES_GET, refresh],
+    [TALENT_POOL_CATEGORIES_GET, refreshCategory],
     () => TalentPoolService.getCategories(initProps, isAllowedToGetTalentPools),
     {
       enabled: isAllowedToGetTalentPoolCategories,
@@ -96,7 +97,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.2. Get Talent Pools
   const { data: dataTalents, isLoading: loadingTalents } = useQuery(
-    [TALENT_POOLS_GET, queryParams, searchingFilterTalents, refresh],
+    [TALENT_POOLS_GET, queryParams, searchingFilterTalents, refreshPool],
     () =>
       TalentPoolService.getTalentPools(
         initProps,
@@ -112,7 +113,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.3. Get Talent Pool Filters
   const { data: dataFilters, isLoading: loadingFilters } = useQuery(
-    [TALENT_POOL_FILTERS_GET, queryParams.category_id, refresh],
+    [TALENT_POOL_FILTERS_GET, queryParams.category_id, refreshPool],
     () =>
       TalentPoolService.getFilters(
         initProps,
@@ -126,10 +127,6 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 4. Event
-  // 4.2. Create Contract
-  // const onAddContract = useCallback(() => {
-  //   handleAddContract();
-  // }, []);
 
   if (isAccessControlPending) {
     return null;
@@ -209,7 +206,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
                   searchingFilterTalents={searchingFilterTalents}
                   setSearchingFilterTalents={setSearchingFilterTalents}
                   dataFilters={dataFilters}
-                  setRefresh={setRefresh}
+                  setRefresh={setRefreshPool}
                 />
               </Tabs.TabPane>
             ))}
@@ -223,7 +220,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           visible={modalCategoryCreate}
           onvisible={setModalCategoryCreate}
           isAllowedToAddCategory={isAllowedToAddTalentPoolCategory}
-          setRefreshCategory={setRefresh}
+          setRefreshCategory={setRefreshCategory}
         />
       </AccessControl>
     </LayoutDashboard>

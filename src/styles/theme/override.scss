@@ -375,6 +375,17 @@ ol {
   border: 0;
 }
 
+.tableTalentCandidate thead > tr:first-child th:last-child {
+  display: none;
+}
+
+.tableTalentCandidate .ant-table-thead > tr > th,
+.tableTalentCandidate .ant-table-tbody > tr > td,
+.tableTalentCandidate .ant-table tfoot > tr > th,
+.tableTalentCandidate .ant-table tfoot > tr > td {
+  padding: 0;
+}
+
 .hoverComponent {
   display: none;
 }
@@ -526,6 +537,19 @@ ol {
   border-radius: 12px;
   cursor: pointer;
   transition: border-color 0.3s;
+}
+
+/** POPOVER */
+.popoverTalentCandidate .ant-popover-inner-content {
+  padding: 0;
+}
+
+.popoverTalentCandidate .ant-popover-placement-bottom .ant-popover-arrow {
+  display: none;
+}
+
+.popoverTalentCandidate .ant-popover {
+  width: 64%;
 }
 
 // .ant-checkbox .ant-checkbox-inner {

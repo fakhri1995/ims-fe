@@ -89,16 +89,16 @@ const ItemIconSvg = () => {
   );
   return <Icon rev={""} component={itemIconSvg}></Icon>;
 };
-const CompanyIconSvg = () => {
+const CompanyIconSvg = ({ size, color }) => {
   const companyIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-building-skyscraper"
-      width={20}
-      height={20}
+      width={size ? size : 20}
+      height={size ? size : 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#597e8d"
+      stroke={color ? color : "#597e8d"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3123,6 +3123,28 @@ const TimelineIconSvg = ({ size, color }) => {
   return <Icon rev={""} component={timelineIconSvg}></Icon>;
 };
 
+const SchoolIconSvg = ({ size, color }) => {
+  const schoolIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-school"
+      width={size ? size : "8"}
+      height={size ? size : "8"}
+      viewBox="0 0 24 24"
+      strokeWidth="2"
+      stroke={color ? color : "#35763B"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" />
+      <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
+    </svg>
+  );
+  return <Icon rev={""} component={schoolIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -3252,4 +3274,5 @@ export {
   UpIconSvg,
   TimelineIconSvg,
   TableImportIconSvg,
+  SchoolIconSvg,
 };

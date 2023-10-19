@@ -1,39 +1,21 @@
-import {
-  CloseCircleOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  ShareAltOutlined,
-} from "@ant-design/icons";
-import { Input, Modal, Select, Spin, Tabs, Tag, notification } from "antd";
+import { DeleteOutlined, ShareAltOutlined } from "@ant-design/icons";
+import { Input, Select, Tag, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
 import {
   NewsIconSvg,
-  PlusIconSvg,
   SearchIconSvg,
-  ShareIconSvg,
   TableImportIconSvg,
-  UsersIconSvg,
 } from "components/icon";
 import { TableCustomTalentPoolList } from "components/table/tableCustom";
 
-import {
-  TALENT_POOLS_GET,
-  TALENT_POOL_CANDIDATES_GET,
-  TALENT_POOL_CATEGORIES_GET,
-  TALENT_POOL_CATEGORY_ADD,
-  TALENT_POOL_FILTERS_GET,
-} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
-import {
-  convertDaysToString,
-  createKeyPressHandler,
-  momentFormatDate,
-} from "lib/helper";
+import { createKeyPressHandler } from "lib/helper";
 
 import { TALENT_POOL_ADD, TALENT_POOL_DELETE } from "../../../lib/features";
 import { ModalHapus2 } from "../../modal/modalCustom";
@@ -60,6 +42,7 @@ const TalentPoolSection = ({
   // 2. Use state
   const [modalTalentAdd, setModalTalentAdd] = useState(false);
   const [modalTalentDelete, setModalTalentDelete] = useState(false);
+  const [drawerTalentDetail, setDrawerTalentDetail] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [dataRowClicked, setDataRowClicked] = useState({});
 
@@ -71,6 +54,13 @@ const TalentPoolSection = ({
   const [selectedExpYear, setSelectedExpYear] = useState(undefined);
   const [selectedUni, setSelectedUni] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
+
+  // 3. Use Effect
+  useEffect(() => {
+    return () => {
+      setDataRowClicked({});
+    };
+  }, []);
 
   // 4. Event
   // 4.1. Filter Table
@@ -90,20 +80,23 @@ const TalentPoolSection = ({
   );
 
   // 4.2. Delete Talent
-  const handleDelete = (id) => {
+  const handleDelete = () => {
     if (!isAllowedToDeleteTalentPool) {
       permissionWarningNotification("Menghapus", "Talent");
       return;
     }
 
     setLoadingDelete(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTalentPool?id=${id}`, {
-      method: `DELETE`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTalentPool?id=${dataRowClicked?.id}`,
+      {
+        method: `DELETE`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
@@ -256,6 +249,7 @@ const TalentPoolSection = ({
     },
   ];
 
+  console.log({ dataRowClicked });
   return (
     <div className="flex flex-col gap-6">
       {/* Start: Search criteria */}
