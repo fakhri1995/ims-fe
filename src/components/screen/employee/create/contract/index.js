@@ -674,7 +674,7 @@ const EmployeeContractForm = ({
         name={"contract_end_at"}
         rules={[
           {
-            required: true,
+            // required: true,
             message: "Akhir kontrak wajib diisi",
           },
         ]}
