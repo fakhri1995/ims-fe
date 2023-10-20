@@ -271,7 +271,7 @@ const EmployeePayslipAddIndex = ({
         dataPayslip.total_gross_pengurangan &&
         dataPayslip.take_home_pay &&
         dataPayslip.gaji_pokok &&
-        Number(dataPayslip.pph21 !== null ? dataPayslip.pph21 : true) &&
+        Number(dataPayslip.pph21 !== false ? dataPayslip.pph21 : true) &&
         isAllRequiredBenefitFilled
     );
 
@@ -293,7 +293,7 @@ const EmployeePayslipAddIndex = ({
     // if BPJS/Pph shown in Penerimaan, sum the value to Total Gross Penerimaan
     if (dataPayslip?.show_all_benefit) {
       let defaultReductionBenefitValues = defaultSalaryVar
-        ?.filter((v) => dataPayslip[v.attrName] !== null)
+        ?.filter((v) => dataPayslip[v.attrName] !== false)
         ?.map((v) => dataPayslip[v.attrName]);
 
       receiveBenefitValues = receiveBenefitValues.concat(
@@ -691,7 +691,7 @@ const EmployeePayslipAddIndex = ({
                   {defaultSalaryVar
                     ?.filter(
                       (v) =>
-                        dataPayslip[v.attrName] !== null &&
+                        dataPayslip[v.attrName] !== false &&
                         v.attrName !== "pph21"
                     )
                     ?.map((item) => (
@@ -717,7 +717,7 @@ const EmployeePayslipAddIndex = ({
                       </Form.Item>
                     ))}
 
-                  {dataPayslip?.pph21 !== null && (
+                  {dataPayslip?.pph21 !== false && (
                     <Form.Item
                       label="PPh 21"
                       name={"pph21"}
@@ -782,7 +782,7 @@ const EmployeePayslipAddIndex = ({
               {defaultSalaryVar
                 ?.filter(
                   (v) =>
-                    dataPayslip[v.attrName] !== null && v.attrName !== "pph21"
+                    dataPayslip[v.attrName] !== false && v.attrName !== "pph21"
                 )
                 ?.map((item) => (
                   <Form.Item
@@ -808,7 +808,7 @@ const EmployeePayslipAddIndex = ({
                 ))}
 
               {/* Pph 21 field */}
-              {dataPayslip?.pph21 !== null && (
+              {dataPayslip?.pph21 !== false && (
                 <Form.Item
                   label="PPh 21"
                   name={"pph21"}

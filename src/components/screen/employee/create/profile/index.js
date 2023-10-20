@@ -533,7 +533,11 @@ const EmployeeProfileForm = ({
       >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataEmployee.npwp}
+            value={
+              dataEmployee.npwp == null || dataEmployee.npwp == false
+                ? ""
+                : dataEmployee.npwp
+            }
             name={"npwp"}
             placeholder="Masukkan nomor NPWP"
             onChange={onChangeInput}
@@ -552,7 +556,12 @@ const EmployeeProfileForm = ({
       >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataEmployee.bpjs_kesehatan}
+            value={
+              dataEmployee.bpjs_kesehatan == null ||
+              dataEmployee.bpjs_kesehatan == false
+                ? ""
+                : dataEmployee.bpjs_kesehatan
+            }
             name={"bpjs_kesehatan"}
             placeholder="Masukkan nomor BPJS Kesehatan"
             onChange={onChangeInput}
@@ -572,7 +581,12 @@ const EmployeeProfileForm = ({
       >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataEmployee.bpjs_ketenagakerjaan}
+            value={
+              dataEmployee.bpjs_ketenagakerjaan == null ||
+              dataEmployee.bpjs_ketenagakerjaan == false
+                ? ""
+                : dataEmployee.bpjs_ketenagakerjaan
+            }
             name={"bpjs_ketenagakerjaan"}
             placeholder="Masukkan nomor BPJS Ketenagakerjaan"
             onChange={onChangeInput}
@@ -591,7 +605,12 @@ const EmployeeProfileForm = ({
       >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataEmployee.acc_number_bukopin}
+            value={
+              dataEmployee.acc_number_bukopin == null ||
+              dataEmployee.acc_number_bukopin == false
+                ? ""
+                : dataEmployee.acc_number_bukopin
+            }
             name={"acc_number_bukopin"}
             placeholder="Masukkan nomor rekening Bank KB Bukopin"
             onChange={onChangeInput}
@@ -644,7 +663,12 @@ const EmployeeProfileForm = ({
           >
             <>
               <Input
-                value={dataEmployee.acc_number_another}
+                value={
+                  dataEmployee.acc_number_another == null ||
+                  dataEmployee.acc_number_another == false
+                    ? ""
+                    : dataEmployee.acc_number_another
+                }
                 name={"acc_number_another"}
                 placeholder="Masukkan nomor rekening bank lainnya"
                 onChange={onChangeInput}
