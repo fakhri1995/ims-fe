@@ -26,7 +26,11 @@ import st from "../../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../../components/layout-dashboardNew";
 import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
 import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
-import { TALENT_POOL_ADD, TALENT_POOL_DELETE } from "../../../../lib/features";
+import {
+  TALENT_POOL_ADD,
+  TALENT_POOL_DELETE,
+  TALENT_POOL_GET,
+} from "../../../../lib/features";
 import httpcookie from "cookie";
 
 const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
@@ -38,6 +42,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
     useAccessControl();
 
   const isAllowedToGetTalentPools = hasPermission(TALENT_POOLS_GET);
+  const isAllowedToGetTalentPool = hasPermission(TALENT_POOL_GET);
   const isAllowedToAddTalentPool = hasPermission(TALENT_POOL_ADD);
   const isAllowedToDeleteTalentPool = hasPermission(TALENT_POOL_DELETE);
   const isAllowedToGetTalentPoolFilters = hasPermission(
@@ -193,6 +198,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <TalentPoolSection
                   initProps={initProps}
                   isAllowedToGetTalentPools={isAllowedToGetTalentPools}
+                  isAllowedToGetTalentPool={isAllowedToGetTalentPool}
                   isAllowedToGetTalentPoolFilters={
                     isAllowedToGetTalentPoolFilters
                   }

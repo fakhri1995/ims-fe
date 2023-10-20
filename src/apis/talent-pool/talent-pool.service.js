@@ -162,39 +162,39 @@ export class TalentPoolService {
     return apiRes;
   };
 
-  // static getContract = async (initProps, feature, contractId) => {
-  //   if (!feature) {
-  //     permissionWarningNotification("Mendapatkan", "Data Contract");
-  //     return;
-  //   }
+  static getTalent = async (initProps, feature, talentId) => {
+    if (!feature) {
+      permissionWarningNotification("Mendapatkan", "Data Talent");
+      return;
+    }
 
-  //   const apiRes = await fetch(
-  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContract?id=${contractId}`,
-  //     {
-  //       method: `GET`,
-  //       headers: {
-  //         Authorization: JSON.parse(initProps),
-  //       },
-  //     }
-  //   )
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       if (res2.success) {
-  //         return res2;
-  //       } else {
-  //         notification.error({
-  //           message: `${res2.message}`,
-  //           duration: 3,
-  //         });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `${err.response}`,
-  //         duration: 3,
-  //       });
-  //     });
+    const apiRes = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTalentPool?id=${talentId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          return res2;
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
 
-  //   return apiRes;
-  // };
+    return apiRes;
+  };
 }

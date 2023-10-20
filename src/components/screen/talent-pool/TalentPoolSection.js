@@ -1,4 +1,8 @@
-import { DeleteOutlined, ShareAltOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  ProfileOutlined,
+  ShareAltOutlined,
+} from "@ant-design/icons";
 import { Input, Select, Tag, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
@@ -17,7 +21,12 @@ import { TableCustomTalentPoolList } from "components/table/tableCustom";
 import { permissionWarningNotification } from "lib/helper";
 import { createKeyPressHandler } from "lib/helper";
 
-import { TALENT_POOL_ADD, TALENT_POOL_DELETE } from "../../../lib/features";
+import {
+  TALENT_POOL_ADD,
+  TALENT_POOL_DELETE,
+  TALENT_POOL_GET,
+} from "../../../lib/features";
+import DrawerTalentDetail from "../../drawer/recruitment/drawerTalentDetail";
 import { ModalHapus2 } from "../../modal/modalCustom";
 import ModalTalentAdd from "../../modal/talent-pool/modalTalentAdd";
 
@@ -27,6 +36,7 @@ const TalentPoolSection = ({
   isAllowedToGetTalentPoolFilters,
   isAllowedToAddTalentPool,
   isAllowedToDeleteTalentPool,
+  isAllowedToGetTalentPool,
   queryParams,
   setQueryParams,
   category,
@@ -221,13 +231,14 @@ const TalentPoolSection = ({
                 <ButtonSys
                   type={"default"}
                   color={"mono50"}
-                  disabled={!isAllowedToGetTalentPools}
+                  disabled={!isAllowedToGetTalentPool}
                   onClick={(event) => {
                     event.stopPropagation();
-                    // rt.push(`/admin/contracts/create?id=${record.id}`);
+                    setDataRowClicked(record);
+                    setDrawerTalentDetail(true);
                   }}
                 >
-                  <NewsIconSvg color={"#808080"} size={16} />
+                  <ProfileOutlined rev={""} />
                 </ButtonSys>
                 <ButtonSys
                   type={"default"}
@@ -249,7 +260,7 @@ const TalentPoolSection = ({
     },
   ];
 
-  console.log({ dataRowClicked });
+  // console.log({ dataRowClicked });
   return (
     <div className="flex flex-col gap-6">
       {/* Start: Search criteria */}
@@ -419,6 +430,17 @@ const TalentPoolSection = ({
           </div>
         </ButtonSys>
       </div>
+
+      {/* Drawer Talent Detail */}
+      <AccessControl hasPermission={TALENT_POOL_GET}>
+        <DrawerTalentDetail
+          initProps={initProps}
+          visible={drawerTalentDetail}
+          onvisible={setDrawerTalentDetail}
+          isAllowedToGetTalentPool={isAllowedToGetTalentPool}
+          talentId={dataRowClicked?.id}
+        />
+      </AccessControl>
 
       <AccessControl hasPermission={TALENT_POOL_ADD}>
         <ModalTalentAdd
