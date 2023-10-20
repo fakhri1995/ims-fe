@@ -11,8 +11,6 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { useAxiosClient } from "hooks/use-axios-client";
-
 import {
   TALENT_POOLS_GET,
   TALENT_POOL_CANDIDATES_GET,
@@ -28,6 +26,11 @@ import st from "../../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../../components/layout-dashboardNew";
 import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
 import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
+import {
+  TALENT_POOL_ADD,
+  TALENT_POOL_DELETE,
+  TALENT_POOL_GET,
+} from "../../../../lib/features";
 import httpcookie from "cookie";
 
 const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
@@ -39,9 +42,13 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
     useAccessControl();
 
   const isAllowedToGetTalentPools = hasPermission(TALENT_POOLS_GET);
+  const isAllowedToGetTalentPool = hasPermission(TALENT_POOL_GET);
+  const isAllowedToAddTalentPool = hasPermission(TALENT_POOL_ADD);
+  const isAllowedToDeleteTalentPool = hasPermission(TALENT_POOL_DELETE);
   const isAllowedToGetTalentPoolFilters = hasPermission(
     TALENT_POOL_FILTERS_GET
   );
+
   const isAllowedToGetTalentPoolCandidates = hasPermission(
     TALENT_POOL_CANDIDATES_GET
   );
@@ -79,12 +86,13 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [searchingFilterTalents, setSearchingFilterTalents] = useState("");
   const [currentCategory, setCurrentCategory] = useState("1");
   const [modalCategoryCreate, setModalCategoryCreate] = useState(false);
-  const [refresh, setRefresh] = useState(-1);
+  const [refreshCategory, setRefreshCategory] = useState(-1);
+  const [refreshPool, setRefreshPool] = useState(-1);
 
   // 3. UseEffect & UseQuery
   // 3.1. Get Talent Pool Categories
   const { data: dataCategories, isLoading: loadingCategories } = useQuery(
-    [TALENT_POOL_CATEGORIES_GET, refresh],
+    [TALENT_POOL_CATEGORIES_GET, refreshCategory],
     () => TalentPoolService.getCategories(initProps, isAllowedToGetTalentPools),
     {
       enabled: isAllowedToGetTalentPoolCategories,
@@ -94,7 +102,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.2. Get Talent Pools
   const { data: dataTalents, isLoading: loadingTalents } = useQuery(
-    [TALENT_POOLS_GET, queryParams, searchingFilterTalents, refresh],
+    [TALENT_POOLS_GET, queryParams, searchingFilterTalents, refreshPool],
     () =>
       TalentPoolService.getTalentPools(
         initProps,
@@ -110,7 +118,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.3. Get Talent Pool Filters
   const { data: dataFilters, isLoading: loadingFilters } = useQuery(
-    [TALENT_POOL_FILTERS_GET, queryParams.category_id, refresh],
+    [TALENT_POOL_FILTERS_GET, queryParams.category_id, refreshPool],
     () =>
       TalentPoolService.getFilters(
         initProps,
@@ -124,51 +132,6 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 4. Event
-  // 4.2. Create Contract
-  // const onAddContract = useCallback(() => {
-  //   handleAddContract();
-  // }, []);
-
-  // 4.3. Delete Contract
-  // const handleDeleteContract = (id) => {
-  //   if (!isAllowedToGetTalentPoolCategories) {
-  //     permissionWarningNotification("Menghapus", "Kontrak");
-  //     return;
-  //   }
-
-  //   setLoadingDelete(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${id}`, {
-  //     method: `DELETE`,
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //       "Content-Type": "application/json",
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((response) => {
-  //       if (response.success) {
-  //         setRefresh((prev) => prev + 1);
-  //         setModalDelete(false);
-
-  //         notification.success({
-  //           message: response.message,
-  //           duration: 3,
-  //         });
-  //       } else {
-  //         notification.error({
-  //           message: response.message,
-  //           duration: 3,
-  //         });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `Gagal menghapus proyek. ${err.response}`,
-  //         duration: 3,
-  //       });
-  //     })
-  //     .finally(() => setLoadingDelete(false));
-  // };
 
   if (isAccessControlPending) {
     return null;
@@ -233,17 +196,23 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
               >
                 {/* Talent Pool per Category */}
                 <TalentPoolSection
+                  initProps={initProps}
                   isAllowedToGetTalentPools={isAllowedToGetTalentPools}
+                  isAllowedToGetTalentPool={isAllowedToGetTalentPool}
                   isAllowedToGetTalentPoolFilters={
                     isAllowedToGetTalentPoolFilters
                   }
+                  isAllowedToAddTalentPool={isAllowedToAddTalentPool}
+                  isAllowedToDeleteTalentPool={isAllowedToDeleteTalentPool}
                   queryParams={queryParams}
                   setQueryParams={setQueryParams}
+                  category={category}
                   dataTalents={dataTalents}
                   loadingTalents={loadingTalents}
                   searchingFilterTalents={searchingFilterTalents}
                   setSearchingFilterTalents={setSearchingFilterTalents}
                   dataFilters={dataFilters}
+                  setRefresh={setRefreshPool}
                 />
               </Tabs.TabPane>
             ))}
@@ -257,28 +226,9 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           visible={modalCategoryCreate}
           onvisible={setModalCategoryCreate}
           isAllowedToAddCategory={isAllowedToAddTalentPoolCategory}
-          setRefreshCategory={setRefresh}
+          setRefreshCategory={setRefreshCategory}
         />
       </AccessControl>
-
-      {/* Modal Delete Talent */}
-      {/* <AccessControl hasPermission={CONTRACT_DELETE}>
-        <ModalHapus2
-          title={`Peringatan`}
-          visible={modalDelete}
-          onvisible={setModalDelete}
-          onOk={() => handleDeletTalent(dataRowClicked?.id)}
-          onCancel={() => {
-            setModalDelete(false);
-          }}
-          itemName={"talent"}
-          loading={loadingDelete}>
-          <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan talent{" "}
-            <strong>{dataRowClicked?.code_number}</strong>?
-          </p>
-        </ModalHapus2>
-      </AccessControl> */}
     </LayoutDashboard>
   );
 };

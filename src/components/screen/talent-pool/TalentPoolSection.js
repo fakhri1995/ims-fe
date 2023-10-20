@@ -1,73 +1,61 @@
 import {
-  CloseCircleOutlined,
   DeleteOutlined,
-  EditOutlined,
+  ProfileOutlined,
   ShareAltOutlined,
-  UnorderedListOutlined,
 } from "@ant-design/icons";
-import { Input, Modal, Select, Spin, Tabs, Tag, notification } from "antd";
-import moment from "moment";
-import {
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from "next-query-params";
+import { Input, Select, Tag, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
 
 import ButtonSys from "components/button";
+import { AccessControl } from "components/features/AccessControl";
 import {
   NewsIconSvg,
-  PlusIconSvg,
   SearchIconSvg,
-  ShareIconSvg,
   TableImportIconSvg,
-  UsersIconSvg,
 } from "components/icon";
-import Layout from "components/layout-dashboard";
-import st from "components/layout-dashboard.module.css";
-import LayoutDashboard from "components/layout-dashboardNew";
-import { ModalHapus2 } from "components/modal/modalCustom";
-import { AddNewFormButton } from "components/screen/resume";
-import {
-  TableCustomContractList,
-  TableCustomTalentPoolList,
-} from "components/table/tableCustom";
+import { TableCustomTalentPoolList } from "components/table/tableCustom";
 
-import { useAccessControl } from "contexts/access-control";
-
-import { useAxiosClient } from "hooks/use-axios-client";
-
-import {
-  TALENT_POOLS_GET,
-  TALENT_POOL_CANDIDATES_GET,
-  TALENT_POOL_CATEGORIES_GET,
-  TALENT_POOL_CATEGORY_ADD,
-  TALENT_POOL_FILTERS_GET,
-} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
+import { createKeyPressHandler } from "lib/helper";
+
 import {
-  convertDaysToString,
-  createKeyPressHandler,
-  momentFormatDate,
-} from "lib/helper";
+  TALENT_POOL_ADD,
+  TALENT_POOL_DELETE,
+  TALENT_POOL_GET,
+} from "../../../lib/features";
+import DrawerTalentDetail from "../../drawer/recruitment/drawerTalentDetail";
+import { ModalHapus2 } from "../../modal/modalCustom";
+import ModalTalentAdd from "../../modal/talent-pool/modalTalentAdd";
 
 const TalentPoolSection = ({
+  initProps,
   isAllowedToGetTalentPools,
   isAllowedToGetTalentPoolFilters,
+  isAllowedToAddTalentPool,
+  isAllowedToDeleteTalentPool,
+  isAllowedToGetTalentPool,
   queryParams,
   setQueryParams,
+  category,
   dataTalents,
   loadingTalents,
   searchingFilterTalents,
   setSearchingFilterTalents,
   dataFilters,
+  setRefresh,
 }) => {
   const rt = useRouter();
 
   // 2. Use state
+  const [modalTalentAdd, setModalTalentAdd] = useState(false);
+  const [modalTalentDelete, setModalTalentDelete] = useState(false);
+  const [drawerTalentDetail, setDrawerTalentDetail] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [dataRowClicked, setDataRowClicked] = useState({});
+
   // 2.1. Table Contract
   // filter search & selected options
   // const [searchingFilterTalents, setSearchingFilterTalents] = useState("");
@@ -77,11 +65,17 @@ const TalentPoolSection = ({
   const [selectedUni, setSelectedUni] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
+  // 3. Use Effect
+  useEffect(() => {
+    return () => {
+      setDataRowClicked({});
+    };
+  }, []);
+
   // 4. Event
   // 4.1. Filter Table
   const onFilterTalentPools = () => {
     setQueryParams({
-      // category_id: currentCategory,
       role: selectedRole,
       skill: selectedSkill,
       year: selectedExpYear,
@@ -94,6 +88,50 @@ const TalentPoolSection = ({
     onFilterTalentPools,
     "Enter"
   );
+
+  // 4.2. Delete Talent
+  const handleDelete = () => {
+    if (!isAllowedToDeleteTalentPool) {
+      permissionWarningNotification("Menghapus", "Talent");
+      return;
+    }
+
+    setLoadingDelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTalentPool?id=${dataRowClicked?.id}`,
+      {
+        method: `DELETE`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          setRefresh((prev) => prev + 1);
+          setModalTalentDelete(false);
+
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus talent. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingDelete(false));
+  };
 
   // Talent Pool Table columns
   const columnTalents = [
@@ -193,25 +231,26 @@ const TalentPoolSection = ({
                 <ButtonSys
                   type={"default"}
                   color={"mono50"}
-                  disabled={!isAllowedToGetTalentPools}
+                  disabled={!isAllowedToGetTalentPool}
                   onClick={(event) => {
                     event.stopPropagation();
-                    // rt.push(`/admin/contracts/create?id=${record.id}`);
+                    setDataRowClicked(record);
+                    setDrawerTalentDetail(true);
                   }}
                 >
-                  <NewsIconSvg color={"#808080"} size={16} />
+                  <ProfileOutlined rev={""} />
                 </ButtonSys>
                 <ButtonSys
                   type={"default"}
                   color={"danger"}
-                  // disabled={!isAllowedToDeleteTalent}
+                  disabled={!isAllowedToDeleteTalentPool}
                   onClick={(event) => {
                     event.stopPropagation();
                     setDataRowClicked(record);
-                    setModalDelete(true);
+                    setModalTalentDelete(true);
                   }}
                 >
-                  <DeleteOutlined />
+                  <DeleteOutlined rev={""} />
                 </ButtonSys>
               </div>
             </>
@@ -221,6 +260,7 @@ const TalentPoolSection = ({
     },
   ];
 
+  // console.log({ dataRowClicked });
   return (
     <div className="flex flex-col gap-6">
       {/* Start: Search criteria */}
@@ -373,7 +413,11 @@ const TalentPoolSection = ({
       </div>
 
       <div className="flex gap-6 justify-center items-center">
-        <ButtonSys type={"primary"}>
+        <ButtonSys
+          type={"primary"}
+          disabled={!isAllowedToAddTalentPool}
+          onClick={() => setModalTalentAdd(true)}
+        >
           <div className="flex gap-2 items-center">
             <TableImportIconSvg color={"#FFFFFF"} size={16} />
             <p className="mig-caption">Tambahkan Talent</p>
@@ -386,6 +430,46 @@ const TalentPoolSection = ({
           </div>
         </ButtonSys>
       </div>
+
+      {/* Drawer Talent Detail */}
+      <AccessControl hasPermission={TALENT_POOL_GET}>
+        <DrawerTalentDetail
+          initProps={initProps}
+          visible={drawerTalentDetail}
+          onvisible={setDrawerTalentDetail}
+          isAllowedToGetTalentPool={isAllowedToGetTalentPool}
+          talentId={dataRowClicked?.id}
+        />
+      </AccessControl>
+
+      <AccessControl hasPermission={TALENT_POOL_ADD}>
+        <ModalTalentAdd
+          initProps={initProps}
+          visible={modalTalentAdd}
+          onvisible={setModalTalentAdd}
+          category={category}
+          setRefreshTalentPool={setRefresh}
+        />
+      </AccessControl>
+
+      <AccessControl hasPermission={TALENT_POOL_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalTalentDelete}
+          onvisible={setModalTalentDelete}
+          onOk={handleDelete}
+          onCancel={() => {
+            setModalTalentDelete(false);
+          }}
+          itemName={"talent"}
+          loading={loadingDelete}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin melanjutkan penghapusan talent dengan nama{" "}
+            <strong>{dataRowClicked?.resume?.name}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
     </div>
   );
 };

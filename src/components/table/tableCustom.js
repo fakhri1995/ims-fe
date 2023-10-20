@@ -2220,9 +2220,7 @@ const TableCustomTalentPoolList = ({
             setrowstate(record.id);
           },
           onClick: () => {
-            record.id &&
-              record.is_posted &&
-              rt.push(`/admin/talent-pools/${record.id}`);
+            record.id && rt.push(`/admin/recruitment/talent-pool/${record.id}`);
           },
         };
       }}
