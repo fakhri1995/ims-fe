@@ -1,24 +1,12 @@
-import { UnorderedListOutlined } from "@ant-design/icons";
-import { Tabs, Tag } from "antd";
+import { Tabs, Tag, Timeline } from "antd";
 import parse from "html-react-parser";
-import { NumberParam, useQueryParams, withDefault } from "next-query-params";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useMemo } from "react";
 import { useQuery } from "react-query";
 
-import { AccessControl } from "components/features/AccessControl";
-
 import { useAccessControl } from "contexts/access-control";
-
-import {
-  TALENT_POOLS_GET,
-  TALENT_POOL_CANDIDATES_GET,
-  TALENT_POOL_CATEGORIES_GET,
-  TALENT_POOL_CATEGORY_ADD,
-  TALENT_POOL_FILTERS_GET,
-} from "lib/features";
 
 import { CandidateService } from "../../../../apis/candidates";
 import { TalentPoolService } from "../../../../apis/talent-pool/talent-pool.service";
@@ -26,25 +14,15 @@ import ButtonSys from "../../../../components/button";
 import {
   ArrowLeftIconSvg,
   BriefcaseIconSvg,
-  BulbIconSvg,
   CalendarEventIconSvg,
   CompanyIconSvg,
   PhoneIconSvg,
-  PlusIconSvg,
   SchoolIconSvg,
-  UsersIconSvg,
 } from "../../../../components/icon";
 import st from "../../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../../components/layout-dashboardNew";
-import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
-import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
-import {
-  RESUME_GET,
-  TALENT_POOL_ADD,
-  TALENT_POOL_DELETE,
-  TALENT_POOL_GET,
-} from "../../../../lib/features";
-import { getNameInitial } from "../../../../lib/helper";
+import { RESUME_GET, TALENT_POOL_GET } from "../../../../lib/features";
+import { getNameInitial, momentFormatDate } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
@@ -73,13 +51,6 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
   ]);
 
   // 2. Use state
-  // 2.1. Table Contract
-  // filter search & selected options
-  const [searchingFilterTalents, setSearchingFilterTalents] = useState("");
-  const [currentCategory, setCurrentCategory] = useState("1");
-  const [modalCategoryCreate, setModalCategoryCreate] = useState(false);
-  const [refreshCategory, setRefreshCategory] = useState(-1);
-  const [refreshPool, setRefreshPool] = useState(-1);
 
   // 3. UseEffect & UseQuery
   // 3.1. Get Talent
@@ -97,7 +68,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
     }
   );
 
-  // 3.1. Get Resume Talent
+  // 3.2. Get Resume Talent
   const { data: dataResume, isLoading: loadingResume } = useQuery(
     [RESUME_GET, dataTalent?.resume_id],
     () =>
@@ -107,7 +78,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
         dataTalent?.resume_id
       ),
     {
-      enabled: isAllowedToGetResume,
+      enabled: !!dataTalent?.resume_id,
       select: (response) => response.data,
     }
   );
@@ -131,9 +102,14 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
     >
       <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
         <div className="flex flex-col shadow-md rounded-md bg-white p-6 gap-4 ">
-          <div className="flex gap-2 items-center">
-            <ArrowLeftIconSvg size={24} color={"#4D4D4D"} />
-            <p className="mig-caption--bold text-mono50">Kembali</p>
+          <div>
+            <button
+              onClick={() => rt.back()}
+              className="flex gap-2 items-center bg-transparent hover:opacity-70"
+            >
+              <ArrowLeftIconSvg size={24} color={"#4D4D4D"} />
+              <p className="mig-caption--bold text-mono50">Kembali</p>
+            </button>
           </div>
 
           <div className="flex gap-6 items-center">
@@ -221,7 +197,11 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                 <CalendarEventIconSvg size={16} color={"#35763B"} />
                 <p className="text-primary100">Tanggal Daftar</p>
               </div>
-              <p>{dataTalent?.resume?.recruitment?.created_at || "-"}</p>
+              <p>
+                {momentFormatDate(
+                  dataTalent?.resume?.recruitment?.created_at || "-"
+                )}
+              </p>
             </div>
           </div>
 
@@ -243,32 +223,173 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
 
           {/* Resume */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Academic */}
-            <div className="flex flex-col gap-4">
-              <h4 className="mig-heading--4">Academic History</h4>
-              <div>
-                {dataResume?.summaries?.description ? (
-                  parse(dataResume?.summaries?.description)
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* LEFT COLUMN */}
+            <div className="flex flex-col w-full gap-4">
+              {/* ACADEMIC / EDUCATION */}
+              <div className="flex flex-col gap-6  border-b border-mono-90">
+                <h4 className="mig-heading--4">Academic History</h4>
+                {dataResume?.educations?.length ? (
+                  <Timeline>
+                    {dataResume?.educations?.map((item) => (
+                      <Timeline.Item key={item?.id} color="#35763B">
+                        <p className="text-primary100 font-bold">
+                          {item.university}
+                        </p>
+                        <p className="text-mono50">
+                          {item.major} ·{" "}
+                          <strong>{item.graduation_year.slice(0, 4)}</strong>
+                        </p>
+                        <p className="text-mono50">GPA {item.gpa}</p>
+                      </Timeline.Item>
+                    ))}
+                  </Timeline>
+                ) : (
+                  <p className="pb-6">-</p>
+                )}
+              </div>
+
+              {/* EXPERIENCES */}
+              <div className="flex flex-col gap-6 border-b border-mono-90">
+                <h4 className="mig-heading--4">Experiences</h4>
+                {dataResume?.experiences?.length ? (
+                  <Timeline>
+                    {dataResume?.experiences?.map((item) => (
+                      <Timeline.Item key={item?.id} color="#35763B">
+                        <p className="text-primary100 font-bold">{item.role}</p>
+                        <p className="text-mono50">
+                          {item.company} ·{" "}
+                          <strong>
+                            {momentFormatDate(item.start_date, "-", "MMM YYYY")}{" "}
+                            -&nbsp;
+                            {momentFormatDate(
+                              item.end_date,
+                              <em>present</em>,
+                              "MMM YYYY"
+                            )}
+                          </strong>
+                        </p>
+                        <div className="text-mono50">
+                          {parse(item.description)}
+                        </div>
+                      </Timeline.Item>
+                    ))}
+                  </Timeline>
+                ) : (
+                  <p className="pb-6">-</p>
+                )}
+              </div>
+
+              {/* PROJECTS */}
+              <div className="flex flex-col gap-4">
+                <h4 className="mig-heading--4">Projects</h4>
+                {dataResume?.projects?.length ? (
+                  <div className="flex flex-col gap-4">
+                    {dataResume?.projects?.map((item) => (
+                      <div key={item?.id} className="flex gap-6">
+                        <p className="text-primary100 font-bold">
+                          {item.year.slice(0, 4)}
+                        </p>
+                        <div>
+                          <p className="text-mono30 font-bold">{item.name}</p>
+
+                          <p className="text-mono50">{item.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <p>-</p>
                 )}
               </div>
             </div>
 
-            {/* Skills */}
-            <div className="flex flex-col gap-4">
-              <h4 className="mig-heading--4">Skills</h4>
-              <div className="flex flex-wrap gap-2">
-                {dataTalent?.resume?.skills?.map((skill) => (
-                  <Tag
-                    key={skill.id}
-                    color="#35763B1A"
-                    className="text-primary100 rounded-md mig-caption--bold"
-                  >
-                    {skill.name}
-                  </Tag>
-                ))}
+            {/* RIGHT COLUMN */}
+            <div className="flex flex-col w-full gap-4">
+              {/* Skills */}
+              <div className="flex flex-col gap-6 border-b border-mono-90">
+                <h4 className="mig-heading--4">Skills</h4>
+                {dataResume?.skills?.length ? (
+                  <div className="flex flex-wrap gap-x-4">
+                    {dataResume?.skills?.map((skill) => (
+                      <Tag
+                        key={skill.id}
+                        color="#35763B1A"
+                        className="text-primary100 rounded-md mb-6"
+                      >
+                        {skill.name}
+                      </Tag>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="pb-6">-</p>
+                )}
+              </div>
+
+              {/* TRAININGS */}
+              <div className="flex flex-col gap-6 pb-6 border-b border-mono-90">
+                <h4 className="mig-heading--4">Trainings</h4>
+                {dataResume?.trainings?.length ? (
+                  <div className="flex flex-col gap-4">
+                    {dataResume?.trainings?.map((item) => (
+                      <div key={item?.id} className="flex gap-6">
+                        <p className="text-primary100 font-bold">
+                          {item.year.slice(0, 4)}
+                        </p>
+                        <div>
+                          <p className="text-mono30 font-bold">{item.name}</p>
+                          <p className="text-mono50">{item.organizer}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>-</p>
+                )}
+              </div>
+
+              {/* CERTIFICATIONS */}
+              <div className="flex flex-col gap-6 pb-6 border-b border-mono-90">
+                <h4 className="mig-heading--4">Certifications</h4>
+                {dataResume?.certificates?.length ? (
+                  <div className="flex flex-col gap-4">
+                    {dataResume?.certificates?.map((item) => (
+                      <div key={item?.id} className="flex gap-6">
+                        <p className="text-primary100 font-bold">
+                          {item.year.slice(0, 4)}
+                        </p>
+                        <div>
+                          <p className="text-mono30 font-bold">{item.name}</p>
+                          <p className="text-mono50">{item.organizer}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>-</p>
+                )}
+              </div>
+
+              {/* ACHIEVEMENTS */}
+              <div className="flex flex-col gap-6">
+                <h4 className="mig-heading--4">Achievements</h4>
+                {dataResume?.achievements?.length ? (
+                  <div className="flex flex-col gap-4">
+                    {dataResume?.achievements?.map((item) => (
+                      <div key={item?.id} className="flex gap-6">
+                        <p className="text-primary100 font-bold">
+                          {item.year.slice(0, 4)}
+                        </p>
+                        <div>
+                          <p className="text-mono30 font-bold">{item.name}</p>
+                          <p className="text-mono50">{item.organizer}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>-</p>
+                )}
               </div>
             </div>
           </div>
