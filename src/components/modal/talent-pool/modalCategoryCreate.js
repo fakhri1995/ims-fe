@@ -24,7 +24,7 @@ const ModalCategoryCreate = ({
   visible,
   onvisible,
   isAllowedToAddCategory,
-  setRefreshCategory,
+  refetchCategories,
 }) => {
   const { hasPermission } = useAccessControl();
   const [form] = Form.useForm();
@@ -81,7 +81,7 @@ const ModalCategoryCreate = ({
             message: response.message,
             duration: 3,
           });
-          setRefreshCategory((prev) => prev + 1);
+          refetchCategories();
         } else {
           notification.error({
             message: response.message,
@@ -110,17 +110,14 @@ const ModalCategoryCreate = ({
       width={700}
       footer={
         <Spin spinning={loading}>
-          <div className="flex  items-center">
-            <ButtonSys
-              fullWidth
-              type={"primary"}
-              color={"mono50"}
-              onClick={() => setModalConfirm(true)}
-              disabled={!dataCategory.name || !dataCategory.description}
-            >
-              <p>Tambah</p>
-            </ButtonSys>
-          </div>
+          <ButtonSys
+            fullWidth
+            type={"primary"}
+            onClick={() => setModalConfirm(true)}
+            disabled={!dataCategory.name || !dataCategory.description}
+          >
+            <p>Tambah</p>
+          </ButtonSys>
         </Spin>
       }
       loading={loading}
@@ -151,6 +148,7 @@ const ModalCategoryCreate = ({
             </Form.Item>
             <Form.Item
               label="Deskripsi Kategori"
+              name={"description"}
               rules={[
                 {
                   required: true,

@@ -8,10 +8,7 @@ import {
   Table,
   notification,
 } from "antd";
-import { NumberParam, useQueryParams, withDefault } from "next-query-params";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { useRef } from "react";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
 import "react-quill/dist/quill.snow.css";
@@ -41,7 +38,8 @@ const ModalTalentAdd = ({
   visible,
   onvisible,
   category,
-  setRefreshTalentPool,
+  refetchPool,
+  refetchFilters,
 }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
@@ -52,27 +50,31 @@ const ModalTalentAdd = ({
   const isAllowedToGetCandidates = hasPermission(TALENT_POOL_CANDIDATES_GET);
   const isAllowedToAddTalentPool = hasPermission(TALENT_POOL_ADD);
 
-  const [queryParams, setQueryParams] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    category_id: withDefault(NumberParam, category?.id),
-  });
-
   // 1. USE STATE
+  const [params, setParams] = useState({
+    page: 1,
+    rows: 10,
+    category_id: category?.id,
+  });
   const [loading, setLoading] = useState(false);
   const [modalConfirm, setModalConfirm] = useState(false);
   const [searchCandidate, setSearchCandidate] = useState("");
   const [selectedCandidates, setSelectedCandidates] = useState([]); // talent pool candidate id is same as resume id
   const [rowState, setRowState] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   // 2. USE QUERY & USE EFFECT
-  const { data: dataRawCandidates, isLoading: loadingCandidates } = useQuery(
-    [TALENT_POOL_CANDIDATES_GET, queryParams, searchCandidate],
+  const {
+    data: dataRawCandidates,
+    isLoading: loadingCandidates,
+    refetch: refetchCandidates,
+  } = useQuery(
+    [TALENT_POOL_CANDIDATES_GET, params, searchCandidate],
     () =>
       TalentPoolService.getCandidates(
         initProps,
         isAllowedToGetCandidates,
-        queryParams,
+        params,
         searchCandidate
       ),
     {
@@ -100,7 +102,7 @@ const ModalTalentAdd = ({
   };
 
   const onChangeSearchCandidate = (e) => {
-    setSearchCandidate(e.target.value);
+    setTimeout(() => setSearchCandidate(e.target.value), 500);
   };
 
   const handleSelect = (e) => {
@@ -149,7 +151,9 @@ const ModalTalentAdd = ({
             message: response.message,
             duration: 3,
           });
-          setRefreshTalentPool((prev) => prev + 1);
+          refetchPool();
+          refetchFilters();
+          refetchCandidates();
         } else {
           notification.error({
             message: response.message,
@@ -234,76 +238,86 @@ const ModalTalentAdd = ({
           dataSource={dataRawCandidates?.data}
           loading={loadingCandidates}
           pagination={{
-            current: queryParams.page,
-            pageSize: queryParams.rows,
+            current: params.page,
+            pageSize: params.rows,
             total: dataRawCandidates?.total,
             showSizeChanger: true,
           }}
           onChange={(pagination, filters, sorter) => {
-            setQueryParams({
+            setParams((prev) => ({
+              ...prev,
               page: pagination.current,
               rows: pagination.pageSize,
-            });
+            }));
           }}
-          // onRow={(record) => {
-          //   return {
-          //     onMouseOver: (event) => {
-          //       console.log(event);
-          //       setRowState(record.id);
-          //     },
-          //   };
-          // }}
+          onRow={(record) => {
+            return {
+              onMouseOver: () => {
+                setRowState(record.id);
+              },
+            };
+          }}
           columns={[
             {
               title: undefined,
               dataIndex: "candidate",
               key: "candidate",
-              render: (_, record) => {
+              render: (_, record, cardIdx) => {
                 const isChecked = selectedCandidates.some(
                   (item) => item.id === record.id
                 );
                 return (
-                  //  Card kandidat
-                  <Popover
-                    className="popoverTalentCandidate"
-                    content={<CandidateDetailCard candidateData={record} />}
-                    placement="bottom"
-                    trigger={"click"}
+                  <div
+                    onMouseEnter={() => {
+                      setTimeout(() => {
+                        setIsHovered(true);
+                      }, 500);
+                    }}
+                    onMouseLeave={() => setIsHovered(false)}
+                    className={`p-3 relative hover:bg-backdrop rounded-md flex 
+                    items-center mb-2 border border-mono100 cursor-pointer ${
+                      isChecked ? "bg-backdrop" : "bg-transparent"
+                    }`}
                   >
-                    <div
-                      className={`p-3 relative hover:bg-backdrop rounded-md flex items-center mb-2 ${
-                        isChecked ? "bg-backdrop" : "bg-mono100"
-                      }`}
-                    >
-                      <div className="flex gap-3 items-center w-11/12">
-                        <div
-                          className="rounded-full w-12 h-12 flex justify-center items-center 
-                      bg-white mig-caption--bold p-1"
-                        >
-                          {getNameInitial(record?.name)}
-                        </div>
-                        <div>
-                          <p className="font-medium">{record?.name}</p>
-                          <p className="mig-caption text-mono50">
-                            {record?.last_assessment?.name}
-                          </p>
-                        </div>
+                    <div className="flex gap-3 items-center w-11/12">
+                      <div
+                        className={`rounded-full w-12 h-12 flex justify-center 
+                        items-center mig-caption--bold p-1 ${
+                          isHovered && rowState === record.id
+                            ? "bg-white"
+                            : "bg-backdrop"
+                        }`}
+                      >
+                        {getNameInitial(record?.name)}
                       </div>
-                      <Checkbox
-                        key={record.id}
-                        value={record}
-                        checked={isChecked}
-                        onChange={handleSelect}
-                      />
-
-                      {/* <div
-                      className={`absolute w-full h-full z-50 ${
-                        rowState === record.id ? "block" : "hidden"
-                      }`}>
-                      <CandidateDetailCard candidateData={record} />
-                    </div> */}
+                      <div>
+                        <p className="font-medium">{record?.name}</p>
+                        <p className="mig-caption text-mono50">
+                          {record?.last_assessment?.name}
+                        </p>
+                      </div>
                     </div>
-                  </Popover>
+                    <Checkbox
+                      key={record.id}
+                      value={record}
+                      checked={isChecked}
+                      onChange={handleSelect}
+                    />
+                    {isHovered && rowState === record.id && (
+                      <div
+                        className={`absolute left-0 w-full h-full z-50 
+                        ${
+                          // Last 3 card will show popup above
+                          cardIdx >
+                          dataRawCandidates?.to - dataRawCandidates?.from - 3
+                            ? "-top-[17rem]"
+                            : "top-20"
+                        } `}
+                      >
+                        <CandidateDetailCard candidateData={record} />
+                      </div>
+                    )}
+                  </div>
                 );
               },
             },

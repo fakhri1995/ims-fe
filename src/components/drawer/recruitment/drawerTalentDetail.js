@@ -1,6 +1,7 @@
-import { useQuery } from "@chakra-ui/react";
 import { Spin, Tag } from "antd";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -18,65 +19,6 @@ import {
   SchoolIconSvg,
 } from "../../icon";
 import DrawerCore from "../drawerCore";
-
-// export const dataTalent = {
-//   id: 1,
-//   resume_id: 1,
-//   talent_pool_category_id: 1,
-//   status: null,
-//   created_at: "2023-10-10T07:58:37.000000Z",
-//   updated_at: "2023-10-10T07:58:37.000000Z",
-//   deleted_at: null,
-//   resume: {
-//     id: 1,
-//     name: "Yasmin",
-//     telp: "0232312312",
-//     email: "yasminadelia@mitrasolusi.group",
-//     city: "Bogor",
-//     province: "Jawa Barat",
-//     assessment_id: 1,
-//     created_at: "2023-06-09 10:52:00",
-//     updated_at: "2023-06-09 10:52:00",
-//     created_by: 26,
-//     deleted_at: null,
-//     owner_id: null,
-//     last_education: {
-//       resume_id: 1,
-//       university: "test23",
-//     },
-//     last_assessment: {
-//       id: 1,
-//       name: "Frontend Developer",
-//     },
-//     skills: [
-//       {
-//         id: 1,
-//         name: "PHP",
-//         resume_id: 1,
-//       },
-//       {
-//         id: 2,
-//         name: "Python",
-//         resume_id: 1,
-//       },
-//       {
-//         id: 3,
-//         name: "React",
-//         resume_id: 1,
-//       },
-//       {
-//         id: 4,
-//         name: "TailwindCSS",
-//         resume_id: 1,
-//       },
-//       {
-//         id: 5,
-//         name: "Javascript",
-//         resume_id: 1,
-//       },
-//     ],
-//   },
-// };
 
 const DrawerTalentDetail = ({
   initProps,
@@ -98,20 +40,9 @@ const DrawerTalentDetail = ({
     return null;
   }
 
-  // useState
-  const [detailTalent, setDetailTalent] = useState({
-    employee_id: -1,
-    id: -1,
-    is_posted: -1,
-    take_home_pay: 0,
-    tanggal_dibayarkan: "",
-    total_gross_penerimaan: 0,
-    total_gross_pengurangan: 0,
-    total_hari_kerja: 0,
-    show_all_benefits: false,
-  });
+  const rt = useRouter();
 
-  // 2. Use QUery & Use Effect
+  // 2. Use Query & Use Effect
   // 2.1 Get talent detail
   const { data: dataTalent, isLoading: loadingTalent } = useQuery(
     [TALENT_POOL_GET, talentId],
@@ -122,7 +53,7 @@ const DrawerTalentDetail = ({
         talentId
       ),
     {
-      enabled: isAllowedToGetTalentPool,
+      enabled: visible,
       select: (response) => response.data,
     }
   );
@@ -229,7 +160,11 @@ const DrawerTalentDetail = ({
                 <CalendarEventIconSvg size={16} color={"#35763B"} />
                 <p className="text-primary100">Tanggal Daftar</p>
               </div>
-              <p>{dataTalent?.recruitment_created_at || "-"}</p>
+              <p>
+                {momentFormatDate(
+                  dataTalent?.resume?.recruitment?.created_at || "-"
+                )}
+              </p>
             </div>
 
             <div className="col-span-2 mig-caption--medium">
@@ -256,7 +191,11 @@ const DrawerTalentDetail = ({
 
           <div className="flex gap-2 pt-4">
             <div className="w-11/12">
-              <ButtonSys type={"primary"} fullWidth>
+              <ButtonSys
+                type={"primary"}
+                fullWidth
+                onClick={() => rt.push(`talent-pool/${talentId}`)}
+              >
                 <div className="flex gap-2 items-center">
                   <p>Lihat Detail</p>
                   <ArrowUpRightIconSvg color={"#FFFFFF"} size={16} />
