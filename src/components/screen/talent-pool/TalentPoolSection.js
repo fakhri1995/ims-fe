@@ -45,7 +45,8 @@ const TalentPoolSection = ({
   searchingFilterTalents,
   setSearchingFilterTalents,
   dataFilters,
-  setRefresh,
+  refetchPool,
+  refetchFilters,
 }) => {
   const rt = useRouter();
 
@@ -110,9 +111,9 @@ const TalentPoolSection = ({
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
-          setRefresh((prev) => prev + 1);
           setModalTalentDelete(false);
-
+          refetchPool();
+          refetchFilters();
           notification.success({
             message: response.message,
             duration: 3,
@@ -369,7 +370,7 @@ const TalentPoolSection = ({
             defaultValue={queryParams.status}
             allowClear
             name={`status`}
-            disabled={!isAllowedToGetTalentPoolFilters}
+            disabled={true || !isAllowedToGetTalentPoolFilters}
             placeholder="Status"
             style={{ width: `100%` }}
             onChange={(value) => {
@@ -448,7 +449,8 @@ const TalentPoolSection = ({
           visible={modalTalentAdd}
           onvisible={setModalTalentAdd}
           category={category}
-          setRefreshTalentPool={setRefresh}
+          refetchPool={refetchPool}
+          refetchFilters={refetchFilters}
         />
       </AccessControl>
 

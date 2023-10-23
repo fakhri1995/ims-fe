@@ -5,7 +5,9 @@ import { BriefcaseIconSvg, CompanyIconSvg, SchoolIconSvg } from "../../icon";
 
 const CandidateDetailCard = ({ candidateData }) => {
   return (
-    <div className={`rounded-lg grid grid-cols-1 gap-4 p-6 bg-white`}>
+    <div
+      className={`w-full shadow-lg border border-mono100 rounded-lg grid grid-cols-1 gap-4 p-6 bg-white`}
+    >
       <div className="flex gap-3 items-center w-11/12">
         <div
           className="rounded-full w-12 h-12 flex justify-center items-center 
@@ -24,8 +26,8 @@ const CandidateDetailCard = ({ candidateData }) => {
       <div className="grid grid-cols-2 gap-6">
         <div className="mig-caption--medium">
           <div
-            className="flex rounded-sm w-1/2 bg-backdrop gap-2 
-         items-center px-2 py-0.5 mb-2 "
+            className="flex rounded-sm w-fit bg-backdrop gap-2 
+         items-center px-2 py-0.5 mb-2"
           >
             <CompanyIconSvg size={16} color={"#35763B"} />
             <p className="text-primary100">Asal Kota</p>
@@ -35,7 +37,7 @@ const CandidateDetailCard = ({ candidateData }) => {
 
         <div className="mig-caption--medium">
           <div
-            className="flex rounded-sm w-1/2 bg-backdrop gap-2 
+            className="flex rounded-sm w-fit bg-backdrop gap-2 
          items-center px-2 py-0.5 mb-2 "
           >
             <BriefcaseIconSvg size={16} color={"#35763B"} />
@@ -46,7 +48,7 @@ const CandidateDetailCard = ({ candidateData }) => {
 
         <div className="mig-caption--medium">
           <div
-            className="flex rounded-sm w-1/2 bg-backdrop gap-2 
+            className="flex rounded-sm w-fit bg-backdrop gap-2 
          items-center px-2 py-0.5 mb-2 "
           >
             <SchoolIconSvg size={16} color={"#35763B"} />
@@ -57,7 +59,7 @@ const CandidateDetailCard = ({ candidateData }) => {
 
         <div className="mig-caption--medium">
           <div
-            className="flex rounded-sm w-2/3 bg-backdrop gap-2 
+            className="flex rounded-sm w-fit bg-backdrop gap-2 
          items-center px-2 py-0.5 mb-2 "
           >
             <BriefcaseIconSvg size={16} color={"#35763B"} />

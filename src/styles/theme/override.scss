@@ -386,6 +386,10 @@ ol {
   padding: 0;
 }
 
+.tableTalentCandidate .ant-table-tbody > tr > td {
+  border: 0;
+}
+
 .hoverComponent {
   display: none;
 }
@@ -436,6 +440,15 @@ ol {
 
 .ant-tabs.tabResponsive {
   display: grid;
+}
+
+.ant-tabs-tab .anticon {
+  margin: 0 5px;
+}
+
+.talentPoolTab .ant-tabs-tab {
+  margin: 0;
+  padding: 0;
 }
 
 /** UPLOAD */
@@ -537,19 +550,6 @@ ol {
   border-radius: 12px;
   cursor: pointer;
   transition: border-color 0.3s;
-}
-
-/** POPOVER */
-.popoverTalentCandidate .ant-popover-inner-content {
-  padding: 0;
-}
-
-.popoverTalentCandidate .ant-popover-placement-bottom .ant-popover-arrow {
-  display: none;
-}
-
-.popoverTalentCandidate .ant-popover {
-  width: 64%;
 }
 
 // .ant-checkbox .ant-checkbox-inner {
