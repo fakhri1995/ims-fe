@@ -1,4 +1,4 @@
-import { Tabs, Tag, Timeline } from "antd";
+import { Spin, Tabs, Tag, Timeline } from "antd";
 import parse from "html-react-parser";
 import { useRouter } from "next/router";
 import React from "react";
@@ -37,6 +37,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
   const isAllowedToGetResume = hasPermission(RESUME_GET);
 
   const rt = useRouter();
+
   // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
 
@@ -101,299 +102,306 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
-        <div className="flex flex-col shadow-md rounded-md bg-white p-6 gap-4 ">
-          <div>
-            <button
-              onClick={() => rt.back()}
-              className="flex gap-2 items-center bg-transparent hover:opacity-70"
-            >
-              <ArrowLeftIconSvg size={24} color={"#4D4D4D"} />
-              <p className="mig-caption--bold text-mono50">Kembali</p>
-            </button>
-          </div>
+        <Spin spinning={loadingResume}>
+          <div className="flex flex-col shadow-md rounded-md bg-white p-6 gap-4 ">
+            <div>
+              <button
+                onClick={() => rt.back()}
+                className="flex gap-2 items-center bg-transparent hover:opacity-70"
+              >
+                <ArrowLeftIconSvg size={24} color={"#4D4D4D"} />
+                <p className="mig-caption--bold text-mono50">Kembali</p>
+              </button>
+            </div>
 
-          <div className="flex gap-6 items-center">
-            <div
-              className="rounded-full w-20 h-20 p-2 flex justify-center items-center 
+            <div className="flex gap-6 items-center">
+              <div
+                className="rounded-full w-20 h-20 p-2 flex justify-center items-center 
               bg-backdrop mig-heading--4 text-primary100"
-            >
-              {getNameInitial(dataTalent?.resume?.name)}
-            </div>
-            <div>
-              <h4 className="mig-heading--4">{dataTalent?.resume?.name}</h4>
-              <p className="mig-caption--medium text-mono30">
-                {dataTalent?.resume?.last_assessment?.name}
-              </p>
-              <p className="mig-caption--medium text-mono50">
-                {dataTalent?.resume?.email}
-              </p>
-            </div>
-          </div>
-
-          <hr />
-
-          {/* Informasi Umum */}
-          <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="mig-caption--medium">
-              <div
-                className="flex rounded-sm w-max bg-backdrop gap-2 
-                items-center px-2 py-0.5 mb-2 "
               >
-                <CompanyIconSvg size={16} color={"#35763B"} />
-                <p className="text-primary100">Asal Kota</p>
+                {getNameInitial(dataTalent?.resume?.name)}
               </div>
-              <p>{dataTalent?.resume?.city || "-"}</p>
+              <div>
+                <h4 className="mig-heading--4">{dataTalent?.resume?.name}</h4>
+                <p className="mig-caption--medium text-mono30">
+                  {dataTalent?.resume?.last_assessment?.name}
+                </p>
+                <p className="mig-caption--medium text-mono50">
+                  {dataTalent?.resume?.email}
+                </p>
+              </div>
             </div>
 
-            <div className="mig-caption--medium">
-              <div
-                className="flex rounded-sm w-max bg-backdrop gap-2 
+            <hr />
+
+            {/* INFORMASI UMUM */}
+            <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="mig-caption--medium">
+                <div
+                  className="flex rounded-sm w-max bg-backdrop gap-2 
                 items-center px-2 py-0.5 mb-2 "
-              >
-                <BriefcaseIconSvg size={16} color={"#35763B"} />
-                <p className="text-primary100">Pengalaman Terakhir</p>
+                >
+                  <CompanyIconSvg size={16} color={"#35763B"} />
+                  <p className="text-primary100">Asal Kota</p>
+                </div>
+                <p>{dataTalent?.resume?.city || "-"}</p>
               </div>
-              <p>{dataTalent?.resume?.last_experience?.name || "-"}</p>
-            </div>
 
-            <div className="mig-caption--medium">
-              <div
-                className="flex rounded-sm w-max bg-backdrop gap-2 
+              <div className="mig-caption--medium">
+                <div
+                  className="flex rounded-sm w-max bg-backdrop gap-2 
                 items-center px-2 py-0.5 mb-2 "
-              >
-                <PhoneIconSvg size={16} color={"#35763B"} />
-                <p className="text-primary100">No Telepon</p>
+                >
+                  <BriefcaseIconSvg size={16} color={"#35763B"} />
+                  <p className="text-primary100">Pengalaman Terakhir</p>
+                </div>
+                <p>{dataTalent?.resume?.last_experience?.name || "-"}</p>
               </div>
-              <p>{dataTalent?.resume?.telp || "-"}</p>
-            </div>
 
-            <div className="mig-caption--medium">
-              <div
-                className="flex rounded-sm w-max bg-backdrop gap-2 
+              <div className="mig-caption--medium">
+                <div
+                  className="flex rounded-sm w-max bg-backdrop gap-2 
                 items-center px-2 py-0.5 mb-2 "
-              >
-                <SchoolIconSvg size={16} color={"#35763B"} />
-                <p className="text-primary100">Universitas</p>
+                >
+                  <PhoneIconSvg size={16} color={"#35763B"} />
+                  <p className="text-primary100">No Telepon</p>
+                </div>
+                <p>{dataTalent?.resume?.telp || "-"}</p>
               </div>
-              <p>{dataTalent?.resume?.last_education?.university || "-"}</p>
-            </div>
 
-            <div className="mig-caption--medium">
-              <div
-                className="flex rounded-sm w-max bg-backdrop gap-2 
+              <div className="mig-caption--medium">
+                <div
+                  className="flex rounded-sm w-max bg-backdrop gap-2 
                 items-center px-2 py-0.5 mb-2 "
-              >
-                <BriefcaseIconSvg size={16} color={"#35763B"} />
-                <p className="text-primary100">Role</p>
+                >
+                  <SchoolIconSvg size={16} color={"#35763B"} />
+                  <p className="text-primary100">Universitas</p>
+                </div>
+                <p>{dataTalent?.resume?.last_education?.university || "-"}</p>
               </div>
-              <p>{dataTalent?.resume?.last_assessment?.name || "-"}</p>
-            </div>
 
-            <div className="mig-caption--medium">
-              <div
-                className="flex rounded-sm w-max bg-backdrop gap-2 
+              <div className="mig-caption--medium">
+                <div
+                  className="flex rounded-sm w-max bg-backdrop gap-2 
                 items-center px-2 py-0.5 mb-2 "
-              >
-                <CalendarEventIconSvg size={16} color={"#35763B"} />
-                <p className="text-primary100">Tanggal Daftar</p>
+                >
+                  <BriefcaseIconSvg size={16} color={"#35763B"} />
+                  <p className="text-primary100">Role</p>
+                </div>
+                <p>{dataTalent?.resume?.last_assessment?.name || "-"}</p>
               </div>
-              <p>
-                {momentFormatDate(
-                  dataTalent?.resume?.recruitment?.created_at || "-"
-                )}
-              </p>
+
+              <div className="mig-caption--medium">
+                <div
+                  className="flex rounded-sm w-max bg-backdrop gap-2 
+                items-center px-2 py-0.5 mb-2 "
+                >
+                  <CalendarEventIconSvg size={16} color={"#35763B"} />
+                  <p className="text-primary100">Tanggal Daftar</p>
+                </div>
+                <p>
+                  {momentFormatDate(
+                    dataTalent?.resume?.recruitment?.created_at || "-"
+                  )}
+                </p>
+              </div>
             </div>
-          </div>
 
-          <hr className="" />
+            <hr className="" />
 
-          {/* Summary */}
-          <div className="flex flex-col gap-4">
-            <h4 className="mig-heading--4">Summary</h4>
-            <div>
-              {dataResume?.summaries?.description ? (
-                parse(dataResume?.summaries?.description)
-              ) : (
-                <p>-</p>
-              )}
-            </div>
-          </div>
-
-          <hr className="col-span-3" />
-
-          {/* Resume */}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* LEFT COLUMN */}
-            <div className="flex flex-col w-full gap-4">
-              {/* ACADEMIC / EDUCATION */}
-              <div className="flex flex-col gap-6  border-b border-mono-90">
-                <h4 className="mig-heading--4">Academic History</h4>
-                {dataResume?.educations?.length ? (
-                  <Timeline>
-                    {dataResume?.educations?.map((item) => (
-                      <Timeline.Item key={item?.id} color="#35763B">
-                        <p className="text-primary100 font-bold">
-                          {item.university}
-                        </p>
-                        <p className="text-mono50">
-                          {item.major} ·{" "}
-                          <strong>{item.graduation_year.slice(0, 4)}</strong>
-                        </p>
-                        <p className="text-mono50">GPA {item.gpa}</p>
-                      </Timeline.Item>
-                    ))}
-                  </Timeline>
-                ) : (
-                  <p className="pb-6">-</p>
-                )}
-              </div>
-
-              {/* EXPERIENCES */}
-              <div className="flex flex-col gap-6 border-b border-mono-90">
-                <h4 className="mig-heading--4">Experiences</h4>
-                {dataResume?.experiences?.length ? (
-                  <Timeline>
-                    {dataResume?.experiences?.map((item) => (
-                      <Timeline.Item key={item?.id} color="#35763B">
-                        <p className="text-primary100 font-bold">{item.role}</p>
-                        <p className="text-mono50">
-                          {item.company} ·{" "}
-                          <strong>
-                            {momentFormatDate(item.start_date, "-", "MMM YYYY")}{" "}
-                            -&nbsp;
-                            {momentFormatDate(
-                              item.end_date,
-                              <em>present</em>,
-                              "MMM YYYY"
-                            )}
-                          </strong>
-                        </p>
-                        <div className="text-mono50">
-                          {parse(item.description)}
-                        </div>
-                      </Timeline.Item>
-                    ))}
-                  </Timeline>
-                ) : (
-                  <p className="pb-6">-</p>
-                )}
-              </div>
-
-              {/* PROJECTS */}
-              <div className="flex flex-col gap-4">
-                <h4 className="mig-heading--4">Projects</h4>
-                {dataResume?.projects?.length ? (
-                  <div className="flex flex-col gap-4">
-                    {dataResume?.projects?.map((item) => (
-                      <div key={item?.id} className="flex gap-6">
-                        <p className="text-primary100 font-bold">
-                          {item.year.slice(0, 4)}
-                        </p>
-                        <div>
-                          <p className="text-mono30 font-bold">{item.name}</p>
-
-                          <p className="text-mono50">{item.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+            {/* SUMMARY */}
+            <div className="flex flex-col gap-4">
+              <h4 className="mig-heading--4">Summary</h4>
+              <div>
+                {dataResume?.summaries?.description ? (
+                  parse(dataResume?.summaries?.description)
                 ) : (
                   <p>-</p>
                 )}
               </div>
             </div>
 
-            {/* RIGHT COLUMN */}
-            <div className="flex flex-col w-full gap-4">
-              {/* Skills */}
-              <div className="flex flex-col gap-6 border-b border-mono-90">
-                <h4 className="mig-heading--4">Skills</h4>
-                {dataResume?.skills?.length ? (
-                  <div className="flex flex-wrap gap-x-4">
-                    {dataResume?.skills?.map((skill) => (
-                      <Tag
-                        key={skill.id}
-                        color="#35763B1A"
-                        className="text-primary100 rounded-md mb-6"
-                      >
-                        {skill.name}
-                      </Tag>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="pb-6">-</p>
-                )}
+            <hr className="col-span-3" />
+
+            {/* RESUME */}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* LEFT COLUMN */}
+              <div className="flex flex-col w-full gap-4">
+                {/* ACADEMIC / EDUCATION */}
+                <div className="flex flex-col gap-6  border-b border-mono-90">
+                  <h4 className="mig-heading--4">Academic History</h4>
+                  {dataResume?.educations?.length ? (
+                    <Timeline>
+                      {dataResume?.educations?.map((item) => (
+                        <Timeline.Item key={item?.id} color="#35763B">
+                          <p className="text-primary100 font-bold">
+                            {item.university}
+                          </p>
+                          <p className="text-mono50">
+                            {item.major} ·{" "}
+                            <strong>{item.graduation_year.slice(0, 4)}</strong>
+                          </p>
+                          <p className="text-mono50">GPA {item.gpa}</p>
+                        </Timeline.Item>
+                      ))}
+                    </Timeline>
+                  ) : (
+                    <p className="pb-6">-</p>
+                  )}
+                </div>
+
+                {/* EXPERIENCES */}
+                <div className="flex flex-col gap-6 border-b border-mono-90">
+                  <h4 className="mig-heading--4">Experiences</h4>
+                  {dataResume?.experiences?.length ? (
+                    <Timeline>
+                      {dataResume?.experiences?.map((item) => (
+                        <Timeline.Item key={item?.id} color="#35763B">
+                          <p className="text-primary100 font-bold">
+                            {item.role}
+                          </p>
+                          <p className="text-mono50">
+                            {item.company} ·{" "}
+                            <strong>
+                              {momentFormatDate(
+                                item.start_date,
+                                "-",
+                                "MMM YYYY"
+                              )}{" "}
+                              -&nbsp;
+                              {momentFormatDate(
+                                item.end_date,
+                                <em>present</em>,
+                                "MMM YYYY"
+                              )}
+                            </strong>
+                          </p>
+                          <div className="text-mono50">
+                            {parse(item.description)}
+                          </div>
+                        </Timeline.Item>
+                      ))}
+                    </Timeline>
+                  ) : (
+                    <p className="pb-6">-</p>
+                  )}
+                </div>
+
+                {/* PROJECTS */}
+                <div className="flex flex-col gap-4">
+                  <h4 className="mig-heading--4">Projects</h4>
+                  {dataResume?.projects?.length ? (
+                    <div className="flex flex-col gap-4">
+                      {dataResume?.projects?.map((item) => (
+                        <div key={item?.id} className="flex gap-6">
+                          <p className="text-primary100 font-bold">
+                            {item.year.slice(0, 4)}
+                          </p>
+                          <div>
+                            <p className="text-mono30 font-bold">{item.name}</p>
+                            <p className="text-mono50">{item.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>-</p>
+                  )}
+                </div>
               </div>
 
-              {/* TRAININGS */}
-              <div className="flex flex-col gap-6 pb-6 border-b border-mono-90">
-                <h4 className="mig-heading--4">Trainings</h4>
-                {dataResume?.trainings?.length ? (
-                  <div className="flex flex-col gap-4">
-                    {dataResume?.trainings?.map((item) => (
-                      <div key={item?.id} className="flex gap-6">
-                        <p className="text-primary100 font-bold">
-                          {item.year.slice(0, 4)}
-                        </p>
-                        <div>
-                          <p className="text-mono30 font-bold">{item.name}</p>
-                          <p className="text-mono50">{item.organizer}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p>-</p>
-                )}
-              </div>
+              {/* RIGHT COLUMN */}
+              <div className="flex flex-col w-full gap-4">
+                {/* SKILLS */}
+                <div className="flex flex-col gap-6 border-b border-mono-90">
+                  <h4 className="mig-heading--4">Skills</h4>
+                  {dataResume?.skills?.length ? (
+                    <div className="flex flex-wrap gap-x-4">
+                      {dataResume?.skills?.map((skill) => (
+                        <Tag
+                          key={skill.id}
+                          color="#35763B1A"
+                          className="text-primary100 rounded-md mb-6"
+                        >
+                          {skill.name}
+                        </Tag>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="pb-6">-</p>
+                  )}
+                </div>
 
-              {/* CERTIFICATIONS */}
-              <div className="flex flex-col gap-6 pb-6 border-b border-mono-90">
-                <h4 className="mig-heading--4">Certifications</h4>
-                {dataResume?.certificates?.length ? (
-                  <div className="flex flex-col gap-4">
-                    {dataResume?.certificates?.map((item) => (
-                      <div key={item?.id} className="flex gap-6">
-                        <p className="text-primary100 font-bold">
-                          {item.year.slice(0, 4)}
-                        </p>
-                        <div>
-                          <p className="text-mono30 font-bold">{item.name}</p>
-                          <p className="text-mono50">{item.organizer}</p>
+                {/* TRAININGS */}
+                <div className="flex flex-col gap-6 pb-6 border-b border-mono-90">
+                  <h4 className="mig-heading--4">Trainings</h4>
+                  {dataResume?.trainings?.length ? (
+                    <div className="flex flex-col gap-4">
+                      {dataResume?.trainings?.map((item) => (
+                        <div key={item?.id} className="flex gap-6">
+                          <p className="text-primary100 font-bold">
+                            {item.year.slice(0, 4)}
+                          </p>
+                          <div>
+                            <p className="text-mono30 font-bold">{item.name}</p>
+                            <p className="text-mono50">{item.organizer}</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p>-</p>
-                )}
-              </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>-</p>
+                  )}
+                </div>
 
-              {/* ACHIEVEMENTS */}
-              <div className="flex flex-col gap-6">
-                <h4 className="mig-heading--4">Achievements</h4>
-                {dataResume?.achievements?.length ? (
-                  <div className="flex flex-col gap-4">
-                    {dataResume?.achievements?.map((item) => (
-                      <div key={item?.id} className="flex gap-6">
-                        <p className="text-primary100 font-bold">
-                          {item.year.slice(0, 4)}
-                        </p>
-                        <div>
-                          <p className="text-mono30 font-bold">{item.name}</p>
-                          <p className="text-mono50">{item.organizer}</p>
+                {/* CERTIFICATIONS */}
+                <div className="flex flex-col gap-6 pb-6 border-b border-mono-90">
+                  <h4 className="mig-heading--4">Certifications</h4>
+                  {dataResume?.certificates?.length ? (
+                    <div className="flex flex-col gap-4">
+                      {dataResume?.certificates?.map((item) => (
+                        <div key={item?.id} className="flex gap-6">
+                          <p className="text-primary100 font-bold">
+                            {item.year.slice(0, 4)}
+                          </p>
+                          <div>
+                            <p className="text-mono30 font-bold">{item.name}</p>
+                            <p className="text-mono50">{item.organizer}</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p>-</p>
-                )}
+                      ))}
+                    </div>
+                  ) : (
+                    <p>-</p>
+                  )}
+                </div>
+
+                {/* ACHIEVEMENTS */}
+                <div className="flex flex-col gap-6">
+                  <h4 className="mig-heading--4">Achievements</h4>
+                  {dataResume?.achievements?.length ? (
+                    <div className="flex flex-col gap-4">
+                      {dataResume?.achievements?.map((item) => (
+                        <div key={item?.id} className="flex gap-6">
+                          <p className="text-primary100 font-bold">
+                            {item.year.slice(0, 4)}
+                          </p>
+                          <div>
+                            <p className="text-mono30 font-bold">{item.name}</p>
+                            <p className="text-mono50">{item.organizer}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>-</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </Spin>
       </div>
     </LayoutDashboard>
   );

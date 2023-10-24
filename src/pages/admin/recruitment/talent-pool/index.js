@@ -33,6 +33,7 @@ import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
 import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
 import {
+  RESUME_GET,
   TALENT_POOL_ADD,
   TALENT_POOL_CATEGORY_DELETE,
   TALENT_POOL_DELETE,
@@ -57,9 +58,6 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
     TALENT_POOL_FILTERS_GET
   );
 
-  const isAllowedToGetTalentPoolCandidates = hasPermission(
-    TALENT_POOL_CANDIDATES_GET
-  );
   const isAllowedToGetTalentPoolCategories = hasPermission(
     TALENT_POOL_CATEGORIES_GET
   );
@@ -69,6 +67,8 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToDeleteTalentPoolCategory = hasPermission(
     TALENT_POOL_CATEGORY_DELETE
   );
+
+  const isAllowedToGetResume = hasPermission(RESUME_GET);
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -92,7 +92,6 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   ]);
 
   // 2. Use state
-  const [searchingFilterTalents, setSearchingFilterTalents] = useState("");
   const [currentCategory, setCurrentCategory] = useState({ id: 0, name: "" });
 
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -109,53 +108,18 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
     refetch: refetchCategories,
   } = useQuery(
     [TALENT_POOL_CATEGORIES_GET],
-    () => TalentPoolService.getCategories(initProps, isAllowedToGetTalentPools),
+    () =>
+      TalentPoolService.getCategories(
+        initProps,
+        isAllowedToGetTalentPoolCategories
+      ),
     {
       enabled: isAllowedToGetTalentPoolCategories,
       select: (response) => response.data,
     }
   );
 
-  // 3.2. Get Talent Pools
-  const {
-    data: dataTalents,
-    isLoading: loadingTalents,
-    refetch: refetchPool,
-  } = useQuery(
-    [TALENT_POOLS_GET, queryParams, searchingFilterTalents],
-    () =>
-      TalentPoolService.getTalentPools(
-        initProps,
-        isAllowedToGetTalentPools,
-        queryParams,
-        searchingFilterTalents
-      ),
-    {
-      enabled: isAllowedToGetTalentPools,
-      select: (response) => response.data,
-    }
-  );
-
-  // 3.3. Get Talent Pool Filters
-  const {
-    data: dataFilters,
-    isLoading: loadingFilters,
-    refetch: refetchFilters,
-  } = useQuery(
-    [TALENT_POOL_FILTERS_GET, queryParams.category_id],
-    () =>
-      TalentPoolService.getFilters(
-        initProps,
-        isAllowedToGetTalentPools,
-        queryParams.category_id
-      ),
-    {
-      enabled: isAllowedToGetTalentPoolFilters,
-      select: (response) => response.data,
-    }
-  );
-
-  // 3.4. Set active category tab
+  // 3.2. Set active category tab
   useEffect(() => {
     const firstCategory = dataCategories?.[0];
     setCurrentCategory({ id: firstCategory?.id, name: firstCategory?.name });
@@ -223,9 +187,9 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
     >
       <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
         <div className="flex flex-col shadow-md rounded-md bg-white px-5 py-6 gap-6 mb-6">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col md:flex-row gap-2 justify-between md:items-center">
             <h4 className="mig-heading--4 w-full md:w-2/12">Daftar Talent</h4>
-            <div className="flex flex-wrap gap-2 justify-end">
+            <div className="flex flex-col lg:flex-row gap-2 md:justify-end">
               <ButtonSys type={"default"}>
                 <div className="flex gap-2 items-center">
                   <UnorderedListOutlined rev={""} />
@@ -257,8 +221,8 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
               defaultActiveKey={"1"}
               className="talentPoolTab px-1"
               activeKey={currentCategory?.id?.toString()}
-              onTabClick={(key) => {
-                setCurrentCategory({ id: key, name: "" });
+              onTabClick={(key, e) => {
+                setCurrentCategory({ id: key, name: e.target.innerText });
                 setQueryParams({ category_id: key });
                 rt.push(`talent-pool?category_id=${key}`, undefined, {
                   shallow: true,
@@ -307,16 +271,10 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }
                     isAllowedToAddTalentPool={isAllowedToAddTalentPool}
                     isAllowedToDeleteTalentPool={isAllowedToDeleteTalentPool}
+                    isAllowedToGetResume={isAllowedToGetResume}
                     queryParams={queryParams}
                     setQueryParams={setQueryParams}
                     category={category}
-                    dataTalents={dataTalents}
-                    loadingTalents={loadingTalents}
-                    searchingFilterTalents={searchingFilterTalents}
-                    setSearchingFilterTalents={setSearchingFilterTalents}
-                    dataFilters={dataFilters}
-                    refetchPool={refetchPool}
-                    refetchFilters={refetchFilters}
                   />
                 </Tabs.TabPane>
               ))}

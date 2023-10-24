@@ -1,13 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
-import {
-  Checkbox,
-  Input,
-  Modal,
-  Popover,
-  Spin,
-  Table,
-  notification,
-} from "antd";
+import { Checkbox, Input, Modal, Spin, Table, notification } from "antd";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
@@ -15,16 +7,12 @@ import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { PRODUCTS_GET } from "lib/features";
-
-import { ProductCatalogService } from "../../../apis/product-catalog";
 import { TalentPoolService } from "../../../apis/talent-pool/talent-pool.service";
 import {
   TALENT_POOL_ADD,
   TALENT_POOL_CANDIDATES_GET,
 } from "../../../lib/features";
 import {
-  countSubTotal,
   getNameInitial,
   permissionWarningNotification,
 } from "../../../lib/helper";
@@ -201,7 +189,7 @@ const ModalTalentAdd = ({
       loading={loading}
     >
       <div className="grid grid-cols-1 gap-4">
-        {/* Tab */}
+        {/* TODO: Implement tab  */}
         <Input
           style={{ width: `100%` }}
           suffix={<SearchOutlined rev={""} />}
@@ -242,6 +230,9 @@ const ModalTalentAdd = ({
             pageSize: params.rows,
             total: dataRawCandidates?.total,
             showSizeChanger: true,
+            pageSizeOptions: [10, 20],
+            showTotal: (total, range) =>
+              `Showing ${range[0]}-${range[1]} of ${total} items`,
           }}
           onChange={(pagination, filters, sorter) => {
             setParams((prev) => ({
@@ -307,12 +298,12 @@ const ModalTalentAdd = ({
                       <div
                         className={`absolute left-0 w-full h-full z-50 
                         ${
-                          // Last 3 card will show popup above
+                          // Last 3 card will show popup above the row
                           cardIdx >
                           dataRawCandidates?.to - dataRawCandidates?.from - 3
                             ? "-top-[17rem]"
                             : "top-20"
-                        } `}
+                        }`}
                       >
                         <CandidateDetailCard candidateData={record} />
                       </div>
