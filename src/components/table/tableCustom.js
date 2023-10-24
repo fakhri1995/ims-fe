@@ -2186,27 +2186,35 @@ const TableCustomInvoiceList = ({
 };
 
 const TableCustomTalentPoolList = ({
-  rt,
   dataSource,
   columns,
   loading,
   total,
   queryParams,
   setQueryParams,
+  isAllowedToGetTalentPool,
+  setDrawerShown,
+  setDataRowClicked,
+  rowstate,
+  setrowstate,
+  setIsHovered,
+  isLargeScreen,
 }) => {
-  const [rowstate, setrowstate] = useState(0);
   return (
     <Table
       dataSource={dataSource}
       columns={columns}
       rowKey={(record) => record.id}
       loading={loading}
-      scroll={{ x: 200 }}
+      scroll={!isLargeScreen && { x: 200 }}
       pagination={{
         current: queryParams.page,
         pageSize: queryParams.rows,
         total: total,
         showSizeChanger: true,
+        pageSizeOptions: [10, 20],
+        showTotal: (total, range) =>
+          `Showing ${range[0]}-${range[1]} of ${total} items`,
       }}
       onChange={(pagination, filters, sorter, extra) => {
         setQueryParams({
@@ -2216,11 +2224,20 @@ const TableCustomTalentPoolList = ({
       }}
       onRow={(record, rowIndex) => {
         return {
-          onMouseOver: () => {
+          onMouseEnter: () => {
             setrowstate(record.id);
+            setTimeout(() => {
+              setIsHovered(true);
+            }, 500);
+          },
+          onMouseLeave: () => {
+            setIsHovered(false);
           },
           onClick: () => {
-            record.id && rt.push(`/admin/recruitment/talent-pool/${record.id}`);
+            if (record.id && isAllowedToGetTalentPool) {
+              setDataRowClicked(record);
+              setDrawerShown(true);
+            }
           },
         };
       }}
