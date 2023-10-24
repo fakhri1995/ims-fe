@@ -66,6 +66,7 @@ import {
   SIDEBAR_RECRUITMENT,
   SIDEBAR_RECRUITMENT_CANDIDATE,
   SIDEBAR_RECRUITMENT_SETUP,
+  SIDEBAR_RECRUITMENT_TALENT_POOL,
   SIDEBAR_RESUME,
   SIDEBAR_RESUME_DAFTAR_KANDIDAT,
   SIDEBAR_RESUME_ROLE_ASSESSMENT,
@@ -469,11 +470,17 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               <Link href="/admin/recruitment/role">Setup</Link>
             </Menu.Item>
           )}
+
+          {/* {hasPermission(SIDEBAR_RECRUITMENT_TALENT_POOL) && (
+            <Menu.Item key="recruitment-talent-pool">
+              <Link href="/admin/recruitment/talent-pool">Talent Pool</Link>
+            </Menu.Item>
+          )} */}
         </SubMenu>
       )}
 
       {/* Contract Management */}
-      {/* {hasPermission(SIDEBAR_CONTRACT) && (
+      {hasPermission(SIDEBAR_CONTRACT) && (
         <SubMenu
           title="Kontrak"
           key="contract"
@@ -490,7 +497,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
         </SubMenu>
-      )} */}
+      )}
     </>
   );
 
