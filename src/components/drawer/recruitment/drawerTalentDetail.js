@@ -1,4 +1,5 @@
-import { Spin, Tag } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Menu, Spin, Tag } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -26,6 +27,7 @@ const DrawerTalentDetail = ({
   onvisible,
   isAllowedToGetTalentPool,
   talentId,
+  onDelete,
 }) => {
   /**
    * Dependencies
@@ -56,6 +58,20 @@ const DrawerTalentDetail = ({
       enabled: visible,
       select: (response) => response.data,
     }
+  );
+
+  const moreMenu = (
+    <Menu>
+      <Menu.Item>
+        <button
+          onClick={onDelete}
+          className="flex space-x-2 items-center whitespace-nowrap bg-transparent"
+        >
+          <DeleteOutlined rev={""} />
+          <p>Hapus Talent</p>
+        </button>
+      </Menu.Item>
+    </Menu>
   );
 
   // console.log({ talentId });
@@ -202,9 +218,17 @@ const DrawerTalentDetail = ({
                 </div>
               </ButtonSys>
             </div>
-            <ButtonSys type={"primary"} color={"mono100"}>
-              ...
-            </ButtonSys>
+            <Dropdown overlay={moreMenu} placement="topRight">
+              <Button
+                type={"primary"}
+                className="btn btn-sm text-mono50 font-semibold px-6 border 
+                bg-mono100 border-mono100 hover:opacity-75 hover:bg-mono80 rounded-lg
+                hover:border-mono80 focus:bg-mono80 focus:border-mono80 
+                "
+              >
+                ...
+              </Button>
+            </Dropdown>
           </div>
         </div>
       )}
