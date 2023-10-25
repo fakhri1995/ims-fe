@@ -8,27 +8,28 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
-import {
-  NewsIconSvg,
-  SearchIconSvg,
-  TableImportIconSvg,
-} from "components/icon";
+import { SearchIconSvg, TableImportIconSvg } from "components/icon";
 import { TableCustomTalentPoolList } from "components/table/tableCustom";
 
 import { permissionWarningNotification } from "lib/helper";
 import { createKeyPressHandler } from "lib/helper";
 
+import { TalentPoolService } from "../../../apis/talent-pool/talent-pool.service";
 import {
+  TALENT_POOLS_GET,
   TALENT_POOL_ADD,
   TALENT_POOL_DELETE,
+  TALENT_POOL_FILTERS_GET,
   TALENT_POOL_GET,
 } from "../../../lib/features";
 import DrawerTalentDetail from "../../drawer/recruitment/drawerTalentDetail";
 import { ModalHapus2 } from "../../modal/modalCustom";
 import ModalTalentAdd from "../../modal/talent-pool/modalTalentAdd";
+import TalentDetailCard from "./TalentDetailCard";
 
 const TalentPoolSection = ({
   initProps,
@@ -37,36 +38,92 @@ const TalentPoolSection = ({
   isAllowedToAddTalentPool,
   isAllowedToDeleteTalentPool,
   isAllowedToGetTalentPool,
+  isAllowedToGetResume,
   queryParams,
   setQueryParams,
   category,
-  dataTalents,
-  loadingTalents,
-  searchingFilterTalents,
-  setSearchingFilterTalents,
-  dataFilters,
-  refetchPool,
-  refetchFilters,
 }) => {
   const rt = useRouter();
 
   // 2. Use state
-  const [modalTalentAdd, setModalTalentAdd] = useState(false);
-  const [modalTalentDelete, setModalTalentDelete] = useState(false);
-  const [drawerTalentDetail, setDrawerTalentDetail] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
-  const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 2.1. Table Contract
   // filter search & selected options
-  // const [searchingFilterTalents, setSearchingFilterTalents] = useState("");
+  const [searchingFilterTalents, setSearchingFilterTalents] = useState("");
   const [selectedRole, setSelectedRole] = useState(undefined);
   const [selectedSkill, setSelectedSkill] = useState(undefined);
   const [selectedExpYear, setSelectedExpYear] = useState(undefined);
   const [selectedUni, setSelectedUni] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
-  // 3. Use Effect
+  const [modalTalentAdd, setModalTalentAdd] = useState(false);
+  const [modalTalentDelete, setModalTalentDelete] = useState(false);
+  const [drawerTalentDetail, setDrawerTalentDetail] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [dataRowClicked, setDataRowClicked] = useState({});
+  const [rowState, setRowState] = useState({});
+  const [isHovered, setIsHovered] = useState(false);
+
+  const [isLargeScreen, setIsLargeScreen] = useState(true);
+
+  // 3. Use Effect & Use Query
+  // 3.1. Get Talent Pools
+  const {
+    data: dataTalents,
+    isLoading: loadingTalents,
+    refetch: refetchPool,
+  } = useQuery(
+    [TALENT_POOLS_GET, queryParams, searchingFilterTalents],
+    () =>
+      TalentPoolService.getTalentPools(
+        initProps,
+        isAllowedToGetTalentPools,
+        queryParams,
+        searchingFilterTalents
+      ),
+    {
+      enabled: isAllowedToGetTalentPools,
+      select: (response) => response.data,
+    }
+  );
+
+  // 3.2. Get Talent Pool Filters
+  const {
+    data: dataFilters,
+    isLoading: loadingFilters,
+    refetch: refetchFilters,
+  } = useQuery(
+    [TALENT_POOL_FILTERS_GET, queryParams.category_id],
+    () =>
+      TalentPoolService.getFilters(
+        initProps,
+        isAllowedToGetTalentPoolFilters,
+        queryParams.category_id
+      ),
+    {
+      enabled: isAllowedToGetTalentPoolFilters,
+      select: (response) => response.data,
+    }
+  );
+
+  // 3.3. Set layout based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 820) {
+        setIsLargeScreen(false); // up to medium screen
+      } else {
+        setIsLargeScreen(true);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // cleanup
   useEffect(() => {
     return () => {
       setDataRowClicked({});
@@ -143,8 +200,19 @@ const TalentPoolSection = ({
       render: (text, record, index) => {
         return {
           children: (
-            <div className="flex justify-center">
-              {dataTalents?.from + index}
+            <div>
+              <div className="flex justify-center">
+                {dataTalents?.from + index}
+              </div>
+              {isHovered && rowState === record.id && (
+                <div className={`absolute left-0 top-16 w-[67vw] h-full z-50 `}>
+                  <TalentDetailCard
+                    data={record}
+                    isAllowedToGetResume={isAllowedToGetResume}
+                    initProps={initProps}
+                  />
+                </div>
+              )}
             </div>
           ),
         };
@@ -235,8 +303,7 @@ const TalentPoolSection = ({
                   disabled={!isAllowedToGetTalentPool}
                   onClick={(event) => {
                     event.stopPropagation();
-                    setDataRowClicked(record);
-                    setDrawerTalentDetail(true);
+                    rt.push(`/admin/recruitment/talent-pool/${record.id}`);
                   }}
                 >
                   <ProfileOutlined rev={""} />
@@ -263,7 +330,7 @@ const TalentPoolSection = ({
 
   // console.log({ dataRowClicked });
   return (
-    <div className="flex flex-col gap-6">
+    <div className="grid grid-cols-1 gap-6">
       {/* Start: Search criteria */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:flex lg:flex-row gap-2">
         {/* Search by keyword (kata kunci) */}
@@ -401,19 +468,26 @@ const TalentPoolSection = ({
         </div>
       </div>
 
-      <div>
-        <TableCustomTalentPoolList
-          rt={rt}
-          dataSource={dataTalents?.data}
-          columns={columnTalents}
-          loading={loadingTalents}
-          total={dataTalents?.total}
-          queryParams={queryParams}
-          setQueryParams={setQueryParams}
-        />
-      </div>
+      <TableCustomTalentPoolList
+        dataSource={dataTalents?.data}
+        columns={columnTalents}
+        loading={loadingTalents}
+        total={dataTalents?.total}
+        queryParams={queryParams}
+        setQueryParams={setQueryParams}
+        isAllowedToGetTalentPool={isAllowedToGetTalentPool}
+        setDrawerShown={setDrawerTalentDetail}
+        setDataRowClicked={setDataRowClicked}
+        rowstate={rowState}
+        setrowstate={setRowState}
+        setIsHovered={setIsHovered}
+        isLargeScreen={isLargeScreen}
+      />
 
-      <div className="flex gap-6 justify-center items-center">
+      <div
+        className="flex flex-col md:flex-row gap-2 md:gap-6 
+        justify-center md:items-center"
+      >
         <ButtonSys
           type={"primary"}
           disabled={!isAllowedToAddTalentPool}
