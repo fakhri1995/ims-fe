@@ -575,6 +575,14 @@ export const AttendanceStaffAktivitasSection: FC<
     },
   ];
 
+  function renderName(task) {
+    if (task.task == null) {
+      return task.task_export.name;
+    } else {
+      return task.task.name;
+    }
+  }
+
   function checkFormOrTask() {
     if (tabActiveKey2 == "3") {
       return (
@@ -626,13 +634,14 @@ export const AttendanceStaffAktivitasSection: FC<
                           className={"text-xs font-bold text-mono30"}
                           style={{ lineHeight: "20px" }}
                         >
-                          {task.activity} (T-{task.task_id})
+                          {task.activity} (T-
+                          {task.task_id ? task.task_id : task.task_export_id})
                         </p>
                         <p
                           className={"text-xs text-mono50"}
                           style={{ lineHeight: "16px" }}
                         >
-                          [{task.task.project ? task.task.project.name : " - "}]
+                          {renderName(task)}
                         </p>
                       </div>
                       <div className={"w-1/12 self-center flex justify-end"}>
