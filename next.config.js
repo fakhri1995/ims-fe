@@ -1,4 +1,3 @@
-
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
@@ -8,8 +7,8 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
   i18n: {
-    locales: ['en', 'id'],
-    defaultLocale: 'en',
+    locales: ["en", "id"],
+    defaultLocale: "en",
   },
   rewrites: async () => [
     { source: "/advantages", destination: "/migwebsite/advantages" },
@@ -18,7 +17,10 @@ const nextConfig = {
       source: "/hardware/:hardware_id",
       destination: "/migwebsite/hardware/[hardware_id]",
     },
-    { source: "/freeconsultation", destination: "/migwebsite/freeconsultation" },
+    {
+      source: "/freeconsultation",
+      destination: "/migwebsite/freeconsultation",
+    },
     { source: "/software", destination: "/migwebsite/software" },
     { source: "/talents", destination: "/migwebsite/talents" },
     { source: "/aboutus", destination: "/migwebsite/aboutus" },
@@ -44,12 +46,16 @@ const nextConfig = {
     { source: "/dashboard/clients", destination: "/company/clients" },
 
     {
+      source: "/admin/recruitment/talent-pool/:talent_id",
+      destination: "/admin/recruitment/talent-pool/:talent_id",
+    },
+
+    {
       source: "/admin/recruitment/:recruitment_id/:resume_id",
       destination: "/admin/candidates/:resume_id",
     },
   ],
   webpack: (config) => {
-    
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],

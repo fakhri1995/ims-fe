@@ -330,7 +330,7 @@ export const momentFormatDate = (
   dateFormat: string = "DD MMMM YYYY",
   isRelativeTime?: boolean
 ) => {
-  let date = moment(dateValue);
+  let date = moment(dateValue || "");
 
   if (!date.isValid()) {
     return emptyValue;
@@ -407,3 +407,22 @@ export const convertDaysToString = (dayTotal: number) => {
 /** Calculate subtotal */
 export const countSubTotal = (pax: number, price: number) =>
   Number(pax) * Number(price);
+
+/**
+ * Get abbreviation from first letter of each word
+ *
+ * @example
+ * ```
+ * input: "oliver james smith"
+ * return: "OJS"
+ * ```
+ */
+export const getNameInitial = (text: string) => {
+  const textArr = text?.split(" ");
+  const initial = textArr?.reduce(
+    (acc, word) => acc + word[0].toUpperCase(),
+    ""
+  );
+
+  return initial;
+};

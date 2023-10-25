@@ -375,6 +375,21 @@ ol {
   border: 0;
 }
 
+.tableTalentCandidate thead > tr:first-child th:last-child {
+  display: none;
+}
+
+.tableTalentCandidate .ant-table-thead > tr > th,
+.tableTalentCandidate .ant-table-tbody > tr > td,
+.tableTalentCandidate .ant-table tfoot > tr > th,
+.tableTalentCandidate .ant-table tfoot > tr > td {
+  padding: 0;
+}
+
+.tableTalentCandidate .ant-table-tbody > tr > td {
+  border: 0;
+}
+
 .hoverComponent {
   display: none;
 }
@@ -425,6 +440,15 @@ ol {
 
 .ant-tabs.tabResponsive {
   display: grid;
+}
+
+.ant-tabs-tab .anticon {
+  margin: 0 5px;
+}
+
+.talentPoolTab .ant-tabs-tab {
+  margin: 0;
+  padding: 0;
 }
 
 /** UPLOAD */

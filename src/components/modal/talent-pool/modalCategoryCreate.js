@@ -1,3 +1,4 @@
+import { InfoCircleOutlined } from "@ant-design/icons";
 import {
   Form,
   Input,
@@ -7,32 +8,23 @@ import {
   Spin,
   notification,
 } from "antd";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { useRef } from "react";
 import { useEffect } from "react";
-import { useQuery } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { PRODUCTS_GET } from "lib/features";
-
-import { ProductCatalogService } from "../../../apis/product-catalog";
-import {
-  countSubTotal,
-  permissionWarningNotification,
-} from "../../../lib/helper";
+import { permissionWarningNotification } from "../../../lib/helper";
 import ButtonSys from "../../button";
-import { PlusIconSvg } from "../../icon";
-import { InputCurrency } from "../../input";
+import { AlertCircleIconSvg } from "../../icon";
+import { ModalUbah } from "../modalCustom";
 
 const ModalCategoryCreate = ({
   initProps,
   visible,
   onvisible,
   isAllowedToAddCategory,
-  setRefreshCategory,
+  refetchCategories,
 }) => {
   const { hasPermission } = useAccessControl();
   const [form] = Form.useForm();
@@ -41,9 +33,9 @@ const ModalCategoryCreate = ({
   const category = { name: "", description: "" };
 
   const [loading, setLoading] = useState(false);
-  const [serviceTypeSearch, setServiceTypeSearch] = useState("");
   const [disableAdd, setDisableAdd] = useState(true);
   const [dataCategory, setDataCategory] = useState(category);
+  const [modalConfirm, setModalConfirm] = useState(false);
 
   // 2. USE QUERY & USE EFFECT
   useEffect(() => {
@@ -62,6 +54,7 @@ const ModalCategoryCreate = ({
 
   const handleClose = () => {
     onvisible(false);
+    setModalConfirm(false);
     clearData();
   };
 
@@ -88,7 +81,7 @@ const ModalCategoryCreate = ({
             message: response.message,
             duration: 3,
           });
-          setRefreshCategory((prev) => prev + 1);
+          refetchCategories();
         } else {
           notification.error({
             message: response.message,
@@ -108,26 +101,23 @@ const ModalCategoryCreate = ({
   // console.log({ dataServiceList });
   // console.log({ dataCategory });
 
-  return (
+  return !modalConfirm ? (
     <Modal
-      title={"Tambah Service"}
+      title={"Tambah Kategori"}
       visible={visible}
       onCancel={handleClose}
       maskClosable={false}
       width={700}
       footer={
         <Spin spinning={loading}>
-          <div className="flex  items-center">
-            <ButtonSys
-              fullWidth
-              type={"primary"}
-              color={"mono50"}
-              onClick={handleAdd}
-              disabled={!dataCategory.name || !dataCategory.description}
-            >
-              <p>Tambah</p>
-            </ButtonSys>
-          </div>
+          <ButtonSys
+            fullWidth
+            type={"primary"}
+            onClick={() => setModalConfirm(true)}
+            disabled={!dataCategory.name || !dataCategory.description}
+          >
+            <p>Tambah</p>
+          </ButtonSys>
         </Spin>
       }
       loading={loading}
@@ -158,6 +148,7 @@ const ModalCategoryCreate = ({
             </Form.Item>
             <Form.Item
               label="Deskripsi Kategori"
+              name={"description"}
               rules={[
                 {
                   required: true,
@@ -180,6 +171,28 @@ const ModalCategoryCreate = ({
         </Form>
       </div>
     </Modal>
+  ) : (
+    <ModalUbah
+      title={
+        <div className="flex gap-2 items-center">
+          <AlertCircleIconSvg size={32} color="#4D4D4D" />
+          <h3 className="mig-heading--3">Konfirmasi Tambah Kategori</h3>
+        </div>
+      }
+      visible={modalConfirm}
+      onvisible={setModalConfirm}
+      onOk={handleAdd}
+      onCancel={() => setModalConfirm(false)}
+      loading={loading}
+      disabled={!isAllowedToAddCategory}
+      okButtonText={"Ya, tambahkan"}
+      closable={true}
+    >
+      <p>
+        Apakah anda yakin ingin menambahkan kategori dengan nama{" "}
+        <strong>{dataCategory?.name}</strong>?
+      </p>
+    </ModalUbah>
   );
 };
 

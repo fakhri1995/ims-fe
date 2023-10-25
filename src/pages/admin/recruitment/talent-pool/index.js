@@ -1,17 +1,16 @@
 import { UnorderedListOutlined } from "@ant-design/icons";
-import { Tabs } from "antd";
+import { Spin, Tabs, notification } from "antd";
 import { NumberParam, useQueryParams, withDefault } from "next-query-params";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useMemo } from "react";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
-
-import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   TALENT_POOLS_GET,
@@ -23,11 +22,24 @@ import {
 
 import { TalentPoolService } from "../../../../apis/talent-pool/talent-pool.service";
 import ButtonSys from "../../../../components/button";
-import { PlusIconSvg, UsersIconSvg } from "../../../../components/icon";
+import {
+  PlusIconSvg,
+  UsersIconSvg,
+  XIconSvg,
+} from "../../../../components/icon";
 import st from "../../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../../components/layout-dashboardNew";
+import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
 import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
+import {
+  RESUME_GET,
+  TALENT_POOL_ADD,
+  TALENT_POOL_CATEGORY_DELETE,
+  TALENT_POOL_DELETE,
+  TALENT_POOL_GET,
+} from "../../../../lib/features";
+import { permissionWarningNotification } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
@@ -39,18 +51,24 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
     useAccessControl();
 
   const isAllowedToGetTalentPools = hasPermission(TALENT_POOLS_GET);
+  const isAllowedToGetTalentPool = hasPermission(TALENT_POOL_GET);
+  const isAllowedToAddTalentPool = hasPermission(TALENT_POOL_ADD);
+  const isAllowedToDeleteTalentPool = hasPermission(TALENT_POOL_DELETE);
   const isAllowedToGetTalentPoolFilters = hasPermission(
     TALENT_POOL_FILTERS_GET
   );
-  const isAllowedToGetTalentPoolCandidates = hasPermission(
-    TALENT_POOL_CANDIDATES_GET
-  );
+
   const isAllowedToGetTalentPoolCategories = hasPermission(
     TALENT_POOL_CATEGORIES_GET
   );
   const isAllowedToAddTalentPoolCategory = hasPermission(
     TALENT_POOL_CATEGORY_ADD
   );
+  const isAllowedToDeleteTalentPoolCategory = hasPermission(
+    TALENT_POOL_CATEGORY_DELETE
+  );
+
+  const isAllowedToGetResume = hasPermission(RESUME_GET);
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -74,106 +92,90 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   ]);
 
   // 2. Use state
-  // 2.1. Table Contract
-  // filter search & selected options
-  const [searchingFilterTalents, setSearchingFilterTalents] = useState("");
-  const [currentCategory, setCurrentCategory] = useState("1");
+  const [currentCategory, setCurrentCategory] = useState({ id: 0, name: "" });
+
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   const [modalCategoryCreate, setModalCategoryCreate] = useState(false);
-  const [refresh, setRefresh] = useState(-1);
+  const [modalDelete, setModalDelete] = useState(false);
+  const [dataDelete, setDataDelete] = useState({ id: 0, name: "" });
 
   // 3. UseEffect & UseQuery
   // 3.1. Get Talent Pool Categories
-  const { data: dataCategories, isLoading: loadingCategories } = useQuery(
-    [TALENT_POOL_CATEGORIES_GET, refresh],
-    () => TalentPoolService.getCategories(initProps, isAllowedToGetTalentPools),
+  const {
+    data: dataCategories,
+    isLoading: loadingCategories,
+    refetch: refetchCategories,
+  } = useQuery(
+    [TALENT_POOL_CATEGORIES_GET],
+    () =>
+      TalentPoolService.getCategories(
+        initProps,
+        isAllowedToGetTalentPoolCategories
+      ),
     {
       enabled: isAllowedToGetTalentPoolCategories,
       select: (response) => response.data,
     }
   );
 
-  // 3.2. Get Talent Pools
-  const { data: dataTalents, isLoading: loadingTalents } = useQuery(
-    [TALENT_POOLS_GET, queryParams, searchingFilterTalents, refresh],
-    () =>
-      TalentPoolService.getTalentPools(
-        initProps,
-        isAllowedToGetTalentPools,
-        queryParams,
-        searchingFilterTalents
-      ),
-    {
-      enabled: isAllowedToGetTalentPools,
-      select: (response) => response.data,
-    }
-  );
-
-  // 3.3. Get Talent Pool Filters
-  const { data: dataFilters, isLoading: loadingFilters } = useQuery(
-    [TALENT_POOL_FILTERS_GET, queryParams.category_id, refresh],
-    () =>
-      TalentPoolService.getFilters(
-        initProps,
-        isAllowedToGetTalentPools,
-        queryParams.category_id
-      ),
-    {
-      enabled: isAllowedToGetTalentPoolFilters,
-      select: (response) => response.data,
-    }
-  );
+  // 3.2. Set active category tab
+  useEffect(() => {
+    const firstCategory = dataCategories?.[0];
+    setCurrentCategory({ id: firstCategory?.id, name: firstCategory?.name });
+    setQueryParams({ category_id: firstCategory?.id });
+  }, [dataCategories]);
 
   // 4. Event
-  // 4.2. Create Contract
-  // const onAddContract = useCallback(() => {
-  //   handleAddContract();
-  // }, []);
-
-  // 4.3. Delete Contract
-  // const handleDeleteContract = (id) => {
-  //   if (!isAllowedToGetTalentPoolCategories) {
-  //     permissionWarningNotification("Menghapus", "Kontrak");
-  //     return;
-  //   }
-
-  //   setLoadingDelete(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${id}`, {
-  //     method: `DELETE`,
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //       "Content-Type": "application/json",
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((response) => {
-  //       if (response.success) {
-  //         setRefresh((prev) => prev + 1);
-  //         setModalDelete(false);
-
-  //         notification.success({
-  //           message: response.message,
-  //           duration: 3,
-  //         });
-  //       } else {
-  //         notification.error({
-  //           message: response.message,
-  //           duration: 3,
-  //         });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `Gagal menghapus proyek. ${err.response}`,
-  //         duration: 3,
-  //       });
-  //     })
-  //     .finally(() => setLoadingDelete(false));
-  // };
+  const handleDeleteCategory = (id) => {
+    if (!isAllowedToDeleteTalentPoolCategory) {
+      permissionWarningNotification("Menghapus", "Kategori Talent Pool");
+      return;
+    }
+    setLoadingDelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTalentPoolCategory?id=${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          refetchCategories();
+          notification.success({
+            message: res2.message,
+            duration: 3,
+          });
+          setModalDelete(false);
+        } else {
+          notification.error({
+            message: `Gagal menghapus kategori talent pool. ${res2.response}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus kategori talent pool. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingDelete(false);
+      });
+  };
 
   if (isAccessControlPending) {
     return null;
   }
 
+  // console.log({ dataCategories });
+  // console.log({ currentCategory });
   return (
     <LayoutDashboard
       tok={initProps}
@@ -185,13 +187,15 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
     >
       <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
         <div className="flex flex-col shadow-md rounded-md bg-white px-5 py-6 gap-6 mb-6">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col md:flex-row gap-2 justify-between md:items-center">
             <h4 className="mig-heading--4 w-full md:w-2/12">Daftar Talent</h4>
-            <div className="flex flex-wrap gap-2 justify-end">
+            <div className="flex flex-col lg:flex-row gap-2 md:justify-end">
               <ButtonSys type={"default"}>
                 <div className="flex gap-2 items-center">
                   <UnorderedListOutlined rev={""} />
-                  <p className="mig-caption">Daftar Tautan [Nama Kategori]</p>
+                  <p className="mig-caption">
+                    Daftar Tautan {currentCategory?.name}
+                  </p>
                 </div>
               </ButtonSys>
               <ButtonSys type={"primary"} color={"secondary100"}>
@@ -212,42 +216,70 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
               </ButtonSys>
             </div>
           </div>
-          <Tabs
-            defaultActiveKey={"1"}
-            tabBarGutter={60}
-            className="px-1"
-            activeKey={currentCategory}
-            onTabClick={(key) => {
-              setCurrentCategory(key);
-              setQueryParams({ category_id: key });
-              rt.push(`talent-pool?category_id=${key}`, undefined, {
-                shallow: true,
-              });
-            }}
-          >
-            {dataCategories?.map((category) => (
-              <Tabs.TabPane
-                key={category?.id}
-                tab={category?.name}
-                tabKey={category?.id}
-              >
-                {/* Talent Pool per Category */}
-                <TalentPoolSection
-                  isAllowedToGetTalentPools={isAllowedToGetTalentPools}
-                  isAllowedToGetTalentPoolFilters={
-                    isAllowedToGetTalentPoolFilters
+          <Spin spinning={loadingCategories}>
+            <Tabs
+              defaultActiveKey={"1"}
+              className="talentPoolTab px-1"
+              activeKey={currentCategory?.id?.toString()}
+              onTabClick={(key, e) => {
+                setCurrentCategory({ id: key, name: e.target.innerText });
+                setQueryParams({ category_id: key });
+                rt.push(`talent-pool?category_id=${key}`, undefined, {
+                  shallow: true,
+                });
+              }}
+            >
+              {dataCategories?.map((category) => (
+                <Tabs.TabPane
+                  key={category?.id}
+                  tab={
+                    <div
+                      className={`flex gap-2 items-center justify-between py-2 px-5 ${
+                        currentCategory?.id == category?.id
+                          ? "bg-primary100 bg-opacity-10 translate-x-0 transition-colors ease-linear"
+                          : "bg-transparent"
+                      }`}
+                    >
+                      <p className="w-2/3">{category?.name}</p>
+                      {isAllowedToDeleteTalentPoolCategory &&
+                        currentCategory?.id == category?.id && (
+                          <button
+                            onClick={(e) => {
+                              setDataDelete({
+                                id: category?.id,
+                                name: category?.name,
+                              });
+                              setModalDelete(true);
+                            }}
+                            disabled={!isAllowedToDeleteTalentPoolCategory}
+                            className="bg-transparent hover:opacity-70 flex items-center"
+                          >
+                            <XIconSvg size={16} color={"#4D4D4D"} />
+                          </button>
+                        )}
+                    </div>
                   }
-                  queryParams={queryParams}
-                  setQueryParams={setQueryParams}
-                  dataTalents={dataTalents}
-                  loadingTalents={loadingTalents}
-                  searchingFilterTalents={searchingFilterTalents}
-                  setSearchingFilterTalents={setSearchingFilterTalents}
-                  dataFilters={dataFilters}
-                />
-              </Tabs.TabPane>
-            ))}
-          </Tabs>
+                  tabKey={category?.id}
+                >
+                  {/* Talent Pool per Category */}
+                  <TalentPoolSection
+                    initProps={initProps}
+                    isAllowedToGetTalentPools={isAllowedToGetTalentPools}
+                    isAllowedToGetTalentPool={isAllowedToGetTalentPool}
+                    isAllowedToGetTalentPoolFilters={
+                      isAllowedToGetTalentPoolFilters
+                    }
+                    isAllowedToAddTalentPool={isAllowedToAddTalentPool}
+                    isAllowedToDeleteTalentPool={isAllowedToDeleteTalentPool}
+                    isAllowedToGetResume={isAllowedToGetResume}
+                    queryParams={queryParams}
+                    setQueryParams={setQueryParams}
+                    category={category}
+                  />
+                </Tabs.TabPane>
+              ))}
+            </Tabs>
+          </Spin>
         </div>
       </div>
 
@@ -257,28 +289,28 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           visible={modalCategoryCreate}
           onvisible={setModalCategoryCreate}
           isAllowedToAddCategory={isAllowedToAddTalentPoolCategory}
-          setRefreshCategory={setRefresh}
+          refetchCategories={refetchCategories}
         />
       </AccessControl>
 
-      {/* Modal Delete Talent */}
-      {/* <AccessControl hasPermission={CONTRACT_DELETE}>
+      <AccessControl hasPermission={TALENT_POOL_CATEGORY_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
           visible={modalDelete}
           onvisible={setModalDelete}
-          onOk={() => handleDeletTalent(dataRowClicked?.id)}
+          onOk={() => handleDeleteCategory(dataDelete?.id)}
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"talent"}
-          loading={loadingDelete}>
+          itemName={"kategori"}
+          loading={loadingDelete}
+        >
           <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan talent{" "}
-            <strong>{dataRowClicked?.code_number}</strong>?
+            Apakah Anda yakin ingin melanjutkan penghapusan kategori&nbsp;
+            <strong>{dataDelete?.name}</strong>?
           </p>
         </ModalHapus2>
-      </AccessControl> */}
+      </AccessControl>
     </LayoutDashboard>
   );
 };
