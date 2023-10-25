@@ -128,7 +128,7 @@ const EmployeeContractForm = ({
 
   // 2.2. Count total gross penerimaan & pengurangan
   const sumValues = (arr) => {
-    return arr?.reduce((a, b) => a + b, 0);
+    return Number(arr?.reduce((a, b) => Number(a) + Number(b), 0));
   };
 
   // 2.3. Count BPJS value
