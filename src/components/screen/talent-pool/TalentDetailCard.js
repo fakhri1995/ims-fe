@@ -30,13 +30,13 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
 
   return (
     <div
-      className={`w-full shadow-lg border border-mono100 rounded-lg grid grid-cols-1 gap-2 p-4 bg-white`}
+      className={`w-full h-44 shadow-lg border border-mono100 rounded-lg grid grid-cols-1 gap-2 p-4 bg-white`}
     >
       <div className="flex justify-between">
         <div className="flex gap-3 items-center w-10/12">
           <div
             className="rounded-full w-12 h-12 flex justify-center items-center 
-          bg-backdrop text-primary100 mig-caption--bold p-1 text-sm"
+          bg-backdrop text-primary100 mig-caption--bold p-1 text-sm "
           >
             {getNameInitial(dataResume?.name)}
           </div>
@@ -68,7 +68,7 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
       <hr />
 
       <div className="grid grid-cols-2 gap-6 text-mono50">
-        <div>
+        <div className="max-h-20 mig-caption text-ellipsis overflow-hidden">
           {dataResume?.summaries?.description ? (
             parse(dataResume?.summaries?.description)
           ) : (

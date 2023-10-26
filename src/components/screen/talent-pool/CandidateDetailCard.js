@@ -4,6 +4,29 @@ import { getNameInitial } from "../../../lib/helper";
 import { BriefcaseIconSvg, CompanyIconSvg, SchoolIconSvg } from "../../icon";
 
 const CandidateDetailCard = ({ candidateData }) => {
+  const displayData = [
+    {
+      icon: <CompanyIconSvg size={16} color={"#35763B"} />,
+      title: "Asal Kota",
+      value: candidateData?.city,
+    },
+    {
+      icon: <BriefcaseIconSvg size={16} color={"#35763B"} />,
+      title: "Role",
+      value: candidateData?.last_assessment?.name,
+    },
+    {
+      icon: <SchoolIconSvg size={16} color={"#35763B"} />,
+      title: "Universitas",
+      value: candidateData?.last_education?.university,
+    },
+    {
+      icon: <BriefcaseIconSvg size={16} color={"#35763B"} />,
+      title: "Pengalaman Terakhir",
+      value: candidateData?.last_experience?.name,
+    },
+  ];
+
   return (
     <div
       className={`w-full shadow-lg border border-mono100 rounded-lg grid grid-cols-1 gap-4 p-6 bg-white`}
@@ -24,49 +47,18 @@ const CandidateDetailCard = ({ candidateData }) => {
       </div>
       <hr />
       <div className="grid grid-cols-2 gap-6">
-        <div className="mig-caption--medium">
-          <div
-            className="flex rounded-sm w-fit bg-backdrop gap-2 
-         items-center px-2 py-0.5 mb-2"
-          >
-            <CompanyIconSvg size={16} color={"#35763B"} />
-            <p className="text-primary100">Asal Kota</p>
+        {displayData.map((item) => (
+          <div key={item.title} className="mig-caption--medium">
+            <div
+              className="flex rounded-sm w-fit bg-backdrop gap-2 
+              items-center px-2 py-0.5 mb-2"
+            >
+              {item.icon}
+              <p className="text-primary100">{item.title}</p>
+            </div>
+            <p>{item.value || "-"}</p>
           </div>
-          <p>{candidateData?.city || "-"}</p>
-        </div>
-
-        <div className="mig-caption--medium">
-          <div
-            className="flex rounded-sm w-fit bg-backdrop gap-2 
-         items-center px-2 py-0.5 mb-2 "
-          >
-            <BriefcaseIconSvg size={16} color={"#35763B"} />
-            <p className="text-primary100">Role</p>
-          </div>
-          <p>{candidateData?.last_assessment?.name || "-"}</p>
-        </div>
-
-        <div className="mig-caption--medium">
-          <div
-            className="flex rounded-sm w-fit bg-backdrop gap-2 
-         items-center px-2 py-0.5 mb-2 "
-          >
-            <SchoolIconSvg size={16} color={"#35763B"} />
-            <p className="text-primary100">Universitas</p>
-          </div>
-          <p>{candidateData?.last_education?.university || "-"}</p>
-        </div>
-
-        <div className="mig-caption--medium">
-          <div
-            className="flex rounded-sm w-fit bg-backdrop gap-2 
-         items-center px-2 py-0.5 mb-2 "
-          >
-            <BriefcaseIconSvg size={16} color={"#35763B"} />
-            <p className="text-primary100">Pengalaman Terakhir</p>
-          </div>
-          <p>{candidateData?.last_experience?.name || "-"}</p>
-        </div>
+        ))}
       </div>
     </div>
   );

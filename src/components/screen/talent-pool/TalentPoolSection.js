@@ -205,7 +205,16 @@ const TalentPoolSection = ({
                 {dataTalents?.from + index}
               </div>
               {isHovered && rowState === record.id && (
-                <div className={`absolute left-0 top-16 w-[67vw] h-full z-50 `}>
+                <div
+                  className={`absolute left-0 w-[67vw] h-full z-50 
+                ${
+                  // Last 3 card will show popup above the row
+                  index > dataTalents?.to - dataTalents?.from - 3
+                    ? "-top-44"
+                    : "top-16"
+                }
+                `}
+                >
                   <TalentDetailCard
                     data={record}
                     isAllowedToGetResume={isAllowedToGetResume}
@@ -514,6 +523,10 @@ const TalentPoolSection = ({
           onvisible={setDrawerTalentDetail}
           isAllowedToGetTalentPool={isAllowedToGetTalentPool}
           talentId={dataRowClicked?.id}
+          onDelete={() => {
+            setModalTalentDelete(true);
+            setDrawerTalentDetail(false);
+          }}
         />
       </AccessControl>
 
