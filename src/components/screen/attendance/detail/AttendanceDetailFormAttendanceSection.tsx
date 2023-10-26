@@ -109,6 +109,22 @@ export const AttendanceDetailFormAttendanceSection: FC<
       });
   }, []);
 
+  function renderTaskName(task) {
+    if (task.task != null) {
+      if (task.task.name != null) {
+        return task.task.name;
+      } else {
+        return "-";
+      }
+    } else {
+      if (task.task_export.name != null) {
+        return task.task_export.name;
+      } else {
+        return "-";
+      }
+    }
+  }
+
   return (
     <section className="mig-platform space-y-6 text-gray-500">
       <div className="flex items-center justify-between">
@@ -147,13 +163,14 @@ export const AttendanceDetailFormAttendanceSection: FC<
                   className={"text-xs font-bold text-mono30"}
                   style={{ lineHeight: "20px" }}
                 >
-                  {task.activity} (T-{task.task_id})
+                  {task.activity} (T-
+                  {task.task_id ? task.task_id : task.task_export_id})
                 </p>
                 <p
                   className={"text-xs text-mono50"}
                   style={{ lineHeight: "16px" }}
                 >
-                  [{task.task.project ? task.task.project.name : " - "}]
+                  [{renderTaskName(task)}]
                 </p>
               </div>
               <div className={"w-1/12 self-center flex justify-end"}>
