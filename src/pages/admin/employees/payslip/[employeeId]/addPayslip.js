@@ -318,6 +318,12 @@ const EmployeePayslipAddIndex = ({
     receiveVarFields,
     dataPayslip?.gaji_pokok,
     dataPayslip?.show_all_benefit,
+    dataPayslip?.bpjs_ks,
+    dataPayslip?.bpjs_tk_jht,
+    dataPayslip?.bpjs_tk_jkk,
+    dataPayslip?.bpjs_tk_jkm,
+    dataPayslip?.bpjs_tk_jp,
+    dataPayslip?.pph21,
   ]);
 
   // total gross pengurangan
@@ -698,6 +704,7 @@ const EmployeePayslipAddIndex = ({
                     ?.filter(
                       (v) =>
                         dataPayslip[v.attrName] !== false &&
+                        dataPayslip[v.attrName] !== null &&
                         v.attrName !== "pph21"
                     )
                     ?.map((item) => (
@@ -723,7 +730,7 @@ const EmployeePayslipAddIndex = ({
                       </Form.Item>
                     ))}
 
-                  {dataPayslip?.pph21 !== false && (
+                  {dataPayslip?.pph21 !== false && dataPayslip?.pph21 != null && (
                     <Form.Item
                       label="PPh 21"
                       name={"pph21"}
