@@ -30,7 +30,7 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
 
   return (
     <div
-      className={`w-full h-44 shadow-lg border border-mono100 rounded-lg grid grid-cols-1 gap-2 p-4 bg-white`}
+      className={`w-full min-h-44 max-h-fit shadow-lg border border-mono100 rounded-lg grid grid-cols-1 gap-2 p-4 bg-white`}
     >
       <div className="flex justify-between">
         <div className="flex gap-3 items-center w-10/12">
@@ -60,7 +60,9 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
           }}
           className="flex items-center gap-1 bg-transparent hover:opacity-70"
         >
-          <p className="mig-caption--bold text-mono50">Lihat Lainnya</p>
+          <p className="mig-caption--bold text-mono50 whitespace-nowrap">
+            Lihat Lainnya
+          </p>
           <ArrowUpRightIconSvg color={"#808080"} size={20} />
         </button>
       </div>
@@ -68,7 +70,7 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
       <hr />
 
       <div className="grid grid-cols-2 gap-6 text-mono50">
-        <div className="max-h-20 mig-caption text-ellipsis overflow-hidden">
+        <div className=" mig-caption text-ellipsis overflow-hidden">
           {dataResume?.summaries?.description ? (
             parse(dataResume?.summaries?.description)
           ) : (
@@ -76,7 +78,7 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
           )}
         </div>
 
-        <div className="mig-caption--bold ">
+        <div className="mig-caption--bold">
           <p>Pengalaman Terakhir</p>
           {!!dataResume?.experiences?.length ? (
             <p className="mb-2">
@@ -99,7 +101,7 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
           ) : (
             "-"
           )}
-          <div>
+          <div className="">
             {!!dataResume?.skills?.length && (
               <div className="flex flex-wrap gap-1">
                 {dataResume?.skills?.map((skill) => (
