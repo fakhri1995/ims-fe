@@ -163,7 +163,7 @@ const EmployeePayslipDetailIndex = ({
   // 1.4 View payslip detail
   const [drawerDetail, setDrawerDetail] = useState(false);
   const [payslipId, setPayslipId] = useState(0);
-
+  const [payslipIdSelected, setPayslipIdSelected] = useState(null);
   // Current payslip status: 0-kosong, 1-draft, 2-diterbitkan
   const [payslipStatus, setPayslipStatus] = useState(0);
 
@@ -338,6 +338,7 @@ const EmployeePayslipDetailIndex = ({
     }
 
     setLoadingDownload(true);
+    setPayslipIdSelected(payslip?.id);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${payslip?.id}`,
       {
@@ -378,6 +379,7 @@ const EmployeePayslipDetailIndex = ({
       })
       .finally(() => {
         setLoadingDownload(false);
+        setPayslipIdSelected(null);
       });
   };
 
@@ -506,7 +508,9 @@ const EmployeePayslipDetailIndex = ({
                   </ButtonSys>
                   <ButtonSys
                     type={"default"}
-                    disabled={!isAllowedToGetPayslip || loadingDownload}
+                    disabled={
+                      !isAllowedToGetPayslip || record.id == payslipIdSelected
+                    }
                     onClick={(event) => {
                       event.stopPropagation();
                       handleDownloadPayslip(record);
@@ -622,7 +626,10 @@ const EmployeePayslipDetailIndex = ({
                   onClick={() =>
                     handleDownloadPayslip(dataEmployee?.last_month_payslip)
                   }
-                  disabled={!isAllowedToDownloadPayslip || loadingDownload}
+                  disabled={
+                    !isAllowedToDownloadPayslip ||
+                    dataEmployee?.last_month_payslip?.id == payslipIdSelected
+                  }
                 >
                   <DownloadOutlined />
                   <p className="ml-2">Unduh Slip Gaji</p>
