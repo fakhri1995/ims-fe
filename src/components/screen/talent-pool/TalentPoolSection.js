@@ -53,7 +53,7 @@ const TalentPoolSection = ({
   const [selectedRole, setSelectedRole] = useState(undefined);
   const [selectedSkill, setSelectedSkill] = useState(undefined);
   const [selectedExpYear, setSelectedExpYear] = useState(undefined);
-  const [selectedUni, setSelectedUni] = useState(undefined);
+  const [selectedEdu, setSelectedEdu] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
   const [modalTalentAdd, setModalTalentAdd] = useState(false);
@@ -134,10 +134,10 @@ const TalentPoolSection = ({
   // 4.1. Filter Table
   const onFilterTalentPools = () => {
     setQueryParams({
-      role: selectedRole,
-      skill: selectedSkill,
-      year: selectedExpYear,
-      university: selectedUni,
+      roles: selectedRole,
+      skills: selectedSkill,
+      years: selectedExpYear,
+      educations: selectedEdu,
       status: selectedStatus,
     });
   };
@@ -205,7 +205,13 @@ const TalentPoolSection = ({
                 {dataTalents?.from + index}
               </div>
               {isHovered && rowState === record.id && (
-                <div className={`absolute left-0 top-16 w-[67vw] h-full z-50 `}>
+                <div className={`absolute left-0 w-[67vw] h-full z-50 top-16`}>
+                  {/* ${
+                  // Last 3 card will show popup above the row
+                  index > dataTalents?.to - dataTalents?.from - 3
+                    ? "-top-36"
+                    : "top-16"
+                } */}
                   <TalentDetailCard
                     data={record}
                     isAllowedToGetResume={isAllowedToGetResume}
@@ -350,19 +356,19 @@ const TalentPoolSection = ({
         {/* Filter by position (dropdown) */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.role}
+            defaultValue={queryParams.roles}
             allowClear
             name={`role`}
             disabled={!isAllowedToGetTalentPoolFilters}
             placeholder="Posisi"
             style={{ width: `100%` }}
             onChange={(value) => {
-              setQueryParams({ role: value });
+              setQueryParams({ roles: value });
               setSelectedRole(value);
             }}
           >
             {dataFilters?.role?.map((item) => (
-              <Select.Option key={item.id} value={item.id}>
+              <Select.Option key={item.id} value={item.name}>
                 {item.name}
               </Select.Option>
             ))}
@@ -371,19 +377,19 @@ const TalentPoolSection = ({
         {/* Filter by skill */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.skill}
+            defaultValue={queryParams.skills}
             allowClear
             name={`skill`}
             disabled={!isAllowedToGetTalentPoolFilters}
             placeholder="Skill"
             style={{ width: `100%` }}
             onChange={(value) => {
-              setQueryParams({ skill: value });
+              setQueryParams({ skills: value });
               setSelectedSkill(value);
             }}
           >
             {dataFilters?.skill?.map((item) => (
-              <Select.Option key={item.id} value={item.id}>
+              <Select.Option key={item.id} value={item.name}>
                 {item.name}
               </Select.Option>
             ))}
@@ -392,14 +398,14 @@ const TalentPoolSection = ({
         {/* Filter by years of experience */}
         <div className="w-full lg:w-1/12">
           <Select
-            defaultValue={queryParams.year}
+            defaultValue={queryParams.years}
             allowClear
             name={`year`}
             disabled={!isAllowedToGetTalentPoolFilters}
             placeholder="Tahun Pengalaman"
             style={{ width: `100%` }}
             onChange={(value) => {
-              setQueryParams({ year: value });
+              setQueryParams({ years: value });
               setSelectedExpYear(value);
             }}
           >
@@ -413,19 +419,19 @@ const TalentPoolSection = ({
         {/* Filter by university */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.university}
+            defaultValue={queryParams.educations}
             allowClear
             name={`university`}
             disabled={!isAllowedToGetTalentPoolFilters}
             placeholder="Universitas"
             style={{ width: `100%` }}
             onChange={(value) => {
-              setQueryParams({ university: value });
-              setSelectedUni(value);
+              setQueryParams({ educations: value });
+              setSelectedEdu(value);
             }}
           >
             {dataFilters?.university?.map((item) => (
-              <Select.Option key={item.id} value={item.id}>
+              <Select.Option key={item.id} value={item.university}>
                 {item.university}
               </Select.Option>
             ))}
@@ -446,7 +452,7 @@ const TalentPoolSection = ({
             }}
           >
             {dataFilters?.status?.map((item) => (
-              <Select.Option key={item.id} value={item.id}>
+              <Select.Option key={item.id} value={item.status}>
                 {item.status}
               </Select.Option>
             ))}
@@ -509,11 +515,13 @@ const TalentPoolSection = ({
       {/* Drawer Talent Detail */}
       <AccessControl hasPermission={TALENT_POOL_GET}>
         <DrawerTalentDetail
-          initProps={initProps}
           visible={drawerTalentDetail}
           onvisible={setDrawerTalentDetail}
-          isAllowedToGetTalentPool={isAllowedToGetTalentPool}
-          talentId={dataRowClicked?.id}
+          dataTalent={dataRowClicked}
+          onDelete={() => {
+            setModalTalentDelete(true);
+            setDrawerTalentDetail(false);
+          }}
         />
       </AccessControl>
 

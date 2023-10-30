@@ -1,6 +1,11 @@
 import { UnorderedListOutlined } from "@ant-design/icons";
 import { Spin, Tabs, notification } from "antd";
-import { NumberParam, useQueryParams, withDefault } from "next-query-params";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -74,11 +79,11 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
     category_id: withDefault(NumberParam, 1),
-    role: withDefault(NumberParam, undefined),
-    skill: withDefault(NumberParam, undefined),
-    year: withDefault(NumberParam, undefined),
-    university: withDefault(NumberParam, undefined),
-    status: withDefault(NumberParam, undefined),
+    roles: withDefault(StringParam, undefined),
+    skills: withDefault(StringParam, undefined),
+    years: withDefault(StringParam, undefined),
+    educations: withDefault(StringParam, undefined),
+    status: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
