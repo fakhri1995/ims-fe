@@ -141,6 +141,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
   const [payslipStatusCount, setPayslipStatusCount] = useState([]);
+  const [payslipId, setPayslipId] = useState(null);
   const dataColorBar = ["#E5C471", "#35763B"];
 
   // 2.2. Table Employee List
@@ -494,6 +495,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingDownload(true);
     const payslip = employee?.last_month_payslip;
+    setPayslipId(payslip?.id);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${payslip?.id}`,
       {
@@ -534,6 +536,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       })
       .finally(() => {
         setLoadingDownload(false);
+        setPayslipId(null);
       });
   };
 
@@ -656,7 +659,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 (record.last_month_payslip?.is_posted ? (
                   <ButtonSys
                     type={"default"}
-                    disabled={!isAllowedToDownloadPayslip || loadingDownload}
+                    disabled={
+                      !isAllowedToDownloadPayslip ||
+                      record.last_month_payslip?.id == payslipId
+                    }
                     onClick={(event) => {
                       event.stopPropagation();
                       handleDownloadPayslip(record);
