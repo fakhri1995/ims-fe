@@ -28,6 +28,7 @@ import {
 } from "../../../lib/features";
 import DrawerTalentDetail from "../../drawer/recruitment/drawerTalentDetail";
 import { ModalHapus2 } from "../../modal/modalCustom";
+import ModalShare from "../../modal/talent-pool/modalShare";
 import ModalTalentAdd from "../../modal/talent-pool/modalTalentAdd";
 import TalentDetailCard from "./TalentDetailCard";
 
@@ -58,6 +59,7 @@ const TalentPoolSection = ({
 
   const [modalTalentAdd, setModalTalentAdd] = useState(false);
   const [modalTalentDelete, setModalTalentDelete] = useState(false);
+  const [modalShare, setModalShare] = useState(false);
   const [drawerTalentDetail, setDrawerTalentDetail] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [dataRowClicked, setDataRowClicked] = useState({});
@@ -500,7 +502,7 @@ const TalentPoolSection = ({
             <p className="mig-caption">Tambahkan Talent</p>
           </div>
         </ButtonSys>
-        <ButtonSys type={"default"}>
+        <ButtonSys type={"default"} onClick={() => setModalShare(true)}>
           <div className="flex gap-2 items-center">
             <ShareAltOutlined />
             <p className="mig-caption">Bagikan Daftar Talent</p>
@@ -518,6 +520,17 @@ const TalentPoolSection = ({
             setModalTalentDelete(true);
             setDrawerTalentDetail(false);
           }}
+        />
+      </AccessControl>
+
+      <AccessControl hasPermission={TALENT_POOLS_GET}>
+        <ModalShare
+          initProps={initProps}
+          visible={modalShare}
+          onvisible={setModalShare}
+          isAllowedToAddCategory={isAllowedToAddTalentPool}
+          category={category}
+          // refetchCategories={refetchCategories}
         />
       </AccessControl>
 
