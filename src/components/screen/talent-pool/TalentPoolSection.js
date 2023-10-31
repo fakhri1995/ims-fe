@@ -200,25 +200,8 @@ const TalentPoolSection = ({
       render: (text, record, index) => {
         return {
           children: (
-            <div>
-              <div className="flex justify-center">
-                {dataTalents?.from + index}
-              </div>
-              {isHovered && rowState === record.id && (
-                <div className={`absolute left-0 w-[67vw] h-full z-50 top-16`}>
-                  {/* ${
-                  // Last 3 card will show popup above the row
-                  index > dataTalents?.to - dataTalents?.from - 3
-                    ? "-top-36"
-                    : "top-16"
-                } */}
-                  <TalentDetailCard
-                    data={record}
-                    isAllowedToGetResume={isAllowedToGetResume}
-                    initProps={initProps}
-                  />
-                </div>
-              )}
+            <div className="flex justify-center">
+              {dataTalents?.from + index}
             </div>
           ),
         };
@@ -228,9 +211,22 @@ const TalentPoolSection = ({
       title: "Nama",
       key: "name",
       dataIndex: ["resume", "name"],
-      render: (text) => {
+      render: (text, record) => {
         return {
-          children: <div className="xl:w-40">{text || "-"}</div>,
+          children: (
+            <div className="xl:w-40">
+              {text || "-"}
+              {isHovered && rowState === record.id && (
+                <div className={`absolute left-0 w-[35vw] h-full z-50 top-3`}>
+                  <TalentDetailCard
+                    data={record}
+                    isAllowedToGetResume={isAllowedToGetResume}
+                    initProps={initProps}
+                  />
+                </div>
+              )}
+            </div>
+          ),
         };
       },
     },

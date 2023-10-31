@@ -2224,11 +2224,11 @@ const TableCustomTalentPoolList = ({
       }}
       onRow={(record, rowIndex) => {
         return {
-          onMouseEnter: () => {
+          onMouseOver: () => {
             setrowstate(record.id);
-            setTimeout(() => {
-              setIsHovered(true);
-            }, 500);
+          },
+          onMouseEnter: () => {
+            setIsHovered(true);
           },
           onMouseLeave: () => {
             setIsHovered(false);
