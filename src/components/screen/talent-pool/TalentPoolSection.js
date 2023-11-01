@@ -471,7 +471,6 @@ const TalentPoolSection = ({
           </ButtonSys>
         </div>
       </div>
-
       <TableCustomTalentPoolList
         dataSource={dataTalents?.data}
         columns={columnTalents}
@@ -487,7 +486,6 @@ const TalentPoolSection = ({
         setIsHovered={setIsHovered}
         isLargeScreen={isLargeScreen}
       />
-
       <div
         className="flex flex-col md:flex-row gap-2 md:gap-6 
         justify-center md:items-center"
@@ -509,7 +507,6 @@ const TalentPoolSection = ({
           </div>
         </ButtonSys>
       </div>
-
       {/* Drawer Talent Detail */}
       <AccessControl hasPermission={TALENT_POOL_GET}>
         <DrawerTalentDetail
@@ -523,6 +520,7 @@ const TalentPoolSection = ({
         />
       </AccessControl>
 
+      {/* TODO: change feature access */}
       <AccessControl hasPermission={TALENT_POOLS_GET}>
         <ModalShare
           initProps={initProps}
@@ -533,7 +531,6 @@ const TalentPoolSection = ({
           // refetchCategories={refetchCategories}
         />
       </AccessControl>
-
       <AccessControl hasPermission={TALENT_POOL_ADD}>
         <ModalTalentAdd
           initProps={initProps}
@@ -544,7 +541,6 @@ const TalentPoolSection = ({
           refetchFilters={refetchFilters}
         />
       </AccessControl>
-
       <AccessControl hasPermission={TALENT_POOL_DELETE}>
         <ModalHapus2
           title={`Peringatan`}

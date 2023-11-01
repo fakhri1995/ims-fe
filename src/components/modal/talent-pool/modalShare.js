@@ -1,4 +1,3 @@
-import { InfoCircleOutlined } from "@ant-design/icons";
 import {
   Form,
   Input,
@@ -16,7 +15,8 @@ import { useAccessControl } from "contexts/access-control";
 
 import { permissionWarningNotification } from "../../../lib/helper";
 import ButtonSys from "../../button";
-import { AlertCircleIconSvg } from "../../icon";
+import { AlertCircleIconSvg, CopyIconSvg, InfoCircleIconSvg } from "../../icon";
+import ModalCore from "../modalCore";
 import { ModalUbah } from "../modalCustom";
 
 const ModalShare = ({
@@ -31,7 +31,6 @@ const ModalShare = ({
   const [form] = Form.useForm();
 
   // 1. USE STATE
-
   const [loading, setLoading] = useState(false);
   const [disableAdd, setDisableAdd] = useState(true);
   const [dataForm, setDataForm] = useState({
@@ -40,20 +39,23 @@ const ModalShare = ({
     duration: 0,
   });
   const [modalLink, setModalLink] = useState(false);
-  const [requesterList, setRequesterList] = useState([]);
+  const [requesterList, setRequesterList] = useState([
+    { id: 1, name: "person1", company_name: "PT1" },
+    { id: 2, name: "person2", company_name: "PT2" },
+  ]);
 
   // 2. USE QUERY & USE EFFECT
-  useEffect(() => {
-    const requiredFields = ["name", "category"];
-    const allFieldIsFilled = requiredFields.every((item) => dataForm[item]);
-    if (allFieldIsFilled) {
-      setDisableAdd(false);
-    }
-  }, [dataForm]);
+  // useEffect(() => {
+  //   const requiredFields = ["name", "category"];
+  //   const allFieldIsFilled = requiredFields.every((item) => dataForm[item]);
+  //   if (allFieldIsFilled) {
+  //     setDisableAdd(false);
+  //   }
+  // }, [dataForm]);
 
   // 3. HANDLER
   const clearData = () => {
-    setDataForm(category);
+    setDataForm({ requester_id: 0, company_name: "", duration: 0 });
     form.resetFields();
   };
 
@@ -103,32 +105,6 @@ const ModalShare = ({
       .finally(() => setLoading(false));
   };
 
-  if (modalLink) {
-    return (
-      <ModalUbah
-        title={
-          <div className="flex gap-2 items-center">
-            <AlertCircleIconSvg size={32} color="#4D4D4D" />
-            <h3 className="mig-heading--3">Konfirmasi Tambah Kategori</h3>
-          </div>
-        }
-        visible={modalLink}
-        onvisible={setModalLink}
-        onOk={handleAdd}
-        onCancel={() => setModalLink(false)}
-        loading={loading}
-        disabled={!isAllowedToAddCategory}
-        okButtonText={"Ya, tambahkan"}
-        closable={true}
-      >
-        <p>
-          Apakah anda yakin ingin menambahkan kategori dengan nama{" "}
-          <strong>{dataForm?.name}</strong>?
-        </p>
-      </ModalUbah>
-    );
-  }
-
   const durationList = [
     {
       label: "1 Hari",
@@ -152,17 +128,40 @@ const ModalShare = ({
     },
   ];
 
-  // console.log({ dataServiceList });
-  // console.log({ dataForm });
+  const title = (
+    <div className="flex items-center gap-2">
+      <p className="mig-heading--4">Bagikan Daftar Talent {category.name}</p>
+      <InfoCircleIconSvg size={16} color={"#000000"} />
+    </div>
+  );
+
+  if (modalLink) {
+    return (
+      <ModalCore
+        title={title}
+        visible={modalLink}
+        onCancel={handleClose}
+        closable={true}
+        maskClosable={true}
+        footer={null}
+      >
+        <div
+          className="flex items-center justify-between mig-caption--bold text-primary100 
+        p-4 bg-backdrop rounded-md"
+        >
+          <p>[link token auth]</p>
+          <div className="flex items-center gap-2">
+            <CopyIconSvg size={24} color={"#35763B"} />
+            <p>Salin Link</p>
+          </div>
+        </div>
+      </ModalCore>
+    );
+  }
 
   return (
-    <Modal
-      title={
-        <div className="flex items-center gap-2">
-          <p>Bagikan Daftar Talent {category.name}</p>
-          <InfoCircleOutlined size={16} />
-        </div>
-      }
+    <ModalCore
+      title={title}
       visible={visible}
       onCancel={handleClose}
       maskClosable={false}
@@ -173,7 +172,7 @@ const ModalShare = ({
             fullWidth
             type={"primary"}
             onClick={() => setModalLink(true)}
-            disabled={!dataForm.name || !dataForm.description}
+            // disabled={!dataForm.requester_id}
           >
             <p>Generate</p>
           </ButtonSys>
@@ -182,11 +181,11 @@ const ModalShare = ({
       loading={loading}
     >
       <div>
-        <Form layout="vertical" form={form}>
+        <Form layout="vertical">
           <div className="grid grid-cols-1 gap-x-6">
             <Form.Item
               label="Nama Peminta"
-              name={"name"}
+              name={"requester_id"}
               rules={[
                 {
                   required: true,
@@ -195,40 +194,34 @@ const ModalShare = ({
               ]}
             >
               <Select
-                // defaultValue={dataUpdateBasic.assessment_id}
+                value={dataForm.requester_id}
                 onChange={(value, option) => {
                   setDataForm((prev) => ({
                     ...prev,
                     requester_id: value,
-                    company_name: option?.company_name,
+                    company_name: option.company_name,
                   }));
                 }}
                 // disabled={}
               >
                 {requesterList?.map((item) => (
-                  <Select.Option key={item.id} value={item.id}>
+                  <Select.Option key={item.id} value={item.id} {...item}>
                     {item.name}
                   </Select.Option>
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item label="Nama Perusahaan" name={"company_name"} disabled>
+            <Form.Item label="Nama Perusahaan" name={"company_name"}>
               <Input
                 placeholder="Masukkan Nama Perusahaan"
-                value={dataForm?.company_name}
-                onChange={(e) => {
-                  setDataForm((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }));
-                }}
+                value={dataForm.company_name}
+                disabled
               />
             </Form.Item>
             <Form.Item label="Masa Berlaku Link" name={"name"}>
               <Select
-                // defaultValue={dataUpdateBasic.assessment_id}
+                value={dataForm?.duration}
                 onChange={(value, option) => {
-                  console.log({ value, option });
                   setDataForm((prev) => ({
                     ...prev,
                     duration: value,
@@ -241,7 +234,7 @@ const ModalShare = ({
           </div>
         </Form>
       </div>
-    </Modal>
+    </ModalCore>
   );
 };
 
