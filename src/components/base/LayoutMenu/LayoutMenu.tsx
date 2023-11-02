@@ -20,6 +20,7 @@ import {
   UserCheckIconSvg,
   UserIconSvg,
   UserPlusIconSvg,
+  UsersIconSvg,
 } from "components/icon";
 import commonLayoutStyle from "components/layout-dashboard.module.css";
 
@@ -70,6 +71,7 @@ import {
   SIDEBAR_RESUME,
   SIDEBAR_RESUME_DAFTAR_KANDIDAT,
   SIDEBAR_RESUME_ROLE_ASSESSMENT,
+  SIDEBAR_TALENT,
   SIDEBAR_TASK,
   SIDEBAR_TASK_ADMIN,
   SIDEBAR_TASK_MY,
@@ -292,6 +294,21 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           <Link href="/myApplication">Lamaran Saya</Link>
         </Menu.Item>
       )}
+
+      {/* Talent */}
+      {hasPermission(SIDEBAR_TALENT) && (
+        <SubMenu
+          title="Talent"
+          key="talent"
+          icon={<UsersIconSvg size={16} color={"#597e8d"} />}
+        >
+          {hasPermission(SIDEBAR_TALENT) && (
+            <Menu.Item key="talent/daftar-talent">
+              <Link href="/talent">Daftar Talent</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
     </>
   );
 
@@ -471,11 +488,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
 
-          {/* {hasPermission(SIDEBAR_RECRUITMENT_TALENT_POOL) && (
+          {hasPermission(SIDEBAR_RECRUITMENT_TALENT_POOL) && (
             <Menu.Item key="recruitment-talent-pool">
               <Link href="/admin/recruitment/talent-pool">Talent Pool</Link>
             </Menu.Item>
-          )} */}
+          )}
         </SubMenu>
       )}
 

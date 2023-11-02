@@ -38,6 +38,9 @@ export const SIDEBAR_TASK_MY = "SIDEBAR_TASK_MY";
 /** Ticket */
 export const SIDEBAR_TICKET = "SIDEBAR_TICKET";
 
+/** Talent (Requester's Talent Pool) */
+export const SIDEBAR_TALENT = "SIDEBAR_TALENT";
+
 /** ------------------ Manajemen ------------------ */
 /** Asset */
 export const SIDEBAR_ASSET = "SIDEBAR_ASSET";
