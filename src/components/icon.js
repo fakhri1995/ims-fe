@@ -3190,6 +3190,54 @@ const BulbIconSvg = ({ size, color }) => {
   return <Icon rev={""} component={bulbIconSvg}></Icon>;
 };
 
+const TableOffIconSvg = ({ size, color }) => {
+  const tableOffIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-table-off"
+      width={size ? size : "24"}
+      height={size ? size : "24"}
+      viewBox="0 0 24 24"
+      strokeWidth="2"
+      stroke={color ? color : "#35763B"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M7 3h12a2 2 0 0 1 2 2v12m-.585 3.413a1.994 1.994 0 0 1 -1.415 .587h-14a2 2 0 0 1 -2 -2v-14c0 -.55 .223 -1.05 .583 -1.412" />
+      <path d="M3 10h7m4 0h7" />
+      <path d="M10 3v3m0 4v11" />
+      <path d="M3 3l18 18" />
+    </svg>
+  );
+  return <Icon rev={""} component={tableOffIconSvg}></Icon>;
+};
+
+const UserXIconSvg = ({ size, color }) => {
+  const userXIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-user-x"
+      width={size ? size : "24"}
+      height={size ? size : "24"}
+      viewBox="0 0 24 24"
+      strokeWidth="2"
+      stroke={color ? color : "#35763B"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+      <path d="M6 21v-2a4 4 0 0 1 4 -4h3.5" />
+      <path d="M22 22l-5 -5" />
+      <path d="M17 22l5 -5" />
+    </svg>
+  );
+  return <Icon rev={""} component={userXIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -3322,4 +3370,6 @@ export {
   SchoolIconSvg,
   ArrowUpRightIconSvg,
   BulbIconSvg,
+  TableOffIconSvg,
+  UserXIconSvg,
 };

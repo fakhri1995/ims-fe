@@ -15,9 +15,9 @@ const ModalLinkList = ({
   // refetchCategories,
 }) => {
   // 1. USE STATE
+  const newArr = Array.from({ length: 6 }, (_, idx) => idx);
   const [loading, setLoading] = useState(false);
-
-  const [linkList, setLinkList] = useState([]);
+  const [linkList, setLinkList] = useState(newArr);
   const [modalDelete, setModalDelete] = useState(false);
 
   // 2. USE QUERY & USE EFFECT
@@ -77,22 +77,31 @@ const ModalLinkList = ({
       footer={null}
       loading={loading}
     >
-      <div>
-        <div className="flex items-center justify-between p-4 rounded-md border rounded-md">
-          <div>
-            <p className="mig-caption--bold">nama requester</p>
-            <p className="mig-caption--medium text-primary100">
-              link token auth
-            </p>
-          </div>
-          <button
-            onClick={() => setModalDelete(true)}
-            className="mig-caption--medium text-warning px-3 py-1 
-          bg-warning bg-opacity-20 rounded-full"
+      <div className="grid grid-cols-1 gap-2">
+        {linkList.map((item) => (
+          <div
+            key={item.id}
+            className="flex items-center justify-between p-4 rounded-md border"
           >
-            Stop
-          </button>
-        </div>
+            <div>
+              <p className="mig-caption--bold">nama requester</p>
+              <a
+                href="#"
+                target="_blank"
+                className="mig-caption--medium text-primary100"
+              >
+                link token auth
+              </a>
+            </div>
+            <button
+              onClick={() => setModalDelete(true)}
+              className="mig-caption--medium text-warning px-3 py-1 
+          bg-warning bg-opacity-20 rounded-full"
+            >
+              Stop
+            </button>
+          </div>
+        ))}
       </div>
     </ModalCore>
   );

@@ -33,11 +33,12 @@ const ModalShare = ({
   // 1. USE STATE
   const [loading, setLoading] = useState(false);
   const [disableAdd, setDisableAdd] = useState(true);
-  const [dataForm, setDataForm] = useState({
-    requester_id: 0,
+  const emptyForm = {
+    requester_id: null,
     company_name: "",
-    duration: 0,
-  });
+    duration: null,
+  };
+  const [dataForm, setDataForm] = useState(emptyForm);
   const [modalLink, setModalLink] = useState(false);
   const [requesterList, setRequesterList] = useState([
     { id: 1, name: "person1", company_name: "PT1" },
@@ -55,7 +56,7 @@ const ModalShare = ({
 
   // 3. HANDLER
   const clearData = () => {
-    setDataForm({ requester_id: 0, company_name: "", duration: 0 });
+    setDataForm(emptyForm);
     form.resetFields();
   };
 
@@ -105,29 +106,6 @@ const ModalShare = ({
       .finally(() => setLoading(false));
   };
 
-  const durationList = [
-    {
-      label: "1 Hari",
-      value: 1,
-    },
-    {
-      label: "3 Hari",
-      value: 3,
-    },
-    {
-      label: "5 Hari",
-      value: 5,
-    },
-    {
-      label: "1 Minggu",
-      value: 7,
-    },
-    {
-      label: "1 Bulan",
-      value: 30,
-    },
-  ];
-
   const title = (
     <div className="flex items-center gap-2">
       <p className="mig-heading--4">Bagikan Daftar Talent {category.name}</p>
@@ -159,20 +137,21 @@ const ModalShare = ({
     );
   }
 
+  console.log({ dataForm });
   return (
     <ModalCore
       title={title}
       visible={visible}
       onCancel={handleClose}
       maskClosable={false}
-      width={700}
+      width={500}
       footer={
         <Spin spinning={loading}>
           <ButtonSys
             fullWidth
             type={"primary"}
             onClick={() => setModalLink(true)}
-            // disabled={!dataForm.requester_id}
+            disabled={!dataForm.requester_id}
           >
             <p>Generate</p>
           </ButtonSys>
@@ -180,60 +159,67 @@ const ModalShare = ({
       }
       loading={loading}
     >
-      <div>
-        <Form layout="vertical">
-          <div className="grid grid-cols-1 gap-x-6">
-            <Form.Item
-              label="Nama Peminta"
-              name={"requester_id"}
-              rules={[
-                {
-                  required: true,
-                  message: "Nama Peminta wajib diisi",
-                },
-              ]}
+      <Form layout="vertical">
+        <Form.Item
+          label="Nama Peminta"
+          name={"requester_id"}
+          rules={[
+            {
+              required: true,
+              message: "Nama Peminta wajib diisi",
+            },
+          ]}
+        >
+          <>
+            <Select
+              value={dataForm.requester_id}
+              placeholder="Pilih nama peminta"
+              onChange={(value, option) => {
+                setDataForm((prev) => ({
+                  ...prev,
+                  requester_id: value,
+                  company_name: option.company_name,
+                }));
+              }}
+              // disabled={}
             >
-              <Select
-                value={dataForm.requester_id}
-                onChange={(value, option) => {
-                  setDataForm((prev) => ({
-                    ...prev,
-                    requester_id: value,
-                    company_name: option.company_name,
-                  }));
-                }}
-                // disabled={}
-              >
-                {requesterList?.map((item) => (
-                  <Select.Option key={item.id} value={item.id} {...item}>
-                    {item.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item label="Nama Perusahaan" name={"company_name"}>
-              <Input
-                placeholder="Masukkan Nama Perusahaan"
-                value={dataForm.company_name}
-                disabled
-              />
-            </Form.Item>
-            <Form.Item label="Masa Berlaku Link" name={"name"}>
-              <Select
-                value={dataForm?.duration}
-                onChange={(value, option) => {
-                  setDataForm((prev) => ({
-                    ...prev,
-                    duration: value,
-                  }));
-                }}
-                // disabled={}
-                options={durationList}
-              ></Select>
-            </Form.Item>
+              {requesterList?.map((item) => (
+                <Select.Option key={item.id} value={item.id} {...item}>
+                  {item.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </>
+        </Form.Item>
+        {!!dataForm.company_name && (
+          <Form.Item label="Nama Perusahaan" name={"company_name"}>
+            <>
+              <Input value={dataForm.company_name} disabled />
+            </>
+          </Form.Item>
+        )}
+
+        <Form.Item label="Masa Berlaku Link" name={"name"}>
+          <div className="flex items-center gap-2">
+            <Input
+              placeholder="Masukkan masa berlaku link"
+              value={dataForm?.duration}
+              onChange={(e) => {
+                console.log(e.target.value);
+                setDataForm((prev) => ({
+                  ...prev,
+                  duration: e.target.value,
+                }));
+              }}
+              type="number"
+              min={0}
+              className="w-11/12"
+              // disabled={}
+            />
+            <p className="">Hari</p>
           </div>
-        </Form>
-      </div>
+        </Form.Item>
+      </Form>
     </ModalCore>
   );
 };
