@@ -33,6 +33,14 @@ export interface UpdateRequesterPayload {
   position: string;
 }
 
+export interface GetRequesterParams {
+  page: number;
+  rows: number;
+  name: string;
+  company_id: number;
+  is_enabled: boolean;
+}
+
 /**
  * @access GET /getRequesterList
  */

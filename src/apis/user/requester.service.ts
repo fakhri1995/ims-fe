@@ -1,9 +1,11 @@
 import type { AxiosInstance } from "axios";
+import QueryString from "qs";
 
 import { objectToFormData } from "lib/helper";
 
 import type {
   CreateRequesterPayload,
+  GetRequesterParams,
   IGetRequesterListSucceedResponse,
   UpdateRequesterPayload,
 } from "./requester.types";
@@ -59,14 +61,12 @@ export class RequesterService {
    * @access GET /getRequesterList
    */
   static async getRequesterList(
-    axiosClient: AxiosInstance
-    // params?:
+    axiosClient: AxiosInstance,
+    params?: GetRequesterParams
   ) {
-    // const querySearch = QueryString.stringify(params, { addQueryPrefix: true });
-
+    const querySearch = QueryString.stringify(params, { addQueryPrefix: true });
     return axiosClient.get<IGetRequesterListSucceedResponse>(
-      "/getRequesterList"
-      // + querySearch
+      "/getRequesterList" + querySearch
     );
   }
 }
