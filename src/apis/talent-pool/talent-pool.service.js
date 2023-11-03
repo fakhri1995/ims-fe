@@ -197,4 +197,42 @@ export class TalentPoolService {
 
     return apiRes;
   };
+
+  static generateSharedLink = async (initProps, feature, payload) => {
+    if (!feature) {
+      permissionWarningNotification("Menambah", "Talent Pool Share");
+      return;
+    }
+
+    const apiRes = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/addTalentPoolShare`,
+      {
+        method: `POST`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          return res2;
+        } else {
+          notification.error({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+
+    return apiRes;
+  };
 }
