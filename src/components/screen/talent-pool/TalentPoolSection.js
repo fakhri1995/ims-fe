@@ -226,7 +226,7 @@ const TalentPoolSection = ({
             <div className="xl:w-40">
               {text || "-"}
               {isHovered && rowState === record.id && (
-                <div className={`absolute left-0 w-[35vw] h-full z-50 top-3`}>
+                <div className={`absolute left-40 w-[35vw] h-full z-50 top-3`}>
                   <TalentDetailCard
                     data={record}
                     isAllowedToGetResume={isAllowedToGetResume}
