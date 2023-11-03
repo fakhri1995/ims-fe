@@ -296,7 +296,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       )}
 
       {/* Talent */}
-      {hasPermission(SIDEBAR_TALENT) && (
+      {/* {hasPermission(SIDEBAR_TALENT) && (
         <SubMenu
           title="Talent"
           key="talent"
@@ -308,7 +308,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
         </SubMenu>
-      )}
+      )} */}
     </>
   );
 
@@ -488,11 +488,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
 
-          {hasPermission(SIDEBAR_RECRUITMENT_TALENT_POOL) && (
+          {/* {hasPermission(SIDEBAR_RECRUITMENT_TALENT_POOL) && (
             <Menu.Item key="recruitment-talent-pool">
               <Link href="/admin/recruitment/talent-pool">Talent Pool</Link>
             </Menu.Item>
-          )}
+          )} */}
         </SubMenu>
       )}
 
