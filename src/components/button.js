@@ -63,7 +63,7 @@ const ButtonSys = ({
   );
 
   const buttonSolidColorsClassName = clsx({
-    "bg-state1 hover:bg-state1 text-white border-state1 hover:border-state1":
+    "bg-state1 hover:opacity-75 text-white border-state1 hover:border-state1":
       color === "danger" && !disabled,
     "bg-white hover:bg-gray-100 border-white hover:border-gray-100":
       color === "white" && !disabled,

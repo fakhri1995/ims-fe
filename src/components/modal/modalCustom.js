@@ -848,14 +848,14 @@ const ModalHapus2 = ({
                 onClick={onOk}
                 disabled={disabled}
               >
-                <div className="flex flex-row space-x-2">
-                  <DeleteOutlined rev={""} />
-                  {okButtonText ? (
-                    <p>{okButtonText}</p>
-                  ) : (
+                {okButtonText ? (
+                  <div>{okButtonText}</div>
+                ) : (
+                  <div className="flex flex-row space-x-2">
+                    <DeleteOutlined rev={""} />
                     <p>Ya, saya yakin dan hapus {itemName}</p>
-                  )}
-                </div>
+                  </div>
+                )}
               </ButtonSys>
             </div>
           </div>

@@ -2,6 +2,8 @@ import {
   DeleteOutlined,
   ProfileOutlined,
   ShareAltOutlined,
+  UserAddOutlined,
+  UserDeleteOutlined,
 } from "@ant-design/icons";
 import { Input, Select, Tag, notification } from "antd";
 import { useRouter } from "next/router";
@@ -27,8 +29,11 @@ import {
   TALENT_POOL_GET,
 } from "../../../lib/features";
 import DrawerTalentDetail from "../../drawer/recruitment/drawerTalentDetail";
+import { UserCheckIconSvg, UserXIconSvg } from "../../icon";
 import { ModalHapus2 } from "../../modal/modalCustom";
+import ModalShare from "../../modal/talent-pool/modalShare";
 import ModalTalentAdd from "../../modal/talent-pool/modalTalentAdd";
+import ModalTalentDetail from "../../modal/talent-pool/modalTalentDetail";
 import TalentDetailCard from "./TalentDetailCard";
 
 const TalentPoolSection = ({
@@ -42,6 +47,7 @@ const TalentPoolSection = ({
   queryParams,
   setQueryParams,
   category,
+  isRequester,
 }) => {
   const rt = useRouter();
 
@@ -58,6 +64,7 @@ const TalentPoolSection = ({
 
   const [modalTalentAdd, setModalTalentAdd] = useState(false);
   const [modalTalentDelete, setModalTalentDelete] = useState(false);
+  const [modalShare, setModalShare] = useState(false);
   const [drawerTalentDetail, setDrawerTalentDetail] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [dataRowClicked, setDataRowClicked] = useState({});
@@ -65,6 +72,8 @@ const TalentPoolSection = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const [isLargeScreen, setIsLargeScreen] = useState(true);
+
+  const [modalTalentDetail, setModalTalentDetail] = useState(false);
 
   // 3. Use Effect & Use Query
   // 3.1. Get Talent Pools
@@ -296,34 +305,55 @@ const TalentPoolSection = ({
       dataIndex: "action_button",
       render: (text, record, index) => {
         return {
-          children: (
-            <>
-              <div className="flex flex-col md:flex-row gap-2 items-center">
-                <ButtonSys
-                  type={"default"}
-                  color={"mono50"}
-                  disabled={!isAllowedToGetTalentPool}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    rt.push(`/admin/recruitment/talent-pool/${record.id}`);
-                  }}
-                >
-                  <ProfileOutlined rev={""} />
-                </ButtonSys>
-                <ButtonSys
-                  type={"default"}
-                  color={"danger"}
-                  disabled={!isAllowedToDeleteTalentPool}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setDataRowClicked(record);
-                    setModalTalentDelete(true);
-                  }}
-                >
-                  <DeleteOutlined rev={""} />
-                </ButtonSys>
-              </div>
-            </>
+          children: !isRequester ? (
+            <div className="flex flex-col md:flex-row gap-2 items-center">
+              <ButtonSys
+                type={"default"}
+                color={"mono50"}
+                disabled={!isAllowedToGetTalentPool}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  rt.push(`/admin/recruitment/talent-pool/${record.id}`);
+                }}
+              >
+                <ProfileOutlined rev={""} />
+              </ButtonSys>
+              <ButtonSys
+                type={"default"}
+                color={"danger"}
+                disabled={!isAllowedToDeleteTalentPool}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setDataRowClicked(record);
+                  setModalTalentDelete(true);
+                }}
+              >
+                <DeleteOutlined rev={""} />
+              </ButtonSys>
+            </div>
+          ) : (
+            <div className="flex flex-col md:flex-row gap-2 items-center">
+              <ButtonSys
+                type={"default"}
+                color={"secondary100"}
+                disabled={!isAllowedToGetTalentPool}
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
+              >
+                <UserAddOutlined rev={""} />
+              </ButtonSys>
+              <ButtonSys
+                type={"default"}
+                color={"danger"}
+                disabled={!isAllowedToDeleteTalentPool}
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
+              >
+                <UserDeleteOutlined rev={""} />
+              </ButtonSys>
+            </div>
           ),
         };
       },
@@ -469,7 +499,6 @@ const TalentPoolSection = ({
           </ButtonSys>
         </div>
       </div>
-
       <TableCustomTalentPoolList
         dataSource={dataTalents?.data}
         columns={columnTalents}
@@ -478,14 +507,15 @@ const TalentPoolSection = ({
         queryParams={queryParams}
         setQueryParams={setQueryParams}
         isAllowedToGetTalentPool={isAllowedToGetTalentPool}
-        setDrawerShown={setDrawerTalentDetail}
+        setDrawerShown={
+          !isRequester ? setDrawerTalentDetail : setModalTalentDetail
+        }
         setDataRowClicked={setDataRowClicked}
         rowstate={rowState}
         setrowstate={setRowState}
         setIsHovered={setIsHovered}
         isLargeScreen={isLargeScreen}
       />
-
       <div
         className="flex flex-col md:flex-row gap-2 md:gap-6 
         justify-center md:items-center"
@@ -500,7 +530,7 @@ const TalentPoolSection = ({
             <p className="mig-caption">Tambahkan Talent</p>
           </div>
         </ButtonSys>
-        <ButtonSys type={"default"}>
+        <ButtonSys type={"default"} onClick={() => setModalShare(true)}>
           <div className="flex gap-2 items-center">
             <ShareAltOutlined />
             <p className="mig-caption">Bagikan Daftar Talent</p>
@@ -521,6 +551,31 @@ const TalentPoolSection = ({
         />
       </AccessControl>
 
+      {/* Modal Talent Detail */}
+      <AccessControl hasPermission={TALENT_POOL_GET}>
+        <ModalTalentDetail
+          initProps={initProps}
+          visible={modalTalentDetail}
+          onvisible={setModalTalentDetail}
+          dataTalent={dataRowClicked}
+          // onDelete={() => {
+          //   setModalTalentDelete(true);
+          //   setDrawerTalentDetail(false);
+          // }}
+        />
+      </AccessControl>
+
+      {/* TODO: change feature access */}
+      <AccessControl hasPermission={TALENT_POOLS_GET}>
+        <ModalShare
+          initProps={initProps}
+          visible={modalShare}
+          onvisible={setModalShare}
+          isAllowedToAddCategory={isAllowedToAddTalentPool}
+          category={category}
+          // refetchCategories={refetchCategories}
+        />
+      </AccessControl>
       <AccessControl hasPermission={TALENT_POOL_ADD}>
         <ModalTalentAdd
           initProps={initProps}
@@ -531,7 +586,6 @@ const TalentPoolSection = ({
           refetchFilters={refetchFilters}
         />
       </AccessControl>
-
       <AccessControl hasPermission={TALENT_POOL_DELETE}>
         <ModalHapus2
           title={`Peringatan`}

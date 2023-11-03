@@ -36,6 +36,7 @@ import st from "../../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../../components/layout-dashboardNew";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
+import ModalLinkList from "../../../../components/modal/talent-pool/modalLinkList";
 import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
 import {
   RESUME_GET,
@@ -101,6 +102,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const [loadingDelete, setLoadingDelete] = useState(false);
 
+  const [modalLinks, setModalLinks] = useState(false);
   const [modalCategoryCreate, setModalCategoryCreate] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [dataDelete, setDataDelete] = useState({ id: 0, name: "" });
@@ -195,7 +197,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="flex flex-col md:flex-row gap-2 justify-between md:items-center">
             <h4 className="mig-heading--4 w-full md:w-2/12">Daftar Talent</h4>
             <div className="flex flex-col lg:flex-row gap-2 md:justify-end">
-              <ButtonSys type={"default"}>
+              <ButtonSys type={"default"} onClick={() => setModalLinks(true)}>
                 <div className="flex gap-2 items-center">
                   <UnorderedListOutlined rev={""} />
                   <p className="mig-caption">
@@ -287,6 +289,18 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           </Spin>
         </div>
       </div>
+
+      {/* TODO: change feature access */}
+      <AccessControl hasPermission={TALENT_POOLS_GET}>
+        <ModalLinkList
+          initProps={initProps}
+          visible={modalLinks}
+          onvisible={setModalLinks}
+          isAllowedToAddCategory={isAllowedToAddTalentPool}
+          category={currentCategory}
+          // refetchCategories={refetchCategories}
+        />
+      </AccessControl>
 
       <AccessControl hasPermission={TALENT_POOL_CATEGORY_ADD}>
         <ModalCategoryCreate
