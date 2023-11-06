@@ -1,15 +1,6 @@
-import {
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-  Spin,
-  notification,
-} from "antd";
+import { Form, Input, Select, Spin, notification } from "antd";
 import React, { useState } from "react";
-import { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
@@ -19,26 +10,27 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import { RequesterService } from "apis/user";
 
 import { TalentPoolService } from "../../../apis/talent-pool/talent-pool.service";
-import { REQUESTERS_GET, TALENT_POOL_SHARE_ADD } from "../../../lib/features";
-import { permissionWarningNotification } from "../../../lib/helper";
+import {
+  REQUESTERS_GET,
+  TALENT_POOL_SHARES_GET,
+  TALENT_POOL_SHARE_ADD,
+} from "../../../lib/features";
 import ButtonSys from "../../button";
-import { AlertCircleIconSvg, CopyIconSvg, InfoCircleIconSvg } from "../../icon";
+import { CopyIconSvg, InfoCircleIconSvg } from "../../icon";
 import ModalCore from "../modalCore";
-import { ModalUbah } from "../modalCustom";
 
-const ModalShare = ({
-  initProps,
-  visible,
-  onvisible,
-  isAllowedToAddCategory,
-  category,
-  // refetchCategories,
-}) => {
+export const getTalentPoolLink = (code) => {
+  return window.location.host + "/talent/" + code;
+};
+
+const ModalShare = ({ initProps, visible, onvisible, category }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetRequesters = hasPermission(REQUESTERS_GET);
   const isAllowedToAddTalentPoolShare = hasPermission(TALENT_POOL_SHARE_ADD);
 
   const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+
   const [form] = Form.useForm();
 
   // 1. USE STATE
@@ -53,7 +45,7 @@ const ModalShare = ({
   const [dataForm, setDataForm] = useState(emptyForm);
   const [modalLink, setModalLink] = useState(false);
   const [generatedData, setGeneratedData] = useState(null);
-  const sharedLink = window.location.host + "/talent/" + generatedData?.code;
+  const sharedLink = getTalentPoolLink(generatedData?.code);
 
   const [filterParams, setFilterParams] = useState({
     page: 1,
@@ -94,15 +86,31 @@ const ModalShare = ({
 
   const handleGenerate = () => {
     setLoading(true);
+    const payload = { ...dataForm, expired: dataForm.expired ?? 0 };
     TalentPoolService.generateSharedLink(
       initProps,
       isAllowedToAddTalentPoolShare,
-      dataForm
-    ).then((res) => {
-      setLoading(false);
-      setGeneratedData(res.data);
-      setModalLink(true);
-    });
+      payload
+    )
+      .then((res) => {
+        if (res.success) {
+          setGeneratedData(res?.data);
+          setModalLink(true);
+          queryClient.invalidateQueries(TALENT_POOL_SHARES_GET);
+        } else {
+          notification.error({
+            message: res.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
   };
 
   const title = (

@@ -12,13 +12,20 @@ import { getNameInitial, permissionWarningNotification } from "lib/helper";
 
 import { TalentPoolService } from "apis/talent-pool/talent-pool.service";
 
+import { TALENT_POOL_SHARE_PUBLIC_CANCEL } from "../../../lib/features";
 import ButtonSys from "../../button";
 import { AlertCircleIconSvg, InfoCircleIconSvg, PlusIconSvg } from "../../icon";
 import CandidateDetailCard from "../../screen/talent-pool/CandidateDetailCard";
 import ModalCore from "../modalCore";
 import { ModalHapus2, ModalUbah } from "../modalCustom";
 
-const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
+const ModalEliminatedTalent = ({
+  initProps,
+  visible,
+  onvisible,
+  category,
+  linkCode,
+}) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
   if (isAccessControlPending) {
@@ -27,6 +34,9 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
 
   const isAllowedToGetCandidates = hasPermission(TALENT_POOL_CANDIDATES_GET);
   const isAllowedToAddTalentPool = hasPermission(TALENT_POOL_ADD);
+  const isAllowedToCancelEliminateTalent = hasPermission(
+    TALENT_POOL_SHARE_PUBLIC_CANCEL
+  );
 
   // 1. USE STATE
   const [params, setParams] = useState({
@@ -39,6 +49,7 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
   const [searchCandidate, setSearchCandidate] = useState("");
   const [rowState, setRowState] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [dataRowClicked, setDataRowClicked] = useState(null);
 
   // 2. USE QUERY & USE EFFECT
   const {
@@ -46,7 +57,7 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
     isLoading: loadingCandidates,
     refetch: refetchCandidates,
   } = useQuery(
-    [TALENT_POOL_CANDIDATES_GET, params, searchCandidate],
+    [TALENT_POOL_CANDIDATES_GET, params.category_id, searchCandidate],
     () =>
       TalentPoolService.getCandidates(
         initProps,
@@ -55,7 +66,7 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
         searchCandidate
       ),
     {
-      enabled: isAllowedToGetCandidates,
+      enabled: isAllowedToGetCandidates && !!params.category_id,
       select: (response) => response.data,
     }
   );
@@ -69,6 +80,38 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
 
   const onChangeSearchCandidate = (e) => {
     setTimeout(() => setSearchCandidate(e.target.value), 500);
+  };
+
+  const handleCancelElimination = () => {
+    setLoading(true);
+    TalentPoolService.cancelEliminate(
+      initProps,
+      isAllowedToCancelEliminateTalent,
+      linkCode,
+      dataRowClicked?.id
+    )
+      .then((res) => {
+        if (res.success) {
+          setModalConfirm(false);
+          notification.success({
+            message: <div>Eliminasi Talent berhasil dibatalkan.</div>,
+            duration: 3,
+          });
+          // queryClient.invalidateQueries(TALENT_);
+        } else {
+          notification.error({
+            message: res.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
   };
 
   // console.log({ dataServiceList });
@@ -88,14 +131,15 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
         title={title}
         visible={modalConfirm}
         onvisible={setModalConfirm}
-        // onOk={handleDelete}
+        onOk={handleCancelElimination}
         okButtonText={"Eliminasi"}
         onCancel={handleClose}
         loading={loading}
       >
         <p className="mb-4">
-          Apakah anda yakin ingin mengeliminasi talent dengan nama{" "}
-          <strong>nama user</strong> dengan role <strong>nama role</strong>?
+          Apakah anda yakin ingin membatalkan eliminasi talent dengan nama{" "}
+          <strong>{dataRowClicked.name}</strong> dengan role{" "}
+          <strong>{dataRowClicked.last_assessment?.name}</strong>?
         </p>
       </ModalHapus2>
     );
@@ -183,7 +227,10 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
                       </div>
                     </div>
                     <button
-                      onClick={() => setModalConfirm(true)}
+                      onClick={() => {
+                        setDataRowClicked(record);
+                        setModalConfirm(true);
+                      }}
                       className="mig-caption--medium text-primary100 px-3 py-1 
                     bg-primary100 bg-opacity-10 hover:opacity-70 rounded-full 
                       whitespace-nowrap"

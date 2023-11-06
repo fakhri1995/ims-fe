@@ -1,3 +1,8 @@
+import {
+  DownloadOutlined,
+  UserAddOutlined,
+  UserDeleteOutlined,
+} from "@ant-design/icons";
 import { Modal, Tag, Timeline } from "antd";
 import parse from "html-react-parser";
 import React, { useState } from "react";
@@ -6,10 +11,17 @@ import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RESUME_GET, TALENT_POOL_CANDIDATES_GET } from "lib/features";
+import { TALENT_POOL_CANDIDATES_GET } from "lib/features";
 import { getNameInitial, momentFormatDate } from "lib/helper";
 
 import { CandidateService } from "../../../apis/candidates";
+import { TalentPoolService } from "../../../apis/talent-pool/talent-pool.service";
+import {
+  TALENT_POOL_SHARE_PUBLIC_ELIMINATE,
+  TALENT_POOL_SHARE_PUBLIC_GET,
+  TALENT_POOL_SHARE_PUBLIC_MARK,
+} from "../../../lib/features";
+import ButtonSys from "../../button";
 import { InfoCircleIconSvg } from "../../icon";
 import { ModalHapus2 } from "../modalCustom";
 
@@ -20,8 +32,13 @@ const ModalTalentDetail = ({ initProps, visible, onvisible, dataTalent }) => {
     return null;
   }
 
-  const isAllowedToGetCandidates = hasPermission(TALENT_POOL_CANDIDATES_GET);
-  const isAllowedToGetResume = hasPermission(RESUME_GET);
+  const isAllowedToGetTalentPoolSharePublic = hasPermission(
+    TALENT_POOL_SHARE_PUBLIC_GET
+  );
+  const isAllowedToMarkTalent = hasPermission(TALENT_POOL_SHARE_PUBLIC_MARK);
+  const isAllowedToEliminateTalent = hasPermission(
+    TALENT_POOL_SHARE_PUBLIC_ELIMINATE
+  );
 
   // 1. USE STATE
   const [params, setParams] = useState({
@@ -37,11 +54,11 @@ const ModalTalentDetail = ({ initProps, visible, onvisible, dataTalent }) => {
   // 2. USE QUERY & USE EFFECT
   // 3.2. Get Resume Talent
   const { data: dataResume, isLoading: loadingResume } = useQuery(
-    [RESUME_GET, dataTalent?.resume_id],
+    [TALENT_POOL_SHARE_PUBLIC_GET, dataTalent?.resume_id],
     () =>
-      CandidateService.getResume(
-        initProps,
-        isAllowedToGetResume,
+      TalentPoolService.getPublicResume(
+        // initProps,
+        isAllowedToGetTalentPoolSharePublic,
         dataTalent?.resume_id
       ),
     {
@@ -91,29 +108,55 @@ const ModalTalentDetail = ({ initProps, visible, onvisible, dataTalent }) => {
     );
   }
 
-  const header = (
-    <div className="flex gap-6 items-center">
-      <div
-        className="rounded-full w-12 h-12 p-2 flex justify-center items-center 
-              bg-backdrop text-primary100"
+  const footer = (
+    <div className="grid grid-cols-3 gap-2 items-center">
+      <ButtonSys
+        type={"default"}
+        color={"danger"}
+        disabled={!isAllowedToEliminateTalent}
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
       >
-        {getNameInitial(dataResume?.name)}
-      </div>
-      <div>
-        <h4 className="mig-heading--4">{dataResume?.name}</h4>
-
-        <p className="mig-caption--medium text-mono50">{dataResume?.email}</p>
-      </div>
+        <div className="flex items-center gap-2 whitespace-nowrap">
+          <UserDeleteOutlined rev={""} />
+          <p className="mig-caption--small">Eliminasi Talent</p>
+        </div>
+      </ButtonSys>
+      <ButtonSys
+        type={"primary"}
+        color={"secondary100"}
+        disabled={!isAllowedToMarkTalent}
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+      >
+        <div className="flex items-center gap-2 whitespace-nowrap">
+          <UserAddOutlined rev={""} />
+          <p className="mig-caption--small">Tandai Talent</p>
+        </div>
+      </ButtonSys>
+      <ButtonSys
+        type={"primary"}
+        // disabled={!isAllowedToMarkTalent}
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+      >
+        <div className="flex items-center gap-2 whitespace-nowrap">
+          <DownloadOutlined rev={""} />
+          <p className="mig-caption--small">Unduh Resume</p>
+        </div>
+      </ButtonSys>
     </div>
   );
 
-  console.log({ dataResume });
   return (
     <Modal
       title={null}
       visible={visible}
       onCancel={handleClose}
-      footer={null}
+      footer={footer}
       loading={loading}
       mask={false}
       maskClosable={true}
