@@ -45,23 +45,22 @@ import { TalentPoolService } from "apis/talent-pool/talent-pool.service";
 
 import { TableOffIconSvg } from "../../components/icon";
 import ModalEliminatedTalent from "../../components/modal/talent-pool/modalEliminatedTalent";
+import TalentPoolSectionPublic from "../../components/screen/talent-pool/TalentPoolSectionPublic";
+import { TALENT_POOL_SHARE_PUBLICS_GET } from "../../lib/features";
 import httpcookie from "cookie";
 
-const TalentPoolRequesterIndex = ({ dataProfile, sidemenu, initProps }) => {
+const TalentPoolPublicIndex = ({
+  dataProfile,
+  sidemenu,
+  // initProps,
+  linkCode,
+}) => {
   // 1. Init
   /**
    * Dependencies
    */
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
-
-  const isAllowedToGetTalentPools = hasPermission(TALENT_POOLS_GET);
-  const isAllowedToGetTalentPool = hasPermission(TALENT_POOL_GET);
-  const isAllowedToAddTalentPool = hasPermission(TALENT_POOL_ADD);
-  const isAllowedToDeleteTalentPool = hasPermission(TALENT_POOL_DELETE);
-  const isAllowedToGetTalentPoolFilters = hasPermission(
-    TALENT_POOL_FILTERS_GET
-  );
 
   const isAllowedToGetTalentPoolCategories = hasPermission(
     TALENT_POOL_CATEGORIES_GET
@@ -75,10 +74,14 @@ const TalentPoolRequesterIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const isAllowedToGetResume = hasPermission(RESUME_GET);
 
+  const isAllowedToGetTalentPoolSharePublics = hasPermission(
+    TALENT_POOL_SHARE_PUBLICS_GET
+  );
+
   const [queryParams, setQueryParams] = useQueryParams({
+    code: withDefault(StringParam, linkCode),
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
-    category_id: withDefault(NumberParam, 1),
     roles: withDefault(StringParam, undefined),
     skills: withDefault(StringParam, undefined),
     years: withDefault(StringParam, undefined),
@@ -107,29 +110,53 @@ const TalentPoolRequesterIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataDelete, setDataDelete] = useState({ id: 0, name: "" });
 
   // 3. UseEffect & UseQuery
+  // Get Public Talent Pools
+  const {
+    data: dataTalents,
+    isLoading: loadingTalents,
+    refetch: refetchTalents,
+  } = useQuery(
+    [TALENT_POOL_SHARE_PUBLICS_GET, linkCode],
+    () =>
+      TalentPoolService.getPublicTalentPools(
+        // initProps,
+        isAllowedToGetTalentPoolSharePublics,
+        queryParams
+      ),
+    {
+      enabled: isAllowedToGetTalentPoolSharePublics && !!linkCode,
+      select: (response) => response.data,
+    }
+  );
+
   // 3.1. Get Talent Pool Categories
   const {
     data: dataCategories,
     isLoading: loadingCategories,
     refetch: refetchCategories,
   } = useQuery(
-    [TALENT_POOL_CATEGORIES_GET],
+    [
+      TALENT_POOL_CATEGORIES_GET,
+      dataTalents?.data?.[0]?.talent_pool_category_id,
+    ],
     () =>
       TalentPoolService.getCategories(
-        initProps,
+        // initProps,
         isAllowedToGetTalentPoolCategories
       ),
     {
-      enabled: isAllowedToGetTalentPoolCategories,
+      enabled:
+        isAllowedToGetTalentPoolCategories && !!dataTalents?.data?.length,
       select: (response) => response.data,
     }
   );
 
   // 3.2. Set active category tab
   useEffect(() => {
-    const firstCategory = dataCategories?.[0];
-    setCurrentCategory({ id: firstCategory?.id, name: firstCategory?.name });
-    setQueryParams({ category_id: firstCategory?.id });
+    const category = dataCategories?.find(
+      (item) => item?.id === dataTalents?.data?.[0]?.talent_pool_category_id
+    );
+    setCurrentCategory({ id: category?.id, name: category?.name });
   }, [dataCategories]);
 
   // 4. Event
@@ -138,11 +165,12 @@ const TalentPoolRequesterIndex = ({ dataProfile, sidemenu, initProps }) => {
     return null;
   }
 
+  // console.log({ dataTalents });
   // console.log({ dataCategories });
   // console.log({ currentCategory });
   return (
     <LayoutDashboard
-      tok={initProps}
+      tok={null}
       dataProfile={dataProfile}
       sidemenu={sidemenu}
       st={st}
@@ -197,20 +225,11 @@ const TalentPoolRequesterIndex = ({ dataProfile, sidemenu, initProps }) => {
                 tabKey={"1"}
               >
                 {/* Talent Pool per Category */}
-                <TalentPoolSection
-                  initProps={initProps}
-                  isAllowedToGetTalentPools={isAllowedToGetTalentPools}
-                  isAllowedToGetTalentPool={isAllowedToGetTalentPool}
-                  isAllowedToGetTalentPoolFilters={
-                    isAllowedToGetTalentPoolFilters
-                  }
-                  isAllowedToAddTalentPool={isAllowedToAddTalentPool}
-                  isAllowedToDeleteTalentPool={isAllowedToDeleteTalentPool}
-                  isAllowedToGetResume={isAllowedToGetResume}
+                <TalentPoolSectionPublic
+                  // initProps={initProps}
                   queryParams={queryParams}
                   setQueryParams={setQueryParams}
                   category={currentCategory}
-                  isRequester={true}
                 />
               </Tabs.TabPane>
             </Tabs>
@@ -221,18 +240,21 @@ const TalentPoolRequesterIndex = ({ dataProfile, sidemenu, initProps }) => {
       {/* TODO: change feature access */}
       <AccessControl hasPermission={TALENT_POOL_ADD}>
         <ModalEliminatedTalent
-          initProps={initProps}
+          // initProps={initProps}
           visible={modalTable}
           onvisible={setModalTable}
           category={currentCategory}
+          linkCode={linkCode}
         />
       </AccessControl>
     </LayoutDashboard>
   );
 };
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, params }) {
   let initProps = {};
+  let linkCode = params.linkCode;
+
   if (!req.headers.cookie) {
     return {
       redirect: {
@@ -265,11 +287,12 @@ export async function getServerSideProps({ req, res }) {
 
   return {
     props: {
-      initProps,
+      // initProps,
       dataProfile,
       sidemenu: "talent/daftar-talent",
+      linkCode,
     },
   };
 }
 
-export default TalentPoolRequesterIndex;
+export default TalentPoolPublicIndex;

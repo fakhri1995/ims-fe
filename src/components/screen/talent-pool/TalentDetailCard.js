@@ -6,22 +6,34 @@ import React from "react";
 import { useQuery } from "react-query";
 
 import { CandidateService } from "../../../apis/candidates";
+import { TalentPoolService } from "../../../apis/talent-pool/talent-pool.service";
 import { RESUME_GET } from "../../../lib/features";
 import { getNameInitial, momentFormatDate } from "../../../lib/helper";
 import { ArrowUpRightIconSvg } from "../../icon";
 
-const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
+const TalentDetailCard = ({
+  data,
+  isAllowedToGetResume,
+  initProps,
+  isPublic,
+}) => {
   const rt = useRouter();
 
   // Get Resume Talent
   const { data: dataResume, isLoading: loadingResume } = useQuery(
     [RESUME_GET, data?.resume_id],
     () =>
-      CandidateService.getResume(
-        initProps,
-        isAllowedToGetResume,
-        data?.resume_id
-      ),
+      !isPublic
+        ? CandidateService.getResume(
+            initProps,
+            isAllowedToGetResume,
+            data?.resume_id
+          )
+        : TalentPoolService.getPublicResume(
+            // initProps,
+            isAllowedToGetResume,
+            data?.resume_id
+          ),
     {
       enabled: !!data?.resume_id,
       select: (response) => response.data,
@@ -52,19 +64,20 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
             )}
           </div>
         </div>
-
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            rt.push(`talent-pool/${data?.id}`);
-          }}
-          className="flex items-center gap-1 bg-transparent hover:opacity-70"
-        >
-          <p className="mig-caption--bold text-mono50 whitespace-nowrap">
-            Lihat Lainnya
-          </p>
-          <ArrowUpRightIconSvg color={"#808080"} size={20} />
-        </button>
+        {!isPublic && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              rt.push(`talent-pool/${data?.id}`);
+            }}
+            className="flex items-center gap-1 bg-transparent hover:opacity-70"
+          >
+            <p className="mig-caption--bold text-mono50 whitespace-nowrap">
+              Lihat Lainnya
+            </p>
+            <ArrowUpRightIconSvg color={"#808080"} size={20} />
+          </button>
+        )}
       </div>
 
       <hr />

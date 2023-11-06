@@ -289,14 +289,12 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           </Spin>
         </div>
       </div>
-
       {/* TODO: change feature access */}
       <AccessControl hasPermission={TALENT_POOLS_GET}>
         <ModalLinkList
           initProps={initProps}
           visible={modalLinks}
           onvisible={setModalLinks}
-          isAllowedToAddCategory={isAllowedToAddTalentPool}
           category={currentCategory}
           // refetchCategories={refetchCategories}
         />

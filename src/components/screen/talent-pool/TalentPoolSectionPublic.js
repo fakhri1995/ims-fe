@@ -17,6 +17,8 @@ import { AccessControl } from "components/features/AccessControl";
 import { SearchIconSvg, TableImportIconSvg } from "components/icon";
 import { TableCustomTalentPoolList } from "components/table/tableCustom";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { permissionWarningNotification } from "lib/helper";
 import { createKeyPressHandler } from "lib/helper";
 
@@ -27,28 +29,49 @@ import {
   TALENT_POOL_DELETE,
   TALENT_POOL_FILTERS_GET,
   TALENT_POOL_GET,
-  TALENT_POOL_SHARE_ADD,
+  TALENT_POOL_SHARE_PUBLICS_GET,
+  TALENT_POOL_SHARE_PUBLIC_CANCEL,
+  TALENT_POOL_SHARE_PUBLIC_ELIMINATE,
+  TALENT_POOL_SHARE_PUBLIC_GET,
+  TALENT_POOL_SHARE_PUBLIC_MARK,
 } from "../../../lib/features";
 import DrawerTalentDetail from "../../drawer/recruitment/drawerTalentDetail";
-import { UserCheckIconSvg, UserXIconSvg } from "../../icon";
+import { AlertCircleIconSvg, UserCheckIconSvg, UserXIconSvg } from "../../icon";
 import { ModalHapus2 } from "../../modal/modalCustom";
 import ModalShare from "../../modal/talent-pool/modalShare";
 import ModalTalentAdd from "../../modal/talent-pool/modalTalentAdd";
 import ModalTalentDetail from "../../modal/talent-pool/modalTalentDetail";
 import TalentDetailCard from "./TalentDetailCard";
 
-const TalentPoolSection = ({
-  initProps,
-  isAllowedToGetTalentPools,
-  isAllowedToGetTalentPoolFilters,
-  isAllowedToAddTalentPool,
-  isAllowedToDeleteTalentPool,
-  isAllowedToGetTalentPool,
-  isAllowedToGetResume,
+const TalentPoolSectionPublic = ({
+  // initProps,
   queryParams,
   setQueryParams,
   category,
 }) => {
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+
+  const isAllowedToGetTalentPoolSharePublics = hasPermission(
+    TALENT_POOL_SHARE_PUBLICS_GET
+  );
+  const isAllowedToGetTalentPoolSharePublic = hasPermission(
+    TALENT_POOL_SHARE_PUBLIC_GET
+  );
+
+  const isAllowedToGetTalentPoolFilters = hasPermission(
+    TALENT_POOL_FILTERS_GET
+  );
+  const isAllowedToGetTalentPool = hasPermission(TALENT_POOL_GET);
+
+  const isAllowedToMarkTalent = hasPermission(TALENT_POOL_SHARE_PUBLIC_MARK);
+  const isAllowedToEliminateTalent = hasPermission(
+    TALENT_POOL_SHARE_PUBLIC_ELIMINATE
+  );
+  const isAllowedToCancelEliminateTalent = hasPermission(
+    TALENT_POOL_SHARE_PUBLIC_CANCEL
+  );
+
   const rt = useRouter();
 
   // 2. Use state
@@ -63,7 +86,7 @@ const TalentPoolSection = ({
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
   const [modalTalentAdd, setModalTalentAdd] = useState(false);
-  const [modalTalentDelete, setModalTalentDelete] = useState(false);
+  const [modalTalentEliminate, setModalTalentEliminate] = useState(false);
   const [modalShare, setModalShare] = useState(false);
   const [drawerTalentDetail, setDrawerTalentDetail] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -76,22 +99,23 @@ const TalentPoolSection = ({
   const [modalTalentDetail, setModalTalentDetail] = useState(false);
 
   // 3. Use Effect & Use Query
-  // 3.1. Get Talent Pools
+  // 3.1. Get Public Talent Pools
   const {
     data: dataTalents,
     isLoading: loadingTalents,
-    refetch: refetchPool,
+    refetch: refetchTalents,
   } = useQuery(
-    [TALENT_POOLS_GET, searchingFilterTalents, queryParams.category_id],
+    [TALENT_POOL_SHARE_PUBLICS_GET, searchingFilterTalents, queryParams.code],
+
     () =>
-      TalentPoolService.getTalentPools(
-        initProps,
-        isAllowedToGetTalentPools,
+      TalentPoolService.getPublicTalentPools(
+        // initProps,
+        isAllowedToGetTalentPoolSharePublics,
         queryParams,
         searchingFilterTalents
       ),
     {
-      enabled: isAllowedToGetTalentPools,
+      enabled: isAllowedToGetTalentPoolSharePublics && !!queryParams?.code,
       select: (response) => response.data,
     }
   );
@@ -102,15 +126,15 @@ const TalentPoolSection = ({
     isLoading: loadingFilters,
     refetch: refetchFilters,
   } = useQuery(
-    [TALENT_POOL_FILTERS_GET, queryParams.category_id],
+    [TALENT_POOL_FILTERS_GET, category?.id],
     () =>
       TalentPoolService.getFilters(
-        initProps,
+        // initProps,
         isAllowedToGetTalentPoolFilters,
-        queryParams.category_id
+        category?.id
       ),
     {
-      enabled: isAllowedToGetTalentPoolFilters,
+      enabled: isAllowedToGetTalentPoolFilters && !!category?.id,
       select: (response) => response.data,
     }
   );
@@ -156,48 +180,43 @@ const TalentPoolSection = ({
     "Enter"
   );
 
-  // 4.2. Delete Talent
-  const handleDelete = () => {
-    if (!isAllowedToDeleteTalentPool) {
-      permissionWarningNotification("Menghapus", "Talent");
-      return;
-    }
-
+  const handleEliminate = () => {
     setLoadingDelete(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTalentPool?id=${dataRowClicked?.id}`,
-      {
-        method: `DELETE`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
+    TalentPoolService.eliminate(
+      // initProps,
+      isAllowedToEliminateTalent,
+      queryParams?.code,
+      dataRowClicked?.resume_id
     )
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          setModalTalentDelete(false);
-          refetchPool();
-          refetchFilters();
+      .then((res) => {
+        if (res.success) {
+          setModalTalentEliminate(false);
           notification.success({
-            message: response.message,
+            message: (
+              <div>
+                Talent berhasil dieliminasi.{" "}
+                <button className="mig-caption text-primary100">
+                  Lihat Tabel Eliminasi
+                </button>{" "}
+              </div>
+            ),
             duration: 3,
           });
+          // queryClient.invalidateQueries(TALENT_);
         } else {
           notification.error({
-            message: response.message,
+            message: res.message,
             duration: 3,
           });
         }
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menghapus talent. ${err.response}`,
+          message: `${err.response}`,
           duration: 3,
         });
       })
-      .finally(() => setLoadingDelete(false));
+      .finally(() => setLoading(false));
   };
 
   // Talent Pool Table columns
@@ -229,8 +248,9 @@ const TalentPoolSection = ({
                 <div className={`absolute left-40 w-[35vw] h-full z-50 top-3`}>
                   <TalentDetailCard
                     data={record}
-                    isAllowedToGetResume={isAllowedToGetResume}
-                    initProps={initProps}
+                    isAllowedToGetResume={isAllowedToGetTalentPoolSharePublic}
+                    // initProps={initProps}
+                    isPublic={true}
                   />
                 </div>
               )}
@@ -309,26 +329,25 @@ const TalentPoolSection = ({
             <div className="flex flex-col md:flex-row gap-2 items-center">
               <ButtonSys
                 type={"default"}
-                color={"mono50"}
-                disabled={!isAllowedToGetTalentPool}
+                color={"secondary100"}
+                disabled={!isAllowedToMarkTalent}
                 onClick={(event) => {
                   event.stopPropagation();
-                  rt.push(`/admin/recruitment/talent-pool/${record.id}`);
                 }}
               >
-                <ProfileOutlined rev={""} />
+                <UserAddOutlined rev={""} />
               </ButtonSys>
               <ButtonSys
                 type={"default"}
                 color={"danger"}
-                disabled={!isAllowedToDeleteTalentPool}
+                disabled={!isAllowedToEliminateTalent}
                 onClick={(event) => {
                   event.stopPropagation();
                   setDataRowClicked(record);
-                  setModalTalentDelete(true);
+                  setModalTalentEliminate(true);
                 }}
               >
-                <DeleteOutlined rev={""} />
+                <UserDeleteOutlined rev={""} />
               </ButtonSys>
             </div>
           ),
@@ -353,7 +372,7 @@ const TalentPoolSection = ({
               setTimeout(() => setSearchingFilterTalents(e.target.value), 500);
             }}
             onKeyPress={onKeyPressHandler}
-            disabled={!isAllowedToGetTalentPools}
+            disabled={!isAllowedToGetTalentPoolSharePublics}
           />
         </div>
         {/* Filter by position (dropdown) */}
@@ -466,7 +485,7 @@ const TalentPoolSection = ({
           <ButtonSys
             type={`primary`}
             onClick={onFilterTalentPools}
-            disabled={!isAllowedToGetTalentPools}
+            disabled={!isAllowedToGetTalentPoolSharePublics}
             fullWidth
           >
             <div className="flex flex-row space-x-2.5 items-center whitespace-nowrap">
@@ -483,87 +502,52 @@ const TalentPoolSection = ({
         total={dataTalents?.total}
         queryParams={queryParams}
         setQueryParams={setQueryParams}
-        isAllowedToGetTalentPool={isAllowedToGetTalentPool}
-        setDrawerShown={setDrawerTalentDetail}
+        isAllowedToGetTalentPool={isAllowedToGetTalentPoolSharePublic}
+        setDrawerShown={setModalTalentDetail}
         setDataRowClicked={setDataRowClicked}
         rowstate={rowState}
         setrowstate={setRowState}
         setIsHovered={setIsHovered}
         isLargeScreen={isLargeScreen}
       />
-      <div
-        className="flex flex-col md:flex-row gap-2 md:gap-6 
-        justify-center md:items-center"
-      >
-        <ButtonSys
-          type={"primary"}
-          disabled={!isAllowedToAddTalentPool}
-          onClick={() => setModalTalentAdd(true)}
-        >
-          <div className="flex gap-2 items-center">
-            <TableImportIconSvg color={"#FFFFFF"} size={16} />
-            <p className="mig-caption">Tambahkan Talent</p>
-          </div>
-        </ButtonSys>
-        <ButtonSys
-          type={"default"}
-          onClick={() => setModalShare(true)}
-          disabled={dataTalents?.data?.length === 0}
-        >
-          <div className="flex gap-2 items-center">
-            <ShareAltOutlined />
-            <p className="mig-caption">Bagikan Daftar Talent</p>
-          </div>
-        </ButtonSys>
-      </div>
 
-      {/* Drawer Talent Detail */}
-      <AccessControl hasPermission={TALENT_POOL_GET}>
-        <DrawerTalentDetail
-          visible={drawerTalentDetail}
-          onvisible={setDrawerTalentDetail}
+      {/* Modal Talent Detail */}
+      <AccessControl hasPermission={TALENT_POOL_SHARE_PUBLIC_GET}>
+        <ModalTalentDetail
+          // initProps={initProps}
+          visible={modalTalentDetail}
+          onvisible={setModalTalentDetail}
           dataTalent={dataRowClicked}
-          onDelete={() => {
-            setModalTalentDelete(true);
-            setDrawerTalentDetail(false);
-          }}
+          // onDelete={() => {
+          //   setModalTalentEliminate(true);
+          //   setDrawerTalentDetail(false);
+          // }}
         />
       </AccessControl>
 
-      <AccessControl hasPermission={TALENT_POOL_SHARE_ADD}>
-        <ModalShare
-          initProps={initProps}
-          visible={modalShare}
-          onvisible={setModalShare}
-          category={category}
-        />
-      </AccessControl>
-
-      <AccessControl hasPermission={TALENT_POOL_ADD}>
-        <ModalTalentAdd
-          initProps={initProps}
-          visible={modalTalentAdd}
-          onvisible={setModalTalentAdd}
-          category={category}
-          refetchPool={refetchPool}
-          refetchFilters={refetchFilters}
-        />
-      </AccessControl>
-      <AccessControl hasPermission={TALENT_POOL_DELETE}>
+      <AccessControl hasPermission={TALENT_POOL_SHARE_PUBLIC_ELIMINATE}>
         <ModalHapus2
-          title={`Peringatan`}
-          visible={modalTalentDelete}
-          onvisible={setModalTalentDelete}
-          onOk={handleDelete}
+          title={
+            <div className="flex gap-2 items-center">
+              <AlertCircleIconSvg size={32} color="#BF4A40" />
+              <h3 className="mig-heading--3 text-warning">
+                Konfirmasi Eliminasi Talent
+              </h3>
+            </div>
+          }
+          visible={modalTalentEliminate}
+          onvisible={setModalTalentEliminate}
+          onOk={handleEliminate}
           onCancel={() => {
-            setModalTalentDelete(false);
+            setModalTalentEliminate(false);
           }}
-          itemName={"talent"}
+          okButtonText={"Eliminasi"}
           loading={loadingDelete}
         >
           <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan talent dengan nama{" "}
-            <strong>{dataRowClicked?.resume?.name}</strong>?
+            Apakah Anda yakin ingin mengeliminasi talent dengan nama{" "}
+            <strong>{dataRowClicked?.resume?.name}</strong> dan role{" "}
+            <strong>{dataRowClicked?.resume?.last_assessment?.name}</strong>?
           </p>
         </ModalHapus2>
       </AccessControl>
@@ -571,4 +555,4 @@ const TalentPoolSection = ({
   );
 };
 
-export default TalentPoolSection;
+export default TalentPoolSectionPublic;
