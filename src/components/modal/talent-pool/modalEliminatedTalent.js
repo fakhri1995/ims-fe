@@ -1,42 +1,23 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Checkbox, Input, Modal, Spin, Table, notification } from "antd";
 import React, { useState } from "react";
-import { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
-import { useAccessControl } from "contexts/access-control";
-
-import { TALENT_POOL_ADD, TALENT_POOL_CANDIDATES_GET } from "lib/features";
 import { getNameInitial, permissionWarningNotification } from "lib/helper";
 
-import { TalentPoolService } from "apis/talent-pool/talent-pool.service";
-
-import { TALENT_POOL_SHARE_PUBLIC_CANCEL } from "../../../lib/features";
-import ButtonSys from "../../button";
+import { TalentPoolPublicService } from "../../../apis/talent-pool";
+import {
+  TALENT_POOL_SHARE_PUBLICS_GET,
+  TALENT_POOL_SHARE_PUBLIC_CUTS_GET,
+} from "../../../lib/features";
 import { AlertCircleIconSvg, InfoCircleIconSvg, PlusIconSvg } from "../../icon";
 import CandidateDetailCard from "../../screen/talent-pool/CandidateDetailCard";
 import ModalCore from "../modalCore";
 import { ModalHapus2, ModalUbah } from "../modalCustom";
 
-const ModalEliminatedTalent = ({
-  initProps,
-  visible,
-  onvisible,
-  category,
-  linkCode,
-}) => {
-  const { hasPermission, isPending: isAccessControlPending } =
-    useAccessControl();
-  if (isAccessControlPending) {
-    return null;
-  }
-
-  const isAllowedToGetCandidates = hasPermission(TALENT_POOL_CANDIDATES_GET);
-  const isAllowedToAddTalentPool = hasPermission(TALENT_POOL_ADD);
-  const isAllowedToCancelEliminateTalent = hasPermission(
-    TALENT_POOL_SHARE_PUBLIC_CANCEL
-  );
+const ModalEliminatedTalent = ({ visible, onvisible, category, shareId }) => {
+  const queryClient = useQueryClient();
 
   // 1. USE STATE
   const [params, setParams] = useState({
@@ -53,26 +34,19 @@ const ModalEliminatedTalent = ({
 
   // 2. USE QUERY & USE EFFECT
   const {
-    data: dataRawCandidates,
-    isLoading: loadingCandidates,
-    refetch: refetchCandidates,
+    data: dataEliminatedTalents,
+    isLoading: loadingEliminatedTalents,
+    refetch: refetchEliminatedTalents,
   } = useQuery(
-    [TALENT_POOL_CANDIDATES_GET, params.category_id, searchCandidate],
-    () =>
-      TalentPoolService.getCandidates(
-        initProps,
-        isAllowedToGetCandidates,
-        params,
-        searchCandidate
-      ),
+    [TALENT_POOL_SHARE_PUBLIC_CUTS_GET, shareId],
+    () => TalentPoolPublicService.getEliminates(shareId),
     {
-      enabled: isAllowedToGetCandidates && !!params.category_id,
+      enabled: !!shareId,
       select: (response) => response.data,
     }
   );
 
   // 3. HANDLER
-
   const handleClose = () => {
     onvisible(false);
     setModalConfirm(false);
@@ -84,12 +58,7 @@ const ModalEliminatedTalent = ({
 
   const handleCancelElimination = () => {
     setLoading(true);
-    TalentPoolService.cancelEliminate(
-      initProps,
-      isAllowedToCancelEliminateTalent,
-      linkCode,
-      dataRowClicked?.id
-    )
+    TalentPoolPublicService.cancelEliminate(shareId, dataRowClicked?.id)
       .then((res) => {
         if (res.success) {
           setModalConfirm(false);
@@ -97,7 +66,8 @@ const ModalEliminatedTalent = ({
             message: <div>Eliminasi Talent berhasil dibatalkan.</div>,
             duration: 3,
           });
-          // queryClient.invalidateQueries(TALENT_);
+          refetchEliminatedTalents();
+          queryClient.invalidateQueries(TALENT_POOL_SHARE_PUBLICS_GET);
         } else {
           notification.error({
             message: res.message,
@@ -138,8 +108,8 @@ const ModalEliminatedTalent = ({
       >
         <p className="mb-4">
           Apakah anda yakin ingin membatalkan eliminasi talent dengan nama{" "}
-          <strong>{dataRowClicked.name}</strong> dengan role{" "}
-          <strong>{dataRowClicked.last_assessment?.name}</strong>?
+          <strong>{dataRowClicked?.resume?.name}</strong> dengan role{" "}
+          <strong>{dataRowClicked?.resume?.last_assessment?.name}</strong>?
         </p>
       </ModalHapus2>
     );
@@ -166,12 +136,12 @@ const ModalEliminatedTalent = ({
         <Table
           rowKey={(record) => record.id}
           className="tableTalentCandidate"
-          dataSource={dataRawCandidates?.data}
-          loading={loadingCandidates}
+          dataSource={dataEliminatedTalents}
+          loading={loadingEliminatedTalents}
           pagination={{
             current: params.page,
             pageSize: params.rows,
-            total: dataRawCandidates?.total,
+            total: dataEliminatedTalents?.length,
             showSizeChanger: true,
             pageSizeOptions: [10, 20],
             showTotal: (total, range) =>
@@ -217,18 +187,20 @@ const ModalEliminatedTalent = ({
                             : "bg-backdrop"
                         }`}
                       >
-                        {getNameInitial(record?.name)}
+                        {getNameInitial(record?.talent?.resume?.name)}
                       </div>
                       <div>
-                        <p className="font-medium">{record?.name}</p>
+                        <p className="font-medium">
+                          {record?.talent?.resume?.name}
+                        </p>
                         <p className="mig-caption text-mono50">
-                          {record?.last_assessment?.name}
+                          {record?.talent?.resume?.last_assessment?.name}
                         </p>
                       </div>
                     </div>
                     <button
                       onClick={() => {
-                        setDataRowClicked(record);
+                        setDataRowClicked(record?.talent);
                         setModalConfirm(true);
                       }}
                       className="mig-caption--medium text-primary100 px-3 py-1 
@@ -239,16 +211,11 @@ const ModalEliminatedTalent = ({
                     </button>
                     {isHovered && rowState === record.id && (
                       <div
-                        className={`absolute left-0 w-full h-full z-50 
-                        ${
-                          // Last 3 card will show popup above the row
-                          cardIdx >
-                          dataRawCandidates?.to - dataRawCandidates?.from - 3
-                            ? "-top-[17rem]"
-                            : "top-20"
-                        }`}
+                        className={`absolute left-0 w-full h-full z-50 top-20`}
                       >
-                        <CandidateDetailCard candidateData={record} />
+                        <CandidateDetailCard
+                          candidateData={record?.talent?.resume}
+                        />
                       </div>
                     )}
                   </div>
