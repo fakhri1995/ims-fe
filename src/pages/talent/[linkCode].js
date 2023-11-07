@@ -1,11 +1,4 @@
-import { UnorderedListOutlined } from "@ant-design/icons";
 import { Spin, Tabs, notification } from "antd";
-import {
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from "next-query-params";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -14,80 +7,22 @@ import { useEffect } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
-import { AccessControl } from "components/features/AccessControl";
 import { PlusIconSvg, UsersIconSvg, XIconSvg } from "components/icon";
 import st from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
-import { ModalHapus2 } from "components/modal/modalCustom";
-import ModalCategoryCreate from "components/modal/talent-pool/modalCategoryCreate";
-import ModalLinkList from "components/modal/talent-pool/modalLinkList";
-import TalentPoolSection from "components/screen/talent-pool/TalentPoolSection";
 
-import { useAccessControl } from "contexts/access-control";
-
-import {
-  TALENT_POOLS_GET,
-  TALENT_POOL_CANDIDATES_GET,
-  TALENT_POOL_CATEGORIES_GET,
-  TALENT_POOL_CATEGORY_ADD,
-  TALENT_POOL_FILTERS_GET,
-} from "lib/features";
-import {
-  RESUME_GET,
-  TALENT_POOL_ADD,
-  TALENT_POOL_CATEGORY_DELETE,
-  TALENT_POOL_DELETE,
-  TALENT_POOL_GET,
-} from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
-
-import { TalentPoolService } from "apis/talent-pool/talent-pool.service";
-
+import { TalentPoolPublicService } from "../../apis/talent-pool";
 import { TableOffIconSvg } from "../../components/icon";
 import ModalEliminatedTalent from "../../components/modal/talent-pool/modalEliminatedTalent";
 import TalentPoolSectionPublic from "../../components/screen/talent-pool/TalentPoolSectionPublic";
-import { TALENT_POOL_SHARE_PUBLICS_GET } from "../../lib/features";
+import { TALENT_POOL_SHARE_PUBLIC_AUTH } from "../../lib/features";
 import httpcookie from "cookie";
 
-const TalentPoolPublicIndex = ({
-  dataProfile,
-  sidemenu,
-  // initProps,
-  linkCode,
-}) => {
+const TalentPoolPublicIndex = ({ dataProfile, sidemenu, linkCode }) => {
   // 1. Init
   /**
    * Dependencies
    */
-  const { hasPermission, isPending: isAccessControlPending } =
-    useAccessControl();
-
-  const isAllowedToGetTalentPoolCategories = hasPermission(
-    TALENT_POOL_CATEGORIES_GET
-  );
-  const isAllowedToAddTalentPoolCategory = hasPermission(
-    TALENT_POOL_CATEGORY_ADD
-  );
-  const isAllowedToDeleteTalentPoolCategory = hasPermission(
-    TALENT_POOL_CATEGORY_DELETE
-  );
-
-  const isAllowedToGetResume = hasPermission(RESUME_GET);
-
-  const isAllowedToGetTalentPoolSharePublics = hasPermission(
-    TALENT_POOL_SHARE_PUBLICS_GET
-  );
-
-  const [queryParams, setQueryParams] = useQueryParams({
-    code: withDefault(StringParam, linkCode),
-    page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    roles: withDefault(StringParam, undefined),
-    skills: withDefault(StringParam, undefined),
-    years: withDefault(StringParam, undefined),
-    educations: withDefault(StringParam, undefined),
-    status: withDefault(StringParam, undefined),
-  });
 
   const rt = useRouter();
   // Breadcrumb url
@@ -101,69 +36,35 @@ const TalentPoolPublicIndex = ({
 
   // 2. Use state
   const [currentCategory, setCurrentCategory] = useState({ id: 0, name: "" });
-
-  const [loadingDelete, setLoadingDelete] = useState(false);
-
   const [modalTable, setModalTable] = useState(false);
-  const [modalCategoryCreate, setModalCategoryCreate] = useState(false);
-  const [modalDelete, setModalDelete] = useState(false);
-  const [dataDelete, setDataDelete] = useState({ id: 0, name: "" });
 
   // 3. UseEffect & UseQuery
-  // Get Public Talent Pools
+  // 3.1. Get Public Talent Pool Auth
   const {
-    data: dataTalents,
-    isLoading: loadingTalents,
-    refetch: refetchTalents,
+    data: dataAuth,
+    isLoading: loadingAuth,
+    refetch: refetchAuth,
   } = useQuery(
-    [TALENT_POOL_SHARE_PUBLICS_GET, linkCode],
-    () =>
-      TalentPoolService.getPublicTalentPools(
-        // initProps,
-        isAllowedToGetTalentPoolSharePublics,
-        queryParams
-      ),
+    [TALENT_POOL_SHARE_PUBLIC_AUTH, linkCode],
+    () => TalentPoolPublicService.getAuth(linkCode),
     {
-      enabled: isAllowedToGetTalentPoolSharePublics && !!linkCode,
-      select: (response) => response.data,
-    }
-  );
-
-  // 3.1. Get Talent Pool Categories
-  const {
-    data: dataCategories,
-    isLoading: loadingCategories,
-    refetch: refetchCategories,
-  } = useQuery(
-    [
-      TALENT_POOL_CATEGORIES_GET,
-      dataTalents?.data?.[0]?.talent_pool_category_id,
-    ],
-    () =>
-      TalentPoolService.getCategories(
-        // initProps,
-        isAllowedToGetTalentPoolCategories
-      ),
-    {
-      enabled:
-        isAllowedToGetTalentPoolCategories && !!dataTalents?.data?.length,
+      enabled: !!linkCode,
+      initialData: [],
       select: (response) => response.data,
     }
   );
 
   // 3.2. Set active category tab
   useEffect(() => {
-    const category = dataCategories?.find(
-      (item) => item?.id === dataTalents?.data?.[0]?.talent_pool_category_id
-    );
-    setCurrentCategory({ id: category?.id, name: category?.name });
-  }, [dataCategories]);
+    if (!loadingAuth) {
+      setCurrentCategory({
+        id: dataAuth?.category?.id,
+        name: dataAuth?.category?.name,
+      });
+    }
+  }, [loadingAuth]);
 
   // 4. Event
-
-  if (isAccessControlPending) {
-    return null;
-  }
 
   // console.log({ dataTalents });
   // console.log({ dataCategories });
@@ -197,7 +98,7 @@ const TalentPoolPublicIndex = ({
               <ButtonSys
                 type={"primary"}
                 // onClick={() => setModalCategoryCreate(true)}
-                disabled={!isAllowedToAddTalentPoolCategory}
+                // disabled={!isAllowedToAddTalentPoolCategory}
               >
                 <div className="flex gap-2 items-center">
                   <PlusIconSvg size={16} />
@@ -206,7 +107,7 @@ const TalentPoolPublicIndex = ({
               </ButtonSys>
             </div>
           </div>
-          <Spin spinning={loadingCategories}>
+          <Spin spinning={loadingAuth}>
             <Tabs
               defaultActiveKey={"1"}
               className="talentPoolTab px-1"
@@ -224,12 +125,10 @@ const TalentPoolPublicIndex = ({
                 }
                 tabKey={"1"}
               >
-                {/* Talent Pool per Category */}
                 <TalentPoolSectionPublic
-                  // initProps={initProps}
-                  queryParams={queryParams}
-                  setQueryParams={setQueryParams}
+                  shareId={dataAuth?.id}
                   category={currentCategory}
+                  setModalEliminatedTalent={setModalTable}
                 />
               </Tabs.TabPane>
             </Tabs>
@@ -237,16 +136,12 @@ const TalentPoolPublicIndex = ({
         </div>
       </div>
 
-      {/* TODO: change feature access */}
-      <AccessControl hasPermission={TALENT_POOL_ADD}>
-        <ModalEliminatedTalent
-          // initProps={initProps}
-          visible={modalTable}
-          onvisible={setModalTable}
-          category={currentCategory}
-          linkCode={linkCode}
-        />
-      </AccessControl>
+      <ModalEliminatedTalent
+        visible={modalTable}
+        onvisible={setModalTable}
+        category={currentCategory}
+        shareId={dataAuth?.id}
+      />
     </LayoutDashboard>
   );
 };

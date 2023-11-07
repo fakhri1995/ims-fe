@@ -9,58 +9,25 @@ import React, { useState } from "react";
 import { useQuery } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
-import { useAccessControl } from "contexts/access-control";
-
-import { TALENT_POOL_CANDIDATES_GET } from "lib/features";
 import { getNameInitial, momentFormatDate } from "lib/helper";
 
-import { CandidateService } from "../../../apis/candidates";
-import { TalentPoolService } from "../../../apis/talent-pool/talent-pool.service";
-import {
-  TALENT_POOL_SHARE_PUBLIC_ELIMINATE,
-  TALENT_POOL_SHARE_PUBLIC_GET,
-  TALENT_POOL_SHARE_PUBLIC_MARK,
-} from "../../../lib/features";
+import { TalentPoolPublicService } from "../../../apis/talent-pool";
+import { TALENT_POOL_SHARE_PUBLIC_GET } from "../../../lib/features";
 import ButtonSys from "../../button";
 import { InfoCircleIconSvg } from "../../icon";
 import { ModalHapus2 } from "../modalCustom";
 
-const ModalTalentDetail = ({ initProps, visible, onvisible, dataTalent }) => {
-  const { hasPermission, isPending: isAccessControlPending } =
-    useAccessControl();
-  if (isAccessControlPending) {
-    return null;
-  }
-
-  const isAllowedToGetTalentPoolSharePublic = hasPermission(
-    TALENT_POOL_SHARE_PUBLIC_GET
-  );
-  const isAllowedToMarkTalent = hasPermission(TALENT_POOL_SHARE_PUBLIC_MARK);
-  const isAllowedToEliminateTalent = hasPermission(
-    TALENT_POOL_SHARE_PUBLIC_ELIMINATE
-  );
-
+const ModalTalentDetail = ({ visible, onvisible, dataTalent }) => {
   // 1. USE STATE
-  const [params, setParams] = useState({
-    page: 1,
-    rows: 10,
-  });
+
   const [loading, setLoading] = useState(false);
   const [modalConfirm, setModalConfirm] = useState(false);
-  const [searchCandidate, setSearchCandidate] = useState("");
-  const [rowState, setRowState] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
 
   // 2. USE QUERY & USE EFFECT
   // 3.2. Get Resume Talent
   const { data: dataResume, isLoading: loadingResume } = useQuery(
     [TALENT_POOL_SHARE_PUBLIC_GET, dataTalent?.resume_id],
-    () =>
-      TalentPoolService.getPublicResume(
-        // initProps,
-        isAllowedToGetTalentPoolSharePublic,
-        dataTalent?.resume_id
-      ),
+    () => TalentPoolPublicService.getResume(dataTalent?.resume_id),
     {
       enabled: !!dataTalent?.resume_id,
       select: (response) => response.data,
@@ -68,7 +35,6 @@ const ModalTalentDetail = ({ initProps, visible, onvisible, dataTalent }) => {
   );
 
   // 3. HANDLER
-
   const handleClose = () => {
     onvisible(false);
     setModalConfirm(false);
@@ -113,7 +79,7 @@ const ModalTalentDetail = ({ initProps, visible, onvisible, dataTalent }) => {
       <ButtonSys
         type={"default"}
         color={"danger"}
-        disabled={!isAllowedToEliminateTalent}
+        // disabled={!isAllowedToEliminateTalent}
         onClick={(event) => {
           event.stopPropagation();
         }}
@@ -123,10 +89,11 @@ const ModalTalentDetail = ({ initProps, visible, onvisible, dataTalent }) => {
           <p className="mig-caption--small">Eliminasi Talent</p>
         </div>
       </ButtonSys>
+
       <ButtonSys
         type={"primary"}
         color={"secondary100"}
-        disabled={!isAllowedToMarkTalent}
+        // disabled={!isAllowedToMarkTalent}
         onClick={(event) => {
           event.stopPropagation();
         }}
@@ -136,6 +103,7 @@ const ModalTalentDetail = ({ initProps, visible, onvisible, dataTalent }) => {
           <p className="mig-caption--small">Tandai Talent</p>
         </div>
       </ButtonSys>
+
       <ButtonSys
         type={"primary"}
         // disabled={!isAllowedToMarkTalent}

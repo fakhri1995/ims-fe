@@ -1,78 +1,52 @@
-import {
-  DeleteOutlined,
-  ProfileOutlined,
-  ShareAltOutlined,
-  UserAddOutlined,
-  UserDeleteOutlined,
-} from "@ant-design/icons";
+import { UserAddOutlined, UserDeleteOutlined } from "@ant-design/icons";
 import { Input, Select, Tag, notification } from "antd";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
-import { AccessControl } from "components/features/AccessControl";
 import { SearchIconSvg, TableImportIconSvg } from "components/icon";
 import { TableCustomTalentPoolList } from "components/table/tableCustom";
 
-import { useAccessControl } from "contexts/access-control";
-
-import { permissionWarningNotification } from "lib/helper";
 import { createKeyPressHandler } from "lib/helper";
 
-import { TalentPoolService } from "../../../apis/talent-pool/talent-pool.service";
+import { TalentPoolPublicService } from "../../../apis/talent-pool";
 import {
-  TALENT_POOLS_GET,
-  TALENT_POOL_ADD,
-  TALENT_POOL_DELETE,
-  TALENT_POOL_FILTERS_GET,
-  TALENT_POOL_GET,
   TALENT_POOL_SHARE_PUBLICS_GET,
-  TALENT_POOL_SHARE_PUBLIC_CANCEL,
-  TALENT_POOL_SHARE_PUBLIC_ELIMINATE,
-  TALENT_POOL_SHARE_PUBLIC_GET,
-  TALENT_POOL_SHARE_PUBLIC_MARK,
+  TALENT_POOL_SHARE_PUBLIC_CUTS_GET,
+  TALENT_POOL_SHARE_PUBLIC_FILTERS_GET,
 } from "../../../lib/features";
-import DrawerTalentDetail from "../../drawer/recruitment/drawerTalentDetail";
-import { AlertCircleIconSvg, UserCheckIconSvg, UserXIconSvg } from "../../icon";
+import { AlertCircleIconSvg } from "../../icon";
 import { ModalHapus2 } from "../../modal/modalCustom";
-import ModalShare from "../../modal/talent-pool/modalShare";
-import ModalTalentAdd from "../../modal/talent-pool/modalTalentAdd";
 import ModalTalentDetail from "../../modal/talent-pool/modalTalentDetail";
 import TalentDetailCard from "./TalentDetailCard";
 
 const TalentPoolSectionPublic = ({
-  // initProps,
-  queryParams,
-  setQueryParams,
+  shareId,
   category,
+  setModalEliminatedTalent,
 }) => {
-  const { hasPermission, isPending: isAccessControlPending } =
-    useAccessControl();
-
-  const isAllowedToGetTalentPoolSharePublics = hasPermission(
-    TALENT_POOL_SHARE_PUBLICS_GET
-  );
-  const isAllowedToGetTalentPoolSharePublic = hasPermission(
-    TALENT_POOL_SHARE_PUBLIC_GET
-  );
-
-  const isAllowedToGetTalentPoolFilters = hasPermission(
-    TALENT_POOL_FILTERS_GET
-  );
-  const isAllowedToGetTalentPool = hasPermission(TALENT_POOL_GET);
-
-  const isAllowedToMarkTalent = hasPermission(TALENT_POOL_SHARE_PUBLIC_MARK);
-  const isAllowedToEliminateTalent = hasPermission(
-    TALENT_POOL_SHARE_PUBLIC_ELIMINATE
-  );
-  const isAllowedToCancelEliminateTalent = hasPermission(
-    TALENT_POOL_SHARE_PUBLIC_CANCEL
-  );
+  const [queryParams, setQueryParams] = useQueryParams({
+    share_id: withDefault(NumberParam, shareId),
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    roles: withDefault(StringParam, undefined),
+    skills: withDefault(StringParam, undefined),
+    years: withDefault(StringParam, undefined),
+    educations: withDefault(StringParam, undefined),
+    status: withDefault(StringParam, undefined),
+  });
 
   const rt = useRouter();
+  const queryClient = useQueryClient();
 
   // 2. Use state
 
@@ -105,36 +79,32 @@ const TalentPoolSectionPublic = ({
     isLoading: loadingTalents,
     refetch: refetchTalents,
   } = useQuery(
-    [TALENT_POOL_SHARE_PUBLICS_GET, searchingFilterTalents, queryParams.code],
+    [
+      TALENT_POOL_SHARE_PUBLICS_GET,
+      searchingFilterTalents,
+      queryParams.share_id,
+    ],
 
     () =>
-      TalentPoolService.getPublicTalentPools(
-        // initProps,
-        isAllowedToGetTalentPoolSharePublics,
+      TalentPoolPublicService.getTalentPools(
         queryParams,
         searchingFilterTalents
       ),
     {
-      enabled: isAllowedToGetTalentPoolSharePublics && !!queryParams?.code,
+      enabled: !!queryParams?.share_id,
       select: (response) => response.data,
     }
   );
-
   // 3.2. Get Talent Pool Filters
   const {
     data: dataFilters,
     isLoading: loadingFilters,
     refetch: refetchFilters,
   } = useQuery(
-    [TALENT_POOL_FILTERS_GET, category?.id],
-    () =>
-      TalentPoolService.getFilters(
-        // initProps,
-        isAllowedToGetTalentPoolFilters,
-        category?.id
-      ),
+    [TALENT_POOL_SHARE_PUBLIC_FILTERS_GET, queryParams?.share_id],
+    () => TalentPoolPublicService.getFilters(queryParams?.share_id),
     {
-      enabled: isAllowedToGetTalentPoolFilters && !!category?.id,
+      enabled: !!queryParams?.share_id,
       select: (response) => response.data,
     }
   );
@@ -182,12 +152,7 @@ const TalentPoolSectionPublic = ({
 
   const handleEliminate = () => {
     setLoadingDelete(true);
-    TalentPoolService.eliminate(
-      // initProps,
-      isAllowedToEliminateTalent,
-      queryParams?.code,
-      dataRowClicked?.resume_id
-    )
+    TalentPoolPublicService.eliminate(queryParams?.share_id, dataRowClicked?.id)
       .then((res) => {
         if (res.success) {
           setModalTalentEliminate(false);
@@ -195,14 +160,18 @@ const TalentPoolSectionPublic = ({
             message: (
               <div>
                 Talent berhasil dieliminasi.{" "}
-                <button className="mig-caption text-primary100">
+                <button
+                  onClick={() => setModalEliminatedTalent(true)}
+                  className="mig-caption--bold text-primary100 bg-transparent"
+                >
                   Lihat Tabel Eliminasi
-                </button>{" "}
+                </button>
               </div>
             ),
             duration: 3,
           });
-          // queryClient.invalidateQueries(TALENT_);
+          refetchTalents();
+          queryClient.invalidateQueries(TALENT_POOL_SHARE_PUBLIC_CUTS_GET);
         } else {
           notification.error({
             message: res.message,
@@ -216,7 +185,7 @@ const TalentPoolSectionPublic = ({
           duration: 3,
         });
       })
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingDelete(false));
   };
 
   // Talent Pool Table columns
@@ -248,8 +217,7 @@ const TalentPoolSectionPublic = ({
                 <div className={`absolute left-40 w-[35vw] h-full z-50 top-3`}>
                   <TalentDetailCard
                     data={record}
-                    isAllowedToGetResume={isAllowedToGetTalentPoolSharePublic}
-                    // initProps={initProps}
+                    isAllowedToGetResume={true}
                     isPublic={true}
                   />
                 </div>
@@ -330,7 +298,7 @@ const TalentPoolSectionPublic = ({
               <ButtonSys
                 type={"default"}
                 color={"secondary100"}
-                disabled={!isAllowedToMarkTalent}
+                // disabled={!isAllowedToMarkTalent}
                 onClick={(event) => {
                   event.stopPropagation();
                 }}
@@ -340,7 +308,7 @@ const TalentPoolSectionPublic = ({
               <ButtonSys
                 type={"default"}
                 color={"danger"}
-                disabled={!isAllowedToEliminateTalent}
+                // disabled={!isAllowedToEliminateTalent}
                 onClick={(event) => {
                   event.stopPropagation();
                   setDataRowClicked(record);
@@ -372,7 +340,7 @@ const TalentPoolSectionPublic = ({
               setTimeout(() => setSearchingFilterTalents(e.target.value), 500);
             }}
             onKeyPress={onKeyPressHandler}
-            disabled={!isAllowedToGetTalentPoolSharePublics}
+            // disabled={!isAllowedToGetTalentPoolSharePublics}
           />
         </div>
         {/* Filter by position (dropdown) */}
@@ -381,7 +349,7 @@ const TalentPoolSectionPublic = ({
             defaultValue={queryParams.roles}
             allowClear
             name={`role`}
-            disabled={!isAllowedToGetTalentPoolFilters}
+            // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
             placeholder="Posisi"
             style={{ width: `100%` }}
             onChange={(value) => {
@@ -402,7 +370,7 @@ const TalentPoolSectionPublic = ({
             defaultValue={queryParams.skills}
             allowClear
             name={`skill`}
-            disabled={!isAllowedToGetTalentPoolFilters}
+            // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
             placeholder="Skill"
             style={{ width: `100%` }}
             onChange={(value) => {
@@ -423,7 +391,7 @@ const TalentPoolSectionPublic = ({
             defaultValue={queryParams.years}
             allowClear
             name={`year`}
-            disabled={!isAllowedToGetTalentPoolFilters}
+            // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
             placeholder="Tahun Pengalaman"
             style={{ width: `100%` }}
             onChange={(value) => {
@@ -444,7 +412,7 @@ const TalentPoolSectionPublic = ({
             defaultValue={queryParams.educations}
             allowClear
             name={`university`}
-            disabled={!isAllowedToGetTalentPoolFilters}
+            // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
             placeholder="Universitas"
             style={{ width: `100%` }}
             onChange={(value) => {
@@ -459,13 +427,14 @@ const TalentPoolSectionPublic = ({
             ))}
           </Select>
         </div>
+
         {/* Filter by status (dropdown) */}
         <div className="w-full lg:w-1/12">
           <Select
             defaultValue={queryParams.status}
             allowClear
             name={`status`}
-            disabled={true || !isAllowedToGetTalentPoolFilters}
+            disabled={true}
             placeholder="Status"
             style={{ width: `100%` }}
             onChange={(value) => {
@@ -485,7 +454,7 @@ const TalentPoolSectionPublic = ({
           <ButtonSys
             type={`primary`}
             onClick={onFilterTalentPools}
-            disabled={!isAllowedToGetTalentPoolSharePublics}
+            // disabled={!isAllowedToGetTalentPoolSharePublics}
             fullWidth
           >
             <div className="flex flex-row space-x-2.5 items-center whitespace-nowrap">
@@ -502,7 +471,7 @@ const TalentPoolSectionPublic = ({
         total={dataTalents?.total}
         queryParams={queryParams}
         setQueryParams={setQueryParams}
-        isAllowedToGetTalentPool={isAllowedToGetTalentPoolSharePublic}
+        isAllowedToGetTalentPool={true}
         setDrawerShown={setModalTalentDetail}
         setDataRowClicked={setDataRowClicked}
         rowstate={rowState}
@@ -512,45 +481,40 @@ const TalentPoolSectionPublic = ({
       />
 
       {/* Modal Talent Detail */}
-      <AccessControl hasPermission={TALENT_POOL_SHARE_PUBLIC_GET}>
-        <ModalTalentDetail
-          // initProps={initProps}
-          visible={modalTalentDetail}
-          onvisible={setModalTalentDetail}
-          dataTalent={dataRowClicked}
-          // onDelete={() => {
-          //   setModalTalentEliminate(true);
-          //   setDrawerTalentDetail(false);
-          // }}
-        />
-      </AccessControl>
+      <ModalTalentDetail
+        visible={modalTalentDetail}
+        onvisible={setModalTalentDetail}
+        dataTalent={dataRowClicked}
+        // onDelete={() => {
+        //   setModalTalentEliminate(true);
+        //   setDrawerTalentDetail(false);
+        // }}
+      />
 
-      <AccessControl hasPermission={TALENT_POOL_SHARE_PUBLIC_ELIMINATE}>
-        <ModalHapus2
-          title={
-            <div className="flex gap-2 items-center">
-              <AlertCircleIconSvg size={32} color="#BF4A40" />
-              <h3 className="mig-heading--3 text-warning">
-                Konfirmasi Eliminasi Talent
-              </h3>
-            </div>
-          }
-          visible={modalTalentEliminate}
-          onvisible={setModalTalentEliminate}
-          onOk={handleEliminate}
-          onCancel={() => {
-            setModalTalentEliminate(false);
-          }}
-          okButtonText={"Eliminasi"}
-          loading={loadingDelete}
-        >
-          <p className="mb-4">
-            Apakah Anda yakin ingin mengeliminasi talent dengan nama{" "}
-            <strong>{dataRowClicked?.resume?.name}</strong> dan role{" "}
-            <strong>{dataRowClicked?.resume?.last_assessment?.name}</strong>?
-          </p>
-        </ModalHapus2>
-      </AccessControl>
+      <ModalHapus2
+        title={
+          <div className="flex gap-2 items-center">
+            <AlertCircleIconSvg size={32} color="#BF4A40" />
+            <h3 className="mig-heading--3 text-warning">
+              Konfirmasi Eliminasi Talent
+            </h3>
+          </div>
+        }
+        visible={modalTalentEliminate}
+        onvisible={setModalTalentEliminate}
+        onOk={handleEliminate}
+        onCancel={() => {
+          setModalTalentEliminate(false);
+        }}
+        okButtonText={"Eliminasi"}
+        loading={loadingDelete}
+      >
+        <p className="mb-4">
+          Apakah Anda yakin ingin mengeliminasi talent dengan nama{" "}
+          <strong>{dataRowClicked?.resume?.name}</strong> dan role{" "}
+          <strong>{dataRowClicked?.resume?.last_assessment?.name}</strong>?
+        </p>
+      </ModalHapus2>
     </div>
   );
 };
