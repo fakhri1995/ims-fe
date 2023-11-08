@@ -166,9 +166,7 @@ const ModalEliminatedTalent = ({ visible, onvisible, category, shareId }) => {
                 return (
                   <div
                     onMouseEnter={() => {
-                      setTimeout(() => {
-                        setIsHovered(true);
-                      }, 500);
+                      setIsHovered(true);
                     }}
                     onMouseLeave={() => setIsHovered(false)}
                     className={`p-3 relative bg-transparent hover:bg-backdrop rounded-md flex 

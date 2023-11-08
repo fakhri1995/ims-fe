@@ -2242,8 +2242,8 @@ const TableCustomTalentPoolList = ({
         };
       }}
       rowClassName={(record, idx) => {
-        return `${record.id === rowstate && `cursor-pointer`}
-        }`;
+        return `${record.id === rowstate && `cursor-pointer `}
+        ${record.mark == 1 && `bg-[#00589F26] bg-opacity15`}}`;
       }}
     />
   );

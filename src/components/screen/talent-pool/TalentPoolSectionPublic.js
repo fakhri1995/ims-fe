@@ -79,11 +79,7 @@ const TalentPoolSectionPublic = ({
     isLoading: loadingTalents,
     refetch: refetchTalents,
   } = useQuery(
-    [
-      TALENT_POOL_SHARE_PUBLICS_GET,
-      searchingFilterTalents,
-      queryParams.share_id,
-    ],
+    [TALENT_POOL_SHARE_PUBLICS_GET, searchingFilterTalents, queryParams],
 
     () =>
       TalentPoolPublicService.getTalentPools(
@@ -150,6 +146,30 @@ const TalentPoolSectionPublic = ({
     "Enter"
   );
 
+  const handleMarkTalent = async (talentId) => {
+    await TalentPoolPublicService.mark(talentId)
+      .then((res) => {
+        if (res.success) {
+          refetchTalents();
+          notification.success({
+            message: res.message,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: res.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  };
+
   const handleEliminate = () => {
     setLoadingDelete(true);
     TalentPoolPublicService.eliminate(queryParams?.share_id, dataRowClicked?.id)
@@ -214,7 +234,7 @@ const TalentPoolSectionPublic = ({
             <div className="xl:w-40">
               {text || "-"}
               {isHovered && rowState === record.id && (
-                <div className={`absolute left-40 w-[35vw] h-full z-50 top-3`}>
+                <div className={`absolute left-20 w-[35vw] h-full z-50 top-3`}>
                   <TalentDetailCard
                     data={record}
                     isAllowedToGetResume={true}
@@ -296,11 +316,13 @@ const TalentPoolSectionPublic = ({
           children: (
             <div className="flex flex-col md:flex-row gap-2 items-center">
               <ButtonSys
-                type={"default"}
+                type={record.mark == 1 ? "primary" : "default"}
                 color={"secondary100"}
                 // disabled={!isAllowedToMarkTalent}
                 onClick={(event) => {
                   event.stopPropagation();
+                  setDataRowClicked(record);
+                  handleMarkTalent(record?.id);
                 }}
               >
                 <UserAddOutlined rev={""} />
@@ -324,7 +346,6 @@ const TalentPoolSectionPublic = ({
     },
   ];
 
-  // console.log({ dataRowClicked });
   return (
     <div className="grid grid-cols-1 gap-6">
       {/* Start: Search criteria */}
@@ -485,6 +506,8 @@ const TalentPoolSectionPublic = ({
         visible={modalTalentDetail}
         onvisible={setModalTalentDetail}
         dataTalent={dataRowClicked}
+        setModalTalentEliminate={setModalTalentEliminate}
+        handleMarkTalent={handleMarkTalent}
         // onDelete={() => {
         //   setModalTalentEliminate(true);
         //   setDrawerTalentDetail(false);
