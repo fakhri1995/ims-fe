@@ -19,7 +19,6 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   TALENT_POOLS_GET,
-  TALENT_POOL_CANDIDATES_GET,
   TALENT_POOL_CATEGORIES_GET,
   TALENT_POOL_CATEGORY_ADD,
   TALENT_POOL_FILTERS_GET,

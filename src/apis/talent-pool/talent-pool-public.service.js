@@ -1,7 +1,4 @@
-import { notification } from "antd";
 import QueryString from "qs";
-
-import { objectToFormData, permissionWarningNotification } from "lib/helper";
 
 export class TalentPoolPublicService {
   static getAuth = async (linkCode) => {

@@ -1,7 +1,7 @@
 import { notification } from "antd";
 import QueryString from "qs";
 
-import { objectToFormData, permissionWarningNotification } from "lib/helper";
+import { permissionWarningNotification } from "lib/helper";
 
 export class TalentPoolService {
   static getCategories = async (initProps, feature) => {

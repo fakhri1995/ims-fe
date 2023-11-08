@@ -44,10 +44,6 @@ const ModalTalentDetail = ({ visible, onvisible, dataTalent }) => {
     setTimeout(() => setSearchCandidate(e.target.value), 500);
   };
 
-  // console.log({ dataServiceList });
-  // console.log({ dataCategory });
-  // console.log({ dataRawCandidates });
-
   const title = (
     <div className="flex items-center gap-2 ">
       <InfoCircleIconSvg size={32} color="#BF4A40" />

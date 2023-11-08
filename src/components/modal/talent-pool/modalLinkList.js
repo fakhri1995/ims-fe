@@ -1,6 +1,5 @@
 import { Empty, Spin, notification } from "antd";
 import React, { useState } from "react";
-import { useEffect } from "react";
 import { useQuery } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
@@ -24,14 +23,12 @@ const ModalLinkList = ({ initProps, visible, onvisible, category }) => {
   );
 
   // 1. USE STATE
-  const newArr = Array.from({ length: 6 }, (_, idx) => idx);
   const [loading, setLoading] = useState(false);
-  const [linkList, setLinkList] = useState(newArr);
   const [modalDelete, setModalDelete] = useState(false);
   const [currentModalData, setCurrentModalData] = useState({});
 
   // 2. USE QUERY & USE EFFECT
-  // 3.1. Get Shared Talent Pool Links
+  // 2.1. Get Shared Talent Pool Links
   const {
     data: dataLinks,
     isLoading: loadingLinks,
@@ -48,12 +45,10 @@ const ModalLinkList = ({ initProps, visible, onvisible, category }) => {
       enabled: isAllowedToGetTalentPoolShares && !!category?.id,
       select: (response) => response.data,
       refetchOnMount: true,
-      // initialData: [],
     }
   );
 
   // 3. HANDLER
-
   const handleDelete = () => {
     setLoading(true);
     TalentPoolService.deleteSharedLink(

@@ -4,14 +4,14 @@ import React, { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
-import { getNameInitial, permissionWarningNotification } from "lib/helper";
+import { getNameInitial } from "lib/helper";
 
 import { TalentPoolPublicService } from "../../../apis/talent-pool";
 import {
   TALENT_POOL_SHARE_PUBLICS_GET,
   TALENT_POOL_SHARE_PUBLIC_CUTS_GET,
 } from "../../../lib/features";
-import { AlertCircleIconSvg, InfoCircleIconSvg, PlusIconSvg } from "../../icon";
+import { InfoCircleIconSvg } from "../../icon";
 import CandidateDetailCard from "../../screen/talent-pool/CandidateDetailCard";
 import ModalCore from "../modalCore";
 import { ModalHapus2, ModalUbah } from "../modalCustom";
@@ -83,10 +83,6 @@ const ModalEliminatedTalent = ({ visible, onvisible, category, shareId }) => {
       })
       .finally(() => setLoading(false));
   };
-
-  // console.log({ dataServiceList });
-  // console.log({ dataCategory });
-  // console.log({ dataRawCandidates });
 
   const title = (
     <div className="flex items-center gap-2 ">

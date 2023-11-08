@@ -30,11 +30,9 @@ import {
   TALENT_POOL_SHARE_ADD,
 } from "../../../lib/features";
 import DrawerTalentDetail from "../../drawer/recruitment/drawerTalentDetail";
-import { UserCheckIconSvg, UserXIconSvg } from "../../icon";
 import { ModalHapus2 } from "../../modal/modalCustom";
 import ModalShare from "../../modal/talent-pool/modalShare";
 import ModalTalentAdd from "../../modal/talent-pool/modalTalentAdd";
-import ModalTalentDetail from "../../modal/talent-pool/modalTalentDetail";
 import TalentDetailCard from "./TalentDetailCard";
 
 const TalentPoolSection = ({
@@ -72,8 +70,6 @@ const TalentPoolSection = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const [isLargeScreen, setIsLargeScreen] = useState(true);
-
-  const [modalTalentDetail, setModalTalentDetail] = useState(false);
 
   // 3. Use Effect & Use Query
   // 3.1. Get Talent Pools

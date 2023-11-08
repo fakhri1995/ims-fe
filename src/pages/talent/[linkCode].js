@@ -35,7 +35,6 @@ const TalentPoolPublicIndex = ({ dataProfile, sidemenu, linkCode }) => {
   ]);
 
   // 2. Use state
-  const [currentCategory, setCurrentCategory] = useState({ id: 0, name: "" });
   const [modalTable, setModalTable] = useState(false);
 
   // 3. UseEffect & UseQuery
@@ -54,21 +53,10 @@ const TalentPoolPublicIndex = ({ dataProfile, sidemenu, linkCode }) => {
     }
   );
 
-  // 3.2. Set active category tab
-  useEffect(() => {
-    if (!loadingAuth) {
-      setCurrentCategory({
-        id: dataAuth?.category?.id,
-        name: dataAuth?.category?.name,
-      });
-    }
-  }, [loadingAuth]);
-
   // 4. Event
 
   // console.log({ dataTalents });
   // console.log({ dataCategories });
-  // console.log({ currentCategory });
   return (
     <LayoutDashboard
       tok={null}
@@ -117,17 +105,17 @@ const TalentPoolPublicIndex = ({ dataProfile, sidemenu, linkCode }) => {
                 key={"1"}
                 tab={
                   <div
-                    className={`flex gap-2 items-center justify-between py-2 px-5 bg-primary100 bg-opacity-10
-                          `}
+                    className={`flex gap-2 items-center justify-between py-2 px-5 
+                    bg-primary100 bg-opacity-10`}
                   >
-                    <p className="w-2/3">{currentCategory?.name}</p>
+                    <p className="w-2/3">{dataAuth?.category?.name}</p>
                   </div>
                 }
                 tabKey={"1"}
               >
                 <TalentPoolSectionPublic
                   shareId={dataAuth?.id}
-                  category={currentCategory}
+                  category={dataAuth?.category}
                   setModalEliminatedTalent={setModalTable}
                 />
               </Tabs.TabPane>
@@ -139,7 +127,7 @@ const TalentPoolPublicIndex = ({ dataProfile, sidemenu, linkCode }) => {
       <ModalEliminatedTalent
         visible={modalTable}
         onvisible={setModalTable}
-        category={currentCategory}
+        category={dataAuth?.category}
         shareId={dataAuth?.id}
       />
     </LayoutDashboard>
