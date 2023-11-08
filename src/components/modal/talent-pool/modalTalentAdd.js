@@ -158,10 +158,6 @@ const ModalTalentAdd = ({
       .finally(() => setLoading(false));
   };
 
-  // console.log({ dataServiceList });
-  // console.log({ dataCategory });
-  // console.log({ dataRawCandidates });
-
   return !modalConfirm ? (
     <Modal
       title={<p className="mig-heading--4">Tambah Talent</p>}

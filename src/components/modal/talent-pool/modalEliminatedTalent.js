@@ -1,32 +1,23 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Checkbox, Input, Modal, Spin, Table, notification } from "antd";
 import React, { useState } from "react";
-import { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
-import { useAccessControl } from "contexts/access-control";
+import { getNameInitial } from "lib/helper";
 
-import { TALENT_POOL_ADD, TALENT_POOL_CANDIDATES_GET } from "lib/features";
-import { getNameInitial, permissionWarningNotification } from "lib/helper";
-
-import { TalentPoolService } from "apis/talent-pool/talent-pool.service";
-
-import ButtonSys from "../../button";
-import { AlertCircleIconSvg, InfoCircleIconSvg, PlusIconSvg } from "../../icon";
+import { TalentPoolPublicService } from "../../../apis/talent-pool";
+import {
+  TALENT_POOL_SHARE_PUBLICS_GET,
+  TALENT_POOL_SHARE_PUBLIC_CUTS_GET,
+} from "../../../lib/features";
+import { InfoCircleIconSvg } from "../../icon";
 import CandidateDetailCard from "../../screen/talent-pool/CandidateDetailCard";
 import ModalCore from "../modalCore";
 import { ModalHapus2, ModalUbah } from "../modalCustom";
 
-const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
-  const { hasPermission, isPending: isAccessControlPending } =
-    useAccessControl();
-  if (isAccessControlPending) {
-    return null;
-  }
-
-  const isAllowedToGetCandidates = hasPermission(TALENT_POOL_CANDIDATES_GET);
-  const isAllowedToAddTalentPool = hasPermission(TALENT_POOL_ADD);
+const ModalEliminatedTalent = ({ visible, onvisible, category, shareId }) => {
+  const queryClient = useQueryClient();
 
   // 1. USE STATE
   const [params, setParams] = useState({
@@ -39,29 +30,23 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
   const [searchCandidate, setSearchCandidate] = useState("");
   const [rowState, setRowState] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [dataRowClicked, setDataRowClicked] = useState(null);
 
   // 2. USE QUERY & USE EFFECT
   const {
-    data: dataRawCandidates,
-    isLoading: loadingCandidates,
-    refetch: refetchCandidates,
+    data: dataEliminatedTalents,
+    isLoading: loadingEliminatedTalents,
+    refetch: refetchEliminatedTalents,
   } = useQuery(
-    [TALENT_POOL_CANDIDATES_GET, params, searchCandidate],
-    () =>
-      TalentPoolService.getCandidates(
-        initProps,
-        isAllowedToGetCandidates,
-        params,
-        searchCandidate
-      ),
+    [TALENT_POOL_SHARE_PUBLIC_CUTS_GET, shareId],
+    () => TalentPoolPublicService.getEliminates(shareId),
     {
-      enabled: isAllowedToGetCandidates,
+      enabled: !!shareId,
       select: (response) => response.data,
     }
   );
 
   // 3. HANDLER
-
   const handleClose = () => {
     onvisible(false);
     setModalConfirm(false);
@@ -71,9 +56,33 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
     setTimeout(() => setSearchCandidate(e.target.value), 500);
   };
 
-  // console.log({ dataServiceList });
-  // console.log({ dataCategory });
-  // console.log({ dataRawCandidates });
+  const handleCancelElimination = () => {
+    setLoading(true);
+    TalentPoolPublicService.cancelEliminate(shareId, dataRowClicked?.id)
+      .then((res) => {
+        if (res.success) {
+          setModalConfirm(false);
+          notification.success({
+            message: <div>Eliminasi Talent berhasil dibatalkan.</div>,
+            duration: 3,
+          });
+          refetchEliminatedTalents();
+          queryClient.invalidateQueries(TALENT_POOL_SHARE_PUBLICS_GET);
+        } else {
+          notification.error({
+            message: res.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
 
   const title = (
     <div className="flex items-center gap-2 ">
@@ -88,14 +97,15 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
         title={title}
         visible={modalConfirm}
         onvisible={setModalConfirm}
-        // onOk={handleDelete}
+        onOk={handleCancelElimination}
         okButtonText={"Eliminasi"}
         onCancel={handleClose}
         loading={loading}
       >
         <p className="mb-4">
-          Apakah anda yakin ingin mengeliminasi talent dengan nama{" "}
-          <strong>nama user</strong> dengan role <strong>nama role</strong>?
+          Apakah anda yakin ingin membatalkan eliminasi talent dengan nama{" "}
+          <strong>{dataRowClicked?.resume?.name}</strong> dengan role{" "}
+          <strong>{dataRowClicked?.resume?.last_assessment?.name}</strong>?
         </p>
       </ModalHapus2>
     );
@@ -122,12 +132,12 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
         <Table
           rowKey={(record) => record.id}
           className="tableTalentCandidate"
-          dataSource={dataRawCandidates?.data}
-          loading={loadingCandidates}
+          dataSource={dataEliminatedTalents}
+          loading={loadingEliminatedTalents}
           pagination={{
             current: params.page,
             pageSize: params.rows,
-            total: dataRawCandidates?.total,
+            total: dataEliminatedTalents?.length,
             showSizeChanger: true,
             pageSizeOptions: [10, 20],
             showTotal: (total, range) =>
@@ -173,17 +183,22 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
                             : "bg-backdrop"
                         }`}
                       >
-                        {getNameInitial(record?.name)}
+                        {getNameInitial(record?.talent?.resume?.name)}
                       </div>
                       <div>
-                        <p className="font-medium">{record?.name}</p>
+                        <p className="font-medium">
+                          {record?.talent?.resume?.name}
+                        </p>
                         <p className="mig-caption text-mono50">
-                          {record?.last_assessment?.name}
+                          {record?.talent?.resume?.last_assessment?.name}
                         </p>
                       </div>
                     </div>
                     <button
-                      onClick={() => setModalConfirm(true)}
+                      onClick={() => {
+                        setDataRowClicked(record?.talent);
+                        setModalConfirm(true);
+                      }}
                       className="mig-caption--medium text-primary100 px-3 py-1 
                     bg-primary100 bg-opacity-10 hover:opacity-70 rounded-full 
                       whitespace-nowrap"
@@ -192,16 +207,11 @@ const ModalEliminatedTalent = ({ initProps, visible, onvisible, category }) => {
                     </button>
                     {isHovered && rowState === record.id && (
                       <div
-                        className={`absolute left-0 w-full h-full z-50 
-                        ${
-                          // Last 3 card will show popup above the row
-                          cardIdx >
-                          dataRawCandidates?.to - dataRawCandidates?.from - 3
-                            ? "-top-[17rem]"
-                            : "top-20"
-                        }`}
+                        className={`absolute left-0 w-full h-full z-50 top-20`}
                       >
-                        <CandidateDetailCard candidateData={record} />
+                        <CandidateDetailCard
+                          candidateData={record?.talent?.resume}
+                        />
                       </div>
                     )}
                   </div>

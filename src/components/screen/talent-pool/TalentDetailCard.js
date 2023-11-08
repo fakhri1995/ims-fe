@@ -1,6 +1,5 @@
 import { Tag } from "antd";
 import parse from "html-react-parser";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { useQuery } from "react-query";
@@ -10,11 +9,16 @@ import { RESUME_GET } from "../../../lib/features";
 import { getNameInitial, momentFormatDate } from "../../../lib/helper";
 import { ArrowUpRightIconSvg } from "../../icon";
 
-const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
+const TalentDetailCard = ({
+  data,
+  isAllowedToGetResume,
+  initProps,
+  isPublic,
+}) => {
   const rt = useRouter();
 
-  // Get Resume Talent
-  const { data: dataResume, isLoading: loadingResume } = useQuery(
+  // Get Resume Talent, use in Recruitment Talent Pool
+  const { data: fetchedData, isLoading: loadingResume } = useQuery(
     [RESUME_GET, data?.resume_id],
     () =>
       CandidateService.getResume(
@@ -23,10 +27,12 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
         data?.resume_id
       ),
     {
-      enabled: !!data?.resume_id,
+      enabled: !isPublic && !!data?.resume_id,
       select: (response) => response.data,
     }
   );
+
+  const dataResume = fetchedData || data?.resume;
 
   return (
     <div
@@ -42,7 +48,18 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
           </div>
           <div>
             <p className="font-bold text-mono30">{dataResume?.name}</p>
-            {!!dataResume?.educations?.length && (
+            {/* use for public talent pool */}
+            {isPublic && dataResume?.last_education && (
+              <p className="mig-caption--medium text-mono50">
+                {dataResume?.last_education?.university} ·{" "}
+                {dataResume?.last_education?.major} ·{" "}
+                {dataResume?.last_education?.graduation_year?.slice(0, 4)} ·{" "}
+                {dataResume?.last_education?.gpa}
+              </p>
+            )}
+
+            {/* use in recruitment talent pool */}
+            {!isPublic && !!dataResume?.educations?.length && (
               <p className="mig-caption--medium text-mono50">
                 {dataResume?.educations?.[0]?.university} ·{" "}
                 {dataResume?.educations?.[0]?.major} ·{" "}
@@ -53,18 +70,20 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
           </div>
         </div>
 
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            rt.push(`talent-pool/${data?.id}`);
-          }}
-          className="flex items-center gap-1 bg-transparent hover:opacity-70"
-        >
-          <p className="mig-caption--bold text-mono50 whitespace-nowrap">
-            Lihat Lainnya
-          </p>
-          <ArrowUpRightIconSvg color={"#808080"} size={20} />
-        </button>
+        {!isPublic && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              rt.push(`talent-pool/${data?.id}`);
+            }}
+            className="flex items-center gap-1 bg-transparent hover:opacity-70"
+          >
+            <p className="mig-caption--bold text-mono50 whitespace-nowrap">
+              Lihat Lainnya
+            </p>
+            <ArrowUpRightIconSvg color={"#808080"} size={20} />
+          </button>
+        )}
       </div>
 
       <hr />
@@ -80,27 +99,57 @@ const TalentDetailCard = ({ data, isAllowedToGetResume, initProps }) => {
 
         <div className="mig-caption--bold">
           <p>Pengalaman Terakhir</p>
-          {!!dataResume?.experiences?.length ? (
-            <p className="mb-2">
-              <span className="text-primary100 mr-1">
-                {dataResume?.experiences?.[0]?.role}
-              </span>{" "}
-              {dataResume?.experiences?.[0]?.company} ·{" "}
-              {momentFormatDate(
-                dataResume?.experiences?.[0]?.start_date,
-                "-",
-                "MMM YYYY"
-              )}{" "}
-              -{" "}
-              {momentFormatDate(
-                dataResume?.experiences?.[0]?.end_date,
-                "present",
-                "MMM YYYY"
-              )}
-            </p>
-          ) : (
-            "-"
-          )}
+
+          {/* use for public talent pool */}
+          {isPublic ? (
+            dataResume?.last_experience ? (
+              <p className="mb-2">
+                <span className="text-primary100 mr-1">
+                  {dataResume?.last_experience?.role}
+                </span>{" "}
+                {dataResume?.last_experience?.company} ·{" "}
+                {momentFormatDate(
+                  dataResume?.last_experience?.start_date,
+                  "-",
+                  "MMM YYYY"
+                )}{" "}
+                -{" "}
+                {momentFormatDate(
+                  dataResume?.last_experience?.end_date,
+                  "present",
+                  "MMM YYYY"
+                )}
+              </p>
+            ) : (
+              "-"
+            )
+          ) : null}
+
+          {/* use in recruitment talent pool */}
+          {!isPublic ? (
+            !!dataResume?.experiences?.length ? (
+              <p className="mb-2">
+                <span className="text-primary100 mr-1">
+                  {dataResume?.experiences?.[0]?.role}
+                </span>{" "}
+                {dataResume?.experiences?.[0]?.company} ·{" "}
+                {momentFormatDate(
+                  dataResume?.experiences?.[0]?.start_date,
+                  "-",
+                  "MMM YYYY"
+                )}{" "}
+                -{" "}
+                {momentFormatDate(
+                  dataResume?.experiences?.[0]?.end_date,
+                  "present",
+                  "MMM YYYY"
+                )}
+              </p>
+            ) : (
+              "-"
+            )
+          ) : null}
+
           <div className="">
             {!!dataResume?.skills?.length && (
               <div className="flex flex-wrap gap-1">

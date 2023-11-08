@@ -19,7 +19,6 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   TALENT_POOLS_GET,
-  TALENT_POOL_CANDIDATES_GET,
   TALENT_POOL_CATEGORIES_GET,
   TALENT_POOL_CATEGORY_ADD,
   TALENT_POOL_FILTERS_GET,
@@ -289,14 +288,12 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           </Spin>
         </div>
       </div>
-
       {/* TODO: change feature access */}
       <AccessControl hasPermission={TALENT_POOLS_GET}>
         <ModalLinkList
           initProps={initProps}
           visible={modalLinks}
           onvisible={setModalLinks}
-          isAllowedToAddCategory={isAllowedToAddTalentPool}
           category={currentCategory}
           // refetchCategories={refetchCategories}
         />

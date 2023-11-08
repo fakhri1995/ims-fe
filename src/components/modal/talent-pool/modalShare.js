@@ -1,63 +1,81 @@
-import {
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-  Spin,
-  notification,
-} from "antd";
+import { Form, Input, Select, Spin, notification } from "antd";
 import React, { useState } from "react";
-import { useEffect } from "react";
+import { useQuery, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { permissionWarningNotification } from "../../../lib/helper";
-import ButtonSys from "../../button";
-import { AlertCircleIconSvg, CopyIconSvg, InfoCircleIconSvg } from "../../icon";
-import ModalCore from "../modalCore";
-import { ModalUbah } from "../modalCustom";
+import { useAxiosClient } from "hooks/use-axios-client";
 
-const ModalShare = ({
-  initProps,
-  visible,
-  onvisible,
-  isAllowedToAddCategory,
-  category,
-  // refetchCategories,
-}) => {
+import { RequesterService } from "apis/user";
+
+import { TalentPoolService } from "../../../apis/talent-pool/talent-pool.service";
+import {
+  REQUESTERS_GET,
+  TALENT_POOL_SHARES_GET,
+  TALENT_POOL_SHARE_ADD,
+} from "../../../lib/features";
+import ButtonSys from "../../button";
+import { CopyIconSvg, InfoCircleIconSvg } from "../../icon";
+import ModalCore from "../modalCore";
+
+export const getTalentPoolLink = (code) => {
+  return window.location.host + "/talent/" + code;
+};
+
+const ModalShare = ({ initProps, visible, onvisible, category }) => {
   const { hasPermission } = useAccessControl();
+  const isAllowedToGetRequesters = hasPermission(REQUESTERS_GET);
+  const isAllowedToAddTalentPoolShare = hasPermission(TALENT_POOL_SHARE_ADD);
+
+  const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+
   const [form] = Form.useForm();
 
   // 1. USE STATE
   const [loading, setLoading] = useState(false);
-  const [disableAdd, setDisableAdd] = useState(true);
   const emptyForm = {
+    category_id: category.id,
     requester_id: null,
     company_name: "",
-    duration: null,
+    expired: null,
   };
+
   const [dataForm, setDataForm] = useState(emptyForm);
   const [modalLink, setModalLink] = useState(false);
-  const [requesterList, setRequesterList] = useState([
-    { id: 1, name: "person1", company_name: "PT1" },
-    { id: 2, name: "person2", company_name: "PT2" },
-  ]);
+  const [generatedData, setGeneratedData] = useState(null);
+  const sharedLink = getTalentPoolLink(generatedData?.code);
+
+  const [filterParams, setFilterParams] = useState({
+    page: 1,
+    rows: 10,
+    name: "",
+  });
 
   // 2. USE QUERY & USE EFFECT
-  // useEffect(() => {
-  //   const requiredFields = ["name", "category"];
-  //   const allFieldIsFilled = requiredFields.every((item) => dataForm[item]);
-  //   if (allFieldIsFilled) {
-  //     setDisableAdd(false);
-  //   }
-  // }, [dataForm]);
+  const {
+    data: requesterList,
+    isLoading: loadingRequesterList,
+    refetch: refetchRequesters,
+  } = useQuery(
+    [REQUESTERS_GET, filterParams],
+    () => RequesterService.getRequesterList(axiosClient, filterParams),
+    {
+      enabled: isAllowedToGetRequesters && visible,
+      select: (response) => response.data.data.data,
+    }
+  );
 
   // 3. HANDLER
   const clearData = () => {
     setDataForm(emptyForm);
     form.resetFields();
+    setFilterParams({
+      page: 1,
+      rows: 10,
+      name: "",
+    });
   };
 
   const handleClose = () => {
@@ -66,40 +84,29 @@ const ModalShare = ({
     clearData();
   };
 
-  const handleAdd = () => {
-    if (!isAllowedToAddCategory) {
-      permissionWarningNotification("Membuat", "Kategori");
-      return;
-    }
-
+  const handleGenerate = () => {
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTalentPoolCategory`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(dataForm),
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          handleClose();
-          notification.success({
-            message: response.message,
-            duration: 3,
-          });
-          // refetchCategories();
+    const payload = { ...dataForm, expired: dataForm.expired ?? 0 };
+    TalentPoolService.generateSharedLink(
+      initProps,
+      isAllowedToAddTalentPoolShare,
+      payload
+    )
+      .then((res) => {
+        if (res.success) {
+          setGeneratedData(res?.data);
+          setModalLink(true);
+          queryClient.invalidateQueries(TALENT_POOL_SHARES_GET);
         } else {
           notification.error({
-            message: response.message,
+            message: res.message,
             duration: 3,
           });
         }
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menambah kategori. ${err.response}`,
+          message: `${err.response}`,
           duration: 3,
         });
       })
@@ -125,19 +132,30 @@ const ModalShare = ({
       >
         <div
           className="flex items-center justify-between mig-caption--bold text-primary100 
-        p-4 bg-backdrop rounded-md"
+          p-4 bg-backdrop rounded-md"
         >
-          <p>[link token auth]</p>
-          <div className="flex items-center gap-2">
-            <CopyIconSvg size={24} color={"#35763B"} />
-            <p>Salin Link</p>
-          </div>
+          <p>{sharedLink}</p>
+          <button
+            className="bg-transparent hover:opacity-70"
+            onClick={() => {
+              navigator.clipboard.writeText(sharedLink).then(() =>
+                notification.success({
+                  message: "Link berhasil disalin!",
+                  duration: 3,
+                })
+              );
+            }}
+          >
+            <div className="flex items-center gap-2 mig-caption--bold">
+              <CopyIconSvg size={24} color={"#35763B"} />
+              <p>Salin Link</p>
+            </div>
+          </button>
         </div>
       </ModalCore>
     );
   }
 
-  console.log({ dataForm });
   return (
     <ModalCore
       title={title}
@@ -150,8 +168,8 @@ const ModalShare = ({
           <ButtonSys
             fullWidth
             type={"primary"}
-            onClick={() => setModalLink(true)}
-            disabled={!dataForm.requester_id}
+            onClick={handleGenerate}
+            disabled={!isAllowedToAddTalentPoolShare || !dataForm.requester_id}
           >
             <p>Generate</p>
           </ButtonSys>
@@ -172,16 +190,24 @@ const ModalShare = ({
         >
           <>
             <Select
+              showSearch
+              allowClear
               value={dataForm.requester_id}
               placeholder="Pilih nama peminta"
+              onSearch={(value) => {
+                setTimeout(() =>
+                  setFilterParams((prev) => ({ ...prev, name: value }), 500)
+                );
+              }}
+              optionFilterProp="children"
               onChange={(value, option) => {
                 setDataForm((prev) => ({
                   ...prev,
-                  requester_id: value,
-                  company_name: option.company_name,
+                  requester_id: value ?? null,
+                  company_name: option?.company_name ?? null,
                 }));
               }}
-              // disabled={}
+              disabled={!isAllowedToGetRequesters}
             >
               {requesterList?.map((item) => (
                 <Select.Option key={item.id} value={item.id} {...item}>
@@ -191,6 +217,7 @@ const ModalShare = ({
             </Select>
           </>
         </Form.Item>
+
         {!!dataForm.company_name && (
           <Form.Item label="Nama Perusahaan" name={"company_name"}>
             <>
@@ -203,18 +230,17 @@ const ModalShare = ({
           <div className="flex items-center gap-2">
             <Input
               placeholder="Masukkan masa berlaku link"
-              value={dataForm?.duration}
+              value={dataForm?.expired}
               onChange={(e) => {
-                console.log(e.target.value);
                 setDataForm((prev) => ({
                   ...prev,
-                  duration: e.target.value,
+                  expired: e.target.value,
                 }));
               }}
               type="number"
               min={0}
               className="w-11/12"
-              // disabled={}
+              disabled={!isAllowedToAddTalentPoolShare}
             />
             <p className="">Hari</p>
           </div>
