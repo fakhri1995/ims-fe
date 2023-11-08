@@ -17,11 +17,16 @@ import ButtonSys from "../../button";
 import { InfoCircleIconSvg } from "../../icon";
 import { ModalHapus2 } from "../modalCustom";
 
-const ModalTalentDetail = ({ visible, onvisible, dataTalent }) => {
+const ModalTalentDetail = ({
+  visible,
+  onvisible,
+  dataTalent,
+  setModalTalentEliminate,
+  handleMarkTalent,
+}) => {
   // 1. USE STATE
 
   const [loading, setLoading] = useState(false);
-  const [modalConfirm, setModalConfirm] = useState(false);
 
   // 2. USE QUERY & USE EFFECT
   // 3.2. Get Resume Talent
@@ -37,38 +42,11 @@ const ModalTalentDetail = ({ visible, onvisible, dataTalent }) => {
   // 3. HANDLER
   const handleClose = () => {
     onvisible(false);
-    setModalConfirm(false);
   };
 
   const onChangeSearchCandidate = (e) => {
     setTimeout(() => setSearchCandidate(e.target.value), 500);
   };
-
-  const title = (
-    <div className="flex items-center gap-2 ">
-      <InfoCircleIconSvg size={32} color="#BF4A40" />
-      <p className="mig-heading--3 text-warning">Konfirmasi Eliminasi Talent</p>
-    </div>
-  );
-
-  if (modalConfirm) {
-    return (
-      <ModalHapus2
-        title={title}
-        visible={modalConfirm}
-        onvisible={setModalConfirm}
-        // onOk={handleDelete}
-        okButtonText={"Eliminasi"}
-        onCancel={handleClose}
-        loading={loading}
-      >
-        <p className="mb-4">
-          Apakah anda yakin ingin mengeliminasi talent dengan nama{" "}
-          <strong>nama user</strong> dengan role <strong>nama role</strong>?
-        </p>
-      </ModalHapus2>
-    );
-  }
 
   const footer = (
     <div className="grid grid-cols-3 gap-2 items-center">
@@ -78,6 +56,8 @@ const ModalTalentDetail = ({ visible, onvisible, dataTalent }) => {
         // disabled={!isAllowedToEliminateTalent}
         onClick={(event) => {
           event.stopPropagation();
+          onvisible(false);
+          setModalTalentEliminate(true);
         }}
       >
         <div className="flex items-center gap-2 whitespace-nowrap">
@@ -92,11 +72,15 @@ const ModalTalentDetail = ({ visible, onvisible, dataTalent }) => {
         // disabled={!isAllowedToMarkTalent}
         onClick={(event) => {
           event.stopPropagation();
+          if (dataTalent?.id)
+            handleMarkTalent(dataTalent?.id).then(() => onvisible(false));
         }}
       >
         <div className="flex items-center gap-2 whitespace-nowrap">
           <UserAddOutlined rev={""} />
-          <p className="mig-caption--small">Tandai Talent</p>
+          <p className="mig-caption--small">
+            {!dataTalent?.mark ? "Tandai Talent" : "Batal Tandai Talent"}
+          </p>
         </div>
       </ButtonSys>
 
@@ -125,7 +109,6 @@ const ModalTalentDetail = ({ visible, onvisible, dataTalent }) => {
       mask={false}
       maskClosable={true}
       className="top-4 right-4 absolute"
-      // style={{}}
     >
       <div className="grid grid-cols-2 gap-4">
         {/* HEADER */}
