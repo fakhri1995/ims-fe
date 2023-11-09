@@ -18,7 +18,13 @@ import TalentPoolSectionPublic from "../../components/screen/talent-pool/TalentP
 import { TALENT_POOL_SHARE_PUBLIC_AUTH } from "../../lib/features";
 import httpcookie from "cookie";
 
-const TalentPoolPublicIndex = ({ dataProfile, sidemenu, linkCode }) => {
+const TalentPoolPublicIndex = ({
+  initProps,
+  dataProfile,
+  sidemenu,
+  linkCode,
+  isPublic,
+}) => {
   // 1. Init
   /**
    * Dependencies
@@ -30,8 +36,7 @@ const TalentPoolPublicIndex = ({ dataProfile, sidemenu, linkCode }) => {
 
   // Breadcrumb title
   const pageBreadcrumbValue = useMemo(() => [
-    { name: "Rekrutmen", hrefValue: "/admin/recruitment" },
-    { name: "Talent Pool", hrefValue: "/admin/recruitment/talent-pool" },
+    { name: "Talent Pool", hrefValue: "" },
   ]);
 
   // 2. Use state
@@ -55,16 +60,15 @@ const TalentPoolPublicIndex = ({ dataProfile, sidemenu, linkCode }) => {
 
   // 4. Event
 
-  // console.log({ dataTalents });
-  // console.log({ dataCategories });
   return (
     <LayoutDashboard
-      tok={null}
+      tok={initProps}
       dataProfile={dataProfile}
       sidemenu={sidemenu}
       st={st}
       pathArr={pathArr}
       fixedBreadcrumbValues={pageBreadcrumbValue}
+      isPublic={isPublic}
     >
       <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
         <div className="flex flex-col shadow-md rounded-md bg-white px-5 py-6 gap-6 mb-6">
@@ -137,8 +141,10 @@ const TalentPoolPublicIndex = ({ dataProfile, sidemenu, linkCode }) => {
 export async function getServerSideProps({ req, res, params }) {
   let initProps = {};
   let linkCode = params.linkCode;
+  let dataProfile = {};
+  let isPublic = true;
 
-  if (!req.headers.cookie) {
+  if (!req.headers.cookie && !linkCode) {
     return {
       redirect: {
         permanent: false,
@@ -147,7 +153,33 @@ export async function getServerSideProps({ req, res, params }) {
     };
   }
   const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
-  if (!cookiesJSON1.token) {
+
+  initProps = cookiesJSON1.token || null;
+  if (initProps) {
+    const resourcesGP = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    );
+    const resjsonGP = await resourcesGP.json();
+    dataProfile = resjsonGP;
+    isPublic = false;
+  } else if (linkCode) {
+    const publicAuth = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/authTalentPoolSharePublic?code=${linkCode}`,
+      {
+        method: "GET",
+      }
+    ).then((res) => res.json());
+    dataProfile = {
+      data: publicAuth.data.user,
+    };
+    isPublic = true;
+  } else {
     return {
       redirect: {
         permanent: false,
@@ -155,25 +187,14 @@ export async function getServerSideProps({ req, res, params }) {
       },
     };
   }
-  initProps = cookiesJSON1.token;
-  const resourcesGP = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    }
-  );
-  const resjsonGP = await resourcesGP.json();
-  const dataProfile = resjsonGP;
 
   return {
     props: {
-      // initProps,
+      initProps,
       dataProfile,
       sidemenu: "talent/daftar-talent",
       linkCode,
+      isPublic,
     },
   };
 }

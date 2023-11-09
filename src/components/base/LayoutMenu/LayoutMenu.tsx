@@ -71,7 +71,7 @@ import {
   SIDEBAR_RESUME,
   SIDEBAR_RESUME_DAFTAR_KANDIDAT,
   SIDEBAR_RESUME_ROLE_ASSESSMENT,
-  SIDEBAR_TALENT,
+  SIDEBAR_TALENT_POOL,
   SIDEBAR_TASK,
   SIDEBAR_TASK_ADMIN,
   SIDEBAR_TASK_MY,
@@ -130,6 +130,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
   collsmall,
   dataPerusahaan,
   handleCollSmall,
+  isPublic,
 }) => {
   /**
    * Class names
@@ -295,16 +296,15 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         </Menu.Item>
       )}
 
-      {/* Talent */}
-      {/* {hasPermission(SIDEBAR_TALENT) && (
+      {/* Public Talent Pool */}
+      {/* {(hasPermission(SIDEBAR_TALENT_POOL) || isPublic) && (
         <SubMenu
           title="Talent"
           key="talent"
-          icon={<UsersIconSvg size={16} color={"#597e8d"} />}
-        >
-          {hasPermission(SIDEBAR_TALENT) && (
+          icon={<UsersIconSvg size={16} color={"#597e8d"} />}>
+          {(hasPermission(SIDEBAR_TALENT_POOL) || isPublic) && (
             <Menu.Item key="talent/daftar-talent">
-              <Link href="/talent">Daftar Talent</Link>
+              <Link href="#">Daftar Talent</Link>
             </Menu.Item>
           )}
         </SubMenu>
