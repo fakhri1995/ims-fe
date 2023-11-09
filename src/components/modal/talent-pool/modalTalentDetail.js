@@ -3,6 +3,7 @@ import {
   UserAddOutlined,
   UserDeleteOutlined,
 } from "@ant-design/icons";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Modal, Tag, Timeline } from "antd";
 import parse from "html-react-parser";
 import React, { useState } from "react";
@@ -13,9 +14,8 @@ import { getNameInitial, momentFormatDate } from "lib/helper";
 
 import { TalentPoolPublicService } from "../../../apis/talent-pool";
 import { TALENT_POOL_SHARE_PUBLIC_GET } from "../../../lib/features";
+import { ResumePDFTemplate } from "../../../pages/admin/candidates/[candidateId]";
 import ButtonSys from "../../button";
-import { InfoCircleIconSvg } from "../../icon";
-import { ModalHapus2 } from "../modalCustom";
 
 const ModalTalentDetail = ({
   visible,
@@ -84,18 +84,26 @@ const ModalTalentDetail = ({
         </div>
       </ButtonSys>
 
-      <ButtonSys
-        type={"primary"}
-        // disabled={!isAllowedToMarkTalent}
-        onClick={(event) => {
-          event.stopPropagation();
-        }}
-      >
-        <div className="flex items-center gap-2 whitespace-nowrap">
-          <DownloadOutlined rev={""} />
-          <p className="mig-caption--small">Unduh Resume</p>
-        </div>
-      </ButtonSys>
+      {dataResume && (
+        <PDFDownloadLink
+          document={
+            <ResumePDFTemplate dataResume={dataResume} logoStatus={true} />
+          }
+          fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
+        >
+          <ButtonSys
+            type={"primary"}
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+          >
+            <div className="flex items-center gap-2 whitespace-nowrap">
+              <DownloadOutlined rev={""} />
+              <p className="mig-caption--small">Unduh Resume</p>
+            </div>
+          </ButtonSys>
+        </PDFDownloadLink>
+      )}
     </div>
   );
 
@@ -105,7 +113,7 @@ const ModalTalentDetail = ({
       visible={visible}
       onCancel={handleClose}
       footer={footer}
-      loading={loading}
+      loading={loadingResume}
       mask={false}
       maskClosable={true}
       className="top-4 right-4 absolute"

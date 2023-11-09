@@ -23,7 +23,9 @@ const CandidateDetailCard = ({ candidateData }) => {
     {
       icon: <BriefcaseIconSvg size={16} color={"#35763B"} />,
       title: "Pengalaman Terakhir",
-      value: candidateData?.last_experience?.name,
+      value:
+        candidateData?.last_experience?.name ||
+        candidateData?.last_experience?.role,
     },
   ];
 
