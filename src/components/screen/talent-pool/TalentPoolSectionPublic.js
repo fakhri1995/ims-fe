@@ -499,6 +499,7 @@ const TalentPoolSectionPublic = ({
         setrowstate={setRowState}
         setIsHovered={setIsHovered}
         isLargeScreen={isLargeScreen}
+        isPublic={true}
       />
 
       {/* Modal Talent Detail */}
@@ -508,10 +509,6 @@ const TalentPoolSectionPublic = ({
         dataTalent={dataRowClicked}
         setModalTalentEliminate={setModalTalentEliminate}
         handleMarkTalent={handleMarkTalent}
-        // onDelete={() => {
-        //   setModalTalentEliminate(true);
-        //   setDrawerTalentDetail(false);
-        // }}
       />
 
       <ModalHapus2
