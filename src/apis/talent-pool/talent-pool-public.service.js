@@ -67,9 +67,9 @@ export class TalentPoolPublicService {
     return apiRes;
   };
 
-  static getEliminates = async (shareId) => {
+  static getEliminates = async (shareId, keyword) => {
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTalentPoolSharePublicCuts?share_id=${shareId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTalentPoolSharePublicCuts?share_id=${shareId}&keyword=${keyword}`,
       {
         method: `GET`,
       }

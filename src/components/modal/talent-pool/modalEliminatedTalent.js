@@ -27,7 +27,7 @@ const ModalEliminatedTalent = ({ visible, onvisible, category, shareId }) => {
   });
   const [loading, setLoading] = useState(false);
   const [modalConfirm, setModalConfirm] = useState(false);
-  const [searchCandidate, setSearchCandidate] = useState("");
+  const [searchTalent, setSearchTalent] = useState("");
   const [rowState, setRowState] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [dataRowClicked, setDataRowClicked] = useState(null);
@@ -38,8 +38,8 @@ const ModalEliminatedTalent = ({ visible, onvisible, category, shareId }) => {
     isLoading: loadingEliminatedTalents,
     refetch: refetchEliminatedTalents,
   } = useQuery(
-    [TALENT_POOL_SHARE_PUBLIC_CUTS_GET, shareId],
-    () => TalentPoolPublicService.getEliminates(shareId),
+    [TALENT_POOL_SHARE_PUBLIC_CUTS_GET, shareId, searchTalent],
+    () => TalentPoolPublicService.getEliminates(shareId, searchTalent),
     {
       enabled: !!shareId,
       select: (response) => response.data,
@@ -53,7 +53,7 @@ const ModalEliminatedTalent = ({ visible, onvisible, category, shareId }) => {
   };
 
   const onChangeSearchCandidate = (e) => {
-    setTimeout(() => setSearchCandidate(e.target.value), 500);
+    setTimeout(() => setSearchTalent(e.target.value), 500);
   };
 
   const handleCancelElimination = () => {
@@ -166,9 +166,7 @@ const ModalEliminatedTalent = ({ visible, onvisible, category, shareId }) => {
                 return (
                   <div
                     onMouseEnter={() => {
-                      setTimeout(() => {
-                        setIsHovered(true);
-                      }, 500);
+                      setIsHovered(true);
                     }}
                     onMouseLeave={() => setIsHovered(false)}
                     className={`p-3 relative bg-transparent hover:bg-backdrop rounded-md flex 
@@ -207,7 +205,14 @@ const ModalEliminatedTalent = ({ visible, onvisible, category, shareId }) => {
                     </button>
                     {isHovered && rowState === record.id && (
                       <div
-                        className={`absolute left-0 w-full h-full z-50 top-20`}
+                        className={`absolute left-0 w-full h-full z-50 
+                        ${
+                          // Bottom card will show popup above the row
+                          dataEliminatedTalents.length > 2 &&
+                          cardIdx > dataEliminatedTalents.length - 3
+                            ? "-top-[17rem]"
+                            : "top-20"
+                        }`}
                       >
                         <CandidateDetailCard
                           candidateData={record?.talent?.resume}

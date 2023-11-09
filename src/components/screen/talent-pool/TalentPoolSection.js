@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
@@ -24,6 +24,7 @@ import { TalentPoolService } from "../../../apis/talent-pool/talent-pool.service
 import {
   TALENT_POOLS_GET,
   TALENT_POOL_ADD,
+  TALENT_POOL_CANDIDATES_GET,
   TALENT_POOL_DELETE,
   TALENT_POOL_FILTERS_GET,
   TALENT_POOL_GET,
@@ -48,6 +49,7 @@ const TalentPoolSection = ({
   category,
 }) => {
   const rt = useRouter();
+  const queryClient = useQueryClient();
 
   // 2. Use state
 
@@ -176,6 +178,8 @@ const TalentPoolSection = ({
           setModalTalentDelete(false);
           refetchPool();
           refetchFilters();
+          queryClient.invalidateQueries(TALENT_POOL_CANDIDATES_GET);
+
           notification.success({
             message: response.message,
             duration: 3,

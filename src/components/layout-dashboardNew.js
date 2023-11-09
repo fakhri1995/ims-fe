@@ -27,6 +27,7 @@ function LayoutDashboard({
   idpage,
 
   fixedBreadcrumbValues = [],
+  isPublic, // use for public talent pool
 }) {
   const rt = useRouter();
   var rootBreadcrumb = "";
@@ -109,7 +110,8 @@ function LayoutDashboard({
           sidemenu={sidemenu}
           coll={coll}
           collsmall={collsmall}
-          dataPerusahaan={dataProfile.data.company.name}
+          dataPerusahaan={dataProfile.data?.company?.name || "-"}
+          isPublic={isPublic}
         />
 
         {/* Header + Main Content */}
@@ -480,7 +482,8 @@ function LayoutDashboard({
               Linkheader={Link}
               handleLogout={handleLogout}
               st={st}
-            ></LayoutMenuHeader>
+              isPublic={isPublic}
+            />
 
             {/* Breadcrumb for mobile view */}
             {pathArr ? (

@@ -130,33 +130,42 @@ const ModalLinkList = ({ initProps, visible, onvisible, category }) => {
       <Spin spinning={loadingLinks}>
         <div className="grid grid-cols-1 gap-2">
           {!dataLinks?.length && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
-          {dataLinks?.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center justify-between p-4 rounded-md border"
-            >
-              <div>
-                <p className="mig-caption--bold">{item.user?.name}</p>
-                <a
-                  href={getTalentPoolLink(item.code)}
-                  target="_blank"
-                  className="mig-caption--medium text-primary100"
-                >
-                  {getTalentPoolLink(item.code)}
-                </a>
-              </div>
-              <button
-                onClick={() => {
-                  setCurrentModalData(item);
-                  setModalDelete(true);
-                }}
-                className="mig-caption--medium text-warning px-3 py-1 
-            bg-warning bg-opacity-20 rounded-full hover:opacity-70"
+          {dataLinks?.map((item) => {
+            const link = getTalentPoolLink(item.code);
+            return (
+              <div
+                key={item.id}
+                className="flex items-center justify-between p-4 rounded-md border"
               >
-                Stop
-              </button>
-            </div>
-          ))}
+                <div>
+                  <p className="mig-caption--bold">{item.user?.name}</p>
+                  <p
+                    onClick={() => {
+                      navigator.clipboard.writeText(link).then(() =>
+                        notification.success({
+                          message: "Link berhasil disalin!",
+                          duration: 3,
+                        })
+                      );
+                    }}
+                    className="mig-caption--medium text-primary100 cursor-pointer hover:opacity-70"
+                  >
+                    {link}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setCurrentModalData(item);
+                    setModalDelete(true);
+                  }}
+                  className="mig-caption--medium text-warning px-3 py-1 
+                bg-warning bg-opacity-20 rounded-full hover:opacity-70"
+                >
+                  Stop
+                </button>
+              </div>
+            );
+          })}
         </div>
       </Spin>
     </ModalCore>

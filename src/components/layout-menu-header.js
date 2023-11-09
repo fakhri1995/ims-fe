@@ -7,7 +7,13 @@ import { generateStaticAssetUrl } from "lib/helper";
 
 import { LogoutIconSvg, UsercircleIconSvg } from "./icon";
 
-function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
+function LayoutMenuHeader({
+  dataProfile,
+  Linkheader,
+  handleLogout,
+  st,
+  isPublic,
+}) {
   const rt = useRouter();
 
   const menuProfile2 = () => {
@@ -15,11 +21,17 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
       <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5">
         <div className="flex items-center justify-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-blue-500 flex text-white text-center justify-center items-center">
-            <img
-              src={generateStaticAssetUrl(dataProfile.data.profile_image?.link)}
-              alt={dataProfile.data.profile_image?.description}
-              className="w-full h-full rounded-full object-cover"
-            />
+            {dataProfile.data?.profile_image?.link ? (
+              <img
+                src={generateStaticAssetUrl(
+                  dataProfile.data.profile_image.link
+                )}
+                alt={dataProfile.data?.profile_image?.description}
+                className="w-full h-full rounded-full object-cover"
+              />
+            ) : (
+              <UsercircleIconSvg size={20} color={"black"} />
+            )}
           </div>
           <div className="flex flex-col">
             <h2 className="text-sm font-bold mb-1">{dataProfile.data.name}</h2>
@@ -58,15 +70,21 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
       className={`hidden md:flex md:w-auto w-full ${st.menu} md:justify-end`}
     >
       <div className="md:mr-8 mr-4 flex items-center">
-        <Notification />
+        {!isPublic && <Notification />}
       </div>
       <div className="md:mr-12 mr-4 flex items-center">
         <Dropdown overlay={menuProfile2} trigger={["click"]}>
-          <img
-            src={generateStaticAssetUrl(dataProfile.data.profile_image?.link)}
-            alt={dataProfile.data.profile_image?.description}
-            className="w-8 h-8 rounded-full object-cover cursor-pointer"
-          />
+          {dataProfile.data?.profile_image?.link ? (
+            <img
+              src={generateStaticAssetUrl(
+                dataProfile.data?.profile_image?.link
+              )}
+              alt={dataProfile.data?.profile_image?.description}
+              className="w-8 h-8 rounded-full object-cover cursor-pointer"
+            />
+          ) : (
+            <UsercircleIconSvg size={32} color={"black"} />
+          )}
         </Dropdown>
         <div className="flex flex-col ml-1">
           <h1 className="font-semibold text-sm mb-0">
