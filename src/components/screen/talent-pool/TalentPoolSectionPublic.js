@@ -236,8 +236,7 @@ const TalentPoolSectionPublic = ({
               {isHovered && rowState === record.id && (
                 <div className={`absolute left-20 w-[35vw] h-full z-50 top-3`}>
                   <TalentDetailCard
-                    data={record}
-                    isAllowedToGetResume={true}
+                    dataResume={record?.resume}
                     isPublic={true}
                   />
                 </div>

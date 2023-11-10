@@ -227,11 +227,7 @@ const TalentPoolSection = ({
               {text || "-"}
               {isHovered && rowState === record.id && (
                 <div className={`absolute left-40 w-[35vw] h-full z-50 top-3`}>
-                  <TalentDetailCard
-                    data={record}
-                    isAllowedToGetResume={isAllowedToGetResume}
-                    initProps={initProps}
-                  />
+                  <TalentDetailCard dataResume={record?.resume} />
                 </div>
               )}
             </div>
@@ -337,7 +333,6 @@ const TalentPoolSection = ({
     },
   ];
 
-  // console.log({ dataRowClicked });
   return (
     <div className="grid grid-cols-1 gap-6">
       {/* Start: Search criteria */}
