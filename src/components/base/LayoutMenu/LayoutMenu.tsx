@@ -114,11 +114,14 @@ export interface ILayoutMenu {
    */
   collsmall: boolean;
   dataPerusahaan: string;
-
   /**
    * Handler untuk toggle collapsed state pada smaller width device.
    */
   handleCollSmall: () => void;
+  /**
+   * use for Public Talent Pool
+   */
+  isPublic?: boolean;
 }
 
 /**
