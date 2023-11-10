@@ -9,30 +9,8 @@ import { RESUME_GET } from "../../../lib/features";
 import { getNameInitial, momentFormatDate } from "../../../lib/helper";
 import { ArrowUpRightIconSvg } from "../../icon";
 
-const TalentDetailCard = ({
-  data,
-  isAllowedToGetResume,
-  initProps,
-  isPublic,
-}) => {
+const TalentDetailCard = ({ dataResume, isPublic }) => {
   const rt = useRouter();
-
-  // Get Resume Talent, use in Recruitment Talent Pool
-  const { data: fetchedData, isLoading: loadingResume } = useQuery(
-    [RESUME_GET, data?.resume_id],
-    () =>
-      CandidateService.getResume(
-        initProps,
-        isAllowedToGetResume,
-        data?.resume_id
-      ),
-    {
-      enabled: !isPublic && !!data?.resume_id,
-      select: (response) => response.data,
-    }
-  );
-
-  const dataResume = fetchedData || data?.resume;
 
   return (
     <div
@@ -48,23 +26,12 @@ const TalentDetailCard = ({
           </div>
           <div>
             <p className="font-bold text-mono30">{dataResume?.name}</p>
-            {/* use for public talent pool */}
-            {isPublic && dataResume?.last_education && (
+            {!!dataResume?.last_education && (
               <p className="mig-caption--medium text-mono50">
                 {dataResume?.last_education?.university} ·{" "}
                 {dataResume?.last_education?.major} ·{" "}
                 {dataResume?.last_education?.graduation_year?.slice(0, 4)} ·{" "}
                 {dataResume?.last_education?.gpa}
-              </p>
-            )}
-
-            {/* use in recruitment talent pool */}
-            {!isPublic && !!dataResume?.educations?.length && (
-              <p className="mig-caption--medium text-mono50">
-                {dataResume?.educations?.[0]?.university} ·{" "}
-                {dataResume?.educations?.[0]?.major} ·{" "}
-                {dataResume?.educations?.[0]?.graduation_year?.slice(0, 4)} ·{" "}
-                {dataResume?.educations?.[0]?.gpa}
               </p>
             )}
           </div>
@@ -99,56 +66,27 @@ const TalentDetailCard = ({
 
         <div className="mig-caption--bold">
           <p>Pengalaman Terakhir</p>
-
-          {/* use for public talent pool */}
-          {isPublic ? (
-            dataResume?.last_experience ? (
-              <p className="mb-2">
-                <span className="text-primary100 mr-1">
-                  {dataResume?.last_experience?.role}
-                </span>{" "}
-                {dataResume?.last_experience?.company} ·{" "}
-                {momentFormatDate(
-                  dataResume?.last_experience?.start_date,
-                  "-",
-                  "MMM YYYY"
-                )}{" "}
-                -{" "}
-                {momentFormatDate(
-                  dataResume?.last_experience?.end_date,
-                  "present",
-                  "MMM YYYY"
-                )}
-              </p>
-            ) : (
-              "-"
-            )
-          ) : null}
-
-          {/* use in recruitment talent pool */}
-          {!isPublic ? (
-            !!dataResume?.experiences?.length ? (
-              <p className="mb-2">
-                <span className="text-primary100 mr-1">
-                  {dataResume?.experiences?.[0]?.role}
-                </span>{" "}
-                {dataResume?.experiences?.[0]?.company} ·{" "}
-                {momentFormatDate(
-                  dataResume?.experiences?.[0]?.start_date,
-                  "-",
-                  "MMM YYYY"
-                )}{" "}
-                -{" "}
-                {momentFormatDate(
-                  dataResume?.experiences?.[0]?.end_date,
-                  "present",
-                  "MMM YYYY"
-                )}
-              </p>
-            ) : (
-              "-"
-            )
-          ) : null}
+          {dataResume?.last_experience ? (
+            <p className="mb-2">
+              <span className="text-primary100 mr-1">
+                {dataResume?.last_experience?.role}
+              </span>{" "}
+              {dataResume?.last_experience?.company} ·{" "}
+              {momentFormatDate(
+                dataResume?.last_experience?.start_date,
+                "-",
+                "MMM YYYY"
+              )}{" "}
+              -{" "}
+              {momentFormatDate(
+                dataResume?.last_experience?.end_date,
+                "present",
+                "MMM YYYY"
+              )}
+            </p>
+          ) : (
+            "-"
+          )}
 
           <div className="">
             {!!dataResume?.skills?.length && (

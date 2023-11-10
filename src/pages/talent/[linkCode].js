@@ -140,6 +140,7 @@ const TalentPoolPublicIndex = ({
 
 export async function getServerSideProps({ req, res, params }) {
   let initProps = {};
+  let cookiesJSON1 = {};
   let linkCode = params.linkCode;
   let dataProfile = {};
   let isPublic = true;
@@ -152,7 +153,19 @@ export async function getServerSideProps({ req, res, params }) {
       },
     };
   }
-  const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+
+  if (typeof req.headers.cookie == "string") {
+    cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+  }
+
+  if (!cookiesJSON1.token && !linkCode) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
 
   initProps = cookiesJSON1.token || null;
   if (initProps) {
