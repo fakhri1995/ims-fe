@@ -90,6 +90,10 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
     return null;
   }
 
+  const assessmentResults = dataResume?.assessment_results?.filter(
+    (item) => item.value
+  );
+
   // console.log({ dataTalent });
   // console.log({ dataResume });
   return (
@@ -289,7 +293,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                 </div>
 
                 {/* PROJECTS */}
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-6">
                   <h4 className="mig-heading--4">Projects</h4>
                   {dataResume?.projects?.length ? (
                     <div className="flex flex-col gap-4">
@@ -378,7 +382,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                 </div>
 
                 {/* ACHIEVEMENTS */}
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-6 pb-6 border-b border-mono-90">
                   <h4 className="mig-heading--4">Achievements</h4>
                   {dataResume?.achievements?.length ? (
                     <div className="flex flex-col gap-4">
@@ -394,6 +398,29 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                         </div>
                       ))}
                     </div>
+                  ) : (
+                    <p>-</p>
+                  )}
+                </div>
+
+                {/* ASSESSMENT RESULTS */}
+                <div className="flex flex-col gap-6">
+                  <h4 className="mig-heading--4">
+                    Technical Assessment Results
+                  </h4>
+                  {assessmentResults?.length ? (
+                    <ul>
+                      {assessmentResults?.map((item) => (
+                        <li key={item?.id}>
+                          <div className="flex flex-row justify-between">
+                            <p className="text-mono30">{item?.criteria}</p>
+                            <p className="text-primary100 font-bold">
+                              {item?.value}
+                            </p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
                   ) : (
                     <p>-</p>
                   )}

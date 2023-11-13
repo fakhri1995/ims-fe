@@ -87,16 +87,16 @@ const TalentPoolPublicIndex = ({
                   <p className="mig-caption">Tabel Eliminasi Talent</p>
                 </div>
               </ButtonSys>
-              <ButtonSys
+              {/* <ButtonSys
                 type={"primary"}
-                // onClick={() => setModalCategoryCreate(true)}
-                // disabled={!isAllowedToAddTalentPoolCategory}
+                onClick={() => setModalCategoryCreate(true)}
+                disabled={!isAllowedToAddTalentPoolCategory}
               >
                 <div className="flex gap-2 items-center">
                   <PlusIconSvg size={16} />
                   <p className="mig-caption">Tambah Permintaan</p>
                 </div>
-              </ButtonSys>
+              </ButtonSys> */}
             </div>
           </div>
           <Spin spinning={loadingAuth}>

@@ -91,6 +91,7 @@ const TalentPoolSectionPublic = ({
       select: (response) => response.data,
     }
   );
+
   // 3.2. Get Talent Pool Filters
   const {
     data: dataFilters,
@@ -406,7 +407,7 @@ const TalentPoolSectionPublic = ({
           </Select>
         </div>
         {/* Filter by years of experience */}
-        <div className="w-full lg:w-1/12">
+        <div className="w-full lg:w-2/12">
           <Select
             defaultValue={queryParams.years}
             allowClear
@@ -449,7 +450,7 @@ const TalentPoolSectionPublic = ({
         </div>
 
         {/* Filter by status (dropdown) */}
-        <div className="w-full lg:w-1/12">
+        {/* <div className="w-full lg:w-1/12">
           <Select
             defaultValue={queryParams.status}
             allowClear
@@ -460,15 +461,14 @@ const TalentPoolSectionPublic = ({
             onChange={(value) => {
               setQueryParams({ status: value });
               setSelectedStatus(value);
-            }}
-          >
+            }}>
             {dataFilters?.status?.map((item) => (
               <Select.Option key={item.id} value={item.status}>
                 {item.status}
               </Select.Option>
             ))}
           </Select>
-        </div>
+        </div> */}
         {/* End: Search criteria */}
         <div className="w-full col-span-2 md:col-span-3 lg:w-2/12">
           <ButtonSys
