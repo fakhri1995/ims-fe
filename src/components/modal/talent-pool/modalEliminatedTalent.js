@@ -86,28 +86,29 @@ const ModalEliminatedTalent = ({ visible, onvisible, category, shareId }) => {
 
   const title = (
     <div className="flex items-center gap-2 ">
-      <InfoCircleIconSvg size={32} color="#BF4A40" />
-      <p className="mig-heading--3 text-warning">Konfirmasi Eliminasi Talent</p>
+      <InfoCircleIconSvg size={32} color="#35763B" />
+      <p className="mig-heading--3 text-primary100">
+        Konfirmasi Batal Eliminasi Talent
+      </p>
     </div>
   );
 
   if (modalConfirm) {
     return (
-      <ModalHapus2
+      <ModalUbah
         title={title}
         visible={modalConfirm}
         onvisible={setModalConfirm}
         onOk={handleCancelElimination}
-        okButtonText={"Eliminasi"}
+        okButtonText={"Masukkan"}
         onCancel={handleClose}
         loading={loading}
       >
         <p className="mb-4">
-          Apakah anda yakin ingin membatalkan eliminasi talent dengan nama{" "}
-          <strong>{dataRowClicked?.resume?.name}</strong> dengan role{" "}
-          <strong>{dataRowClicked?.resume?.last_assessment?.name}</strong>?
+          Apakah anda yakin ingin memasukkan kembali talent dengan nama{" "}
+          <strong>{dataRowClicked?.resume?.name}</strong> ke list?
         </p>
-      </ModalHapus2>
+      </ModalUbah>
     );
   }
 

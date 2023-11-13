@@ -530,8 +530,7 @@ const TalentPoolSectionPublic = ({
       >
         <p className="mb-4">
           Apakah Anda yakin ingin mengeliminasi talent dengan nama{" "}
-          <strong>{dataRowClicked?.resume?.name}</strong> dan role{" "}
-          <strong>{dataRowClicked?.resume?.last_assessment?.name}</strong>?
+          <strong>{dataRowClicked?.resume?.name}</strong>?
         </p>
       </ModalHapus2>
     </div>
