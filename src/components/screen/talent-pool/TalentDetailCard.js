@@ -9,7 +9,7 @@ import { RESUME_GET } from "../../../lib/features";
 import { getNameInitial, momentFormatDate } from "../../../lib/helper";
 import { ArrowUpRightIconSvg } from "../../icon";
 
-const TalentDetailCard = ({ dataResume, isPublic }) => {
+const TalentDetailCard = ({ talentId, dataResume, isPublic }) => {
   const rt = useRouter();
 
   return (
@@ -41,7 +41,7 @@ const TalentDetailCard = ({ dataResume, isPublic }) => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              rt.push(`talent-pool/${data?.id}`);
+              rt.push(`talent-pool/${talentId}`);
             }}
             className="flex items-center gap-1 bg-transparent hover:opacity-70"
           >
