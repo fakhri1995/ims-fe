@@ -339,11 +339,12 @@ const ModalTalentDetail = ({
             </div>
 
             {/* ASSESSMENT RESULTS */}
-            <div className="flex flex-col gap-1">
-              <h4 className="mig-heading--4 pb-1 mb-1 border-b border-mono-90">
-                Technical Assessment Results
-              </h4>
-              {assessmentResults?.length ? (
+            {!!assessmentResults?.length && (
+              <div className="flex flex-col gap-1">
+                <h4 className="mig-heading--4 pb-1 mb-1 border-b border-mono-90">
+                  Technical Assessment Results
+                </h4>
+
                 <ul>
                   {assessmentResults?.map((item) => (
                     <li key={item?.id}>
@@ -356,10 +357,8 @@ const ModalTalentDetail = ({
                     </li>
                   ))}
                 </ul>
-              ) : (
-                <p>-</p>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

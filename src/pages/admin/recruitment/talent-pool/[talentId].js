@@ -382,7 +382,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                 </div>
 
                 {/* ACHIEVEMENTS */}
-                <div className="flex flex-col gap-6 pb-6 border-b border-mono-90">
+                <div className="flex flex-col gap-6 pb-2">
                   <h4 className="mig-heading--4">Achievements</h4>
                   {dataResume?.achievements?.length ? (
                     <div className="flex flex-col gap-4">
@@ -404,11 +404,12 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                 </div>
 
                 {/* ASSESSMENT RESULTS */}
-                <div className="flex flex-col gap-6">
-                  <h4 className="mig-heading--4">
-                    Technical Assessment Results
-                  </h4>
-                  {assessmentResults?.length ? (
+                {!!assessmentResults?.length && (
+                  <div className="flex flex-col gap-6 pt-4 border-t border-mono-90">
+                    <h4 className="mig-heading--4">
+                      Technical Assessment Results
+                    </h4>
+
                     <ul>
                       {assessmentResults?.map((item) => (
                         <li key={item?.id}>
@@ -421,10 +422,8 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                         </li>
                       ))}
                     </ul>
-                  ) : (
-                    <p>-</p>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
