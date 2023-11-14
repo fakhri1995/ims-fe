@@ -107,6 +107,10 @@ const ModalTalentDetail = ({
     </div>
   );
 
+  const assessmentResults = dataResume?.assessment_results?.filter(
+    (item) => item.value
+  );
+
   return (
     <Modal
       title={null}
@@ -333,6 +337,28 @@ const ModalTalentDetail = ({
                 <p>-</p>
               )}
             </div>
+
+            {/* ASSESSMENT RESULTS */}
+            {!!assessmentResults?.length && (
+              <div className="flex flex-col gap-1">
+                <h4 className="mig-heading--4 pb-1 mb-1 border-b border-mono-90">
+                  Technical Assessment Results
+                </h4>
+
+                <ul>
+                  {assessmentResults?.map((item) => (
+                    <li key={item?.id}>
+                      <div className="flex flex-row justify-between">
+                        <p className="text-mono30">{item?.criteria}</p>
+                        <p className="text-primary100 font-bold">
+                          {item?.value}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>

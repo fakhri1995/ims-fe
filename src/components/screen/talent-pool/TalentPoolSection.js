@@ -227,7 +227,10 @@ const TalentPoolSection = ({
               {text || "-"}
               {isHovered && rowState === record.id && (
                 <div className={`absolute left-40 w-[35vw] h-full z-50 top-3`}>
-                  <TalentDetailCard dataResume={record?.resume} />
+                  <TalentDetailCard
+                    talentId={record?.id}
+                    dataResume={record?.resume}
+                  />
                 </div>
               )}
             </div>

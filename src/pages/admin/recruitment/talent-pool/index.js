@@ -127,9 +127,16 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.2. Set active category tab
   useEffect(() => {
-    const firstCategory = dataCategories?.[0];
-    setCurrentCategory({ id: firstCategory?.id, name: firstCategory?.name });
-    setQueryParams({ category_id: firstCategory?.id });
+    if (!queryParams.category_id || queryParams.category_id == 1) {
+      const firstCategory = dataCategories?.[0];
+      setCurrentCategory({ id: firstCategory?.id, name: firstCategory?.name });
+      setQueryParams({ category_id: firstCategory?.id });
+    } else {
+      const category = dataCategories?.find(
+        (item) => item.id === queryParams.category_id
+      );
+      setCurrentCategory({ id: queryParams.category_id, name: category?.name });
+    }
   }, [dataCategories]);
 
   // 4. Event
