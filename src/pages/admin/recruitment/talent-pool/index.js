@@ -43,6 +43,7 @@ import {
   TALENT_POOL_CATEGORY_DELETE,
   TALENT_POOL_DELETE,
   TALENT_POOL_GET,
+  TALENT_POOL_SHARES_GET,
 } from "../../../../lib/features";
 import { permissionWarningNotification } from "../../../../lib/helper";
 import httpcookie from "cookie";
@@ -295,14 +296,13 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           </Spin>
         </div>
       </div>
-      {/* TODO: change feature access */}
-      <AccessControl hasPermission={TALENT_POOLS_GET}>
+
+      <AccessControl hasPermission={TALENT_POOL_SHARES_GET}>
         <ModalLinkList
           initProps={initProps}
           visible={modalLinks}
           onvisible={setModalLinks}
           category={currentCategory}
-          // refetchCategories={refetchCategories}
         />
       </AccessControl>
 
