@@ -9,7 +9,12 @@ import { RESUME_GET } from "../../../lib/features";
 import { getNameInitial, momentFormatDate } from "../../../lib/helper";
 import { ArrowUpRightIconSvg } from "../../icon";
 
-const TalentDetailCard = ({ talentId, dataResume, isPublic }) => {
+const TalentDetailCard = ({
+  talentId,
+  dataResume,
+  isPublic,
+  isAllowedToGetTalentPool,
+}) => {
   const rt = useRouter();
 
   return (
@@ -43,6 +48,7 @@ const TalentDetailCard = ({ talentId, dataResume, isPublic }) => {
               e.stopPropagation();
               rt.push(`talent-pool/${talentId}`);
             }}
+            disabled={!isAllowedToGetTalentPool}
             className="flex items-center gap-1 bg-transparent hover:opacity-70"
           >
             <p className="mig-caption--bold text-mono50 whitespace-nowrap">

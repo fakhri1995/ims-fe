@@ -5,6 +5,7 @@ import React from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { TALENT_POOL_DELETE, TALENT_POOL_GET } from "../../../lib/features";
 import { getNameInitial, momentFormatDate } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import {
@@ -28,6 +29,9 @@ const DrawerTalentDetail = ({ visible, onvisible, dataTalent, onDelete }) => {
     isPending: isAccessControlPending,
   } = useAccessControl();
 
+  const isAllowedToGetTalentPool = hasPermission(TALENT_POOL_GET);
+  const isAllowedToDeleteTalentPool = hasPermission(TALENT_POOL_DELETE);
+
   if (isAccessControlPending) {
     return null;
   }
@@ -39,6 +43,7 @@ const DrawerTalentDetail = ({ visible, onvisible, dataTalent, onDelete }) => {
         <button
           onClick={onDelete}
           className="flex space-x-2 items-center whitespace-nowrap bg-transparent"
+          disabled={!isAllowedToDeleteTalentPool}
         >
           <DeleteOutlined rev={""} />
           <p>Hapus Talent</p>
@@ -179,6 +184,7 @@ const DrawerTalentDetail = ({ visible, onvisible, dataTalent, onDelete }) => {
               type={"primary"}
               fullWidth
               onClick={() => rt.push(`talent-pool/${dataTalent?.id}`)}
+              disabled={!isAllowedToGetTalentPool}
             >
               <div className="flex gap-2 items-center">
                 <p>Lihat Detail</p>
