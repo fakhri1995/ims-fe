@@ -138,7 +138,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
       );
       setCurrentCategory({ id: queryParams.category_id, name: category?.name });
     }
-  }, [dataCategories]);
+  }, [dataCategories, queryParams.category_id]);
 
   // 4. Event
   const handleDeleteCategory = (id) => {
