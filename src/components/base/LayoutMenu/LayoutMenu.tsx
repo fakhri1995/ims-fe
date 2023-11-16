@@ -300,18 +300,19 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       )}
 
       {/* Public Talent Pool */}
-      {/* {(hasPermission(SIDEBAR_TALENT_POOL) || isPublic) && (
+      {(hasPermission(SIDEBAR_TALENT_POOL) || isPublic) && (
         <SubMenu
           title="Talent"
           key="talent"
-          icon={<UsersIconSvg size={16} color={"#597e8d"} />}>
+          icon={<UsersIconSvg size={16} color={"#597e8d"} />}
+        >
           {(hasPermission(SIDEBAR_TALENT_POOL) || isPublic) && (
             <Menu.Item key="talent/daftar-talent">
               <Link href="#">Daftar Talent</Link>
             </Menu.Item>
           )}
         </SubMenu>
-      )} */}
+      )}
     </>
   );
 
@@ -491,11 +492,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
 
-          {/* {hasPermission(SIDEBAR_RECRUITMENT_TALENT_POOL) && (
+          {hasPermission(SIDEBAR_RECRUITMENT_TALENT_POOL) && (
             <Menu.Item key="recruitment-talent-pool">
               <Link href="/admin/recruitment/talent-pool">Talent Pool</Link>
             </Menu.Item>
-          )} */}
+          )}
         </SubMenu>
       )}
 

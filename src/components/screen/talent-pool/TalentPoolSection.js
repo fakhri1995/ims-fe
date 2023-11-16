@@ -43,7 +43,7 @@ const TalentPoolSection = ({
   isAllowedToAddTalentPool,
   isAllowedToDeleteTalentPool,
   isAllowedToGetTalentPool,
-  isAllowedToGetResume,
+  isAllowedToAddTalentPoolShare,
   queryParams,
   setQueryParams,
   category,
@@ -228,6 +228,7 @@ const TalentPoolSection = ({
               {isHovered && rowState === record.id && (
                 <div className={`absolute left-40 w-[35vw] h-full z-50 top-3`}>
                   <TalentDetailCard
+                    isAllowedToGetTalentPool={isAllowedToGetTalentPool}
                     talentId={record?.id}
                     dataResume={record?.resume}
                   />
@@ -506,7 +507,9 @@ const TalentPoolSection = ({
         <ButtonSys
           type={"default"}
           onClick={() => setModalShare(true)}
-          disabled={dataTalents?.data?.length === 0}
+          disabled={
+            !isAllowedToAddTalentPoolShare || dataTalents?.data?.length === 0
+          }
         >
           <div className="flex gap-2 items-center">
             <ShareAltOutlined />

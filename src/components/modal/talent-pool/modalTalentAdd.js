@@ -172,7 +172,7 @@ const ModalTalentAdd = ({
               fullWidth
               type={"primary"}
               onClick={() => setModalConfirm(true)}
-              disabled={!selectedCandidates.length}
+              disabled={!isAllowedToAddTalentPool || !selectedCandidates.length}
             >
               <div className="flex gap-2 items-center">
                 <PlusIconSvg size={16} color={"#FFFFFF"} />

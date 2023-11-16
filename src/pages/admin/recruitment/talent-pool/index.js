@@ -18,10 +18,16 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  RESUME_GET,
   TALENT_POOLS_GET,
+  TALENT_POOL_ADD,
   TALENT_POOL_CATEGORIES_GET,
   TALENT_POOL_CATEGORY_ADD,
+  TALENT_POOL_CATEGORY_DELETE,
+  TALENT_POOL_DELETE,
   TALENT_POOL_FILTERS_GET,
+  TALENT_POOL_GET,
+  TALENT_POOL_SHARES_GET,
 } from "lib/features";
 
 import { TalentPoolService } from "../../../../apis/talent-pool/talent-pool.service";
@@ -37,14 +43,7 @@ import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
 import ModalLinkList from "../../../../components/modal/talent-pool/modalLinkList";
 import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
-import {
-  RESUME_GET,
-  TALENT_POOL_ADD,
-  TALENT_POOL_CATEGORY_DELETE,
-  TALENT_POOL_DELETE,
-  TALENT_POOL_GET,
-  TALENT_POOL_SHARES_GET,
-} from "../../../../lib/features";
+import { TALENT_POOL_SHARE_ADD } from "../../../../lib/features";
 import { permissionWarningNotification } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
@@ -74,6 +73,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
     TALENT_POOL_CATEGORY_DELETE
   );
 
+  const isAllowedToAddTalentPoolShare = hasPermission(TALENT_POOL_SHARE_ADD);
   const isAllowedToGetResume = hasPermission(RESUME_GET);
 
   const [queryParams, setQueryParams] = useQueryParams({
@@ -285,7 +285,9 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }
                     isAllowedToAddTalentPool={isAllowedToAddTalentPool}
                     isAllowedToDeleteTalentPool={isAllowedToDeleteTalentPool}
-                    isAllowedToGetResume={isAllowedToGetResume}
+                    isAllowedToAddTalentPoolShare={
+                      isAllowedToAddTalentPoolShare
+                    }
                     queryParams={queryParams}
                     setQueryParams={setQueryParams}
                     category={category}
