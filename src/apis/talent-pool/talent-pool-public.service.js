@@ -116,7 +116,7 @@ export class TalentPoolPublicService {
     return apiRes;
   };
 
-  static mark = async (talentId) => {
+  static mark = async (payload) => {
     const apiRes = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/markTalentPoolSharePublic`,
       {
@@ -124,7 +124,7 @@ export class TalentPoolPublicService {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ talent_id: talentId }),
+        body: JSON.stringify(payload),
       }
     )
       .then((res) => res.json())

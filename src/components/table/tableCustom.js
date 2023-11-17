@@ -2244,7 +2244,9 @@ const TableCustomTalentPoolList = ({
       }}
       rowClassName={(record, idx) => {
         return `${record.id === rowstate && `cursor-pointer `}
-        ${isPublic && record.mark == 1 && `bg-[#00589F26] bg-opacity15`}}`;
+        ${
+          isPublic && record.mark_count == 1 && `bg-[#00589F26] bg-opacity15`
+        }}`;
       }}
     />
   );

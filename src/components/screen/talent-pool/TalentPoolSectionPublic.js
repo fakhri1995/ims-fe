@@ -147,8 +147,13 @@ const TalentPoolSectionPublic = ({
     "Enter"
   );
 
-  const handleMarkTalent = async (talentId) => {
-    await TalentPoolPublicService.mark(talentId)
+  const handleMarkTalent = async (data) => {
+    const payload = {
+      talent_id: data.id,
+      share_id: shareId,
+    };
+
+    await TalentPoolPublicService.mark(payload)
       .then((res) => {
         if (res.success) {
           refetchTalents();
@@ -316,13 +321,13 @@ const TalentPoolSectionPublic = ({
           children: (
             <div className="flex flex-col md:flex-row gap-2 items-center">
               <ButtonSys
-                type={record.mark == 1 ? "primary" : "default"}
+                type={record.mark_count == 1 ? "primary" : "default"}
                 color={"secondary100"}
                 // disabled={!isAllowedToMarkTalent}
                 onClick={(event) => {
                   event.stopPropagation();
                   setDataRowClicked(record);
-                  handleMarkTalent(record?.id);
+                  handleMarkTalent(record);
                 }}
               >
                 <UserAddOutlined rev={""} />
