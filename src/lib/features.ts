@@ -138,6 +138,7 @@ export const ATTENDANCE_ACTIVITY_USERS_EXPORT =
  * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/89653264/Messages
  */
 export const CAREER_ADD = "CAREER_ADD";
+export const CAREERS_V2_GET = "CAREERS_V2_POSTED_GET";
 export const CAREER_UPDATE = "CAREER_UPDATE";
 export const CAREER_DELETE = "CAREER_DELETE";
 export const MESSAGES_GET = "MESSAGES_GET";
