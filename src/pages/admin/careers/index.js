@@ -3,36 +3,89 @@ import {
   EditOutlined,
   SelectOutlined,
 } from "@ant-design/icons";
-import { Button, Drawer, Form, Input, Modal, Table, notification } from "antd";
+import {
+  Button,
+  Drawer,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Switch,
+  Table,
+  notification,
+} from "antd";
+import {
+  ArrayParam,
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import QueryString from "qs";
+import { useEffect, useState } from "react";
+import CurrencyFormat from "react-currency-format";
 
 import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { CAREER_ADD, CAREER_DELETE, CAREER_UPDATE } from "lib/features";
+import {
+  CAREERS_V2_GET,
+  CAREER_ADD,
+  CAREER_DELETE,
+  CAREER_UPDATE,
+  RECRUITMENT_ROLE_TYPES_LIST_GET,
+} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
-export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
+export const Careers = ({ initProps, dataProfile, sidemenu }) => {
   const rt = useRouter();
   const { hasPermission } = useAccessControl();
+  const isAllowedToGetCareer = hasPermission(CAREERS_V2_GET);
   const isAllowedToAddCareer = hasPermission(CAREER_ADD);
   const isAllowedToUpdateCareer = hasPermission(CAREER_UPDATE);
   const isAllowedToDeleteCareer = hasPermission(CAREER_DELETE);
-
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    from: withDefault(StringParam, undefined),
+    to: withDefault(StringParam, undefined),
+  });
+  const [dataExperience, setDataExperience] = useState([
+    {
+      id: 1,
+      name: "0 - 1 Tahun",
+    },
+    {
+      id: 2,
+      name: "1 - 3 Tahun",
+    },
+    {
+      id: 3,
+      name: "3 - 5 Tahun",
+    },
+    {
+      id: 4,
+      name: "Lebih dari 5 Tahun",
+    },
+  ]);
   const pathArr = rt.pathname.split("/").slice(1);
-
+  const isAllowedToGetRoleTypeList = hasPermission(
+    RECRUITMENT_ROLE_TYPES_LIST_GET
+  );
+  const [dataRoleTypeList, setDataRoleTypeList] = useState([]);
   //Definisi table
   const columnsFeature = [
     {
       title: "No",
-      dataIndex: "nomor",
-      key: "nomor",
+      dataIndex: "num",
       render: (text, record, index) => {
         return {
           props: {
@@ -51,14 +104,21 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
                   setdrawedit(true);
                   setdataedit({
                     id: record.id,
-                    position_name: record.position_name,
-                    job_description: record.job_description,
-                    job_category: record.job_category,
-                    register_link: record.register_link,
+                    name: record.name,
+                    description: record.description,
+                    qualification: record.qualification,
+                    overview: record.overview,
+                    salary_min: record.salary_min,
+                    salary_max: record.salary_max,
+                    career_role_type_id: record.career_role_type_id,
+                    career_experience_id: record.career_experience_id,
+                    is_posted: record.is_posted,
                   });
                 }}
               >
-                <h1 className="hover:text-gray-500">{record.nomor}</h1>
+                <h1 className="hover:text-gray-500">
+                  {dataRawCareers?.from + index}
+                </h1>
               </a>
             </>
           ),
@@ -67,8 +127,8 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
     },
     {
       title: "Position Name",
-      dataIndex: "position_name",
-      key: "position_name",
+      dataIndex: "name",
+      key: "name",
       render: (text, record, index) => {
         return {
           props: {
@@ -76,16 +136,33 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
           },
           children: (
             <>
-              <p className=" text-base">{record.position_name}</p>
+              <p className=" text-base">{record.name}</p>
             </>
           ),
         };
       },
     },
+    // {
+    //   title: "Description",
+    //   dataIndex: "job_description",
+    //   key: "job_description",
+    //   render: (text, record, index) => {
+    //     return {
+    //       props: {
+    //         style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
+    //       },
+    //       children: (
+    //         <>
+    //           <p className="text-xs">{record.job_description}</p>
+    //         </>
+    //       ),
+    //     };
+    //   },
+    // },
     {
-      title: "Description",
-      dataIndex: "job_description",
-      key: "job_description",
+      title: "Status",
+      dataIndex: "is_posted",
+      key: "is_posted",
       render: (text, record, index) => {
         return {
           props: {
@@ -93,51 +170,34 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
           },
           children: (
             <>
-              <p className="text-xs">{record.job_description}</p>
+              <h1 className="text-xs">{text == 1 ? "Posted" : "Archived"}</h1>
             </>
           ),
         };
       },
     },
-    {
-      title: "Category",
-      dataIndex: "job_category",
-      key: "job_category",
-      render: (text, record, index) => {
-        return {
-          props: {
-            style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
-          children: (
-            <>
-              <h1 className="text-xs">{record.job_category}</h1>
-            </>
-          ),
-        };
-      },
-    },
-    {
-      title: "Link",
-      dataIndex: "register_link",
-      key: "register_link",
-      align: "center",
-      render: (text, record, index) => {
-        return {
-          props: {
-            style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
-          children: (
-            <>
-              <a href={record.register_link} target="_blank">
-                <h1 className=" text-blue-400 hover:text-blue-800 text-xs">
-                  {record.register_link} <SelectOutlined />
-                </h1>
-              </a>
-            </>
-          ),
-        };
-      },
-    },
+    // {
+    //   title: "Link",
+    //   dataIndex: "register_link",
+    //   key: "register_link",
+    //   align: "center",
+    //   render: (text, record, index) => {
+    //     return {
+    //       props: {
+    //         style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
+    //       },
+    //       children: (
+    //         <>
+    //           <a href={record.register_link} target="_blank">
+    //             <h1 className=" text-blue-400 hover:text-blue-800 text-xs">
+    //               {record.register_link} <SelectOutlined />
+    //             </h1>
+    //           </a>
+    //         </>
+    //       ),
+    //     };
+    //   },
+    // },
     {
       dataIndex: "status",
       key: "status",
@@ -159,10 +219,15 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
                   setdrawedit(true);
                   setdataedit({
                     id: record.id,
-                    position_name: record.position_name,
-                    job_description: record.job_description,
-                    job_category: record.job_category,
-                    register_link: record.register_link,
+                    name: record.name,
+                    description: record.description,
+                    qualification: record.qualification,
+                    overview: record.overview,
+                    salary_min: record.salary_min,
+                    salary_max: record.salary_max,
+                    career_role_type_id: record.career_role_type_id,
+                    career_experience_id: record.career_experience_id,
+                    is_posted: record.is_posted,
                   });
                 }}
                 style={{
@@ -179,7 +244,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
                 onClick={() => {
                   setmodaldelete(true);
                   setdatadelete({ ...datadelete, id: parseInt(record.id) });
-                  setfeatureselected(record.position_name);
+                  setfeatureselected(record.name);
                 }}
                 style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}
               >
@@ -193,32 +258,36 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
   ];
 
   //useState
-  const datatemp = dataCareers.data ?? [];
-  const dataCareersMap = datatemp.map((doc, idx) => {
-    return {
-      ...doc,
-      nomor: idx + 1,
-    };
-  });
+  const [loadingProjects, setLoadingProjects] = useState(true);
 
   //create
   const [drawcreate, setdrawcreate] = useState(false);
   const [loadingcreate, setloadingcreate] = useState(false);
   const [datacreate, setdatacreate] = useState({
-    position_name: "",
-    job_description: "",
-    job_category: "",
-    register_link: "",
+    name: "",
+    description: "",
+    qualification: "",
+    overview: "",
+    salary_min: 0,
+    salary_max: 0,
+    career_role_type_id: null,
+    career_experience_id: null,
+    is_posted: 0,
   });
   //update
   const [drawedit, setdrawedit] = useState(false);
   const [loadingedit, setloadingedit] = useState(false);
   const [dataedit, setdataedit] = useState({
     id: 0,
-    position_name: "",
-    job_description: "",
-    job_category: "",
-    register_link: "",
+    name: "",
+    description: "",
+    qualification: "",
+    overview: "",
+    salary_min: 0,
+    salary_max: 0,
+    career_role_type_id: null,
+    career_experience_id: null,
+    is_posted: 0,
   });
   //delete
   const [modaldelete, setmodaldelete] = useState(false);
@@ -227,11 +296,125 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
   const [datadelete, setdatadelete] = useState({
     id: 0,
   });
+  const [dataCareersNew, setDataCareersNew] = useState([]);
+  const [dataRawCareers, setDataRawCareers] = useState({
+    current_page: "",
+    data: [],
+    first_page_url: "",
+    from: null,
+    last_page: null,
+    last_page_url: "",
+    next_page_url: "",
+    path: "",
+    per_page: null,
+    prev_page_url: null,
+    to: null,
+    total: null,
+  });
+
+  //get data type role list
+  useEffect(() => {
+    if (!isAllowedToGetRoleTypeList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Tipe Role");
+      // setLoadingRoleTypeList(false);
+      return;
+    }
+
+    // setLoadingRoleTypeList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoleTypesList`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRoleTypeList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingRoleTypeList(false);
+      });
+  }, [isAllowedToGetRoleTypeList]);
+  //get data
+  useEffect(() => {
+    if (!isAllowedToGetCareer) {
+      permissionWarningNotification("Mendapatkan", "Data Tabel Careers");
+      setLoadingProjects(false);
+      return;
+    }
+
+    const params = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
+    const fetchData = async () => {
+      getCareers(params);
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
+  }, [
+    isAllowedToGetCareer,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+    queryParams.from,
+    queryParams.to,
+  ]);
+
+  //getdata careers
+  const getCareers = (params) => {
+    setLoadingProjects(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/getCareers${params}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRawCareers(res2.data);
+          setDataCareersNew(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingProjects(false);
+      });
+  };
 
   //handler
   const handleCreate = () => {
     setloadingcreate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addCareer`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/addCareer`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -247,15 +430,22 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
             duration: 3,
           });
           setdatacreate({
-            position_name: "",
-            job_description: "",
-            job_category: "",
-            register_link: "",
+            name: "",
+            description: "",
+            qualification: "",
+            overview: "",
+            salary_min: 0,
+            salary_max: 0,
+            career_role_type_id: null,
+            career_experience_id: null,
           });
           setTimeout(() => {
             setloadingcreate(false);
             setdrawcreate(false);
-            rt.push(`/admin/careers`);
+            const params = QueryString.stringify(queryParams, {
+              addQueryPrefix: true,
+            });
+            getCareers(params);
           }, 500);
         } else if (!res2.success) {
           notification["error"]({
@@ -269,7 +459,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
   };
   const handleEdit = () => {
     setloadingedit(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateCareer`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/updateCareer`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -286,16 +476,21 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
           });
           setdataedit({
             id: 0,
-            position_name: "",
-            job_description: "",
-            job_category: "",
-            register_link: "",
+            name: "",
+            description: "",
+            qualification: "",
+            overview: "",
+            salary_min: 0,
+            salary_max: 0,
+            career_role_type_id: null,
+            career_experience_id: null,
           });
-          setTimeout(() => {
-            setloadingedit(false);
-            setdrawedit(false);
-            rt.push(`/admin/careers`);
-          }, 500);
+          setloadingedit(false);
+          setdrawedit(false);
+          const params = QueryString.stringify(queryParams, {
+            addQueryPrefix: true,
+          });
+          getCareers(params);
         } else if (!res2.success) {
           notification["error"]({
             message: res2.message.errorInfo.status_detail,
@@ -308,7 +503,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
   };
   const handleDelete = () => {
     setloadingdelete(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteCareer`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/deleteCareer`, {
       method: "DELETE",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -329,7 +524,10 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
           setTimeout(() => {
             setloadingdelete(false);
             setmodaldelete(false);
-            rt.push(`/admin/careers`);
+            const params = QueryString.stringify(queryParams, {
+              addQueryPrefix: true,
+            });
+            getCareers(params);
           }, 500);
         } else if (!res2.success) {
           notification["error"]({
@@ -366,7 +564,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
         <div className="col-span-5 p-0 md:p-5 flex flex-col">
           <Table
             columns={columnsFeature}
-            dataSource={dataCareersMap}
+            dataSource={dataCareersNew}
             pagination={{ pageSize: 8 }}
             scroll={{ x: 300 }}
           ></Table>
@@ -392,7 +590,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
             >
               <Form.Item
                 label="Position Name"
-                name="position_name"
+                name="name"
                 rules={[
                   {
                     required: true,
@@ -401,18 +599,158 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
                 ]}
               >
                 <Input
-                  defaultValue={datacreate.position_name}
+                  defaultValue={datacreate.name}
                   onChange={(e) => {
                     setdatacreate({
                       ...datacreate,
-                      position_name: e.target.value,
+                      name: e.target.value,
+                    });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Status Kontrak"
+                name="career_role_type_id"
+                rules={[
+                  {
+                    required: true,
+                    message: "Status Kontrak wajib diisi",
+                  },
+                ]}
+              >
+                <Select
+                  value={
+                    datacreate?.career_role_type_id &&
+                    Number(datacreate?.career_role_type_id)
+                  }
+                  onChange={(e) => {
+                    setdatacreate({
+                      ...datacreate,
+                      career_role_type_id: e,
+                    });
+                  }}
+                  placeholder="Pilih status kontrak"
+                >
+                  <>
+                    {dataRoleTypeList?.map((option) => (
+                      <Select.Option key={option.id} value={option.id}>
+                        {option.name}
+                      </Select.Option>
+                    ))}
+                  </>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="Pengalaman Kerja"
+                name="career_experience_id"
+                rules={[
+                  {
+                    required: true,
+                    message: "Pengalaman Kerja wajib diisi",
+                  },
+                ]}
+              >
+                <Select
+                  value={
+                    datacreate?.career_experience_id &&
+                    Number(datacreate?.career_experience_id)
+                  }
+                  onChange={(e) => {
+                    setdatacreate({
+                      ...datacreate,
+                      career_experience_id: e,
+                    });
+                  }}
+                  placeholder="Pilih pengalaman kerja"
+                >
+                  <>
+                    {dataExperience?.map((option) => (
+                      <Select.Option key={option.id} value={option.id}>
+                        {option.name}
+                      </Select.Option>
+                    ))}
+                  </>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="Salary Min"
+                name="salary_min"
+                rules={[
+                  {
+                    required: true,
+                    message: "Salary Min wajib diisi",
+                  },
+                ]}
+              >
+                <CurrencyFormat
+                  customInput={Input}
+                  placeholder={"Masukkan Minimal Gaji"}
+                  value={datacreate?.salary_min || 0}
+                  thousandSeparator={"."}
+                  decimalSeparator={","}
+                  prefix={"Rp"}
+                  allowNegative={false}
+                  onValueChange={(values) => {
+                    const { formattedValue, value, floatValue } = values;
+                    setdatacreate((prev) => ({
+                      ...prev,
+                      salary_min: floatValue || 0,
+                    }));
+                  }}
+                  renderText={(value) => <p>{value}</p>}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Salary Max"
+                name="salary_max"
+                rules={[
+                  {
+                    required: true,
+                    message: "Salary Max wajib diisi",
+                  },
+                ]}
+              >
+                <CurrencyFormat
+                  customInput={Input}
+                  placeholder={"Masukkan Maksimal Gaji"}
+                  value={datacreate?.salary_max || 0}
+                  thousandSeparator={"."}
+                  decimalSeparator={","}
+                  prefix={"Rp"}
+                  allowNegative={false}
+                  onValueChange={(values) => {
+                    const { formattedValue, value, floatValue } = values;
+                    setdatacreate((prev) => ({
+                      ...prev,
+                      salary_max: floatValue || 0,
+                    }));
+                  }}
+                  renderText={(value) => <p>{value}</p>}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Overview"
+                name="overview"
+                rules={[
+                  {
+                    required: true,
+                    message: "Overview wajib diisi",
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  defaultValue={datacreate.overview}
+                  onChange={(e) => {
+                    setdatacreate({
+                      ...datacreate,
+                      overview: e.target.value,
                     });
                   }}
                 />
               </Form.Item>
               <Form.Item
                 label="Description"
-                name="job_description"
+                name="description"
                 rules={[
                   {
                     required: true,
@@ -421,55 +759,61 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
                 ]}
               >
                 <Input.TextArea
-                  defaultValue={datacreate.job_description}
+                  defaultValue={datacreate.description}
                   onChange={(e) => {
                     setdatacreate({
                       ...datacreate,
-                      job_description: e.target.value,
+                      description: e.target.value,
+                    });
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Qualification"
+                name="qualification"
+                rules={[
+                  {
+                    required: true,
+                    message: "Qualification wajib diisi",
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  defaultValue={datacreate.qualification}
+                  onChange={(e) => {
+                    setdatacreate({
+                      ...datacreate,
+                      qualification: e.target.value,
                     });
                   }}
                 />
               </Form.Item>
               <Form.Item
-                label="Category"
-                name="job_category"
+                label="Status"
+                name="is_posted"
                 rules={[
                   {
                     required: true,
-                    message: "Category wajib diisi",
+                    message: "Status wajib diisi",
                   },
                 ]}
               >
-                <Input
-                  defaultValue={datacreate.job_category}
+                <Switch
+                  size="large"
+                  checkedChildren="Posted"
+                  unCheckedChildren="Archived"
+                  defaultChecked
+                  checked={datacreate?.is_posted}
                   onChange={(e) => {
                     setdatacreate({
                       ...datacreate,
-                      job_category: e.target.value,
+                      is_posted: e == true ? 1 : 0,
                     });
                   }}
                 />
               </Form.Item>
-              <Form.Item
-                label="Register Link"
-                name="register_link"
-                rules={[
-                  {
-                    required: true,
-                    message: "Register Link wajib diisi",
-                  },
-                ]}
-              >
-                <Input
-                  defaultValue={datacreate.register_link}
-                  onChange={(e) => {
-                    setdatacreate({
-                      ...datacreate,
-                      register_link: e.target.value,
-                    });
-                  }}
-                />
-              </Form.Item>
+
               <div className="flex justify-end">
                 <Button
                   type="default"
@@ -512,7 +856,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
             >
               <Form.Item
                 label="Position Name"
-                name="position_name"
+                name="name"
                 rules={[
                   {
                     required: true,
@@ -521,15 +865,155 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
                 ]}
               >
                 <Input
-                  defaultValue={dataedit.position_name}
+                  defaultValue={dataedit.name}
                   onChange={(e) => {
-                    setdataedit({ ...dataedit, position_name: e.target.value });
+                    setdataedit({ ...dataedit, name: e.target.value });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Status Kontrak"
+                name="career_role_type_id"
+                rules={[
+                  {
+                    required: true,
+                    message: "Status Kontrak wajib diisi",
+                  },
+                ]}
+              >
+                <Select
+                  value={
+                    dataedit?.career_role_type_id &&
+                    Number(dataedit?.career_role_type_id)
+                  }
+                  onChange={(e) => {
+                    setdataedit({
+                      ...dataedit,
+                      career_role_type_id: e,
+                    });
+                  }}
+                  placeholder="Pilih status kontrak"
+                >
+                  <>
+                    {dataRoleTypeList?.map((option) => (
+                      <Select.Option key={option.id} value={option.id}>
+                        {option.name}
+                      </Select.Option>
+                    ))}
+                  </>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="Pengalaman Kerja"
+                name="career_experience_id"
+                rules={[
+                  {
+                    required: true,
+                    message: "Pengalaman Kerja wajib diisi",
+                  },
+                ]}
+              >
+                <Select
+                  value={
+                    dataedit?.career_experience_id &&
+                    Number(dataedit?.career_experience_id)
+                  }
+                  onChange={(e) => {
+                    setdataedit({
+                      ...dataedit,
+                      career_experience_id: e,
+                    });
+                  }}
+                  placeholder="Pilih pengalaman kerja"
+                >
+                  <>
+                    {dataExperience?.map((option) => (
+                      <Select.Option key={option.id} value={option.id}>
+                        {option.name}
+                      </Select.Option>
+                    ))}
+                  </>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="Salary Min"
+                name="salary_min"
+                rules={[
+                  {
+                    required: true,
+                    message: "Salary Min wajib diisi",
+                  },
+                ]}
+              >
+                <CurrencyFormat
+                  customInput={Input}
+                  placeholder={"Masukkan Minimal Gaji"}
+                  value={dataedit?.salary_min || 0}
+                  thousandSeparator={"."}
+                  decimalSeparator={","}
+                  prefix={"Rp"}
+                  allowNegative={false}
+                  onValueChange={(values) => {
+                    const { formattedValue, value, floatValue } = values;
+                    setdataedit((prev) => ({
+                      ...prev,
+                      salary_min: floatValue || 0,
+                    }));
+                  }}
+                  renderText={(value) => <p>{value}</p>}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Salary Max"
+                name="salary_max"
+                rules={[
+                  {
+                    required: true,
+                    message: "Salary Max wajib diisi",
+                  },
+                ]}
+              >
+                <CurrencyFormat
+                  customInput={Input}
+                  placeholder={"Masukkan Maksimal Gaji"}
+                  value={dataedit?.salary_max || 0}
+                  thousandSeparator={"."}
+                  decimalSeparator={","}
+                  prefix={"Rp"}
+                  allowNegative={false}
+                  onValueChange={(values) => {
+                    const { formattedValue, value, floatValue } = values;
+                    setdataedit((prev) => ({
+                      ...prev,
+                      salary_max: floatValue || 0,
+                    }));
+                  }}
+                  renderText={(value) => <p>{value}</p>}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Overview"
+                name="overview"
+                rules={[
+                  {
+                    required: true,
+                    message: "Overview wajib diisi",
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  defaultValue={dataedit.overview}
+                  onChange={(e) => {
+                    setdataedit({
+                      ...dataedit,
+                      overview: e.target.value,
+                    });
                   }}
                 />
               </Form.Item>
               <Form.Item
                 label="Description"
-                name="job_description"
+                name="description"
                 rules={[
                   {
                     required: true,
@@ -538,46 +1022,57 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
                 ]}
               >
                 <Input.TextArea
-                  defaultValue={dataedit.job_description}
+                  defaultValue={dataedit.description}
                   onChange={(e) => {
                     setdataedit({
                       ...dataedit,
-                      job_description: e.target.value,
+                      description: e.target.value,
+                    });
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Qualification"
+                name="qualification"
+                rules={[
+                  {
+                    required: true,
+                    message: "Qualification wajib diisi",
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  defaultValue={dataedit.qualification}
+                  onChange={(e) => {
+                    setdataedit({
+                      ...dataedit,
+                      qualification: e.target.value,
                     });
                   }}
                 />
               </Form.Item>
               <Form.Item
-                label="Category"
-                name="job_category"
+                label="Status"
+                name="is_posted"
                 rules={[
                   {
                     required: true,
-                    message: "Category wajib diisi",
+                    message: "Status wajib diisi",
                   },
                 ]}
               >
-                <Input
-                  defaultValue={dataedit.job_category}
+                <Switch
+                  size="large"
+                  checkedChildren="Posted"
+                  unCheckedChildren="Archived"
+                  defaultChecked
+                  checked={dataedit?.is_posted}
                   onChange={(e) => {
-                    setdataedit({ ...dataedit, job_category: e.target.value });
-                  }}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Register Link"
-                name="register_link"
-                rules={[
-                  {
-                    required: true,
-                    message: "Register Link wajib diisi",
-                  },
-                ]}
-              >
-                <Input
-                  defaultValue={dataedit.register_link}
-                  onChange={(e) => {
-                    setdataedit({ ...dataedit, register_link: e.target.value });
+                    setdataedit({
+                      ...dataedit,
+                      is_posted: e == true ? 1 : 0,
+                    });
                   }}
                 />
               </Form.Item>
@@ -646,23 +1141,10 @@ export async function getServerSideProps({ req, res }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
-  const resourcesGC = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCareers`,
-    {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    }
-  );
-  const resjsonGC = await resourcesGC.json();
-  const dataCareers = resjsonGC;
-
   return {
     props: {
       initProps,
       dataProfile,
-      dataCareers,
       sidemenu: "4",
     },
   };
