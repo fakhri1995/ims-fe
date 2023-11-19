@@ -7,13 +7,14 @@ import { useQuery } from "react-query";
 import { CandidateService } from "../../../apis/candidates";
 import { RESUME_GET } from "../../../lib/features";
 import { getNameInitial, momentFormatDate } from "../../../lib/helper";
-import { ArrowUpRightIconSvg } from "../../icon";
+import { ArrowUpRightIconSvg, PinFilledIconSvg } from "../../icon";
 
 const TalentDetailCard = ({
   talentId,
   dataResume,
-  isPublic,
+  isPublic = false,
   isAllowedToGetTalentPool,
+  markList,
 }) => {
   const rt = useRouter();
 
@@ -111,6 +112,22 @@ const TalentDetailCard = ({
           </div>
         </div>
       </div>
+
+      {!isPublic && (
+        <div className="border-t border-mono100 pt-2 flex flex-wrap gap-2 items-center ">
+          {markList?.map((item) => (
+            <div
+              key={item.id}
+              className="px-1 py-0.5 flex items-center gap-1 bg-secondary100 bg-opacity-10 rounded-md"
+            >
+              <PinFilledIconSvg color={"#00589F"} size={16} />
+              <p className="text-secondary100 font-bold">
+                {item?.requester?.company?.name}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

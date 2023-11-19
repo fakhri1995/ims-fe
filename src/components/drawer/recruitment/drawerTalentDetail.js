@@ -204,6 +204,32 @@ const DrawerTalentDetail = ({ visible, onvisible, dataTalent, onDelete }) => {
             </Button>
           </Dropdown>
         </div>
+        <hr className="" />
+
+        <div>
+          <h5 className="mb-6 mig-heading--5 font-bold">Keterangan</h5>
+          <div className="grid grid-cols-1 gap-4">
+            {dataTalent?.mark?.map((item) => (
+              <div key={item.id} className="shadow-lg rounded-md px-6 py-3">
+                <div className="flex justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-secondary100 rounded-full" />
+                    <p className="mig-caption--bold">
+                      {item?.requester?.company?.name}
+                    </p>
+                  </div>
+                  <div className="bg-secondary100 text-white mig-caption--bold px-2 py-1 rounded">
+                    Menandai
+                  </div>
+                </div>
+                <p>
+                  Perusahaan <b>{item?.requester?.company?.name}</b> telah
+                  menandai talent ini.
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </DrawerCore>
   );
