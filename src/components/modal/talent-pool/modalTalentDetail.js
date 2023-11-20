@@ -79,7 +79,7 @@ const ModalTalentDetail = ({
         <div className="flex items-center gap-2 whitespace-nowrap">
           <UserAddOutlined rev={""} />
           <p className="mig-caption--small">
-            {!dataTalent?.mark ? "Tandai Talent" : "Batal Tandai Talent"}
+            {!dataTalent?.mark_count ? "Tandai Talent" : "Batal Tandai Talent"}
           </p>
         </div>
       </ButtonSys>

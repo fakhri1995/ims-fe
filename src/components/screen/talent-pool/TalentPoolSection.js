@@ -223,14 +223,18 @@ const TalentPoolSection = ({
       render: (text, record) => {
         return {
           children: (
-            <div className="xl:w-40">
-              {text || "-"}
+            <div className="xl:w-40 flex gap-2 items-center">
+              <p className="truncate">{text || "-"}</p>
+              {record.mark?.length > 0 && (
+                <div className="w-4 h-4 rounded-full bg-secondary100" />
+              )}
               {isHovered && rowState === record.id && (
                 <div className={`absolute left-40 w-[35vw] h-full z-50 top-3`}>
                   <TalentDetailCard
                     isAllowedToGetTalentPool={isAllowedToGetTalentPool}
                     talentId={record?.id}
                     dataResume={record?.resume}
+                    markList={record?.mark}
                   />
                 </div>
               )}
