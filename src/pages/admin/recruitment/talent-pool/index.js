@@ -212,12 +212,12 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
                   </p>
                 </div>
               </ButtonSys>
-              <ButtonSys type={"primary"} color={"secondary100"}>
+              {/* <ButtonSys type={"primary"} color={"secondary100"}>
                 <div className="flex gap-2 items-center">
                   <UsersIconSvg size={16} color={"#FFFFFF"} />
                   <p className="mig-caption">Kelola Permintaan Klien</p>
                 </div>
-              </ButtonSys>
+              </ButtonSys> */}
               <ButtonSys
                 type={"primary"}
                 onClick={() => setModalCategoryCreate(true)}
