@@ -372,16 +372,18 @@ const TalentPoolSectionPublic = ({
         {/* Filter by position (dropdown) */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.roles}
             allowClear
-            name={`role`}
-            // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
+            showSearch
+            mode="multiple"
+            name={`roles`}
             placeholder="Posisi"
             style={{ width: `100%` }}
+            defaultValue={queryParams.roles}
             onChange={(value) => {
               setQueryParams({ roles: value });
               setSelectedRole(value);
             }}
+            // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
           >
             {dataFilters?.role?.map((item) => (
               <Select.Option key={item.id} value={item.name}>
@@ -393,9 +395,11 @@ const TalentPoolSectionPublic = ({
         {/* Filter by skill */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.skills}
             allowClear
-            name={`skill`}
+            showSearch
+            mode="multiple"
+            name={`skills`}
+            defaultValue={queryParams.skills}
             // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
             placeholder="Skill"
             style={{ width: `100%` }}
@@ -414,9 +418,11 @@ const TalentPoolSectionPublic = ({
         {/* Filter by years of experience */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.years}
             allowClear
-            name={`year`}
+            showSearch
+            mode="multiple"
+            name={`years`}
+            defaultValue={queryParams.years}
             // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
             placeholder="Tahun Pengalaman"
             style={{ width: `100%` }}
@@ -435,9 +441,11 @@ const TalentPoolSectionPublic = ({
         {/* Filter by university */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.educations}
             allowClear
+            showSearch
+            mode="multiple"
             name={`university`}
+            defaultValue={queryParams.educations}
             // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
             placeholder="Universitas"
             style={{ width: `100%` }}
