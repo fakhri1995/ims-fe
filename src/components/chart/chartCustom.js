@@ -103,15 +103,15 @@ const ChartHorizontalBar = ({ dataChart, objName, value, colorBarList }) => {
       <div className="md:w-2/3 h-24">
         <Bar
           data={{
-            labels: dataChart.map((doc) => doc[objName]),
+            labels: dataChart?.map((doc) => doc[objName]),
             datasets: [
               {
-                data: dataChart.map((doc) => doc[value]),
-                backgroundColor: dataChart.map(
+                data: dataChart?.map((doc) => doc[value]),
+                backgroundColor: dataChart?.map(
                   (doc, idx) =>
                     colorBarList[idx + (1 % colorBarList.length) - 1]
                 ),
-                borderColor: dataChart.map(
+                borderColor: dataChart?.map(
                   (doc, idx) =>
                     colorBarList[idx + (1 % colorBarList.length) - 1]
                 ),
@@ -169,7 +169,7 @@ const ChartHorizontalBar = ({ dataChart, objName, value, colorBarList }) => {
       </div>
 
       <div className="flex flex-col md:w-1/4">
-        {dataChart.map((doc, idx) => (
+        {dataChart?.map((doc, idx) => (
           <div key={idx} className="flex items-center justify-between">
             <p className="w-3/4 font-medium">{doc[objName]}</p>
             <p className="mig-heading--4 ">{doc[value]}</p>

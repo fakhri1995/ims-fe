@@ -12,9 +12,9 @@ import {
   withDefault,
 } from "next-query-params";
 import { useRouter } from "next/router";
-import QueryString from "qs";
 import React from "react";
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 import { DataEmptyState } from "components/states/DataEmptyState";
@@ -39,6 +39,7 @@ import {
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import { PayslipService } from "../../../../apis/employee";
 import ButtonSys from "../../../../components/button";
 import { ChartHorizontalBar } from "../../../../components/chart/chartCustom";
 import {
@@ -139,18 +140,11 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2. useState
   // 2.1. Charts
-  const [loadingChart, setLoadingChart] = useState(false);
-  const [payslipStatusCount, setPayslipStatusCount] = useState([]);
   const [payslipId, setPayslipId] = useState(null);
   const dataColorBar = ["#E5C471", "#35763B"];
 
   // 2.2. Table Employee List
   // filter data
-  const [loadingCompanyList, setLoadingCompanyList] = useState(false);
-  const [dataCompanyList, setDataCompanyList] = useState([]);
-
-  const [loadingRoleList, setLoadingRoleList] = useState(false);
-  const [dataRoleList, setDataRoleList] = useState([]);
 
   const dataPayslipStatusList = [
     {
@@ -175,228 +169,109 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     useState(undefined);
 
   // table data
-  const [loadingPayslips, setLoadingPayslips] = useState(true);
   const [dataPayslips, setDataPayslips] = useState([]);
-  const [dataRawPayslips, setDataRawPayslips] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
-
-  const [refresh, setRefresh] = useState(-1);
 
   // 2.3. Post, download payslip
   const [loadingPost, setLoadingPost] = useState(false);
   const [modalPost, setModalPost] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
 
-  // 2.4. Delete payslip
-  const [modalDelete, setModalDelete] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
-
   // 2.5. Add salary variable
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
 
-  // 3. UseEffect
+  // 3. UseQuery & UseEffect
   // 3.1. Get Payslips
-  useEffect(() => {
-    if (!isAllowedToGetPayslips) {
-      permissionWarningNotification("Mendapatkan", "Daftar Slip Gaji");
-      setLoadingPayslips(false);
-      return;
+  const {
+    data: dataRawPayslips,
+    isLoading: loadingPayslips,
+    refetch: refetchPayslips,
+  } = useQuery(
+    [EMPLOYEE_PAYSLIPS_GET, queryParams],
+    () =>
+      PayslipService.getPayslips(
+        initProps,
+        isAllowedToGetPayslips,
+        queryParams,
+        searchingFilterPayslips
+      ),
+    {
+      enabled: isAllowedToGetPayslips,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataPayslips(data.data);
+      },
     }
+  );
 
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      refetchPayslips();
+    }, 500);
 
-    const fetchData = async () => {
-      setLoadingPayslips(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeesPayslip${payload}&keyword=${searchingFilterPayslips}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawPayslips(res2.data);
-            setDataPayslips(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingPayslips(false);
-        });
-    };
-
-    const timer = setTimeout(() => fetchData(), 500);
-
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetPayslips,
-    refresh,
-    searchingFilterPayslips,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.keyword,
-    queryParams.role_ids,
-    queryParams.placements,
-    queryParams.is_posted,
-  ]);
+    return () => clearTimeout(delaySearch);
+  }, [searchingFilterPayslips]);
 
   // 3.2. Get Company Client List
-  useEffect(() => {
-    if (!isAllowedToGetCompanyClients) {
-      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
-      setLoadingCompanyList(false);
-      return;
+  const {
+    data: dataCompanyList,
+    isLoading: loadingCompanyList,
+    refetch: refetchCompanyList,
+  } = useQuery(
+    [COMPANY_CLIENTS_GET],
+    () =>
+      PayslipService.getCompanyClientList(
+        initProps,
+        isAllowedToGetCompanyClients
+      ),
+    {
+      enabled: isAllowedToGetCompanyClients,
+      select: (response) => response.data,
     }
-
-    setLoadingCompanyList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataCompanyList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingCompanyList(false);
-      });
-  }, [isAllowedToGetCompanyClients]);
+  );
 
   // 3.3. Get Employee Role List
-  useEffect(() => {
-    if (!isAllowedToGetRoleList) {
-      permissionWarningNotification("Mendapatkan", "Daftar Employee Role");
-      setLoadingRoleList(false);
-      return;
+  const {
+    data: dataRoleList,
+    isLoading: loadingRoleList,
+    refetch: refetchRoleList,
+  } = useQuery(
+    [RECRUITMENT_ROLES_LIST_GET],
+    () => PayslipService.getEmployeeRoleList(initProps, isAllowedToGetRoleList),
+    {
+      enabled: isAllowedToGetRoleList,
+      select: (response) => response.data,
     }
-
-    setLoadingRoleList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRolesList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRoleList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingRoleList(false);
-      });
-  }, [isAllowedToGetRoleList, refresh]);
+  );
 
   // 3.4. Get Payslip Status Count
-  useEffect(() => {
-    if (!isAllowedToGetPayslipStatusCount) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Chart Status Karyawan"
-      );
-      setLoadingChart(false);
-      return;
-    }
-
-    setLoadingChart(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslipStatusCount`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          let statusCountRes = res2.data;
-          let mappedStatusCount = statusCountRes.map((data) => {
-            return {
-              total: data?.total,
-              is_posted: Number(data?.is_posted) ? "Diterbitkan" : "Draft",
-            };
-          });
-          setPayslipStatusCount(mappedStatusCount);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+  const {
+    data: payslipStatusCount,
+    isLoading: loadingChart,
+    refetch: refetchPayslipStatusCount,
+  } = useQuery(
+    [EMPLOYEE_PAYSLIP_STATUS_COUNT_GET],
+    () =>
+      PayslipService.getPayslipStatusCount(
+        initProps,
+        isAllowedToGetPayslipStatusCount
+      ),
+    {
+      enabled: isAllowedToGetPayslipStatusCount,
+      select: (response) => {
+        let statusCountRes = response.data;
+        let mappedStatusCount = statusCountRes.map((data) => {
+          return {
+            total: data?.total,
+            is_posted: Number(data?.is_posted) ? "Diterbitkan" : "Draft",
+          };
         });
-      })
-      .finally(() => {
-        setLoadingChart(false);
-      });
-  }, [isAllowedToGetPayslipStatusCount, refresh]);
+        return mappedStatusCount;
+      },
+    }
+  );
 
   // 4. Event
   const handlePostPayslips = () => {
@@ -415,7 +290,9 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((response) => response.json())
       .then((response2) => {
         if (response2.success) {
-          setRefresh((prev) => prev + 1);
+          refetchPayslips();
+          refetchRoleList();
+          refetchPayslipStatusCount();
           notification.success({
             message: `Draft slip gaji untuk semua karyawan berhasil diterbitkan.`,
             duration: 3,
@@ -455,7 +332,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((response) => response.json())
       .then((response2) => {
         if (response2.success) {
-          setRefresh((prev) => prev + 1);
+          refetchPayslips();
+          refetchRoleList();
+          refetchPayslipStatusCount();
+
           notification.success({
             message: (
               <div>
@@ -814,7 +694,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     .includes(input.toLowerCase())
                 }
               >
-                {dataRoleList.map((role) => (
+                {dataRoleList?.map((role) => (
                   <Select.Option key={role.id} value={role.id}>
                     {role.name}
                   </Select.Option>
@@ -843,7 +723,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 }
                 optionFilterProp="children"
               >
-                {dataCompanyList.map((company) => (
+                {dataCompanyList?.map((company) => (
                   <Select.Option key={company.id} value={company.name}>
                     {company.name}
                   </Select.Option>
