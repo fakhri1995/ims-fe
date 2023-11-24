@@ -71,7 +71,7 @@ const ChartDoughnut = ({ title, dataChart, objName, value, customLegend }) => {
 
       {!customLegend ? (
         <div className="flex flex-col w-full mt-5">
-          {dataChart.map((doc, idx) => (
+          {dataChart?.map((doc, idx) => (
             <div key={idx} className="flex justify-between items-center mb-1">
               <div className="flex">
                 <div
@@ -254,7 +254,7 @@ const ChartVerticalBar = ({ dataChart, objName, value, colorBarList }) => {
       </div>
 
       <div className="flex flex-col w-full">
-        {dataChart.map((doc, idx) => (
+        {dataChart?.map((doc, idx) => (
           <div key={idx} className="flex justify-between items-center mb-1">
             <div className="flex">
               <div

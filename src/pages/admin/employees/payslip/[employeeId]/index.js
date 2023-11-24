@@ -34,7 +34,7 @@ import {
   EMPLOYEE_PAYSLIP_UPDATE,
 } from "lib/features";
 
-import { PayslipService } from "../../../../../apis/employee";
+import { EmployeeService, PayslipService } from "../../../../../apis/employee";
 import ButtonSys from "../../../../../components/button";
 import DrawerPayslipDetail from "../../../../../components/drawer/employees/drawerPayslipDetail";
 import {
@@ -149,7 +149,11 @@ const EmployeePayslipDetailIndex = ({
   } = useQuery(
     [EMPLOYEE_GET, employeeId],
     () =>
-      PayslipService.getEmployee(initProps, isAllowedToGetEmployee, employeeId),
+      EmployeeService.getEmployee(
+        initProps,
+        isAllowedToGetEmployee,
+        employeeId
+      ),
     {
       enabled: isAllowedToGetEmployee,
       select: (response) => response.data,
