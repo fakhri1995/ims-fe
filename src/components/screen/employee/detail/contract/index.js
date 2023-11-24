@@ -16,6 +16,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import CurrencyFormat from "react-currency-format";
+import { useQueryClient } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -33,6 +34,7 @@ import {
   TrashIconSvg,
   UploadIconSvg,
 } from "../../../../../components/icon";
+import { EMPLOYEE_GET } from "../../../../../lib/features";
 import {
   generateStaticAssetUrl,
   getFileName,
@@ -49,7 +51,6 @@ const EmployeeContractDetail = ({
   isAllowedToDeleteEmployeeContract,
   dataEmployee,
   initProps,
-  setRefresh,
 }) => {
   /**
    * Dependencies
@@ -71,6 +72,7 @@ const EmployeeContractDetail = ({
     employeeId == myEmployeeId || hasPermission(EMPLOYEE_CONTRACT_SALARY_READ);
 
   const rt = useRouter();
+  const queryClient = useQueryClient();
 
   // 1. USE STATE
   // Display data contract
@@ -157,7 +159,8 @@ const EmployeeContractDetail = ({
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setRefresh((prev) => prev + 1);
+          queryClient.invalidateQueries(EMPLOYEE_GET);
+
           notification.success({
             message: res2.message,
             duration: 3,

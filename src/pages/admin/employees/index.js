@@ -189,6 +189,14 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
   );
 
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      refetchEmployees();
+    }, 500);
+
+    return () => clearTimeout(delaySearch);
+  }, [searchingFilterEmployees]);
+
   // 3.2. Get Company Client List
   const {
     data: dataCompanyList,
@@ -386,11 +394,10 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((response2) => {
         if (response2.success) {
           refetchEmployees();
-          refetchCompanyList();
-          refetchRoleList();
           refetchPlacementCount();
           refetchRoleCount();
           refetchStatusCount();
+
           notification.success({
             message: response2.message,
             duration: 3,
