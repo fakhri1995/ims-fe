@@ -27,6 +27,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useMemo } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
+import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -58,6 +59,7 @@ import {
 
 import { ProjectService } from "apis/project";
 
+import { ProjectManagementService } from "../../apis/project-management";
 import ButtonSys from "../../components/button";
 import TaskCard from "../../components/cards/project/TaskCard";
 import {
@@ -186,22 +188,22 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [selectedCategory, setSelectedCategory] = useState(undefined);
 
   // table data
-  const [loadingProjects, setLoadingProjects] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [dataProjects, setDataProjects] = useState([]);
-  const [dataRawProjects, setDataRawProjects] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
+  // const [dataRawProjects, setDataRawProjects] = useState({
+  //   current_page: "",
+  //   data: [],
+  //   first_page_url: "",
+  //   from: null,
+  //   last_page: null,
+  //   last_page_url: "",
+  //   next_page_url: "",
+  //   path: "",
+  //   per_page: null,
+  //   prev_page_url: null,
+  //   to: null,
+  //   total: null,
+  // });
 
   const [refresh, setRefresh] = useState(-1);
 
@@ -230,66 +232,37 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3. UseEffect
   // 3.1. Get Projects
-  useEffect(() => {
-    if (!isAllowedToGetProjects) {
-      permissionWarningNotification("Mendapatkan", "Data Tabel Proyek");
-      setLoadingProjects(false);
-      return;
+  const {
+    data: dataRawProjects,
+    isLoading: loadingProjects,
+    refetch: refetchProjects,
+  } = useQuery(
+    [PROJECTS_GET, queryParams],
+    () =>
+      ProjectManagementService.getProjects(
+        initProps,
+        isAllowedToGetProjects,
+        queryParams,
+        searchingFilterProjects
+      ),
+    {
+      enabled: isAllowedToGetProjects,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataProjects(data.data);
+      },
     }
+  );
 
-    const params = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      refetchProjects();
+    }, 500);
 
-    const fetchData = async () => {
-      setLoadingProjects(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${params}&keyword=${searchingFilterProjects}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawProjects(res2.data);
-            setDataProjects(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingProjects(false);
-        });
-    };
-
-    const timer = setTimeout(() => fetchData(), 500);
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetProjects,
-    refresh,
-    searchingFilterProjects,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.status_ids,
-    queryParams.category_ids,
-    queryParams.from,
-    queryParams.to,
-  ]);
+    return () => clearTimeout(delaySearch);
+  }, [searchingFilterProjects]);
 
   // 3.2. Get project list
   useEffect(() => {
@@ -593,7 +566,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    setLoadingProjects(true);
+    setLoading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProject`, {
       method: `POST`,
       headers: {
@@ -619,7 +592,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           duration: 3,
         });
       })
-      .finally(() => setLoadingProjects(false));
+      .finally(() => setLoading(false));
   };
 
   const handleAddTask = () => {
