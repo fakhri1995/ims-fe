@@ -21,6 +21,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useCallback } from "react";
 import { useRef } from "react";
+import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -42,6 +43,7 @@ import {
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import { EmployeeService } from "../../../apis/employee";
 import ButtonSys from "../../../components/button";
 import { ChartDoughnut } from "../../../components/chart/chartCustom";
 import { SearchIconSvg, UserPlusIconSvg } from "../../../components/icon";
@@ -126,22 +128,8 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2.1. Charts
   const cursorTooltipRef = useRef(null);
   const [loadingChart, setLoadingChart] = useState(false);
-  const [placementCount, setPlacementCount] = useState([]);
-  const [roleCount, setRoleCount] = useState([]);
-  const [statusCount, setStatusCount] = useState([]);
 
   // 2.2. Table Employee List
-  // filter data
-  const [loadingCompanyList, setLoadingCompanyList] = useState(false);
-  const [dataCompanyList, setDataCompanyList] = useState([]);
-
-  const [loadingRoleList, setLoadingRoleList] = useState(false);
-  const [dataRoleList, setDataRoleList] = useState([]);
-
-  const [loadingContractStatusList, setLoadingContractStatusList] =
-    useState(false);
-  const [dataContractStatusList, setDataContractStatusList] = useState([]);
-
   // filter search & selected options
   const [searchingFilterEmployees, setSearchingFilterEmployees] = useState("");
   const [selectedPlacement, setSelectedPlacement] = useState(undefined);
@@ -150,24 +138,22 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     useState(undefined);
 
   // table data
-  const [loadingEmployees, setLoadingEmployees] = useState(true);
   const [dataEmployees, setDataEmployees] = useState([]);
-  const [dataRawEmployees, setDataRawEmployees] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
+  // const [dataRawEmployees, setDataRawEmployees] = useState({
+  //   current_page: "",
+  //   data: [],
+  //   first_page_url: "",
+  //   from: null,
+  //   last_page: null,
+  //   last_page_url: "",
+  //   next_page_url: "",
+  //   path: "",
+  //   per_page: null,
+  //   prev_page_url: null,
+  //   to: null,
+  //   total: null,
+  // });
 
-  const [refresh, setRefresh] = useState(-1);
   const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 2.3. Add employee
@@ -179,326 +165,168 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3. UseEffect
   // 3.1. Get Employees
-  useEffect(() => {
-    if (!isAllowedToGetEmployees) {
-      permissionWarningNotification("Mendapatkan", "Daftar Employee");
-      setLoadingEmployees(false);
-      return;
+  const {
+    data: dataRawEmployees,
+    isLoading: loadingEmployees,
+    refetch: refetchEmployees,
+  } = useQuery(
+    [EMPLOYEES_GET, queryParams],
+    () =>
+      EmployeeService.getEmployees(
+        initProps,
+        isAllowedToGetEmployees,
+        queryParams,
+        searchingFilterEmployees
+      ),
+    {
+      enabled: isAllowedToGetEmployees,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataEmployees(data.data);
+      },
     }
+  );
 
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      refetchEmployees();
+    }, 500);
 
-    const fetchData = async () => {
-      setLoadingEmployees(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees${payload}&keyword=${searchingFilterEmployees}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawEmployees(res2.data);
-            setDataEmployees(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingEmployees(false);
-        });
-    };
-
-    const timer = setTimeout(() => fetchData(), 500);
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetEmployees,
-    refresh,
-    searchingFilterEmployees,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.role_ids,
-    queryParams.placements,
-    queryParams.contract_status_ids,
-    queryParams.is_employee_active,
-  ]);
+    return () => clearTimeout(delaySearch);
+  }, [searchingFilterEmployees]);
 
   // 3.2. Get Company Client List
-  useEffect(() => {
-    if (!isAllowedToGetCompanyClients) {
-      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
-      setLoadingCompanyList(false);
-      return;
+  const {
+    data: dataCompanyList,
+    isLoading: loadingCompanyList,
+    refetch: refetchCompanyList,
+  } = useQuery(
+    [COMPANY_CLIENTS_GET],
+    () =>
+      EmployeeService.getCompanyClientList(
+        initProps,
+        isAllowedToGetCompanyClients
+      ),
+    {
+      enabled: isAllowedToGetCompanyClients,
+      select: (response) => response.data,
+      initialData: [],
     }
-
-    setLoadingCompanyList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataCompanyList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingCompanyList(false);
-      });
-  }, [isAllowedToGetCompanyClients]);
+  );
 
   // 3.3. Get Employee Role List
-  useEffect(() => {
-    if (!isAllowedToGetRoleList) {
-      permissionWarningNotification("Mendapatkan", "Data Employee Role List");
-      setLoadingRoleList(false);
-      return;
+  const {
+    data: dataRoleList,
+    isLoading: loadingRoleList,
+    refetch: refetchRoleList,
+  } = useQuery(
+    [RECRUITMENT_ROLES_LIST_GET],
+    () =>
+      EmployeeService.getEmployeeRoleList(initProps, isAllowedToGetRoleList),
+    {
+      enabled: isAllowedToGetRoleList,
+      select: (response) => response.data,
     }
-
-    setLoadingRoleList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRolesList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRoleList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingRoleList(false);
-      });
-  }, [isAllowedToGetRoleList, refresh]);
+  );
 
   // 3.4. Get Contract Status/Role Type List
-  useEffect(() => {
-    if (!isAllowedToGetRoleTypeList) {
-      permissionWarningNotification("Mendapatkan", "Daftar Tipe Role");
-      setLoadingContractStatusList(false);
-      return;
+  const {
+    data: dataContractStatusList,
+    isLoading: loadingContractStatusList,
+    refetch: refetchContractStatusList,
+  } = useQuery(
+    [RECRUITMENT_ROLE_TYPES_LIST_GET],
+    () =>
+      EmployeeService.getRoleTypeList(initProps, isAllowedToGetRoleTypeList),
+    {
+      enabled: isAllowedToGetRoleTypeList,
+      select: (response) => response.data,
     }
-
-    setLoadingContractStatusList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoleTypesList`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataContractStatusList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingContractStatusList(false);
-      });
-  }, [isAllowedToGetRoleTypeList]);
+  );
 
   // 3.5. Get Employee Placement Count
-  useEffect(() => {
-    if (!isAllowedToGetPlacementCount) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Statistik Employee Placement"
-      );
-      setLoadingChart(false);
-      return;
-    }
-
-    setLoadingChart(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePlacementsCount`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
+  const {
+    data: placementCount,
+    isLoading: loadingPlacementCount,
+    refetch: refetchPlacementCount,
+  } = useQuery(
+    [EMPLOYEE_PLACEMENTS_COUNT_GET],
+    () =>
+      EmployeeService.getEmployeePlacementCount(
+        initProps,
+        isAllowedToGetPlacementCount
+      ),
+    {
+      enabled: isAllowedToGetPlacementCount,
+      select: (response) => {
+        let finalPlacementCount = getFinalStatisticCount(
+          response.data,
+          "placement",
+          "placement_count"
+        );
+        return finalPlacementCount;
       },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          let resData = res2.data;
-          let finalPlacementCount = getFinalStatisticCount(
-            resData,
-            "placement",
-            "placement_count"
-          );
-          setPlacementCount(finalPlacementCount);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingChart(false);
-      });
-  }, [isAllowedToGetPlacementCount]);
+    }
+  );
 
   // 3.6. Get Employee Role Count
-  useEffect(() => {
-    if (!isAllowedToGetRoleCount) {
-      permissionWarningNotification("Mendapatkan", "Statistik Employee Role");
-      setLoadingChart(false);
-      return;
-    }
-
-    setLoadingChart(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeRolesCount`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          let resData = res2.data;
-          let mappedRoleCount = resData.map((data) => {
-            return {
-              role_count: data.role_count,
-              role_name: data.role?.name,
-            };
-          });
-
-          let finalRoleCount = getFinalStatisticCount(
-            mappedRoleCount,
-            "role_name",
-            "role_count"
-          );
-
-          setRoleCount(finalRoleCount);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+  const {
+    data: roleCount,
+    isLoading: loadingRoleCount,
+    refetch: refetchRoleCount,
+  } = useQuery(
+    [EMPLOYEE_ROLES_COUNT_GET],
+    () =>
+      EmployeeService.getEmployeeRoleCount(initProps, isAllowedToGetRoleCount),
+    {
+      enabled: isAllowedToGetRoleCount,
+      select: (response) => {
+        let mappedRoleCount = response.data.map((data) => {
+          return {
+            role_count: data.role_count,
+            role_name: data.role?.name,
+          };
         });
-      })
-      .finally(() => {
-        setLoadingChart(false);
-      });
-  }, [isAllowedToGetRoleCount]);
+
+        let finalRoleCount = getFinalStatisticCount(
+          mappedRoleCount,
+          "role_name",
+          "role_count"
+        );
+        return finalRoleCount;
+      },
+    }
+  );
 
   // 3.7. Get Employee Status Count
-  useEffect(() => {
-    if (!isAllowedToGetStatusCount) {
-      permissionWarningNotification("Mendapatkan", "Statistik Employee Status");
-      setLoadingChart(false);
-      return;
-    }
-
-    setLoadingChart(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeStatusesCount`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          let statusCountRes = res2.data;
-          let mappedStatusCount = statusCountRes.map((data) => {
-            return {
-              status_count: data.status_count,
-              is_employee_active: Number(data.is_employee_active)
-                ? "Aktif"
-                : "Tidak Aktif",
-            };
-          });
-          setStatusCount(mappedStatusCount);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+  const {
+    data: statusCount,
+    isLoading: loadingStatusCount,
+    refetch: refetchStatusCount,
+  } = useQuery(
+    [EMPLOYEE_STATUSES_COUNT_GET],
+    () =>
+      EmployeeService.getEmployeeStatusCount(
+        initProps,
+        isAllowedToGetStatusCount
+      ),
+    {
+      enabled: isAllowedToGetStatusCount,
+      select: (response) => {
+        let mappedStatusCount = response.data.map((data) => {
+          return {
+            status_count: data.status_count,
+            is_employee_active: Number(data.is_employee_active)
+              ? "Aktif"
+              : "Tidak Aktif",
+          };
         });
-      })
-      .finally(() => {
-        setLoadingChart(false);
-      });
-  }, [isAllowedToGetStatusCount]);
+        return mappedStatusCount;
+      },
+    }
+  );
 
   // 4. Event
   const onAddEmployeeButtonClicked = useCallback(() => {
@@ -564,8 +392,12 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     )
       .then((response) => response.json())
       .then((response2) => {
-        setRefresh((prev) => prev + 1);
         if (response2.success) {
+          refetchEmployees();
+          refetchPlacementCount();
+          refetchRoleCount();
+          refetchStatusCount();
+
           notification.success({
             message: response2.message,
             duration: 3,
@@ -856,7 +688,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             >
               <div className="grid md:grid-cols-3 gap-2 lg:gap-6">
                 {/* CHART PENEMPATAN KARYAWAN */}
-                {loadingChart ? (
+                {loadingPlacementCount ? (
                   <Spin />
                 ) : (
                   <ChartDoughnut
@@ -867,7 +699,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                   />
                 )}
                 {/* CHART POSISI */}
-                {loadingChart ? (
+                {loadingRoleCount ? (
                   <Spin />
                 ) : (
                   <ChartDoughnut
@@ -878,7 +710,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                   />
                 )}
                 {/* CHART STATUS KARYAWAN */}
-                {loadingChart ? (
+                {loadingStatusCount ? (
                   <Spin />
                 ) : (
                   <ChartDoughnut
@@ -965,7 +797,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 {/* <Select.Option key={-1} value={""}>
                   Semua Penempatan
                 </Select.Option> */}
-                {dataCompanyList.map((company) => (
+                {dataCompanyList?.map((company) => (
                   <Select.Option key={company.id} value={company.name}>
                     {company.name}
                   </Select.Option>
@@ -994,7 +826,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                     .includes(input.toLowerCase())
                 }
               >
-                {dataRoleList.map((role) => (
+                {dataRoleList?.map((role) => (
                   <Select.Option key={role.id} value={role.id}>
                     {role.name}
                   </Select.Option>

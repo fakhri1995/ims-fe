@@ -17,6 +17,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useRef } from "react";
+import { useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
@@ -67,6 +68,7 @@ const ModalProjectTaskDetailUpdate = ({
   const [form] = Form.useForm();
   const rt = useRouter();
   const searchTimeoutRef = useRef(null);
+  const queryClient = useQueryClient();
 
   // 1. USE STATE
   // Current state: detail, edit
@@ -571,6 +573,7 @@ const ModalProjectTaskDetailUpdate = ({
             duration: 3,
           });
           setRefreshProject((prev) => prev + 1);
+          queryClient.invalidateQueries(PROJECTS_GET);
         } else {
           notification.error({
             message: response.message,

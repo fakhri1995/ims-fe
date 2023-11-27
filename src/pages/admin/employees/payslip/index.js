@@ -39,7 +39,7 @@ import {
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import { PayslipService } from "../../../../apis/employee";
+import { EmployeeService, PayslipService } from "../../../../apis/employee";
 import ButtonSys from "../../../../components/button";
 import { ChartHorizontalBar } from "../../../../components/chart/chartCustom";
 import {
@@ -222,7 +222,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   } = useQuery(
     [COMPANY_CLIENTS_GET],
     () =>
-      PayslipService.getCompanyClientList(
+      EmployeeService.getCompanyClientList(
         initProps,
         isAllowedToGetCompanyClients
       ),
@@ -239,7 +239,8 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     refetch: refetchRoleList,
   } = useQuery(
     [RECRUITMENT_ROLES_LIST_GET],
-    () => PayslipService.getEmployeeRoleList(initProps, isAllowedToGetRoleList),
+    () =>
+      EmployeeService.getEmployeeRoleList(initProps, isAllowedToGetRoleList),
     {
       enabled: isAllowedToGetRoleList,
       select: (response) => response.data,

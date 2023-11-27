@@ -6,6 +6,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import Html from "react-pdf-html";
+import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -13,6 +14,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { EMPLOYEE_GET, EMPLOYEE_UPDATE } from "lib/features";
 
+import { EmployeeService } from "../../../../apis/employee";
 import ButtonSys from "../../../../components/button";
 import { CheckIconSvg } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
@@ -58,7 +60,6 @@ const EmployeeProfileEditIndex = ({
 
   // 1. STATE
   // 1.1. display
-  const [praloading, setpraloading] = useState(true);
   const [dataEmployee, setDataEmployee] = useState({
     // id_photo: "",
     id: null,
@@ -89,51 +90,30 @@ const EmployeeProfileEditIndex = ({
     join_at: "",
   });
 
-  const [refresh, setRefresh] = useState(-1);
-
   // 1.2 Update
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [disablePublish, setDisablePublish] = useState(true);
 
   // 2. USE EFFECT
   // 2.1 Get employee detail
-  useEffect(() => {
-    if (!isAllowedToGetEmployee) {
-      permissionWarningNotification("Mendapatkan", "Detail Karyawan");
-      setpraloading(false);
-      return;
+  const {
+    data,
+    isLoading: loadingEmployee,
+    refetch: refetchEmployee,
+  } = useQuery(
+    [EMPLOYEE_GET, employeeId],
+    () =>
+      EmployeeService.getEmployee(
+        initProps,
+        isAllowedToGetEmployee,
+        employeeId
+      ),
+    {
+      enabled: isAllowedToGetEmployee,
+      select: (response) => response.data,
+      onSuccess: (data) => setDataEmployee(data),
     }
-    if (employeeId) {
-      setpraloading(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            setDataEmployee(response2.data);
-          } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setpraloading(false));
-    }
-  }, [isAllowedToGetEmployee, employeeId, refresh]);
+  );
 
   // 2.2. Disable "Simpan" button if any required field is empty
   useEffect(() => {
@@ -178,7 +158,7 @@ const EmployeeProfileEditIndex = ({
     })
       .then((response) => response.json())
       .then((response2) => {
-        setRefresh((prev) => prev + 1);
+        refetchEmployee();
         if (response2.success) {
           rt.push(`/admin/employees/${employeeId}`);
           setTimeout(() => {
