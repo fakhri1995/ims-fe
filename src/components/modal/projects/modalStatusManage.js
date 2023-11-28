@@ -13,10 +13,16 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Form, Input, Modal, Spin, Switch, Tooltip, notification } from "antd";
 import React, { useEffect, useState } from "react";
+import { useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
 import { permissionWarningNotification } from "lib/helper";
 
+import {
+  PROJECTS_GET,
+  PROJECT_STATUSES_GET,
+  PROJECT_TASKS_GET,
+} from "../../../lib/features";
 import ButtonSys from "../../button";
 import { EditSquareIconSvg, LeftIconSvg, PlusIconSvg } from "../../icon";
 import { ModalHapus2 } from "../modalCustom";
@@ -29,11 +35,10 @@ const ModalStatusManage = ({
   isAllowedToEditStatus,
   isAllowedToGetStatus,
   isAllowedToDeleteStatus,
-  setRefresh,
-  setRefreshStatuses,
   currentStatusList,
 }) => {
   const [form] = Form.useForm();
+  const queryClient = useQueryClient();
 
   // 1. USE STATE
   // Modal current state: manage, add, edit
@@ -145,7 +150,7 @@ const ModalStatusManage = ({
             message: response.message,
             duration: 3,
           });
-          setRefreshStatuses((prev) => prev + 1);
+          queryClient.invalidateQueries(PROJECT_STATUSES_GET);
         } else {
           notification.error({
             message: response.message,
@@ -185,7 +190,9 @@ const ModalStatusManage = ({
               message: response.message,
               duration: 3,
             });
-            setRefresh((prev) => prev + 1);
+            queryClient.invalidateQueries(PROJECT_STATUSES_GET);
+            queryClient.invalidateQueries(PROJECTS_GET);
+            queryClient.invalidateQueries(PROJECT_TASKS_GET);
           } else {
             notification.error({
               message: response.message,
@@ -229,7 +236,10 @@ const ModalStatusManage = ({
             message: res2.message,
             duration: 3,
           });
-          setRefresh((prev) => prev + 1);
+
+          queryClient.invalidateQueries(PROJECT_STATUSES_GET);
+          queryClient.invalidateQueries(PROJECTS_GET);
+          queryClient.invalidateQueries(PROJECT_TASKS_GET);
         }
       })
       .catch((err) => {
@@ -316,7 +326,7 @@ const ModalStatusManage = ({
             <p className="mig-caption text-mono80">
               {idx === 0 ? (
                 "(Prioritas Tinggi)"
-              ) : idx === dataStatusList.length - 1 ? (
+              ) : idx === dataStatusList?.length - 1 ? (
                 "(Prioritas Rendah)"
               ) : (
                 <></>
@@ -377,8 +387,8 @@ const ModalStatusManage = ({
             onDragEnd={onDragEnd}
             modifiers={[restrictToVerticalAxis, restrictToParentElement]}
           >
-            <SortableContext items={dataStatusList.map((i) => i.id)}>
-              {dataStatusList.map((status, idx) => (
+            <SortableContext items={dataStatusList?.map((i) => i.id)}>
+              {dataStatusList?.map((status, idx) => (
                 <SortableItem
                   key={status?.id}
                   id={status.id}
@@ -688,7 +698,7 @@ const ModalStatusManage = ({
                 );
                 handleUpdateStatus({
                   ...dataStatus,
-                  after_id: dataStatusList[currentStatusIdx - 1]?.id,
+                  after_id: dataStatusList?.[currentStatusIdx - 1]?.id,
                 });
                 setCurrentState("manage");
                 form.resetFields();

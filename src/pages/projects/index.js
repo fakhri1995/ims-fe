@@ -175,11 +175,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataProjectDeadline, setDataProjectDeadline] = useState([]);
 
   // 2.2. Table Projects List (Semua Proyek)
-  // filter data
-  const [loadingStatusList, setLoadingStatusList] = useState(false);
-  const [dataStatusList, setDataStatusList] = useState([]);
-  const [dataCategoryList, setDataCategoryList] = useState([]);
-
   // filter search & selected options
   const [searchingFilterProjects, setSearchingFilterProjects] = useState("");
   const [selectedFromDate, setSelectedFromDate] = useState("");
@@ -208,20 +203,14 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [refresh, setRefresh] = useState(-1);
 
   // 2.3. My Task List (Task Saya)
-  const [refreshTasks, setRefreshTasks] = useState(-1);
-  const [dataRawMyTaskList, setDataRawMyTaskList] = useState({});
   const [dataMyTaskList, setDataMyTaskList] = useState([]);
-  const [loadingMyTaskList, setLoadingMyTaskList] = useState(false);
-  const [dataProjectList, setDataProjectList] = useState([]);
+  const [loadingAdd, setLoadingAdd] = useState(false);
   const [pageMyTaskList, setPageMyTaskList] = useState(1);
   const [rowsMyTaskList, setRowsMyTaskList] = useState(4);
   const [sortColumn, setSortColumn] = useState("deadline");
   const [sortOrder, setSortOrder] = useState("asc");
 
-  // 2.4. Manage Status
-  const [refreshStatuses, setRefreshStatuses] = useState(-1);
-
-  // 2.5. Modal
+  // 2.4. Modal
   const [modalAddProject, setModalAddProject] = useState(false);
   const [modalAddTask, setModalAddTask] = useState(false);
   const [modalDetailTask, setModalDetailTask] = useState(false);
@@ -265,210 +254,124 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, [searchingFilterProjects]);
 
   // 3.2. Get project list
-  useEffect(() => {
-    if (!isAllowedToGetProjects) {
-      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
+  const { data: dataProjectList } = useQuery(
+    [PROJECTS_GET],
+    () =>
+      ProjectManagementService.getProjectList(
+        initProps,
+        isAllowedToGetProjects
+      ),
+    {
+      enabled: isAllowedToGetProjects,
+      select: (response) => {
+        return response.data;
       },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataProjectList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-  }, [isAllowedToGetProjects, refresh]);
+    }
+  );
 
   // 3.3. Get Project Status List
-  useEffect(() => {
-    if (!isAllowedToGetStatuses) {
-      permissionWarningNotification("Mendapatkan", "Daftar Status Proyek");
-      setLoadingStatusList(false);
-      return;
-    }
-
-    setLoadingStatusList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatuses`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
+  const {
+    data: dataStatusList,
+    isLoading: loadingStatusList,
+    refetch: refetchStatusList,
+  } = useQuery(
+    [PROJECT_STATUSES_GET],
+    () =>
+      ProjectManagementService.getStatusList(initProps, isAllowedToGetStatuses),
+    {
+      enabled: isAllowedToGetStatuses,
+      select: (response) => {
+        return response.data;
       },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataStatusList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingStatusList(false);
-      });
-  }, [isAllowedToGetStatuses, refresh, refreshStatuses]);
+    }
+  );
 
   // 3.4. Get My Task List
-  useEffect(() => {
-    if (!isAllowedToGetStatuses) {
-      permissionWarningNotification("Mendapatkan", "Daftar Task Saya");
-      setLoadingMyTaskList(false);
-      return;
+  const taskListParams = {
+    user_id: dataProfile?.data?.id,
+    rows: rowsMyTaskList,
+    page: pageMyTaskList,
+    sort_by: sortColumn,
+    sort_type: sortOrder,
+  };
+  const {
+    data: dataRawMyTaskList,
+    isLoading: loadingMyTaskList,
+    refetch: refetchMyTaskList,
+  } = useQuery(
+    [PROJECT_TASKS_GET, taskListParams],
+    () =>
+      ProjectManagementService.getTaskList(
+        initProps,
+        isAllowedToGetTasks,
+        taskListParams
+      ),
+    {
+      enabled: isAllowedToGetTasks,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataMyTaskList(data.data);
+      },
     }
-
-    setLoadingMyTaskList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?user_id=${dataProfile?.data?.id}&rows=${rowsMyTaskList}&page=${pageMyTaskList}&sort_by=${sortColumn}&sort_type=${sortOrder}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawMyTaskList(res2.data);
-          setDataMyTaskList(res2.data.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingMyTaskList(false);
-      });
-  }, [
-    isAllowedToGetTasks,
-    refreshTasks,
-    pageMyTaskList,
-    rowsMyTaskList,
-    sortColumn,
-    sortOrder,
-  ]);
+  );
 
   // 3.5. Get Data Chart Status Proyek
-  useEffect(() => {
-    if (!isAllowedToGetProjectStatusCount) {
-      setLoadingChart(false);
-      return;
-    }
-
-    setLoadingChart(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsCount`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
+  const { data, isLoading: loadingStatusCount } = useQuery(
+    [PROJECTS_COUNT_GET],
+    () =>
+      ProjectManagementService.getProjectStatusCount(
+        initProps,
+        isAllowedToGetProjectStatusCount
+      ),
+    {
+      enabled: isAllowedToGetProjectStatusCount,
+      select: (response) => {
+        return response.data;
       },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setProjectStatusCount(res2.data?.status); // "Status Proyek" chart's data source
-        setProjectTotalCount(res2.data?.total);
-      })
-      .catch((err) =>
-        notification.error({
-          message: "Gagal mendapatkan data statistik status proyek",
-          duration: 3,
-        })
-      )
-      .finally(() => setLoadingChart(false));
-  }, [isAllowedToGetProjectStatusCount]);
+      onSuccess: (data) => {
+        setProjectStatusCount(data?.status); // "Status Proyek" chart's data source
+        setProjectTotalCount(data?.total);
+      },
+    }
+  );
 
   // 3.6. Get Data Chart Deadline Proyek
-  useEffect(() => {
-    if (!isAllowedToGetProjectDeadlineCount) {
-      setLoadingChart(false);
-      return;
-    }
-
-    if (!dateState.from || !dateState.to) {
-      setLoadingChart(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsDeadline`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
+  const { data: projectDeadlineCount, isLoading: loadingDeadlineCount } =
+    useQuery(
+      [PROJECTS_DEADLINE_GET],
+      () =>
+        ProjectManagementService.getProjectDeadlineCount(
+          initProps,
+          isAllowedToGetProjectDeadlineCount
+        ),
+      {
+        enabled: isAllowedToGetProjectDeadlineCount,
+        select: (response) => {
+          return response.data;
         },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setDataProjectDeadline(res2.data); // "Deadline Proyek Bulan Ini" chart's data source
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan data statistik deadline proyek",
-            duration: 3,
-          })
-        )
-        .finally(() => setLoadingChart(false));
-    }
-  }, [isAllowedToGetProjectDeadlineCount, dateState]);
+        onSuccess: (data) => {
+          setDataProjectDeadline(data);
+        },
+      }
+    );
 
   // 3.7. Get Project Category List
-  useEffect(() => {
-    if (!isAllowedToGetTagList) {
-      permissionWarningNotification("Mendapatkan", "Daftar Tag Proyek");
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
+  const { data: dataCategoryList, isLoading: loadingCategoryList } = useQuery(
+    [PROJECT_CATEGORIES_GET],
+    () =>
+      ProjectManagementService.getProjectCategoryList(
+        initProps,
+        isAllowedToGetTagList
+      ),
+    {
+      enabled: isAllowedToGetTagList,
+      select: (response) => {
+        return response.data;
       },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataCategoryList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-  }, [isAllowedToGetTagList, refresh]);
+    }
+  );
 
   // 3.8. Update number of rows in task table based on the device width
   useEffect(() => {
@@ -601,7 +504,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    setLoadingMyTaskList(true);
+    setLoadingAdd(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectTask`, {
       method: `POST`,
       headers: {
@@ -627,7 +530,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           duration: 3,
         });
       })
-      .finally(() => setLoadingMyTaskList(false));
+      .finally(() => setLoadingAdd(false));
   };
 
   // "Semua Proyek" Table columns
@@ -897,7 +800,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
               }
             >
-              {loadingChart ? (
+              {loadingChart || loadingStatusCount ? (
                 <div className="text-center">
                   <Spin />
                 </div>
@@ -1222,7 +1125,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                   dataIndex: "name",
                   key: "name",
                   render: (_, task) => {
-                    const currentProject = dataProjectList.find(
+                    const currentProject = dataProjectList?.find(
                       (project) => project.id === task.project_id
                     );
                     return (
@@ -1274,7 +1177,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           onvisible={setModalAddProject}
           isAllowedToUpdateProject={isAllowedToUpdateProject}
           isAllowedToDeleteProject={isAllowedToDeleteProject}
-          setRefresh={setRefresh}
           currentProject={currentProject}
         />
       </AccessControl>
@@ -1289,7 +1191,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToDeleteTask={isAllowedToDeleteTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
-          setRefreshTasks={setRefreshTasks}
           isAddMyTask={true}
           dataProfile={dataProfile}
           taskId={currentTaskId}
@@ -1306,7 +1207,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           isAllowedToGetStatuses={isAllowedToGetStatuses}
-          setRefreshTasks={setRefreshTasks}
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
           isOutsideProject={true}
@@ -1326,8 +1226,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToEditStatus={isAllowedToEditStatus}
           isAllowedToGetStatus={isAllowedToGetStatus}
           isAllowedToDeleteStatus={isAllowedToDeleteStatus}
-          setRefresh={setRefresh}
-          setRefreshStatuses={setRefreshStatuses}
           currentStatusList={dataStatusList}
         />
       </AccessControl>

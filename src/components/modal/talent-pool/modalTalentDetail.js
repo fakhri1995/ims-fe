@@ -26,10 +26,8 @@ const ModalTalentDetail = ({
 }) => {
   // 1. USE STATE
 
-  const [loading, setLoading] = useState(false);
-
   // 2. USE QUERY & USE EFFECT
-  // 3.2. Get Resume Talent
+  // 2.2. Get Resume Talent
   const { data: dataResume, isLoading: loadingResume } = useQuery(
     [TALENT_POOL_SHARE_PUBLIC_GET, dataTalent?.resume_id],
     () => TalentPoolPublicService.getResume(dataTalent?.resume_id),
@@ -42,10 +40,6 @@ const ModalTalentDetail = ({
   // 3. HANDLER
   const handleClose = () => {
     onvisible(false);
-  };
-
-  const onChangeSearchCandidate = (e) => {
-    setTimeout(() => setSearchCandidate(e.target.value), 500);
   };
 
   const footer = (

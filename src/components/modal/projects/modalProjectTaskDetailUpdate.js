@@ -25,7 +25,12 @@ import { useAccessControl } from "contexts/access-control";
 import { GROUPS_GET, PROJECT_CATEGORIES_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import { PROJECT_UPDATE } from "../../../lib/features";
+import {
+  PROJECTS_COUNT_GET,
+  PROJECTS_GET,
+  PROJECT_TASKS_GET,
+  PROJECT_UPDATE,
+} from "../../../lib/features";
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import {
@@ -50,7 +55,6 @@ const ModalProjectTaskDetailUpdate = ({
   isAllowedToGetProjects,
   isAllowedToGetProject,
   isAllowedToGetStatuses,
-  setRefreshTasks,
   taskId,
   dataStatusList,
   isOutsideProject, // if modal not use in project detail
@@ -345,7 +349,7 @@ const ModalProjectTaskDetailUpdate = ({
 
   // 2.3. Get current status object
   useEffect(() => {
-    const status = dataStatusList.find(
+    const status = dataStatusList?.find(
       (status) => status.id === dataTaskUpdate.status_id
     );
     setCurrentStatus(status);
@@ -427,7 +431,7 @@ const ModalProjectTaskDetailUpdate = ({
             message: response.message,
             duration: 3,
           });
-          setRefreshTasks((prev) => prev + 1);
+          queryClient.invalidateQueries(PROJECT_TASKS_GET);
         } else {
           notification.error({
             message: response.message,
@@ -478,7 +482,7 @@ const ModalProjectTaskDetailUpdate = ({
             message: response.message,
             duration: 3,
           });
-          setRefreshTasks((prev) => prev + 1);
+          queryClient.invalidateQueries(PROJECT_TASKS_GET);
         } else {
           notification.error({
             message: response.message,
@@ -520,7 +524,7 @@ const ModalProjectTaskDetailUpdate = ({
             message: response.message,
             duration: 3,
           });
-          setRefreshTasks((prev) => prev + 1);
+          queryClient.invalidateQueries(PROJECT_TASKS_GET);
         } else {
           notification.error({
             message: response.message,
@@ -699,7 +703,7 @@ const ModalProjectTaskDetailUpdate = ({
                     color: currentStatus?.color ?? "#808080",
                   }}
                 >
-                  {dataStatusList.map((item) => (
+                  {dataStatusList?.map((item) => (
                     <Select.Option
                       key={item?.id}
                       value={item?.id}
@@ -937,7 +941,7 @@ const ModalProjectTaskDetailUpdate = ({
                   color: currentStatus?.color ?? "#808080",
                 }}
               >
-                {dataStatusList.map((item) => (
+                {dataStatusList?.map((item) => (
                   <Select.Option
                     key={item?.id}
                     value={item?.id}
