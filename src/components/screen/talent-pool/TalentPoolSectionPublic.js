@@ -29,11 +29,7 @@ import { ModalHapus2 } from "../../modal/modalCustom";
 import ModalTalentDetail from "../../modal/talent-pool/modalTalentDetail";
 import TalentDetailCard from "./TalentDetailCard";
 
-const TalentPoolSectionPublic = ({
-  shareId,
-  category,
-  setModalEliminatedTalent,
-}) => {
+const TalentPoolSectionPublic = ({ shareId, setModalEliminatedTalent }) => {
   const [queryParams, setQueryParams] = useQueryParams({
     share_id: withDefault(NumberParam, shareId),
     page: withDefault(NumberParam, 1),
@@ -59,10 +55,8 @@ const TalentPoolSectionPublic = ({
   const [selectedEdu, setSelectedEdu] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
-  const [modalTalentAdd, setModalTalentAdd] = useState(false);
   const [modalTalentEliminate, setModalTalentEliminate] = useState(false);
-  const [modalShare, setModalShare] = useState(false);
-  const [drawerTalentDetail, setDrawerTalentDetail] = useState(false);
+
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [dataRowClicked, setDataRowClicked] = useState({});
   const [rowState, setRowState] = useState({});
@@ -149,7 +143,7 @@ const TalentPoolSectionPublic = ({
 
   const handleMarkTalent = async (data) => {
     const payload = {
-      talent_id: data.id,
+      talent_id: data?.id,
       share_id: shareId,
     };
 
@@ -158,19 +152,19 @@ const TalentPoolSectionPublic = ({
         if (res.success) {
           refetchTalents();
           notification.success({
-            message: res.message,
+            message: res?.message,
             duration: 3,
           });
         } else {
           notification.error({
-            message: res.message,
+            message: res?.message,
             duration: 3,
           });
         }
       })
       .catch((err) => {
         notification.error({
-          message: `${err.response}`,
+          message: `${err?.response}`,
           duration: 3,
         });
       });
