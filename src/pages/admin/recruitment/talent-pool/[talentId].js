@@ -39,7 +39,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
   const rt = useRouter();
 
   // Breadcrumb url
-  const pathArr = rt.pathname.split("/").slice(1);
+  const pathArr = rt.pathname?.split("/")?.slice(1);
 
   // Breadcrumb title
   const pageBreadcrumbValue = useMemo(() => [
@@ -244,7 +244,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                           </p>
                           <p className="text-mono50">
                             {item.major} ·{" "}
-                            <strong>{item.graduation_year.slice(0, 4)}</strong>
+                            <strong>{item.graduation_year?.slice(0, 4)}</strong>
                           </p>
                           <p className="text-mono50">GPA {item.gpa}</p>
                         </Timeline.Item>
@@ -300,7 +300,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                       {dataResume?.projects?.map((item) => (
                         <div key={item?.id} className="flex gap-6">
                           <p className="text-primary100 font-bold">
-                            {item.year.slice(0, 4)}
+                            {item.year?.slice(0, 4)}
                           </p>
                           <div>
                             <p className="text-mono30 font-bold">{item.name}</p>
@@ -345,7 +345,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                       {dataResume?.trainings?.map((item) => (
                         <div key={item?.id} className="flex gap-6">
                           <p className="text-primary100 font-bold">
-                            {item.year.slice(0, 4)}
+                            {item.year?.slice(0, 4)}
                           </p>
                           <div>
                             <p className="text-mono30 font-bold">{item.name}</p>
@@ -367,7 +367,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                       {dataResume?.certificates?.map((item) => (
                         <div key={item?.id} className="flex gap-6">
                           <p className="text-primary100 font-bold">
-                            {item.year.slice(0, 4)}
+                            {item.year?.slice(0, 4)}
                           </p>
                           <div>
                             <p className="text-mono30 font-bold">{item.name}</p>
@@ -389,7 +389,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                       {dataResume?.achievements?.map((item) => (
                         <div key={item?.id} className="flex gap-6">
                           <p className="text-primary100 font-bold">
-                            {item.year.slice(0, 4)}
+                            {item.year?.slice(0, 4)}
                           </p>
                           <div>
                             <p className="text-mono30 font-bold">{item.name}</p>
