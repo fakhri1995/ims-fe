@@ -72,8 +72,8 @@ const ModalTalentDetail = ({
         // disabled={!isAllowedToMarkTalent}
         onClick={(event) => {
           event.stopPropagation();
-          if (dataTalent?.id)
-            handleMarkTalent(dataTalent?.id).then(() => onvisible(false));
+          if (dataTalent)
+            handleMarkTalent(dataTalent).then(() => onvisible(false));
         }}
       >
         <div className="flex items-center gap-2 whitespace-nowrap">
