@@ -164,7 +164,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2. useState
   // 2.1. Charts
-  const [loadingChart, setLoadingChart] = useState(false);
   const [projectStatusCount, setProjectStatusCount] = useState([]);
   const [projectTotalCount, setProjectTotalCount] = useState(0);
   const [dateFilter, setDateFilter] = useState(false);
@@ -172,7 +171,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     from: "",
     to: "",
   });
-  const [dataProjectDeadline, setDataProjectDeadline] = useState([]);
 
   // 2.2. Table Projects List (Semua Proyek)
   // filter search & selected options
@@ -338,21 +336,19 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 3.6. Get Data Chart Deadline Proyek
-  const { data: projectDeadlineCount, isLoading: loadingDeadlineCount } =
+  const { data: dataProjectDeadline, isLoading: loadingDeadlineCount } =
     useQuery(
-      [PROJECTS_DEADLINE_GET],
+      [PROJECTS_DEADLINE_GET, dateState],
       () =>
         ProjectManagementService.getProjectDeadlineCount(
           initProps,
-          isAllowedToGetProjectDeadlineCount
+          isAllowedToGetProjectDeadlineCount,
+          dateState
         ),
       {
         enabled: isAllowedToGetProjectDeadlineCount,
         select: (response) => {
           return response.data;
-        },
-        onSuccess: (data) => {
-          setDataProjectDeadline(data);
         },
       }
     );
@@ -421,47 +417,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     onFilterProjects,
     "Enter"
   );
-
-  const handleGetProjectDeadlineCount = (fromDate = "", toDate = "") => {
-    if (!isAllowedToGetProjectDeadlineCount) {
-      setLoadingChart(false);
-      return;
-    }
-
-    setLoadingChart(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsDeadline?from=${fromDate}&to=${toDate}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDateState({
-            from: fromDate,
-            to: toDate,
-          });
-          setDataProjectDeadline(res2.data);
-          setLoadingChart(false);
-        } else {
-          notification["error"]({
-            message: `Gagal mendapatkan data statistik deadline proyek. ${res2?.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) =>
-        notification["error"]({
-          message: `Gagal mendapatkan data statistik deadline proyek. ${err?.message}`,
-          duration: 3,
-        })
-      )
-      .finally(() => setLoadingChart(false));
-  };
 
   const handleAddProject = () => {
     if (!isAllowedToAddProject) {
@@ -800,7 +755,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
               }
             >
-              {loadingChart || loadingStatusCount ? (
+              {loadingDeadlineCount || loadingStatusCount ? (
                 <div className="text-center">
                   <Spin />
                 </div>
@@ -893,10 +848,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                           onOpenChange={setDateFilter}
                           onChange={(dates, datestrings) => {
                             setDateFilter((prev) => !prev);
-                            handleGetProjectDeadlineCount(
-                              datestrings[0],
-                              datestrings[1]
-                            );
+                            setDateState({
+                              from: datestrings[0],
+                              to: datestrings[1],
+                            });
                           }}
                           renderExtraFooter={() => (
                             <div className=" flex items-center">
@@ -916,7 +871,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                     </div>
 
                     {/* CHART */}
-                    {loadingChart ? (
+                    {loadingDeadlineCount ? (
                       <Spin />
                     ) : (
                       <div>
@@ -973,13 +928,11 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                             Proyek yang berakhir bulan ini
                           </h5>
                           <h5 className="font-bold text-mono30 text-right">
-                            {
-                              dataProjectDeadline?.find((project) => {
-                                const today = new Date();
-                                const todayMonth = today.getMonth(); // today's month in number, start from 0
-                                return project.month === todayMonth + 1;
-                              })?.total
-                            }
+                            {dataProjectDeadline?.find((project) => {
+                              const today = new Date();
+                              const todayMonth = today.getMonth(); // today's month in number, start from 0
+                              return project.month === todayMonth + 1;
+                            })?.total ?? "0"}
                           </h5>
                         </div>
                       </div>

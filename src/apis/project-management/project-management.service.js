@@ -226,7 +226,7 @@ export class ProjectManagementService {
     return apiRes;
   };
 
-  static getProjectDeadlineCount = async (initProps, feature) => {
+  static getProjectDeadlineCount = async (initProps, feature, queryParams) => {
     if (!feature) {
       permissionWarningNotification(
         "Mendapatkan",
@@ -235,8 +235,12 @@ export class ProjectManagementService {
       return;
     }
 
+    const params = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsDeadline`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsDeadline${params}`,
       {
         method: `GET`,
         headers: {
