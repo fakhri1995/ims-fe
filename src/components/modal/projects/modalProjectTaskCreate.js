@@ -14,6 +14,7 @@ import moment from "moment";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
 import { useRef } from "react";
+import { useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
@@ -21,7 +22,11 @@ import { useAccessControl } from "contexts/access-control";
 import { GROUPS_GET, PROJECT_CATEGORIES_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import { PROJECT_UPDATE } from "../../../lib/features";
+import {
+  PROJECTS_COUNT_GET,
+  PROJECT_TASKS_GET,
+  PROJECT_UPDATE,
+} from "../../../lib/features";
 import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { CirclePlusIconSvg, InfoCircleIconSvg } from "../../icon";
@@ -37,7 +42,6 @@ const ModalProjectTaskCreate = ({
   isAllowedToUpdateTask,
   isAllowedToGetProjects,
   isAllowedToDeleteTask,
-  setRefreshTasks,
   defaultProject,
   isAddMyTask,
   dataProfile,
@@ -53,6 +57,7 @@ const ModalProjectTaskCreate = ({
 
   const [form] = Form.useForm();
   const searchTimeoutRef = useRef(null);
+  const queryClient = useQueryClient();
 
   // 1. USE STATE
   const [dataTask, setDataTask] = useState({
@@ -369,7 +374,7 @@ const ModalProjectTaskCreate = ({
             message: response.message,
             duration: 3,
           });
-          setRefreshTasks((prev) => prev + 1);
+          queryClient.invalidateQueries(PROJECT_TASKS_GET);
         } else {
           notification.error({
             message: response.message,
@@ -380,47 +385,6 @@ const ModalProjectTaskCreate = ({
       .catch((err) => {
         notification.error({
           message: `Gagal mengubah task. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoading(false));
-  };
-
-  const handleDeleteTask = () => {
-    if (!isAllowedToDeleteTask) {
-      permissionWarningNotification("Menghapus", "Task");
-      return;
-    }
-
-    setLoading(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProjectTask?id=${taskId}`,
-      {
-        method: `DELETE`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          handleClose();
-          notification.success({
-            message: response.message,
-            duration: 3,
-          });
-        } else {
-          notification.error({
-            message: response.message,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menghapus task. ${err.response}`,
           duration: 3,
         });
       })

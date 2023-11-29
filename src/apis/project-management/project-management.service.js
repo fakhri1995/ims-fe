@@ -44,14 +44,14 @@ export class ProjectManagementService {
     return apiRes;
   };
 
-  static getEmployee = async (initProps, feature, employeeId) => {
+  static getProjectList = async (initProps, feature) => {
     if (!feature) {
-      permissionWarningNotification("Mendapatkan", "Detail Karyawan");
+      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
       return;
     }
 
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsList`,
       {
         method: `GET`,
         headers: {
@@ -80,14 +80,16 @@ export class ProjectManagementService {
     return apiRes;
   };
 
-  static getCompanyClientList = async (initProps, feature) => {
+  static getTaskList = async (initProps, feature, queryParams) => {
     if (!feature) {
-      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
+      permissionWarningNotification("Mendapatkan", "Daftar Task");
       return;
     }
 
+    const params = QueryString.stringify(queryParams);
+
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?${params}`,
       {
         method: `GET`,
         headers: {
@@ -116,14 +118,14 @@ export class ProjectManagementService {
     return apiRes;
   };
 
-  static getEmployeeRoleList = async (initProps, feature) => {
+  static getStatusList = async (initProps, feature) => {
     if (!feature) {
-      permissionWarningNotification("Mendapatkan", "Daftar Employee Role");
+      permissionWarningNotification("Mendapatkan", "Daftar Status Proyek");
       return;
     }
 
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRolesList`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatuses`,
       {
         method: `GET`,
         headers: {
@@ -152,14 +154,14 @@ export class ProjectManagementService {
     return apiRes;
   };
 
-  static getRoleTypeList = async (initProps, feature) => {
+  static getProjectCategoryList = async (initProps, feature) => {
     if (!feature) {
-      permissionWarningNotification("Mendapatkan", "Daftar Tipe Role");
+      permissionWarningNotification("Mendapatkan", "Daftar Tag Proyek");
       return;
     }
 
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoleTypesList`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList`,
       {
         method: `GET`,
         headers: {
@@ -188,89 +190,53 @@ export class ProjectManagementService {
     return apiRes;
   };
 
-  static getEmployeePlacementCount = async (initProps, feature) => {
+  static getProjectStatusCount = async (initProps, feature) => {
+    if (!feature) {
+      permissionWarningNotification("Mendapatkan", "Data Chart Status Proyek");
+      return;
+    }
+
+    const apiRes = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsCount`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          return res2;
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+
+    return apiRes;
+  };
+
+  static getProjectDeadlineCount = async (initProps, feature) => {
     if (!feature) {
       permissionWarningNotification(
         "Mendapatkan",
-        "Statistik Employee Placement"
+        "Data Chart Deadline Proyek"
       );
       return;
     }
 
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePlacementsCount`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          return res2;
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-
-    return apiRes;
-  };
-
-  static getEmployeeRoleCount = async (initProps, feature) => {
-    if (!feature) {
-      permissionWarningNotification("Mendapatkan", "Statistik Employee Role");
-      return;
-    }
-
-    const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeRolesCount`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          return res2;
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-
-    return apiRes;
-  };
-
-  static getEmployeeStatusCount = async (initProps, feature) => {
-    if (!feature) {
-      permissionWarningNotification("Mendapatkan", "Statistik Employee Status");
-      return;
-    }
-
-    const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeStatusesCount`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsDeadline`,
       {
         method: `GET`,
         headers: {
