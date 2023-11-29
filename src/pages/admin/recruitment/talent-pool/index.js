@@ -79,7 +79,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
-    category_id: withDefault(NumberParam, 1),
+    category_id: withDefault(NumberParam, 0),
     roles: withDefault(StringParam, undefined),
     skills: withDefault(StringParam, undefined),
     years: withDefault(StringParam, undefined),
@@ -99,9 +99,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2. Use state
   const [currentCategory, setCurrentCategory] = useState({ id: 0, name: "" });
-
   const [loadingDelete, setLoadingDelete] = useState(false);
-
   const [modalLinks, setModalLinks] = useState(false);
   const [modalCategoryCreate, setModalCategoryCreate] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -128,7 +126,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.2. Set active category tab
   useEffect(() => {
-    if (!queryParams.category_id || queryParams.category_id == 1) {
+    if (!queryParams.category_id) {
       const firstCategory = dataCategories?.[0];
       setCurrentCategory({ id: firstCategory?.id, name: firstCategory?.name });
       setQueryParams({ category_id: firstCategory?.id });
