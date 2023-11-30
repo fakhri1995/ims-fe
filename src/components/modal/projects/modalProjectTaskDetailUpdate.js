@@ -28,7 +28,10 @@ import { permissionWarningNotification } from "lib/helper";
 import {
   PROJECTS_COUNT_GET,
   PROJECTS_GET,
+  PROJECT_TASKS_COUNT_GET,
+  PROJECT_TASKS_DEADLINE_GET,
   PROJECT_TASKS_GET,
+  PROJECT_TASK_STAFF_COUNT_GET,
   PROJECT_UPDATE,
 } from "../../../lib/features";
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
@@ -432,6 +435,7 @@ const ModalProjectTaskDetailUpdate = ({
             duration: 3,
           });
           queryClient.invalidateQueries(PROJECT_TASKS_GET);
+          queryClient.invalidateQueries(PROJECT_TASKS_COUNT_GET);
         } else {
           notification.error({
             message: response.message,
@@ -483,6 +487,9 @@ const ModalProjectTaskDetailUpdate = ({
             duration: 3,
           });
           queryClient.invalidateQueries(PROJECT_TASKS_GET);
+          queryClient.invalidateQueries(PROJECT_TASKS_COUNT_GET);
+          queryClient.invalidateQueries(PROJECT_TASKS_DEADLINE_GET);
+          queryClient.invalidateQueries(PROJECT_TASK_STAFF_COUNT_GET);
         } else {
           notification.error({
             message: response.message,
@@ -525,6 +532,9 @@ const ModalProjectTaskDetailUpdate = ({
             duration: 3,
           });
           queryClient.invalidateQueries(PROJECT_TASKS_GET);
+          queryClient.invalidateQueries(PROJECT_TASKS_COUNT_GET);
+          queryClient.invalidateQueries(PROJECT_TASKS_DEADLINE_GET);
+          queryClient.invalidateQueries(PROJECT_TASK_STAFF_COUNT_GET);
         } else {
           notification.error({
             message: response.message,

@@ -190,21 +190,6 @@ const ProjectDetailIndex = ({
   // table data
   const [loadingAdd, setLoadingAdd] = useState(true);
   const [dataTasks, setDataTasks] = useState([]);
-  // const [dataRawTasks, setDataRawTasks] = useState({
-  //   current_page: "",
-  //   data: [],
-  //   first_page_url: "",
-  //   from: null,
-  //   last_page: null,
-  //   last_page_url: "",
-  //   next_page_url: "",
-  //   path: "",
-  //   per_page: null,
-  //   prev_page_url: null,
-  //   to: null,
-  //   total: null,
-  // });
-
   const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 2.3. Project Detail
