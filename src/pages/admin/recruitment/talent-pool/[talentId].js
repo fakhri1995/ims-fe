@@ -22,7 +22,11 @@ import {
 import st from "../../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../../components/layout-dashboardNew";
 import { RESUME_GET, TALENT_POOL_GET } from "../../../../lib/features";
-import { getNameInitial, momentFormatDate } from "../../../../lib/helper";
+import {
+  generateStaticAssetUrl,
+  getNameInitial,
+  momentFormatDate,
+} from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
@@ -119,12 +123,23 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
             </div>
 
             <div className="flex gap-6 items-center">
-              <div
-                className="rounded-full w-20 h-20 p-2 flex justify-center items-center 
+              {dataTalent?.resume?.profile_image?.id ? (
+                <img
+                  src={generateStaticAssetUrl(
+                    dataTalent?.resume?.profile_image?.link
+                  )}
+                  alt={dataTalent?.resume?.profile_image?.description}
+                  className="rounded-full w-20 h-20 bg-cover object-cover flex items-center justify-center"
+                />
+              ) : (
+                <div
+                  className="rounded-full w-20 h-20 p-2 flex justify-center items-center 
               bg-backdrop mig-heading--4 text-primary100"
-              >
-                {getNameInitial(dataTalent?.resume?.name)}
-              </div>
+                >
+                  {getNameInitial(dataTalent?.resume?.name)}
+                </div>
+              )}
+
               <div>
                 <h4 className="mig-heading--4">{dataTalent?.resume?.name}</h4>
                 <p className="mig-caption--medium text-mono30">

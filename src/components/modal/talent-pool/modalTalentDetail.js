@@ -14,6 +14,7 @@ import { getNameInitial, momentFormatDate } from "lib/helper";
 
 import { TalentPoolPublicService } from "../../../apis/talent-pool";
 import { TALENT_POOL_SHARE_PUBLIC_GET } from "../../../lib/features";
+import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import ResumePDFTemplate from "../../screen/resume/ResumePDFTemplate";
 
@@ -119,12 +120,21 @@ const ModalTalentDetail = ({
       <div className="grid grid-cols-2 gap-4">
         {/* HEADER */}
         <div className="col-span-2 flex gap-6 items-center">
-          <div
-            className="rounded-full w-12 h-12 p-2 flex justify-center items-center 
+          {dataResume?.profile_image?.id ? (
+            <img
+              src={generateStaticAssetUrl(dataResume?.profile_image?.link)}
+              alt={dataResume?.profile_image?.description}
+              className="rounded-full w-12 h-12 bg-cover object-cover flex items-center justify-center"
+            />
+          ) : (
+            <div
+              className="rounded-full w-12 h-12 p-2 flex justify-center items-center 
               bg-backdrop text-primary100 font-bold text-base"
-          >
-            {getNameInitial(dataResume?.name)}
-          </div>
+            >
+              {getNameInitial(dataResume?.name)}
+            </div>
+          )}
+
           <div>
             <h4 className="mig-heading--4">{dataResume?.name}</h4>
 

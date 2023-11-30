@@ -6,7 +6,11 @@ import React from "react";
 import { useAccessControl } from "contexts/access-control";
 
 import { TALENT_POOL_DELETE, TALENT_POOL_GET } from "../../../lib/features";
-import { getNameInitial, momentFormatDate } from "../../../lib/helper";
+import {
+  generateStaticAssetUrl,
+  getNameInitial,
+  momentFormatDate,
+} from "../../../lib/helper";
 import ButtonSys from "../../button";
 import {
   ArrowUpRightIconSvg,
@@ -62,12 +66,23 @@ const DrawerTalentDetail = ({ visible, onvisible, dataTalent, onDelete }) => {
     >
       <div className="grid grid-cols-1 gap-4">
         <div className="flex gap-6 items-center">
-          <div
-            className="rounded-full w-20 h-20 p-2 flex justify-center items-center 
-              bg-backdrop mig-heading--4 text-primary100"
-          >
-            {getNameInitial(dataTalent?.resume?.name)}
-          </div>
+          {dataTalent?.resume?.profile_image?.id ? (
+            <img
+              src={generateStaticAssetUrl(
+                dataTalent?.resume?.profile_image?.link
+              )}
+              alt={dataTalent?.resume?.profile_image?.description}
+              className="rounded-full w-20 h-20 bg-cover object-cover flex items-center justify-center"
+            />
+          ) : (
+            <div
+              className="rounded-full w-20 h-20 p-2 flex justify-center items-center 
+                  bg-backdrop mig-heading--4 text-primary100"
+            >
+              {getNameInitial(dataTalent?.resume?.name)}
+            </div>
+          )}
+
           <div>
             <h4 className="mig-heading--4">{dataTalent?.resume?.name}</h4>
             <p className="mig-caption--medium text-mono50">
