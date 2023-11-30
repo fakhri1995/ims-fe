@@ -14,8 +14,8 @@ import { getNameInitial, momentFormatDate } from "lib/helper";
 
 import { TalentPoolPublicService } from "../../../apis/talent-pool";
 import { TALENT_POOL_SHARE_PUBLIC_GET } from "../../../lib/features";
-import { ResumePDFTemplate } from "../../../pages/admin/candidates/[candidateId]";
 import ButtonSys from "../../button";
+import ResumePDFTemplate from "../../screen/resume/ResumePDFTemplate";
 
 const ModalTalentDetail = ({
   visible,

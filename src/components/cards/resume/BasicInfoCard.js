@@ -22,7 +22,6 @@ import {
   beforeUploadFileMaxSize,
   generateStaticAssetUrl,
 } from "../../../lib/helper";
-import { ResumePDFTemplate } from "../../../pages/admin/candidates/[candidateId]";
 import ButtonSys from "../../button";
 import {
   CheckIconSvg,
@@ -36,6 +35,7 @@ import {
 } from "../../icon";
 import ModalCore from "../../modal/modalCore";
 import { ModalHapus2 } from "../../modal/modalCustom";
+import ResumePDFTemplate from "../../screen/resume/ResumePDFTemplate";
 
 const BasicInfoCard = ({
   dataDisplay,

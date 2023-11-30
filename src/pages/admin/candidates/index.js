@@ -30,13 +30,13 @@ import { DownloadIcon2Svg, DownloadIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import ModalCore from "../../../components/modal/modalCore";
+import ResumePDFTemplate from "../../../components/screen/resume/ResumePDFTemplate";
 import { TableCustomCandidate } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
 import {
   createKeyPressHandler,
   permissionWarningNotification,
 } from "../../../lib/helper";
-import { ResumePDFTemplate } from "./[candidateId]";
 import {
   ArcElement,
   BarElement,

@@ -13,7 +13,6 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { RESUME_DELETE } from "lib/features";
 
-import { ResumePDFTemplate } from "../../../pages/admin/candidates/[candidateId]";
 import ButtonSys from "../../button";
 import {
   CheckIconSvg,
