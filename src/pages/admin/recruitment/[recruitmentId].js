@@ -67,8 +67,8 @@ import LayoutDashboard from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import ModalCore from "../../../components/modal/modalCore";
 import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
+import ResumePDFTemplate from "../../../components/screen/resume/ResumePDFTemplate";
 import { permissionWarningNotification } from "../../../lib/helper";
-import { ResumePDFTemplate } from "../../../pages/admin/candidates/[candidateId]";
 import httpcookie from "cookie";
 
 moment.locale("id");

@@ -17,7 +17,11 @@ import BasicInfoCard from "../../../../components/cards/resume/BasicInfoCard";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import { H1, H2 } from "../../../../components/typography";
-import { permissionWarningNotification } from "../../../../lib/helper";
+import {
+  objectToFormData,
+  objectToFormDataNew,
+  permissionWarningNotification,
+} from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
@@ -51,6 +55,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
     city: "",
     province: "",
     assessment_id: "",
+    profile_image: "",
   });
 
   const [loadingCreate, setLoadingCreate] = useState(false);
@@ -153,14 +158,15 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
       permissionWarningNotification("Menambah", "Kandidat");
       return;
     }
+    const payloadFormData = objectToFormData(dataAddCandidate);
+
     setLoadingCreate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResume`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataAddCandidate),
+      body: payloadFormData,
     })
       .then((response) => response.json())
       .then((response2) => {

@@ -6,7 +6,11 @@ import { useQuery } from "react-query";
 
 import { CandidateService } from "../../../apis/candidates";
 import { RESUME_GET } from "../../../lib/features";
-import { getNameInitial, momentFormatDate } from "../../../lib/helper";
+import {
+  generateStaticAssetUrl,
+  getNameInitial,
+  momentFormatDate,
+} from "../../../lib/helper";
 import { ArrowUpRightIconSvg, PinFilledIconSvg } from "../../icon";
 
 const TalentDetailCard = ({
@@ -24,12 +28,21 @@ const TalentDetailCard = ({
     >
       <div className="flex justify-between">
         <div className="flex gap-3 items-center w-10/12">
-          <div
-            className="rounded-full w-12 h-12 flex justify-center items-center 
-          bg-backdrop text-primary100 mig-caption--bold p-1 text-sm "
-          >
-            {getNameInitial(dataResume?.name)}
-          </div>
+          {dataResume?.profile_image?.id ? (
+            <img
+              src={generateStaticAssetUrl(dataResume?.profile_image?.link)}
+              alt={dataResume?.profile_image?.description}
+              className="rounded-full w-12 h-12 bg-cover object-cover flex items-center justify-center"
+            />
+          ) : (
+            <div
+              className="rounded-full w-12 h-12 flex justify-center items-center 
+              bg-backdrop text-primary100 mig-caption--bold p-1 text-sm "
+            >
+              {getNameInitial(dataResume?.name)}
+            </div>
+          )}
+
           <div>
             <p className="font-bold text-mono30">{dataResume?.name}</p>
             {!!dataResume?.last_education && (
