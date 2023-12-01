@@ -1,12 +1,3 @@
-import {
-  Document,
-  Font,
-  Image,
-  Page,
-  StyleSheet,
-  Text,
-  View,
-} from "@react-pdf/renderer";
 import { notification } from "antd";
 import parse from "html-react-parser";
 import moment from "moment";

@@ -11,10 +11,10 @@ import parse from "html-react-parser";
 import React from "react";
 import Html from "react-pdf-html";
 
-import { momentFormatDate } from "../../../lib/helper";
+import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 
 const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
-  const isAllResultEmpty = dataResume.assessment_results?.every(
+  const isAllResultEmpty = dataResume?.assessment_results?.every(
     (result) => result?.value === ""
   );
 
@@ -64,33 +64,39 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
               </View>
             )
           }
-          // debug={true}
         />
 
         {/* Name Section */}
         <View
           style={{
             paddingHorizontal: 48,
-            paddingBottom: 26,
+            paddingBottom: 12,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
           }}
         >
-          <View>
+          <View
+            style={{
+              width: "80%",
+              display: "flex",
+              flexDirection: "col",
+              marginRight: 24,
+            }}
+          >
             <Text
               style={{
-                fontSize: 26,
+                fontSize: 32,
                 fontFamily: "Inter",
                 fontWeight: 700,
                 color: `#4D4D4D`,
                 borderBottomWidth: 1,
                 borderColor: `1px solid #4D4D4D`,
-                paddingBottom: 8,
-                marginBottom: 8,
+                paddingBottom: 16,
+                marginBottom: 16,
               }}
             >
-              {dataResume.name?.toUpperCase()}
+              {dataResume?.name?.toUpperCase()}
             </Text>
             <View
               style={{
@@ -103,16 +109,37 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                 src={`/image/userIcon.png`}
               />
 
-              <Text style={{ fontSize: 10, color: `#4D4D4D`, marginLeft: 10 }}>
-                {dataResume.assessment?.name}
+              <Text style={{ fontSize: 12, color: `#4D4D4D`, marginLeft: 10 }}>
+                {dataResume?.assessment?.name}
               </Text>
             </View>
           </View>
-
-          {/* <Image
-            style={{ width: 100, height: 115 }}
-            src={dataResume.profile_image?.link}
-          /> */}
+          <View
+            style={{
+              width: "20%",
+              borderColor: `1px solid #4D4D4D`,
+              backgroundColor: "#E0DCEB",
+            }}
+          >
+            {dataResume?.profile_image?.id && (
+              <Image
+                style={{
+                  width: 100,
+                  height: 115,
+                }}
+                src={{
+                  uri:
+                    "https://cors.bridged.cc/" +
+                    generateStaticAssetUrl(dataResume?.profile_image?.link),
+                  method: "GET",
+                  headers: {
+                    "Cache-Control": "no-cache",
+                  },
+                  body: "",
+                }}
+              />
+            )}
+          </View>
         </View>
 
         {/*Summary Section */}

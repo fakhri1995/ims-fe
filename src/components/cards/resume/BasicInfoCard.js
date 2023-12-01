@@ -504,10 +504,7 @@ const BasicInfoCard = ({
                 }
                 fileName={`CV-${dataDisplay?.assessment?.name}-${dataDisplay?.name}.pdf`}
               >
-                <ButtonSys
-                  type={"primary"}
-                  // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
-                >
+                <ButtonSys type={"primary"}>
                   <div className={"flex flex-row"}>
                     <DownloadIcon2Svg size={16} color={"#fffffff"} />
                     <p className={"ml-2 text-xs text-white"}>Unduh Resume</p>
