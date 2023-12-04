@@ -192,7 +192,7 @@ export const objectToFormData = <T extends Object>(entry: T) => {
  *
  * @example
  * ```ts
- * const payload = objectToFormData({
+ * const payload = objectToFormDataNew({
  *    name: "Kennan",
  *    roles: [1, 2, 3],
  *   extras: [{
@@ -225,17 +225,18 @@ export const objectToFormDataNew = <T extends Object>(entry: T) => {
           }
         }
       }
-
-      continue;
+    } else if (v instanceof Object) {
+      for (const [key, val] of Object.entries(v)) {
+        formData.append(`${k}[${key}]`, val as string | Blob);
+      }
+    } else {
+      // prevent null object converted to string
+      let value: any = v;
+      if (v === null) {
+        value = "";
+      }
+      formData.append(k, value);
     }
-
-    // prevent null object converted to string
-    let value: any = v;
-    if (v === null) {
-      value = "";
-    }
-
-    formData.append(k, value);
   }
 
   return formData;

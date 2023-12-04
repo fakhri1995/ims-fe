@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useQueryClient } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -51,7 +52,6 @@ const EmployeeInventoryDetail = ({
   isAllowedToUpdateEmployeeInventory,
   isAllowedToDeleteEmployeeInventory,
   dataEmployee,
-  setRefresh,
 }) => {
   /**
    * Dependencies
@@ -66,8 +66,8 @@ const EmployeeInventoryDetail = ({
 
   const isAllowedToGetEmployeeInventory = hasPermission(EMPLOYEE_INVENTORY_GET);
 
-  const [instanceForm] = Form.useForm();
   const rt = useRouter();
+  const queryClient = useQueryClient();
 
   // 1. USE STATE
   // Detail inventory
@@ -147,7 +147,7 @@ const EmployeeInventoryDetail = ({
     )
       .then((res) => res.json())
       .then((res2) => {
-        setRefresh((prev) => prev + 1);
+        queryClient.invalidateQueries(EMPLOYEE_GET);
         if (res2.success) {
           notification.success({
             message: res2.message,

@@ -14,8 +14,9 @@ import { getNameInitial, momentFormatDate } from "lib/helper";
 
 import { TalentPoolPublicService } from "../../../apis/talent-pool";
 import { TALENT_POOL_SHARE_PUBLIC_GET } from "../../../lib/features";
-import { ResumePDFTemplate } from "../../../pages/admin/candidates/[candidateId]";
+import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
+import ResumePDFTemplate from "../../screen/resume/ResumePDFTemplate";
 
 const ModalTalentDetail = ({
   visible,
@@ -26,10 +27,8 @@ const ModalTalentDetail = ({
 }) => {
   // 1. USE STATE
 
-  const [loading, setLoading] = useState(false);
-
   // 2. USE QUERY & USE EFFECT
-  // 3.2. Get Resume Talent
+  // 2.2. Get Resume Talent
   const { data: dataResume, isLoading: loadingResume } = useQuery(
     [TALENT_POOL_SHARE_PUBLIC_GET, dataTalent?.resume_id],
     () => TalentPoolPublicService.getResume(dataTalent?.resume_id),
@@ -42,10 +41,6 @@ const ModalTalentDetail = ({
   // 3. HANDLER
   const handleClose = () => {
     onvisible(false);
-  };
-
-  const onChangeSearchCandidate = (e) => {
-    setTimeout(() => setSearchCandidate(e.target.value), 500);
   };
 
   const footer = (
@@ -72,14 +67,14 @@ const ModalTalentDetail = ({
         // disabled={!isAllowedToMarkTalent}
         onClick={(event) => {
           event.stopPropagation();
-          if (dataTalent?.id)
-            handleMarkTalent(dataTalent?.id).then(() => onvisible(false));
+          if (dataTalent)
+            handleMarkTalent(dataTalent).then(() => onvisible(false));
         }}
       >
         <div className="flex items-center gap-2 whitespace-nowrap">
           <UserAddOutlined rev={""} />
           <p className="mig-caption--small">
-            {!dataTalent?.mark ? "Tandai Talent" : "Batal Tandai Talent"}
+            {!dataTalent?.mark_count ? "Tandai Talent" : "Batal Tandai Talent"}
           </p>
         </div>
       </ButtonSys>
@@ -125,12 +120,21 @@ const ModalTalentDetail = ({
       <div className="grid grid-cols-2 gap-4">
         {/* HEADER */}
         <div className="col-span-2 flex gap-6 items-center">
-          <div
-            className="rounded-full w-12 h-12 p-2 flex justify-center items-center 
+          {dataResume?.profile_image?.id ? (
+            <img
+              src={generateStaticAssetUrl(dataResume?.profile_image?.link)}
+              alt={dataResume?.profile_image?.description}
+              className="rounded-full w-12 h-12 bg-cover object-cover flex items-center justify-center"
+            />
+          ) : (
+            <div
+              className="rounded-full w-12 h-12 p-2 flex justify-center items-center 
               bg-backdrop text-primary100 font-bold text-base"
-          >
-            {getNameInitial(dataResume?.name)}
-          </div>
+            >
+              {getNameInitial(dataResume?.name)}
+            </div>
+          )}
+
           <div>
             <h4 className="mig-heading--4">{dataResume?.name}</h4>
 
@@ -173,7 +177,7 @@ const ModalTalentDetail = ({
                       </p>
                       <p className="text-mono50">
                         {item.major} ·{" "}
-                        <strong>{item.graduation_year.slice(0, 4)}</strong>
+                        <strong>{item.graduation_year?.slice(0, 4)}</strong>
                       </p>
                       <p className="text-mono50">GPA {item.gpa}</p>
                     </Timeline.Item>
@@ -227,7 +231,7 @@ const ModalTalentDetail = ({
                   {dataResume?.projects?.map((item) => (
                     <div key={item?.id} className="flex gap-6">
                       <p className="text-primary100 font-bold">
-                        {item.year.slice(0, 4)}
+                        {item.year?.slice(0, 4)}
                       </p>
                       <div>
                         <p className="text-mono30 font-bold">{item.name}</p>
@@ -276,7 +280,7 @@ const ModalTalentDetail = ({
                   {dataResume?.trainings?.map((item) => (
                     <div key={item?.id} className="flex gap-4">
                       <p className="text-primary100 font-bold">
-                        {item.year.slice(0, 4)}
+                        {item.year?.slice(0, 4)}
                       </p>
                       <div>
                         <p className="text-mono30 font-bold">{item.name}</p>
@@ -300,7 +304,7 @@ const ModalTalentDetail = ({
                   {dataResume?.certificates?.map((item) => (
                     <div key={item?.id} className="flex gap-4">
                       <p className="text-primary100 font-bold">
-                        {item.year.slice(0, 4)}
+                        {item.year?.slice(0, 4)}
                       </p>
                       <div>
                         <p className="text-mono30 font-bold">{item.name}</p>
@@ -324,7 +328,7 @@ const ModalTalentDetail = ({
                   {dataResume?.achievements?.map((item) => (
                     <div key={item?.id} className="flex gap-4">
                       <p className="text-primary100 font-bold">
-                        {item.year.slice(0, 4)}
+                        {item.year?.slice(0, 4)}
                       </p>
                       <div>
                         <p className="text-mono30 font-bold">{item.name}</p>

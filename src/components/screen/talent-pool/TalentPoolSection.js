@@ -80,7 +80,7 @@ const TalentPoolSection = ({
     isLoading: loadingTalents,
     refetch: refetchPool,
   } = useQuery(
-    [TALENT_POOLS_GET, searchingFilterTalents, queryParams.category_id],
+    [TALENT_POOLS_GET, searchingFilterTalents, queryParams],
     () =>
       TalentPoolService.getTalentPools(
         initProps,
@@ -223,14 +223,18 @@ const TalentPoolSection = ({
       render: (text, record) => {
         return {
           children: (
-            <div className="xl:w-40">
-              {text || "-"}
+            <div className="xl:w-40 flex gap-2 items-center">
+              <p className="truncate">{text || "-"}</p>
+              {record.mark?.length > 0 && (
+                <div className="w-4 h-4 rounded-full bg-secondary100" />
+              )}
               {isHovered && rowState === record.id && (
                 <div className={`absolute left-40 w-[35vw] h-full z-50 top-3`}>
                   <TalentDetailCard
                     isAllowedToGetTalentPool={isAllowedToGetTalentPool}
                     talentId={record?.id}
                     dataResume={record?.resume}
+                    markList={record?.mark}
                   />
                 </div>
               )}
@@ -358,9 +362,11 @@ const TalentPoolSection = ({
         {/* Filter by position (dropdown) */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.roles}
             allowClear
-            name={`role`}
+            showSearch
+            mode="multiple"
+            name={`roles`}
+            defaultValue={queryParams.roles}
             disabled={!isAllowedToGetTalentPoolFilters}
             placeholder="Posisi"
             style={{ width: `100%` }}
@@ -379,9 +385,11 @@ const TalentPoolSection = ({
         {/* Filter by skill */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.skills}
             allowClear
-            name={`skill`}
+            showSearch
+            mode="multiple"
+            name={`skills`}
+            defaultValue={queryParams.skills}
             disabled={!isAllowedToGetTalentPoolFilters}
             placeholder="Skill"
             style={{ width: `100%` }}
@@ -398,11 +406,13 @@ const TalentPoolSection = ({
           </Select>
         </div>
         {/* Filter by years of experience */}
-        <div className="w-full lg:w-1/12">
+        <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.years}
             allowClear
-            name={`year`}
+            showSearch
+            mode="multiple"
+            name={`years`}
+            defaultValue={queryParams.years}
             disabled={!isAllowedToGetTalentPoolFilters}
             placeholder="Tahun Pengalaman"
             style={{ width: `100%` }}
@@ -421,9 +431,11 @@ const TalentPoolSection = ({
         {/* Filter by university */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.educations}
             allowClear
+            showSearch
+            mode="multiple"
             name={`university`}
+            defaultValue={queryParams.educations}
             disabled={!isAllowedToGetTalentPoolFilters}
             placeholder="Universitas"
             style={{ width: `100%` }}
@@ -440,7 +452,7 @@ const TalentPoolSection = ({
           </Select>
         </div>
         {/* Filter by status (dropdown) */}
-        <div className="w-full lg:w-1/12">
+        {/* <div className="w-full lg:w-1/12">
           <Select
             defaultValue={queryParams.status}
             allowClear
@@ -459,7 +471,7 @@ const TalentPoolSection = ({
               </Select.Option>
             ))}
           </Select>
-        </div>
+        </div> */}
         {/* End: Search criteria */}
         <div className="w-full col-span-2 md:col-span-3 lg:w-2/12">
           <ButtonSys

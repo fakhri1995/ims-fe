@@ -27,6 +27,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useMemo } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
+import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -58,6 +59,7 @@ import {
 
 import { ProjectService } from "apis/project";
 
+import { ProjectManagementService } from "../../apis/project-management";
 import ButtonSys from "../../components/button";
 import TaskCard from "../../components/cards/project/TaskCard";
 import {
@@ -162,7 +164,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2. useState
   // 2.1. Charts
-  const [loadingChart, setLoadingChart] = useState(false);
   const [projectStatusCount, setProjectStatusCount] = useState([]);
   const [projectTotalCount, setProjectTotalCount] = useState(0);
   const [dateFilter, setDateFilter] = useState(false);
@@ -170,14 +171,8 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     from: "",
     to: "",
   });
-  const [dataProjectDeadline, setDataProjectDeadline] = useState([]);
 
   // 2.2. Table Projects List (Semua Proyek)
-  // filter data
-  const [loadingStatusList, setLoadingStatusList] = useState(false);
-  const [dataStatusList, setDataStatusList] = useState([]);
-  const [dataCategoryList, setDataCategoryList] = useState([]);
-
   // filter search & selected options
   const [searchingFilterProjects, setSearchingFilterProjects] = useState("");
   const [selectedFromDate, setSelectedFromDate] = useState("");
@@ -186,40 +181,34 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [selectedCategory, setSelectedCategory] = useState(undefined);
 
   // table data
-  const [loadingProjects, setLoadingProjects] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [dataProjects, setDataProjects] = useState([]);
-  const [dataRawProjects, setDataRawProjects] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
+  // const [dataRawProjects, setDataRawProjects] = useState({
+  //   current_page: "",
+  //   data: [],
+  //   first_page_url: "",
+  //   from: null,
+  //   last_page: null,
+  //   last_page_url: "",
+  //   next_page_url: "",
+  //   path: "",
+  //   per_page: null,
+  //   prev_page_url: null,
+  //   to: null,
+  //   total: null,
+  // });
 
   const [refresh, setRefresh] = useState(-1);
 
   // 2.3. My Task List (Task Saya)
-  const [refreshTasks, setRefreshTasks] = useState(-1);
-  const [dataRawMyTaskList, setDataRawMyTaskList] = useState({});
   const [dataMyTaskList, setDataMyTaskList] = useState([]);
-  const [loadingMyTaskList, setLoadingMyTaskList] = useState(false);
-  const [dataProjectList, setDataProjectList] = useState([]);
+  const [loadingAdd, setLoadingAdd] = useState(false);
   const [pageMyTaskList, setPageMyTaskList] = useState(1);
   const [rowsMyTaskList, setRowsMyTaskList] = useState(4);
   const [sortColumn, setSortColumn] = useState("deadline");
   const [sortOrder, setSortOrder] = useState("asc");
 
-  // 2.4. Manage Status
-  const [refreshStatuses, setRefreshStatuses] = useState(-1);
-
-  // 2.5. Modal
+  // 2.4. Modal
   const [modalAddProject, setModalAddProject] = useState(false);
   const [modalAddTask, setModalAddTask] = useState(false);
   const [modalDetailTask, setModalDetailTask] = useState(false);
@@ -230,272 +219,155 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3. UseEffect
   // 3.1. Get Projects
-  useEffect(() => {
-    if (!isAllowedToGetProjects) {
-      permissionWarningNotification("Mendapatkan", "Data Tabel Proyek");
-      setLoadingProjects(false);
-      return;
+  const {
+    data: dataRawProjects,
+    isLoading: loadingProjects,
+    refetch: refetchProjects,
+  } = useQuery(
+    [PROJECTS_GET, queryParams],
+    () =>
+      ProjectManagementService.getProjects(
+        initProps,
+        isAllowedToGetProjects,
+        queryParams,
+        searchingFilterProjects
+      ),
+    {
+      enabled: isAllowedToGetProjects,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataProjects(data.data);
+      },
     }
+  );
 
-    const params = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      refetchProjects();
+    }, 500);
 
-    const fetchData = async () => {
-      setLoadingProjects(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${params}&keyword=${searchingFilterProjects}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawProjects(res2.data);
-            setDataProjects(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingProjects(false);
-        });
-    };
-
-    const timer = setTimeout(() => fetchData(), 500);
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetProjects,
-    refresh,
-    searchingFilterProjects,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.status_ids,
-    queryParams.category_ids,
-    queryParams.from,
-    queryParams.to,
-  ]);
+    return () => clearTimeout(delaySearch);
+  }, [searchingFilterProjects]);
 
   // 3.2. Get project list
-  useEffect(() => {
-    if (!isAllowedToGetProjects) {
-      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
+  const { data: dataProjectList } = useQuery(
+    [PROJECTS_GET],
+    () =>
+      ProjectManagementService.getProjectList(
+        initProps,
+        isAllowedToGetProjects
+      ),
+    {
+      enabled: isAllowedToGetProjects,
+      select: (response) => {
+        return response.data;
       },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataProjectList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-  }, [isAllowedToGetProjects, refresh]);
+    }
+  );
 
   // 3.3. Get Project Status List
-  useEffect(() => {
-    if (!isAllowedToGetStatuses) {
-      permissionWarningNotification("Mendapatkan", "Daftar Status Proyek");
-      setLoadingStatusList(false);
-      return;
-    }
-
-    setLoadingStatusList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatuses`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
+  const {
+    data: dataStatusList,
+    isLoading: loadingStatusList,
+    refetch: refetchStatusList,
+  } = useQuery(
+    [PROJECT_STATUSES_GET],
+    () =>
+      ProjectManagementService.getStatusList(initProps, isAllowedToGetStatuses),
+    {
+      enabled: isAllowedToGetStatuses,
+      select: (response) => {
+        return response.data;
       },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataStatusList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingStatusList(false);
-      });
-  }, [isAllowedToGetStatuses, refresh, refreshStatuses]);
+    }
+  );
 
   // 3.4. Get My Task List
-  useEffect(() => {
-    if (!isAllowedToGetStatuses) {
-      permissionWarningNotification("Mendapatkan", "Daftar Task Saya");
-      setLoadingMyTaskList(false);
-      return;
+  const taskListParams = {
+    user_id: dataProfile?.data?.id,
+    rows: rowsMyTaskList,
+    page: pageMyTaskList,
+    sort_by: sortColumn,
+    sort_type: sortOrder,
+  };
+  const {
+    data: dataRawMyTaskList,
+    isLoading: loadingMyTaskList,
+    refetch: refetchMyTaskList,
+  } = useQuery(
+    [PROJECT_TASKS_GET, taskListParams],
+    () =>
+      ProjectManagementService.getTaskList(
+        initProps,
+        isAllowedToGetTasks,
+        taskListParams
+      ),
+    {
+      enabled: isAllowedToGetTasks,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataMyTaskList(data.data);
+      },
     }
-
-    setLoadingMyTaskList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?user_id=${dataProfile?.data?.id}&rows=${rowsMyTaskList}&page=${pageMyTaskList}&sort_by=${sortColumn}&sort_type=${sortOrder}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawMyTaskList(res2.data);
-          setDataMyTaskList(res2.data.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingMyTaskList(false);
-      });
-  }, [
-    isAllowedToGetTasks,
-    refreshTasks,
-    pageMyTaskList,
-    rowsMyTaskList,
-    sortColumn,
-    sortOrder,
-  ]);
+  );
 
   // 3.5. Get Data Chart Status Proyek
-  useEffect(() => {
-    if (!isAllowedToGetProjectStatusCount) {
-      setLoadingChart(false);
-      return;
-    }
-
-    setLoadingChart(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsCount`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
+  const { data, isLoading: loadingStatusCount } = useQuery(
+    [PROJECTS_COUNT_GET],
+    () =>
+      ProjectManagementService.getProjectStatusCount(
+        initProps,
+        isAllowedToGetProjectStatusCount
+      ),
+    {
+      enabled: isAllowedToGetProjectStatusCount,
+      select: (response) => {
+        return response.data;
       },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setProjectStatusCount(res2.data?.status); // "Status Proyek" chart's data source
-        setProjectTotalCount(res2.data?.total);
-      })
-      .catch((err) =>
-        notification.error({
-          message: "Gagal mendapatkan data statistik status proyek",
-          duration: 3,
-        })
-      )
-      .finally(() => setLoadingChart(false));
-  }, [isAllowedToGetProjectStatusCount]);
+      onSuccess: (data) => {
+        setProjectStatusCount(data?.status); // "Status Proyek" chart's data source
+        setProjectTotalCount(data?.total);
+      },
+    }
+  );
 
   // 3.6. Get Data Chart Deadline Proyek
-  useEffect(() => {
-    if (!isAllowedToGetProjectDeadlineCount) {
-      setLoadingChart(false);
-      return;
-    }
-
-    if (!dateState.from || !dateState.to) {
-      setLoadingChart(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsDeadline`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
+  const { data: dataProjectDeadline, isLoading: loadingDeadlineCount } =
+    useQuery(
+      [PROJECTS_DEADLINE_GET, dateState],
+      () =>
+        ProjectManagementService.getProjectDeadlineCount(
+          initProps,
+          isAllowedToGetProjectDeadlineCount,
+          dateState
+        ),
+      {
+        enabled: isAllowedToGetProjectDeadlineCount,
+        select: (response) => {
+          return response.data;
         },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setDataProjectDeadline(res2.data); // "Deadline Proyek Bulan Ini" chart's data source
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan data statistik deadline proyek",
-            duration: 3,
-          })
-        )
-        .finally(() => setLoadingChart(false));
-    }
-  }, [isAllowedToGetProjectDeadlineCount, dateState]);
+      }
+    );
 
   // 3.7. Get Project Category List
-  useEffect(() => {
-    if (!isAllowedToGetTagList) {
-      permissionWarningNotification("Mendapatkan", "Daftar Tag Proyek");
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectCategoryList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
+  const { data: dataCategoryList, isLoading: loadingCategoryList } = useQuery(
+    [PROJECT_CATEGORIES_GET],
+    () =>
+      ProjectManagementService.getProjectCategoryList(
+        initProps,
+        isAllowedToGetTagList
+      ),
+    {
+      enabled: isAllowedToGetTagList,
+      select: (response) => {
+        return response.data;
       },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataCategoryList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-  }, [isAllowedToGetTagList, refresh]);
+    }
+  );
 
   // 3.8. Update number of rows in task table based on the device width
   useEffect(() => {
@@ -546,54 +418,13 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     "Enter"
   );
 
-  const handleGetProjectDeadlineCount = (fromDate = "", toDate = "") => {
-    if (!isAllowedToGetProjectDeadlineCount) {
-      setLoadingChart(false);
-      return;
-    }
-
-    setLoadingChart(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsDeadline?from=${fromDate}&to=${toDate}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDateState({
-            from: fromDate,
-            to: toDate,
-          });
-          setDataProjectDeadline(res2.data);
-          setLoadingChart(false);
-        } else {
-          notification["error"]({
-            message: `Gagal mendapatkan data statistik deadline proyek. ${res2?.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) =>
-        notification["error"]({
-          message: `Gagal mendapatkan data statistik deadline proyek. ${err?.message}`,
-          duration: 3,
-        })
-      )
-      .finally(() => setLoadingChart(false));
-  };
-
   const handleAddProject = () => {
     if (!isAllowedToAddProject) {
       permissionWarningNotification("Menambah", "Proyek");
       return;
     }
 
-    setLoadingProjects(true);
+    setLoading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProject`, {
       method: `POST`,
       headers: {
@@ -619,7 +450,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           duration: 3,
         });
       })
-      .finally(() => setLoadingProjects(false));
+      .finally(() => setLoading(false));
   };
 
   const handleAddTask = () => {
@@ -628,7 +459,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    setLoadingMyTaskList(true);
+    setLoadingAdd(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectTask`, {
       method: `POST`,
       headers: {
@@ -654,7 +485,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           duration: 3,
         });
       })
-      .finally(() => setLoadingMyTaskList(false));
+      .finally(() => setLoadingAdd(false));
   };
 
   // "Semua Proyek" Table columns
@@ -924,7 +755,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
               }
             >
-              {loadingChart ? (
+              {loadingDeadlineCount || loadingStatusCount ? (
                 <div className="text-center">
                   <Spin />
                 </div>
@@ -1017,10 +848,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                           onOpenChange={setDateFilter}
                           onChange={(dates, datestrings) => {
                             setDateFilter((prev) => !prev);
-                            handleGetProjectDeadlineCount(
-                              datestrings[0],
-                              datestrings[1]
-                            );
+                            setDateState({
+                              from: datestrings[0],
+                              to: datestrings[1],
+                            });
                           }}
                           renderExtraFooter={() => (
                             <div className=" flex items-center">
@@ -1040,7 +871,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                     </div>
 
                     {/* CHART */}
-                    {loadingChart ? (
+                    {loadingDeadlineCount ? (
                       <Spin />
                     ) : (
                       <div>
@@ -1097,13 +928,11 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                             Proyek yang berakhir bulan ini
                           </h5>
                           <h5 className="font-bold text-mono30 text-right">
-                            {
-                              dataProjectDeadline?.find((project) => {
-                                const today = new Date();
-                                const todayMonth = today.getMonth(); // today's month in number, start from 0
-                                return project.month === todayMonth + 1;
-                              })?.total
-                            }
+                            {dataProjectDeadline?.find((project) => {
+                              const today = new Date();
+                              const todayMonth = today.getMonth(); // today's month in number, start from 0
+                              return project.month === todayMonth + 1;
+                            })?.total ?? "0"}
                           </h5>
                         </div>
                       </div>
@@ -1249,7 +1078,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                   dataIndex: "name",
                   key: "name",
                   render: (_, task) => {
-                    const currentProject = dataProjectList.find(
+                    const currentProject = dataProjectList?.find(
                       (project) => project.id === task.project_id
                     );
                     return (
@@ -1301,7 +1130,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           onvisible={setModalAddProject}
           isAllowedToUpdateProject={isAllowedToUpdateProject}
           isAllowedToDeleteProject={isAllowedToDeleteProject}
-          setRefresh={setRefresh}
           currentProject={currentProject}
         />
       </AccessControl>
@@ -1316,7 +1144,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToDeleteTask={isAllowedToDeleteTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
-          setRefreshTasks={setRefreshTasks}
           isAddMyTask={true}
           dataProfile={dataProfile}
           taskId={currentTaskId}
@@ -1333,7 +1160,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           isAllowedToGetStatuses={isAllowedToGetStatuses}
-          setRefreshTasks={setRefreshTasks}
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
           isOutsideProject={true}
@@ -1353,8 +1179,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToEditStatus={isAllowedToEditStatus}
           isAllowedToGetStatus={isAllowedToGetStatus}
           isAllowedToDeleteStatus={isAllowedToDeleteStatus}
-          setRefresh={setRefresh}
-          setRefreshStatuses={setRefreshStatuses}
           currentStatusList={dataStatusList}
         />
       </AccessControl>

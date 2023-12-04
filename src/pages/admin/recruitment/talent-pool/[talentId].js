@@ -22,7 +22,11 @@ import {
 import st from "../../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../../components/layout-dashboardNew";
 import { RESUME_GET, TALENT_POOL_GET } from "../../../../lib/features";
-import { getNameInitial, momentFormatDate } from "../../../../lib/helper";
+import {
+  generateStaticAssetUrl,
+  getNameInitial,
+  momentFormatDate,
+} from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
@@ -39,7 +43,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
   const rt = useRouter();
 
   // Breadcrumb url
-  const pathArr = rt.pathname.split("/").slice(1);
+  const pathArr = rt.pathname?.split("/")?.slice(1);
 
   // Breadcrumb title
   const pageBreadcrumbValue = useMemo(() => [
@@ -119,12 +123,23 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
             </div>
 
             <div className="flex gap-6 items-center">
-              <div
-                className="rounded-full w-20 h-20 p-2 flex justify-center items-center 
+              {dataTalent?.resume?.profile_image?.id ? (
+                <img
+                  src={generateStaticAssetUrl(
+                    dataTalent?.resume?.profile_image?.link
+                  )}
+                  alt={dataTalent?.resume?.profile_image?.description}
+                  className="rounded-full w-20 h-20 bg-cover object-cover flex items-center justify-center"
+                />
+              ) : (
+                <div
+                  className="rounded-full w-20 h-20 p-2 flex justify-center items-center 
               bg-backdrop mig-heading--4 text-primary100"
-              >
-                {getNameInitial(dataTalent?.resume?.name)}
-              </div>
+                >
+                  {getNameInitial(dataTalent?.resume?.name)}
+                </div>
+              )}
+
               <div>
                 <h4 className="mig-heading--4">{dataTalent?.resume?.name}</h4>
                 <p className="mig-caption--medium text-mono30">
@@ -244,7 +259,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                           </p>
                           <p className="text-mono50">
                             {item.major} ·{" "}
-                            <strong>{item.graduation_year.slice(0, 4)}</strong>
+                            <strong>{item.graduation_year?.slice(0, 4)}</strong>
                           </p>
                           <p className="text-mono50">GPA {item.gpa}</p>
                         </Timeline.Item>
@@ -300,7 +315,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                       {dataResume?.projects?.map((item) => (
                         <div key={item?.id} className="flex gap-6">
                           <p className="text-primary100 font-bold">
-                            {item.year.slice(0, 4)}
+                            {item.year?.slice(0, 4)}
                           </p>
                           <div>
                             <p className="text-mono30 font-bold">{item.name}</p>
@@ -345,7 +360,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                       {dataResume?.trainings?.map((item) => (
                         <div key={item?.id} className="flex gap-6">
                           <p className="text-primary100 font-bold">
-                            {item.year.slice(0, 4)}
+                            {item.year?.slice(0, 4)}
                           </p>
                           <div>
                             <p className="text-mono30 font-bold">{item.name}</p>
@@ -367,7 +382,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                       {dataResume?.certificates?.map((item) => (
                         <div key={item?.id} className="flex gap-6">
                           <p className="text-primary100 font-bold">
-                            {item.year.slice(0, 4)}
+                            {item.year?.slice(0, 4)}
                           </p>
                           <div>
                             <p className="text-mono30 font-bold">{item.name}</p>
@@ -389,7 +404,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                       {dataResume?.achievements?.map((item) => (
                         <div key={item?.id} className="flex gap-6">
                           <p className="text-primary100 font-bold">
-                            {item.year.slice(0, 4)}
+                            {item.year?.slice(0, 4)}
                           </p>
                           <div>
                             <p className="text-mono30 font-bold">{item.name}</p>

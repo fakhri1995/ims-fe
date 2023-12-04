@@ -2235,7 +2235,7 @@ const TableCustomTalentPoolList = ({
             setIsHovered(false);
           },
           onClick: () => {
-            if (record.id && isAllowedToGetTalentPool) {
+            if (record?.id && isAllowedToGetTalentPool) {
               setDataRowClicked(record);
               setDrawerShown(true);
             }
@@ -2243,8 +2243,10 @@ const TableCustomTalentPoolList = ({
         };
       }}
       rowClassName={(record, idx) => {
-        return `${record.id === rowstate && `cursor-pointer `}
-        ${isPublic && record.mark == 1 && `bg-[#00589F26] bg-opacity15`}}`;
+        return `${record?.id === rowstate && `cursor-pointer `}
+        ${
+          isPublic && record?.mark_count == 1 && `bg-[#00589F26] bg-opacity15`
+        }}`;
       }}
     />
   );

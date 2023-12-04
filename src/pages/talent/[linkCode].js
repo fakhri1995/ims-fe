@@ -32,7 +32,7 @@ const TalentPoolPublicIndex = ({
 
   const rt = useRouter();
   // Breadcrumb url
-  const pathArr = rt.pathname.split("/").slice(1);
+  const pathArr = rt.pathname?.split("/")?.slice(1);
 
   // Breadcrumb title
   const pageBreadcrumbValue = useMemo(() => [

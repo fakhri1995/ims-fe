@@ -165,8 +165,11 @@ const DrawerPayslipDetail = ({
             <p className="mig-caption--medium text-mono80">Jumlah Diterima</p>
             <div className="flex flex-row">
               <p className={!isAllowedToSeeSalary ? `blur-text` : undefined}>
-                Rp{detailPayslip?.take_home_pay.toLocaleString("id-ID")} (
-                {convertTerbilang(detailPayslip?.take_home_pay) || "Nol"}{" "}
+                Rp
+                {Number(detailPayslip?.take_home_pay)?.toLocaleString(
+                  "id-ID"
+                )}{" "}
+                ({convertTerbilang(detailPayslip?.take_home_pay) || "Nol"}{" "}
                 Rupiah)
               </p>
             </div>
@@ -225,9 +228,9 @@ const DrawerPayslipDetail = ({
                         className={`font-bold text-right 
                         ${!isAllowedToSeeSalary ? `blur-text` : undefined}`}
                       >
-                        {detailPayslip?.total_gross_penerimaan?.toLocaleString(
-                          "id-ID"
-                        )}
+                        {Number(
+                          detailPayslip?.total_gross_penerimaan
+                        )?.toLocaleString("id-ID")}
                       </Table.Summary.Cell>
                     </Table.Summary.Row>
                   </Table.Summary>
@@ -278,9 +281,9 @@ const DrawerPayslipDetail = ({
                         className={`font-bold text-right 
                         ${!isAllowedToSeeSalary ? `blur-text` : undefined}`}
                       >
-                        {detailPayslip?.total_gross_pengurangan?.toLocaleString(
-                          "id-ID"
-                        )}
+                        {Number(
+                          detailPayslip?.total_gross_pengurangan
+                        )?.toLocaleString("id-ID")}
                       </Table.Summary.Cell>
                     </Table.Summary.Row>
                   </Table.Summary>

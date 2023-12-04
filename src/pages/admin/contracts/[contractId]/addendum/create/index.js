@@ -184,19 +184,6 @@ const ContractAddendumCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     /** Setup form data to be sent in API */
 
-    // let payload = {
-    //   contract_id: data.contract_id,
-    //   code_number: data.code_number,
-    //   title: data.title,
-    //   client_id: data.client_id,
-    //   requester_id: data.requester_id,
-    //   initial_date: data.initial_date,
-    //   start_date: data.start_date,
-    //   end_date: data.end_date,
-    //   is_posted: data.is_posted,
-    //   extras: data.extras,
-    // };
-
     // convert object to form data
     const payloadFormData = objectToFormDataNew(data);
 

@@ -9,6 +9,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useCallback } from "react";
+import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -26,6 +27,7 @@ import {
   EMPLOYEE_UPDATE,
 } from "lib/features";
 
+import { EmployeeService } from "../../../../apis/employee";
 import ButtonSys from "../../../../components/button";
 import { OneUserIconSvg, TrashIconSvg } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
@@ -89,38 +91,35 @@ const EmployeeDetailIndex = ({
 
   // 1. STATE
   // 1.1. display
-  const [praloading, setpraloading] = useState(true);
   const [currentTab, setCurrentTab] = useState(tabId || "1");
-  const [dataEmployee, setDataEmployee] = useState({
-    id: 0,
-    name: "",
-    nip: "",
-    nik: "",
-    alias: "",
-    phone_number: "",
-    email_office: "",
-    email_personal: "",
-    domicile: "",
-    birth_place: "",
-    birth_date: "",
-    gender: "",
-    blood_type: "",
-    marital_status: "",
-    child_total: "",
-    bio_mother_name: "",
-    npwp: "",
-    bpjs_kesehatan: "",
-    bpjs_ketenagakerjaan: "",
-    acc_number_bukopin: "",
-    acc_number_another: "",
-    is_posted: 0,
-    contracts: [],
-    inventories: [],
-    id_card_photo: {},
-    join_at: "",
-  });
-
-  const [refresh, setRefresh] = useState(-1);
+  // const [dataEmployee, setDataEmployee] = useState({
+  //   id: 0,
+  //   name: "",
+  //   nip: "",
+  //   nik: "",
+  //   alias: "",
+  //   phone_number: "",
+  //   email_office: "",
+  //   email_personal: "",
+  //   domicile: "",
+  //   birth_place: "",
+  //   birth_date: "",
+  //   gender: "",
+  //   blood_type: "",
+  //   marital_status: "",
+  //   child_total: "",
+  //   bio_mother_name: "",
+  //   npwp: "",
+  //   bpjs_kesehatan: "",
+  //   bpjs_ketenagakerjaan: "",
+  //   acc_number_bukopin: "",
+  //   acc_number_another: "",
+  //   is_posted: 0,
+  //   contracts: [],
+  //   inventories: [],
+  //   id_card_photo: {},
+  //   join_at: "",
+  // });
 
   // 1.2. Delete
   const [modalInactivate, setModalInactivate] = useState(false);
@@ -131,43 +130,23 @@ const EmployeeDetailIndex = ({
 
   // 2. USE EFFECT
   // 2.1 Get employee detail
-  useEffect(() => {
-    if (!isAllowedToGetEmployee) {
-      permissionWarningNotification("Mendapatkan", "Detail Karyawan");
-      setpraloading(false);
-      return;
+  const {
+    data: dataEmployee,
+    isLoading: loadingEmployee,
+    refetch: refetchEmployee,
+  } = useQuery(
+    [EMPLOYEE_GET, employeeId],
+    () =>
+      EmployeeService.getEmployee(
+        initProps,
+        isAllowedToGetEmployee,
+        employeeId
+      ),
+    {
+      enabled: isAllowedToGetEmployee,
+      select: (response) => response.data,
     }
-    if (employeeId) {
-      setpraloading(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            setDataEmployee(response2.data);
-          } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setpraloading(false));
-    }
-  }, [isAllowedToGetEmployee, employeeId, refresh]);
+  );
 
   // 3. Event
   const onAddContractButtonClicked = useCallback(() => {
@@ -321,10 +300,10 @@ const EmployeeDetailIndex = ({
       <div className="grid grid-cols-1 ">
         <div className="flex flex-col md:flex-row gap-3 md:gap-5 w-full">
           {/* Left Column - ID Card Photo */}
-          {dataEmployee.id_card_photo ? (
+          {dataEmployee?.id_card_photo ? (
             <img
-              src={generateStaticAssetUrl(dataEmployee.id_card_photo?.link)}
-              alt={dataEmployee.id_card_photo?.description}
+              src={generateStaticAssetUrl(dataEmployee?.id_card_photo?.link)}
+              alt={dataEmployee?.id_card_photo?.description}
               className="md:w-1/5 bg-cover object-cover rounded-md shadow-lg"
             />
           ) : (
@@ -411,7 +390,6 @@ const EmployeeDetailIndex = ({
                   isAllowedToDeleteEmployeeContract
                 }
                 dataEmployee={dataEmployee}
-                setRefresh={setRefresh}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="3">
@@ -425,7 +403,6 @@ const EmployeeDetailIndex = ({
                   isAllowedToDeleteEmployeeInventory
                 }
                 dataEmployee={dataEmployee}
-                setRefresh={setRefresh}
               />
             </Tabs.TabPane>
           </Tabs>

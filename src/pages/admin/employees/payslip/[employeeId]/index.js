@@ -18,6 +18,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useCallback } from "react";
+import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -33,6 +34,7 @@ import {
   EMPLOYEE_PAYSLIP_UPDATE,
 } from "lib/features";
 
+import { EmployeeService, PayslipService } from "../../../../../apis/employee";
 import ButtonSys from "../../../../../components/button";
 import DrawerPayslipDetail from "../../../../../components/drawer/employees/drawerPayslipDetail";
 import {
@@ -105,18 +107,6 @@ const EmployeePayslipDetailIndex = ({
 
   // 1. STATE
   // 1.1. display
-  const [praloading, setpraloading] = useState(true);
-  const [dataEmployee, setDataEmployee] = useState({
-    id: 0,
-    name: "",
-    nip: "",
-    phone_number: "",
-    email_office: "",
-    join_at: "",
-    is_posted: 0,
-    contracts: [],
-    inventories: [],
-  });
 
   // 1.2. Table Payslips
   // filter data
@@ -138,23 +128,6 @@ const EmployeePayslipDetailIndex = ({
 
   // table data
   const [dataPayslips, setDataPayslips] = useState([]);
-  const [dataRawPayslips, setDataRawPayslips] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
-
-  const [refresh, setRefresh] = useState(-1);
-  const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 1.3. Add & Download
   const [loadingAdd, setLoadingAdd] = useState(false);
@@ -167,114 +140,68 @@ const EmployeePayslipDetailIndex = ({
   // Current payslip status: 0-kosong, 1-draft, 2-diterbitkan
   const [payslipStatus, setPayslipStatus] = useState(0);
 
-  // 2. USE EFFECT
+  // 2. USE QUERY & USE EFFECT
   // 2.1 Get employee detail
-  useEffect(() => {
-    if (!isAllowedToGetEmployee) {
-      permissionWarningNotification("Mendapatkan", "Detail Karyawan");
-      setpraloading(false);
-      return;
-    }
-    if (employeeId) {
-      setpraloading(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            const resData = response2.data;
-
-            setDataEmployee(resData);
-            setPayslipId(resData?.last_month_payslip?.id);
-            if (resData?.last_month_payslip) {
-              if (resData?.last_month_payslip?.is_posted) {
-                setPayslipStatus(2);
-              } else {
-                setPayslipStatus(1);
-              }
-            }
+  const {
+    data: dataEmployee,
+    isLoading: loadingEmployee,
+    refetch: refetchEmployee,
+  } = useQuery(
+    [EMPLOYEE_GET, employeeId],
+    () =>
+      EmployeeService.getEmployee(
+        initProps,
+        isAllowedToGetEmployee,
+        employeeId
+      ),
+    {
+      enabled: isAllowedToGetEmployee,
+      select: (response) => response.data,
+      onSuccess: (data) => {
+        setPayslipId(data?.last_month_payslip?.id);
+        if (data?.last_month_payslip) {
+          if (data?.last_month_payslip?.is_posted) {
+            setPayslipStatus(2);
           } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
+            setPayslipStatus(1);
           }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setpraloading(false));
+        }
+      },
     }
-  }, [isAllowedToGetEmployee, employeeId, refresh]);
+  );
 
   // 2.2. Get employee payslips
-  useEffect(() => {
-    if (!isAllowedToGetPayslips) {
-      permissionWarningNotification("Mendapatkan", "Daftar Slip Gaji Karyawan");
-      setpraloading(false);
-      return;
+  const {
+    data: dataRawPayslips,
+    isLoading: loadingPayslips,
+    refetch: refetchPayslips,
+  } = useQuery(
+    [EMPLOYEE_PAYSLIPS_GET, queryParams],
+    () =>
+      PayslipService.getEmployeePayslips(
+        initProps,
+        isAllowedToGetPayslips,
+        queryParams,
+        searchingFilterPayslips
+      ),
+    {
+      enabled: isAllowedToGetPayslips,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataPayslips(data.data);
+      },
     }
-    // if (employeeId) {
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
+  );
 
-    const fetchData = async () => {
-      setpraloading(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips${payload}&keyword=${searchingFilterPayslips}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            setDataRawPayslips(response2.data);
-            setDataPayslips(response2.data.data);
-          } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setpraloading(false));
-    };
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      refetchPayslips();
+    }, 500);
 
-    const timer = setTimeout(() => fetchData(), 500);
-    return () => clearTimeout(timer);
-    // }
-  }, [
-    isAllowedToGetPayslips,
-    refresh,
-    searchingFilterPayslips,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.employee_id,
-    queryParams.is_posted,
-  ]);
+    return () => clearTimeout(delaySearch);
+  }, [searchingFilterPayslips]);
 
   // 3. Event
   const onFilterPayslips = () => {
@@ -427,7 +354,8 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <p className={!isAllowedToSeeSalary ? `blur-text` : undefined}>
-              {record.total_gross_penerimaan?.toLocaleString("id-ID") || "-"}
+              {Number(record.total_gross_penerimaan)?.toLocaleString("id-ID") ||
+                "-"}
             </p>
           ),
         };
@@ -440,7 +368,9 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <p className={!isAllowedToSeeSalary ? `blur-text` : undefined}>
-              {record.total_gross_pengurangan?.toLocaleString("id-ID") || "-"}
+              {Number(record.total_gross_pengurangan)?.toLocaleString(
+                "id-ID"
+              ) || "-"}
             </p>
           ),
         };
@@ -453,7 +383,7 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <p className={!isAllowedToSeeSalary ? `blur-text` : undefined}>
-              {record.take_home_pay?.toLocaleString("id-ID") || "-"}
+              {Number(record.take_home_pay)?.toLocaleString("id-ID") || "-"}
             </p>
           ),
         };
@@ -553,10 +483,10 @@ const EmployeePayslipDetailIndex = ({
       <div className="grid grid-cols-1" id="mainWrapper">
         <div className="flex flex-col md:flex-row gap-3 md:gap-5 w-full">
           {/* Left Column - ID Card Photo */}
-          {dataEmployee.id_card_photo ? (
+          {dataEmployee?.id_card_photo ? (
             <img
-              src={generateStaticAssetUrl(dataEmployee.id_card_photo?.link)}
-              alt={dataEmployee.id_card_photo?.description}
+              src={generateStaticAssetUrl(dataEmployee?.id_card_photo?.link)}
+              alt={dataEmployee?.id_card_photo?.description}
               className="md:w-2/5 lg:w-1/5 bg-cover object-cover rounded-md shadow-lg"
             />
           ) : (
@@ -698,7 +628,7 @@ const EmployeePayslipDetailIndex = ({
             rt={rt}
             dataSource={dataPayslips}
             columns={columnPayslip}
-            loading={praloading}
+            loading={loadingPayslips}
             total={dataRawPayslips?.total}
             queryParams={queryParams}
             setQueryParams={setQueryParams}

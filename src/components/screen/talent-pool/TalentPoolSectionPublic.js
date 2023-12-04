@@ -29,11 +29,7 @@ import { ModalHapus2 } from "../../modal/modalCustom";
 import ModalTalentDetail from "../../modal/talent-pool/modalTalentDetail";
 import TalentDetailCard from "./TalentDetailCard";
 
-const TalentPoolSectionPublic = ({
-  shareId,
-  category,
-  setModalEliminatedTalent,
-}) => {
+const TalentPoolSectionPublic = ({ shareId, setModalEliminatedTalent }) => {
   const [queryParams, setQueryParams] = useQueryParams({
     share_id: withDefault(NumberParam, shareId),
     page: withDefault(NumberParam, 1),
@@ -59,10 +55,8 @@ const TalentPoolSectionPublic = ({
   const [selectedEdu, setSelectedEdu] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
-  const [modalTalentAdd, setModalTalentAdd] = useState(false);
   const [modalTalentEliminate, setModalTalentEliminate] = useState(false);
-  const [modalShare, setModalShare] = useState(false);
-  const [drawerTalentDetail, setDrawerTalentDetail] = useState(false);
+
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [dataRowClicked, setDataRowClicked] = useState({});
   const [rowState, setRowState] = useState({});
@@ -147,25 +141,30 @@ const TalentPoolSectionPublic = ({
     "Enter"
   );
 
-  const handleMarkTalent = async (talentId) => {
-    await TalentPoolPublicService.mark(talentId)
+  const handleMarkTalent = async (data) => {
+    const payload = {
+      talent_id: data?.id,
+      share_id: shareId,
+    };
+
+    await TalentPoolPublicService.mark(payload)
       .then((res) => {
         if (res.success) {
           refetchTalents();
           notification.success({
-            message: res.message,
+            message: res?.message,
             duration: 3,
           });
         } else {
           notification.error({
-            message: res.message,
+            message: res?.message,
             duration: 3,
           });
         }
       })
       .catch((err) => {
         notification.error({
-          message: `${err.response}`,
+          message: `${err?.response}`,
           duration: 3,
         });
       });
@@ -316,13 +315,13 @@ const TalentPoolSectionPublic = ({
           children: (
             <div className="flex flex-col md:flex-row gap-2 items-center">
               <ButtonSys
-                type={record.mark == 1 ? "primary" : "default"}
+                type={record.mark_count == 1 ? "primary" : "default"}
                 color={"secondary100"}
                 // disabled={!isAllowedToMarkTalent}
                 onClick={(event) => {
                   event.stopPropagation();
                   setDataRowClicked(record);
-                  handleMarkTalent(record?.id);
+                  handleMarkTalent(record);
                 }}
               >
                 <UserAddOutlined rev={""} />
@@ -367,16 +366,18 @@ const TalentPoolSectionPublic = ({
         {/* Filter by position (dropdown) */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.roles}
             allowClear
-            name={`role`}
-            // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
+            showSearch
+            mode="multiple"
+            name={`roles`}
             placeholder="Posisi"
             style={{ width: `100%` }}
+            defaultValue={queryParams.roles}
             onChange={(value) => {
               setQueryParams({ roles: value });
               setSelectedRole(value);
             }}
+            // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
           >
             {dataFilters?.role?.map((item) => (
               <Select.Option key={item.id} value={item.name}>
@@ -388,9 +389,11 @@ const TalentPoolSectionPublic = ({
         {/* Filter by skill */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.skills}
             allowClear
-            name={`skill`}
+            showSearch
+            mode="multiple"
+            name={`skills`}
+            defaultValue={queryParams.skills}
             // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
             placeholder="Skill"
             style={{ width: `100%` }}
@@ -409,9 +412,11 @@ const TalentPoolSectionPublic = ({
         {/* Filter by years of experience */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.years}
             allowClear
-            name={`year`}
+            showSearch
+            mode="multiple"
+            name={`years`}
+            defaultValue={queryParams.years}
             // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
             placeholder="Tahun Pengalaman"
             style={{ width: `100%` }}
@@ -430,9 +435,11 @@ const TalentPoolSectionPublic = ({
         {/* Filter by university */}
         <div className="w-full lg:w-2/12">
           <Select
-            defaultValue={queryParams.educations}
             allowClear
+            showSearch
+            mode="multiple"
             name={`university`}
+            defaultValue={queryParams.educations}
             // disabled={!isAllowedToGetTalentPoolSharePublicFilters}
             placeholder="Universitas"
             style={{ width: `100%` }}

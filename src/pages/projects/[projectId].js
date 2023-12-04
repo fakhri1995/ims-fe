@@ -25,6 +25,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useMemo } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
+import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -45,6 +46,7 @@ import {
   PROJECT_UPDATE,
 } from "lib/features";
 
+import { ProjectManagementService } from "../../apis/project-management";
 import ButtonSys from "../../components/button";
 import TaskCard from "../../components/cards/project/TaskCard";
 import {
@@ -186,23 +188,8 @@ const ProjectDetailIndex = ({
   const [selectedSortType, setSelectedSortType] = useState(undefined);
 
   // table data
-  const [loadingTasks, setLoadingTasks] = useState(true);
+  const [loadingAdd, setLoadingAdd] = useState(true);
   const [dataTasks, setDataTasks] = useState([]);
-  const [dataRawTasks, setDataRawTasks] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
-
   const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 2.3. Project Detail
@@ -335,64 +322,33 @@ const ProjectDetailIndex = ({
   }, [isAllowedToGetStatuses, refresh]);
 
   // 3.5. Get Task List
-  useEffect(() => {
-    if (!isAllowedToGetTasks) {
-      permissionWarningNotification("Mendapatkan", "Daftar Task Proyek");
-      setLoadingTasks(false);
-      return;
+  const taskListParams = {
+    ...queryParams,
+    project_id: projectId,
+    keyword: searchingFilterTasks,
+  };
+  const {
+    data: dataRawTasks,
+    isLoading: loadingTasks,
+    refetch: refetchTasks,
+  } = useQuery(
+    [PROJECT_TASKS_GET, taskListParams],
+    () =>
+      ProjectManagementService.getTaskList(
+        initProps,
+        isAllowedToGetTasks,
+        taskListParams
+      ),
+    {
+      enabled: isAllowedToGetTasks,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataTasks(data.data);
+      },
     }
-
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
-
-    const fetchData = async () => {
-      setLoadingTasks(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}&project_id=${projectId}&keyword=${searchingFilterTasks}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawTasks(res2.data);
-            setDataTasks(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingTasks(false);
-        });
-    };
-    const timer = setTimeout(() => fetchData(), 500);
-
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetTasks,
-    refreshTasks,
-    projectId,
-    searchingFilterTasks,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.status_ids,
-  ]);
+  );
 
   // 3.6. Get Data Chart Status Task
   useEffect(() => {
@@ -578,7 +534,7 @@ const ProjectDetailIndex = ({
       project_id: projectId,
     };
 
-    setLoadingTasks(true);
+    setLoadingAdd(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectTask`, {
       method: `POST`,
       headers: {
@@ -605,7 +561,7 @@ const ProjectDetailIndex = ({
           duration: 3,
         });
       })
-      .finally(() => setLoadingTasks(false));
+      .finally(() => setLoadingAdd(false));
   };
 
   // String of project staffs for project detail

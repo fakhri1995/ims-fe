@@ -23,6 +23,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useMemo } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
+import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -42,6 +43,7 @@ import {
   PROJECT_TASK_UPDATE,
 } from "lib/features";
 
+import { ProjectManagementService } from "../../../apis/project-management";
 import ButtonSys from "../../../components/button";
 import {
   AdjusmentsHorizontalIconSvg,
@@ -141,68 +143,25 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2. useState
   // 2.1. Charts
-  const [loadingChart, setLoadingChart] = useState(false);
   const [taskStatusCount, setTaskStatusCount] = useState([]);
   const [taskTotal, setTaskTotal] = useState(0);
-
-  const [dataTaskDeadline, setDataTaskDeadline] = useState({
-    deadline: {
-      today_deadline: 0,
-      tomorrow_deadline: 0,
-      first_range_deadline: 0,
-      second_range_deadline: 0,
-      third_range_deadline: 0,
-    },
-    date: {
-      first_start_date: "",
-      first_end_date: "",
-      second_start_date: "",
-      second_end_date: "",
-      third_start_date: "",
-      third_end_date: "",
-    },
-  });
   const [dateFilter, setDateFilter] = useState(false);
   const [dateState, setDateState] = useState({
     from: "",
     to: "",
   });
 
-  const [staffCount, setStaffCount] = useState({
-    total_staff: 0,
-    total_staff_without_task: 0,
-    percentage: 0,
-  });
-
   // 2.2. Table Projects List (Semua Proyek)
   // filter data
-  const [refreshTasks, setRefreshTasks] = useState(-1);
   const [refreshProject, setRefreshProject] = useState(-1);
-  const [loadingStatusList, setLoadingStatusList] = useState(false);
-  const [dataStatusList, setDataStatusList] = useState([]);
 
   // filter search & selected options
   const [searchingFilterTasks, setSearchingFilterTasks] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
   // table data
-  const [loadingTasks, setLoadingTasks] = useState(true);
+  const [loadingAdd, setLoadingAdd] = useState(true);
   const [dataTasks, setDataTasks] = useState([]);
-  const [dataRawTasks, setDataRawTasks] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
-
   const [sortTable, setSortTable] = useState({
     sort_by: undefined,
     sort_type: undefined,
@@ -213,200 +172,109 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [modalDetailTask, setModalDetailTask] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState(0);
 
-  // 3. UseEffect
+  // 3. UseQuery & UseEffect
   // 3.1. Get Tasks
-  useEffect(() => {
-    if (!isAllowedToGetTasks) {
-      permissionWarningNotification("Mendapatkan", "Data Tabel Task");
-      setLoadingTasks(false);
-      return;
+  const {
+    data: dataRawTasks,
+    isLoading: loadingTasks,
+    refetch: refetchTasks,
+  } = useQuery(
+    [PROJECT_TASKS_GET, queryParams, searchingFilterTasks],
+    () =>
+      ProjectManagementService.getAdminTaskList(
+        initProps,
+        isAllowedToGetTasks,
+        queryParams,
+        searchingFilterTasks
+      ),
+    {
+      enabled: isAllowedToGetTasks,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataTasks(data.data);
+      },
     }
+  );
 
-    const params = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      refetchTasks();
+    }, 500);
 
-    const fetchData = async () => {
-      setLoadingTasks(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasksAdmin${params}&keyword=${searchingFilterTasks}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawTasks(res2.data);
-            setDataTasks(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingTasks(false);
-        });
-    };
-    const timer = setTimeout(() => fetchData(), 500);
-
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetTasks,
-    refreshTasks,
-    searchingFilterTasks,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.status_ids,
-  ]);
+    return () => clearTimeout(delaySearch);
+  }, [searchingFilterTasks]);
 
   // 3.3. Get Project Status List
-  useEffect(() => {
-    if (!isAllowedToGetStatuses) {
-      permissionWarningNotification("Mendapatkan", "Daftar Status Proyek");
-      setLoadingStatusList(false);
-      return;
-    }
-
-    setLoadingStatusList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatuses`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
+  const {
+    data: dataStatusList,
+    isLoading: loadingStatusList,
+    refetch: refetchStatusList,
+  } = useQuery(
+    [PROJECT_STATUSES_GET],
+    () =>
+      ProjectManagementService.getStatusList(initProps, isAllowedToGetStatuses),
+    {
+      enabled: isAllowedToGetStatuses,
+      select: (response) => {
+        return response.data;
       },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataStatusList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingStatusList(false);
-      });
-  }, [isAllowedToGetStatuses]);
+    }
+  );
 
   // 3.4. Get Data Chart Status Task
-  useEffect(() => {
-    if (!isAllowedToGetTaskStatusCount) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Statistik Status Task"
-      );
-      setLoadingChart(false);
-      return;
-    }
-
-    setLoadingChart(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasksCount`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
+  const { data, isLoading: loadingStatusCount } = useQuery(
+    [PROJECT_TASKS_COUNT_GET],
+    () =>
+      ProjectManagementService.getTaskStatusCount(
+        initProps,
+        isAllowedToGetTaskStatusCount
+      ),
+    {
+      enabled: isAllowedToGetTaskStatusCount,
+      select: (response) => {
+        return response.data;
       },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setTaskStatusCount(res2.data?.status); // "Status Task" chart's data source
-        setTaskTotal(res2.data?.total);
-      })
-      .catch((err) =>
-        notification.error({
-          message: "Gagal mendapatkan data statistik status task",
-          duration: 3,
-        })
-      )
-      .finally(() => setLoadingChart(false));
-  }, [isAllowedToGetTaskStatusCount, refreshTasks]);
+      onSuccess: (data) => {
+        setTaskStatusCount(data?.status); // "Status Task" chart's data source
+        setTaskTotal(data?.total);
+      },
+    }
+  );
 
   // 3.5. Get Data Chart Deadline Task
-  useEffect(() => {
-    if (!isAllowedToGetTaskDeadlineCount) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Statistik Deadline Task"
-      );
-      setLoadingChart(false);
-      return;
+  const { data: dataTaskDeadline, isLoading: loadingDeadlineCount } = useQuery(
+    [PROJECT_TASKS_DEADLINE_GET, dateState],
+    () =>
+      ProjectManagementService.getTaskDeadlineCount(
+        initProps,
+        isAllowedToGetTaskDeadlineCount,
+        dateState.from || dateState.to ? dateState : null
+      ),
+    {
+      enabled: isAllowedToGetTaskDeadlineCount,
+      select: (response) => {
+        return response.data;
+      },
     }
-
-    if (!dateState.from || !dateState.to) {
-      setLoadingChart(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasksDeadline`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setDataTaskDeadline(res2.data); // "Deadline Task Bulan Ini" chart's data source
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan data statistik deadline task",
-            duration: 3,
-          })
-        )
-        .finally(() => setLoadingChart(false));
-    }
-  }, [isAllowedToGetTaskDeadlineCount, dateState, refreshTasks]);
+  );
 
   // 3.6. Get Data Chart Staff
-  useEffect(() => {
-    if (!isAllowedToGetStaffCount) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Statistik Jumlah Staff"
-      );
-      setLoadingChart(false);
-      return;
+  const { data: staffCount, isLoading: loadingStaffCount } = useQuery(
+    [PROJECT_TASK_STAFF_COUNT_GET],
+    () =>
+      ProjectManagementService.getTaskStaffCount(
+        initProps,
+        isAllowedToGetStaffCount
+      ),
+    {
+      enabled: isAllowedToGetStaffCount,
+      select: (response) => {
+        return response.data;
+      },
     }
-
-    if (!dateState.from || !dateState.to) {
-      setLoadingChart(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTaskStaffCount`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setStaffCount(res2.data); // "Staff" chart's data source
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan data statistik jumlah staff",
-            duration: 3,
-          })
-        )
-        .finally(() => setLoadingChart(false));
-    }
-  }, [isAllowedToGetStaffCount, refreshTasks]);
+  );
 
   // 4. Event
   const onFilterTasks = () => {
@@ -419,54 +287,13 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterTasks, "Enter");
 
-  const handleGetTaskDeadlineCount = (fromDate = "", toDate = "") => {
-    if (!isAllowedToGetTaskDeadlineCount) {
-      setLoadingChart(false);
-      return;
-    }
-
-    setLoadingChart(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasksDeadline?from=${fromDate}&to=${toDate}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDateState({
-            from: fromDate,
-            to: toDate,
-          });
-          setDataTaskDeadline(res2.data);
-          setLoadingChart(false);
-        } else {
-          notification["error"]({
-            message: `Gagal mendapatkan data statistik deadline task. ${res2?.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) =>
-        notification["error"]({
-          message: `Gagal mendapatkan data statistik deadline task. ${err?.message}`,
-          duration: 3,
-        })
-      )
-      .finally(() => setLoadingChart(false));
-  };
-
   const handleAddTask = () => {
     if (!isAllowedToAddTask) {
       permissionWarningNotification("Menambah", "Task");
       return;
     }
 
-    setLoadingTasks(true);
+    setLoadingAdd(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectTask`, {
       method: `POST`,
       headers: {
@@ -492,7 +319,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
           duration: 3,
         });
       })
-      .finally(() => setLoadingTasks(false));
+      .finally(() => setLoadingAdd(false));
   };
 
   const onOpenModalTask = (taskId) => {
@@ -641,7 +468,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
             }
           >
-            {loadingChart ? (
+            {loadingStatusCount || loadingDeadlineCount || loadingStaffCount ? (
               <div className="text-center">
                 <Spin />
               </div>
@@ -696,7 +523,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                   </div>
 
                   {/* LEGEND STATUS TASK */}
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+                  <div className="flex flex-wrap gap-4">
                     {taskStatusCount?.map((status, idx) => (
                       <div
                         key={idx}
@@ -761,10 +588,10 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                         onOpenChange={setDateFilter}
                         onChange={(dates, datestrings) => {
                           setDateFilter((prev) => !prev);
-                          handleGetTaskDeadlineCount(
-                            datestrings[0],
-                            datestrings[1]
-                          );
+                          setDateState({
+                            from: datestrings[0],
+                            to: datestrings[1],
+                          });
                         }}
                         renderExtraFooter={() => (
                           <div className=" flex items-center">
@@ -784,7 +611,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                   </div>
 
                   {/* CHART DEADLINE TASK*/}
-                  {loadingChart ? (
+                  {loadingDeadlineCount ? (
                     <Spin />
                   ) : (
                     <div className="">
@@ -794,39 +621,20 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                             labels: [
                               `${
                                 moment(
-                                  dataTaskDeadline.date.first_start_date
+                                  dataTaskDeadline?.date.first_start_date
                                 ).isValid()
                                   ? moment(
-                                      dataTaskDeadline.date.first_start_date
+                                      dataTaskDeadline?.date.first_start_date
                                     )
                                       .locale("id")
                                       .format("Do MMM")
                                   : ""
                               }-${
                                 moment(
-                                  dataTaskDeadline.date.first_end_date
-                                ).isValid()
-                                  ? moment(dataTaskDeadline.date.first_end_date)
-                                      .locale("id")
-                                      .format("Do MMM")
-                                  : ""
-                              }`,
-                              `${
-                                moment(
-                                  dataTaskDeadline.date.second_start_date
+                                  dataTaskDeadline?.date.first_end_date
                                 ).isValid()
                                   ? moment(
-                                      dataTaskDeadline.date.second_start_date
-                                    )
-                                      .locale("id")
-                                      .format("Do MMM")
-                                  : ""
-                              }-${
-                                moment(
-                                  dataTaskDeadline.date.second_end_date
-                                ).isValid()
-                                  ? moment(
-                                      dataTaskDeadline.date.second_end_date
+                                      dataTaskDeadline?.date.first_end_date
                                     )
                                       .locale("id")
                                       .format("Do MMM")
@@ -834,19 +642,42 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                               }`,
                               `${
                                 moment(
-                                  dataTaskDeadline.date.third_start_date
+                                  dataTaskDeadline?.date.second_start_date
                                 ).isValid()
                                   ? moment(
-                                      dataTaskDeadline.date.third_start_date
+                                      dataTaskDeadline?.date.second_start_date
                                     )
                                       .locale("id")
                                       .format("Do MMM")
                                   : ""
                               }-${
                                 moment(
-                                  dataTaskDeadline.date.third_end_date
+                                  dataTaskDeadline?.date.second_end_date
                                 ).isValid()
-                                  ? moment(dataTaskDeadline.date.third_end_date)
+                                  ? moment(
+                                      dataTaskDeadline?.date.second_end_date
+                                    )
+                                      .locale("id")
+                                      .format("Do MMM")
+                                  : ""
+                              }`,
+                              `${
+                                moment(
+                                  dataTaskDeadline?.date.third_start_date
+                                ).isValid()
+                                  ? moment(
+                                      dataTaskDeadline?.date.third_start_date
+                                    )
+                                      .locale("id")
+                                      .format("Do MMM")
+                                  : ""
+                              }-${
+                                moment(
+                                  dataTaskDeadline?.date.third_end_date
+                                ).isValid()
+                                  ? moment(
+                                      dataTaskDeadline?.date.third_end_date
+                                    )
                                       .locale("id")
                                       .format("Do MMM")
                                   : ""
@@ -855,11 +686,11 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                             datasets: [
                               {
                                 data: [
-                                  dataTaskDeadline.deadline
+                                  dataTaskDeadline?.deadline
                                     .first_range_deadline,
-                                  dataTaskDeadline.deadline
+                                  dataTaskDeadline?.deadline
                                     .second_range_deadline,
-                                  dataTaskDeadline.deadline
+                                  dataTaskDeadline?.deadline
                                     .third_range_deadline,
                                 ],
                                 borderColor: "#35763B",
@@ -912,7 +743,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                             </p>
                           </div>
                           <p className="font-bold text-right text-mono30">
-                            {dataTaskDeadline.deadline.today_deadline}
+                            {dataTaskDeadline?.deadline.today_deadline}
                           </p>
                         </div>
                         <div className="flex justify-between items-center space-x-5">
@@ -928,7 +759,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                             </p>
                           </div>
                           <p className="font-bold text-right text-mono30">
-                            {dataTaskDeadline.deadline.tomorrow_deadline}
+                            {dataTaskDeadline?.deadline.tomorrow_deadline}
                           </p>
                         </div>
                       </div>
@@ -940,7 +771,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <div className="grid grid-cols-1 gap-6 shadow-md rounded-md bg-white p-5">
                   <h4 className="mig-heading--4 ">Staff</h4>
 
-                  {loadingChart ? (
+                  {loadingStaffCount ? (
                     <>
                       <Spin />
                     </>
@@ -949,7 +780,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                       <div className="flex justify-center mb-3 h-40">
                         <Progress
                           type="dashboard"
-                          percent={staffCount.percentage}
+                          percent={staffCount?.percentage}
                           strokeColor={"#35763B"}
                           strokeWidth={8}
                           width={170}
@@ -969,8 +800,8 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                           </div>
                           <div>
                             <H2>
-                              {staffCount.total_staff_without_task} /{" "}
-                              {staffCount.total_staff}
+                              {staffCount?.total_staff_without_task} /{" "}
+                              {staffCount?.total_staff}
                             </H2>
                           </div>
                         </div>
@@ -994,7 +825,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                             </p>
                           </div>
                           <p className="font-bold text-right text-mono30">
-                            {staffCount.total_staff}
+                            {staffCount?.total_staff}
                           </p>
                         </div>
                         <div className="flex justify-between items-center space-x-5 mb-2">
@@ -1010,7 +841,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                             </p>
                           </div>
                           <p className="font-bold text-right text-mono30">
-                            {staffCount.total_staff_without_task}
+                            {staffCount?.total_staff_without_task}
                           </p>
                         </div>
                       </div>
@@ -1155,7 +986,6 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToDeleteTask={isAllowedToDeleteTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
-          setRefreshTasks={setRefreshTasks}
           taskId={currentTaskId}
         />
       </AccessControl>
@@ -1170,7 +1000,6 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           isAllowedToGetStatuses={isAllowedToGetStatuses}
-          setRefreshTasks={setRefreshTasks}
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
           isOutsideProject={true}
