@@ -807,3 +807,44 @@ ol {
   width: 0;
   position: absolute;
 }
+.customDatepicker .ant-picker .ant-picker-input span.ant-picker-suffix {
+  margin-left: 1px;
+  margin-right: 10px;
+  order: -1;
+  color: #35763b;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.customDatepicker .ant-picker {
+  border: 2px solid #35763b;
+}
+
+.customDatepicker .ant-picker .ant-picker-input input {
+  color: #35763b;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 11px;
+  flex: auto;
+  min-width: 1px;
+  height: auto;
+  padding: 0;
+  border: 0;
+}
+.customselectcareer .ant-select {
+  border: 2px solid #35763b;
+  border-radius: 5px;
+}
+
+.customselectcareer .ant-select-selection-placeholder {
+  color: #35763b;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+}

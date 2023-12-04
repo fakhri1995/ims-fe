@@ -1,21 +1,20 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  SelectOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import {
   Button,
+  DatePicker,
   Drawer,
   Form,
   Input,
+  Menu,
   Modal,
   Select,
+  Spin,
   Switch,
   Table,
   notification,
 } from "antd";
+import moment from "moment";
 import {
-  ArrayParam,
   NumberParam,
   StringParam,
   useQueryParams,
@@ -23,40 +22,175 @@ import {
 } from "next-query-params";
 import { useRouter } from "next/router";
 import QueryString from "qs";
+import React from "react";
 import { useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useRef } from "react";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
 import CurrencyFormat from "react-currency-format";
 
 import { AccessControl } from "components/features/AccessControl";
+import { AddNewFormButton } from "components/screen/resume";
 
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  CAREERS_V2_APPLY_STATUSES,
   CAREERS_V2_GET,
   CAREER_ADD,
   CAREER_DELETE,
   CAREER_UPDATE,
   RECRUITMENT_ROLE_TYPES_LIST_GET,
+  SIDEBAR_RECRUITMENT_SETUP,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import ButtonSys from "../../../components/button";
+import {
+  AddCareerIconSvg,
+  CalendartimeIconSvg,
+  DownIconSvg,
+  SearchIconSvg,
+  ShowCareerIconSvg,
+  UpIconSvg,
+} from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { createKeyPressHandler, momentFormatDate } from "../../../lib/helper";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Tooltip,
+} from "chart.js";
 import httpcookie from "cookie";
 
-export const Careers = ({ initProps, dataProfile, sidemenu }) => {
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+Chart.register(
+  ArcElement,
+  Tooltip,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  BarElement,
+  PointElement
+);
+
+const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
+  // 1. Init
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToSetupRecruitment = hasPermission(SIDEBAR_RECRUITMENT_SETUP);
   const isAllowedToGetCareer = hasPermission(CAREERS_V2_GET);
-  const isAllowedToAddCareer = hasPermission(CAREER_ADD);
   const isAllowedToUpdateCareer = hasPermission(CAREER_UPDATE);
   const isAllowedToDeleteCareer = hasPermission(CAREER_DELETE);
+  const isAllowedToAddCareer = hasPermission(CAREER_ADD);
+  const isAllowedToGetStatusCareer = hasPermission(CAREERS_V2_APPLY_STATUSES);
+  const [dataIkhtisar, setDataIkhtisar] = useState([]);
+  const dataExample = {
+    labels: ["Organic", "Sponsored", "Organic", "Sponsored"],
+    previousDate: {
+      label: "08/10/2019 - 09/30/2019",
+      dataSet: [10000, 150000, 10000, 150000],
+    },
+    currentDate: {
+      label: "10/01/2019 - 11/20/2019",
+      dataSet: [10000, 225000, 10000, 225000],
+    },
+  };
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"} */ undefined),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    from: withDefault(StringParam, undefined),
-    to: withDefault(StringParam, undefined),
+    is_posted: withDefault(NumberParam, undefined),
+  });
+
+  const [dataStatusList, setDataStatusList] = useState([
+    {
+      id: undefined,
+      name: "All",
+    },
+    {
+      id: 0,
+      name: "Draft",
+    },
+    {
+      id: 1,
+      name: "Posted",
+    },
+  ]);
+
+  const rt = useRouter();
+  // Breadcrumb url
+  const pathArr = rt.pathname.split("/").slice(1);
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 1);
+  pathTitleArr.splice(1, 1, "Karir Manajemen");
+
+  // 2. Use state
+  // 2.1. Role List & Candidate Count
+
+  // filter search & selected options
+  const [searchingFilterRecruitments, setSearchingFilterRecruitments] =
+    useState("");
+  const [selectedStatus, setSelectedStatus] = useState(undefined);
+  const [showCollapsible, setShowCollapsible] = useState(true);
+  // table data
+  const [loadingCareers, setLoadingCareers] = useState(true);
+  const [dataCareers, setDataCareers] = useState([]);
+  const [dataRawRCareers, setDataRawCareers] = useState({
+    current_page: "",
+    data: [],
+    first_page_url: "",
+    from: null,
+    last_page: null,
+    last_page_url: "",
+    next_page_url: "",
+    path: "",
+    per_page: null,
+    prev_page_url: null,
+    to: null,
+    total: null,
+  });
+  //create
+  const [drawcreate, setdrawcreate] = useState(false);
+  const [loadingcreate, setloadingcreate] = useState(false);
+  const [datacreate, setdatacreate] = useState({
+    name: "",
+    description: "",
+    qualification: "",
+    overview: "",
+    salary_min: 0,
+    salary_max: 0,
+    career_role_type_id: null,
+    career_experience_id: null,
+    is_posted: 0,
+  });
+  const [drawedit, setdrawedit] = useState(false);
+  const [loadingedit, setloadingedit] = useState(false);
+  const [dataedit, setdataedit] = useState({
+    id: 0,
+    name: "",
+    description: "",
+    qualification: "",
+    overview: "",
+    salary_min: 0,
+    salary_max: 0,
+    career_role_type_id: null,
+    career_experience_id: null,
+    is_posted: 0,
   });
   const [dataExperience, setDataExperience] = useState([
     {
@@ -76,136 +210,290 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
       name: "Lebih dari 5 Tahun",
     },
   ]);
-  const pathArr = rt.pathname.split("/").slice(1);
   const isAllowedToGetRoleTypeList = hasPermission(
     RECRUITMENT_ROLE_TYPES_LIST_GET
   );
   const [dataRoleTypeList, setDataRoleTypeList] = useState([]);
-  //Definisi table
-  const columnsFeature = [
+  //delete
+  const [modaldelete, setmodaldelete] = useState(false);
+  const [loadingdelete, setloadingdelete] = useState(false);
+  const [featureselected, setfeatureselected] = useState("");
+  const [datadelete, setdatadelete] = useState({
+    id: 0,
+  });
+
+  // 3. UseEffect
+  // 3.1. Get Recruitment Count
+
+  //get data type role list
+  useEffect(() => {
+    if (!isAllowedToGetRoleTypeList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Tipe Role");
+      // setLoadingRoleTypeList(false);
+      return;
+    }
+
+    // setLoadingRoleTypeList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoleTypesList`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRoleTypeList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingRoleTypeList(false);
+      });
+  }, [isAllowedToGetRoleTypeList]);
+
+  //get data status aoply
+  useEffect(() => {
+    if (!isAllowedToGetStatusCareer) {
+      permissionWarningNotification("Mendapatkan", "Daftar Status Apply");
+      // setLoadingRoleTypeList(false);
+      return;
+    }
+
+    // setLoadingRoleTypeList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/getCareerApplyStatuses`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataIkhtisar(res2);
+        // } else {
+        //   notification.error({
+        //     message: `${res2.message}`,
+        //     duration: 3,
+        //   });
+        // }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingRoleTypeList(false);
+      });
+  }, [isAllowedToGetStatusCareer]);
+
+  // 3.3. Get Careers
+  useEffect(() => {
+    if (!isAllowedToGetCareer) {
+      permissionWarningNotification("Mendapatkan", "Daftar Lowongan");
+      setLoadingCareers(false);
+      return;
+    }
+
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
+    const fetchData = async () => {
+      getCareers(payload);
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
+  }, [
+    isAllowedToGetCareer,
+    searchingFilterRecruitments,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+    queryParams.is_posted,
+  ]);
+
+  const getCareers = (params) => {
+    setLoadingCareers(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/getCareers${params}&keyword=${searchingFilterRecruitments}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRawCareers(res2.data);
+          setDataCareers(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingCareers(false);
+      });
+  };
+
+  // 4. Event
+  const onManageRecruitmentButtonClicked = useCallback(() => {
+    rt.push("/admin/career/general");
+  }, []);
+
+  const onAddCareerButtonClicked = useCallback(() => {
+    setdrawcreate(true);
+  }, []);
+
+  // 4.1. Filter Table
+  const onFilterRecruitments = () => {
+    setQueryParams({
+      is_posted: selectedStatus,
+    });
+  };
+
+  const handleClickCareer = (record) => {
+    rt.push(`/admin/career/${record.id}`);
+  };
+
+  const { onKeyPressHandler } = createKeyPressHandler(
+    onFilterRecruitments,
+    "Enter"
+  );
+
+  // "Semua Kandidat" Table's columns
+  const columnRecruitment = [
     {
       title: "No",
+      key: "number",
       dataIndex: "num",
       render: (text, record, index) => {
         return {
-          props: {
-            style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
           children: (
-            <>
-              <a
-                href="#"
-                onClick={() => {
-                  if (!isAllowedToUpdateCareer) {
-                    permissionWarningNotification("Memperbarui", "Career");
-                    return;
-                  }
-
-                  setdrawedit(true);
-                  setdataedit({
-                    id: record.id,
-                    name: record.name,
-                    description: record.description,
-                    qualification: record.qualification,
-                    overview: record.overview,
-                    salary_min: record.salary_min,
-                    salary_max: record.salary_max,
-                    career_role_type_id: record.career_role_type_id,
-                    career_experience_id: record.career_experience_id,
-                    is_posted: record.is_posted,
-                  });
-                }}
-              >
-                <h1 className="hover:text-gray-500">
-                  {dataRawCareers?.from + index}
-                </h1>
-              </a>
-            </>
+            <div className="flex justify-center">
+              {dataRawRCareers?.from + index}
+            </div>
           ),
         };
       },
     },
     {
-      title: "Position Name",
-      dataIndex: "name",
+      title: "Nama Lowongan",
       key: "name",
+      dataIndex: "name",
       render: (text, record, index) => {
         return {
-          props: {
-            style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
           children: (
-            <>
-              <p className=" text-base">{record.name}</p>
-            </>
+            <div className="xl:w-40">{record.name ? record.name : ""}</div>
           ),
         };
       },
+      sorter: isAllowedToGetCareer
+        ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
+        : false,
     },
-    // {
-    //   title: "Description",
-    //   dataIndex: "job_description",
-    //   key: "job_description",
-    //   render: (text, record, index) => {
-    //     return {
-    //       props: {
-    //         style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
-    //       },
-    //       children: (
-    //         <>
-    //           <p className="text-xs">{record.job_description}</p>
-    //         </>
-    //       ),
-    //     };
-    //   },
-    // },
+    {
+      title: "Tipe Kontrak",
+      key: "role_type",
+      dataIndex: "role_type",
+      render: (text, record, index) => {
+        return {
+          children: <>{record.role_type?.name}</>,
+        };
+      },
+    },
+    {
+      title: "Tanggal Posting",
+      key: "created_at",
+      dataIndex: "created_at",
+      render: (text, record, index) => {
+        return {
+          children: <>{moment(text).format("ll, HH:mm")}</>,
+        };
+      },
+    },
     {
       title: "Status",
-      dataIndex: "is_posted",
       key: "is_posted",
+      dataIndex: "is_posted",
       render: (text, record, index) => {
         return {
-          props: {
-            style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
           children: (
             <>
-              <h1 className="text-xs">{text == 1 ? "Posted" : "Archived"}</h1>
+              {text == 1 ? (
+                <div
+                  className={
+                    "bg-bgstatustaskfinish flex justify-center items-center px-4 py-1 rounded-[5px]"
+                  }
+                >
+                  <p
+                    className={
+                      "text-[10px] text-primary100 leading-4 font-medium"
+                    }
+                  >
+                    Posted
+                  </p>
+                </div>
+              ) : (
+                <div
+                  className={
+                    "bg-bgstatuscareer flex justify-center items-center px-4 py-1 rounded-[5px]"
+                  }
+                >
+                  <p
+                    className={"text-[10px] text-mono30 leading-4 font-medium"}
+                  >
+                    Draft
+                  </p>
+                </div>
+              )}
             </>
           ),
         };
       },
     },
-    // {
-    //   title: "Link",
-    //   dataIndex: "register_link",
-    //   key: "register_link",
-    //   align: "center",
-    //   render: (text, record, index) => {
-    //     return {
-    //       props: {
-    //         style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
-    //       },
-    //       children: (
-    //         <>
-    //           <a href={record.register_link} target="_blank">
-    //             <h1 className=" text-blue-400 hover:text-blue-800 text-xs">
-    //               {record.register_link} <SelectOutlined />
-    //             </h1>
-    //           </a>
-    //         </>
-    //       ),
-    //     };
-    //   },
-    // },
     {
-      dataIndex: "status",
-      key: "status",
+      title: "Jumlah Pelamar",
+      key: "apply_count",
+      dataIndex: "apply_count",
       render: (text, record, index) => {
         return {
-          props: {
-            style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
+          children: <>{text}</>,
+        };
+      },
+    },
+    {
+      title: "Aksi",
+      key: "button_action",
+      render: (text, record) => {
+        return {
           children: (
             <div className=" flex">
               <Button
@@ -257,161 +545,7 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
     },
   ];
 
-  //useState
-  const [loadingProjects, setLoadingProjects] = useState(true);
-
-  //create
-  const [drawcreate, setdrawcreate] = useState(false);
-  const [loadingcreate, setloadingcreate] = useState(false);
-  const [datacreate, setdatacreate] = useState({
-    name: "",
-    description: "",
-    qualification: "",
-    overview: "",
-    salary_min: 0,
-    salary_max: 0,
-    career_role_type_id: null,
-    career_experience_id: null,
-    is_posted: 0,
-  });
-  //update
-  const [drawedit, setdrawedit] = useState(false);
-  const [loadingedit, setloadingedit] = useState(false);
-  const [dataedit, setdataedit] = useState({
-    id: 0,
-    name: "",
-    description: "",
-    qualification: "",
-    overview: "",
-    salary_min: 0,
-    salary_max: 0,
-    career_role_type_id: null,
-    career_experience_id: null,
-    is_posted: 0,
-  });
-  //delete
-  const [modaldelete, setmodaldelete] = useState(false);
-  const [loadingdelete, setloadingdelete] = useState(false);
-  const [featureselected, setfeatureselected] = useState("");
-  const [datadelete, setdatadelete] = useState({
-    id: 0,
-  });
-  const [dataCareersNew, setDataCareersNew] = useState([]);
-  const [dataRawCareers, setDataRawCareers] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
-
-  //get data type role list
-  useEffect(() => {
-    if (!isAllowedToGetRoleTypeList) {
-      permissionWarningNotification("Mendapatkan", "Daftar Tipe Role");
-      // setLoadingRoleTypeList(false);
-      return;
-    }
-
-    // setLoadingRoleTypeList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoleTypesList`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRoleTypeList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        // setLoadingRoleTypeList(false);
-      });
-  }, [isAllowedToGetRoleTypeList]);
-  //get data
-  useEffect(() => {
-    if (!isAllowedToGetCareer) {
-      permissionWarningNotification("Mendapatkan", "Data Tabel Careers");
-      setLoadingProjects(false);
-      return;
-    }
-
-    const params = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
-
-    const fetchData = async () => {
-      getCareers(params);
-    };
-
-    const timer = setTimeout(() => fetchData(), 500);
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetCareer,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.from,
-    queryParams.to,
-  ]);
-
-  //getdata careers
-  const getCareers = (params) => {
-    setLoadingProjects(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/getCareers${params}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawCareers(res2.data);
-          setDataCareersNew(res2.data.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingProjects(false);
-      });
-  };
-
-  //handler
+  //handle create career
   const handleCreate = () => {
     setloadingcreate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/addCareer`, {
@@ -457,6 +591,7 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
         }
       });
   };
+
   const handleEdit = () => {
     setloadingedit(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/updateCareer`, {
@@ -539,38 +674,321 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
         }
       });
   };
+
   return (
     <Layout
       tok={initProps}
       dataProfile={dataProfile}
-      pathArr={pathArr}
-      sidemenu={"91"}
+      sidemenu={sidemenu}
       st={st}
+      pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
-      <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">
-        <div className="col-span-5 border-b border-opacity-30 border-gray-400 flex items-center justify-between px-0 py-4 md:p-4 mb-5">
-          <h1 className="font-bold">Careers</h1>
-          <Button
-            type="primary"
-            size="large"
-            disabled={!isAllowedToAddCareer}
-            onClick={() => {
-              setdrawcreate(true);
-            }}
-          >
-            Add New
-          </Button>
-        </div>
-        <div className="col-span-5 p-0 md:p-5 flex flex-col">
-          <Table
-            columns={columnsFeature}
-            dataSource={dataCareersNew}
-            pagination={{ pageSize: 8 }}
-            scroll={{ x: 300 }}
-          ></Table>
+      <div className="flex flex-col" id="mainWrapper">
+        <div className="grid grid-cols-1 lg:grid-cols-2 md:px-5 gap-6">
+          {showCollapsible ? (
+            <div
+              className={"bg-white p-6 h-[282px] rounded-[5px]"}
+              style={{ boxShadow: "0px 4px 40px 0px rgba(0, 0, 0, 0.10)" }}
+            >
+              <div className={"flex flex-row justify-between"}>
+                <p className={"text-mono30 text-lg leading-6 font-bold "}>
+                  Top 5 Lowongan
+                </p>
+                <div
+                  className={"cursor-pointer"}
+                  onClick={() => setShowCollapsible(false)}
+                >
+                  <DownIconSvg size={24} color={"#4D4D4D"} />
+                </div>
+              </div>
+              <div className={"mt-4"}>
+                <Bar
+                  data={{
+                    labels: [
+                      "Product Manager",
+                      "Front End Engineer",
+                      "Back End Engineer",
+                      "Mobile Developer",
+                      "Product Designer",
+                    ],
+                    datasets: [
+                      {
+                        stack: "1",
+                        label: "Rejected",
+                        pointStyle: "rectRounded",
+                        backgroundColor: "#BF4A40",
+                        barThickness: 40,
+                        categoryPercentage: 1,
+                        data: [123, 120, 60, 75, 80], //From API
+                      },
+                      {
+                        stack: "1",
+                        label: "Shortlisted",
+                        backgroundColor: "#6AAA70",
+                        barThickness: 40,
+                        categoryPercentage: 1,
+                        pointStyle: "triangle",
+                        data: [90, 40, 120, 100, 90], //From API
+                      },
+                      {
+                        stack: "1",
+                        label: "Unprocessed",
+                        backgroundColor: "#CCCCCC",
+                        barThickness: 40,
+                        categoryPercentage: 1,
+                        pointStyle: "triangle",
+                        data: [50, 40, 55, 45, 60], //From API
+                      },
+                    ],
+                  }}
+                  options={{
+                    layout: {
+                      margin: {
+                        top: 10,
+                      },
+                    },
+                    title: {
+                      display: false,
+                    },
+                    legend: {
+                      display: false,
+                    },
+                    maintainAspectRatio: false,
+                    scales: {
+                      x: {
+                        grid: {
+                          display: false,
+                          drawBorder: false,
+                        },
+                        ticks: {
+                          font: {
+                            family: "Montserrat, sans-serif",
+                            size: 10,
+                          },
+                        },
+                      },
+                      y: {
+                        grid: {
+                          display: false,
+                        },
+                        ticks: {
+                          display: false,
+                        },
+                        display: false,
+                      },
+                    },
+                    plugins: {
+                      tooltip: {
+                        callbacks: {
+                          title: (context) => {
+                            return context[0].label.replaceAll(",", " ");
+                          },
+                        },
+                      },
+                    },
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            <div
+              className={"bg-white p-6 rounded-[5px]"}
+              style={{ boxShadow: "0px 4px 40px 0px rgba(0, 0, 0, 0.10)" }}
+            >
+              <div className={"flex flex-row justify-between"}>
+                <p className={"text-mono30 text-lg leading-6 font-bold "}>
+                  Top 5 Lowongan
+                </p>
+                <div
+                  className={"cursor-pointer"}
+                  onClick={() => setShowCollapsible(true)}
+                >
+                  <UpIconSvg size={24} color={"#4D4D4D"} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className={"flex flex-col gap-6"}>
+            <div
+              className="lg:col-span-2 flex flex-row items-center w-full 
+                          justify-between rounded-md
+                          gap-6"
+            >
+              <AddNewFormButton
+                icon={<AddCareerIconSvg />}
+                title="Tambah Lowongan Kerja"
+                onButtonClicked={onAddCareerButtonClicked}
+                disabled={!isAllowedToAddCareer}
+              />
+
+              <AddNewFormButton
+                icon={<ShowCareerIconSvg />}
+                title="Lihat Pelamar Tanpa Lowongan"
+                onButtonClicked={onManageRecruitmentButtonClicked}
+                disabled={!isAllowedToSetupRecruitment}
+              />
+            </div>
+            {showCollapsible && (
+              <div
+                className={"bg-white h-[178px] rounded-[5px] py-6 px-[22px]"}
+                style={{ boxShadow: "0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
+              >
+                <p className={"text-lg leading-4 text-mono30 font-bold"}>
+                  Ikhtisar Pelamar
+                </p>
+                {dataIkhtisar.length > 0 && (
+                  <div className={"mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4"}>
+                    {dataIkhtisar.map((dataIkhtisar1) => (
+                      <div
+                        className={`py-2 self-stretch ${
+                          dataIkhtisar1.name == "Unprocessed"
+                            ? "bg-bgikhtisar1"
+                            : dataIkhtisar1.name == "Shortlisted"
+                            ? "bg-bgstatustaskfinish"
+                            : "bg-bgBackdropOverdue "
+                        } flex flex-col justify-center items-center rounded-[5px] gap-[3px]`}
+                      >
+                        <p
+                          className={`text-2xl leading-8 font-bold ${
+                            dataIkhtisar1.name == "Unprocessed"
+                              ? "text-mono30"
+                              : dataIkhtisar1.name == "Shortlisted"
+                              ? "text-primary100"
+                              : "text-warning"
+                          }`}
+                        >
+                          {dataIkhtisar1.applicants_count}
+                        </p>
+                        <p
+                          className={`text-[10px] leading-4 font-normal ${
+                            dataIkhtisar1.name == "Unprocessed"
+                              ? "text-mono30"
+                              : dataIkhtisar1.name == "Shortlisted"
+                              ? "text-primary100"
+                              : "text-warning"
+                          }  `}
+                        >
+                          {dataIkhtisar1.name}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Table Kandidat */}
+          <div className="lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <h4 className="mig-heading--4 ">List Lowongan</h4>
+            </div>
+
+            {/* Start: Search criteria */}
+            <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
+              {/* Search by keyword (kata kunci) */}
+              <div className="w-full md:w-8/12">
+                <Input
+                  defaultValue={searchingFilterRecruitments}
+                  style={{ width: `100%` }}
+                  placeholder="Cari Lowongan ..."
+                  allowClear
+                  onChange={(e) => {
+                    setSearchingFilterRecruitments(e.target.value);
+                  }}
+                  onKeyPress={onKeyPressHandler}
+                  disabled={!isAllowedToGetCareer}
+                />
+              </div>
+              {/* filter tanggal */}
+              {/* <div className="w-full md:w-2/12 customDatepicker">
+              <DatePicker placeholder="Semua Tanggal" className={'w-full'} suffixIcon={<CalendartimeIconSvg size={16} color={'#35763B'}/>} />
+              </div> */}
+
+              {/* Search by status (dropdown) */}
+              <div className="w-full md:w-2/12 customselectcareer">
+                <Select
+                  defaultValue={queryParams.is_posted}
+                  suffixIcon={<DownIconSvg size={24} color={"#35763B"} />}
+                  allowClear
+                  name={`status`}
+                  placeholder="Semua Status"
+                  style={{ width: `100%` }}
+                  onChange={(value) => {
+                    setQueryParams({ is_posted: value });
+                    setSelectedStatus(value);
+                  }}
+                >
+                  {dataStatusList.map((status) => (
+                    <Select.Option key={status.id} value={status.id}>
+                      <div className="flex items-center">
+                        <p className="truncate">{status.name}</p>
+                      </div>
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+
+              <div className="flex justify-end">
+                <ButtonSys
+                  type={`primary`}
+                  onClick={onFilterRecruitments}
+                  disabled={!isAllowedToGetCareer}
+                >
+                  <div className="flex flex-row space-x-2.5 w-full items-center">
+                    <SearchIconSvg size={15} color={`#ffffff`} />
+                    <p>Cari Lowongan</p>
+                  </div>
+                </ButtonSys>
+              </div>
+            </div>
+            {/* End: Search criteria */}
+
+            <div>
+              <Table
+                columns={columnRecruitment}
+                className={"cursor-pointer"}
+                dataSource={dataCareers}
+                loading={loadingCareers}
+                rowKey={(record) => record.id}
+                pagination={{
+                  current: queryParams.page,
+                  pageSize: queryParams.rows,
+                  total: dataRawRCareers?.total,
+                  showSizeChanger: true,
+                }}
+                onRow={(record, rowIndex) => {
+                  return {
+                    onClick: () => {
+                      handleClickCareer(record);
+                    },
+                  };
+                }}
+                onChange={(pagination, filters, sorter, extra) => {
+                  const sortTypePayload =
+                    sorter.order === "ascend"
+                      ? "asc"
+                      : sorter.order === "descend"
+                      ? "desc"
+                      : undefined;
+
+                  setQueryParams({
+                    sort_type: sortTypePayload,
+                    sort_by:
+                      sortTypePayload === undefined ? undefined : sorter.field,
+                    page: pagination.current,
+                    rows: pagination.pageSize,
+                  });
+                }}
+                scroll={{ x: 300 }}
+              ></Table>
+            </div>
+          </div>
         </div>
       </div>
-
+      {/* drawer create careers */}
       <AccessControl hasPermission={CAREER_ADD}>
         <Drawer
           title={`Add A New Career`}
@@ -839,7 +1257,7 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
           </div>
         </Drawer>
       </AccessControl>
-
+      {/* drawer update careers  */}
       <AccessControl hasPermission={CAREER_UPDATE}>
         <Drawer
           title={`Edit Career`}
@@ -1101,6 +1519,7 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
         </Drawer>
       </AccessControl>
 
+      {/* drawer delete careers */}
       <AccessControl hasPermission={CAREER_DELETE}>
         <Modal
           title={`Konfirmasi hapus career`}
@@ -1121,24 +1540,30 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
     </Layout>
   );
 };
-
 export async function getServerSideProps({ req, res }) {
-  var initProps = {};
-  if (req && req.headers) {
-    const cookies = req.headers.cookie;
-    if (!cookies) {
-      res.writeHead(302, { Location: "/login" });
-      res.end();
-    }
-    if (typeof cookies === "string") {
-      const cookiesJSON = httpcookie.parse(cookies);
-      initProps = cookiesJSON.token;
-    }
+  let initProps = {};
+  if (!req.headers.cookie) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
   }
+  const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+  if (!cookiesJSON1.token) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+  initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
-      method: `GET`,
+      method: "GET",
       headers: {
         Authorization: JSON.parse(initProps),
       },
@@ -1151,9 +1576,9 @@ export async function getServerSideProps({ req, res }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "4",
+      sidemenu: "career-management",
     },
   };
 }
 
-export default Careers;
+export default CareerIndex;
