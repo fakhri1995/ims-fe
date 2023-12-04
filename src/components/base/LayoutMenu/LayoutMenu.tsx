@@ -481,6 +481,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           icon={<UserPlusIconSvg className="text-[#597e8d]" />}
         >
           {hasPermission(SIDEBAR_RECRUITMENT_CANDIDATE) && (
+            <Menu.Item key="career-management">
+              <Link href="/admin/career">Karir Manajemen</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_RECRUITMENT_CANDIDATE) && (
             <Menu.Item key="111">
               <Link href="/admin/recruitment">Candidates</Link>
             </Menu.Item>

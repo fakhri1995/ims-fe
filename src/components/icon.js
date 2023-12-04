@@ -3238,6 +3238,85 @@ const UserXIconSvg = ({ size, color }) => {
   return <Icon rev={""} component={userXIconSvg}></Icon>;
 };
 
+const AddCareerIconSvg = ({ size, color }) => {
+  const addCareerIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-clipboard-plus"
+      width={size ? size : "36"}
+      height={size ? size : "36"}
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke={color ? color : "#FFFFFF"}
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+      <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+      <path d="M10 14h4" />
+      <path d="M12 12v4" />
+    </svg>
+  );
+  return <Icon rev={""} component={addCareerIconSvg}></Icon>;
+};
+
+const ShowCareerIconSvg = ({ size, color }) => {
+  const showCareerIconSvg = () => (
+    <svg
+      width={size ? size : "36"}
+      height={size ? size : "36"}
+      viewBox="0 0 36 36"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M13.5 7.5H10.5C8.84315 7.5 7.5 8.84315 7.5 10.5V28.5C7.5 30.1569 8.84315 31.5 10.5 31.5H25.5C27.1569 31.5 28.5 30.1569 28.5 28.5V10.5C28.5 8.84315 27.1569 7.5 25.5 7.5H22.5"
+        stroke="white"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <rect
+        x="13.5"
+        y="4.5"
+        width="9"
+        height="6"
+        rx="2"
+        stroke={color ? color : "#FFFFFF"}
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M19.9975 21.0014H22.3881C22.6577 21.0015 22.9008 21.2045 23.0039 21.5159C23.1071 21.8272 23.0501 22.1856 22.8595 22.4239L18.4688 27.9123C18.2085 28.2376 17.7865 28.2376 17.5261 27.9123L13.1355 22.4239C12.9449 22.1856 12.8879 21.8272 12.991 21.5159C13.0942 21.2045 13.3372 21.0015 13.6068 21.0014H15.9975V18.5014H19.9975V21.0014Z"
+        stroke="white"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M20 13.5013H16"
+        stroke={color ? color : "#FFFFFF"}
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M20 16.0013H16"
+        stroke={color ? color : "#FFFFFF"}
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={showCareerIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -3372,4 +3451,6 @@ export {
   BulbIconSvg,
   TableOffIconSvg,
   UserXIconSvg,
+  AddCareerIconSvg,
+  ShowCareerIconSvg,
 };
