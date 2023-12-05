@@ -2,26 +2,20 @@ import {
   CloseOutlined,
   DeleteOutlined,
   DownloadOutlined,
-  UploadOutlined,
 } from "@ant-design/icons";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import { Button, Form, Input, Select, Spin, Switch, Upload } from "antd";
-import TextArea from "antd/lib/input/TextArea";
-import moment from "moment";
+import { Form, Input, Select, Spin, Switch } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { useCallback } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 
 import { RESUME_DELETE, RESUME_GET } from "lib/features";
 
-import {
-  beforeUploadFileMaxSize,
-  generateStaticAssetUrl,
-} from "../../../lib/helper";
+import { generateStaticAssetUrl } from "../../../lib/helper";
+import UploadImage from "../../UploadImage";
 import ButtonSys from "../../button";
 import {
   CheckIconSvg,
@@ -58,13 +52,12 @@ const BasicInfoCard = ({
   const [modalDelete, setModalDelete] = useState(false);
   const [openDownloadModal, setOpenDownloadModal] = useState(false);
   const [showLogoStatus, setShowLogoStatus] = useState(true);
-  const [fileList, setFileList] = useState([]);
-  const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
+
   const onChangeInput = (e) => {
-    setDataUpdateBasic({
-      ...dataUpdateBasic,
+    setDataUpdateBasic((prev) => ({
+      ...prev,
       [e.target.name]: e.target?.value,
-    });
+    }));
   };
 
   /** State to only renders `<PDFDownloadLink>` component after this page mount (client-side) */
@@ -73,58 +66,8 @@ const BasicInfoCard = ({
     setIsOnClient(true);
   }, []);
 
-  // Display profile photo filename when available
-  useEffect(() => {
-    if (dataDisplay?.profile_image?.link) {
-      const currentFileName = dataDisplay?.profile_image?.link?.split("/")[2];
-      setFileList([{ name: currentFileName }]);
-    } else {
-      setFileList([]);
-    }
-  }, [dataDisplay?.profile_image]);
-
-  // Handle upload file
-  const beforeUploadIDCardPicture = useCallback((uploadedFile) => {
-    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
-    const isReachedMaxFileSize =
-      checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
-    const allowedFileTypes = [`image/png`, `image/jpg`, `image/jpeg`];
-
-    if (!allowedFileTypes.includes(uploadedFile.type)) {
-      notification.error({
-        message: "File harus berupa gambar",
-      });
-      return Upload.LIST_IGNORE;
-    }
-
-    if (isReachedMaxFileSize) {
-      return Upload.LIST_IGNORE;
-    }
-
-    setDataUpdateBasic((prev) => ({
-      ...prev,
-      profile_image: uploadedFile,
-    }));
-  }, []);
-
-  const onUploadChange = useCallback(({ file }) => {
-    setUploadPictureLoading(file.status === "uploading");
-    if (file.status !== "removed") {
-      setFileList([file]);
-    }
-  }, []);
-
-  const onUploadRemove = useCallback(() => {
-    setFileList([]);
-    setDataUpdateBasic((prev) => ({
-      ...prev,
-      profile_image: null,
-    }));
-  }, []);
-
   // console.log(dataUpdateBasic);
   // console.log(dataDisplay)
-
   return (
     <>
       {isShowInput || isCreateForm ? (
@@ -133,7 +76,7 @@ const BasicInfoCard = ({
             <h3 className="mig-heading--3">Basic Information</h3>
             <div
               className="flex flex-col md:flex-row space-y-2 md:space-y-0 
-          md:space-x-6 items-end md:items-center"
+              md:space-x-6 items-end md:items-center"
             >
               <ButtonSys
                 type={"default"}
@@ -148,6 +91,7 @@ const BasicInfoCard = ({
                         assessment_id: dataDisplay?.assessment_id,
                         city: dataDisplay?.city,
                         province: dataDisplay?.province,
+                        profile_image: dataDisplay?.profile_image,
                       });
                   setIsShowInput(false);
                 }}
@@ -201,26 +145,11 @@ const BasicInfoCard = ({
               <em className="text-mono50 mr-10">
                 Unggah File JPEG (Maksimal 2 MB)
               </em>
-              <Upload
-                accept=".png, .jpg, .jpeg"
-                listType="picture"
-                maxCount={1}
-                beforeUpload={beforeUploadIDCardPicture}
-                onChange={onUploadChange}
-                onRemove={onUploadRemove}
-                disabled={uploadPictureLoading}
-                fileList={fileList}
-              >
-                <Button
-                  className="btn-sm btn font-semibold px-6 space-x-2 border
-            text-primary100 hover:text-white bg-white border-primary100 
-            hover:bg-primary75 hover:border-primary75  
-            focus:border-primary75 focus:text-primary100 "
-                >
-                  <UploadOutlined />
-                  <p>Unggah File</p>
-                </Button>
-              </Upload>
+              <UploadImage
+                useCrop={true}
+                dataDisplay={dataDisplay}
+                setDataUpdate={setDataUpdateBasic}
+              />
             </Form.Item>
             <Form.Item
               label="Name"
@@ -372,6 +301,7 @@ const BasicInfoCard = ({
                         assessment_id: dataDisplay?.assessment_id,
                         city: dataDisplay?.city,
                         province: dataDisplay?.province,
+                        profile_image: dataDisplay?.profile_image,
                       });
                       setIsShowInput(true);
                     }}

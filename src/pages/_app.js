@@ -9,6 +9,7 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useEffect } from "react";
 import ReactGA from "react-ga";
+import "react-image-crop/src/ReactCrop.scss";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 
