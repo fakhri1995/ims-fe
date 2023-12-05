@@ -78,10 +78,10 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
         >
           <View
             style={{
-              width: "80%",
+              width: dataResume?.profile_image?.id ? "80%" : "100%",
               display: "flex",
               flexDirection: "col",
-              marginRight: 24,
+              marginRight: dataResume?.profile_image?.id ? 24 : 0,
             }}
           >
             <Text
@@ -108,20 +108,19 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                 style={{ width: 12, height: 12 }}
                 src={`/image/userIcon.png`}
               />
-
               <Text style={{ fontSize: 12, color: `#4D4D4D`, marginLeft: 10 }}>
                 {dataResume?.assessment?.name}
               </Text>
             </View>
           </View>
-          <View
-            style={{
-              width: "20%",
-              borderColor: `1px solid #4D4D4D`,
-              backgroundColor: "#E0DCEB",
-            }}
-          >
-            {dataResume?.profile_image?.id && (
+          {dataResume?.profile_image?.id && (
+            <View
+              style={{
+                width: "20%",
+                borderColor: `1px solid #4D4D4D`,
+                backgroundColor: "#E0DCEB",
+              }}
+            >
               <Image
                 style={{
                   width: 100,
@@ -138,8 +137,8 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                   body: "",
                 }}
               />
-            )}
-          </View>
+            </View>
+          )}
         </View>
 
         {/*Summary Section */}
