@@ -1,4 +1,8 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  DownloadOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Drawer,
@@ -339,6 +343,13 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
     });
   };
 
+  const downloadNoData = () => {
+    notification.error({
+      message: `Pelamar tidak punya file resume`,
+      duration: 3,
+    });
+  };
+
   // "Semua Kandidat" Table's columns
   const columnRecruitment = [
     {
@@ -441,14 +452,21 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
       key: "button_action",
       render: (text, record) => {
         return {
-          children: (
-            <div
-              className={
-                "w-[40px] h-[24px] py-1 px-3 rounded-[5px] flex justify-center items-center border border-primary100 cursor-pointer "
-              }
+          children: record.resume ? (
+            <a
+              download={record.name + ".pdf"}
+              href={"https://cdn.mig.id/" + record.resume.link}
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <DownloadIconSvg size={12} color={"#35763B"} />
-            </div>
+              <ButtonSys type={"default"}>
+                <DownloadOutlined />
+              </ButtonSys>
+            </a>
+          ) : (
+            <ButtonSys type={"default"} onClick={() => downloadNoData()}>
+              <DownloadOutlined />
+            </ButtonSys>
           ),
         };
       },
