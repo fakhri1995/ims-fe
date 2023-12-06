@@ -221,6 +221,9 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [datadelete, setdatadelete] = useState({
     id: 0,
   });
+  const [dataLabelStatistic, setDataLabelStatistic] = useState([]);
+
+  const [dataSets, setDataSets] = useState([]);
 
   // 3. UseEffect
   // 3.1. Get Recruitment Count
@@ -283,6 +286,105 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         setDataIkhtisar(res2);
+        // } else {
+        //   notification.error({
+        //     message: `${res2.message}`,
+        //     duration: 3,
+        //   });
+        // }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingRoleTypeList(false);
+      });
+  }, [isAllowedToGetStatusCareer]);
+
+  useEffect(() => {
+    if (!isAllowedToGetStatusCareer) {
+      permissionWarningNotification("Mendapatkan", "Daftar Status Apply");
+      // setLoadingRoleTypeList(false);
+      return;
+    }
+
+    // setLoadingRoleTypeList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/getTopFiveCareers`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          if (res2.data) {
+            if (res2.data.careers.length > 0) {
+              let dataCareersTemp = res2.data.careers;
+              let dataTemp = [];
+              for (let a = 0; a < dataCareersTemp.length; a++) {
+                dataTemp.push(dataCareersTemp[a].name);
+              }
+              setDataLabelStatistic(dataTemp);
+            }
+
+            if (res2.data.status_count.length > 0) {
+              let dataSetTemp1 = [];
+              let dataSetTemp2 = [];
+              let dataSetTemp3 = [];
+              let dataSetsTemp = [];
+              let dataCount = res2.data.status_count;
+              for (let a = 0; a < dataCount.length; a++) {
+                for (let i = 0; i < dataCount[a].length; i++) {
+                  if (dataCount[a][i].name == "Rejected") {
+                    dataSetTemp1.push(dataCount[a][i].applicants_count);
+                  }
+                  if (dataCount[a][i].name == "Shortlisted") {
+                    dataSetTemp2.push(dataCount[a][i].applicants_count);
+                  }
+                  if (dataCount[a][i].name == "Unprocessed") {
+                    dataSetTemp3.push(dataCount[a][i].applicants_count);
+                  }
+                }
+              }
+              let dataSet1 = {
+                stack: "1",
+                label: "Rejected",
+                pointStyle: "rectRounded",
+                backgroundColor: "#BF4A40",
+                barThickness: 40,
+                categoryPercentage: 1,
+                data: dataSetTemp1, //From API
+              };
+              let dataSet2 = {
+                stack: "1",
+                label: "Shortlisted",
+                backgroundColor: "#6AAA70",
+                barThickness: 40,
+                categoryPercentage: 1,
+                pointStyle: "triangle",
+                data: dataSetTemp2, //From API
+              };
+
+              let dataSet3 = {
+                stack: "1",
+                label: "Unprocessed",
+                backgroundColor: "#CCCCCC",
+                barThickness: 40,
+                categoryPercentage: 1,
+                pointStyle: "triangle",
+                data: dataSetTemp3, //From API
+              };
+
+              dataSetsTemp.push(dataSet1, dataSet2, dataSet3);
+              setDataSets(dataSetsTemp);
+            }
+          }
+        }
+        // setDataIkhtisar(res2);
         // } else {
         //   notification.error({
         //     message: `${res2.message}`,
@@ -702,94 +804,62 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <DownIconSvg size={24} color={"#4D4D4D"} />
                 </div>
               </div>
-              <div className={"mt-4"}>
-                <Bar
-                  data={{
-                    labels: [
-                      "Product Manager",
-                      "Front End Engineer",
-                      "Back End Engineer",
-                      "Mobile Developer",
-                      "Product Designer",
-                    ],
-                    datasets: [
-                      {
-                        stack: "1",
-                        label: "Rejected",
-                        pointStyle: "rectRounded",
-                        backgroundColor: "#BF4A40",
-                        barThickness: 40,
-                        categoryPercentage: 1,
-                        data: [123, 120, 60, 75, 80], //From API
-                      },
-                      {
-                        stack: "1",
-                        label: "Shortlisted",
-                        backgroundColor: "#6AAA70",
-                        barThickness: 40,
-                        categoryPercentage: 1,
-                        pointStyle: "triangle",
-                        data: [90, 40, 120, 100, 90], //From API
-                      },
-                      {
-                        stack: "1",
-                        label: "Unprocessed",
-                        backgroundColor: "#CCCCCC",
-                        barThickness: 40,
-                        categoryPercentage: 1,
-                        pointStyle: "triangle",
-                        data: [50, 40, 55, 45, 60], //From API
-                      },
-                    ],
-                  }}
-                  options={{
-                    layout: {
-                      margin: {
-                        top: 10,
-                      },
-                    },
-                    title: {
-                      display: false,
-                    },
-                    legend: {
-                      display: false,
-                    },
-                    maintainAspectRatio: false,
-                    scales: {
-                      x: {
-                        grid: {
-                          display: false,
-                          drawBorder: false,
-                        },
-                        ticks: {
-                          font: {
-                            family: "Montserrat, sans-serif",
-                            size: 10,
-                          },
+              {dataLabelStatistic.length > 0 && (
+                <div className={"mt-4"}>
+                  <Bar
+                    data={{
+                      labels: dataLabelStatistic,
+                      datasets: dataSets,
+                    }}
+                    options={{
+                      layout: {
+                        margin: {
+                          top: 10,
                         },
                       },
-                      y: {
-                        grid: {
-                          display: false,
-                        },
-                        ticks: {
-                          display: false,
-                        },
+                      title: {
                         display: false,
                       },
-                    },
-                    plugins: {
-                      tooltip: {
-                        callbacks: {
-                          title: (context) => {
-                            return context[0].label.replaceAll(",", " ");
+                      legend: {
+                        display: false,
+                      },
+                      maintainAspectRatio: false,
+                      scales: {
+                        x: {
+                          grid: {
+                            display: false,
+                            drawBorder: false,
+                          },
+                          ticks: {
+                            font: {
+                              family: "Montserrat, sans-serif",
+                              size: 9,
+                            },
+                          },
+                        },
+                        y: {
+                          grid: {
+                            display: false,
+                          },
+                          ticks: {
+                            display: false,
+                          },
+                          display: false,
+                        },
+                      },
+                      plugins: {
+                        tooltip: {
+                          callbacks: {
+                            title: (context) => {
+                              return context[0].label.replaceAll(",", " ");
+                            },
                           },
                         },
                       },
-                    },
-                  }}
-                />
-              </div>
+                    }}
+                  />
+                </div>
+              )}
             </div>
           ) : (
             <div
