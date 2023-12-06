@@ -66,8 +66,6 @@ const BasicInfoCard = ({
     setIsOnClient(true);
   }, []);
 
-  // console.log(dataUpdateBasic);
-  // console.log(dataDisplay)
   return (
     <>
       {isShowInput || isCreateForm ? (
@@ -91,7 +89,6 @@ const BasicInfoCard = ({
                         assessment_id: dataDisplay?.assessment_id,
                         city: dataDisplay?.city,
                         province: dataDisplay?.province,
-                        profile_image: dataDisplay?.profile_image,
                       });
                   setIsShowInput(false);
                 }}
@@ -301,7 +298,6 @@ const BasicInfoCard = ({
                         assessment_id: dataDisplay?.assessment_id,
                         city: dataDisplay?.city,
                         province: dataDisplay?.province,
-                        profile_image: dataDisplay?.profile_image,
                       });
                       setIsShowInput(true);
                     }}
