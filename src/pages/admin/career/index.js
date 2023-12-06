@@ -37,6 +37,7 @@ import { useAccessControl } from "contexts/access-control";
 import {
   CAREERS_V2_APPLY_STATUSES,
   CAREERS_V2_GET,
+  CAREERS_V2_TOP_FIVE_GET,
   CAREER_ADD,
   CAREER_DELETE,
   CAREER_UPDATE,
@@ -95,6 +96,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToDeleteCareer = hasPermission(CAREER_DELETE);
   const isAllowedToAddCareer = hasPermission(CAREER_ADD);
   const isAllowedToGetStatusCareer = hasPermission(CAREERS_V2_APPLY_STATUSES);
+  const isAllowedToGetTopFiveCareer = hasPermission(CAREERS_V2_TOP_FIVE_GET);
   const [dataIkhtisar, setDataIkhtisar] = useState([]);
   const dataExample = {
     labels: ["Organic", "Sponsored", "Organic", "Sponsored"],
@@ -305,8 +307,8 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, [isAllowedToGetStatusCareer]);
 
   useEffect(() => {
-    if (!isAllowedToGetStatusCareer) {
-      permissionWarningNotification("Mendapatkan", "Daftar Status Apply");
+    if (!isAllowedToGetTopFiveCareer) {
+      permissionWarningNotification("Mendapatkan", "Daftar Top 5 Karir");
       // setLoadingRoleTypeList(false);
       return;
     }
@@ -401,7 +403,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         // setLoadingRoleTypeList(false);
       });
-  }, [isAllowedToGetStatusCareer]);
+  }, [isAllowedToGetTopFiveCareer]);
 
   // 3.3. Get Careers
   useEffect(() => {
