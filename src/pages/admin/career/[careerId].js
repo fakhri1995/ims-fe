@@ -173,19 +173,31 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     });
   };
 
+  const downloadNoData = () => {
+    notification.error({
+      message: `Pelamar tidak punya file resume`,
+      duration: 3,
+    });
+  };
+
   // "Semua Kandidat" Table's columns
   const columnRecruitment = [
     {
       title: "No",
       key: "number",
       dataIndex: "num",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickDetailPelamar(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
           children: (
-            <div
-              onClick={() => handleClickDetailPelamar(record)}
-              className="flex justify-center cursor-pointer"
-            >
+            <div className="flex justify-center cursor-pointer">
               {dataRawRCareers?.from + index}
             </div>
           ),
@@ -196,13 +208,18 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
       title: "Tanggal Melamar",
       key: "created_at",
       dataIndex: "created_at",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickDetailPelamar(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
           children: (
-            <div
-              onClick={() => handleClickDetailPelamar(record)}
-              className={"cursor-pointer"}
-            >
+            <div className={"cursor-pointer"}>
               {moment(text).format("DD MMMM YYYY")}
             </div>
           ),
@@ -213,13 +230,18 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
       title: "Nama Pelamar",
       key: "name",
       dataIndex: "name",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickDetailPelamar(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
           children: (
-            <div
-              onClick={() => handleClickDetailPelamar(record)}
-              className="xl:w-40 cursor-pointer"
-            >
+            <div className="xl:w-40 cursor-pointer">
               {record.name ? record.name : ""}
             </div>
           ),
@@ -233,16 +255,17 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
       title: "Kontak Pelamar",
       key: "phone",
       dataIndex: "phone",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickDetailPelamar(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
-          children: (
-            <div
-              onClick={() => handleClickDetailPelamar(record)}
-              className={"cursor-pointer"}
-            >
-              {text}
-            </div>
-          ),
+          children: <div className={"cursor-pointer"}>{text}</div>,
         };
       },
     },
@@ -250,16 +273,17 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
       title: "Email Pelamar",
       key: "email",
       dataIndex: "email",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickDetailPelamar(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
-          children: (
-            <div
-              className={"cursor-pointer"}
-              onClick={() => handleClickDetailPelamar(record)}
-            >
-              {text}
-            </div>
-          ),
+          children: <div className={"cursor-pointer"}>{text}</div>,
         };
       },
     },
@@ -267,6 +291,14 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
       title: "Status",
       key: "status",
       dataIndex: "status",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickDetailPelamar(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
           children: (
@@ -326,7 +358,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
       key: "button_action",
       render: (text, record) => {
         return {
-          children: (
+          children: record.resume ? (
             <a
               download={record.name + ".pdf"}
               href={"https://cdn.mig.id/" + record.resume.link}
@@ -337,6 +369,10 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                 <DownloadOutlined />
               </ButtonSys>
             </a>
+          ) : (
+            <ButtonSys type={"default"} onClick={() => downloadNoData()}>
+              <DownloadOutlined />
+            </ButtonSys>
           ),
         };
       },
@@ -959,7 +995,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                 </div>
               </div>
               <div className={"mt-10"}>
-                {dataTerpilih && (
+                {dataTerpilih && dataTerpilih.resume ? (
                   <a
                     download
                     href={"https://cdn.mig.id/" + dataTerpilih.resume.link}
@@ -979,6 +1015,20 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       </div>
                     </ButtonSys>
                   </a>
+                ) : (
+                  <ButtonSys
+                    onClick={() => downloadNoData()}
+                    fullWidth={true}
+                    type={"primary"}
+                    // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
+                  >
+                    <div className={"flex flex-row"}>
+                      <DownloadIcon2Svg size={16} color={"#fffffff"} />
+                      <p className={"ml-2 text-xs text-white"}>
+                        Unduh CV Pelamar
+                      </p>
+                    </div>
+                  </ButtonSys>
                 )}
               </div>
             </Drawer>
