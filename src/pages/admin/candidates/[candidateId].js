@@ -473,8 +473,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
   };
 
   //DEBUG
-  // console.log(dataDisplay);
-  // console.log(dataUpdateEdu);
 
   return (
     <LayoutDashboard
