@@ -126,16 +126,9 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                   width: 100,
                   height: 115,
                 }}
-                src={{
-                  uri:
-                    "https://cors.bridged.cc/" +
-                    generateStaticAssetUrl(dataResume?.profile_image?.link),
-                  method: "GET",
-                  headers: {
-                    "Cache-Control": "no-cache",
-                  },
-                  body: "",
-                }}
+                src={`${generateStaticAssetUrl(
+                  dataResume?.profile_image?.link
+                )}?rnd="${Math.random()}`}
               />
             </View>
           )}

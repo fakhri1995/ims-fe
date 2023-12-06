@@ -150,7 +150,7 @@ const UploadImage = ({ useCrop = false, dataDisplay, setDataUpdate }) => {
     // You might want { type: "image/jpeg", quality: <0 to 1> } to
     // reduce image size
     const blob = await offscreen.convertToBlob({
-      type: "image/png",
+      type: "image/jpeg",
       quality: 0.7,
     });
 
