@@ -341,7 +341,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         return {
           children: (
             <>
-              <h1>{record.name}</h1>
+              <h1>{record.name || "-"}</h1>
             </>
           ),
         };
@@ -358,7 +358,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         return {
           children: (
             <>
-              <h1 className="">{record.assessment?.name}</h1>
+              <h1 className="">{record.assessment?.name || "-"}</h1>
             </>
           ),
         };
@@ -376,7 +376,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         return {
           children: (
             <>
-              <h1 className="">{record.email}</h1>
+              <h1 className="">{record.email || "-"}</h1>
             </>
           ),
         };
@@ -390,7 +390,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         return {
           children: (
             <>
-              <h1 className="">{record.telp}</h1>
+              <h1 className="">{record.telp || "-"}</h1>
             </>
           ),
         };
@@ -428,8 +428,8 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
       pathArr={pathArr}
     >
       <div className="grid grid-cols-1">
-        <div className="flex flex-col lg:flex-row">
-          <div className="flex flex-col space-y-6 lg:px-5 lg:w-1/3">
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col gap-6 lg:w-1/3">
             <AddNewFormButton
               title="Tambah Kandidat"
               disabled={!isAllowedToAddResume}
