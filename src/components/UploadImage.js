@@ -15,6 +15,9 @@ import { CheckIconSvg } from "./icon";
 import ModalCore from "./modal/modalCore";
 
 const UploadImage = ({ useCrop = false, dataDisplay, setDataUpdate }) => {
+  const IMAGE_WIDTH = 80;
+  const IMAGE_HEIGHT = 105;
+
   const [fileList, setFileList] = useState([]);
   const [fileName, setFileName] = useState("");
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
@@ -28,12 +31,12 @@ const UploadImage = ({ useCrop = false, dataDisplay, setDataUpdate }) => {
     unit: "px", // Can be 'px' or '%'
     x: 25,
     y: 25,
-    width: 100,
-    height: 115,
+    width: IMAGE_WIDTH,
+    height: IMAGE_HEIGHT,
   });
 
   const [completedCrop, setCompletedCrop] = useState(null);
-  const [aspect, setAspect] = useState(100 / 115);
+  const [aspect, setAspect] = useState(IMAGE_WIDTH / IMAGE_HEIGHT);
 
   // Display profile photo filename when available
   useEffect(() => {
@@ -189,8 +192,8 @@ const UploadImage = ({ useCrop = false, dataDisplay, setDataUpdate }) => {
       makeAspectCrop(
         {
           unit: "px",
-          width: 100,
-          height: 115,
+          width: IMAGE_WIDTH,
+          height: IMAGE_HEIGHT,
         },
         aspect,
         mediaWidth,
