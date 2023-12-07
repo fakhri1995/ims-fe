@@ -78,7 +78,7 @@ const AssessmentResultCard = ({
       <div>
         <div className="flex flex-col space-y-2 mb-3">
           <p className="text-xs text-mono80">Assessment Role</p>
-          <p>{dataDisplay?.assessment?.name}</p>
+          <p>{dataDisplay?.assessment?.name || "-"}</p>
         </div>
 
         <div>
@@ -116,8 +116,10 @@ const AssessmentResultCard = ({
               {dataDisplay?.assessment_results?.map((result) => (
                 <li key={result?.id}>
                   <div className="flex flex-row justify-between mb-1">
-                    <p className="text-mono30">{result?.criteria}</p>
-                    <p className="text-primary100 font-bold">{result?.value}</p>
+                    <p className="text-mono30">{result?.criteria || "-"}</p>
+                    <p className="text-primary100 font-bold">
+                      {result?.value || "-"}
+                    </p>
                   </div>
                 </li>
               ))}

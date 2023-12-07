@@ -144,7 +144,7 @@ const ExperienceBlock = ({
         <div className="flex justify-between">
           {/* Read state */}
           <div className="flex flex-col cursor-move" {...draggable}>
-            <p className="text-primary100 font-bold mb-1">{exp.role}</p>
+            <p className="text-primary100 font-bold mb-1">{exp.role || "-"}</p>
             <p className="text-mono50 mb-1">
               {exp.company} ·&nbsp;
               <strong>
@@ -152,7 +152,7 @@ const ExperienceBlock = ({
                 {momentFormatDate(exp.end_date, <em>present</em>, "MMM YYYY")}
               </strong>
             </p>
-            <div className="text-mono50">{parse(exp.description)}</div>
+            <div className="text-mono50">{parse(exp.description) || "-"}</div>
           </div>
           <div className="flex flex-row space-x-2 items-start">
             {isAllowedToUpdateCandidate && (

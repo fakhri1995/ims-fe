@@ -341,7 +341,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         return {
           children: (
             <>
-              <h1>{record.name}</h1>
+              <h1>{record.name || "-"}</h1>
             </>
           ),
         };
@@ -358,7 +358,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         return {
           children: (
             <>
-              <h1 className="">{record.assessment?.name}</h1>
+              <h1 className="">{record.assessment?.name || "-"}</h1>
             </>
           ),
         };
@@ -376,7 +376,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         return {
           children: (
             <>
-              <h1 className="">{record.email}</h1>
+              <h1 className="">{record.email || "-"}</h1>
             </>
           ),
         };
@@ -390,7 +390,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         return {
           children: (
             <>
-              <h1 className="">{record.telp}</h1>
+              <h1 className="">{record.telp || "-"}</h1>
             </>
           ),
         };

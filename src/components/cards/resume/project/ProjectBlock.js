@@ -100,8 +100,8 @@ const ProjectBlock = ({
               {project.year ? project.year.slice(0, 4) : "-"}
             </p>
             <div className="flex flex-col w-2/3">
-              <p className="font-bold text-mono30">{project.name}</p>
-              <p className="text-mono50">{project.description}</p>
+              <p className="font-bold text-mono30">{project.name || "-"}</p>
+              <p className="text-mono50">{project.description || "-"}</p>
             </div>
           </div>
           <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
