@@ -70,10 +70,11 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
         <View
           style={{
             paddingHorizontal: 48,
-            paddingBottom: 12,
+            paddingBottom: 10,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
           <View
@@ -86,7 +87,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
           >
             <Text
               style={{
-                fontSize: 32,
+                fontSize: 28,
                 fontFamily: "Inter",
                 fontWeight: 700,
                 color: `#4D4D4D`,
@@ -116,15 +117,18 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
           {dataResume?.profile_image?.id && (
             <View
               style={{
-                width: "20%",
-                borderColor: `1px solid #4D4D4D`,
-                backgroundColor: "#E0DCEB",
+                width: 93,
+                border: `1px solid #4D4D4D`,
+                objectFit: "cover",
+                padding: 4,
+                display: "flex",
+                justifyContent: "center",
               }}
             >
               <Image
                 style={{
-                  width: 100,
-                  height: 115,
+                  width: 80,
+                  height: 105,
                 }}
                 src={`${generateStaticAssetUrl(
                   dataResume?.profile_image?.link
