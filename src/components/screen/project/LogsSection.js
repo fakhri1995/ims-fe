@@ -3,6 +3,7 @@ import { Collapse, Input, Table, notification } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { useQuery } from "react-query";
 import TextareaAutosize from "react-textarea-autosize";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -11,6 +12,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { PROJECT_LOGS_GET } from "lib/features";
 
+import { ProjectManagementService } from "../../../apis/project-management";
 import {
   generateStaticAssetUrl,
   momentFormatDate,
@@ -18,13 +20,7 @@ import {
 } from "../../../lib/helper";
 import ModalProjectLog from "../../modal/projects/modalProjectLog";
 
-const LogsSection = ({
-  initProps,
-  projectId,
-  projectName,
-  refresh,
-  refreshTasks,
-}) => {
+const LogsSection = ({ initProps, projectId, projectName }) => {
   // 1. Init
   /**
    * Dependencies
@@ -37,7 +33,7 @@ const LogsSection = ({
   const isAllowedToGetLogs = hasPermission(PROJECT_LOGS_GET);
 
   // 2. useState
-  const [dataRawProjectLogs, setDataRawProjectLogs] = useState({});
+  // const [dataRawProjectLogs, setDataRawProjectLogs] = useState({});
   const [dataProjectLogs, setDataProjectLogs] = useState([]);
   const [loadingProjectLog, setLoadingProjectLog] = useState(false);
   const [dataCurrentLog, setDataCurrentLog] = useState({});
@@ -49,57 +45,42 @@ const LogsSection = ({
 
   // 3. useEffect
   // 3.1. Get Project Logs
-  useEffect(() => {
-    if (!isAllowedToGetLogs) {
-      permissionWarningNotification("Mendapatkan", "Log Aktivitas Proyek");
-      setLoadingProjectLog(false);
-      return;
+  const logParams = {
+    project_id: projectId,
+    page: pageProjectLogs,
+    rows: 5,
+  };
+  const {
+    data: dataRawProjectLogs,
+    isLoading: loadingProjectLogs,
+    refetch: refetchProjectLogs,
+  } = useQuery(
+    [PROJECT_LOGS_GET, logParams],
+    () =>
+      ProjectManagementService.getProjectLogs(
+        initProps,
+        isAllowedToGetLogs,
+        logParams,
+        searchingFilterLogs
+      ),
+    {
+      enabled: isAllowedToGetLogs,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataProjectLogs(data.data);
+      },
     }
+  );
 
-    const fetchData = async () => {
-      setLoadingProjectLog(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs?project_id=${projectId}&keyword=${searchingFilterLogs}&page=${pageProjectLogs}&rows=5`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawProjectLogs(res2.data);
-            setDataProjectLogs(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingProjectLog(false);
-        });
-    };
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      refetchProjectLogs();
+    }, 500);
 
-    const timer = setTimeout(() => fetchData(), 500);
-
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetLogs,
-    refresh,
-    refreshTasks,
-    searchingFilterLogs,
-    pageProjectLogs,
-  ]);
+    return () => clearTimeout(delaySearch);
+  }, [searchingFilterLogs]);
 
   return (
     <section>

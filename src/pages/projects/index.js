@@ -733,10 +733,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <div
-        className="grid grid-cols-1 lg:grid-cols-6 gap-6 px-4 md:px-5"
+        className="grid grid-cols-1 xl:grid-cols-6 gap-6 px-4 md:px-5"
         id="mainWrapper"
       >
-        <div className="flex flex-col lg:col-span-4 gap-6">
+        <div className="flex flex-col xl:col-span-4 gap-6">
           {/* Statistik Proyek */}
           <Collapse
             className="shadow-md rounded-md bg-white"
@@ -969,12 +969,12 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           </Collapse>
 
           {/* Table Semua Proyek */}
-          <div className="hidden lg:block">{TableProjectSection}</div>
+          <div className="hidden xl:block">{TableProjectSection}</div>
         </div>
 
-        <div className="grid grid-cols-2 lg:flex flex-col lg:col-span-2 gap-6">
+        <div className="grid grid-cols-2 xl:flex flex-col xl:col-span-2 gap-6">
           {/* Tambah Proyek Baru */}
-          <div className="col-span-2 md:col-span-1 lg:col-span-2">
+          <div className="col-span-2 md:col-span-1 xl:col-span-2">
             <button
               onClick={handleAddProject}
               className="mig-platform--p-0 px-4 py-2 w-full flex space-x-2 items-center text-white bg-primary100 disabled:bg-gray-200 hover:bg-primary75 overflow-hidden"
@@ -986,7 +986,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
 
           {/* Kelola Status Task & Proyek */}
-          <div className="flex gap-6 justify-between col-span-2 md:col-span-1 lg:col-span-2">
+          <div className="flex gap-6 justify-between col-span-2 md:col-span-1 xl:col-span-2">
             <button
               onClick={() => setModalManageStatus(true)}
               className="mig-platform--p-0 px-4 py-2 w-[85%] flex space-x-2 items-center text-white bg-mono50 disabled:bg-gray-200 hover:bg-opacity-75 overflow-hidden"
@@ -1119,7 +1119,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         </div>
 
         {/* Table Semua Proyek (in mobile layout)*/}
-        <div className="block lg:hidden">{TableProjectSection}</div>
+        <div className="block xl:hidden">{TableProjectSection}</div>
       </div>
 
       {/* Modal Project */}
@@ -1163,8 +1163,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
           isOutsideProject={true}
-          refreshProject={refresh}
-          setRefreshProject={setRefresh}
           dataProfile={dataProfile}
         />
       </AccessControl>

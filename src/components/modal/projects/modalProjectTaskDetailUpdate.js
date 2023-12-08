@@ -28,6 +28,8 @@ import { permissionWarningNotification } from "lib/helper";
 import {
   PROJECTS_COUNT_GET,
   PROJECTS_GET,
+  PROJECT_GET,
+  PROJECT_LOGS_GET,
   PROJECT_TASKS_COUNT_GET,
   PROJECT_TASKS_DEADLINE_GET,
   PROJECT_TASKS_GET,
@@ -61,8 +63,6 @@ const ModalProjectTaskDetailUpdate = ({
   taskId,
   dataStatusList,
   isOutsideProject, // if modal not use in project detail
-  refreshProject,
-  setRefreshProject,
   dataProfile,
 }) => {
   const { hasPermission } = useAccessControl();
@@ -83,6 +83,7 @@ const ModalProjectTaskDetailUpdate = ({
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
   const [isStaffsFromAgents, setIsStaffsFromAgents] = useState(false);
   const [isEditTitle, setIsEditTitle] = useState(false);
+  const [refresh, setRefresh] = useState(-1);
 
   const [dataTask, setDataTask] = useState({
     id: 0,
@@ -347,7 +348,7 @@ const ModalProjectTaskDetailUpdate = ({
     isSwitchGroup,
     dataTaskUpdate.project_id,
     currentState,
-    refreshProject,
+    refresh,
   ]);
 
   // 2.3. Get current status object
@@ -436,6 +437,7 @@ const ModalProjectTaskDetailUpdate = ({
           });
           queryClient.invalidateQueries(PROJECT_TASKS_GET);
           queryClient.invalidateQueries(PROJECT_TASKS_COUNT_GET);
+          queryClient.invalidateQueries(PROJECT_LOGS_GET);
         } else {
           notification.error({
             message: response.message,
@@ -490,6 +492,7 @@ const ModalProjectTaskDetailUpdate = ({
           queryClient.invalidateQueries(PROJECT_TASKS_COUNT_GET);
           queryClient.invalidateQueries(PROJECT_TASKS_DEADLINE_GET);
           queryClient.invalidateQueries(PROJECT_TASK_STAFF_COUNT_GET);
+          queryClient.invalidateQueries(PROJECT_LOGS_GET);
         } else {
           notification.error({
             message: response.message,
@@ -535,6 +538,7 @@ const ModalProjectTaskDetailUpdate = ({
           queryClient.invalidateQueries(PROJECT_TASKS_COUNT_GET);
           queryClient.invalidateQueries(PROJECT_TASKS_DEADLINE_GET);
           queryClient.invalidateQueries(PROJECT_TASK_STAFF_COUNT_GET);
+          queryClient.invalidateQueries(PROJECT_LOGS_GET);
         } else {
           notification.error({
             message: response.message,
@@ -586,8 +590,9 @@ const ModalProjectTaskDetailUpdate = ({
             message: response.message,
             duration: 3,
           });
-          setRefreshProject((prev) => prev + 1);
-          queryClient.invalidateQueries(PROJECTS_GET);
+          setRefresh((prev) => prev + 1);
+          queryClient.invalidateQueries(PROJECT_GET);
+          queryClient.invalidateQueries(PROJECT_LOGS_GET);
         } else {
           notification.error({
             message: response.message,
@@ -1349,7 +1354,6 @@ const ModalProjectTaskDetailUpdate = ({
       break;
   }
 
-  // console.log({ dataTask });
   return modalDelete ? (
     <ModalHapus2
       title={`Perhatian`}
