@@ -20,6 +20,7 @@ import { RESUME_SECTION_DELETE } from "lib/features";
 import ButtonSys from "../../../button";
 import { CheckIconSvg, XIconSvg } from "../../../icon";
 import { ModalHapus2 } from "../../../modal/modalCustom";
+import { formats, modules } from "../textEditorConfig";
 import ExperienceBlock from "./ExperienceBlock";
 
 // Quill library for text editor has to be imported dynamically
@@ -74,24 +75,6 @@ const ExperienceCard = ({
     setEditIdx(null);
   };
 
-  // Text Editor Config
-  const modules = {
-    toolbar: [
-      ["bold", "italic", "underline"],
-      [{ list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
-      ["link"],
-    ],
-  };
-  const formats = [
-    "bold",
-    "italic",
-    "underline",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-  ];
-
   const onDragEnd = async ({ active, over }) => {
     let activeIndex,
       overIndex = 0;
@@ -144,8 +127,6 @@ const ExperienceCard = ({
           setEditIdx={setEditIdx}
           isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
           isAllowedToDeleteSection={isAllowedToDeleteSection}
-          modules={modules}
-          formats={formats}
           {...listeners}
           {...attributes}
         />
@@ -177,8 +158,6 @@ const ExperienceCard = ({
                   setEditIdx={setEditIdx}
                   isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
                   isAllowedToDeleteSection={isAllowedToDeleteSection}
-                  modules={modules}
-                  formats={formats}
                   afterId={experienceList[idx - 1]?.id}
                 />
               ) : (

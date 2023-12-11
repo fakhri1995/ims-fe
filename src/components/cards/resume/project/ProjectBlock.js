@@ -1,5 +1,7 @@
 import { DatePicker, Input } from "antd";
+import parse from "html-react-parser";
 import moment from "moment";
+import dynamic from "next/dynamic";
 import React from "react";
 
 import {
@@ -8,6 +10,10 @@ import {
   TrashIconSvg,
   XIconSvg,
 } from "../../../icon";
+import { formats, modules } from "../textEditorConfig";
+
+// Quill library for text editor has to be imported dynamically
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const ProjectBlock = ({
   project,
@@ -40,6 +46,20 @@ const ProjectBlock = ({
                 }));
               }}
             ></Input>
+            <DatePicker
+              allowClear={true}
+              picker="year"
+              placeholder="Year"
+              className="w-1/3"
+              value={dataUpdateProj.year ? moment(dataUpdateProj.year) : null}
+              onChange={(date) => {
+                let input = date ? date.format("YYYY-MM-DD") : null;
+                setDataUpdateProj((prev) => ({
+                  ...prev,
+                  year: input,
+                }));
+              }}
+            />
             <button
               onClick={() => {
                 if (dataUpdateProj.id) {
@@ -63,34 +83,20 @@ const ProjectBlock = ({
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
           </div>
-          <div className="flex flex-row space-x-4 w-full">
-            <DatePicker
-              allowClear={true}
-              picker="year"
-              placeholder="Year"
-              className="w-1/3"
-              value={dataUpdateProj.year ? moment(dataUpdateProj.year) : null}
-              onChange={(date) => {
-                let input = date ? date.format("YYYY-MM-DD") : null;
-                setDataUpdateProj((prev) => ({
-                  ...prev,
-                  year: input,
-                }));
-              }}
-            />
-            <Input
-              placeholder="Description"
-              value={dataUpdateProj.description}
-              onChange={(e) => {
-                let input = e.target.value;
-                setDataUpdateProj((prev) => ({
-                  ...prev,
-                  description: input,
-                }));
-              }}
-              className="w-2/3"
-            ></Input>
-          </div>
+          {/* <div className="flex flex-row space-x-4 w-full"> */}
+          <ReactQuill
+            theme="snow"
+            value={dataUpdateProj.description}
+            modules={modules}
+            formats={formats}
+            className="h-44 pb-10"
+            onChange={(value) => {
+              setDataUpdateProj((prev) => ({
+                ...prev,
+                description: value,
+              }));
+            }}
+          />
         </div>
       ) : (
         <div className="flex w-full  ">
@@ -101,7 +107,7 @@ const ProjectBlock = ({
             </p>
             <div className="flex flex-col w-2/3">
               <p className="font-bold text-mono30">{project.name || "-"}</p>
-              <p className="text-mono50">{project.description || "-"}</p>
+              <p className="text-mono50">{parse(project.description) || "-"}</p>
             </div>
           </div>
           <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
