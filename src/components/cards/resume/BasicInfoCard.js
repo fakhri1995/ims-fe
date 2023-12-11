@@ -282,7 +282,7 @@ const BasicInfoCard = ({
             )}
           </div>
 
-          <div className="lg:w-11/12">
+          <div className="lg:w-11/12 flex flex-col justify-between">
             <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-between mb-4 gap-2 ">
               <div className="flex flex-row space-x-2 justify-between md:justify-start">
                 <h3 className="mig-heading--3">{dataDisplay?.name}</h3>
@@ -357,7 +357,7 @@ const BasicInfoCard = ({
             <hr />
             <Spin spinning={praloading}>
               <div className="flex flex-col lg:flex-row justify-between">
-                <div className="flex flex-col mt-3">
+                <div className="flex flex-col mt-3 ">
                   <p className="text-xs text-gray-300 mb-2">Role</p>
                   <div className="flex flex-row items-center space-x-2">
                     <OneUserIconSvg size={18} color="#4D4D4D" />
