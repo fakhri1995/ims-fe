@@ -70,15 +70,13 @@ const BasicInfoCard = ({
     <>
       {isShowInput || isCreateForm ? (
         <div className=" shadow-lg rounded-md bg-white p-5">
-          <div className="flex flex-row items-center justify-between mb-4 ">
-            <h3 className="mig-heading--3">Basic Information</h3>
-            <div
-              className="flex flex-col md:flex-row space-y-2 md:space-y-0 
-              md:space-x-6 items-end md:items-center"
-            >
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center justify-between mb-4 ">
+            <h3 className="col-span-6 mig-heading--3">Basic Information</h3>
+            <div className="col-span-6 grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-6 items-end md:items-center">
               <ButtonSys
                 type={"default"}
                 color={"danger"}
+                fullWidth={true}
                 onClick={() => {
                   isCreateForm
                     ? rt.back()

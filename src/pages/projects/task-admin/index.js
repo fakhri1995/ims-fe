@@ -986,6 +986,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToDeleteTask={isAllowedToDeleteTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
+          dataProfile={dataProfile}
           taskId={currentTaskId}
         />
       </AccessControl>

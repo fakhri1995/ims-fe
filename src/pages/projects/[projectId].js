@@ -25,7 +25,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useMemo } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -64,6 +64,7 @@ import ModalProjectUpdate from "../../components/modal/projects/modalProjectUpda
 import ModalStaffList from "../../components/modal/projects/modalStaffList";
 import LogsSection from "../../components/screen/project/LogsSection";
 import NotesSection from "../../components/screen/project/NotesSection";
+import { PROJECT_LOGS_GET } from "../../lib/features";
 import {
   createKeyPressHandler,
   generateStaticAssetUrl,
@@ -135,6 +136,7 @@ const ProjectDetailIndex = ({
 
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
+  const queryClient = useQueryClient();
 
   const dataColorBar = [
     "#2F80ED",
@@ -146,31 +148,29 @@ const ProjectDetailIndex = ({
   ];
 
   // 2. useState
-  const [refresh, setRefresh] = useState(-1); // use for all data except project notes & tasks
-  const [refreshTasks, setRefreshTasks] = useState(-1);
+  const [refresh, setRefresh] = useState(-1); // use for all data project data
 
   // 2.1. Charts
-  const [loadingChart, setLoadingChart] = useState(false);
   const [taskStatusCount, setTaskStatusCount] = useState([]);
   const [taskTotal, setTaskTotal] = useState(0);
 
-  const [dataTaskDeadline, setDataTaskDeadline] = useState({
-    deadline: {
-      today_deadline: 0,
-      tomorrow_deadline: 0,
-      first_range_deadline: 0,
-      second_range_deadline: 0,
-      third_range_deadline: 0,
-    },
-    date: {
-      first_start_date: "",
-      first_end_date: "",
-      second_start_date: "",
-      second_end_date: "",
-      third_start_date: "",
-      third_end_date: "",
-    },
-  });
+  // const [dataTaskDeadline, setDataTaskDeadline] = useState({
+  //   deadline: {
+  //     today_deadline: 0,
+  //     tomorrow_deadline: 0,
+  //     first_range_deadline: 0,
+  //     second_range_deadline: 0,
+  //     third_range_deadline: 0,
+  //   },
+  //   date: {
+  //     first_start_date: "",
+  //     first_end_date: "",
+  //     second_start_date: "",
+  //     second_end_date: "",
+  //     third_start_date: "",
+  //     third_end_date: "",
+  //   },
+  // });
   const [dateFilter, setDateFilter] = useState(false);
   const [dateState, setDateState] = useState({
     from: "",
@@ -179,8 +179,8 @@ const ProjectDetailIndex = ({
 
   // 2.2. Table Task List
   // filter data
-  const [loadingStatusList, setLoadingStatusList] = useState(false);
-  const [dataStatusList, setDataStatusList] = useState([]);
+  // const [loadingStatusList, setLoadingStatusList] = useState(false);
+  // const [dataStatusList, setDataStatusList] = useState([]);
 
   // filter search & selected options
   const [searchingFilterTasks, setSearchingFilterTasks] = useState("");
@@ -203,123 +203,70 @@ const ProjectDetailIndex = ({
   const [modalAddTask, setModalAddTask] = useState(false);
   const [modalDetailTask, setModalDetailTask] = useState(false);
 
-  const [dataProjectList, setDataProjectList] = useState([]);
+  // const [dataProjectList, setDataProjectList] = useState([]);
   const [currentTaskId, setCurrentTaskId] = useState(0);
 
   // 3. UseEffect
-  // 3.1. Get current status object
+  // 3.1. Get project list
+  const { data: dataProjectList } = useQuery(
+    [PROJECTS_GET],
+    () =>
+      ProjectManagementService.getProjectList(
+        initProps,
+        isAllowedToGetProjects
+      ),
+    {
+      enabled: isAllowedToGetProjects,
+      select: (response) => {
+        return response.data;
+      },
+    }
+  );
+
+  // 3.2. Get Project Status List
+  const {
+    data: dataStatusList,
+    isLoading: loadingStatusList,
+    refetch: refetchStatusList,
+  } = useQuery(
+    [PROJECT_STATUSES_GET],
+    () =>
+      ProjectManagementService.getStatusList(initProps, isAllowedToGetStatuses),
+    {
+      enabled: isAllowedToGetStatuses,
+      select: (response) => {
+        return response.data;
+      },
+    }
+  );
+
+  // 3.3. Get Project
+  const { data: project, refetch: refetchProject } = useQuery(
+    [PROJECT_GET, projectId],
+    () =>
+      ProjectManagementService.getProject(
+        initProps,
+        isAllowedToGetProject,
+        projectId
+      ),
+    {
+      enabled: isAllowedToGetProject,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataProject(data);
+      },
+    }
+  );
+
+  // 3.4. Get current status object
   useEffect(() => {
-    const status = dataStatusList.find(
-      (status) => status.id === dataProject.status_id
+    const status = dataStatusList?.find(
+      (status) => status.id === dataProject?.status_id
     );
     setCurrentStatus(status);
-  }, [dataStatusList, dataProject.status_id]);
-
-  // 3.2. Get Project
-  useEffect(() => {
-    if (!isAllowedToGetProject) {
-      permissionWarningNotification("Mendapatkan", "Data Proyek");
-      setLoadingProject(false);
-      return;
-    }
-
-    setLoadingProject(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProject?id=${projectId}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataProject(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingProject(false);
-      });
-  }, [isAllowedToGetProject, refresh]);
-
-  // 3.3. Get project list
-  useEffect(() => {
-    if (!isAllowedToGetProjects) {
-      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataProjectList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-  }, [isAllowedToGetProjects, refresh]);
-
-  // 3.4. Get Project Status List
-  useEffect(() => {
-    if (!isAllowedToGetStatuses) {
-      permissionWarningNotification("Mendapatkan", "Daftar Status Proyek");
-      setLoadingStatusList(false);
-      return;
-    }
-
-    setLoadingStatusList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatuses`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataStatusList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingStatusList(false);
-      });
-  }, [isAllowedToGetStatuses, refresh]);
+  }, [dataStatusList, dataProject?.status_id]);
 
   // 3.5. Get Task List
   const taskListParams = {
@@ -327,6 +274,7 @@ const ProjectDetailIndex = ({
     project_id: projectId,
     keyword: searchingFilterTasks,
   };
+
   const {
     data: dataRawTasks,
     isLoading: loadingTasks,
@@ -351,65 +299,46 @@ const ProjectDetailIndex = ({
   );
 
   // 3.6. Get Data Chart Status Task
-  useEffect(() => {
-    if (!isAllowedToGetTaskStatusCount) {
-      setLoadingChart(false);
-      return;
+  const statusParams = {
+    project_id: projectId,
+  };
+  const { data, isLoading: loadingStatusCount } = useQuery(
+    [PROJECT_TASKS_COUNT_GET, statusParams],
+    () =>
+      ProjectManagementService.getTaskStatusCount(
+        initProps,
+        isAllowedToGetTaskStatusCount,
+        statusParams
+      ),
+    {
+      enabled: isAllowedToGetTaskStatusCount,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setTaskStatusCount(data?.status); // "Status Proyek" chart's data source
+        setTaskTotal(data?.total);
+      },
     }
-
-    setLoadingChart(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasksCount?project_id=${projectId}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setTaskStatusCount(res2.data?.status); // "Status Task" chart's data source
-        setTaskTotal(res2.data?.total);
-      })
-      .catch((err) =>
-        notification.error({
-          message: "Gagal mendapatkan data statistik status task",
-          duration: 3,
-        })
-      )
-      .finally(() => setLoadingChart(false));
-  }, [isAllowedToGetTaskStatusCount, projectId, refreshTasks]);
+  );
 
   // 3.7. Get Data Chart Deadline Task
-  useEffect(() => {
-    if (!isAllowedToGetTaskDeadlineCount) {
-      setLoadingChart(false);
-      return;
+  const { data: dataTaskDeadline, isLoading: loadingDeadlineCount } = useQuery(
+    [PROJECT_TASKS_DEADLINE_GET, dateState, projectId],
+    () =>
+      ProjectManagementService.getTaskDeadlineCount(
+        initProps,
+        isAllowedToGetTaskDeadlineCount,
+        dateState.from || dateState.to ? dateState : null,
+        projectId
+      ),
+    {
+      enabled: isAllowedToGetTaskDeadlineCount,
+      select: (response) => {
+        return response.data;
+      },
     }
-
-    setLoadingChart(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasksDeadline?project_id=${projectId}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setDataTaskDeadline(res2.data); // "Deadline Task Bulan Ini" chart's data source
-      })
-      .catch((err) =>
-        notification.error({
-          message: "Gagal mendapatkan data statistik deadline task",
-          duration: 3,
-        })
-      )
-      .finally(() => setLoadingChart(false));
-  }, [isAllowedToGetTaskDeadlineCount, refreshTasks]);
+  );
 
   // 3.8. Update number of rows in task table based on the device width
   useEffect(() => {
@@ -466,7 +395,8 @@ const ProjectDetailIndex = ({
             message: response.message,
             duration: 3,
           });
-          setRefresh((prev) => prev + 1);
+          queryClient.invalidateQueries(PROJECT_LOGS_GET);
+          refetchProject();
         } else {
           notification.error({
             message: response.message,
@@ -481,47 +411,6 @@ const ProjectDetailIndex = ({
         });
       })
       .finally(() => setLoadingProject(false));
-  };
-
-  const handleGetTaskDeadlineCount = (fromDate = "", toDate = "") => {
-    if (!isAllowedToGetTaskDeadlineCount) {
-      setLoadingChart(false);
-      return;
-    }
-
-    setLoadingChart(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasksDeadline?project_id=${projectId}&from=${fromDate}&to=${toDate}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDateState({
-            from: fromDate,
-            to: toDate,
-          });
-          setDataTaskDeadline(res2.data);
-          setLoadingChart(false);
-        } else {
-          notification["error"]({
-            message: res2.message,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) =>
-        notification["error"]({
-          message: err?.message,
-          duration: 3,
-        })
-      )
-      .finally(() => setLoadingChart(false));
   };
 
   const handleAddTask = () => {
@@ -583,7 +472,7 @@ const ProjectDetailIndex = ({
       { name: "Manajemen Proyek", hrefValue: "/projects" },
       { name: dataProject?.name, hrefValue: `/projects/${projectId}` },
     ],
-    [dataProject.name]
+    [dataProject?.name]
   );
 
   return (
@@ -618,7 +507,7 @@ const ProjectDetailIndex = ({
                 </div>
               }
             >
-              {loadingChart ? (
+              {loadingStatusCount || loadingDeadlineCount ? (
                 <div className="text-center">
                   <Spin />
                 </div>
@@ -726,10 +615,10 @@ const ProjectDetailIndex = ({
                           onOpenChange={setDateFilter}
                           onChange={(dates, datestrings) => {
                             setDateFilter((prev) => !prev);
-                            handleGetTaskDeadlineCount(
-                              datestrings[0],
-                              datestrings[1]
-                            );
+                            setDateState({
+                              from: datestrings[0],
+                              to: datestrings[1],
+                            });
                           }}
                           renderExtraFooter={() => (
                             <div className=" flex items-center">
@@ -749,7 +638,7 @@ const ProjectDetailIndex = ({
                     </div>
 
                     {/* CHART */}
-                    {loadingChart ? (
+                    {loadingDeadlineCount ? (
                       <Spin />
                     ) : (
                       <div className="">
@@ -759,20 +648,20 @@ const ProjectDetailIndex = ({
                               labels: [
                                 `${
                                   moment(
-                                    dataTaskDeadline?.date.first_start_date
+                                    dataTaskDeadline?.date?.first_start_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline?.date.first_start_date
+                                        dataTaskDeadline?.date?.first_start_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
                                     : ""
                                 }-${
                                   moment(
-                                    dataTaskDeadline?.date.first_end_date
+                                    dataTaskDeadline?.date?.first_end_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline?.date.first_end_date
+                                        dataTaskDeadline?.date?.first_end_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
@@ -780,20 +669,21 @@ const ProjectDetailIndex = ({
                                 }`,
                                 `${
                                   moment(
-                                    dataTaskDeadline?.date.second_start_date
+                                    dataTaskDeadline?.date?.second_start_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline?.date.second_start_date
+                                        dataTaskDeadline?.date
+                                          ?.second_start_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
                                     : ""
                                 }-${
                                   moment(
-                                    dataTaskDeadline?.date.second_end_date
+                                    dataTaskDeadline?.date?.second_end_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline?.date.second_end_date
+                                        dataTaskDeadline?.date?.second_end_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
@@ -801,20 +691,20 @@ const ProjectDetailIndex = ({
                                 }`,
                                 `${
                                   moment(
-                                    dataTaskDeadline?.date.third_start_date
+                                    dataTaskDeadline?.date?.third_start_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline?.date.third_start_date
+                                        dataTaskDeadline?.date?.third_start_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
                                     : ""
                                 }-${
                                   moment(
-                                    dataTaskDeadline?.date.third_end_date
+                                    dataTaskDeadline?.date?.third_end_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline?.date.third_end_date
+                                        dataTaskDeadline?.date?.third_end_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
@@ -825,11 +715,11 @@ const ProjectDetailIndex = ({
                                 {
                                   data: [
                                     dataTaskDeadline?.deadline
-                                      .first_range_deadline,
+                                      ?.first_range_deadline,
                                     dataTaskDeadline?.deadline
-                                      .second_range_deadline,
+                                      ?.second_range_deadline,
                                     dataTaskDeadline?.deadline
-                                      .third_range_deadline,
+                                      ?.third_range_deadline,
                                   ],
                                   borderColor: "#35763B",
                                   tension: 0.5,
@@ -882,7 +772,7 @@ const ProjectDetailIndex = ({
                               </p>
                             </div>
                             <p className="font-bold text-right text-mono30">
-                              {dataTaskDeadline?.deadline.today_deadline}
+                              {dataTaskDeadline?.deadline?.today_deadline}
                             </p>
                           </div>
                           <div className="flex justify-between items-center space-x-5">
@@ -898,7 +788,7 @@ const ProjectDetailIndex = ({
                               </p>
                             </div>
                             <p className="font-bold text-right text-mono30">
-                              {dataTaskDeadline?.deadline.tomorrow_deadline}
+                              {dataTaskDeadline?.deadline?.tomorrow_deadline}
                             </p>
                           </div>
                         </div>
@@ -996,7 +886,7 @@ const ProjectDetailIndex = ({
                       <div>
                         <Select
                           allowClear
-                          value={dataProject.status_id}
+                          value={dataProject?.status_id}
                           disabled={!isAllowedToGetStatuses}
                           placeholder="Ubah Status"
                           onChange={(value) => {
@@ -1017,7 +907,7 @@ const ProjectDetailIndex = ({
                             color: currentStatus?.color ?? "#808080",
                           }}
                         >
-                          {dataStatusList.map((item) => (
+                          {dataStatusList?.map((item) => (
                             <Select.Option
                               key={item?.id}
                               value={item?.id}
@@ -1167,8 +1057,6 @@ const ProjectDetailIndex = ({
               initProps={initProps}
               projectId={projectId}
               projectName={dataProject?.name}
-              refresh={refresh}
-              refreshTasks={refreshTasks}
             />
 
             {/* Catatan */}
@@ -1262,7 +1150,7 @@ const ProjectDetailIndex = ({
                         .includes(input.toLowerCase())
                     }
                   >
-                    {dataStatusList.map((status) => (
+                    {dataStatusList?.map((status) => (
                       <Select.Option key={status.id} value={status.id}>
                         {status.name}
                       </Select.Option>
@@ -1357,7 +1245,6 @@ const ProjectDetailIndex = ({
           onvisible={setModalUpdateProject}
           isAllowedToUpdateProject={isAllowedToUpdateProject}
           isAllowedToDeleteProject={isAllowedToDeleteProject}
-          setRefresh={setRefresh}
           dataProject={dataProject}
           dataStatusList={dataStatusList}
         />
@@ -1382,7 +1269,6 @@ const ProjectDetailIndex = ({
           isAllowedToDeleteTask={isAllowedToDeleteTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
-          setRefreshTasks={setRefreshTasks}
           dataProfile={dataProfile}
           defaultProject={dataProject}
           taskId={currentTaskId}
@@ -1401,7 +1287,6 @@ const ProjectDetailIndex = ({
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           isAllowedToGetStatuses={isAllowedToGetStatuses}
-          setRefreshTasks={setRefreshTasks}
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
           refreshProject={refresh}

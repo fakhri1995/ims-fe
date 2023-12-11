@@ -14,6 +14,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useRef } from "react";
+import { useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
@@ -21,6 +22,12 @@ import { useAccessControl } from "contexts/access-control";
 import { GROUPS_GET, PROJECT_CATEGORIES_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import {
+  PROJECTS_GET,
+  PROJECT_GET,
+  PROJECT_LOGS_GET,
+  PROJECT_TASKS_GET,
+} from "../../../lib/features";
 import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { CheckIconSvg, EditSquareIconSvg } from "../../icon";
@@ -35,7 +42,6 @@ const ModalProjectUpdate = ({
   onvisible,
   isAllowedToUpdateProject,
   isAllowedToDeleteProject,
-  setRefresh,
   dataProject,
   dataStatusList,
 }) => {
@@ -46,6 +52,7 @@ const ModalProjectUpdate = ({
 
   const rt = useRouter();
   const searchTimeoutRef = useRef(null);
+  const queryClient = useQueryClient();
 
   // 1. USE STATE
   const [dataUpdateProject, setDataUpdateProject] = useState({
@@ -239,7 +246,10 @@ const ModalProjectUpdate = ({
             message: response.message,
             duration: 3,
           });
-          setRefresh((prev) => prev + 1);
+          queryClient.invalidateQueries(PROJECT_GET);
+          queryClient.invalidateQueries(PROJECTS_GET);
+          queryClient.invalidateQueries(PROJECT_TASKS_GET);
+          queryClient.invalidateQueries(PROJECT_LOGS_GET);
         } else {
           notification.error({
             message: response.message,
