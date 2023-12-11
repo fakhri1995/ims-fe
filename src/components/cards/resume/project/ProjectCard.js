@@ -8,6 +8,7 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { DatePicker, Input } from "antd";
 import moment from "moment";
+import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
 import { useState } from "react";
 
@@ -18,7 +19,10 @@ import { RESUME_SECTION_DELETE } from "lib/features";
 import ButtonSys from "../../../button";
 import { CheckIconSvg, XIconSvg } from "../../../icon";
 import { ModalHapus2 } from "../../../modal/modalCustom";
+import { formats, modules } from "../textEditorConfig";
 import ProjectBlock from "./ProjectBlock";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const ProjectCard = ({
   dataDisplay,
@@ -172,6 +176,20 @@ const ProjectCard = ({
                 }));
               }}
             ></Input>
+            <DatePicker
+              allowClear={true}
+              picker="year"
+              placeholder="Year"
+              className="w-1/3"
+              value={dataUpdateProj?.year ? moment(dataUpdateProj?.year) : null}
+              onChange={(date) => {
+                let input = date?.format("YYYY-MM-DD");
+                setDataUpdateProj((prev) => ({
+                  ...prev,
+                  year: input,
+                }));
+              }}
+            />
             <button
               onClick={() => {
                 handleAddSection("project", {
@@ -193,34 +211,19 @@ const ProjectCard = ({
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
           </div>
-          <div className="flex flex-row space-x-4 w-full">
-            <DatePicker
-              allowClear={true}
-              picker="year"
-              placeholder="Year"
-              className="w-1/3"
-              value={dataUpdateProj?.year ? moment(dataUpdateProj?.year) : null}
-              onChange={(date) => {
-                let input = date?.format("YYYY-MM-DD");
-                setDataUpdateProj((prev) => ({
-                  ...prev,
-                  year: input,
-                }));
-              }}
-            />
-            <Input
-              placeholder="Description"
-              value={dataUpdateProj?.description}
-              onChange={(e) => {
-                let input = e.target.value;
-                setDataUpdateProj((prev) => ({
-                  ...prev,
-                  description: input,
-                }));
-              }}
-              className="w-2/3"
-            ></Input>
-          </div>
+          <ReactQuill
+            theme="snow"
+            value={dataUpdateProj.description}
+            modules={modules}
+            formats={formats}
+            className="h-44 pb-10"
+            onChange={(value) => {
+              setDataUpdateProj((prev) => ({
+                ...prev,
+                description: value,
+              }));
+            }}
+          />
         </div>
       ) : (
         isAllowedToAddSection && (

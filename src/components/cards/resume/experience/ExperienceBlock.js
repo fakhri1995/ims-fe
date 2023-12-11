@@ -13,6 +13,7 @@ import {
   TrashIconSvg,
   XIconSvg,
 } from "../../../icon";
+import { formats, modules } from "../textEditorConfig";
 
 // Quill library for text editor has to be imported dynamically
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -30,8 +31,7 @@ const ExperienceBlock = ({
   setEditIdx,
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
-  modules,
-  formats,
+
   afterId,
   ...draggable
 }) => {
