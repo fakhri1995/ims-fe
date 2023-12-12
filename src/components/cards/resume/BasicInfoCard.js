@@ -70,15 +70,13 @@ const BasicInfoCard = ({
     <>
       {isShowInput || isCreateForm ? (
         <div className=" shadow-lg rounded-md bg-white p-5">
-          <div className="flex flex-row items-center justify-between mb-4 ">
-            <h3 className="mig-heading--3">Basic Information</h3>
-            <div
-              className="flex flex-col md:flex-row space-y-2 md:space-y-0 
-              md:space-x-6 items-end md:items-center"
-            >
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center justify-between mb-4 ">
+            <h3 className="col-span-6 mig-heading--3">Basic Information</h3>
+            <div className="col-span-6 grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-6 items-end md:items-center">
               <ButtonSys
                 type={"default"}
                 color={"danger"}
+                fullWidth={true}
                 onClick={() => {
                   isCreateForm
                     ? rt.back()
@@ -269,8 +267,8 @@ const BasicInfoCard = ({
           </Form>
         </div>
       ) : (
-        <div className="flex flex-col lg:flex-row gap-6 shadow-lg rounded-md bg-white p-5">
-          <div className="flex justify-center">
+        <div className="w-full flex flex-col lg:flex-row gap-6 shadow-lg rounded-md bg-white p-5">
+          <div className="lg:w-1/12 flex justify-center">
             {dataDisplay?.profile_image?.id ? (
               <img
                 src={generateStaticAssetUrl(dataDisplay?.profile_image?.link)}
@@ -284,9 +282,9 @@ const BasicInfoCard = ({
             )}
           </div>
 
-          <div className="w-full">
-            <div className="flex flex-row items-center justify-between mb-4 ">
-              <div className="flex flex-row space-x-2">
+          <div className="lg:w-11/12 flex flex-col justify-between">
+            <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-between mb-4 gap-2 ">
+              <div className="flex flex-row space-x-2 justify-between md:justify-start">
                 <h3 className="mig-heading--3">{dataDisplay?.name}</h3>
                 {isAllowedToUpdateCandidate && (
                   <button
@@ -309,14 +307,15 @@ const BasicInfoCard = ({
                 )}
               </div>
 
-              <div
-                className="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-6 
-                items-end lg:items-center"
-              >
-                {!isGuest && (
+              {!isGuest && (
+                <div
+                  className="grid md:grid-cols-2 w-full gap-2
+                  items-end lg:items-center"
+                >
                   <ButtonSys
                     type={isAllowedToDeleteCandidate ? "default" : "primary"}
                     color="danger"
+                    fullWidth={true}
                     disabled={!isAllowedToDeleteCandidate}
                     onClick={() => setModalDelete(true)}
                   >
@@ -325,21 +324,26 @@ const BasicInfoCard = ({
                       <p className="whitespace-nowrap">Remove Candidate</p>
                     </div>
                   </ButtonSys>
-                )}
-                {!isGuest && isOnClient && (
-                  <ButtonSys
-                    type={"default"}
-                    onClick={() => setOpenDownloadModal(true)}
-                  >
-                    <div className="flex flex-row space-x-2 items-center">
-                      <DownloadOutlined rev={""} />
-                      <p className="whitespace-nowrap">Download Resume</p>
-                    </div>
-                  </ButtonSys>
-                )}
-                {isGuest && (
+                  {isOnClient && (
+                    <ButtonSys
+                      type={"default"}
+                      fullWidth={true}
+                      onClick={() => setOpenDownloadModal(true)}
+                    >
+                      <div className="flex flex-row space-x-2 items-center">
+                        <DownloadOutlined rev={""} />
+                        <p className="whitespace-nowrap">Download Resume</p>
+                      </div>
+                    </ButtonSys>
+                  )}
+                </div>
+              )}
+
+              {isGuest && (
+                <div className="w-full flex justify-end">
                   <ButtonSys
                     type={"primary"}
+                    fullWidth={true}
                     onClick={() => rt.push("/myApplication")}
                   >
                     <div className="flex flex-row space-x-2 items-center">
@@ -347,31 +351,31 @@ const BasicInfoCard = ({
                       <p>Selesai</p>
                     </div>
                   </ButtonSys>
-                )}
-              </div>
+                </div>
+              )}
             </div>
             <hr />
             <Spin spinning={praloading}>
               <div className="flex flex-col lg:flex-row justify-between">
-                <div className="flex flex-col mt-3">
+                <div className="flex flex-col mt-3 ">
                   <p className="text-xs text-gray-300 mb-2">Role</p>
                   <div className="flex flex-row items-center space-x-2">
                     <OneUserIconSvg size={18} color="#4D4D4D" />
-                    <p>{dataDisplay?.assessment?.name}</p>
+                    <p>{dataDisplay?.assessment?.name || "-"}</p>
                   </div>
                 </div>
                 <div className="flex flex-col mt-3">
                   <p className="text-xs text-gray-300 mb-2">Phone Number</p>
                   <div className="flex flex-row items-center space-x-2">
                     <PhoneIconSvg size={18} color="#4D4D4D" />
-                    <p>{dataDisplay?.telp}</p>
+                    <p>{dataDisplay?.telp || "-"}</p>
                   </div>
                 </div>
                 <div className="flex flex-col mt-3">
                   <p className="text-xs text-gray-300 mb-2">Email</p>
                   <div className="flex flex-row items-center space-x-2">
                     <EmailIconSvg size={18} color="#4D4D4D" />
-                    <p>{dataDisplay?.email}</p>
+                    <p>{dataDisplay?.email || "-"}</p>
                   </div>
                 </div>
                 <div className="flex flex-col mt-3">
@@ -379,7 +383,7 @@ const BasicInfoCard = ({
                   <div className="flex flex-row items-center space-x-2">
                     <MappinIconSvg size={18} color="#4D4D4D" />
                     <p>
-                      {dataDisplay?.city}, {dataDisplay?.province}
+                      {dataDisplay?.city || "-"}, {dataDisplay?.province || "-"}
                     </p>
                   </div>
                 </div>

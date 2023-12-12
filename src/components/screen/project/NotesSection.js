@@ -3,6 +3,7 @@ import { Collapse, Input, Table, notification } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { useQuery } from "react-query";
 import TextareaAutosize from "react-textarea-autosize";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -15,6 +16,7 @@ import {
   PROJECT_NOTE_DELETE,
 } from "lib/features";
 
+import { ProjectManagementService } from "../../../apis/project-management";
 import {
   generateStaticAssetUrl,
   momentFormatDate,
@@ -38,11 +40,8 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
   const isAllowedToDeleteNote = hasPermission(PROJECT_NOTE_DELETE);
 
   // 2. useState
-  const [refreshNotes, setRefreshNotes] = useState(-1);
-
-  const [dataRawProjectNotes, setDataRawProjectNotes] = useState({});
   const [dataProjectNotes, setDataProjectNotes] = useState([]);
-  const [loadingProjectNotes, setLoadingProjectNotes] = useState(false);
+  const [loadingAdd, setLoadingAdd] = useState(false);
 
   const [searchingFilterNotes, setSearchingFilterNotes] = useState("");
   const [pageProjectNotes, setPageProjectNotes] = useState(1);
@@ -55,56 +54,42 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
 
   // 3. useEffect
   // 3.1. Get Project Notes
-  useEffect(() => {
-    if (!isAllowedToGetNotes) {
-      permissionWarningNotification("Mendapatkan", "Catatan Proyek");
-      setLoadingProjectNotes(false);
-      return;
+  const params = {
+    project_id: projectId,
+    page: pageProjectNotes,
+    rows: 5,
+  };
+  const {
+    data: dataRawProjectNotes,
+    isLoading: loadingProjectNotes,
+    refetch: refetchProjectNotes,
+  } = useQuery(
+    [PROJECT_NOTES_GET, params],
+    () =>
+      ProjectManagementService.getProjectNotes(
+        initProps,
+        isAllowedToGetNotes,
+        params,
+        searchingFilterNotes
+      ),
+    {
+      enabled: isAllowedToGetNotes,
+      select: (response) => {
+        return response.data;
+      },
+      onSuccess: (data) => {
+        setDataProjectNotes(data.data);
+      },
     }
+  );
 
-    const fetchData = async () => {
-      setLoadingProjectNotes(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogNotes?project_id=${projectId}&keyword=${searchingFilterNotes}&page=${pageProjectNotes}&rows=5`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawProjectNotes(res2.data);
-            setDataProjectNotes(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingProjectNotes(false);
-        });
-    };
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      refetchProjectNotes();
+    }, 500);
 
-    const timer = setTimeout(() => fetchData(), 500);
-
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetNotes,
-    refreshNotes,
-    searchingFilterNotes,
-    pageProjectNotes,
-  ]);
+    return () => clearTimeout(delaySearch);
+  }, [searchingFilterNotes]);
 
   // 4. Event
   const handleAddNote = (notes) => {
@@ -114,7 +99,7 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
     }
 
     const payload = { notes: notes };
-    setLoadingProjectNotes(true);
+    setLoadingAdd(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectLogNotes?project_id=${projectId}`,
       {
@@ -134,7 +119,7 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
             duration: 3,
           });
           setDataInputNote("");
-          setRefreshNotes((prev) => prev + 1);
+          refetchProjectNotes();
         } else {
           notification.error({
             message: response.message,
@@ -148,7 +133,7 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
           duration: 3,
         });
       })
-      .finally(() => setLoadingProjectNotes(false));
+      .finally(() => setLoadingAdd(false));
   };
 
   return (
@@ -314,7 +299,6 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
           onvisible={setModalDetailNote}
           dataNote={dataCurrentNote}
           isAllowedToDeleteNote={isAllowedToDeleteNote}
-          setRefreshNotes={setRefreshNotes}
         />
       </AccessControl>
     </section>

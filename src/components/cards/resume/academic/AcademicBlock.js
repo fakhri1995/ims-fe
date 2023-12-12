@@ -110,12 +110,14 @@ const AcademicBlock = ({
         <div className="flex justify-between">
           {/* Read state */}
           <div className="flex flex-col cursor-move" {...draggable}>
-            <p className="text-primary100 font-bold mb-1">{edu?.university}</p>
-            <p className="text-mono50 mb-1">
-              {edu?.major} ·&nbsp;
-              <strong>{edu?.graduation_year?.slice(0, 4)}</strong>
+            <p className="text-primary100 font-bold mb-1">
+              {edu?.university || "-"}
             </p>
-            {edu?.gpa && <p className="text-mono50">GPA {edu?.gpa}</p>}
+            <p className="text-mono50 mb-1">
+              {edu?.major || "-"} ·&nbsp;
+              <strong>{edu?.graduation_year?.slice(0, 4) || "-"}</strong>
+            </p>
+            {edu?.gpa && <p className="text-mono50">GPA {edu?.gpa || "-"}</p>}
           </div>
           <div className="flex flex-row space-x-2 items-start">
             {isAllowedToUpdateCandidate && (

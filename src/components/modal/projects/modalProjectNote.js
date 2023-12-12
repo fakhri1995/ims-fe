@@ -1,8 +1,10 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { Modal, notification } from "antd";
 import React, { useState } from "react";
+import { useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
+import { PROJECT_NOTES_GET } from "../../../lib/features";
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { ModalHapus2 } from "../modalCustom";
@@ -13,8 +15,9 @@ const ModalProjectNote = ({
   onvisible,
   dataNote,
   isAllowedToDeleteNote,
-  setRefreshNotes,
 }) => {
+  const queryClient = useQueryClient();
+
   // 1. USE STATE
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -46,7 +49,7 @@ const ModalProjectNote = ({
             message: res2?.message,
             duration: 3,
           });
-          setRefreshNotes((prev) => prev + 1);
+          queryClient.invalidateQueries(PROJECT_NOTES_GET);
         } else {
           notification.error({
             message: `Gagal menghapus catatan proyek.`,

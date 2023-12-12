@@ -24,6 +24,8 @@ import { permissionWarningNotification } from "lib/helper";
 
 import {
   PROJECTS_COUNT_GET,
+  PROJECT_GET,
+  PROJECT_LOGS_GET,
   PROJECT_TASKS_COUNT_GET,
   PROJECT_TASKS_DEADLINE_GET,
   PROJECT_TASKS_GET,
@@ -44,13 +46,10 @@ const ModalProjectTaskCreate = ({
   isAllowedToGetProject,
   isAllowedToUpdateTask,
   isAllowedToGetProjects,
-  isAllowedToDeleteTask,
   defaultProject,
   isAddMyTask,
   dataProfile,
   taskId,
-  refreshProject,
-  setRefreshProject,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
@@ -87,6 +86,7 @@ const ModalProjectTaskCreate = ({
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [tagList, setTagList] = useState([]);
   const [searchField, setSearchField] = useState("");
+  const [refresh, setRefresh] = useState(-1);
 
   // 2. USE EFFECT
   // 2.1. Set default project if used in project detail page
@@ -230,7 +230,7 @@ const ModalProjectTaskCreate = ({
     isSwitchGroup,
     dataTask.project_id,
     visible,
-    refreshProject,
+    refresh,
   ]);
 
   // 2.4. Auto fill task staff with self user id (in Tambah Task Saya)
@@ -381,6 +381,7 @@ const ModalProjectTaskCreate = ({
           queryClient.invalidateQueries(PROJECT_TASKS_COUNT_GET);
           queryClient.invalidateQueries(PROJECT_TASKS_DEADLINE_GET);
           queryClient.invalidateQueries(PROJECT_TASK_STAFF_COUNT_GET);
+          queryClient.invalidateQueries(PROJECT_LOGS_GET);
         } else {
           notification.error({
             message: response.message,
@@ -433,7 +434,9 @@ const ModalProjectTaskCreate = ({
             message: response.message,
             duration: 3,
           });
-          setRefreshProject((prev) => prev + 1);
+          setRefresh((prev) => prev + 1);
+          queryClient.invalidateQueries(PROJECT_GET);
+          queryClient.invalidateQueries(PROJECT_LOGS_GET);
         } else {
           notification.error({
             message: response.message,
@@ -467,7 +470,6 @@ const ModalProjectTaskCreate = ({
     "indent",
     "link",
   ];
-
   return (
     <Modal
       title={
