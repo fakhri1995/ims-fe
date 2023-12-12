@@ -1,13 +1,16 @@
 import { DatePicker, Input, InputNumber, Timeline } from "antd";
 import moment from "moment";
-import React from "react";
+import React, { useState } from "react";
 
+import { momentFormatDate } from "../../../../lib/helper";
 import {
   CheckIconSvg,
   EditIconSvg,
   TrashIconSvg,
   XIconSvg,
 } from "../../../icon";
+
+const { RangePicker } = DatePicker;
 
 const AcademicBlock = ({
   edu,
@@ -23,6 +26,8 @@ const AcademicBlock = ({
   afterId,
   ...draggable
 }) => {
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
   return (
     <Timeline.Item color="#35763B">
       {editIdx === edu.id ? (
@@ -45,7 +50,7 @@ const AcademicBlock = ({
                 if (dataUpdateEdu.id) {
                   handleUpdateSection("education", {
                     ...dataUpdateEdu,
-                    after_id: afterId,
+                    after_id: afterId ?? 0,
                   });
                 }
                 clearDataUpdate();
@@ -76,7 +81,46 @@ const AcademicBlock = ({
           />
 
           <div className="flex flex-row space-x-4 w-full">
-            <DatePicker
+            <RangePicker
+              allowEmpty
+              value={[
+                dataUpdateEdu.start_date
+                  ? moment(dataUpdateEdu.start_date)
+                  : null,
+                dataUpdateEdu.end_date ? moment(dataUpdateEdu.end_date) : null,
+              ]}
+              open={calendarOpen}
+              onOpenChange={setCalendarOpen}
+              onCalendarChange={(value, datestring) => {
+                let startDate = datestring[0];
+                let endDate = datestring[1];
+                setDataUpdateEdu((prev) => ({
+                  ...prev,
+                  start_date: startDate,
+                  end_date: endDate,
+                }));
+              }}
+              picker="month"
+              className="w-1/2"
+              renderExtraFooter={() => (
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    className="mb-0 bg-transparent text-primary100 hover:text-primary75 cursor-pointer"
+                    onClick={() => {
+                      setDataUpdateEdu((prev) => ({
+                        ...prev,
+                        end_date: null,
+                      }));
+                      setCalendarOpen(false);
+                    }}
+                  >
+                    Present
+                  </button>
+                </div>
+              )}
+            />
+            {/* <DatePicker
               picker="year"
               placeholder="Graduation Year"
               allowClear={false}
@@ -89,7 +133,7 @@ const AcademicBlock = ({
                   graduation_year: moment(input),
                 }));
               }}
-            />
+            /> */}
             <InputNumber
               placeholder="GPA"
               min={0.0}
@@ -115,7 +159,10 @@ const AcademicBlock = ({
             </p>
             <p className="text-mono50 mb-1">
               {edu?.major || "-"} ·&nbsp;
-              <strong>{edu?.graduation_year?.slice(0, 4) || "-"}</strong>
+              <strong>
+                {momentFormatDate(edu?.start_date, "-", "MMM YYYY")} -&nbsp;
+                {momentFormatDate(edu?.end_date, <em>present</em>, "MMM YYYY")}
+              </strong>
             </p>
             {edu?.gpa && <p className="text-mono50">GPA {edu?.gpa || "-"}</p>}
           </div>

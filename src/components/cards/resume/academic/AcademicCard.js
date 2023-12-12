@@ -20,6 +20,8 @@ import { CheckIconSvg, XIconSvg } from "../../../icon";
 import { ModalHapus2 } from "../../../modal/modalCustom";
 import AcademicBlock from "./AcademicBlock";
 
+const { RangePicker } = DatePicker;
+
 const AcademicCard = ({
   dataDisplay,
   handleAddSection,
@@ -34,6 +36,7 @@ const AcademicCard = ({
   const [modalDelete, setModalDelete] = useState(false);
   const [academicList, setAcademicList] = useState([]);
   const [editIdx, setEditIdx] = useState(null); // if value -1 --> add state
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const [dataUpdateEdu, setDataUpdateEdu] = useState({
     id: null,
@@ -85,7 +88,7 @@ const AcademicCard = ({
       let updatedItem = {
         ...currentItem,
         id: active?.id,
-        after_id: prevId,
+        after_id: prevId ?? 0,
       };
       await handleUpdateSection("education", updatedItem);
       clearDataUpdate();
@@ -205,7 +208,46 @@ const AcademicCard = ({
           />
 
           <div className="flex flex-row space-x-4 w-full">
-            <DatePicker
+            <RangePicker
+              allowEmpty
+              value={[
+                dataUpdateEdu.start_date
+                  ? moment(dataUpdateEdu.start_date)
+                  : null,
+                dataUpdateEdu.end_date ? moment(dataUpdateEdu.end_date) : null,
+              ]}
+              open={calendarOpen}
+              onOpenChange={setCalendarOpen}
+              onCalendarChange={(value, datestring) => {
+                let startDate = datestring[0];
+                let endDate = datestring[1];
+                setDataUpdateEdu((prev) => ({
+                  ...prev,
+                  start_date: startDate,
+                  end_date: endDate,
+                }));
+              }}
+              picker="month"
+              className="w-1/2"
+              renderExtraFooter={() => (
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    className="mb-0 bg-transparent text-primary100 hover:text-primary75 cursor-pointer"
+                    onClick={() => {
+                      setDataUpdateEdu((prev) => ({
+                        ...prev,
+                        end_date: null,
+                      }));
+                      setCalendarOpen(false);
+                    }}
+                  >
+                    Present
+                  </button>
+                </div>
+              )}
+            />
+            {/* <DatePicker
               picker="year"
               placeholder="Graduation Year"
               allowClear={false}
@@ -218,7 +260,7 @@ const AcademicCard = ({
                   graduation_year: moment(input),
                 }));
               }}
-            />
+            /> */}
             <InputNumber
               placeholder="GPA"
               min={0.0}
