@@ -50,7 +50,7 @@ const AcademicBlock = ({
                 if (dataUpdateEdu.id) {
                   handleUpdateSection("education", {
                     ...dataUpdateEdu,
-                    after_id: afterId,
+                    after_id: afterId ?? 0,
                   });
                 }
                 clearDataUpdate();
