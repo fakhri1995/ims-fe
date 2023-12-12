@@ -848,3 +848,30 @@ ol {
   font-weight: 500;
   line-height: 16px;
 }
+.customfontmodal {
+  text-align: center;
+  font-feature-settings: "cv04" on, "cv03" on, "cv02" on, "cv11" on, "clig" off,
+    "liga" off;
+  letter-spacing: 0.16px;
+}
+
+.customfontcareerdetail {
+  font-feature-settings: "cv04" on, "cv03" on, "cv02" on, "cv11" on, "clig" off,
+    "liga" off;
+}
+.ant-upload.ant-upload-drag.customdragger {
+  border: 1.5px dashed #0059a0;
+  background-color: white;
+}
+
+.ant-spin-dot-item,
+.ant-spin-text .customanttext {
+  background-color: white;
+}
+.customspin .ant-spin-dot-item .ant-spin-text {
+  background-color: white;
+}
+
+.customspin {
+  background-color: #ffffff;
+}

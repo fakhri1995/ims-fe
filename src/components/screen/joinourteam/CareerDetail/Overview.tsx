@@ -1,4 +1,5 @@
 import { Skeleton } from "antd";
+import parse from "html-react-parser";
 import { useRouter } from "next/router";
 import type { FC } from "react";
 
@@ -31,7 +32,7 @@ export const Overview: FC = () => {
         {isLoading ? (
           <Skeleton title={false} active />
         ) : (
-          <p>{data?.overview}</p>
+          <div>{data && parse(data?.overview)}</div>
         )}
       </article>
 
@@ -45,7 +46,7 @@ export const Overview: FC = () => {
           {isLoading ? (
             <Skeleton title={false} active />
           ) : (
-            <p>{data?.description}</p>
+            <div>{data && parse(data?.description)}</div>
           )}
         </article>
 
@@ -57,7 +58,7 @@ export const Overview: FC = () => {
           {isLoading ? (
             <Skeleton title={false} active />
           ) : (
-            <p>{data?.qualification}</p>
+            <div>{data && parse(data?.qualification)}</div>
           )}
         </article>
       </div>
