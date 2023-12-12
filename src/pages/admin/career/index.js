@@ -20,6 +20,7 @@ import {
   useQueryParams,
   withDefault,
 } from "next-query-params";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import QueryString from "qs";
 import React from "react";
@@ -28,6 +29,7 @@ import { useCallback } from "react";
 import { useRef } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import CurrencyFormat from "react-currency-format";
+import "react-quill/dist/quill.snow.css";
 
 import { AccessControl } from "components/features/AccessControl";
 import { AddNewFormButton } from "components/screen/resume";
@@ -79,12 +81,30 @@ Chart.register(
   BarElement,
   PointElement
 );
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 1. Init
   /**
    * Dependencies
    */
+  const modules = {
+    toolbar: [
+      ["bold", "italic", "underline"],
+      [{ list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+      ["link"],
+    ],
+  };
+  const formats = [
+    "bold",
+    "italic",
+    "underline",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+  ];
+
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
   if (isAccessControlPending) {
@@ -1228,13 +1248,16 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   },
                 ]}
               >
-                <Input.TextArea
-                  style={{ height: 200 }}
-                  defaultValue={datacreate.overview}
-                  onChange={(e) => {
+                <ReactQuill
+                  theme="snow"
+                  value={datacreate?.overview}
+                  modules={modules}
+                  formats={formats}
+                  className="h-44 pb-10"
+                  onChange={(value) => {
                     setdatacreate({
                       ...datacreate,
-                      overview: e.target.value,
+                      overview: value,
                     });
                   }}
                 />
@@ -1249,13 +1272,16 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   },
                 ]}
               >
-                <Input.TextArea
-                  style={{ height: 200 }}
-                  defaultValue={datacreate.description}
-                  onChange={(e) => {
+                <ReactQuill
+                  theme="snow"
+                  value={datacreate?.description}
+                  modules={modules}
+                  formats={formats}
+                  className="h-44 pb-10"
+                  onChange={(value) => {
                     setdatacreate({
                       ...datacreate,
-                      description: e.target.value,
+                      description: value,
                     });
                   }}
                 />
@@ -1271,13 +1297,16 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   },
                 ]}
               >
-                <Input.TextArea
-                  style={{ height: 200 }}
-                  defaultValue={datacreate.qualification}
-                  onChange={(e) => {
+                <ReactQuill
+                  theme="snow"
+                  value={datacreate?.qualification}
+                  modules={modules}
+                  formats={formats}
+                  className="h-44 pb-10"
+                  onChange={(value) => {
                     setdatacreate({
                       ...datacreate,
-                      qualification: e.target.value,
+                      qualification: value,
                     });
                   }}
                 />
@@ -1494,13 +1523,16 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   },
                 ]}
               >
-                <Input.TextArea
-                  style={{ height: 200 }}
-                  defaultValue={dataedit.overview}
-                  onChange={(e) => {
+                <ReactQuill
+                  theme="snow"
+                  value={dataedit?.overview}
+                  modules={modules}
+                  formats={formats}
+                  className="h-44 pb-10"
+                  onChange={(value) => {
                     setdataedit({
                       ...dataedit,
-                      overview: e.target.value,
+                      overview: value,
                     });
                   }}
                 />
@@ -1515,13 +1547,16 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   },
                 ]}
               >
-                <Input.TextArea
-                  style={{ height: 200 }}
-                  defaultValue={dataedit.description}
-                  onChange={(e) => {
+                <ReactQuill
+                  theme="snow"
+                  value={dataedit?.description}
+                  modules={modules}
+                  formats={formats}
+                  className="h-44 pb-10"
+                  onChange={(value) => {
                     setdataedit({
                       ...dataedit,
-                      description: e.target.value,
+                      description: value,
                     });
                   }}
                 />
@@ -1537,13 +1572,16 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   },
                 ]}
               >
-                <Input.TextArea
-                  style={{ height: 200 }}
-                  defaultValue={dataedit.qualification}
-                  onChange={(e) => {
+                <ReactQuill
+                  theme="snow"
+                  value={dataedit?.qualification}
+                  modules={modules}
+                  formats={formats}
+                  className="h-44 pb-10"
+                  onChange={(value) => {
                     setdataedit({
                       ...dataedit,
-                      qualification: e.target.value,
+                      qualification: value,
                     });
                   }}
                 />

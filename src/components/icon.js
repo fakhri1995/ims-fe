@@ -3342,6 +3342,94 @@ const PinFilledIconSvg = ({ size, color }) => {
   return <Icon rev={""} component={pinFilledIconSvg}></Icon>;
 };
 
+const ArchivedIconSvg = ({ size, color }) => {
+  const archivedIconSvg = () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4.79844 3.60156C3.47295 3.60156 2.39844 4.67608 2.39844 6.00156C2.39844 7.32705 3.47295 8.40156 4.79844 8.40156H19.1984C20.5239 8.40156 21.5984 7.32705 21.5984 6.00156C21.5984 4.67608 20.5239 3.60156 19.1984 3.60156H4.79844Z"
+        fill="#585858"
+      />
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M3.59844 9.60156H20.3984V18.0016C20.3984 19.327 19.3239 20.4016 17.9984 20.4016H5.99844C4.67295 20.4016 3.59844 19.327 3.59844 18.0016V9.60156ZM9.59844 13.2016C9.59844 12.5388 10.1357 12.0016 10.7984 12.0016H13.1984C13.8612 12.0016 14.3984 12.5388 14.3984 13.2016C14.3984 13.8643 13.8612 14.4016 13.1984 14.4016H10.7984C10.1357 14.4016 9.59844 13.8643 9.59844 13.2016Z"
+        fill="#585858"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={archivedIconSvg}></Icon>;
+};
+
+const WorkIconSvg = ({ size, color }) => {
+  const workIconSvg = () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g id="work">
+        <path
+          id="Vector"
+          d="M20 6.5H16V4.5C16 3.39 15.11 2.5 14 2.5H10C8.89 2.5 8 3.39 8 4.5V6.5H4C2.89 6.5 2.01 7.39 2.01 8.5L2 19.5C2 20.61 2.89 21.5 4 21.5H20C21.11 21.5 22 20.61 22 19.5V8.5C22 7.39 21.11 6.5 20 6.5ZM14 6.5H10V4.5H14V6.5Z"
+          fill="#585858"
+        />
+      </g>
+    </svg>
+  );
+  return <Icon rev={""} component={workIconSvg}></Icon>;
+};
+
+const AccessTimeIconSvg = ({ size, color }) => {
+  const accessTimeIconSvg = () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g id="access_time_filled">
+        <path
+          id="Vector"
+          d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM15.29 16.71L11 12.41V7H13V11.59L16.71 15.3L15.29 16.71Z"
+          fill="#585858"
+        />
+      </g>
+    </svg>
+  );
+  return <Icon rev={""} component={accessTimeIconSvg}></Icon>;
+};
+
+const SpinnerIconSvg = ({ size, color }) => {
+  const spinnerIconSvg = () => (
+    <svg
+      width="53"
+      height="53"
+      viewBox="0 0 53 53"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="26.5" cy="26.5" r="26.5" fill="#35763B" />
+      <path
+        d="M14.6953 26.2043L22.9152 34.4242L39.355 17.9844"
+        stroke="white"
+        stroke-width="7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={spinnerIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -3479,4 +3567,8 @@ export {
   AddCareerIconSvg,
   ShowCareerIconSvg,
   PinFilledIconSvg,
+  ArchivedIconSvg,
+  WorkIconSvg,
+  AccessTimeIconSvg,
+  SpinnerIconSvg,
 };

@@ -18,6 +18,7 @@ import {
   notification,
 } from "antd";
 import axios from "axios";
+import parse from "html-react-parser";
 import moment from "moment";
 import {
   NumberParam,
@@ -759,7 +760,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                 <p
                   className={"mt-2.5 text-sm leading-6 font-normal text-mono30"}
                 >
-                  {detailCareer?.overview}
+                  {parse(detailCareer?.overview)}
                 </p>
               </div>
               <div className={"mt-4 flex flex-col md:flex-row"}>
@@ -772,7 +773,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       "mt-2.5 text-sm leading-6 font-normal text-mono30"
                     }
                   >
-                    {detailCareer?.description}
+                    {parse(detailCareer?.description)}
                   </p>
                 </div>
                 <div className={"w-full md:w-1/2 mt-3 md:mt-0"}>
@@ -784,7 +785,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       "mt-2.5 text-sm leading-6 font-normal text-mono30"
                     }
                   >
-                    {detailCareer?.qualification}
+                    {parse(detailCareer?.qualification)}
                   </p>
                 </div>
               </div>
