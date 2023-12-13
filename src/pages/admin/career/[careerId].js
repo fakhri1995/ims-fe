@@ -7,14 +7,11 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   Button,
   Drawer,
-  Form,
-  Input,
-  Menu,
-  Modal,
   Select,
   Spin,
   Switch,
   Table,
+  Tabs,
   notification,
 } from "antd";
 import axios from "axios";
@@ -51,6 +48,7 @@ import {
   DownIconSvg,
   DownloadIcon2Svg,
   DownloadIconSvg,
+  EditSquareIconSvg,
   SearchIconSvg,
   ShowCareerIconSvg,
   UpIconSvg,
@@ -86,6 +84,8 @@ Chart.register(
   BarElement,
   PointElement
 );
+const { TabPane } = Tabs;
+
 const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   /**
    * Dependencies
@@ -129,6 +129,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   const [loadingCareers, setLoadingCareers] = useState(true);
   const [dataStatusApply, setDataStatusApply] = useState([]);
   const [dataCareers, setDataCareers] = useState([]);
+  const [tabActiveKey, setTabActiveKey] = useState("1");
   const currencyI18n = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -377,6 +378,44 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
           ),
         };
       },
+    },
+  ];
+
+  const dataPertanyaan = [
+    {
+      id: 1,
+      name: "Nama Pelamar",
+      label: "Text Input",
+    },
+    {
+      id: 2,
+      name: "Alamat Email",
+      label: "Text Input",
+    },
+    {
+      id: 3,
+      name: "Nomor Telepon",
+      label: "Numeral Input",
+    },
+    {
+      id: 4,
+      name: "Unggah CV",
+      label: "File PDF,JPG (Max. 5MB)",
+    },
+    {
+      id: 5,
+      name: "Tahun Pengalaman",
+      label: "Single Choice",
+    },
+    {
+      id: 6,
+      name: "Pendidikan Terakhir",
+      label: "Single Choice",
+    },
+    {
+      id: 7,
+      name: "Unggah Project",
+      label: "File PDF,JPG (Max. 5MB)",
     },
   ];
 
@@ -693,6 +732,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                 </span>
               </p>
             </div>
+
             {showCollapsible ? (
               <div
                 className={"hidden md:flex justify-end cursor-pointer"}
@@ -709,88 +749,145 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               </div>
             )}
           </div>
-          {showCollapsible && (
-            <div>
-              <div className={"mt-5 flex flex-col md:flex-row"}>
-                <div className={"w-full md:w-1/3 mt-3 md:mt-0"}>
-                  <p className={"text-mono50 font-medium leading-5 "}>
-                    TIpe Kontrak
-                  </p>
-                  <p
-                    className={
-                      "mt-2.5 text-sm leading-6 font-normal text-mono30"
-                    }
-                  >
-                    {detailCareer?.role_type?.name}
-                  </p>
-                </div>
-                <div className={"w-full md:w-1/3 mt-3 md:mt-0"}>
-                  <p className={"text-mono50 font-medium leading-5 "}>
-                    Rentang Pengalaman
-                  </p>
-                  <p
-                    className={
-                      "mt-2.5 text-sm leading-6 font-normal text-mono30"
-                    }
-                  >
-                    {detailCareer?.experience?.str}
-                  </p>
-                </div>
-                <div className={"w-full md:w-1/3 mt-3 md:mt-0"}>
-                  <p className={"text-mono50 font-medium leading-5 "}>
-                    Rentan Gaji
-                  </p>
-                  <p
-                    className={
-                      "mt-2.5 text-sm leading-6 font-normal text-mono30"
-                    }
-                  >
-                    {detailCareer
-                      ? currencyI18n.format(detailCareer.salary_min)
-                      : "0"}{" "}
-                    -{" "}
-                    {detailCareer
-                      ? currencyI18n.format(detailCareer.salary_max)
-                      : "0"}
-                  </p>
-                </div>
-              </div>
-              <div className={"mt-4"}>
-                <p className={"text-mono50 font-medium leading-5 "}>Overview</p>
-                <p
-                  className={"mt-2.5 text-sm leading-6 font-normal text-mono30"}
-                >
-                  {detailCareer ? parse(detailCareer?.overview) : ""}
+          <div className={"flex md:flex-row md:justify-between mt-7"}>
+            <Tabs
+              defaultActiveKey="1"
+              className={`md:w-3/4`}
+              onChange={setTabActiveKey}
+            >
+              <TabPane tab="Informasi Umum" key="1" />
+              <TabPane tab="Pertanyaan Pelamar" key="2" />
+            </Tabs>
+            {tabActiveKey == "1" ? (
+              <div
+                className={
+                  "flex gap-2 border border-primarygreen rounded-[5px] px-4 py-1.5 h-8 self-center hover:cursor-pointer"
+                }
+              >
+                <EditSquareIconSvg size={20} color={"#35763B"} />
+                <p className={"text-primarygreen text-sm font-bold leading-5"}>
+                  Edit Informasi Umum
                 </p>
               </div>
-              <div className={"mt-4 flex flex-col md:flex-row"}>
-                <div className={"w-full md:w-1/2 mt-3 md:mt-0"}>
+            ) : (
+              <div
+                className={
+                  "flex gap-2 border border-primarygreen rounded-[5px] px-4 py-1.5 h-8 self-center hover:cursor-pointer"
+                }
+              >
+                <EditSquareIconSvg size={20} color={"#35763B"} />
+                <p className={"text-primarygreen text-sm font-bold leading-5"}>
+                  Edit Pertanyaan Pelamar
+                </p>
+              </div>
+            )}
+          </div>
+          {showCollapsible &&
+            (tabActiveKey == "1" ? (
+              <div>
+                <div className={"mt-5 flex flex-col md:flex-row"}>
+                  <div className={"w-full md:w-1/3 mt-3 md:mt-0"}>
+                    <p className={"text-mono50 font-medium leading-5 "}>
+                      TIpe Kontrak
+                    </p>
+                    <p
+                      className={
+                        "mt-2.5 text-sm leading-6 font-normal text-mono30"
+                      }
+                    >
+                      {detailCareer?.role_type?.name}
+                    </p>
+                  </div>
+                  <div className={"w-full md:w-1/3 mt-3 md:mt-0"}>
+                    <p className={"text-mono50 font-medium leading-5 "}>
+                      Rentang Pengalaman
+                    </p>
+                    <p
+                      className={
+                        "mt-2.5 text-sm leading-6 font-normal text-mono30"
+                      }
+                    >
+                      {detailCareer?.experience?.str}
+                    </p>
+                  </div>
+                  <div className={"w-full md:w-1/3 mt-3 md:mt-0"}>
+                    <p className={"text-mono50 font-medium leading-5 "}>
+                      Rentan Gaji
+                    </p>
+                    <p
+                      className={
+                        "mt-2.5 text-sm leading-6 font-normal text-mono30"
+                      }
+                    >
+                      {detailCareer
+                        ? currencyI18n.format(detailCareer.salary_min)
+                        : "0"}{" "}
+                      -{" "}
+                      {detailCareer
+                        ? currencyI18n.format(detailCareer.salary_max)
+                        : "0"}
+                    </p>
+                  </div>
+                </div>
+                <div className={"mt-4"}>
                   <p className={"text-mono50 font-medium leading-5 "}>
-                    Deskripsi Pekerjaan
+                    Overview
                   </p>
                   <p
                     className={
                       "mt-2.5 text-sm leading-6 font-normal text-mono30"
                     }
                   >
-                    {detailCareer ? parse(detailCareer?.description) : ""}
+                    {detailCareer ? parse(detailCareer?.overview) : ""}
                   </p>
                 </div>
-                <div className={"w-full md:w-1/2 mt-3 md:mt-0"}>
-                  <p className={"text-mono50 font-medium leading-5 "}>
-                    Spesifikasi Minimal
-                  </p>
-                  <p
-                    className={
-                      "mt-2.5 text-sm leading-6 font-normal text-mono30"
-                    }
-                  >
-                    {detailCareer ? parse(detailCareer?.qualification) : ""}
-                  </p>
+                <div className={"mt-4 flex flex-col md:flex-row"}>
+                  <div className={"w-full md:w-1/2 mt-3 md:mt-0"}>
+                    <p className={"text-mono50 font-medium leading-5 "}>
+                      Deskripsi Pekerjaan
+                    </p>
+                    <p
+                      className={
+                        "mt-2.5 text-sm leading-6 font-normal text-mono30"
+                      }
+                    >
+                      {detailCareer ? parse(detailCareer?.description) : ""}
+                    </p>
+                  </div>
+                  <div className={"w-full md:w-1/2 mt-3 md:mt-0"}>
+                    <p className={"text-mono50 font-medium leading-5 "}>
+                      Spesifikasi Minimal
+                    </p>
+                    <p
+                      className={
+                        "mt-2.5 text-sm leading-6 font-normal text-mono30"
+                      }
+                    >
+                      {detailCareer ? parse(detailCareer?.qualification) : ""}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className={"mt-6 grid md:grid-cols-2 gap-6"}>
+                {dataPertanyaan.map((data, key) => (
+                  <div
+                    className={
+                      "w-full  px-4 py-3 rounded-[5px] border border-solid border-inputkategori bg-white"
+                    }
+                  >
+                    <p
+                      className={"text-mono30 text-[14px] font-bold leading-6 "}
+                    >
+                      {data.id}. {data.name}
+                    </p>
+                    <p className={"text-mono50 text-sm font-medium leading-5 "}>
+                      {data.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ))}
         </div>
         <div
           className="lg:col-span-3 flex flex-col rounded-md bg-white p-5 mb-6"

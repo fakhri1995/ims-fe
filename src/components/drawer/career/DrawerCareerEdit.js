@@ -1,0 +1,347 @@
+import { Button, Form, Input, Select, Spin, Switch } from "antd";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import CurrencyFormat from "react-currency-format";
+import "react-quill/dist/quill.snow.css";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { ASSESSMENT_ADD } from "lib/features";
+import { RECRUITMENT_JALUR_DAFTARS_LIST_GET } from "lib/features";
+
+import ButtonSys from "../../button";
+import { TrashIconSvg } from "../../icon";
+import { InputRequired } from "../../input";
+import { Label } from "../../typography";
+import DrawerCore from "../drawerCore";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
+const DrawerCareerEdit = ({
+  title,
+  visible,
+  onvisible,
+  buttonOkText,
+  setdrawedit,
+  dataedit,
+  handleEdit,
+  setdataedit,
+  loadingEdit,
+  dataRoleTypeList,
+  dataExperience,
+}) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetRegistPlatformList = hasPermission(
+    RECRUITMENT_JALUR_DAFTARS_LIST_GET
+  );
+
+  const [instanceForm] = Form.useForm();
+
+  //USESTATE
+
+  const [disabledcreate, setdisabledcreate] = useState(true);
+
+  const [loadingRegistPlatformList, setLoadingRegistPlatformList] =
+    useState(false);
+  const [dataRegistPlatformList, setDataRegistPlatformList] = useState([]);
+
+  const modules = {
+    toolbar: [
+      ["bold", "italic", "underline"],
+      [{ list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+      ["link"],
+    ],
+  };
+  const formats = [
+    "bold",
+    "italic",
+    "underline",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+  ];
+
+  return (
+    <DrawerCore
+      title={title}
+      visible={visible}
+      onClose={() => {
+        setdrawedit(false);
+      }}
+      onButtonCancelClicked={() => setdrawedit(false)}
+      onClick={handleEdit}
+      //   disabled={disabledcreate}
+    >
+      <Spin spinning={loadingEdit}>
+        <div className="flex flex-col">
+          <Form
+            layout="vertical"
+            initialValues={dataedit}
+            onFinish={handleEdit}
+          >
+            <Form.Item
+              label="Position Name"
+              name="name"
+              rules={[
+                {
+                  required: true,
+                  message: "Position Name wajib diisi",
+                },
+              ]}
+            >
+              <Input
+                defaultValue={dataedit.name}
+                onChange={(e) => {
+                  setdataedit({ ...dataedit, name: e.target.value });
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Status Kontrak"
+              name="career_role_type_id"
+              rules={[
+                {
+                  required: true,
+                  message: "Status Kontrak wajib diisi",
+                },
+              ]}
+            >
+              <Select
+                value={
+                  dataedit?.career_role_type_id &&
+                  Number(dataedit?.career_role_type_id)
+                }
+                onChange={(e) => {
+                  setdataedit({
+                    ...dataedit,
+                    career_role_type_id: e,
+                  });
+                }}
+                placeholder="Pilih status kontrak"
+              >
+                <>
+                  {dataRoleTypeList?.map((option) => (
+                    <Select.Option key={option.id} value={option.id}>
+                      {option.name}
+                    </Select.Option>
+                  ))}
+                </>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="Pengalaman Kerja"
+              name="career_experience_id"
+              rules={[
+                {
+                  required: true,
+                  message: "Pengalaman Kerja wajib diisi",
+                },
+              ]}
+            >
+              <Select
+                value={
+                  dataedit?.career_experience_id &&
+                  Number(dataedit?.career_experience_id)
+                }
+                onChange={(e) => {
+                  setdataedit({
+                    ...dataedit,
+                    career_experience_id: e,
+                  });
+                }}
+                placeholder="Pilih pengalaman kerja"
+              >
+                <>
+                  {dataExperience?.map((option) => (
+                    <Select.Option key={option.id} value={option.id}>
+                      {option.name}
+                    </Select.Option>
+                  ))}
+                </>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="Salary Min"
+              name="salary_min"
+              rules={[
+                {
+                  required: true,
+                  message: "Salary Min wajib diisi",
+                },
+              ]}
+            >
+              <CurrencyFormat
+                customInput={Input}
+                placeholder={"Masukkan Minimal Gaji"}
+                value={dataedit?.salary_min || 0}
+                thousandSeparator={"."}
+                decimalSeparator={","}
+                prefix={"Rp"}
+                allowNegative={false}
+                onValueChange={(values) => {
+                  const { formattedValue, value, floatValue } = values;
+                  setdataedit((prev) => ({
+                    ...prev,
+                    salary_min: floatValue || 0,
+                  }));
+                }}
+                renderText={(value) => <p>{value}</p>}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Salary Max"
+              name="salary_max"
+              rules={[
+                {
+                  required: true,
+                  message: "Salary Max wajib diisi",
+                },
+              ]}
+            >
+              <CurrencyFormat
+                customInput={Input}
+                placeholder={"Masukkan Maksimal Gaji"}
+                value={dataedit?.salary_max || 0}
+                thousandSeparator={"."}
+                decimalSeparator={","}
+                prefix={"Rp"}
+                allowNegative={false}
+                onValueChange={(values) => {
+                  const { formattedValue, value, floatValue } = values;
+                  setdataedit((prev) => ({
+                    ...prev,
+                    salary_max: floatValue || 0,
+                  }));
+                }}
+                renderText={(value) => <p>{value}</p>}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Overview"
+              name="overview"
+              rules={[
+                {
+                  required: true,
+                  message: "Overview wajib diisi",
+                },
+              ]}
+            >
+              <ReactQuill
+                theme="snow"
+                value={dataedit?.overview}
+                modules={modules}
+                formats={formats}
+                className="h-44 pb-10"
+                onChange={(value) => {
+                  setdataedit({
+                    ...dataedit,
+                    overview: value,
+                  });
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Description"
+              name="description"
+              rules={[
+                {
+                  required: true,
+                  message: "Description Job wajib diisi",
+                },
+              ]}
+            >
+              <ReactQuill
+                theme="snow"
+                value={dataedit?.description}
+                modules={modules}
+                formats={formats}
+                className="h-44 pb-10"
+                onChange={(value) => {
+                  setdataedit({
+                    ...dataedit,
+                    description: value,
+                  });
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Qualification"
+              name="qualification"
+              rules={[
+                {
+                  required: true,
+                  message: "Qualification wajib diisi",
+                },
+              ]}
+            >
+              <ReactQuill
+                theme="snow"
+                value={dataedit?.qualification}
+                modules={modules}
+                formats={formats}
+                className="h-44 pb-10"
+                onChange={(value) => {
+                  setdataedit({
+                    ...dataedit,
+                    qualification: value,
+                  });
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Status"
+              name="is_posted"
+              rules={[
+                {
+                  required: true,
+                  message: "Status wajib diisi",
+                },
+              ]}
+            >
+              <Switch
+                size="large"
+                checkedChildren="Posted"
+                unCheckedChildren="Archived"
+                defaultChecked
+                checked={dataedit?.is_posted}
+                onChange={(e) => {
+                  setdataedit({
+                    ...dataedit,
+                    is_posted: e == true ? 1 : 0,
+                  });
+                }}
+              />
+            </Form.Item>
+            <div className="flex justify-end">
+              <Button
+                type="default"
+                onClick={() => {
+                  setdrawedit(false);
+                }}
+                style={{ marginRight: `1rem` }}
+              >
+                Cancel
+              </Button>
+              <Button htmlType="submit" type="primary" loading={loadingEdit}>
+                Save
+              </Button>
+            </div>
+          </Form>
+        </div>
+      </Spin>
+    </DrawerCore>
+  );
+};
+
+export default DrawerCareerEdit;

@@ -50,6 +50,7 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../components/button";
+import DrawerCareerEdit from "../../../components/drawer/career/DrawerCareerEdit";
 import {
   AddCareerIconSvg,
   CalendartimeIconSvg,
@@ -152,7 +153,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       name: "Posted",
     },
   ]);
-
   const rt = useRouter();
   // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
@@ -1461,7 +1461,20 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
       {/* drawer update careers  */}
       <AccessControl hasPermission={CAREER_UPDATE}>
-        <Drawer
+        <DrawerCareerEdit
+          title={"Edit Lowongan"}
+          visible={drawedit}
+          onvisible={setdrawedit}
+          buttonOkText={"Update"}
+          setdrawedit={setdrawedit}
+          setdataedit={setdataedit}
+          dataedit={dataedit}
+          handleEdit={handleEdit}
+          loadingEdit={loadingedit}
+          dataRoleTypeList={dataRoleTypeList}
+          dataExperience={dataExperience}
+        />
+        {/* <Drawer
           title={`Edit Career`}
           maskClosable={false}
           visible={drawedit}
@@ -1727,7 +1740,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
             </Form>
           </div>
-        </Drawer>
+        </Drawer> */}
       </AccessControl>
 
       {/* drawer delete careers */}
