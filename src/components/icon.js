@@ -3238,6 +3238,85 @@ const UserXIconSvg = ({ size, color }) => {
   return <Icon rev={""} component={userXIconSvg}></Icon>;
 };
 
+const AddCareerIconSvg = ({ size, color }) => {
+  const addCareerIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-clipboard-plus"
+      width={size ? size : "36"}
+      height={size ? size : "36"}
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke={color ? color : "#FFFFFF"}
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+      <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+      <path d="M10 14h4" />
+      <path d="M12 12v4" />
+    </svg>
+  );
+  return <Icon rev={""} component={addCareerIconSvg}></Icon>;
+};
+
+const ShowCareerIconSvg = ({ size, color }) => {
+  const showCareerIconSvg = () => (
+    <svg
+      width={size ? size : "36"}
+      height={size ? size : "36"}
+      viewBox="0 0 36 36"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M13.5 7.5H10.5C8.84315 7.5 7.5 8.84315 7.5 10.5V28.5C7.5 30.1569 8.84315 31.5 10.5 31.5H25.5C27.1569 31.5 28.5 30.1569 28.5 28.5V10.5C28.5 8.84315 27.1569 7.5 25.5 7.5H22.5"
+        stroke="white"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <rect
+        x="13.5"
+        y="4.5"
+        width="9"
+        height="6"
+        rx="2"
+        stroke={color ? color : "#FFFFFF"}
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M19.9975 21.0014H22.3881C22.6577 21.0015 22.9008 21.2045 23.0039 21.5159C23.1071 21.8272 23.0501 22.1856 22.8595 22.4239L18.4688 27.9123C18.2085 28.2376 17.7865 28.2376 17.5261 27.9123L13.1355 22.4239C12.9449 22.1856 12.8879 21.8272 12.991 21.5159C13.0942 21.2045 13.3372 21.0015 13.6068 21.0014H15.9975V18.5014H19.9975V21.0014Z"
+        stroke="white"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M20 13.5013H16"
+        stroke={color ? color : "#FFFFFF"}
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M20 16.0013H16"
+        stroke={color ? color : "#FFFFFF"}
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={showCareerIconSvg}></Icon>;
+};
+
 const PinFilledIconSvg = ({ size, color }) => {
   const pinFilledIconSvg = () => (
     <svg
@@ -3261,6 +3340,94 @@ const PinFilledIconSvg = ({ size, color }) => {
     </svg>
   );
   return <Icon rev={""} component={pinFilledIconSvg}></Icon>;
+};
+
+const ArchivedIconSvg = ({ size, color }) => {
+  const archivedIconSvg = () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4.79844 3.60156C3.47295 3.60156 2.39844 4.67608 2.39844 6.00156C2.39844 7.32705 3.47295 8.40156 4.79844 8.40156H19.1984C20.5239 8.40156 21.5984 7.32705 21.5984 6.00156C21.5984 4.67608 20.5239 3.60156 19.1984 3.60156H4.79844Z"
+        fill="#585858"
+      />
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M3.59844 9.60156H20.3984V18.0016C20.3984 19.327 19.3239 20.4016 17.9984 20.4016H5.99844C4.67295 20.4016 3.59844 19.327 3.59844 18.0016V9.60156ZM9.59844 13.2016C9.59844 12.5388 10.1357 12.0016 10.7984 12.0016H13.1984C13.8612 12.0016 14.3984 12.5388 14.3984 13.2016C14.3984 13.8643 13.8612 14.4016 13.1984 14.4016H10.7984C10.1357 14.4016 9.59844 13.8643 9.59844 13.2016Z"
+        fill="#585858"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={archivedIconSvg}></Icon>;
+};
+
+const WorkIconSvg = ({ size, color }) => {
+  const workIconSvg = () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g id="work">
+        <path
+          id="Vector"
+          d="M20 6.5H16V4.5C16 3.39 15.11 2.5 14 2.5H10C8.89 2.5 8 3.39 8 4.5V6.5H4C2.89 6.5 2.01 7.39 2.01 8.5L2 19.5C2 20.61 2.89 21.5 4 21.5H20C21.11 21.5 22 20.61 22 19.5V8.5C22 7.39 21.11 6.5 20 6.5ZM14 6.5H10V4.5H14V6.5Z"
+          fill="#585858"
+        />
+      </g>
+    </svg>
+  );
+  return <Icon rev={""} component={workIconSvg}></Icon>;
+};
+
+const AccessTimeIconSvg = ({ size, color }) => {
+  const accessTimeIconSvg = () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g id="access_time_filled">
+        <path
+          id="Vector"
+          d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM15.29 16.71L11 12.41V7H13V11.59L16.71 15.3L15.29 16.71Z"
+          fill="#585858"
+        />
+      </g>
+    </svg>
+  );
+  return <Icon rev={""} component={accessTimeIconSvg}></Icon>;
+};
+
+const SpinnerIconSvg = ({ size, color }) => {
+  const spinnerIconSvg = () => (
+    <svg
+      width="53"
+      height="53"
+      viewBox="0 0 53 53"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="26.5" cy="26.5" r="26.5" fill="#35763B" />
+      <path
+        d="M14.6953 26.2043L22.9152 34.4242L39.355 17.9844"
+        stroke="white"
+        stroke-width="7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={spinnerIconSvg}></Icon>;
 };
 
 export {
@@ -3397,5 +3564,11 @@ export {
   BulbIconSvg,
   TableOffIconSvg,
   UserXIconSvg,
+  AddCareerIconSvg,
+  ShowCareerIconSvg,
   PinFilledIconSvg,
+  ArchivedIconSvg,
+  WorkIconSvg,
+  AccessTimeIconSvg,
+  SpinnerIconSvg,
 };

@@ -807,3 +807,71 @@ ol {
   width: 0;
   position: absolute;
 }
+.customDatepicker .ant-picker .ant-picker-input span.ant-picker-suffix {
+  margin-left: 1px;
+  margin-right: 10px;
+  order: -1;
+  color: #35763b;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.customDatepicker .ant-picker {
+  border: 2px solid #35763b;
+}
+
+.customDatepicker .ant-picker .ant-picker-input input {
+  color: #35763b;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 11px;
+  flex: auto;
+  min-width: 1px;
+  height: auto;
+  padding: 0;
+  border: 0;
+}
+.customselectcareer .ant-select {
+  border: 2px solid #35763b;
+  border-radius: 5px;
+}
+
+.customselectcareer .ant-select-selection-placeholder {
+  color: #35763b;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+}
+.customfontmodal {
+  text-align: center;
+  font-feature-settings: "cv04" on, "cv03" on, "cv02" on, "cv11" on, "clig" off,
+    "liga" off;
+  letter-spacing: 0.16px;
+}
+
+.customfontcareerdetail {
+  font-feature-settings: "cv04" on, "cv03" on, "cv02" on, "cv11" on, "clig" off,
+    "liga" off;
+}
+.ant-upload.ant-upload-drag.customdragger {
+  border: 1.5px dashed #0059a0;
+  background-color: white;
+}
+
+.ant-spin-dot-item,
+.ant-spin-text .customanttext {
+  background-color: white;
+}
+.customspin .ant-spin-dot-item .ant-spin-text {
+  background-color: white;
+}
+
+.customspin {
+  background-color: #ffffff;
+}

@@ -739,6 +739,7 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
                 ]}
               >
                 <Input.TextArea
+                  style={{ height: 200 }}
                   defaultValue={datacreate.overview}
                   onChange={(e) => {
                     setdatacreate({
@@ -759,6 +760,7 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
                 ]}
               >
                 <Input.TextArea
+                  style={{ height: 200 }}
                   defaultValue={datacreate.description}
                   onChange={(e) => {
                     setdatacreate({
@@ -780,6 +782,7 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
                 ]}
               >
                 <Input.TextArea
+                  style={{ height: 200 }}
                   defaultValue={datacreate.qualification}
                   onChange={(e) => {
                     setdatacreate({
@@ -1002,6 +1005,7 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
                 ]}
               >
                 <Input.TextArea
+                  style={{ height: 200 }}
                   defaultValue={dataedit.overview}
                   onChange={(e) => {
                     setdataedit({
@@ -1022,6 +1026,7 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
                 ]}
               >
                 <Input.TextArea
+                  style={{ height: 200 }}
                   defaultValue={dataedit.description}
                   onChange={(e) => {
                     setdataedit({
@@ -1043,6 +1048,7 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
                 ]}
               >
                 <Input.TextArea
+                  style={{ height: 200 }}
                   defaultValue={dataedit.qualification}
                   onChange={(e) => {
                     setdataedit({

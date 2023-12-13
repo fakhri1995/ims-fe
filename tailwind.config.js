@@ -81,6 +81,9 @@ module.exports = {
         bgstatustaskfinish:"rgba(53, 118, 59, 0.10)",
         bgstatustasklate:"rgba(191, 74, 64, 0.10)",
         bgprimary25persen:"rgba(53, 118, 59, 0.25)",
+        bgstatuscareer:"rgba(77, 77, 77, 0.10)",
+        bgstatuscareer2:'#4D4D4D1A',
+        bgikhtisar1:"#E6E6E6"
       },
       borderColor: {
         primary: "#1890ff",

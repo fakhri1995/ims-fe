@@ -66,6 +66,7 @@ import {
   SIDEBAR_PROJECT_TASK_ADMIN,
   SIDEBAR_RECRUITMENT,
   SIDEBAR_RECRUITMENT_CANDIDATE,
+  SIDEBAR_RECRUITMENT_CAREER,
   SIDEBAR_RECRUITMENT_SETUP,
   SIDEBAR_RECRUITMENT_TALENT_POOL,
   SIDEBAR_RESUME,
@@ -480,6 +481,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           key="11"
           icon={<UserPlusIconSvg className="text-[#597e8d]" />}
         >
+          {hasPermission(SIDEBAR_RECRUITMENT_CAREER) && (
+            <Menu.Item key="career-management">
+              <Link href="/admin/career">Karir Manajemen</Link>
+            </Menu.Item>
+          )}
           {hasPermission(SIDEBAR_RECRUITMENT_CANDIDATE) && (
             <Menu.Item key="111">
               <Link href="/admin/recruitment">Candidates</Link>
