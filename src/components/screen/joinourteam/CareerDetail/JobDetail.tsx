@@ -398,9 +398,18 @@ export const JobDetail: FC = () => {
                   style={{ fontSize: 80, color: "#35763B" }}
                 />
               )}
-              <p className={"text-primary100 text-sm font-medium leading-6"}>
-                {statusSent ? "Sent" : "Sending.."}
-              </p>
+              {statusSent ? (
+                <p
+                  className={"text-primary100 text-sm font-medium leading-6"}
+                  style={{ position: "absolute", top: "70%" }}
+                >
+                  Sent
+                </p>
+              ) : (
+                <p className={"text-primary100 text-sm font-medium leading-6"}>
+                  Sending
+                </p>
+              )}
             </div>
           }
         >
