@@ -760,7 +760,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                 <p
                   className={"mt-2.5 text-sm leading-6 font-normal text-mono30"}
                 >
-                  {parse(detailCareer?.overview)}
+                  {detailCareer ? parse(detailCareer?.overview) : ""}
                 </p>
               </div>
               <div className={"mt-4 flex flex-col md:flex-row"}>
@@ -773,7 +773,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       "mt-2.5 text-sm leading-6 font-normal text-mono30"
                     }
                   >
-                    {parse(detailCareer?.description)}
+                    {detailCareer ? parse(detailCareer?.description) : ""}
                   </p>
                 </div>
                 <div className={"w-full md:w-1/2 mt-3 md:mt-0"}>
@@ -785,7 +785,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       "mt-2.5 text-sm leading-6 font-normal text-mono30"
                     }
                   >
-                    {parse(detailCareer?.qualification)}
+                    {detailCareer ? parse(detailCareer?.qualification) : ""}
                   </p>
                 </div>
               </div>
