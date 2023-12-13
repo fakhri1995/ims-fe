@@ -68,7 +68,10 @@ import st from "../../../components/layout-dashboard.module.css";
 import ModalCore from "../../../components/modal/modalCore";
 import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
 import ResumePDFTemplate from "../../../components/screen/resume/ResumePDFTemplate";
-import { permissionWarningNotification } from "../../../lib/helper";
+import {
+  momentFormatDate,
+  permissionWarningNotification,
+} from "../../../lib/helper";
 import httpcookie from "cookie";
 
 moment.locale("id");
@@ -1127,14 +1130,22 @@ const RecruitmentDetailIndex = ({
                             {experience?.company || "-"},&nbsp;
                           </p>
                           <p className="mig-caption text-mono80">
-                            {moment(experience?.start_date).format("MMMM YYYY")}{" "}
-                            -&nbsp;
-                            {moment(experience?.end_date).format("MMMM YYYY")}
+                            {momentFormatDate(
+                              experience?.start_date,
+                              "-",
+                              "MMMM YYYY"
+                            )}{" "}
+                            -{" "}
+                            {momentFormatDate(
+                              experience?.end_date,
+                              "present",
+                              "MMMM YYYY"
+                            )}
                           </p>
                         </div>
-                        <p className="mig-caption text-mono50">
+                        <div className="mig-caption text-mono50">
                           {parse(experience?.description || "-")}
-                        </p>
+                        </div>
                       </Timeline.Item>
                     ))}
                   </Timeline>
@@ -1157,8 +1168,19 @@ const RecruitmentDetailIndex = ({
                           <p className="mig-caption text-mono50 mb-2">
                             {edu?.major},&nbsp;
                           </p>
+
                           <p className="mig-caption text-mono80">
-                            {moment(edu?.graduation_year).format("YYYY")}
+                            {momentFormatDate(
+                              edu?.start_date,
+                              "-",
+                              "MMMM YYYY"
+                            )}{" "}
+                            -{" "}
+                            {momentFormatDate(
+                              edu?.end_date,
+                              "present",
+                              "MMMM YYYY"
+                            )}
                           </p>
                         </div>
                       </Timeline.Item>
@@ -1195,9 +1217,9 @@ const RecruitmentDetailIndex = ({
                         <p className="text-sm text-mono30 font-bold mb-1">
                           {proj?.name}
                         </p>
-                        <p className="mig-caption text-mono50 mb-2">
-                          {proj?.description}
-                        </p>
+                        <div className="mig-caption text-mono50 mb-2">
+                          {parse(proj?.description || "-")}
+                        </div>
                         <p className="mig-caption text-mono80">
                           {moment(proj?.year).format("YYYY")}
                         </p>
@@ -1285,7 +1307,7 @@ const RecruitmentDetailIndex = ({
                         <div className="flex flex-row justify-between mb-1">
                           <p className="text-mono50 mr-2">{result?.criteria}</p>
                           <p className="text-primary100 font-bold">
-                            {result?.value}
+                            {result?.value || "-"}
                           </p>
                         </div>
                       </li>

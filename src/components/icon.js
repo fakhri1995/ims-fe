@@ -3242,7 +3242,7 @@ const PinFilledIconSvg = ({ size, color }) => {
   const pinFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-pin-filled"
+      className="icon icon-tabler icon-tabler-pin-filled"
       width={size ? size : "24"}
       height={size ? size : "24"}
       viewBox="0 0 24 24"
