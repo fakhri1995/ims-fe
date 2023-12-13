@@ -385,7 +385,12 @@ export const JobDetail: FC = () => {
               {statusSent ? (
                 <CheckCircleOutlined
                   rev={""}
-                  style={{ fontSize: 80, color: "#35763B" }}
+                  style={{
+                    fontSize: 80,
+                    color: "#35763B",
+                    position: "absolute",
+                    left: "50%",
+                  }}
                 />
               ) : (
                 <LoadingOutlined
