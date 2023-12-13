@@ -461,6 +461,11 @@ export const JobDetail: FC = () => {
                     >
                       <Upload.Dragger
                         className={"customdragger w-full"}
+                        customRequest={({ onSuccess }) =>
+                          setTimeout(() => {
+                            onSuccess("ok", null);
+                          }, 0)
+                        }
                         name="files"
                         maxCount={1}
                         onChange={onChangeFile}
