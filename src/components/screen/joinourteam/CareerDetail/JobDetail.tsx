@@ -149,23 +149,23 @@ export const JobDetail: FC = () => {
     setCaptchaVerifyValue(verifyValue);
   }, []);
 
-  const cobaLoading = () => {
-    setLoading(true);
-    setStatusSent(false);
-    setTimeout(() => {
-      setStatusSent(true);
-    }, 3000);
-    setTimeout(() => {
-      setLoading(false);
-    }, 5000);
-  };
+  // const cobaLoading = () => {
+  //   setLoading(true);
+  //   setStatusSent(false);
+  //   setTimeout(() => {
+  //     setStatusSent(true);
+  //   }, 3000);
+  //   setTimeout(() => {
+  //     setLoading(false);
+  //   }, 5000);
+  // };
 
-  const cobashowthankyou = () => {
-    setShowThankyou("half");
-    setTimeout(() => {
-      setShowThankyou("full");
-    }, 3000);
-  };
+  // const cobashowthankyou = () => {
+  //   setShowThankyou("half");
+  //   setTimeout(() => {
+  //     setShowThankyou("full");
+  //   }, 3000);
+  // };
 
   const onFormSubmitted = useCallback(
     (values: FormType) => {
@@ -230,7 +230,7 @@ export const JobDetail: FC = () => {
   return (
     <section className="py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 flex flex-col">
       <div className={"flex flex-row gap-2"}>
-        <LeftOutlined style={{ fontSize: 20, color: "#188E4D" }} />
+        <LeftOutlined rev={""} style={{ fontSize: 20, color: "#188E4D" }} />
         <p
           className={
             "text-[16px] text-primary100 font-normal leading-6 font-gilroysemibold"
@@ -269,7 +269,10 @@ export const JobDetail: FC = () => {
               >
                 Share
               </p>
-              <ShareAltOutlined style={{ color: "#B8B8B8", fontSize: 20 }} />
+              <ShareAltOutlined
+                rev={""}
+                style={{ color: "#B8B8B8", fontSize: 20 }}
+              />
             </div>
           </Tooltip>
 
@@ -286,7 +289,7 @@ export const JobDetail: FC = () => {
             >
               Apply Now
             </p>
-            <RiseOutlined style={{ fontSize: 20, color: "#FFFFFF" }} />
+            <RiseOutlined rev={""} style={{ fontSize: 20, color: "#FFFFFF" }} />
           </div>
         </div>
       </div>
@@ -381,7 +384,10 @@ export const JobDetail: FC = () => {
               {statusSent ? (
                 <SpinnerIconSvg style={{ fontSize: 80, color: "#35763B" }} />
               ) : (
-                <LoadingOutlined style={{ fontSize: 80, color: "#35763B" }} />
+                <LoadingOutlined
+                  rev={""}
+                  style={{ fontSize: 80, color: "#35763B" }}
+                />
               )}
               <p className={"text-primary100 text-sm font-medium leading-6"}>
                 {statusSent ? "Sent" : "Sending.."}
@@ -510,7 +516,7 @@ export const JobDetail: FC = () => {
             </div>
           )}
           {showThankYou == "half" ? (
-            <div className={"flex justify-center md:h-[656px]"}>
+            <div className={"flex justify-center h-[500px] md:h-[656px]"}>
               <div
                 className={
                   "flex flex-col justify-center content-center items-center"
@@ -541,7 +547,7 @@ export const JobDetail: FC = () => {
               </div>
             </div>
           ) : showThankYou == "full" ? (
-            <div className={"flex justify-center md:h-[656px]"}>
+            <div className={"flex justify-center h-[500px] md:h-[656px]"}>
               <div
                 className={
                   "flex flex-col justify-center content-center items-center transition-2"

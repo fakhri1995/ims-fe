@@ -11,6 +11,7 @@ import {
   Spin,
   Switch,
   Table,
+  Tabs,
   notification,
 } from "antd";
 import moment from "moment";
@@ -244,9 +245,9 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     id: 0,
   });
   const [dataLabelStatistic, setDataLabelStatistic] = useState([]);
-
+  const [activeTab, setActiveTab] = useState("1");
   const [dataSets, setDataSets] = useState([]);
-
+  const { TabPane } = Tabs;
   // 3. UseEffect
   // 3.1. Get Recruitment Count
 
@@ -1083,278 +1084,330 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       {/* drawer create careers */}
       <AccessControl hasPermission={CAREER_ADD}>
         <Drawer
-          title={`Add A New Career`}
+          title={`Tambah Lowongan Kerja`}
           maskClosable={false}
           visible={drawcreate}
           onClose={() => {
             setdrawcreate(false);
           }}
-          width={380}
+          width={"auto"}
           destroyOnClose={true}
         >
-          <div className="flex flex-col">
-            <Form
-              layout="vertical"
-              initialValues={datacreate}
-              onFinish={handleCreate}
-            >
-              <Form.Item
-                label="Position Name"
-                name="name"
-                rules={[
-                  {
-                    required: true,
-                    message: "Position Name wajib diisi",
-                  },
-                ]}
-              >
-                <Input
-                  defaultValue={datacreate.name}
-                  onChange={(e) => {
-                    setdatacreate({
-                      ...datacreate,
-                      name: e.target.value,
-                    });
-                  }}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Status Kontrak"
-                name="career_role_type_id"
-                rules={[
-                  {
-                    required: true,
-                    message: "Status Kontrak wajib diisi",
-                  },
-                ]}
-              >
-                <Select
-                  value={
-                    datacreate?.career_role_type_id &&
-                    Number(datacreate?.career_role_type_id)
-                  }
-                  onChange={(e) => {
-                    setdatacreate({
-                      ...datacreate,
-                      career_role_type_id: e,
-                    });
-                  }}
-                  placeholder="Pilih status kontrak"
+          <div>
+            <div className={"flex flex-row mb-6"}>
+              <div className={"w-[200px]"}>
+                <div
+                  className={"flex flex-col gap-1 hover:cursor-pointer"}
+                  onClick={() => setActiveTab("1")}
                 >
-                  <>
-                    {dataRoleTypeList?.map((option) => (
-                      <Select.Option key={option.id} value={option.id}>
-                        {option.name}
-                      </Select.Option>
-                    ))}
-                  </>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                label="Pengalaman Kerja"
-                name="career_experience_id"
-                rules={[
-                  {
-                    required: true,
-                    message: "Pengalaman Kerja wajib diisi",
-                  },
-                ]}
-              >
-                <Select
-                  value={
-                    datacreate?.career_experience_id &&
-                    Number(datacreate?.career_experience_id)
-                  }
-                  onChange={(e) => {
-                    setdatacreate({
-                      ...datacreate,
-                      career_experience_id: e,
-                    });
-                  }}
-                  placeholder="Pilih pengalaman kerja"
-                >
-                  <>
-                    {dataExperience?.map((option) => (
-                      <Select.Option key={option.id} value={option.id}>
-                        {option.name}
-                      </Select.Option>
-                    ))}
-                  </>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                label="Salary Min"
-                name="salary_min"
-                rules={[
-                  {
-                    required: true,
-                    message: "Salary Min wajib diisi",
-                  },
-                ]}
-              >
-                <CurrencyFormat
-                  customInput={Input}
-                  placeholder={"Masukkan Minimal Gaji"}
-                  value={datacreate?.salary_min || 0}
-                  thousandSeparator={"."}
-                  decimalSeparator={","}
-                  prefix={"Rp"}
-                  allowNegative={false}
-                  onValueChange={(values) => {
-                    const { formattedValue, value, floatValue } = values;
-                    setdatacreate((prev) => ({
-                      ...prev,
-                      salary_min: floatValue || 0,
-                    }));
-                  }}
-                  renderText={(value) => <p>{value}</p>}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Salary Max"
-                name="salary_max"
-                rules={[
-                  {
-                    required: true,
-                    message: "Salary Max wajib diisi",
-                  },
-                ]}
-              >
-                <CurrencyFormat
-                  customInput={Input}
-                  placeholder={"Masukkan Maksimal Gaji"}
-                  value={datacreate?.salary_max || 0}
-                  thousandSeparator={"."}
-                  decimalSeparator={","}
-                  prefix={"Rp"}
-                  allowNegative={false}
-                  onValueChange={(values) => {
-                    const { formattedValue, value, floatValue } = values;
-                    setdatacreate((prev) => ({
-                      ...prev,
-                      salary_max: floatValue || 0,
-                    }));
-                  }}
-                  renderText={(value) => <p>{value}</p>}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Overview"
-                name="overview"
-                rules={[
-                  {
-                    required: true,
-                    message: "Overview wajib diisi",
-                  },
-                ]}
-              >
-                <ReactQuill
-                  theme="snow"
-                  value={datacreate?.overview}
-                  modules={modules}
-                  formats={formats}
-                  className="h-44 pb-10"
-                  onChange={(value) => {
-                    setdatacreate({
-                      ...datacreate,
-                      overview: value,
-                    });
-                  }}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Description"
-                name="description"
-                rules={[
-                  {
-                    required: true,
-                    message: "Description Job wajib diisi",
-                  },
-                ]}
-              >
-                <ReactQuill
-                  theme="snow"
-                  value={datacreate?.description}
-                  modules={modules}
-                  formats={formats}
-                  className="h-44 pb-10"
-                  onChange={(value) => {
-                    setdatacreate({
-                      ...datacreate,
-                      description: value,
-                    });
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Qualification"
-                name="qualification"
-                rules={[
-                  {
-                    required: true,
-                    message: "Qualification wajib diisi",
-                  },
-                ]}
-              >
-                <ReactQuill
-                  theme="snow"
-                  value={datacreate?.qualification}
-                  modules={modules}
-                  formats={formats}
-                  className="h-44 pb-10"
-                  onChange={(value) => {
-                    setdatacreate({
-                      ...datacreate,
-                      qualification: value,
-                    });
-                  }}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Status"
-                name="is_posted"
-                rules={[
-                  {
-                    required: true,
-                    message: "Status wajib diisi",
-                  },
-                ]}
-              >
-                <Switch
-                  size="large"
-                  checkedChildren="Posted"
-                  unCheckedChildren="Archived"
-                  defaultChecked
-                  checked={datacreate?.is_posted}
-                  onChange={(e) => {
-                    setdatacreate({
-                      ...datacreate,
-                      is_posted: e == true ? 1 : 0,
-                    });
-                  }}
-                />
-              </Form.Item>
-
-              <div className="flex justify-end">
-                <Button
-                  type="default"
-                  onClick={() => {
-                    setdrawcreate(false);
-                  }}
-                  style={{ marginRight: `1rem` }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  htmlType="submit"
-                  type="primary"
-                  loading={loadingcreate}
-                >
-                  Save
-                </Button>
+                  <p
+                    className={`${
+                      activeTab == "1" ? `text-primarygreen` : `text-mono80`
+                    } text-sm font-bold leading-6 text-underline`}
+                  >
+                    Informasi Umum
+                  </p>
+                  {activeTab == "1" && (
+                    <div className={"bg-primarygreen h-0.5 w-[112px] "} />
+                  )}
+                </div>
               </div>
-            </Form>
+              <div
+                className={"flex flex-col gap-1 hover:cursor-pointer"}
+                onClick={() => setActiveTab("2")}
+              >
+                <p
+                  className={`${
+                    activeTab == "2" ? `text-primarygreen` : `text-mono80`
+                  } text-sm font-bold leading-6 text-underline`}
+                >
+                  Pertanyaan Untuk Pelamar
+                </p>
+                {activeTab == "2" && (
+                  <div className={"bg-primarygreen h-0.5 w-full "} />
+                )}
+              </div>
+            </div>
+            {/* <Tabs
+              defaultActiveKey="1"
+              // onChange={(value) => {
+              //   setActiveTab(value as "1" | "2");
+              // }}
+            >
+              <TabPane tab="Informasi Umum" key="1" />
+              <TabPane tab="Pertanyaan" key="2" />
+            </Tabs> */}
+            <p
+              className={
+                "text-warning text-xs italic font-normal leading-4 mb-6"
+              }
+            >
+              * Informasi ini harus diisi
+            </p>
+            <div className="flex flex-col">
+              <Form
+                layout="vertical"
+                initialValues={datacreate}
+                onFinish={handleCreate}
+              >
+                <Form.Item
+                  label="Position Name"
+                  name="name"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Position Name wajib diisi",
+                    },
+                  ]}
+                >
+                  <Input
+                    defaultValue={datacreate.name}
+                    onChange={(e) => {
+                      setdatacreate({
+                        ...datacreate,
+                        name: e.target.value,
+                      });
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Status Kontrak"
+                  name="career_role_type_id"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Status Kontrak wajib diisi",
+                    },
+                  ]}
+                >
+                  <Select
+                    value={
+                      datacreate?.career_role_type_id &&
+                      Number(datacreate?.career_role_type_id)
+                    }
+                    onChange={(e) => {
+                      setdatacreate({
+                        ...datacreate,
+                        career_role_type_id: e,
+                      });
+                    }}
+                    placeholder="Pilih status kontrak"
+                  >
+                    <>
+                      {dataRoleTypeList?.map((option) => (
+                        <Select.Option key={option.id} value={option.id}>
+                          {option.name}
+                        </Select.Option>
+                      ))}
+                    </>
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  label="Pengalaman Kerja"
+                  name="career_experience_id"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Pengalaman Kerja wajib diisi",
+                    },
+                  ]}
+                >
+                  <Select
+                    value={
+                      datacreate?.career_experience_id &&
+                      Number(datacreate?.career_experience_id)
+                    }
+                    onChange={(e) => {
+                      setdatacreate({
+                        ...datacreate,
+                        career_experience_id: e,
+                      });
+                    }}
+                    placeholder="Pilih pengalaman kerja"
+                  >
+                    <>
+                      {dataExperience?.map((option) => (
+                        <Select.Option key={option.id} value={option.id}>
+                          {option.name}
+                        </Select.Option>
+                      ))}
+                    </>
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  label="Salary Min"
+                  name="salary_min"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Salary Min wajib diisi",
+                    },
+                  ]}
+                >
+                  <CurrencyFormat
+                    customInput={Input}
+                    placeholder={"Masukkan Minimal Gaji"}
+                    value={datacreate?.salary_min || 0}
+                    thousandSeparator={"."}
+                    decimalSeparator={","}
+                    prefix={"Rp"}
+                    allowNegative={false}
+                    onValueChange={(values) => {
+                      const { formattedValue, value, floatValue } = values;
+                      setdatacreate((prev) => ({
+                        ...prev,
+                        salary_min: floatValue || 0,
+                      }));
+                    }}
+                    renderText={(value) => <p>{value}</p>}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Salary Max"
+                  name="salary_max"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Salary Max wajib diisi",
+                    },
+                  ]}
+                >
+                  <CurrencyFormat
+                    customInput={Input}
+                    placeholder={"Masukkan Maksimal Gaji"}
+                    value={datacreate?.salary_max || 0}
+                    thousandSeparator={"."}
+                    decimalSeparator={","}
+                    prefix={"Rp"}
+                    allowNegative={false}
+                    onValueChange={(values) => {
+                      const { formattedValue, value, floatValue } = values;
+                      setdatacreate((prev) => ({
+                        ...prev,
+                        salary_max: floatValue || 0,
+                      }));
+                    }}
+                    renderText={(value) => <p>{value}</p>}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Overview"
+                  name="overview"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Overview wajib diisi",
+                    },
+                  ]}
+                >
+                  <ReactQuill
+                    theme="snow"
+                    value={datacreate?.overview}
+                    modules={modules}
+                    formats={formats}
+                    className="h-44 pb-10"
+                    onChange={(value) => {
+                      setdatacreate({
+                        ...datacreate,
+                        overview: value,
+                      });
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Description"
+                  name="description"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Description Job wajib diisi",
+                    },
+                  ]}
+                >
+                  <ReactQuill
+                    theme="snow"
+                    value={datacreate?.description}
+                    modules={modules}
+                    formats={formats}
+                    className="h-44 pb-10"
+                    onChange={(value) => {
+                      setdatacreate({
+                        ...datacreate,
+                        description: value,
+                      });
+                    }}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  label="Qualification"
+                  name="qualification"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Qualification wajib diisi",
+                    },
+                  ]}
+                >
+                  <ReactQuill
+                    theme="snow"
+                    value={datacreate?.qualification}
+                    modules={modules}
+                    formats={formats}
+                    className="h-44 pb-10"
+                    onChange={(value) => {
+                      setdatacreate({
+                        ...datacreate,
+                        qualification: value,
+                      });
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Status"
+                  name="is_posted"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Status wajib diisi",
+                    },
+                  ]}
+                >
+                  <Switch
+                    size="large"
+                    checkedChildren="Posted"
+                    unCheckedChildren="Archived"
+                    defaultChecked
+                    checked={datacreate?.is_posted}
+                    onChange={(e) => {
+                      setdatacreate({
+                        ...datacreate,
+                        is_posted: e == true ? 1 : 0,
+                      });
+                    }}
+                  />
+                </Form.Item>
+
+                <div className="flex justify-end">
+                  <Button
+                    type="default"
+                    onClick={() => {
+                      setdrawcreate(false);
+                    }}
+                    style={{ marginRight: `1rem` }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    htmlType="submit"
+                    type="primary"
+                    loading={loadingcreate}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </Form>
+            </div>
           </div>
         </Drawer>
       </AccessControl>
