@@ -222,7 +222,6 @@ export const JobDetail: FC = () => {
 
   const handleModalApplyNew = () => {
     setModalApply(true);
-    cobaLoading();
     // cobashowthankyou()
   };
 
@@ -401,7 +400,7 @@ export const JobDetail: FC = () => {
               {statusSent ? (
                 <p
                   className={"text-primary100 text-sm font-medium leading-6"}
-                  style={{ position: "absolute", top: "90%", left: "50$" }}
+                  style={{ position: "absolute", top: "90%" }}
                 >
                   Sent
                 </p>
