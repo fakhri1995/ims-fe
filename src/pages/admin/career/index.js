@@ -519,6 +519,14 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "No",
       key: "number",
       dataIndex: "num",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickCareer(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
           children: (
@@ -533,6 +541,14 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Nama Lowongan",
       key: "name",
       dataIndex: "name",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickCareer(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
           children: (
@@ -548,6 +564,14 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Tipe Kontrak",
       key: "role_type",
       dataIndex: "role_type",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickCareer(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
           children: <>{record.role_type?.name}</>,
@@ -558,6 +582,14 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Tanggal Posting",
       key: "created_at",
       dataIndex: "created_at",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickCareer(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
           children: <>{moment(text).format("ll, HH:mm")}</>,
@@ -568,6 +600,14 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Status",
       key: "is_posted",
       dataIndex: "is_posted",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickCareer(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
           children: (
@@ -608,6 +648,14 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Jumlah Pelamar",
       key: "apply_count",
       dataIndex: "apply_count",
+      onCell: (record) => {
+        return {
+          onClick: (event) => {
+            event.stopPropagation(); // this will avoid onRow being called
+            handleClickCareer(record);
+          },
+        };
+      },
       render: (text, record, index) => {
         return {
           children: <>{text}</>,
@@ -1052,13 +1100,13 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   total: dataRawRCareers?.total,
                   showSizeChanger: true,
                 }}
-                onRow={(record, rowIndex) => {
-                  return {
-                    onClick: () => {
-                      handleClickCareer(record);
-                    },
-                  };
-                }}
+                // onRow={(record, rowIndex) => {
+                //   return {
+                //     onClick: () => {
+                //       handleClickCareer(record);
+                //     },
+                //   };
+                // }}
                 onChange={(pagination, filters, sorter, extra) => {
                   const sortTypePayload =
                     sorter.order === "ascend"

@@ -229,7 +229,10 @@ export const CareersAtMig: FC = () => {
               {statusSent ? (
                 <SpinnerIconSvg style={{ fontSize: 80, color: "#35763B" }} />
               ) : (
-                <LoadingOutlined style={{ fontSize: 80, color: "#35763B" }} />
+                <LoadingOutlined
+                  rev={""}
+                  style={{ fontSize: 80, color: "#35763B" }}
+                />
               )}
               <p className={"text-primary100 text-sm font-medium leading-6"}>
                 {statusSent ? "Sent" : "Sending.."}
