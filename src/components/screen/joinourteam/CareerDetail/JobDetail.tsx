@@ -401,7 +401,7 @@ export const JobDetail: FC = () => {
               {statusSent ? (
                 <p
                   className={"text-primary100 text-sm font-medium leading-6"}
-                  style={{ position: "absolute", top: "70%" }}
+                  style={{ position: "absolute", top: "90%", left: "50$" }}
                 >
                   Sent
                 </p>
