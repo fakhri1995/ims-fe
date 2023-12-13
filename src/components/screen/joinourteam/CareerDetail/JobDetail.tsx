@@ -149,16 +149,16 @@ export const JobDetail: FC = () => {
     setCaptchaVerifyValue(verifyValue);
   }, []);
 
-  // const cobaLoading = () => {
-  //   setLoading(true);
-  //   setStatusSent(false);
-  //   setTimeout(() => {
-  //     setStatusSent(true);
-  //   }, 3000);
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   }, 5000);
-  // };
+  const cobaLoading = () => {
+    setLoading(true);
+    setStatusSent(false);
+    setTimeout(() => {
+      setStatusSent(true);
+    }, 3000);
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+  };
 
   // const cobashowthankyou = () => {
   //   setShowThankyou("half");
@@ -386,7 +386,7 @@ export const JobDetail: FC = () => {
               ) : (
                 <LoadingOutlined
                   rev={""}
-                  style={{ fontSize: 80, color: "#35763B" }}
+                  style={{ fontSize: 80, color: "#35763B", left: "50%" }}
                 />
               )}
               <p className={"text-primary100 text-sm font-medium leading-6"}>
