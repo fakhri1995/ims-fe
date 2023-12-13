@@ -227,6 +227,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                     </Text>
                     <View
                       style={{
+                        display: "flex",
                         flexDirection: "row",
                         flexWrap: "wrap",
                         paddingBottom: 4,
@@ -237,9 +238,9 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                         {edu?.major} ·&nbsp;
                       </Text>
                       <Text style={styles.textYear}>
-                        {edu?.graduation_year
-                          ? edu?.graduation_year?.slice(0, 4)
-                          : "-"}
+                        {momentFormatDate(edu?.start_date, "-", "MMM YYYY")}{" "}
+                        -&nbsp;
+                        {momentFormatDate(edu?.end_date, "present", "MMM YYYY")}
                       </Text>
                     </View>
                     {edu?.gpa && (
@@ -304,12 +305,13 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                     >
                       {proj?.name}
                     </Text>
-                    <Text
+                    <Html
+                      // hyphenationCallback={e => breakText(e)}
                       style={styles.desc}
-                      hyphenationCallback={(e) => breakText(e)}
+                      stylesheet={styles.htmlStyle}
                     >
                       {proj?.description}
-                    </Text>
+                    </Html>
                   </View>
                 </View>
               ))}
