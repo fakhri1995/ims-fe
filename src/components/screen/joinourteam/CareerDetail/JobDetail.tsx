@@ -197,11 +197,11 @@ export const JobDetail: FC = () => {
             }, 5000);
             setTimeout(() => {
               setShowThankyou("half");
-            }, 2000);
+            }, 6000);
 
             setTimeout(() => {
               setShowThankyou("full");
-            }, 3000);
+            }, 7000);
           },
           onError: (error: AxiosError) => {
             notification.error({
@@ -502,7 +502,7 @@ export const JobDetail: FC = () => {
                   <Form.Item noStyle>
                     <div className={"md:flex md:justify-end"}>
                       <Button
-                        className={`${styles.ctaButton} mt-6 w-full md:mt-8`}
+                        className={`${styles.ctaButton} mt-6 w-full md:w-auto md:self-end md:mt-8 text-white`}
                         htmlType="submit"
                         disabled={!isAllowedToSubmit}
                         loading={isApplying}
