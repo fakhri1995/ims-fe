@@ -1,4 +1,4 @@
-import { LoadingOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, LoadingOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -227,7 +227,10 @@ export const CareersAtMig: FC = () => {
               className={"flex w-full flex-col gap-2.5"}
             >
               {statusSent ? (
-                <SpinnerIconSvg style={{ fontSize: 80, color: "#35763B" }} />
+                <CheckCircleOutlined
+                  rev={""}
+                  style={{ fontSize: 80, color: "#35763B" }}
+                />
               ) : (
                 <LoadingOutlined
                   rev={""}
@@ -308,6 +311,11 @@ export const CareersAtMig: FC = () => {
                         className={"customdragger w-full"}
                         name="files"
                         maxCount={1}
+                        customRequest={({ onSuccess }) =>
+                          setTimeout(() => {
+                            onSuccess("ok", null);
+                          }, 0)
+                        }
                         onChange={onChangeFile}
                         accept=".pdf"
                         // action="/upload.do"
