@@ -259,7 +259,19 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                           </p>
                           <p className="text-mono50">
                             {item.major} ·{" "}
-                            <strong>{item.graduation_year?.slice(0, 4)}</strong>
+                            <strong>
+                              {momentFormatDate(
+                                item.start_date,
+                                "-",
+                                "MMM YYYY"
+                              )}{" "}
+                              -{" "}
+                              {momentFormatDate(
+                                item.end_date,
+                                <em>present</em>,
+                                "MMM YYYY"
+                              )}
+                            </strong>
                           </p>
                           <p className="text-mono50">GPA {item.gpa}</p>
                         </Timeline.Item>
@@ -319,7 +331,9 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                           </p>
                           <div>
                             <p className="text-mono30 font-bold">{item.name}</p>
-                            <p className="text-mono50">{item.description}</p>
+                            <div className="text-mono50">
+                              {parse(item.description)}
+                            </div>
                           </div>
                         </div>
                       ))}

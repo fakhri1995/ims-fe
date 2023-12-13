@@ -1,3 +1,8 @@
+/**
+ * This file is used for preview PDF in development,
+ * so developer doesn't need to repeatedly download
+ * the PDF when adjusting the style/layout
+ * */
 import { PDFViewer } from "@react-pdf/renderer";
 import dynamic from "next/dynamic";
 import React from "react";
