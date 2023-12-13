@@ -389,7 +389,7 @@ export const JobDetail: FC = () => {
                     fontSize: 80,
                     color: "#35763B",
                     position: "absolute",
-                    left: "50%",
+                    left: "40%",
                   }}
                 />
               ) : (
