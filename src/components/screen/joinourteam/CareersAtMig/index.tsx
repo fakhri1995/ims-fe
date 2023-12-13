@@ -308,6 +308,11 @@ export const CareersAtMig: FC = () => {
                         className={"customdragger w-full"}
                         name="files"
                         maxCount={1}
+                        customRequest={({ onSuccess }) =>
+                          setTimeout(() => {
+                            onSuccess("ok", null);
+                          }, 0)
+                        }
                         onChange={onChangeFile}
                         accept=".pdf"
                         // action="/upload.do"

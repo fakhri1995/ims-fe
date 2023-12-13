@@ -1,4 +1,5 @@
 import {
+  CheckCircleOutlined,
   LeftOutlined,
   LoadingOutlined,
   RiseOutlined,
@@ -221,7 +222,7 @@ export const JobDetail: FC = () => {
 
   const handleModalApplyNew = () => {
     setModalApply(true);
-    // cobaLoading()
+    cobaLoading();
     // cobashowthankyou()
   };
 
@@ -382,11 +383,14 @@ export const JobDetail: FC = () => {
               className={"flex w-full flex-col gap-2.5"}
             >
               {statusSent ? (
-                <SpinnerIconSvg style={{ fontSize: 80, color: "#35763B" }} />
+                <CheckCircleOutlined
+                  rev={""}
+                  style={{ fontSize: 80, color: "#35763B" }}
+                />
               ) : (
                 <LoadingOutlined
                   rev={""}
-                  style={{ fontSize: 80, color: "#35763B", left: "50%" }}
+                  style={{ fontSize: 80, color: "#35763B" }}
                 />
               )}
               <p className={"text-primary100 text-sm font-medium leading-6"}>
