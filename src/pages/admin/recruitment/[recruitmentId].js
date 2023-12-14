@@ -1132,10 +1132,10 @@ const RecruitmentDetailIndex = ({
                           <p className="mig-caption text-mono80">
                             {momentFormatDate(
                               experience?.start_date,
-                              "-",
+                              "",
                               "MMMM YYYY"
-                            )}{" "}
-                            -{" "}
+                            )}
+                            {experience?.start_date && " - "}
                             {momentFormatDate(
                               experience?.end_date,
                               "present",
@@ -1170,12 +1170,8 @@ const RecruitmentDetailIndex = ({
                           </p>
 
                           <p className="mig-caption text-mono80">
-                            {momentFormatDate(
-                              edu?.start_date,
-                              "-",
-                              "MMMM YYYY"
-                            )}{" "}
-                            -{" "}
+                            {momentFormatDate(edu?.start_date, "", "MMMM YYYY")}
+                            {edu?.start_date && " - "}
                             {momentFormatDate(
                               edu?.end_date,
                               "present",
