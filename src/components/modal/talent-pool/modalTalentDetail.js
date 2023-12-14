@@ -187,7 +187,9 @@ const ModalTalentDetail = ({
                           )}
                         </strong>
                       </p>
-                      <p className="text-mono50">GPA {item.gpa}</p>
+                      {item?.gpa && (
+                        <p className="text-mono50">GPA {item?.gpa || "-"}</p>
+                      )}
                     </Timeline.Item>
                   ))}
                 </Timeline>
