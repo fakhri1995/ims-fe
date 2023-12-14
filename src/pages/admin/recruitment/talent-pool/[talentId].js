@@ -262,10 +262,10 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                             <strong>
                               {momentFormatDate(
                                 item.start_date,
-                                "-",
+                                "",
                                 "MMM YYYY"
-                              )}{" "}
-                              -{" "}
+                              )}
+                              {item?.start_date && " - "}
                               {momentFormatDate(
                                 item.end_date,
                                 <em>present</em>,
@@ -273,7 +273,9 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                               )}
                             </strong>
                           </p>
-                          <p className="text-mono50">GPA {item.gpa}</p>
+                          {item?.gpa && (
+                            <p className="text-mono50">GPA {item?.gpa}</p>
+                          )}
                         </Timeline.Item>
                       ))}
                     </Timeline>
@@ -296,13 +298,13 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                             {item.company} ·{" "}
                             <strong>
                               {momentFormatDate(
-                                item.start_date,
-                                "-",
+                                item?.start_date,
+                                "",
                                 "MMM YYYY"
-                              )}{" "}
-                              -&nbsp;
+                              )}
+                              {item?.start_date && " - "}
                               {momentFormatDate(
-                                item.end_date,
+                                item?.end_date,
                                 <em>present</em>,
                                 "MMM YYYY"
                               )}

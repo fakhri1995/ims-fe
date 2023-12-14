@@ -182,8 +182,8 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                   >
                     <Text>{exp?.company} ·&nbsp;</Text>
                     <Text style={styles.textYear}>
-                      {momentFormatDate(exp?.start_date, "-", "MMM YYYY")}{" "}
-                      -&nbsp;
+                      {momentFormatDate(exp?.start_date, "", "MMM YYYY")}
+                      {exp?.start_date && " - "}
                       {momentFormatDate(exp?.end_date, "present", "MMM YYYY")}
                     </Text>
                   </View>
@@ -238,8 +238,8 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                         {edu?.major} ·&nbsp;
                       </Text>
                       <Text style={styles.textYear}>
-                        {momentFormatDate(edu?.start_date, "-", "MMM YYYY")}{" "}
-                        -&nbsp;
+                        {momentFormatDate(edu?.start_date, "", "MMM YYYY")}
+                        {edu?.start_date && edu?.end_date && " - "}
                         {momentFormatDate(edu?.end_date, "present", "MMM YYYY")}
                       </Text>
                     </View>

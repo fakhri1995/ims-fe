@@ -148,7 +148,8 @@ const ExperienceBlock = ({
             <p className="text-mono50 mb-1">
               {exp.company} ·&nbsp;
               <strong>
-                {momentFormatDate(exp.start_date, "-", "MMM YYYY")} -&nbsp;
+                {momentFormatDate(exp.start_date, "", "MMM YYYY")}
+                {exp?.start_date && " - "}
                 {momentFormatDate(exp.end_date, <em>present</em>, "MMM YYYY")}
               </strong>
             </p>

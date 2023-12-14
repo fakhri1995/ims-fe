@@ -247,20 +247,7 @@ const AcademicCard = ({
                 </div>
               )}
             />
-            {/* <DatePicker
-              picker="year"
-              placeholder="Graduation Year"
-              allowClear={false}
-              className="w-1/2"
-              value={dataUpdateEdu?.graduation_year}
-              onChange={(date) => {
-                let input = date.format("YYYY-MM-DD");
-                setDataUpdateEdu((prev) => ({
-                  ...prev,
-                  graduation_year: moment(input),
-                }));
-              }}
-            /> */}
+
             <InputNumber
               placeholder="GPA"
               min={0.0}

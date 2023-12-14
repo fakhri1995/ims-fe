@@ -50,7 +50,9 @@ const AcademicBlock = ({
                 if (dataUpdateEdu.id) {
                   handleUpdateSection("education", {
                     ...dataUpdateEdu,
-                    after_id: afterId ?? 0,
+                    after_id: afterId ?? null,
+                    start_date: dataUpdateEdu?.start_date_format,
+                    end_date: dataUpdateEdu?.end_date_format,
                   });
                 }
                 clearDataUpdate();
@@ -120,20 +122,6 @@ const AcademicBlock = ({
                 </div>
               )}
             />
-            {/* <DatePicker
-              picker="year"
-              placeholder="Graduation Year"
-              allowClear={false}
-              className="w-1/2"
-              value={moment(dataUpdateEdu.graduation_year)}
-              onChange={(date) => {
-                let input = date?.format("YYYY-MM-DD");
-                setDataUpdateEdu((prev) => ({
-                  ...prev,
-                  graduation_year: moment(input),
-                }));
-              }}
-            /> */}
             <InputNumber
               placeholder="GPA"
               min={0.0}
@@ -160,7 +148,8 @@ const AcademicBlock = ({
             <p className="text-mono50 mb-1">
               {edu?.major || "-"} ·&nbsp;
               <strong>
-                {momentFormatDate(edu?.start_date, "-", "MMM YYYY")} -&nbsp;
+                {momentFormatDate(edu?.start_date, "", "MMM YYYY")}
+                {edu?.start_date && edu?.end_date && " - "}
                 {momentFormatDate(edu?.end_date, <em>present</em>, "MMM YYYY")}
               </strong>
             </p>

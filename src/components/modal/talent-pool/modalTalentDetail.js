@@ -178,8 +178,8 @@ const ModalTalentDetail = ({
                       <p className="text-mono50">
                         {item.major} ·{" "}
                         <strong>
-                          {momentFormatDate(item.start_date, "-", "MMM YYYY")}{" "}
-                          -&nbsp;
+                          {momentFormatDate(item.start_date, "", "MMM YYYY")}
+                          {item?.start_date && " - "}
                           {momentFormatDate(
                             item.end_date,
                             <em>present</em>,
@@ -187,7 +187,9 @@ const ModalTalentDetail = ({
                           )}
                         </strong>
                       </p>
-                      <p className="text-mono50">GPA {item.gpa}</p>
+                      {item?.gpa && (
+                        <p className="text-mono50">GPA {item?.gpa || "-"}</p>
+                      )}
                     </Timeline.Item>
                   ))}
                 </Timeline>
@@ -209,8 +211,8 @@ const ModalTalentDetail = ({
                       <p className="text-mono50">
                         {item.company} ·{" "}
                         <strong>
-                          {momentFormatDate(item.start_date, "-", "MMM YYYY")}{" "}
-                          -&nbsp;
+                          {momentFormatDate(item.start_date, "", "MMM YYYY")}
+                          {item?.start_date && " - "}
                           {momentFormatDate(
                             item.end_date,
                             <em>present</em>,
