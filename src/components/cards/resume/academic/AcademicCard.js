@@ -89,6 +89,8 @@ const AcademicCard = ({
         ...currentItem,
         id: active?.id,
         after_id: prevId ?? 0,
+        start_date: currentItem?.start_date_format,
+        end_date: currentItem?.end_date_format,
       };
       await handleUpdateSection("education", updatedItem);
       clearDataUpdate();

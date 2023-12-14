@@ -107,7 +107,9 @@ const ProjectBlock = ({
             </p>
             <div className="flex flex-col w-2/3">
               <p className="font-bold text-mono30">{project.name || "-"}</p>
-              <p className="text-mono50">{parse(project.description) || "-"}</p>
+              <div className="text-mono50">
+                {parse(project.description) || "-"}
+              </div>
             </div>
           </div>
           <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
