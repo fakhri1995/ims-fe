@@ -115,7 +115,7 @@ const ExperienceCard = ({
       transition,
     };
     return (
-      <li ref={setNodeRef} style={style}>
+      <div ref={setNodeRef} style={style}>
         <ExperienceBlock
           exp={exp}
           dataUpdateExp={dataUpdateExp}
@@ -130,7 +130,7 @@ const ExperienceCard = ({
           {...listeners}
           {...attributes}
         />
-      </li>
+      </div>
     );
   };
 
