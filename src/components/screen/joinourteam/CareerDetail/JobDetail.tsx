@@ -1,4 +1,5 @@
 import {
+  CheckCircleOutlined,
   LeftOutlined,
   LoadingOutlined,
   RiseOutlined,
@@ -149,16 +150,16 @@ export const JobDetail: FC = () => {
     setCaptchaVerifyValue(verifyValue);
   }, []);
 
-  // const cobaLoading = () => {
-  //   setLoading(true);
-  //   setStatusSent(false);
-  //   setTimeout(() => {
-  //     setStatusSent(true);
-  //   }, 3000);
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   }, 5000);
-  // };
+  const cobaLoading = () => {
+    setLoading(true);
+    setStatusSent(false);
+    setTimeout(() => {
+      setStatusSent(true);
+    }, 3000);
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+  };
 
   // const cobashowthankyou = () => {
   //   setShowThankyou("half");
@@ -197,11 +198,11 @@ export const JobDetail: FC = () => {
             }, 5000);
             setTimeout(() => {
               setShowThankyou("half");
-            }, 2000);
+            }, 6000);
 
             setTimeout(() => {
               setShowThankyou("full");
-            }, 3000);
+            }, 7000);
           },
           onError: (error: AxiosError) => {
             notification.error({
@@ -221,7 +222,6 @@ export const JobDetail: FC = () => {
 
   const handleModalApplyNew = () => {
     setModalApply(true);
-    // cobaLoading()
     // cobashowthankyou()
   };
 
@@ -382,16 +382,33 @@ export const JobDetail: FC = () => {
               className={"flex w-full flex-col gap-2.5"}
             >
               {statusSent ? (
-                <SpinnerIconSvg style={{ fontSize: 80, color: "#35763B" }} />
+                <CheckCircleOutlined
+                  rev={""}
+                  style={{
+                    fontSize: 80,
+                    color: "#35763B",
+                    position: "absolute",
+                    left: "40%",
+                  }}
+                />
               ) : (
                 <LoadingOutlined
                   rev={""}
                   style={{ fontSize: 80, color: "#35763B" }}
                 />
               )}
-              <p className={"text-primary100 text-sm font-medium leading-6"}>
-                {statusSent ? "Sent" : "Sending.."}
-              </p>
+              {statusSent ? (
+                <p
+                  className={"text-primary100 text-sm font-medium leading-6"}
+                  style={{ position: "absolute", top: "90%" }}
+                >
+                  Sent
+                </p>
+              ) : (
+                <p className={"text-primary100 text-sm font-medium leading-6"}>
+                  Sending
+                </p>
+              )}
             </div>
           }
         >
@@ -461,6 +478,11 @@ export const JobDetail: FC = () => {
                     >
                       <Upload.Dragger
                         className={"customdragger w-full"}
+                        customRequest={({ onSuccess }) =>
+                          setTimeout(() => {
+                            onSuccess("ok", null);
+                          }, 0)
+                        }
                         name="files"
                         maxCount={1}
                         onChange={onChangeFile}
@@ -502,7 +524,7 @@ export const JobDetail: FC = () => {
                   <Form.Item noStyle>
                     <div className={"md:flex md:justify-end"}>
                       <Button
-                        className={`${styles.ctaButton} mt-6 w-full md:mt-8`}
+                        className={`${styles.ctaButton} mt-6 w-full md:w-auto md:self-end md:mt-8 text-white`}
                         htmlType="submit"
                         disabled={!isAllowedToSubmit}
                         loading={isApplying}
