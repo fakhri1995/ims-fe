@@ -39,12 +39,12 @@ const AcademicCard = ({
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   const [dataUpdateEdu, setDataUpdateEdu] = useState({
-    id: null,
+    id: 0,
     university: "",
     major: "",
-    gpa: null,
+    gpa: "",
     graduation_year: "",
-    resume_id: null,
+    resume_id: 0,
   });
 
   // 2. use Effect
@@ -55,10 +55,10 @@ const AcademicCard = ({
   // 3. Handler
   const clearDataUpdate = () => {
     setDataUpdateEdu({
-      id: null,
+      id: 0,
       university: "",
       major: "",
-      gpa: null,
+      gpa: "",
       graduation_year: "",
       resume_id: 12,
     });
@@ -107,7 +107,7 @@ const AcademicCard = ({
       transition,
     };
     return (
-      <li ref={setNodeRef} style={style}>
+      <div ref={setNodeRef} style={style}>
         <AcademicBlock
           edu={data}
           dataUpdateEdu={dataUpdateEdu}
@@ -122,7 +122,7 @@ const AcademicCard = ({
           {...listeners}
           {...attributes}
         />
-      </li>
+      </div>
     );
   };
 
@@ -259,7 +259,7 @@ const AcademicCard = ({
               onChange={(value) => {
                 setDataUpdateEdu((prev) => ({
                   ...prev,
-                  gpa: value,
+                  gpa: value || "",
                 }));
               }}
               className="w-1/2"

@@ -227,12 +227,17 @@ export const objectToFormDataNew = <T extends Object>(entry: T) => {
       }
     } else if (v instanceof Object) {
       for (const [key, val] of Object.entries(v)) {
-        formData.append(`${k}[${key}]`, val as string | Blob);
+        // prevent falsy values to be converted to string
+        let value: any = val;
+        if (!val) {
+          value = "";
+        }
+        formData.append(`${k}[${key}]`, value as string | Blob);
       }
     } else {
-      // prevent null object converted to string
+      // prevent falsy values to be converted to string
       let value: any = v;
-      if (v === null) {
+      if (!v) {
         value = "";
       }
       formData.append(k, value);

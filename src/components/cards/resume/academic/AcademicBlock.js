@@ -50,7 +50,7 @@ const AcademicBlock = ({
                 if (dataUpdateEdu.id) {
                   handleUpdateSection("education", {
                     ...dataUpdateEdu,
-                    after_id: afterId ?? null,
+                    after_id: afterId ?? 0,
                     start_date: dataUpdateEdu?.start_date_format,
                     end_date: dataUpdateEdu?.end_date_format,
                   });
@@ -86,10 +86,12 @@ const AcademicBlock = ({
             <RangePicker
               allowEmpty
               value={[
-                dataUpdateEdu.start_date
+                moment(dataUpdateEdu.start_date).isValid()
                   ? moment(dataUpdateEdu.start_date)
                   : null,
-                dataUpdateEdu.end_date ? moment(dataUpdateEdu.end_date) : null,
+                moment(dataUpdateEdu.end_date).isValid()
+                  ? moment(dataUpdateEdu.end_date)
+                  : null,
               ]}
               open={calendarOpen}
               onOpenChange={setCalendarOpen}
@@ -98,8 +100,10 @@ const AcademicBlock = ({
                 let endDate = datestring[1];
                 setDataUpdateEdu((prev) => ({
                   ...prev,
-                  start_date: startDate,
-                  end_date: endDate,
+                  start_date: startDate || "",
+                  end_date: endDate || "",
+                  start_date_format: startDate || "",
+                  end_date_format: endDate || "",
                 }));
               }}
               picker="month"
@@ -112,7 +116,8 @@ const AcademicBlock = ({
                     onClick={() => {
                       setDataUpdateEdu((prev) => ({
                         ...prev,
-                        end_date: null,
+                        end_date: "",
+                        end_date_format: "",
                       }));
                       setCalendarOpen(false);
                     }}
