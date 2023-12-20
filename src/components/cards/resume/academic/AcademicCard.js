@@ -43,7 +43,8 @@ const AcademicCard = ({
     university: "",
     major: "",
     gpa: "",
-    graduation_year: "",
+    start_date: "",
+    end_date: "",
     resume_id: 0,
   });
 
@@ -59,7 +60,8 @@ const AcademicCard = ({
       university: "",
       major: "",
       gpa: "",
-      graduation_year: "",
+      start_date: "",
+      end_date: "",
       resume_id: 12,
     });
     setEditIdx(null);
