@@ -150,15 +150,26 @@ const AcademicBlock = ({
             <p className="text-primary100 font-bold mb-1">
               {edu?.university || "-"}
             </p>
-            <p className="text-mono50 mb-1">
-              {edu?.major || "-"} ·&nbsp;
-              <strong>
-                {momentFormatDate(edu?.start_date, "", "MMM YYYY")}
-                {edu?.start_date && edu?.end_date && " - "}
-                {momentFormatDate(edu?.end_date, <em>present</em>, "MMM YYYY")}
-              </strong>
-            </p>
-            {edu?.gpa && <p className="text-mono50">GPA {edu?.gpa || "-"}</p>}
+            <div className="text-mono50 mb-1 flex gap-1">
+              {edu?.major || "-"}
+              {(edu?.start_date || edu?.end_date) && (
+                <div className="flex gap-1">
+                  <p>·</p>
+                  <p>
+                    <strong>
+                      {momentFormatDate(edu?.start_date, "", "MMM YYYY")}
+                      {edu?.start_date && " - "}
+                      {momentFormatDate(
+                        edu?.end_date,
+                        <em>present</em>,
+                        "MMM YYYY"
+                      )}
+                    </strong>
+                  </p>
+                </div>
+              )}
+            </div>
+            {edu?.gpa && <p className="text-mono50">GPA {edu?.gpa}</p>}
           </div>
           <div className="flex flex-row space-x-2 items-start">
             {isAllowedToUpdateCandidate && (
