@@ -175,18 +175,29 @@ const ModalTalentDetail = ({
                       <p className="text-primary100 font-bold">
                         {item.university}
                       </p>
-                      <p className="text-mono50">
-                        {item.major} ·{" "}
-                        <strong>
-                          {momentFormatDate(item.start_date, "", "MMM YYYY")}
-                          {item?.start_date && " - "}
-                          {momentFormatDate(
-                            item.end_date,
-                            <em>present</em>,
-                            "MMM YYYY"
-                          )}
-                        </strong>
-                      </p>
+                      <div className="text-mono50 mb-1 flex gap-1">
+                        <p>{item.major}</p>
+                        {(item?.start_date || item?.end_date) && (
+                          <div className="flex gap-1">
+                            <p>·</p>
+                            <p>
+                              <strong>
+                                {momentFormatDate(
+                                  item?.start_date,
+                                  "",
+                                  "MMM YYYY"
+                                )}
+                                {item?.start_date && " - "}
+                                {momentFormatDate(
+                                  item?.end_date,
+                                  <em>present</em>,
+                                  "MMM YYYY"
+                                )}
+                              </strong>
+                            </p>
+                          </div>
+                        )}
+                      </div>
                       {item?.gpa && (
                         <p className="text-mono50">GPA {item?.gpa || "-"}</p>
                       )}
