@@ -151,7 +151,7 @@ const AcademicBlock = ({
               {edu?.university || "-"}
             </p>
             <div className="text-mono50 mb-1 flex gap-1">
-              {edu?.major || "-"}
+              <p>{edu?.major || "-"}</p>
               {(edu?.start_date || edu?.end_date) && (
                 <div className="flex gap-1">
                   <p>·</p>
