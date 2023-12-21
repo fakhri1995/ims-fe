@@ -742,7 +742,7 @@ export const AttendanceStaffAktivitasSection: FC<
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <Tabs
             defaultActiveKey="1"
-            className="md:w-1/2"
+            className="w-1/2"
             onChange={setTabActiveKey}
           >
             <TabPane tab="Hari Ini" key="1" />
@@ -857,26 +857,36 @@ export const AttendanceStaffAktivitasSection: FC<
             </div>
           </Modal>
 
-          <div className="flex flex-wrap gap-2 w-full md:w-1/2 md:justify-end items-center">
+          <div className="flex flex-col xl:flex-row gap-2 w-full md:w-5/12 xl:w-4/12 md:justify-end items-center">
             <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
-              <ButtonSys
-                type="default"
-                onClick={onImportTask}
-                disabled={!isAllowedToAddTaskActivities}
-              >
-                <FileImportIconSvg />
-                <p className={"ml-2"}>Import Task</p>
-              </ButtonSys>
+              <div className="w-full">
+                <ButtonSys
+                  type="default"
+                  onClick={onImportTask}
+                  disabled={!isAllowedToAddTaskActivities}
+                  fullWidth
+                >
+                  <div className="flex items-center gap-2 whitespace-nowrap">
+                    <FileImportIconSvg />
+                    <p>Import Task</p>
+                  </div>
+                </ButtonSys>
+              </div>
             </AccessControl>
             {isAllowedToAddActivity && (
-              <ButtonSys
-                type="primary"
-                onClick={mOnAddActivityButtonClicked}
-                disabled={!isAllowedToAddActivity}
-              >
-                <AppstoreAddOutlined rev={""} className="mr-2" />
-                Masukkan Aktivitas
-              </ButtonSys>
+              <div className="w-full">
+                <ButtonSys
+                  type="primary"
+                  onClick={mOnAddActivityButtonClicked}
+                  disabled={!isAllowedToAddActivity}
+                  fullWidth
+                >
+                  <div className="flex items-center gap-2 whitespace-nowrap">
+                    <AppstoreAddOutlined rev={""} />
+                    <p>Masukkan Aktivitas</p>
+                  </div>
+                </ButtonSys>
+              </div>
             )}
           </div>
         </div>
