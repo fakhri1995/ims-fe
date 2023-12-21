@@ -229,7 +229,10 @@ export const JobDetail: FC = () => {
 
   return (
     <section className="py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 flex flex-col">
-      <div className={"flex flex-row gap-2"}>
+      <div
+        onClick={() => router.back()}
+        className={"flex flex-row gap-2 hover:cursor-pointer"}
+      >
         <LeftOutlined rev={""} style={{ fontSize: 20, color: "#188E4D" }} />
         <p
           className={
@@ -402,7 +405,7 @@ export const JobDetail: FC = () => {
                   className={"text-primary100 text-sm font-medium leading-6"}
                   style={{ position: "absolute", top: "90%" }}
                 >
-                  Sent
+                  {/* Sent */}
                 </p>
               ) : (
                 <p className={"text-primary100 text-sm font-medium leading-6"}>
@@ -607,6 +610,7 @@ export const JobDetail: FC = () => {
                   you:
                 </p>
                 <div
+                  onClick={() => router.push("/joinourteam")}
                   className={
                     "mt-3 px-4 py-2 rounded bg-primarygreen hover:cursor-pointer"
                   }
@@ -628,6 +632,7 @@ export const JobDetail: FC = () => {
                   or{" "}
                 </p>
                 <div
+                  onClick={() => router.push("/")}
                   className={
                     "mt-3 px-4 py-2 rounded bg-white border-2 border-primarygreen hover:cursor-pointer"
                   }
