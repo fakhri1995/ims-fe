@@ -3430,6 +3430,48 @@ const SpinnerIconSvg = ({ size, color }) => {
   return <Icon rev={""} component={spinnerIconSvg}></Icon>;
 };
 
+const ViewModuleIconSvg = ({ size, color }) => {
+  const viewModuleIconSvg = () => (
+    <svg
+      width="25"
+      height="24"
+      viewBox="0 0 25 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g id="view_module">
+        <path
+          id="Vector"
+          d="M15.17 5V11.5H9.83V5H15.17ZM16.17 11.5H21.5V5H16.17V11.5ZM15.17 19V12.5H9.83V19H15.17ZM16.17 12.5V19H21.5V12.5H16.17ZM8.83 12.5H3.5V19H8.83V12.5ZM8.83 11.5V5H3.5V11.5H8.83Z"
+          fill={color ? color : "white"}
+        />
+      </g>
+    </svg>
+  );
+  return <Icon rev={""} component={viewModuleIconSvg}></Icon>;
+};
+
+const ViewListIconSvg = ({ size, color }) => {
+  const viewListIconSvg = () => (
+    <svg
+      width="25"
+      height="24"
+      viewBox="0 0 25 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g id="view_list">
+        <path
+          id="Vector"
+          d="M3.5 14H7.5V10H3.5V14ZM3.5 19H7.5V15H3.5V19ZM3.5 9H7.5V5H3.5V9ZM8.5 14H21.5V10H8.5V14ZM8.5 19H21.5V15H8.5V19ZM8.5 5V9H21.5V5H8.5Z"
+          fill={color ? color : "#E6E6E6"}
+        />
+      </g>
+    </svg>
+  );
+  return <Icon rev={""} component={viewListIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -3571,4 +3613,6 @@ export {
   WorkIconSvg,
   AccessTimeIconSvg,
   SpinnerIconSvg,
+  ViewModuleIconSvg,
+  ViewListIconSvg,
 };

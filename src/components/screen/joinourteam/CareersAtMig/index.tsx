@@ -177,7 +177,7 @@ export const CareersAtMig: FC = () => {
       <JobListTable />
 
       {/* Notes */}
-      <div className="flex flex-col justify-center items-center ">
+      {/* <div className="flex flex-col justify-center items-center ">
         <p
           style={{ lineHeight: "120%" }}
           className="text-[32px] text-blackmig font-gilroysemibold font-normal text-center mt-[80px]"
@@ -206,6 +206,30 @@ export const CareersAtMig: FC = () => {
             Drop Resume Here
           </p>
         </div>
+      </div> */}
+      <div className="flex flex-col justify-center items-center">
+        <span className="h-[2px] bg-primarygreen w-[200px] lg:w-60 block" />
+
+        <p
+          style={{ lineHeight: "150%" }}
+          className="pb-0 text-base text-black text-center mt-4"
+        >
+          {t.vacancylistsectiondescriptionbelow}{" "}
+        </p>
+        <p
+          style={{ lineHeight: "150%" }}
+          className="pb-12 lg:pb-8 text-base text-black text-center"
+        >
+          {t.vacancylistsectiondescriptionbelow3}{" "}
+          <a
+            style={{ lineHeight: "150%" }}
+            href="mailto:hiring@mitrasolusi.group"
+            className="text-base text-blackmig font-semibold"
+          >
+            hiring@mitrasolusi.group
+          </a>{" "}
+          {t.vacancylistsectiondescriptionbelow2}
+        </p>
       </div>
       <Modal
         open={modalApply}

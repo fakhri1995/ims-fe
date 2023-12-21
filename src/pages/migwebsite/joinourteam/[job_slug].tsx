@@ -7,6 +7,7 @@ import {
   Apply,
   JobDetail as JobDetailSection,
   Overview,
+  RelateJob,
 } from "components/screen/joinourteam";
 
 const JobDetail: NextPage = () => {
@@ -18,7 +19,7 @@ const JobDetail: NextPage = () => {
 
       {/* Job detail */}
       <JobDetailSection />
-
+      {/* <RelateJob/> */}
       {/* Overview */}
       {/* <Overview /> */}
 
