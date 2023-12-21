@@ -182,8 +182,8 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                   >
                     <Text>{exp?.company} ·&nbsp;</Text>
                     <Text style={styles.textYear}>
-                      {momentFormatDate(exp?.start_date, "-", "MMM YYYY")}{" "}
-                      -&nbsp;
+                      {momentFormatDate(exp?.start_date, "", "MMM YYYY")}
+                      {exp?.start_date && " - "}
                       {momentFormatDate(exp?.end_date, "present", "MMM YYYY")}
                     </Text>
                   </View>
@@ -235,13 +235,22 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                       }}
                     >
                       <Text hyphenationCallback={(e) => breakText(e)}>
-                        {edu?.major} ·&nbsp;
+                        {edu?.major || "-"}
                       </Text>
-                      <Text style={styles.textYear}>
-                        {momentFormatDate(edu?.start_date, "-", "MMM YYYY")}{" "}
-                        -&nbsp;
-                        {momentFormatDate(edu?.end_date, "present", "MMM YYYY")}
-                      </Text>
+                      {(edu?.start_date || edu?.end_date) && (
+                        <View style={{ flexDirection: "row" }}>
+                          <Text style={{ marginHorizontal: "4px" }}>·</Text>
+                          <Text style={styles.textYear}>
+                            {momentFormatDate(edu?.start_date, "", "MMM YYYY")}
+                            {edu?.start_date && " - "}
+                            {momentFormatDate(
+                              edu?.end_date,
+                              "present",
+                              "MMM YYYY"
+                            )}
+                          </Text>
+                        </View>
+                      )}
                     </View>
                     {edu?.gpa && (
                       <Text style={styles.desc}>GPA {edu?.gpa}</Text>

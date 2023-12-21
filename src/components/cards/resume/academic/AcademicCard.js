@@ -39,12 +39,13 @@ const AcademicCard = ({
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   const [dataUpdateEdu, setDataUpdateEdu] = useState({
-    id: null,
+    id: 0,
     university: "",
     major: "",
-    gpa: null,
-    graduation_year: "",
-    resume_id: null,
+    gpa: "",
+    start_date: "",
+    end_date: "",
+    resume_id: 0,
   });
 
   // 2. use Effect
@@ -55,11 +56,12 @@ const AcademicCard = ({
   // 3. Handler
   const clearDataUpdate = () => {
     setDataUpdateEdu({
-      id: null,
+      id: 0,
       university: "",
       major: "",
-      gpa: null,
-      graduation_year: "",
+      gpa: "",
+      start_date: "",
+      end_date: "",
       resume_id: 12,
     });
     setEditIdx(null);
@@ -89,6 +91,8 @@ const AcademicCard = ({
         ...currentItem,
         id: active?.id,
         after_id: prevId ?? 0,
+        start_date: currentItem?.start_date_format,
+        end_date: currentItem?.end_date_format,
       };
       await handleUpdateSection("education", updatedItem);
       clearDataUpdate();
@@ -105,7 +109,7 @@ const AcademicCard = ({
       transition,
     };
     return (
-      <li ref={setNodeRef} style={style}>
+      <div ref={setNodeRef} style={style}>
         <AcademicBlock
           edu={data}
           dataUpdateEdu={dataUpdateEdu}
@@ -120,7 +124,7 @@ const AcademicCard = ({
           {...listeners}
           {...attributes}
         />
-      </li>
+      </div>
     );
   };
 
@@ -247,20 +251,7 @@ const AcademicCard = ({
                 </div>
               )}
             />
-            {/* <DatePicker
-              picker="year"
-              placeholder="Graduation Year"
-              allowClear={false}
-              className="w-1/2"
-              value={dataUpdateEdu?.graduation_year}
-              onChange={(date) => {
-                let input = date.format("YYYY-MM-DD");
-                setDataUpdateEdu((prev) => ({
-                  ...prev,
-                  graduation_year: moment(input),
-                }));
-              }}
-            /> */}
+
             <InputNumber
               placeholder="GPA"
               min={0.0}
@@ -270,7 +261,7 @@ const AcademicCard = ({
               onChange={(value) => {
                 setDataUpdateEdu((prev) => ({
                   ...prev,
-                  gpa: value,
+                  gpa: value || "",
                 }));
               }}
               className="w-1/2"

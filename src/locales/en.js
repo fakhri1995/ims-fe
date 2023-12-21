@@ -5,9 +5,9 @@ export default {
   career: "Career at MIG",
   contactus: "Contact Us",
   landingpagemetatitle:
-    "Mitramas Infosys Global: Hardware, Software, Tech Talent Solution.",
+    "Mitramas Infosys Global | Hardware, Software, IT Talent",
   landingpagemetadescription:
-    "Get the best laptop, PC, ATM rental, software development, and Tech Talent Solution services at cost-effective prices from MIG's technology solutions. Contact us!",
+    "Get the best laptop, PC, ATM rental, software development, and IT Talent Solution services from Mitramas Infosys Global. Contact Us!",
   hardwaremetatitle:
     "Managed Service | Rent Cost-Effective Laptops, PCs, and ATMs - MIG",
   hardwaremetadescription:

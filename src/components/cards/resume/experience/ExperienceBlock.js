@@ -60,6 +60,9 @@ const ExperienceBlock = ({
                   handleUpdateSection("experience", {
                     ...dataUpdateExp,
                     after_id: afterId,
+                    end_date: moment(dataUpdateExp.end_date).isValid()
+                      ? dataUpdateExp?.end_date
+                      : "",
                   });
                 }
                 clearDataUpdate();
@@ -92,10 +95,12 @@ const ExperienceBlock = ({
           <RangePicker
             allowEmpty
             value={[
-              dataUpdateExp.start_date
+              moment(dataUpdateExp.start_date).isValid()
                 ? moment(dataUpdateExp.start_date)
                 : null,
-              dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
+              moment(dataUpdateExp.end_date).isValid()
+                ? moment(dataUpdateExp.end_date)
+                : null,
             ]}
             open={calendarOpen}
             onOpenChange={setCalendarOpen}
@@ -148,7 +153,8 @@ const ExperienceBlock = ({
             <p className="text-mono50 mb-1">
               {exp.company} ·&nbsp;
               <strong>
-                {momentFormatDate(exp.start_date, "-", "MMM YYYY")} -&nbsp;
+                {momentFormatDate(exp.start_date, "", "MMM YYYY")}
+                {exp?.start_date && " - "}
                 {momentFormatDate(exp.end_date, <em>present</em>, "MMM YYYY")}
               </strong>
             </p>

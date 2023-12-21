@@ -5,9 +5,9 @@ export default {
   career: "Karir di MIG",
   contactus: "Kontak Kami",
   landingpagemetatitle:
-    "Sewa Laptop, Buat Software, dan tech talent solution bersama MIG.",
+    "Mitramas Infosys Global | Hardware, Software, Talent IT",
   landingpagemetadescription:
-    "Dapatkan sewa laptop, PC, ATM, pembuatan website & software, dan tech talent solution terbaik dengan biaya efektif milik konsultan IT MIG. Hubungi kami!",
+    "Dapatkan sewa laptop, PC, ATM, jasa pembuatan software, dan tech talent terbaik dengan biaya efektif dari Mitramas Infosys Global. Hubungi kami!",
   hardwaremetatitle:
     "Managed Service dengan Biaya Efektif: Sewa Laptop, PC, ATM - MIG",
   hardwaremetadescription:

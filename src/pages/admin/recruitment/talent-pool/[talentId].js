@@ -257,23 +257,32 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                           <p className="text-primary100 font-bold">
                             {item.university}
                           </p>
-                          <p className="text-mono50">
-                            {item.major} ·{" "}
-                            <strong>
-                              {momentFormatDate(
-                                item.start_date,
-                                "-",
-                                "MMM YYYY"
-                              )}{" "}
-                              -{" "}
-                              {momentFormatDate(
-                                item.end_date,
-                                <em>present</em>,
-                                "MMM YYYY"
-                              )}
-                            </strong>
-                          </p>
-                          <p className="text-mono50">GPA {item.gpa}</p>
+                          <div className="text-mono50 mb-1 flex gap-1">
+                            <p>{item.major}</p>
+                            {(item?.start_date || item?.end_date) && (
+                              <div className="flex gap-1">
+                                <p>·</p>
+                                <p>
+                                  <strong>
+                                    {momentFormatDate(
+                                      item?.start_date,
+                                      "",
+                                      "MMM YYYY"
+                                    )}
+                                    {item?.start_date && " - "}
+                                    {momentFormatDate(
+                                      item?.end_date,
+                                      <em>present</em>,
+                                      "MMM YYYY"
+                                    )}
+                                  </strong>
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                          {item?.gpa && (
+                            <p className="text-mono50">GPA {item?.gpa}</p>
+                          )}
                         </Timeline.Item>
                       ))}
                     </Timeline>
@@ -296,13 +305,13 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
                             {item.company} ·{" "}
                             <strong>
                               {momentFormatDate(
-                                item.start_date,
-                                "-",
+                                item?.start_date,
+                                "",
                                 "MMM YYYY"
-                              )}{" "}
-                              -&nbsp;
+                              )}
+                              {item?.start_date && " - "}
                               {momentFormatDate(
-                                item.end_date,
+                                item?.end_date,
                                 <em>present</em>,
                                 "MMM YYYY"
                               )}

@@ -51,6 +51,8 @@ const AcademicBlock = ({
                   handleUpdateSection("education", {
                     ...dataUpdateEdu,
                     after_id: afterId ?? 0,
+                    start_date: dataUpdateEdu?.start_date_format,
+                    end_date: dataUpdateEdu?.end_date_format,
                   });
                 }
                 clearDataUpdate();
@@ -84,10 +86,12 @@ const AcademicBlock = ({
             <RangePicker
               allowEmpty
               value={[
-                dataUpdateEdu.start_date
+                moment(dataUpdateEdu.start_date).isValid()
                   ? moment(dataUpdateEdu.start_date)
                   : null,
-                dataUpdateEdu.end_date ? moment(dataUpdateEdu.end_date) : null,
+                moment(dataUpdateEdu.end_date).isValid()
+                  ? moment(dataUpdateEdu.end_date)
+                  : null,
               ]}
               open={calendarOpen}
               onOpenChange={setCalendarOpen}
@@ -96,8 +100,10 @@ const AcademicBlock = ({
                 let endDate = datestring[1];
                 setDataUpdateEdu((prev) => ({
                   ...prev,
-                  start_date: startDate,
-                  end_date: endDate,
+                  start_date: startDate || "",
+                  end_date: endDate || "",
+                  start_date_format: startDate || "",
+                  end_date_format: endDate || "",
                 }));
               }}
               picker="month"
@@ -110,7 +116,8 @@ const AcademicBlock = ({
                     onClick={() => {
                       setDataUpdateEdu((prev) => ({
                         ...prev,
-                        end_date: null,
+                        end_date: "",
+                        end_date_format: "",
                       }));
                       setCalendarOpen(false);
                     }}
@@ -120,20 +127,6 @@ const AcademicBlock = ({
                 </div>
               )}
             />
-            {/* <DatePicker
-              picker="year"
-              placeholder="Graduation Year"
-              allowClear={false}
-              className="w-1/2"
-              value={moment(dataUpdateEdu.graduation_year)}
-              onChange={(date) => {
-                let input = date?.format("YYYY-MM-DD");
-                setDataUpdateEdu((prev) => ({
-                  ...prev,
-                  graduation_year: moment(input),
-                }));
-              }}
-            /> */}
             <InputNumber
               placeholder="GPA"
               min={0.0}
@@ -157,14 +150,26 @@ const AcademicBlock = ({
             <p className="text-primary100 font-bold mb-1">
               {edu?.university || "-"}
             </p>
-            <p className="text-mono50 mb-1">
-              {edu?.major || "-"} ·&nbsp;
-              <strong>
-                {momentFormatDate(edu?.start_date, "-", "MMM YYYY")} -&nbsp;
-                {momentFormatDate(edu?.end_date, <em>present</em>, "MMM YYYY")}
-              </strong>
-            </p>
-            {edu?.gpa && <p className="text-mono50">GPA {edu?.gpa || "-"}</p>}
+            <div className="text-mono50 mb-1 flex gap-1">
+              <p>{edu?.major || "-"}</p>
+              {(edu?.start_date || edu?.end_date) && (
+                <div className="flex gap-1">
+                  <p>·</p>
+                  <p>
+                    <strong>
+                      {momentFormatDate(edu?.start_date, "", "MMM YYYY")}
+                      {edu?.start_date && " - "}
+                      {momentFormatDate(
+                        edu?.end_date,
+                        <em>present</em>,
+                        "MMM YYYY"
+                      )}
+                    </strong>
+                  </p>
+                </div>
+              )}
+            </div>
+            {edu?.gpa && <p className="text-mono50">GPA {edu?.gpa}</p>}
           </div>
           <div className="flex flex-row space-x-2 items-start">
             {isAllowedToUpdateCandidate && (

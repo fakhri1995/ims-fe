@@ -48,6 +48,7 @@ import {
   SIDEBAR_CMS_MESSAGE,
   SIDEBAR_CMS_PRODUCT,
   SIDEBAR_COMPANY,
+  SIDEBAR_COMPANY_CLIENT,
   SIDEBAR_COMPANY_PROFILE,
   SIDEBAR_CONTRACT,
   SIDEBAR_CONTRACT_INVOICE,
@@ -238,7 +239,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               <Link href="/company/myCompany">Profil Perusahaan</Link>
             </Menu.Item>
           )}
-          {hasPermission(SIDEBAR_COMPANY_PROFILE) && (
+          {hasPermission(SIDEBAR_COMPANY_CLIENT) && (
             <Menu.Item key="52">
               <Link href="/company/clients">Klien</Link>
             </Menu.Item>
