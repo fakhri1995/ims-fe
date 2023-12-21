@@ -739,7 +739,7 @@ export const AttendanceStaffAktivitasSection: FC<
       <section className="mig-platform">
         <h3 className="mig-heading--4">Aktivitas</h3>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <Tabs
             defaultActiveKey="1"
             className="md:w-1/2"
@@ -857,7 +857,7 @@ export const AttendanceStaffAktivitasSection: FC<
             </div>
           </Modal>
 
-          <div className="flex flex-wrap gap-2 md:w-1/2 justify-end items-center">
+          <div className="flex flex-wrap gap-2 w-full md:w-1/2 md:justify-end items-center">
             <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
               <ButtonSys
                 type="default"
