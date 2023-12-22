@@ -466,11 +466,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-2 md:grid-cols-10 px-5">
+        <div className="grid grid-cols-2 md:grid-cols-8 lg:grid-cols-10 px-5">
           {dataProfile.data.role === 1 ? (
             <>
               {/* PENYELESAIAN TIKET */}
-              <div className="col-span-2 md:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 md:mx-3">
+              <div className="col-span-2 md:col-span-4 lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 md:mx-3">
                 <div className="flex items-center justify-between mb-4">
                   <H1>Penyelesaian Tiket</H1>
                 </div>
@@ -580,7 +580,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   <Spin />
                 </>
               ) : (
-                <div className="col-span-2 flex flex-col md:col-span-3 lg:col-span-4 xl:col-span-3 mb-6">
+                <div className="col-span-2 flex flex-col md:col-span-4 lg:col-span-4 xl:col-span-3 mb-6">
                   <div className=" mb-3 grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-2 md:gap-0">
                     <div className="col-span-1 shadow-md rounded-md bg-white p-5 flex flex-row justify-between md:mx-2 mb-2 space-x-2 xl:space-x-0">
                       <div>
@@ -688,7 +688,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   </div>
                 </div>
               )}
-              <div className="col-span-2 md:col-span-4 lg:col-span-3 xl:col-span-4 flex flex-col mb-6">
+              <div className="col-span-2 md:col-span-8 lg:col-span-3 xl:col-span-4 flex flex-col mb-6">
                 {/* BUAT TIKET */}
                 <div
                   className="btn-gradient shadow-md rounded-md transition ease-in-out cursor-pointer p-5 md:mx-3 flex items-center mb-2 "
@@ -780,9 +780,9 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
             </>
           ) : (
-            <div className="col-span-2 md:col-span-10 grid grid-cols-4 md:grid-cols-12">
-              <div className="col-span-4 md:col-span-8 grid grid-cols-2 md:grid-cols-8 mb-6 gap-2">
-                <div className="md:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
+            <div className="col-span-2 md:col-span-8 lg:col-span-10 grid grid-cols-4 lg:grid-cols-12">
+              <div className="col-span-4 lg:col-span-8 grid grid-cols-2 lg:grid-cols-8 mb-6 gap-2">
+                <div className="lg:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
                   <div>
                     <TicketIconSvg size={30} color={`#ED962F`} />
                   </div>
@@ -800,7 +800,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                     </div>
                   </div>
                 </div>
-                <div className="md:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
+                <div className="lg:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
                   <div>
                     <TicketIconSvg size={30} color={`#2F80ED`} />
                   </div>
@@ -815,7 +815,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                     </div>
                   </div>
                 </div>
-                <div className="md:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
+                <div className="lg:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
                   <div>
                     <TicketIconSvg size={30} color={`#808080`} />
                   </div>
@@ -830,7 +830,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                     </div>
                   </div>
                 </div>
-                <div className="md:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
+                <div className="lg:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
                   <div>
                     <TicketIconSvg size={30} color={`#BF4A40`} />
                   </div>
@@ -847,7 +847,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
               </div>
               <div
-                className="col-span-4 shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 md:mx-3 flex items-center mb-6"
+                className="col-span-4 shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 lg:mx-3 flex items-center mb-6"
                 onClick={() => {
                   if (!canCreateNewTicket) {
                     permissionWarningNotification("Membuat", "Tiket Baru");
@@ -872,13 +872,13 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
             </div>
           )}
           {/* TABLE TIKET */}
-          <div className="col-span-2 md:col-span-10 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 md:mx-2">
+          <div className="col-span-2 md:col-span-10 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
             <div className="flex items-center justify-between mb-4">
               <H1>Semua Tiket</H1>
             </div>
 
             {/* Start: Search criteria */}
-            <div className="mb-4 grid grid-cols-2 lg:flex gap-2 lg:justify-between">
+            <div className="mb-4 grid grid-cols-1 md:grid-cols-2 lg:flex gap-2 lg:justify-between">
               {/* Search by keyword (nomor tiket) */}
               <div className="lg:w-2/12">
                 <Input
@@ -928,7 +928,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by date */}
-              <div className="lg:w-3/12">
+              <div className="md:col-span-2 lg:w-3/12">
                 <DatePicker.RangePicker
                   style={{ width: `100%` }}
                   allowEmpty
@@ -1097,11 +1097,12 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 </Select>
               </div>
 
-              <div className="">
+              <div className="md:col-span-2 w-full lg:w-fit">
                 <ButtonSys
                   type={`primary`}
                   onClick={onFilterTickets}
                   disabled={!isAllowedGetTickets}
+                  fullWidth
                 >
                   {/* <div className='mr-1'>
                                         <SearchIconSvg size={15} color={`#ffffff`} />

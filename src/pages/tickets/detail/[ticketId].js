@@ -556,11 +556,11 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
       st={st}
       pathArr={pathArr}
     >
-      <div className=" flex flex-col">
-        <div className=" grid grid-cols-1 md:grid-cols-11 px-5">
-          <div className="col-span-3 flex flex-col">
+      <div className="flex flex-col">
+        <div className=" grid grid-cols-1 md:grid-cols-5 lg:grid-cols-11 px-5 gap-4">
+          <div className="md:col-span-2 lg:col-span-3 flex flex-col gap-4">
             {/* Informasi Umum Tiket */}
-            <div className=" flex flex-col mb-2 md:mr-2 shadow-md rounded-md bg-white p-5">
+            <div className=" flex flex-col shadow-md rounded-md bg-white p-5">
               <div className=" flex flex-col mb-4">
                 <div className=" flex items-center justify-center mb-2">
                   <div className="mr-2">
@@ -651,7 +651,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               )}
             </div>
             {/* INFORMASI DETAIL TIKET */}
-            <div className="flex flex-col my-2 md:mr-2 shadow-md rounded-md bg-white p-5">
+            <div className="flex flex-col shadow-md rounded-md bg-white p-5">
               <div className=" mb-7">
                 <H1>Detail Masalah</H1>
               </div>
@@ -696,7 +696,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               </div>
             </div>
             {/* BUKTI KEJADIAN TIKET */}
-            <div className="flex flex-col my-2 md:mr-2 shadow-md rounded-md bg-white p-5">
+            <div className="flex flex-col shadow-md rounded-md bg-white p-5">
               <div className=" mb-7">
                 <H1>Bukti Kejadian</H1>
               </div>
@@ -721,7 +721,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               )}
             </div>
             {/* EKSPOR TIKET */}
-            <div className="flex items-center justify-center mb-2 md:mr-2 shadow-md rounded-md bg-white p-5">
+            <div className="flex items-center justify-center shadow-md rounded-md bg-white p-5">
               {loadingexportticket ? (
                 <>
                   <Spin />
@@ -763,19 +763,19 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         });
                     }}
                   >
-                    <div className=" mr-1">
+                    <div className="flex items-center gap-2">
                       <FileExportIconSvg size={15} color={`#35763B`} />
+                      <p className="whitespace-nowrap">Ekspor Tiket</p>
                     </div>
-                    Ekspor Tiket
                   </ButtonSys>
                 </div>
               )}
             </div>
           </div>
-          <div className=" col-span-8 flex flex-col">
+          <div className="md:col-span-3 lg:col-span-8 flex flex-col gap-4">
             {/* STATUS ASSIGN DEADLINE TIKET */}
-            <div className=" w-full flex justify-between mb-2 md:ml-2 shadow-md rounded-md bg-white p-5">
-              <div className="w-1/2 pr-8 flex items-center justify-between mb-2">
+            <div className="w-full flex justify-between shadow-md rounded-md bg-white p-5 gap-2 lg:gap-8">
+              <div className="w-1/2 flex items-center justify-between mb-2">
                 <div className=" flex flex-col">
                   <div className="mb-2">
                     <Label>Status</Label>
@@ -921,7 +921,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   ) : null
                 ) : null}
               </div> */}
-              <div className=" w-1/2 pl-8 flex items-center justify-between mb-2">
+              <div className="w-1/2 flex items-center justify-between mb-2">
                 <div className=" flex flex-col">
                   <div className=" mb-2">
                     <Label>
@@ -948,10 +948,10 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                           setdrawedeadlineticket(true);
                         }}
                       >
-                        <div className="mr-1">
+                        <div className="flex items-center gap-2">
                           <CalendartimeIconSvg size={15} color={`#ffffff`} />
+                          <p>Tentukan Deadline</p>
                         </div>
-                        Tentukan Deadline
                       </button>
                     ) : (
                       <div className="flex items-center">
@@ -993,8 +993,8 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 ) : null}
               </div>
             </div>
-            <div className="flex w-full flex-col md:flex-row">
-              <div className="w-full md:w-6/12 md:mx-2 flex flex-col">
+            <div className="flex w-full flex-col lg:flex-row gap-4">
+              <div className="w-full lg:w-6/12 flex flex-col">
                 {/* Task */}
                 {dataProfile.data.role === 1 && (
                   <div className="my-2">
@@ -1290,7 +1290,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   </>
                 )}
               </div>
-              <div className="flex flex-col w-full md:w-6/12">
+              <div className="flex flex-col w-full lg:w-6/12">
                 {/* CATATAN TIKET */}
                 {!isClient && (
                   <TicketDetailCatatanCard
@@ -1365,7 +1365,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 /> */}
 
                 {/* AKTIVITAS TIKET */}
-                <div className="shadow-md rounded-md bg-white p-5 mt-2 md:ml-2">
+                <div className="shadow-md rounded-md bg-white p-5 mt-2 lg:ml-2">
                   <div className=" flex items-center justify-between mb-5">
                     <H1>Aktivitas</H1>
                   </div>

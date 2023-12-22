@@ -141,7 +141,7 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
           />
         </div>
       ) : (
-        <h1>Selamat datang di dashboard</h1>
+        <h1 className="px-5 md:px-0">Selamat datang di dashboard</h1>
       )}
     </LayoutDashboard>
   );

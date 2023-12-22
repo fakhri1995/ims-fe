@@ -345,8 +345,8 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
               <H1>Riwayat Tiket</H1>
             </div>
           </div>
-          <div className=" flex items-center mb-5">
-            <div className="mx-1 w-2/12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:flex gap-2 items-center mb-5">
+            <div className="lg:w-2/12">
               <Input
                 value={
                   searcingfilterhistories === ""
@@ -366,7 +366,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 }}
               />
             </div>
-            <div className="mx-1 w-2/12">
+            <div className="lg:w-2/12">
               <Select
                 value={
                   tickettypefilterhistories === ""
@@ -391,7 +391,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 ))}
               </Select>
             </div>
-            <div className=" w-3/12 mx-1">
+            <div className="md:col-span-2 lg:w-3/12">
               <DatePicker.RangePicker
                 style={{ width: `100%` }}
                 allowEmpty
@@ -408,7 +408,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 }}
               />
             </div>
-            <div className=" mx-1 w-5/12">
+            <div className="lg:w-5/12">
               <TreeSelect
                 style={{ width: `100%` }}
                 allowClear
@@ -436,7 +436,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 }}
               ></TreeSelect>
             </div>
-            <div className="mx-1 w-2/12">
+            <div className="lg:w-2/12">
               <Select
                 value={
                   helperfromresfilterhistories === ""
@@ -512,11 +512,12 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 })}
               </Select>
             </div>
-            <div className="mx-1 w-1/12">
+            <div className="md:col-span-2 w-full lg:w-1/12">
               <ButtonSys
                 type={`primary`}
                 onClick={onFilterTicketHistories}
                 disabled={!isAllowedToGetClosedTicket}
+                fullWidth
               >
                 {/* <div className='mr-1'>
                                     <SearchIconSvg size={15} color={`#ffffff`} />
