@@ -15,7 +15,6 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   RECRUITMENT_ROLES_GET,
-  RECRUITMENT_ROLES_LIST_GET,
   RECRUITMENT_ROLE_ADD,
   RECRUITMENT_ROLE_DELETE,
   RECRUITMENT_ROLE_GET,
@@ -45,7 +44,6 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetRolesList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
   const isAllowedToGetRoles = hasPermission(RECRUITMENT_ROLES_GET);
   const isAllowedToGetRoleTypes = hasPermission(
     RECRUITMENT_ROLE_TYPES_LIST_GET
