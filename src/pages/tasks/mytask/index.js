@@ -1016,9 +1016,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             )}
           </>
         ) : (
-          <div className="grid grid-cols-11 px-5" id="wrapper1">
+          <div className="grid grid-cols-12 px-5 gap-6" id="wrapper1">
             {/* SEGERA BERAKHIR */}
-            <div className="col-span-11 md:col-span-5 flex flex-col shadow-md rounded-md bg-gray-50 p-5 mb-6 md:mr-3">
+            <div className="col-span-12 lg:col-span-6 flex flex-col shadow-md rounded-md bg-gray-50 p-5">
               {loadinguserlasttwo ? (
                 <>
                   <Spin />
@@ -1047,7 +1047,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       </div>
                     )}
                   </div>
-                  <div className=" h-full">
+                  <div className="h-full">
                     {userlasttwo.length === 0 ? (
                       <div className=" flex w-full h-full items-center justify-center">
                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
@@ -1074,7 +1074,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                                 "bg-state1 hover:bg-state12 text-white mb-2":
                                   isOverdue,
                               },
-                              "rounded transition duration-300 shadow p-5 flex justify-between cursor-pointer h-full md:h-3/6 block mb-2"
+                              "rounded transition duration-300 shadow p-5 flex justify-between cursor-pointer block mb-2"
                             );
 
                             // Saat ini: 100 <= time_limit_percentage <= 0
@@ -1182,7 +1182,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               )}
             </div>
             {/* STATUS TASK */}
-            <div className="col-span-11 md:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 md:mx-3">
+            <div className="col-span-12 md:col-span-6 lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5">
               <div className="flex items-center justify-between mb-4">
                 <H1>Status Task</H1>
                 <div className="flex items-center">
@@ -1468,7 +1468,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               )}
             </div>
             {/* TIPE TASK */}
-            <div className="col-span-11 md:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 md:mx-3">
+            <div className="col-span-12 md:col-span-6 lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5">
               <div className="flex items-center justify-between mb-4">
                 <H1>Tipe Task Terbanyak</H1>
                 <div className="flex items-center">
@@ -1651,7 +1651,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               )}
             </div>
             {/* TABLE DAFTAR TASK */}
-            <div className="col-span-11 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 md:mr-3">
+            <div className="col-span-12 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 ">
               <div className="flex items-center justify-between mb-4">
                 <H1>Semua Task</H1>
               </div>

@@ -311,17 +311,17 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
     >
       <div className=" flex flex-col px-5">
         <div className="flex flex-col shadow-md rounded-lg bg-white p-5 mb-6 mx-3">
-          <div className="flex justify-between items-center mb-5">
-            <div className="flex items-center">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-5">
+            <div className="flex items-center gap-2 mb-2 md:mb-0">
               <div
-                className="mr-2 cursor-pointer flex items-center"
+                className="cursor-pointer flex items-center"
                 onClick={() => {
                   rt.push(`/tickets`);
                 }}
               >
                 <BackIconSvg size={15} color={`#000000`} />
               </div>
-              <div className=" mr-2 flex items-center">
+              <div className="flex items-center">
                 <H1>Atur Tiket</H1>
               </div>
               <div className=" flex items-center">
@@ -357,24 +357,25 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                 </Popover>
               </div>
             </div>
-            <div className="w-8/12 flex justify-end">
-              <div className=" mx-2">
+            <div className="lg:w-8/12 gap-2 flex flex-col md:flex-row md:justify-end">
+              <div className="w-full md:w-fit">
                 <ButtonSys
                   type="primary"
                   onClick={() => {
                     setdrawertickettypescreate(true);
                   }}
                   disabled={!canAddNewTicketType}
+                  fullWidth
                 >
-                  <div className=" mr-1">
+                  <div className="flex items-center gap-2">
                     <FilePlusIconSvg size={15} color={`#ffffff`} />
+                    <p className="whitespace-nowrap">Tambah Pengaturan</p>
                   </div>
-                  Tambah Pengaturan
                 </ButtonSys>
               </div>
-              <div className="mx-2">
+              <div className="w-full md:w-3/5">
                 <Input
-                  style={{ width: `20rem` }}
+                  // style={{ width: `20rem` }}
                   placeholder="Nama tipe task.."
                   allowClear
                   disabled={!isAllowedToGetTicketTypes}
