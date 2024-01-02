@@ -1177,20 +1177,21 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   )}
                 </div>
               </div>
-              {/* <div
+              <div
                 className={"flex flex-col gap-1 hover:cursor-pointer"}
                 onClick={() => setActiveTab("2")}
               >
                 <p
-                  className={`${activeTab == "2" ? `text-primarygreen` : `text-mono80`
-                    } text-sm font-bold leading-6 text-underline`}
+                  className={`${
+                    activeTab == "2" ? `text-primarygreen` : `text-mono80`
+                  } text-sm font-bold leading-6 text-underline`}
                 >
                   Pertanyaan Untuk Pelamar
                 </p>
                 {activeTab == "2" && (
                   <div className={"bg-primarygreen h-0.5 w-full "} />
                 )}
-              </div> */}
+              </div>
             </div>
             {/* <Tabs
               defaultActiveKey="1"
@@ -1453,29 +1454,429 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                         }}
                       />
                     </Form.Item>
+                    <p
+                      className={
+                        "text-mono30 text-xs font-medium leading-5 mb-6"
+                      }
+                    >
+                      {" "}
+                      Daftar Isian *{" "}
+                    </p>
+                    {datacreate.public_informations.length === 0 ? (
+                      <>
+                        <Empty
+                          image={Empty.PRESENTED_IMAGE_SIMPLE}
+                          description="Daftar isian masih kosong"
+                        />
+                      </>
+                    ) : (
+                      datacreate.public_informations.map((doc, idx) => {
+                        return (
+                          <div
+                            key={idx}
+                            className="bg-white flex flex-col shadow-md rounded-md p-3 mb-4 border"
+                          >
+                            <div className="flex items-center justify-between mb-6">
+                              <span className="block">Wajib Diisi</span>
+                              <Switch
+                                checked={doc.required}
+                                onChange={(checked) => {
+                                  var temp = [
+                                    ...datacreate.public_informations,
+                                  ];
+                                  temp[idx].required = checked;
+                                  setdatacreate((prev) => ({
+                                    ...prev,
+                                    public_informations: temp,
+                                  }));
+                                }}
+                              />
+                            </div>
+                            <div key={idx} className="grid grid-cols-2 mb-3">
+                              <div className="col-span-1 mr-1 mb-3 flex items-center">
+                                <div className="mr-2">
+                                  <Input
+                                    value={doc.name}
+                                    placeholder="Nama"
+                                    onChange={(e) => {
+                                      var temp = [
+                                        ...datacreate.public_informations,
+                                      ];
+                                      temp[idx].name = e.target.value;
+                                      setdatacreate((prev) => ({
+                                        ...prev,
+                                        public_informations: temp,
+                                      }));
+                                    }}
+                                  ></Input>
+                                </div>
+                              </div>
+                              <div className="col-span-1 ml-1 mb-3">
+                                <Select
+                                  key={idx}
+                                  // name={`name`}
+                                  value={doc.type}
+                                  style={{ width: `100%` }}
+                                  onChange={(value) => {
+                                    var temp = [
+                                      ...datacreate.public_informations,
+                                    ];
+                                    delete temp[idx].lists;
+                                    temp[idx].type = value;
+                                    if (value === 3) {
+                                      temp[idx].lists = [];
+                                    } else if (value === 5) {
+                                      temp[idx].lists = [];
+                                    }
+                                    temp[idx].required = false;
+                                    setdatacreate((prev) => ({
+                                      ...prev,
+                                      public_informations: temp,
+                                    }));
+                                  }}
+                                >
+                                  <Select.Option value={1}>
+                                    <div className="flex items-center">
+                                      <AlignJustifiedIconSvg
+                                        size={12}
+                                        color={`#35763B`}
+                                      />
+                                      Teks
+                                    </div>
+                                  </Select.Option>
+                                  <Select.Option value={2}>
+                                    <div className="flex items-center">
+                                      <AlignJustifiedIconSvg
+                                        size={12}
+                                        color={`#35763B`}
+                                      />
+                                      Paragraf
+                                    </div>
+                                  </Select.Option>
+                                  <Select.Option value={3}>
+                                    <div className="flex items-center">
+                                      <CheckboxIconSvg
+                                        size={12}
+                                        color={`#35763B`}
+                                      />
+                                      Ceklis
+                                    </div>
+                                  </Select.Option>
+                                  <Select.Option value={4}>
+                                    <div className="flex items-center">
+                                      <ListNumbersSvg
+                                        size={12}
+                                        color={`#35763B`}
+                                      />
+                                      Numeral
+                                    </div>
+                                  </Select.Option>
+                                  <Select.Option value={5}>
+                                    <div className="flex items-center">
+                                      <ListNumbersSvg
+                                        size={12}
+                                        color={`#35763B`}
+                                      />
+                                      Dropdown
+                                    </div>
+                                  </Select.Option>
+                                  <Select.Option value={6}>
+                                    <div className="flex items-center">
+                                      <UploadIconSvg
+                                        size={12}
+                                        color={`#35763B`}
+                                      />
+                                      Unggah File
+                                    </div>
+                                  </Select.Option>
+                                </Select>
+                              </div>
 
-                    {/* <div
-                    className="mb-12 border border-dashed border-primary100 hover:border-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer"
-                    onClick={() => {
-                      setdatacreate((prev) => ({
-                        ...prev,
-                        public_informations: [
-                          ...prev.public_informations,
-                          {
-                            type: 1,
-                            name: "",
-                            description: "",
-                            required: false,
-                          },
-                        ],
-                      }));
-                      settempinfo([...tempinfo, ""]);
-                    }}
-                  >
-                    <div className="text-primary100 hover:text-primary75">
-                      + Tambah Field Baru
+                              <div className="mb-5 col-span-2">
+                                {doc.type === 2 ? (
+                                  <ReactQuill
+                                    theme="snow"
+                                    value={doc.description}
+                                    modules={modules}
+                                    formats={formats}
+                                    className="h-44 pb-10"
+                                    onChange={(e) => {
+                                      var temp = [
+                                        ...datacreate.public_informations,
+                                      ];
+                                      temp[idx].description = e.target.value;
+                                      setdatacreate((prev) => ({
+                                        ...prev,
+                                        public_informations: temp,
+                                      }));
+                                    }}
+                                  />
+                                ) : (
+                                  <Input
+                                    placeholder="Deskripsi"
+                                    value={doc.description}
+                                    onChange={(e) => {
+                                      var temp = [
+                                        ...datacreate.public_informations,
+                                      ];
+                                      temp[idx].description = e.target.value;
+                                      setdatacreate((prev) => ({
+                                        ...prev,
+                                        public_informations: temp,
+                                      }));
+                                    }}
+                                  ></Input>
+                                )}
+                              </div>
+
+                              {doc.type === 3 && (
+                                <div className="flex flex-col mb-3 col-span-2">
+                                  <div className="mb-3 flex flex-col">
+                                    <div className="mb-1">
+                                      <Label>Keterangan</Label>
+                                    </div>
+                                    {doc.lists.map((doc2, idx2) => {
+                                      return (
+                                        <div
+                                          key={idx2}
+                                          className="flex items-center justify-between mb-2"
+                                        >
+                                          {/* <div className="cursor-pointer font-bold mr-2">
+                                                                                  ::
+                                                                              </div> */}
+                                          <div className="flex items-center">
+                                            <Checkbox
+                                              style={{ marginRight: `0.5rem` }}
+                                              checked
+                                            />
+                                            {doc2}
+                                          </div>
+                                          <div
+                                            className=" cursor-pointer"
+                                            onClick={() => {
+                                              var temp = [
+                                                ...datacreate.public_informations,
+                                              ];
+                                              temp[idx].lists.splice(idx2, 1);
+                                              setdatacreate((prev) => ({
+                                                ...prev,
+                                                public_informations: temp,
+                                              }));
+                                            }}
+                                          >
+                                            <CircleXIconSvg
+                                              size={15}
+                                              color={`#BF4A40`}
+                                            />
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                    <div className="flex items-center">
+                                      <div
+                                        className="mr-1 cursor-pointer hover:text-primary100"
+                                        onClick={() => {
+                                          settempinfo([]);
+                                          var temp = [
+                                            ...datacreate.public_informations,
+                                          ];
+                                          temp[idx].lists.push(tempinfo[idx]);
+                                          setdatacreate((prev) => ({
+                                            ...prev,
+                                            public_informations: temp,
+                                          }));
+                                        }}
+                                      >
+                                        <H2>+</H2>
+                                      </div>
+                                      <Input
+                                        placeholder="Tambah"
+                                        value={tempinfo[idx]}
+                                        onChange={(e) => {
+                                          var temptempcb = [...tempinfo];
+                                          temptempcb[idx] = e.target.value;
+                                          settempinfo(temptempcb);
+                                        }}
+                                        bordered={false}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {doc.type === 5 && (
+                                <div className="flex flex-col mb-3 col-span-2">
+                                  {doc.lists.map((doc4, idx4) => {
+                                    return (
+                                      <div
+                                        key={idx4}
+                                        className=" px-3 flex items-center mb-2"
+                                      >
+                                        {/* <div className="cursor-pointer font-bold mr-2">
+                                                                              ::
+                                                                          </div> */}
+                                        <div className="flex items-center mr-2">
+                                          <Input
+                                            placeholder="Tambah"
+                                            style={{ marginRight: `0.5rem` }}
+                                            value={doc4}
+                                            onChange={(e) => {
+                                              var temp = [
+                                                ...datacreate.public_informations,
+                                              ];
+                                              temp[idx].lists[idx4] =
+                                                e.target.value;
+                                              setdatacreate((prev) => ({
+                                                ...prev,
+                                                public_informations: temp,
+                                              }));
+                                            }}
+                                            bordered={false}
+                                          />
+                                          <div
+                                            className="cursor-pointer flex items-center text-center justify-center"
+                                            onClick={() => {
+                                              var temp = [
+                                                ...datacreate.public_informations,
+                                              ];
+                                              temp[idx].lists.splice(idx4, 1);
+                                              setdatacreate((prev) => ({
+                                                ...prev,
+                                                public_informations: temp,
+                                              }));
+                                            }}
+                                          >
+                                            <CircleXIconSvg
+                                              size={15}
+                                              color={`#BF4A40`}
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                  <div className="flex items-center px-3">
+                                    <div
+                                      className="mr-1 cursor-pointer hover:text-primary100"
+                                      onClick={() => {
+                                        var temp = [
+                                          ...datacreate.public_informations,
+                                        ];
+                                        temp[idx].lists.push("");
+                                        setdatacreate((prev) => ({
+                                          ...prev,
+                                          public_informations: temp,
+                                        }));
+                                      }}
+                                    >
+                                      <h1 className="font-semibold text-sm hover:text-primary100">
+                                        + Tambah Value
+                                      </h1>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* COPY dan DELETE */}
+                              <div className=" col-span-2 flex justify-end">
+                                <div
+                                  className="mx-1 cursor-pointer"
+                                  onClick={() => {
+                                    var templastdata = {};
+                                    if (doc.type === 1 || doc.type === 2) {
+                                      templastdata = {
+                                        name: doc.name,
+                                        type: doc.type,
+                                        description: doc.description,
+                                      };
+                                    } else if (doc.type === 3) {
+                                      templastdata = {
+                                        name: doc.name,
+                                        type: doc.type,
+                                        description: doc.description,
+                                        lists: [...doc.lists],
+                                      };
+                                    } else if (doc.type === 4) {
+                                      templastdata = {
+                                        name: doc.name,
+                                        type: doc.type,
+                                        description: doc.description,
+                                      };
+                                    } else if (doc.type === 5) {
+                                      templastdata = {
+                                        name: doc.name,
+                                        type: doc.type,
+                                        description: doc.description,
+                                        lists: [...doc.lists],
+                                      };
+                                    } else if (doc.type === 6) {
+                                      templastdata = {
+                                        name: doc.name,
+                                        type: doc.type,
+                                        description: doc.description,
+                                      };
+                                    }
+                                    templastdata = {
+                                      ...templastdata,
+                                      required: doc.required,
+                                    };
+
+                                    var temp = [
+                                      ...datacreate.public_informations,
+                                    ];
+                                    temp.splice(idx + 1, 0, templastdata);
+                                    setdatacreate((prev) => ({
+                                      ...prev,
+                                      public_informations: temp,
+                                    }));
+                                  }}
+                                >
+                                  <CopyIconSvg size={15} color={`#000000`} />
+                                </div>
+                                <div
+                                  className="mx-1 cursor-pointer"
+                                  onClick={() => {
+                                    const temp = [
+                                      ...datacreate.public_informations,
+                                    ];
+                                    temp.splice(idx, 1);
+                                    setdatacreate((prev) => ({
+                                      ...prev,
+                                      public_informations: temp,
+                                    }));
+                                  }}
+                                >
+                                  <TrashIconSvg size={15} color={`#000000`} />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+
+                    <div
+                      className="mb-12 border border-dashed border-primary100 hover:border-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer"
+                      onClick={() => {
+                        setdatacreate((prev) => ({
+                          ...prev,
+                          public_informations: [
+                            ...prev.public_informations,
+                            {
+                              type: 1,
+                              name: "",
+                              description: "",
+                              required: false,
+                            },
+                          ],
+                        }));
+                        settempinfo([...tempinfo, ""]);
+                      }}
+                    >
+                      <div className="text-primary100 hover:text-primary75">
+                        + Tambah Field Baru
+                      </div>
                     </div>
-                  </div> */}
                   </Form>
                 </div>
               </div>
