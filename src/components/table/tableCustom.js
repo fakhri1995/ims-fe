@@ -2252,6 +2252,65 @@ const TableCustomTalentPoolList = ({
   );
 };
 
+const TableCustomShiftList = ({
+  dataSource,
+  columns,
+  loading,
+  total,
+  queryParams,
+  setQueryParams,
+  sortTable,
+  onOpenModal,
+}) => {
+  const [rowstate, setrowstate] = useState(0);
+  return (
+    <Table
+      dataSource={dataSource}
+      columns={columns}
+      rowKey={(record) => record.id}
+      loading={loading}
+      scroll={{ x: 200 }}
+      pagination={{
+        current: queryParams.page,
+        pageSize: queryParams.rows,
+        total: total,
+        showSizeChanger: true,
+      }}
+      onChange={(pagination, filters, sorter, extra) => {
+        const sortTypePayload =
+          sorter.order === "ascend"
+            ? "asc"
+            : sorter.order === "descend"
+            ? "desc"
+            : undefined;
+
+        setQueryParams({
+          sort_type: sortTable.sort_type || sortTypePayload,
+          sort_by:
+            sortTable.sort_by ||
+            (sortTypePayload === undefined ? undefined : sorter.field),
+          page: pagination.current,
+          rows: pagination.pageSize,
+        });
+      }}
+      onRow={(record, rowIndex) => {
+        return {
+          onMouseOver: () => {
+            setrowstate(record.id);
+          },
+          onClick: () => {
+            onOpenModal(record.id);
+          },
+        };
+      }}
+      rowClassName={(record, idx) => {
+        return `${record.id === rowstate && `cursor-pointer`}
+        }`;
+      }}
+    />
+  );
+};
+
 export {
   TableCustom,
   TableCustomRelasi,
@@ -2280,4 +2339,5 @@ export {
   TableCustomContractList,
   TableCustomInvoiceList,
   TableCustomTalentPoolList,
+  TableCustomShiftList,
 };

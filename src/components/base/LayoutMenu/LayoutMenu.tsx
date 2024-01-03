@@ -38,6 +38,8 @@ import {
   SIDEBAR_ATTENDANCE_ADMIN,
   SIDEBAR_ATTENDANCE_FORM_ACTIVITY,
   SIDEBAR_ATTENDANCE_MY,
+  SIDEBAR_ATTENDANCE_SCHEDULE,
+  SIDEBAR_ATTENDANCE_SHIFT,
   SIDEBAR_CLIENT_ATTENDANCE,
   SIDEBAR_CLIENT_DASHBOARD,
   SIDEBAR_CLIENT_PROJECT,
@@ -291,6 +293,18 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               <Link href="/attendance/staff">My Attendance</Link>
             </Menu.Item>
           )}
+
+          {/* {hasPermission(SIDEBAR_ATTENDANCE_SHIFT) && (
+            <Menu.Item key="attendance/shift">
+              <Link href="/attendance/shift">Shift Kerja</Link>
+            </Menu.Item>
+          )}
+
+          {hasPermission(SIDEBAR_ATTENDANCE_SCHEDULE) && (
+            <Menu.Item key="attendance/schedule">
+              <Link href="/attendance/schedule">Jadwal Kerja</Link>
+            </Menu.Item>
+          )} */}
         </SubMenu>
       )}
 
