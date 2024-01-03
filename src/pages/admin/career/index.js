@@ -1,6 +1,7 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import {
   Button,
+  Checkbox,
   DatePicker,
   Drawer,
   Empty,
@@ -212,8 +213,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     career_role_type_id: null,
     career_experience_id: null,
     is_posted: 0,
-    questions: [],
-    public_informations: [],
+    question: [],
   });
   const [tempcb, settempcb] = useState([]);
   const [tempinfo, settempinfo] = useState([]);
@@ -230,6 +230,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     career_role_type_id: null,
     career_experience_id: null,
     is_posted: 0,
+    question: [],
   });
   const [dataExperience, setDataExperience] = useState([
     {
@@ -706,6 +707,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                     career_role_type_id: record.career_role_type_id,
                     career_experience_id: record.career_experience_id,
                     is_posted: record.is_posted,
+                    question: record.question ? record.question.details : [],
                   });
                 }}
                 style={{
@@ -736,7 +738,44 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   ];
 
   //handle create career
+  // const handleCreate = () => {
+  //   console.log('isi apa saja ', JSON.stringify(datacreate))
+  //   let dataQuestions = {
+  //     name:datacreate.name,
+  //     description:"New Description",
+  //     details:datacreate.question
+  //   }
+  //   let dataTemp = {
+  //     name: datacreate.name,
+  //     description: datacreate.description,
+  //     qualification: datacreate.qualification,
+  //     overview: datacreate.overview,
+  //     salary_min: datacreate,
+  //     salary_max: datacreate.salary_max,
+  //     career_role_type_id: datacreate.career_role_type_id,
+  //     career_experience_id: datacreate.career_experience_id,
+  //     question:dataQuestions
+  //   }
+  // }
   const handleCreate = () => {
+    let dataQuestions = {
+      name: datacreate.name,
+      description: "New Description",
+      details: datacreate.question,
+    };
+    let dataTemp = {
+      name: datacreate.name,
+      description: datacreate.description,
+      qualification: datacreate.qualification,
+      overview: datacreate.overview,
+      salary_min: datacreate.salary_min,
+      salary_max: datacreate.salary_max,
+      career_role_type_id: datacreate.career_role_type_id,
+      career_experience_id: datacreate.career_experience_id,
+      is_posted: datacreate.is_posted,
+      question: dataQuestions,
+    };
+
     setloadingcreate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/addCareer`, {
       method: "POST",
@@ -744,7 +783,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(datacreate),
+      body: JSON.stringify(dataTemp),
     })
       .then((res) => res.json())
       .then((res2) => {
@@ -762,6 +801,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
             salary_max: 0,
             career_role_type_id: null,
             career_experience_id: null,
+            question: [],
           });
           setTimeout(() => {
             setloadingcreate(false);
@@ -1177,20 +1217,21 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   )}
                 </div>
               </div>
-              {/* <div
+              <div
                 className={"flex flex-col gap-1 hover:cursor-pointer"}
                 onClick={() => setActiveTab("2")}
               >
                 <p
-                  className={`${activeTab == "2" ? `text-primarygreen` : `text-mono80`
-                    } text-sm font-bold leading-6 text-underline`}
+                  className={`${
+                    activeTab == "2" ? `text-primarygreen` : `text-mono80`
+                  } text-sm font-bold leading-6 text-underline`}
                 >
                   Pertanyaan Untuk Pelamar
                 </p>
                 {activeTab == "2" && (
                   <div className={"bg-primarygreen h-0.5 w-full "} />
                 )}
-              </div> */}
+              </div>
             </div>
             {/* <Tabs
               defaultActiveKey="1"
@@ -1201,21 +1242,21 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
               <TabPane tab="Informasi Umum" key="1" />
               <TabPane tab="Pertanyaan" key="2" />
             </Tabs> */}
-            {activeTab == "1" ? (
-              <div>
-                <p
-                  className={
-                    "text-warning text-xs italic font-normal leading-4 mb-6"
-                  }
-                >
-                  * Informasi ini harus diisi
-                </p>
-                <div className="flex flex-col">
-                  <Form
-                    layout="vertical"
-                    initialValues={datacreate}
-                    onFinish={handleCreate}
+            <Form
+              layout="vertical"
+              initialValues={datacreate}
+              onFinish={handleCreate}
+            >
+              {activeTab == "1" ? (
+                <div>
+                  <p
+                    className={
+                      "text-warning text-xs italic font-normal leading-4 mb-6"
+                    }
                   >
+                    * Informasi ini harus diisi
+                  </p>
+                  <div className="flex flex-col">
                     <Form.Item
                       label="Position Name"
                       name="name"
@@ -1453,14 +1494,373 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                         }}
                       />
                     </Form.Item>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <p
+                    className={"text-mono30 text-xs font-medium leading-5 mb-6"}
+                  >
+                    {" "}
+                    Daftar Isian *{" "}
+                  </p>
+                  {datacreate.question.length === 0 ? (
+                    <>
+                      <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        description="Daftar isian masih kosong"
+                      />
+                    </>
+                  ) : (
+                    datacreate.question.map((doc, idx) => {
+                      return (
+                        <div
+                          key={idx}
+                          className="bg-white flex flex-col shadow-md rounded-md p-3 mb-4 border"
+                        >
+                          <div className="flex items-center justify-between mb-6">
+                            <span className="block">Wajib Diisi</span>
+                            <Switch
+                              checked={doc.required}
+                              onChange={(checked) => {
+                                var temp = [...datacreate.question];
+                                temp[idx].required = checked;
+                                setdatacreate((prev) => ({
+                                  ...prev,
+                                  question: temp,
+                                }));
+                              }}
+                            />
+                          </div>
+                          <div key={idx} className="grid grid-cols-2 mb-3">
+                            <div className="col-span-1 mr-1 mb-3 flex items-center">
+                              <div className="mr-2">
+                                <Input
+                                  value={doc.name}
+                                  placeholder="Nama"
+                                  onChange={(e) => {
+                                    var temp = [...datacreate.question];
+                                    temp[idx].name = e.target.value;
+                                    setdatacreate((prev) => ({
+                                      ...prev,
+                                      question: temp,
+                                    }));
+                                  }}
+                                ></Input>
+                              </div>
+                            </div>
+                            <div className="col-span-1 ml-1 mb-3">
+                              <Select
+                                key={idx}
+                                // name={`name`}
+                                value={doc.type}
+                                style={{ width: `100%` }}
+                                onChange={(value) => {
+                                  var temp = [...datacreate.question];
+                                  delete temp[idx].lists;
+                                  temp[idx].type = value;
+                                  if (value === 3) {
+                                    temp[idx].lists = [];
+                                  } else if (value === 5) {
+                                    temp[idx].lists = [];
+                                  }
+                                  temp[idx].required = false;
+                                  setdatacreate((prev) => ({
+                                    ...prev,
+                                    question: temp,
+                                  }));
+                                }}
+                              >
+                                <Select.Option value={1}>
+                                  <div className="flex items-center">
+                                    <AlignJustifiedIconSvg
+                                      size={12}
+                                      color={`#35763B`}
+                                    />
+                                    Teks
+                                  </div>
+                                </Select.Option>
+                                <Select.Option value={2}>
+                                  <div className="flex items-center">
+                                    <AlignJustifiedIconSvg
+                                      size={12}
+                                      color={`#35763B`}
+                                    />
+                                    Paragraf
+                                  </div>
+                                </Select.Option>
+                                <Select.Option value={3}>
+                                  <div className="flex items-center">
+                                    <CheckboxIconSvg
+                                      size={12}
+                                      color={`#35763B`}
+                                    />
+                                    Ceklis
+                                  </div>
+                                </Select.Option>
+                                <Select.Option value={4}>
+                                  <div className="flex items-center">
+                                    <ListNumbersSvg
+                                      size={12}
+                                      color={`#35763B`}
+                                    />
+                                    Numeral
+                                  </div>
+                                </Select.Option>
+                                <Select.Option value={5}>
+                                  <div className="flex items-center">
+                                    <ListNumbersSvg
+                                      size={12}
+                                      color={`#35763B`}
+                                    />
+                                    Dropdown
+                                  </div>
+                                </Select.Option>
+                                <Select.Option value={6}>
+                                  <div className="flex items-center">
+                                    <UploadIconSvg
+                                      size={12}
+                                      color={`#35763B`}
+                                    />
+                                    Unggah File
+                                  </div>
+                                </Select.Option>
+                              </Select>
+                            </div>
 
-                    {/* <div
-                    className="mb-12 border border-dashed border-primary100 hover:border-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer"
+                            <div className="mb-5 col-span-2">
+                              <Input
+                                placeholder="Deskripsi"
+                                value={doc.description}
+                                onChange={(e) => {
+                                  var temp = [...datacreate.question];
+                                  temp[idx].description = e.target.value;
+                                  setdatacreate((prev) => ({
+                                    ...prev,
+                                    question: temp,
+                                  }));
+                                }}
+                              ></Input>
+                            </div>
+
+                            {doc.type === 3 && (
+                              <div className="flex flex-col mb-3 col-span-2">
+                                <div className="mb-3 flex flex-col">
+                                  <div className="mb-1">
+                                    <Label>Keterangan</Label>
+                                  </div>
+                                  {doc.lists.map((doc2, idx2) => {
+                                    return (
+                                      <div
+                                        key={idx2}
+                                        className="flex items-center justify-between mb-2"
+                                      >
+                                        {/* <div className="cursor-pointer font-bold mr-2">
+                                                                                  ::
+                                                                              </div> */}
+                                        <div className="flex items-center">
+                                          <Checkbox
+                                            style={{ marginRight: `0.5rem` }}
+                                            checked
+                                          />
+                                          {doc2}
+                                        </div>
+                                        <div
+                                          className=" cursor-pointer"
+                                          onClick={() => {
+                                            var temp = [...datacreate.question];
+                                            temp[idx].lists.splice(idx2, 1);
+                                            setdatacreate((prev) => ({
+                                              ...prev,
+                                              question: temp,
+                                            }));
+                                          }}
+                                        >
+                                          <CircleXIconSvg
+                                            size={15}
+                                            color={`#BF4A40`}
+                                          />
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                  <div className="flex items-center">
+                                    <div
+                                      className="mr-1 cursor-pointer hover:text-primary100"
+                                      onClick={() => {
+                                        settempcb([]);
+                                        var temp = [...datacreate.question];
+                                        temp[idx].lists.push(tempcb[idx]);
+                                        setdatacreate((prev) => ({
+                                          ...prev,
+                                          question: temp,
+                                        }));
+                                      }}
+                                    >
+                                      <H2>+</H2>
+                                    </div>
+                                    <Input
+                                      placeholder="Tambah"
+                                      value={tempcb[idx]}
+                                      onChange={(e) => {
+                                        var temptempcb = [...tempcb];
+                                        temptempcb[idx] = e.target.value;
+                                        settempcb(temptempcb);
+                                      }}
+                                      bordered={false}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {doc.type === 5 && (
+                              <div className="flex flex-col mb-3 col-span-2">
+                                {doc.lists.map((doc4, idx4) => {
+                                  return (
+                                    <div
+                                      key={idx4}
+                                      className=" px-3 flex items-center mb-2"
+                                    >
+                                      {/* <div className="cursor-pointer font-bold mr-2">
+                                                                              ::
+                                                                          </div> */}
+                                      <div className="flex items-center mr-2">
+                                        <Input
+                                          placeholder="Tambah"
+                                          style={{ marginRight: `0.5rem` }}
+                                          value={doc4}
+                                          onChange={(e) => {
+                                            var temp = [...datacreate.question];
+                                            temp[idx].lists[idx4] =
+                                              e.target.value;
+                                            setdatacreate((prev) => ({
+                                              ...prev,
+                                              question: temp,
+                                            }));
+                                          }}
+                                          bordered={false}
+                                        />
+                                        <div
+                                          className="cursor-pointer flex items-center text-center justify-center"
+                                          onClick={() => {
+                                            var temp = [...datacreate.question];
+                                            temp[idx].lists.splice(idx4, 1);
+                                            setdatacreate((prev) => ({
+                                              ...prev,
+                                              question: temp,
+                                            }));
+                                          }}
+                                        >
+                                          <CircleXIconSvg
+                                            size={15}
+                                            color={`#BF4A40`}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                                <div className="flex items-center px-3">
+                                  <div
+                                    className="mr-1 cursor-pointer hover:text-primary100"
+                                    onClick={() => {
+                                      var temp = [...datacreate.question];
+                                      temp[idx].lists.push("");
+                                      setdatacreate((prev) => ({
+                                        ...prev,
+                                        question: temp,
+                                      }));
+                                    }}
+                                  >
+                                    <h1 className="font-semibold text-sm hover:text-primary100">
+                                      + Tambah Value
+                                    </h1>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* COPY dan DELETE */}
+                            <div className=" col-span-2 flex justify-end">
+                              <div
+                                className="mx-1 cursor-pointer"
+                                onClick={() => {
+                                  var templastdata = {};
+                                  if (doc.type === 1 || doc.type === 2) {
+                                    templastdata = {
+                                      name: doc.name,
+                                      type: doc.type,
+                                      description: doc.description,
+                                    };
+                                  } else if (doc.type === 3) {
+                                    templastdata = {
+                                      name: doc.name,
+                                      type: doc.type,
+                                      description: doc.description,
+                                      lists: [...doc.lists],
+                                    };
+                                  } else if (doc.type === 4) {
+                                    templastdata = {
+                                      name: doc.name,
+                                      type: doc.type,
+                                      description: doc.description,
+                                    };
+                                  } else if (doc.type === 5) {
+                                    templastdata = {
+                                      name: doc.name,
+                                      type: doc.type,
+                                      description: doc.description,
+                                      lists: [...doc.lists],
+                                    };
+                                  } else if (doc.type === 6) {
+                                    templastdata = {
+                                      name: doc.name,
+                                      type: doc.type,
+                                      description: doc.description,
+                                    };
+                                  }
+                                  templastdata = {
+                                    ...templastdata,
+                                    required: doc.required,
+                                  };
+
+                                  var temp = [...datacreate.question];
+                                  temp.splice(idx + 1, 0, templastdata);
+                                  setdatacreate((prev) => ({
+                                    ...prev,
+                                    question: temp,
+                                  }));
+                                }}
+                              >
+                                <CopyIconSvg size={15} color={`#000000`} />
+                              </div>
+                              <div
+                                className="mx-1 cursor-pointer"
+                                onClick={() => {
+                                  const temp = [...datacreate.question];
+                                  temp.splice(idx, 1);
+                                  setdatacreate((prev) => ({
+                                    ...prev,
+                                    question: temp,
+                                  }));
+                                }}
+                              >
+                                <TrashIconSvg size={15} color={`#000000`} />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                  <div
+                    className="mb-4 border border-dashed border-primary100 hover:border-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer"
                     onClick={() => {
                       setdatacreate((prev) => ({
                         ...prev,
-                        public_informations: [
-                          ...prev.public_informations,
+                        question: [
+                          ...prev.question,
                           {
                             type: 1,
                             name: "",
@@ -1469,407 +1869,36 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                           },
                         ],
                       }));
-                      settempinfo([...tempinfo, ""]);
+                      settempcb([...tempcb, ""]);
                     }}
                   >
                     <div className="text-primary100 hover:text-primary75">
                       + Tambah Field Baru
                     </div>
-                  </div> */}
-                  </Form>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <p className={"text-mono30 text-xs font-medium leading-5 mb-6"}>
-                  {" "}
-                  Daftar Isian *{" "}
-                </p>
-                {datacreate.questions.length === 0 ? (
-                  <>
-                    <Empty
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description="Daftar isian masih kosong"
-                    />
-                  </>
-                ) : (
-                  datacreate.questions.map((doc, idx) => {
-                    return (
-                      <div
-                        key={idx}
-                        className="bg-white flex flex-col shadow-md rounded-md p-3 mb-4 border"
-                      >
-                        <div className="flex items-center justify-between mb-6">
-                          <span className="block">Wajib Diisi</span>
-                          <Switch
-                            checked={doc.required}
-                            onChange={(checked) => {
-                              var temp = [...datacreate.questions];
-                              temp[idx].required = checked;
-                              setdatacreate((prev) => ({
-                                ...prev,
-                                questions: temp,
-                              }));
-                            }}
-                          />
-                        </div>
-                        <div key={idx} className="grid grid-cols-2 mb-3">
-                          <div className="col-span-1 mr-1 mb-3 flex items-center">
-                            <div className="mr-2">
-                              <Input
-                                value={doc.name}
-                                placeholder="Nama"
-                                onChange={(e) => {
-                                  var temp = [...datacreate.questions];
-                                  temp[idx].name = e.target.value;
-                                  setdatacreate((prev) => ({
-                                    ...prev,
-                                    questions: temp,
-                                  }));
-                                }}
-                              ></Input>
-                            </div>
-                          </div>
-                          <div className="col-span-1 ml-1 mb-3">
-                            <Select
-                              key={idx}
-                              // name={`name`}
-                              value={doc.type}
-                              style={{ width: `100%` }}
-                              onChange={(value) => {
-                                var temp = [...datacreate.questions];
-                                delete temp[idx].lists;
-                                temp[idx].type = value;
-                                if (value === 3) {
-                                  temp[idx].lists = [];
-                                } else if (value === 5) {
-                                  temp[idx].lists = [];
-                                }
-                                temp[idx].required = false;
-                                setdatacreate((prev) => ({
-                                  ...prev,
-                                  questions: temp,
-                                }));
-                              }}
-                            >
-                              <Select.Option value={1}>
-                                <div className="flex items-center">
-                                  <AlignJustifiedIconSvg
-                                    size={12}
-                                    color={`#35763B`}
-                                  />
-                                  Teks
-                                </div>
-                              </Select.Option>
-                              <Select.Option value={2}>
-                                <div className="flex items-center">
-                                  <AlignJustifiedIconSvg
-                                    size={12}
-                                    color={`#35763B`}
-                                  />
-                                  Paragraf
-                                </div>
-                              </Select.Option>
-                              <Select.Option value={3}>
-                                <div className="flex items-center">
-                                  <CheckboxIconSvg
-                                    size={12}
-                                    color={`#35763B`}
-                                  />
-                                  Ceklis
-                                </div>
-                              </Select.Option>
-                              <Select.Option value={4}>
-                                <div className="flex items-center">
-                                  <ListNumbersSvg size={12} color={`#35763B`} />
-                                  Numeral
-                                </div>
-                              </Select.Option>
-                              <Select.Option value={5}>
-                                <div className="flex items-center">
-                                  <ListNumbersSvg size={12} color={`#35763B`} />
-                                  Dropdown
-                                </div>
-                              </Select.Option>
-                              <Select.Option value={6}>
-                                <div className="flex items-center">
-                                  <UploadIconSvg size={12} color={`#35763B`} />
-                                  Unggah File
-                                </div>
-                              </Select.Option>
-                            </Select>
-                          </div>
-
-                          <div className="mb-5 col-span-2">
-                            <Input
-                              placeholder="Deskripsi"
-                              value={doc.description}
-                              onChange={(e) => {
-                                var temp = [...datacreate.questions];
-                                temp[idx].description = e.target.value;
-                                setdatacreate((prev) => ({
-                                  ...prev,
-                                  questions: temp,
-                                }));
-                              }}
-                            ></Input>
-                          </div>
-
-                          {doc.type === 3 && (
-                            <div className="flex flex-col mb-3 col-span-2">
-                              <div className="mb-3 flex flex-col">
-                                <div className="mb-1">
-                                  <Label>Keterangan</Label>
-                                </div>
-                                {doc.lists.map((doc2, idx2) => {
-                                  return (
-                                    <div
-                                      key={idx2}
-                                      className="flex items-center justify-between mb-2"
-                                    >
-                                      {/* <div className="cursor-pointer font-bold mr-2">
-                                                                                  ::
-                                                                              </div> */}
-                                      <div className="flex items-center">
-                                        <Checkbox
-                                          style={{ marginRight: `0.5rem` }}
-                                          checked
-                                        />
-                                        {doc2}
-                                      </div>
-                                      <div
-                                        className=" cursor-pointer"
-                                        onClick={() => {
-                                          var temp = [...datacreate.questions];
-                                          temp[idx].lists.splice(idx2, 1);
-                                          setdatacreate((prev) => ({
-                                            ...prev,
-                                            questions: temp,
-                                          }));
-                                        }}
-                                      >
-                                        <CircleXIconSvg
-                                          size={15}
-                                          color={`#BF4A40`}
-                                        />
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                                <div className="flex items-center">
-                                  <div
-                                    className="mr-1 cursor-pointer hover:text-primary100"
-                                    onClick={() => {
-                                      settempcb([]);
-                                      var temp = [...datacreate.questions];
-                                      temp[idx].lists.push(tempcb[idx]);
-                                      setdatacreate((prev) => ({
-                                        ...prev,
-                                        questions: temp,
-                                      }));
-                                    }}
-                                  >
-                                    <H2>+</H2>
-                                  </div>
-                                  <Input
-                                    placeholder="Tambah"
-                                    value={tempcb[idx]}
-                                    onChange={(e) => {
-                                      var temptempcb = [...tempcb];
-                                      temptempcb[idx] = e.target.value;
-                                      settempcb(temptempcb);
-                                    }}
-                                    bordered={false}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {doc.type === 5 && (
-                            <div className="flex flex-col mb-3 col-span-2">
-                              {doc.lists.map((doc4, idx4) => {
-                                return (
-                                  <div
-                                    key={idx4}
-                                    className=" px-3 flex items-center mb-2"
-                                  >
-                                    {/* <div className="cursor-pointer font-bold mr-2">
-                                                                              ::
-                                                                          </div> */}
-                                    <div className="flex items-center mr-2">
-                                      <Input
-                                        placeholder="Tambah"
-                                        style={{ marginRight: `0.5rem` }}
-                                        value={doc4}
-                                        onChange={(e) => {
-                                          var temp = [...datacreate.questions];
-                                          temp[idx].lists[idx4] =
-                                            e.target.value;
-                                          setdatacreate((prev) => ({
-                                            ...prev,
-                                            questions: temp,
-                                          }));
-                                        }}
-                                        bordered={false}
-                                      />
-                                      <div
-                                        className="cursor-pointer flex items-center text-center justify-center"
-                                        onClick={() => {
-                                          var temp = [...datacreate.questions];
-                                          temp[idx].lists.splice(idx4, 1);
-                                          setdatacreate((prev) => ({
-                                            ...prev,
-                                            questions: temp,
-                                          }));
-                                        }}
-                                      >
-                                        <CircleXIconSvg
-                                          size={15}
-                                          color={`#BF4A40`}
-                                        />
-                                      </div>
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                              <div className="flex items-center px-3">
-                                <div
-                                  className="mr-1 cursor-pointer hover:text-primary100"
-                                  onClick={() => {
-                                    var temp = [...datacreate.questions];
-                                    temp[idx].lists.push("");
-                                    setdatacreate((prev) => ({
-                                      ...prev,
-                                      questions: temp,
-                                    }));
-                                  }}
-                                >
-                                  <h1 className="font-semibold text-sm hover:text-primary100">
-                                    + Tambah Value
-                                  </h1>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* COPY dan DELETE */}
-                          <div className=" col-span-2 flex justify-end">
-                            <div
-                              className="mx-1 cursor-pointer"
-                              onClick={() => {
-                                var templastdata = {};
-                                if (doc.type === 1 || doc.type === 2) {
-                                  templastdata = {
-                                    name: doc.name,
-                                    type: doc.type,
-                                    description: doc.description,
-                                  };
-                                } else if (doc.type === 3) {
-                                  templastdata = {
-                                    name: doc.name,
-                                    type: doc.type,
-                                    description: doc.description,
-                                    lists: [...doc.lists],
-                                  };
-                                } else if (doc.type === 4) {
-                                  templastdata = {
-                                    name: doc.name,
-                                    type: doc.type,
-                                    description: doc.description,
-                                  };
-                                } else if (doc.type === 5) {
-                                  templastdata = {
-                                    name: doc.name,
-                                    type: doc.type,
-                                    description: doc.description,
-                                    lists: [...doc.lists],
-                                  };
-                                } else if (doc.type === 6) {
-                                  templastdata = {
-                                    name: doc.name,
-                                    type: doc.type,
-                                    description: doc.description,
-                                  };
-                                }
-                                templastdata = {
-                                  ...templastdata,
-                                  required: doc.required,
-                                };
-
-                                var temp = [...datacreate.questions];
-                                temp.splice(idx + 1, 0, templastdata);
-                                setdatacreate((prev) => ({
-                                  ...prev,
-                                  questions: temp,
-                                }));
-                              }}
-                            >
-                              <CopyIconSvg size={15} color={`#000000`} />
-                            </div>
-                            <div
-                              className="mx-1 cursor-pointer"
-                              onClick={() => {
-                                const temp = [...datacreate.questions];
-                                temp.splice(idx, 1);
-                                setdatacreate((prev) => ({
-                                  ...prev,
-                                  questions: temp,
-                                }));
-                              }}
-                            >
-                              <TrashIconSvg size={15} color={`#000000`} />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-                <div
-                  className="mb-4 border border-dashed border-primary100 hover:border-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer"
-                  onClick={() => {
-                    setdatacreate((prev) => ({
-                      ...prev,
-                      questions: [
-                        ...prev.questions,
-                        {
-                          type: 1,
-                          name: "",
-                          description: "",
-                          required: false,
-                        },
-                      ],
-                    }));
-                    settempcb([...tempcb, ""]);
-                  }}
-                >
-                  <div className="text-primary100 hover:text-primary75">
-                    + Tambah Field Baru
                   </div>
                 </div>
+              )}
+              <div className="fixed bottom-0 right-6 mb-6">
+                <Button
+                  type="default"
+                  onClick={() => {
+                    setdrawcreate(false);
+                  }}
+                  style={{ marginRight: `1rem` }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  danger
+                  icon={<CheckIconSvg size={16} color={"#ffffff"} />}
+                  loading={loadingcreate}
+                >
+                  Post Lowongan Kerja
+                </Button>
               </div>
-            )}
-            <div className="fixed bottom-0 right-6 mb-6">
-              <Button
-                type="default"
-                onClick={() => {
-                  setdrawcreate(false);
-                }}
-                style={{ marginRight: `1rem` }}
-              >
-                Cancel
-              </Button>
-              <Button
-                htmlType="submit"
-                type="primary"
-                danger
-                icon={<CheckIconSvg size={16} color={"#ffffff"} />}
-                loading={loadingcreate}
-              >
-                Post Lowongan Kerja
-              </Button>
-            </div>
+            </Form>
           </div>
         </Drawer>
       </AccessControl>
