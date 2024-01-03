@@ -17,7 +17,6 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   RECRUITMENT_JALUR_DAFTARS_GET,
-  RECRUITMENT_JALUR_DAFTARS_LIST_GET,
   RECRUITMENT_JALUR_DAFTAR_ADD,
   RECRUITMENT_JALUR_DAFTAR_DELETE,
   RECRUITMENT_JALUR_DAFTAR_GET,
@@ -55,9 +54,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetRegistrationsList = hasPermission(
-    RECRUITMENT_JALUR_DAFTARS_LIST_GET
-  );
+
   const isAllowedToGetRegistrations = hasPermission(
     RECRUITMENT_JALUR_DAFTARS_GET
   );
