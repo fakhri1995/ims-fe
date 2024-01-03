@@ -36,13 +36,17 @@ import { useAccessControl } from "contexts/access-control";
 import {
   CAREERS_V2_APPLY_STATUSES,
   CAREERS_V2_GET,
+  CAREER_UPDATE,
   CAREER_V2_APPLY_UPDATE,
   CAREER_V2_GET,
+  RECRUITMENT_ROLE_TYPES_LIST_GET,
   RESUME_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../components/button";
+import DrawerInformationEdit from "../../../components/drawer/career/DrawerInformationEdit";
+import DrawerQuestionEdit from "../../../components/drawer/career/DrawerQuestionEdit";
 import {
   AddCareerIconSvg,
   DownIconSvg,
@@ -150,6 +154,29 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     to: null,
     total: null,
   });
+  const [drawedit, setdrawedit] = useState(false);
+  const [loadingedit, setloadingedit] = useState(false);
+  const [dataedit, setdataedit] = useState({
+    id: 0,
+    name: "",
+    description: "",
+    question: [],
+  });
+
+  const [draweditinformation, setdraweditinformation] = useState(false);
+  const [loadingeditinformation, setloadingeditinformation] = useState(false);
+  const [dataeditinformation, setdataeditinformation] = useState({
+    id: 0,
+    name: "",
+    description: "",
+    qualification: "",
+    overview: "",
+    salary_min: 0,
+    salary_max: 0,
+    career_role_type_id: null,
+    career_experience_id: null,
+    is_posted: 0,
+  });
   // 2.3. Download Resume
   const [candidateId, setCandidateId] = useState(null);
   const [resumeLink, setResumeLink] = useState(null);
@@ -160,6 +187,9 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   const [drawDetailPelamar, setDrawDetailPelamar] = useState(false);
   const [dataTerpilih, setDataTerpilih] = useState(null);
   const canUpdateStatuses = hasPermission(CAREER_V2_APPLY_UPDATE);
+  const isAllowedToGetRoleTypeList = hasPermission(
+    RECRUITMENT_ROLE_TYPES_LIST_GET
+  );
   const [dataUpdateStatus, setDataUpdateStatus] = useState({
     id: null,
     recruitment_status_id: null,
@@ -168,6 +198,26 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     recruitment_status_name: "",
   });
   const [modalUpdateStatus, setModalUpdateStatus] = useState(false);
+  const [countQuestion, setCountQuestion] = useState(0);
+  const [dataRoleTypeList, setDataRoleTypeList] = useState([]);
+  const [dataExperience, setDataExperience] = useState([
+    {
+      id: 1,
+      name: "0 - 1 Tahun",
+    },
+    {
+      id: 2,
+      name: "1 - 3 Tahun",
+    },
+    {
+      id: 3,
+      name: "3 - 5 Tahun",
+    },
+    {
+      id: 4,
+      name: "Lebih dari 5 Tahun",
+    },
+  ]);
 
   const onFilterRecruitments = () => {
     setQueryParams({
@@ -381,44 +431,45 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     },
   ];
 
-  const dataPertanyaan = [
-    {
-      id: 1,
-      name: "Nama Pelamar",
-      label: "Text Input",
-    },
-    {
-      id: 2,
-      name: "Alamat Email",
-      label: "Text Input",
-    },
-    {
-      id: 3,
-      name: "Nomor Telepon",
-      label: "Numeral Input",
-    },
-    {
-      id: 4,
-      name: "Unggah CV",
-      label: "File PDF,JPG (Max. 5MB)",
-    },
-    {
-      id: 5,
-      name: "Tahun Pengalaman",
-      label: "Single Choice",
-    },
-    {
-      id: 6,
-      name: "Pendidikan Terakhir",
-      label: "Single Choice",
-    },
-    {
-      id: 7,
-      name: "Unggah Project",
-      label: "File PDF,JPG (Max. 5MB)",
-    },
-  ];
+  //get data type role list
+  useEffect(() => {
+    if (!isAllowedToGetRoleTypeList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Tipe Role");
+      // setLoadingRoleTypeList(false);
+      return;
+    }
 
+    // setLoadingRoleTypeList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoleTypesList`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRoleTypeList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingRoleTypeList(false);
+      });
+  }, [isAllowedToGetRoleTypeList]);
   useEffect(() => {
     if (dataResume) {
       setIsOnClient(true);
@@ -471,8 +522,11 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
       // setLoadingRoleTypeList(false);
       return;
     }
-
     // setLoadingRoleTypeList(true);
+    getDetailCareer();
+  }, [permissionWarningNotification]);
+
+  const getDetailCareer = () => {
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/getCareer?id=${careerId}`,
       {
@@ -487,6 +541,9 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
         console.log("hasil get detail ", res2);
         if (res2.success) {
           setDetailCareer(res2.data);
+          if (res2.data.question != null) {
+            setCountQuestion(res2.data.question.details.length);
+          }
         }
       })
       .catch((err) => {
@@ -499,7 +556,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
       .finally(() => {
         // setLoadingRoleTypeList(false);
       });
-  }, [permissionWarningNotification]);
+  };
 
   useEffect(() => {
     if (!isAllowedToGetCareer) {
@@ -699,6 +756,106 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
         });
       });
   };
+  const handleUpdateQuestion = () => {
+    setloadingedit(true);
+    let dataUpdateQuestion = {
+      id: dataedit.id,
+      name: dataedit.name,
+      description: dataedit.description,
+      details: dataedit.question,
+    };
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/updateCareerQuestion`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataUpdateQuestion),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+          setdataedit({
+            id: 0,
+            name: "",
+            description: "",
+            question: [],
+          });
+          setloadingedit(false);
+          setdrawedit(false);
+          getDetailCareer();
+        } else if (!res2.success) {
+          notification["error"]({
+            message: res2.message.errorInfo.status_detail,
+            duration: 3,
+          });
+          setloadingedit(false);
+          setdrawedit(false);
+        }
+      });
+  };
+
+  const handleEditInformation = () => {
+    setloadingeditinformation(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/updateCareer`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataeditinformation),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+          setdataeditinformation({
+            id: 0,
+            name: "",
+            description: "",
+            qualification: "",
+            overview: "",
+            salary_min: 0,
+            salary_max: 0,
+            career_role_type_id: null,
+            career_experience_id: null,
+          });
+          setloadingeditinformation(false);
+          setdraweditinformation(false);
+          getDetailCareer();
+        } else if (!res2.success) {
+          notification["error"]({
+            message: res2.message.errorInfo.status_detail,
+            duration: 3,
+          });
+          setloadingeditinformation(false);
+          setdraweditinformation(false);
+        }
+      });
+  };
+
+  const renderType = (type) => {
+    if (type == 1) {
+      return "Teks";
+    } else if (type == 2) {
+      return "Paragraf";
+    } else if (type == 3) {
+      return "Ceklis";
+    } else if (type == 4) {
+      return "Numeral";
+    } else if (type == 5) {
+      return "Dropdown";
+    } else if (type == 1) {
+      return "Unggah File";
+    }
+  };
 
   return (
     <Layout
@@ -756,10 +913,28 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               onChange={setTabActiveKey}
             >
               <TabPane tab="Informasi Umum" key="1" />
-              <TabPane tab="Pertanyaan Pelamar" key="2" />
+              <TabPane
+                tab={"Pertanyaan Pelamar (" + countQuestion + ")"}
+                key="2"
+              />
             </Tabs>
             {tabActiveKey == "1" ? (
               <div
+                onClick={() => {
+                  setdraweditinformation(true);
+                  setdataeditinformation({
+                    id: detailCareer.id,
+                    name: detailCareer.name,
+                    description: detailCareer.description,
+                    qualification: detailCareer.qualification,
+                    overview: detailCareer.overview,
+                    salary_min: detailCareer.salary_min,
+                    salary_max: detailCareer.salary_max,
+                    career_role_type_id: detailCareer.career_role_type_id,
+                    career_experience_id: detailCareer.career_experience_id,
+                    is_posted: detailCareer.is_posted,
+                  });
+                }}
                 className={
                   "flex gap-2 border border-primarygreen rounded-[5px] px-4 py-1.5 h-8 self-center hover:cursor-pointer"
                 }
@@ -771,6 +946,15 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               </div>
             ) : (
               <div
+                onClick={() => {
+                  setdrawedit(true);
+                  setdataedit({
+                    id: detailCareer.question.id,
+                    name: detailCareer.question.name,
+                    description: detailCareer.question.description,
+                    question: detailCareer.question.details,
+                  });
+                }}
                 className={
                   "flex gap-2 border border-primarygreen rounded-[5px] px-4 py-1.5 h-8 self-center hover:cursor-pointer"
                 }
@@ -870,7 +1054,29 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               </div>
             ) : (
               <div className={"mt-6 grid md:grid-cols-2 gap-6"}>
-                {dataPertanyaan.map((data, key) => (
+                {detailCareer &&
+                  detailCareer.question != null &&
+                  detailCareer.question.details.map((data, key) => (
+                    <div
+                      className={
+                        "w-full  px-4 py-3 rounded-[5px] border border-solid border-inputkategori bg-white"
+                      }
+                    >
+                      <p
+                        className={
+                          "text-mono30 text-[14px] font-bold leading-6 "
+                        }
+                      >
+                        {key + 1}. {data.name}
+                      </p>
+                      <p
+                        className={"text-mono50 text-sm font-medium leading-5 "}
+                      >
+                        {renderType(data.type)}
+                      </p>
+                    </div>
+                  ))}
+                {/* {detailCareer?.question.map((data, key) => (
                   <div
                     className={
                       "w-full  px-4 py-3 rounded-[5px] border border-solid border-inputkategori bg-white"
@@ -879,13 +1085,13 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                     <p
                       className={"text-mono30 text-[14px] font-bold leading-6 "}
                     >
-                      {data.id}. {data.name}
+                      {key}. {data.details.name}
                     </p>
                     <p className={"text-mono50 text-sm font-medium leading-5 "}>
-                      {data.label}
+                      {data.details.type}
                     </p>
                   </div>
-                ))}
+                ))} */}
               </div>
             ))}
         </div>
@@ -1157,6 +1363,36 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                 <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
               </div>
             </ModalUbah>
+          </AccessControl>
+          <AccessControl hasPermission={CAREER_UPDATE}>
+            {/* drawer edit pertanyaan */}
+            <DrawerQuestionEdit
+              title={"Edit Pertanyaan"}
+              visible={drawedit}
+              onvisible={setdrawedit}
+              buttonOkText={"Update"}
+              setdrawedit={setdrawedit}
+              setdataedit={setdataedit}
+              handleUpdateQuestion={handleUpdateQuestion}
+              dataedit={dataedit}
+              loadingEdit={loadingedit}
+            />
+          </AccessControl>
+          <AccessControl hasPermission={CAREER_UPDATE}>
+            {/* drawer edit informasi */}
+            <DrawerInformationEdit
+              title={"Edit Informasi Umum"}
+              visible={draweditinformation}
+              onvisible={setdraweditinformation}
+              buttonOkText={"Update"}
+              setdraweditinformation={setdraweditinformation}
+              setdataeditinformation={setdataeditinformation}
+              handleEditInformation={handleEditInformation}
+              dataeditinformation={dataeditinformation}
+              dataExperience={dataExperience}
+              dataRoleTypeList={dataRoleTypeList}
+              loadingeditinformation={loadingeditinformation}
+            />
           </AccessControl>
         </div>
       </div>
