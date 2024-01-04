@@ -9,6 +9,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 
 import ButtonSys from "components/button";
+import DrawerShiftCreate from "components/drawer/attendance/drawerShiftCreate";
 import { AccessControl } from "components/features/AccessControl";
 import { EditIconSvg, PlusIconSvg, TrashIconSvg } from "components/icon";
 import LayoutDashboard from "components/layout-dashboardNew";
@@ -31,7 +32,7 @@ import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
 
-const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
+const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
 }) => {
@@ -42,6 +43,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
   }
 
   const isAllowedToGetShifts = hasPermission(ATTENDANCES_USER_GET);
+  const isAllowedToAddShift = hasPermission(ATTENDANCES_USER_GET);
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
@@ -57,7 +59,9 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
     status_ids: withDefault(StringParam, undefined),
   });
 
-  const [isCheckInDrawerShown, setIsCheckInDrawerShown] = useState(false);
+  const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+
   const [dataRawShifts, setDataRawShifts] = useState({ from: 1 });
   const [dataShifts, setDataShifts] = useState([
     {
@@ -72,14 +76,6 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
     sort_by: undefined,
     sort_type: undefined,
   });
-
-  const toggleCheckInDrawer = useCallback(() => {
-    return setIsCheckInDrawerShown((prev) => !prev);
-  }, []);
-
-  const handleAttendanceButtonClicked = useCallback(() => {
-    setIsCheckInDrawerShown(true);
-  }, []);
 
   useEffect(() => {
     if (!isAllowedToGetShifts) {
@@ -219,7 +215,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
                 <ButtonSys
                   fullWidth
                   type={"primary"}
-                  // onClick={onAddEmployeeButtonClicked}
+                  onClick={() => setShowCreateDrawer(true)}
                   // disabled={!isAllowedToAddEmployee}
                 >
                   <div className="flex flex-row items-center space-x-2">
@@ -246,12 +242,17 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         </div>
       </div>
 
-      <AccessControl hasPermission={ATTENDANCE_TOGGLE_SET}>
-        <AttendanceStaffCheckInDrawer
-          visible={isCheckInDrawerShown}
-          onClose={toggleCheckInDrawer}
-        />
-      </AccessControl>
+      {/* <AccessControl hasPermission={RECRUITMENT_PREVIEW_GET}> */}
+      <DrawerShiftCreate
+        title={"Tambah Shift"}
+        visible={isShowCreateDrawer}
+        buttonOkText={"Simpan Shift"}
+        initProps={token}
+        onvisible={setShowCreateDrawer}
+        setRefresh={setRefresh}
+        isAllowedToAdd={isAllowedToAddShift}
+      />
+      {/* </AccessControl> */}
     </LayoutDashboard>
   );
 };
@@ -298,4 +299,4 @@ export const getServerSideProps: GetServerSideProps<
   };
 };
 
-export default StaffAttendancePage;
+export default ShiftAttendancePage;
