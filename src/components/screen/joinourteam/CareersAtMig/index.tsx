@@ -267,7 +267,9 @@ export const CareersAtMig: FC = () => {
             </div>
           }
         >
-          <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} />
+          {showThankYou != "full" && (
+            <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} />
+          )}
           {showThankYou == null && (
             <div className={"relative"}>
               <p
@@ -424,7 +426,11 @@ export const CareersAtMig: FC = () => {
               </div>
             </div>
           ) : showThankYou == "full" ? (
-            <div className={"flex justify-center h-[500px] md:h-[656px]"}>
+            <div
+              className={
+                "flex justify-center h-[500px] md:h-[656px] bg-form-modal"
+              }
+            >
               <div
                 className={
                   "flex flex-col justify-center content-center items-center transition-2"
@@ -462,6 +468,7 @@ export const CareersAtMig: FC = () => {
                   you:
                 </p>
                 <div
+                  onClick={() => router.push("/joinourteam")}
                   className={
                     "mt-3 px-4 py-2 rounded bg-primarygreen hover:cursor-pointer"
                   }
@@ -483,6 +490,7 @@ export const CareersAtMig: FC = () => {
                   or{" "}
                 </p>
                 <div
+                  onClick={() => router.push("/")}
                   className={
                     "mt-3 px-4 py-2 rounded bg-white border-2 border-primarygreen hover:cursor-pointer"
                   }
