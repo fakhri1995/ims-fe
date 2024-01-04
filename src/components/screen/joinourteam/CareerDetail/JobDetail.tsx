@@ -198,6 +198,7 @@ export const JobDetail: FC = () => {
             }, 5000);
             setTimeout(() => {
               setShowThankyou("half");
+              resetForm();
             }, 6000);
 
             setTimeout(() => {
@@ -214,6 +215,13 @@ export const JobDetail: FC = () => {
     },
     [form, data, captchaVerifyValue, resumeFileBlob]
   );
+
+  const resetForm = () => {
+    setCaptchaVerifyValue(null);
+    setResumeFileBlob(null);
+    setIsAgreementPassed(false);
+    form.resetFields();
+  };
 
   const handleModalApply = () => {
     setModalApply(false);
@@ -415,7 +423,9 @@ export const JobDetail: FC = () => {
             </div>
           }
         >
-          <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} />
+          {showThankYou != "full" && (
+            <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} />
+          )}
           {showThankYou == null && (
             <div className={"relative"}>
               <p
@@ -572,7 +582,11 @@ export const JobDetail: FC = () => {
               </div>
             </div>
           ) : showThankYou == "full" ? (
-            <div className={"flex justify-center h-[500px] md:h-[656px]"}>
+            <div
+              className={
+                "flex justify-center h-[500px] md:h-[656px] bg-form-modal"
+              }
+            >
               <div
                 className={
                   "flex flex-col justify-center content-center items-center transition-2"
