@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import ButtonSys from "components/button";
 import DrawerShiftCreate from "components/drawer/attendance/drawerShiftCreate";
+import DrawerShiftUpdate from "components/drawer/attendance/drawerShiftUpdate";
 import { AccessControl } from "components/features/AccessControl";
 import { EditIconSvg, PlusIconSvg, TrashIconSvg } from "components/icon";
 import LayoutDashboard from "components/layout-dashboardNew";
@@ -44,6 +45,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const isAllowedToGetShifts = hasPermission(ATTENDANCES_USER_GET);
   const isAllowedToAddShift = hasPermission(ATTENDANCES_USER_GET);
+  const isAllowedToUpdateShift = hasPermission(ATTENDANCES_USER_GET);
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
@@ -60,6 +62,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   });
 
   const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
+  const [isShowUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
   const [dataRawShifts, setDataRawShifts] = useState({ from: 1 });
@@ -71,6 +74,8 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       status: "Aktif",
     },
   ]);
+  const [currentDataShift, setCurrentDataShift] = useState({});
+
   const [loadingShifts, setLoadingShifts] = useState(false);
   const [sortTable, setSortTable] = useState({
     sort_by: undefined,
@@ -171,7 +176,10 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
         return {
           children: (
             <div className="flex items-center gap-6 justify-center">
-              <button className="bg-transparent">
+              <button
+                className="bg-transparent"
+                onClick={() => handleUpdate(record)}
+              >
                 <EditIconSvg color={"#808080"} size={24} />
               </button>
               <button className="bg-transparent">
@@ -183,6 +191,11 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       },
     },
   ];
+
+  const handleUpdate = (data) => {
+    setCurrentDataShift(data);
+    setShowUpdateDrawer(true);
+  };
 
   return (
     <LayoutDashboard
@@ -251,6 +264,17 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
         onvisible={setShowCreateDrawer}
         setRefresh={setRefresh}
         isAllowedToAdd={isAllowedToAddShift}
+      />
+      {/* </AccessControl> */}
+
+      {/* <AccessControl hasPermission={RECRUITMENT_UPDATE}> */}
+      <DrawerShiftUpdate
+        data={currentDataShift}
+        visible={isShowUpdateDrawer}
+        initProps={token}
+        onvisible={setShowUpdateDrawer}
+        setRefresh={setRefresh}
+        isAllowedToUpdate={isAllowedToUpdateShift}
       />
       {/* </AccessControl> */}
     </LayoutDashboard>

@@ -1,21 +1,26 @@
 import { DatePicker, Form, Input, Select, Spin, notification } from "antd";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+
+import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RECRUITMENT_JALUR_DAFTARS_LIST_GET } from "lib/features";
+import {
+  RECRUITMENT_JALUR_DAFTARS_LIST_GET,
+  RECRUITMENT_ROLES_LIST_GET,
+} from "lib/features";
 
+import ButtonSys from "../../button";
+import { TrashIconSvg } from "../../icon";
 import DrawerCore from "../drawerCore";
 
-const DrawerShiftCreate = ({
-  title,
+const DrawerShiftUpdate = ({
   visible,
   onvisible,
-  buttonOkText,
   initProps,
   setRefresh,
-  isAllowedToAdd,
+  isAllowedToUpdate,
+  data,
 }) => {
   /**
    * Dependencies
@@ -26,14 +31,13 @@ const DrawerShiftCreate = ({
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetRegistPlatformList = hasPermission(
-    RECRUITMENT_JALUR_DAFTARS_LIST_GET
-  );
 
   const [instanceForm] = Form.useForm();
 
   //USESTATE
-  const [dataCandidate, setDataCandidate] = useState({
+  //1.1 Update
+  const [dataUpdate, setDataUpdate] = useState({
+    id: null,
     name: "",
     email: "",
     university: "",
@@ -43,148 +47,126 @@ const DrawerShiftCreate = ({
     recruitment_status_id: null,
     lampiran: [],
   });
-  const [loadingCreate, setLoadingCreate] = useState(false);
-  const [disabledcreate, setdisabledcreate] = useState(true);
+
+  const [modalUpdate, setModalUpdate] = useState(false);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [disabledUpdate, setDisabledUpdate] = useState(true);
 
   const [loadingRegistPlatformList, setLoadingRegistPlatformList] =
     useState(false);
+  const [loadingRoleList, setLoadingRoleList] = useState([]);
   const [dataRegistPlatformList, setDataRegistPlatformList] = useState([]);
+  const [dataRoleList, setDataRoleList] = useState([]);
 
-  // useEffect
-  // 3.1. Get Recruitment Registration Platform (Jalur Daftar) List
+  // 2. useEffect
+  // 2.1. set initial dataUpdate from data
   useEffect(() => {
-    if (!isAllowedToGetRegistPlatformList) {
-      permissionWarningNotification("Mendapatkan", "Data Jalur Daftar");
-      setLoadingRegistPlatformList(false);
-      return;
-    }
+    setDataUpdate({
+      ...dataUpdate,
+      id: Number(data.id),
+      name: data.name,
+      email: data.email,
+      university: data.university,
+      recruitment_role_id: data.recruitment_role_id,
+      recruitment_jalur_daftar_id: data.recruitment_jalur_daftar_id,
+      recruitment_stage_id: data.recruitment_stage_id,
+      recruitment_status_id: data.recruitment_status_id,
+      lampiran: data?.lampiran ?? [],
+    });
+  }, [data, visible]);
 
-    setLoadingRegistPlatformList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftarsList`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRegistPlatformList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingRegistPlatformList(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingRegistPlatformList(false);
-      });
-  }, [isAllowedToGetRegistPlatformList]);
+  // 2.2. Validate input field
+  useEffect(() => {
+    let allFilled = Object.values(dataUpdate).every((value) => value);
+
+    let attachmentIsFilled = dataUpdate?.lampiran?.every(
+      (attachment) => attachment.judul_lampiran && attachment.isi_lampiran
+    );
+
+    if (allFilled && attachmentIsFilled) {
+      setDisabledUpdate(false);
+    } else {
+      setDisabledUpdate(true);
+    }
+  }, [dataUpdate]);
 
   //HANDLER
   const onChangeInput = (e) => {
-    setDataCandidate({
-      ...dataCandidate,
+    setDataUpdate({
+      ...dataUpdate,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleCreateRecruitment = () => {
-    if (!isAllowedToAdd) {
-      permissionWarningNotification("Menambah", "Rekrutmen Kandidat");
+  const clearData = () => {
+    setDataUpdate({
+      id: null,
+      name: "",
+      email: "",
+      university: "",
+      recruitment_role_id: null,
+      recruitment_jalur_daftar_id: null,
+      recruitment_stage_id: null,
+      recruitment_status_id: null,
+    });
+  };
+
+  const handleUpdateRecruitment = () => {
+    if (!isAllowedToUpdate) {
+      permissionWarningNotification("Mengubah", "Rekrutmen Kandidat");
       return;
     }
-    setLoadingCreate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRecruitment`, {
-      method: "POST",
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitment`, {
+      method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataCandidate),
+      body: JSON.stringify(dataUpdate),
     })
       .then((response) => response.json())
       .then((response2) => {
         setRefresh((prev) => prev + 1);
         if (response2.success) {
+          setLoadingUpdate(false);
+          onvisible(false);
           notification.success({
-            message: `Kandidat berhasil ditambahkan.`,
+            message: `Kandidat berhasil diubah.`,
             duration: 3,
           });
-          setTimeout(() => {
-            onvisible(false);
-            setDataCandidate({
-              name: "",
-              email: "",
-              university: "",
-              recruitment_role_id: null,
-              recruitment_jalur_daftar_id: null,
-              recruitment_stage_id: null,
-              recruitment_status_id: null,
-              lampiran: [],
-            });
-          }, 500);
+          // setTimeout(() => {
+          //   clearData()
+          // }, 500);
         } else {
+          setLoadingUpdate(false);
           notification.error({
-            message: `Gagal menambahkan kandidat. ${response2.message}`,
+            message: `Gagal mengubah kandidat. ${response2.message}`,
             duration: 3,
           });
         }
-        setLoadingCreate(false);
       })
       .catch((err) => {
+        setLoadingUpdate(false);
         notification.error({
-          message: `Gagal menambahkan kandidat. ${err.response}`,
+          message: `Gagal mengubah kandidat. ${err.response}`,
           duration: 3,
         });
-        setLoadingCreate(false);
       });
   };
 
-  // USEEFFECT
-  useEffect(() => {
-    let allFilled = Object.values(dataCandidate).every((value) => value);
-    let attachmentIsFilled = dataCandidate?.lampiran?.every(
-      (attachment) => attachment.judul_lampiran && attachment.isi_lampiran
-    );
-    if (allFilled && attachmentIsFilled) {
-      setdisabledcreate(false);
-    } else {
-      setdisabledcreate(true);
-    }
-  }, [dataCandidate]);
-
   return (
     <DrawerCore
-      title={title}
+      title={"Edit Shift"}
       visible={visible}
       onClose={() => {
-        setDataCandidate({
-          name: "",
-          email: "",
-          university: "",
-          recruitment_role_id: null,
-          recruitment_jalur_daftar_id: null,
-          recruitment_stage_id: null,
-          recruitment_status_id: null,
-          lampiran: [],
-        });
         onvisible(false);
       }}
-      buttonOkText={buttonOkText}
-      onClick={handleCreateRecruitment}
-      disabled={disabledcreate}
+      buttonOkText={"Simpan Shift"}
+      onClick={handleUpdateRecruitment}
+      disabled={disabledUpdate}
     >
-      <Spin spinning={loadingCreate}>
+      <Spin spinning={loadingUpdate}>
         <div className="flex flex-col">
           <p className="mb-6 text-red-500 text-xs italic">
             *Informasi ini harus diisi
@@ -207,7 +189,7 @@ const DrawerShiftCreate = ({
             >
               <div>
                 <Input
-                  value={dataCandidate.name}
+                  value={data.name}
                   name={"name"}
                   onChange={onChangeInput}
                 />
@@ -332,4 +314,4 @@ const DrawerShiftCreate = ({
   );
 };
 
-export default DrawerShiftCreate;
+export default DrawerShiftUpdate;
