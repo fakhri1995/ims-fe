@@ -1,5 +1,5 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Input, Spin } from "antd";
+import { Button, Input, Spin, Tooltip } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 import {
   NumberParam,
@@ -8,6 +8,7 @@ import {
   withDefault,
 } from "next-query-params";
 import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import DrawerShiftCreate from "components/drawer/attendance/drawerShiftCreate";
@@ -29,8 +30,21 @@ import { TableCustomShiftList } from "components/table/tableCustom";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ATTENDANCES_USER_GET, ATTENDANCE_TOGGLE_SET } from "lib/features";
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import {
+  ATTENDANCES_USER_GET,
+  ATTENDANCE_SHIFTS_GET,
+  ATTENDANCE_SHIFT_ADD,
+  ATTENDANCE_SHIFT_DELETE,
+  ATTENDANCE_SHIFT_STATUS_UPDATE,
+  ATTENDANCE_SHIFT_UPDATE,
+  ATTENDANCE_TOGGLE_SET,
+} from "lib/features";
 import { momentFormatDate, permissionWarningNotification } from "lib/helper";
+
+import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
+import { ShiftDetailData } from "apis/attendance/attendance-shift.types";
 
 import httpcookie from "cookie";
 
@@ -40,15 +54,21 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
 }) => {
+  const axiosClient = useAxiosClient();
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
-  if (isAccessControlPending) {
-    return null;
-  }
 
-  const isAllowedToGetShifts = hasPermission(ATTENDANCES_USER_GET);
-  const isAllowedToAddShift = hasPermission(ATTENDANCES_USER_GET);
-  const isAllowedToUpdateShift = hasPermission(ATTENDANCES_USER_GET);
+  // if (isAccessControlPending) {
+  //   return null;
+  // }
+
+  const isAllowedToGetShifts = hasPermission(ATTENDANCE_SHIFTS_GET);
+  const isAllowedToAddShift = hasPermission(ATTENDANCE_SHIFT_ADD);
+  const isAllowedToUpdateShift = hasPermission(ATTENDANCE_SHIFT_UPDATE);
+  const isAllowedToUpdateShiftStatus = hasPermission(
+    ATTENDANCE_SHIFT_STATUS_UPDATE
+  );
+  const isAllowedToDeleteShift = hasPermission(ATTENDANCE_SHIFT_DELETE);
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
@@ -59,9 +79,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
-    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    status_ids: withDefault(StringParam, undefined),
+    keyword: withDefault(StringParam, null),
   });
 
   const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
@@ -69,16 +87,8 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   const [isShowDeleteModal, setShowDeleteModal] = useState(false);
 
   const [refresh, setRefresh] = useState(false);
-
-  const [dataRawShifts, setDataRawShifts] = useState({ from: 1 });
-  const [dataShifts, setDataShifts] = useState([
-    {
-      name: "SHift Malam",
-      work_time: "19.00 - 23.00",
-      break_time: "20.00",
-      status: "Aktif",
-    },
-  ]);
+  // const [dataRawShifts, setDataRawShifts] = useState({ from: 1 });
+  const [dataShifts, setDataShifts] = useState<ShiftDetailData[]>([]);
   const [currentDataShift, setCurrentDataShift] = useState({
     name: "",
     work_time: "",
@@ -86,12 +96,14 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
     status: "",
   });
 
-  const [loadingShifts, setLoadingShifts] = useState(false);
+  // const [loadingShifts, setLoadingShifts] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [sortTable, setSortTable] = useState({
     sort_by: undefined,
     sort_type: undefined,
   });
+
+  const [searchingFilterShitfs, setSearchingFilterShitfs] = useState("");
 
   useEffect(() => {
     if (!isAllowedToGetShifts) {
@@ -99,9 +111,28 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
     }
   }, [isAllowedToGetShifts]);
 
-  const onOpenModal = (taskId) => {
-    // setCurrentTaskId(taskId);
-    // setModalDetailTask(true);
+  const {
+    data: dataRawShifts,
+    isLoading: loadingShifts,
+    refetch: refetchShifts,
+  } = useQuery(
+    [ATTENDANCE_SHIFTS_GET, queryParams],
+    () => AttendanceShiftService.getShifts(axiosClient, queryParams),
+    {
+      enabled: isAllowedToGetShifts,
+      select: (response) => response.data.data,
+      onSuccess: (data) => setDataShifts(data.data),
+    }
+  );
+
+  const handleUpdate = (data) => {
+    setCurrentDataShift(data);
+    setShowUpdateDrawer(true);
+  };
+
+  const handleDelete = (data) => {
+    setCurrentDataShift(data);
+    setShowDeleteModal(true);
   };
 
   const columnShifts = [
@@ -117,23 +148,23 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
 
     {
       title: "Nama Shift",
-      dataIndex: "name",
+      dataIndex: "title",
       render: (text, record, index) => {
         return {
-          children: <>{record.name || "-"}</>,
+          children: <>{text || "-"}</>,
         };
       },
-
-      sorter: isAllowedToGetShifts
-        ? (a, b) => a?.name?.toLowerCase() - b?.name?.toLowerCase()
-        : false,
     },
     {
       title: "Jam Kerja",
       dataIndex: "work_time",
       render: (text, record, index) => {
         return {
-          children: <>{text || "-"}</>,
+          children: (
+            <>
+              {record?.start_at || "-"} - {record?.end_at || "-"}
+            </>
+          ),
         };
       },
     },
@@ -142,12 +173,13 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       dataIndex: "break_time",
       render: (text, record, index) => {
         return {
-          children: <>{text || "-"}</>,
+          children: (
+            <>
+              {record?.start_break || "-"} - {record?.end_break || "-"}
+            </>
+          ),
         };
       },
-      sorter: isAllowedToGetShifts
-        ? (a, b) => a?.start_date - b?.start_date
-        : false,
     },
 
     {
@@ -155,30 +187,65 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       dataIndex: "status",
       render: (status, record, index) => {
         return {
-          children:
-            status == "Aktif" ? (
-              <p
-                className={`rounded-md p-1 text-center bg-primary100 text-white`}
-              >
-                Aktif
-              </p>
-            ) : (
-              <p className={`rounded-md p-1 text-center bg-mono90 text-mono30`}>
-                Non-Aktif
-              </p>
-            ),
+          children: (
+            <>
+              {status == 1 ? (
+                <Tooltip
+                  placement="bottom"
+                  // visible={true}
+                  color={"#FFF"}
+                  title={
+                    <div className="p-2">
+                      <div className="flex gap-2 items-center">
+                        <div className="bg-primary100 w-2 h-2 rounded-full" />
+                        <p className="mig-caption--bold text-mono30">Aktif</p>
+                      </div>
+                      <p className="text-mono50">
+                        Terjadwal di jadwal kerja karyawan dan sedang
+                        berlangsung
+                      </p>
+                    </div>
+                  }
+                >
+                  <button
+                    // disabled={disabled}
+                    // onClick={onClick}
+                    // type={buttonType}
+                    className={`rounded-md p-1 text-center bg-primary100 text-white w-full`}
+                  >
+                    Aktif
+                  </button>
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  placement="bottom"
+                  // visible={true}
+                  color={"#FFF"}
+                  title={
+                    <div className="p-2">
+                      <div className="flex gap-2 items-center">
+                        <div className="bg-mono50 w-2 h-2 rounded-full" />
+                        <p className="mig-caption--bold text-mono30">
+                          Non-Aktif
+                        </p>
+                      </div>
+                      <p className="text-mono50">
+                        Tidak terjadwal di jadwal kerja karyawan
+                      </p>
+                    </div>
+                  }
+                >
+                  <button
+                    className={`rounded-md p-1 text-center bg-mono90 text-mono30 w-full`}
+                  >
+                    Non-Aktif
+                  </button>
+                </Tooltip>
+              )}
+            </>
+          ),
         };
       },
-      // sorter: isAllowedToGetShifts
-      //   ? (a, b) => {
-      //       const dataStatusListIds = dataStatusList?.map(
-      //         (status) => status.id
-      //       );
-      //       const indexA = dataStatusListIds?.indexOf(a.status?.id);
-      //       const indexB = dataStatusListIds?.indexOf(b.status?.id);
-      //       return indexA - indexB;
-      //     }
-      //   : false,
     },
     {
       title: "Aksi",
@@ -205,16 +272,6 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       },
     },
   ];
-
-  const handleUpdate = (data) => {
-    setCurrentDataShift(data);
-    setShowUpdateDrawer(true);
-  };
-
-  const handleDelete = (data) => {
-    setCurrentDataShift(data);
-    setShowDeleteModal(true);
-  };
 
   return (
     <LayoutDashboard
@@ -264,11 +321,11 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
               dataSource={dataShifts}
               columns={columnShifts}
               loading={loadingShifts}
-              // total={dataRawShifts?.total}
+              total={dataRawShifts?.total}
               queryParams={queryParams}
               setQueryParams={setQueryParams}
-              onOpenModal={onOpenModal}
-              sortTable={sortTable}
+              // onOpenModal={onOpenModal}
+              // sortTable={sortTable}
             />
           </div>
         </div>

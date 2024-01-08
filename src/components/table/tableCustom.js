@@ -2260,7 +2260,6 @@ const TableCustomShiftList = ({
   queryParams,
   setQueryParams,
   sortTable,
-  onOpenModal,
 }) => {
   const [rowstate, setrowstate] = useState(0);
   return (
@@ -2277,18 +2276,7 @@ const TableCustomShiftList = ({
         showSizeChanger: true,
       }}
       onChange={(pagination, filters, sorter, extra) => {
-        const sortTypePayload =
-          sorter.order === "ascend"
-            ? "asc"
-            : sorter.order === "descend"
-            ? "desc"
-            : undefined;
-
         setQueryParams({
-          sort_type: sortTable.sort_type || sortTypePayload,
-          sort_by:
-            sortTable.sort_by ||
-            (sortTypePayload === undefined ? undefined : sorter.field),
           page: pagination.current,
           rows: pagination.pageSize,
         });
@@ -2297,9 +2285,6 @@ const TableCustomShiftList = ({
         return {
           onMouseOver: () => {
             setrowstate(record.id);
-          },
-          onClick: () => {
-            onOpenModal(record.id);
           },
         };
       }}
