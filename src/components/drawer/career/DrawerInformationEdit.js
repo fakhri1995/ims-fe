@@ -28,7 +28,7 @@ import {
   TrashIconSvg,
   UploadIconSvg,
 } from "../../icon";
-import { Label } from "../../typography";
+import { H2, Label } from "../../typography";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -64,6 +64,7 @@ const DrawerInformationEdit = ({
 
   const [disabledcreate, setdisabledcreate] = useState(true);
   const [activeTab, setActiveTab] = useState("1");
+  const [tempcb, settempcb] = useState("");
   const [loadingRegistPlatformList, setLoadingRegistPlatformList] =
     useState(false);
   const [dataRegistPlatformList, setDataRegistPlatformList] = useState([]);

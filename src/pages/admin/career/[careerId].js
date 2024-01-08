@@ -947,13 +947,20 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
             ) : (
               <div
                 onClick={() => {
-                  setdrawedit(true);
-                  setdataedit({
-                    id: detailCareer.question.id,
-                    name: detailCareer.question.name,
-                    description: detailCareer.question.description,
-                    question: detailCareer.question.details,
-                  });
+                  if (countQuestion > 0) {
+                    setdrawedit(true);
+                    setdataedit({
+                      id: detailCareer.question.id,
+                      name: detailCareer.question.name,
+                      description: detailCareer.question.description,
+                      question: detailCareer.question.details,
+                    });
+                  } else {
+                    notification.error({
+                      message: `Tidak Dapat Diedit karena tidak ada pertanyaan`,
+                      duration: 3,
+                    });
+                  }
                 }}
                 className={
                   "flex gap-2 border border-primarygreen rounded-[5px] px-4 py-1.5 h-8 self-center hover:cursor-pointer"

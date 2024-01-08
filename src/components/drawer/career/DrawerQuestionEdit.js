@@ -23,12 +23,13 @@ import {
   AlignJustifiedIconSvg,
   CheckIconSvg,
   CheckboxIconSvg,
+  CircleXIconSvg,
   CopyIconSvg,
   ListNumbersSvg,
   TrashIconSvg,
   UploadIconSvg,
 } from "../../icon";
-import { Label } from "../../typography";
+import { H2, Label } from "../../typography";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -62,6 +63,7 @@ const DrawerQuestionEdit = ({
 
   const [disabledcreate, setdisabledcreate] = useState(true);
   const [activeTab, setActiveTab] = useState("1");
+  const [tempcb, settempcb] = useState("");
   const [loadingRegistPlatformList, setLoadingRegistPlatformList] =
     useState(false);
   const [dataRegistPlatformList, setDataRegistPlatformList] = useState([]);
@@ -154,12 +156,12 @@ const DrawerQuestionEdit = ({
                         style={{ width: `100%` }}
                         onChange={(value) => {
                           var temp = [...dataedit.question];
-                          delete temp[idx].lists;
+                          delete temp[idx].list;
                           temp[idx].type = value;
                           if (value === 3) {
-                            temp[idx].lists = [];
+                            temp[idx].list = [];
                           } else if (value === 5) {
-                            temp[idx].lists = [];
+                            temp[idx].list = [];
                           }
                           temp[idx].required = false;
                           setdataedit((prev) => ({
@@ -234,7 +236,7 @@ const DrawerQuestionEdit = ({
                           <div className="mb-1">
                             <Label>Keterangan</Label>
                           </div>
-                          {doc.lists.map((doc2, idx2) => {
+                          {doc.list.map((doc2, idx2) => {
                             return (
                               <div
                                 key={idx2}
@@ -254,7 +256,7 @@ const DrawerQuestionEdit = ({
                                   className=" cursor-pointer"
                                   onClick={() => {
                                     var temp = [...dataedit.question];
-                                    temp[idx].lists.splice(idx2, 1);
+                                    temp[idx].list.splice(idx2, 1);
                                     setdataedit((prev) => ({
                                       ...prev,
                                       question: temp,
@@ -272,7 +274,7 @@ const DrawerQuestionEdit = ({
                               onClick={() => {
                                 settempcb([]);
                                 var temp = [...dataedit.question];
-                                temp[idx].lists.push(tempcb[idx]);
+                                temp[idx].list.push(tempcb[idx]);
                                 setdataedit((prev) => ({
                                   ...prev,
                                   question: temp,
@@ -298,7 +300,7 @@ const DrawerQuestionEdit = ({
 
                     {doc.type === 5 && (
                       <div className="flex flex-col mb-3 col-span-2">
-                        {doc.lists.map((doc4, idx4) => {
+                        {doc.list.map((doc4, idx4) => {
                           return (
                             <div
                               key={idx4}
@@ -314,7 +316,7 @@ const DrawerQuestionEdit = ({
                                   value={doc4}
                                   onChange={(e) => {
                                     var temp = [...dataedit.question];
-                                    temp[idx].lists[idx4] = e.target.value;
+                                    temp[idx].list[idx4] = e.target.value;
                                     setdataedit((prev) => ({
                                       ...prev,
                                       question: temp,
@@ -326,7 +328,7 @@ const DrawerQuestionEdit = ({
                                   className="cursor-pointer flex items-center text-center justify-center"
                                   onClick={() => {
                                     var temp = [...dataedit.question];
-                                    temp[idx].lists.splice(idx4, 1);
+                                    temp[idx].list.splice(idx4, 1);
                                     setdataedit((prev) => ({
                                       ...prev,
                                       question: temp,
@@ -344,7 +346,7 @@ const DrawerQuestionEdit = ({
                             className="mr-1 cursor-pointer hover:text-primary100"
                             onClick={() => {
                               var temp = [...dataedit.question];
-                              temp[idx].lists.push("");
+                              temp[idx].list.push("");
                               setdataedit((prev) => ({
                                 ...prev,
                                 question: temp,
@@ -376,7 +378,7 @@ const DrawerQuestionEdit = ({
                               name: doc.name,
                               type: doc.type,
                               description: doc.description,
-                              lists: [...doc.lists],
+                              list: [...doc.list],
                             };
                           } else if (doc.type === 4) {
                             templastdata = {
@@ -389,7 +391,7 @@ const DrawerQuestionEdit = ({
                               name: doc.name,
                               type: doc.type,
                               description: doc.description,
-                              lists: [...doc.lists],
+                              list: [...doc.list],
                             };
                           } else if (doc.type === 6) {
                             templastdata = {

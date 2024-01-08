@@ -196,7 +196,7 @@ export default {
   hardwareherosection:
     "Optimalkan pengelolaan hardware dengan layanan berskala nasional kami.",
   hardwareherosectionsubtitle:
-    "Merasa kesulitan dalam mengelola hardware Anda? Perubahan yang sangat cepat, skalabilitas yang tidak menentu, serta biaya modal yang tinggi memang menyebabkan sakit kepala. Serahkan hal ini pada kami, kami akan membantu Anda untuk fokus pada bisnis Anda.",
+    "Merasa kesulitan dalam mengelola hardware Anda? Perubahan yang sangat cepat, skalabilitas yang tidak menentu, serta biaya modal yang tinggi jadi tantangan Anda. Serahkan hal ini pada kami, kami akan membantu Anda untuk fokus pada bisnis Anda.",
   hardwarereachus: "Hubungi kami untuk dapatkan detail informasi",
   hardwareenteremail: "Cantumkan email Anda",
   hardwarebankingsubtitle:

@@ -21,7 +21,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 
 import { getBase64 } from "lib/helper";
 
-import { useApplyCareer } from "apis/career_v2";
+import { useApplyCareerNoApply } from "apis/career_v2";
 
 import BgApplyForm from "assets/vectors/bg-apply-form.svg";
 
@@ -57,7 +57,7 @@ export const CareersAtMig: FC = () => {
   const [statusSent, setStatusSent] = useState(false);
   const [showThankYou, setShowThankyou] = useState<string | null>(null);
   const [modalApply, setModalApply] = useState(false);
-  const { mutate: applyJob, isLoading: isApplying } = useApplyCareer();
+  const { mutate: applyJob, isLoading: isApplying } = useApplyCareerNoApply();
   const [captchaVerifyValue, setCaptchaVerifyValue] = useState<string | null>(
     null
   );
@@ -104,7 +104,6 @@ export const CareersAtMig: FC = () => {
           name: values.name,
           email: values.email,
           phone: values.phone_number,
-          career_id: null,
           "g-recaptcha-response": captchaVerifyValue,
           resume: resumeFileBlob,
         },
@@ -122,11 +121,11 @@ export const CareersAtMig: FC = () => {
             }, 5000);
             setTimeout(() => {
               setShowThankyou("half");
-            }, 2000);
+            }, 6000);
 
             setTimeout(() => {
               setShowThankyou("full");
-            }, 3000);
+            }, 7000);
           },
           onError: (error: AxiosError) => {
             notification.error({
@@ -177,7 +176,7 @@ export const CareersAtMig: FC = () => {
       <JobListTable />
 
       {/* Notes */}
-      {/* <div className="flex flex-col justify-center items-center ">
+      <div className="flex flex-col justify-center items-center ">
         <p
           style={{ lineHeight: "120%" }}
           className="text-[32px] text-blackmig font-gilroysemibold font-normal text-center mt-[80px]"
@@ -206,8 +205,8 @@ export const CareersAtMig: FC = () => {
             Drop Resume Here
           </p>
         </div>
-      </div> */}
-      <div className="flex flex-col justify-center items-center">
+      </div>
+      {/* <div className="flex flex-col justify-center items-center">
         <span className="h-[2px] bg-primarygreen w-[200px] lg:w-60 block" />
 
         <p
@@ -230,7 +229,7 @@ export const CareersAtMig: FC = () => {
           </a>{" "}
           {t.vacancylistsectiondescriptionbelow2}
         </p>
-      </div>
+      </div> */}
       <Modal
         open={modalApply}
         onCancel={handleModalApply}
@@ -262,7 +261,7 @@ export const CareersAtMig: FC = () => {
                 />
               )}
               <p className={"text-primary100 text-sm font-medium leading-6"}>
-                {statusSent ? "Sent" : "Sending.."}
+                {statusSent ? "" : "Sending.."}
               </p>
             </div>
           }

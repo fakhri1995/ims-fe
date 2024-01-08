@@ -47,6 +47,14 @@ export type AddCareerPayload = {
   "g-recaptcha-response": string;
 };
 
+export type AddCareerPayloadNoApply = {
+  name: string;
+  email: string;
+  phone: string;
+  resume: Blob | File;
+  "g-recaptcha-response": string;
+};
+
 /**
  * @access GET /v2/getPostedCareers
  */
@@ -93,6 +101,26 @@ export interface Career {
   apply_count: number;
   role_type: RoleType;
   experience: Experience;
+  question: Question;
+}
+
+interface Question {
+  id: number;
+  name: string;
+  description: string;
+  career_id: number;
+  created_by: number;
+  updated_at: Date;
+  deleted_at: null;
+  details: Details[];
+}
+
+interface Details {
+  key: string;
+  name: string;
+  required: boolean;
+  type: number;
+  description: string;
 }
 
 interface Experience {
