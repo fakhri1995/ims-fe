@@ -849,6 +849,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
             salary_max: 0,
             career_role_type_id: null,
             career_experience_id: null,
+            question: [],
           });
           setloadingedit(false);
           setdrawedit(false);

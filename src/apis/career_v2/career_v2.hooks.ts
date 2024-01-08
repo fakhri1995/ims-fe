@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "react-query";
 import { CareerV2QueryKeys, CareerV2Service } from "./career_v2.service";
 import type {
   AddCareerPayload,
+  AddCareerPayloadNoApply,
   GetPostedCareerParam,
   GetPostedCareerSucceedResponse,
   GetPostedCareersParams,
@@ -67,5 +68,15 @@ export const useApplyCareer = () => {
 
   return useMutation((payload: AddCareerPayload) =>
     CareerV2Service.addCareer(axiosClient, payload)
+  );
+};
+
+export const useApplyCareerNoApply = () => {
+  const axiosClient = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+  });
+
+  return useMutation((payload: AddCareerPayloadNoApply) =>
+    CareerV2Service.addCareerNoApply(axiosClient, payload)
   );
 };
