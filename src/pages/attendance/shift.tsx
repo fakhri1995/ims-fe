@@ -1,4 +1,5 @@
-import { Input } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
+import { Input, Spin } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 import {
   NumberParam,
@@ -9,9 +10,13 @@ import {
 import { useCallback, useEffect, useState } from "react";
 
 import ButtonSys from "components/button";
+import DrawerShiftCreate from "components/drawer/attendance/drawerShiftCreate";
+import DrawerShiftUpdate from "components/drawer/attendance/drawerShiftUpdate";
 import { AccessControl } from "components/features/AccessControl";
 import { EditIconSvg, PlusIconSvg, TrashIconSvg } from "components/icon";
 import LayoutDashboard from "components/layout-dashboardNew";
+import ModalCore from "components/modal/modalCore";
+import { ModalHapus2 } from "components/modal/modalCustom";
 import {
   AttendanceStaffAktivitasSection,
   AttendanceStaffDetailCard,
@@ -31,7 +36,7 @@ import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
 
-const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
+const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
 }) => {
@@ -42,6 +47,8 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
   }
 
   const isAllowedToGetShifts = hasPermission(ATTENDANCES_USER_GET);
+  const isAllowedToAddShift = hasPermission(ATTENDANCES_USER_GET);
+  const isAllowedToUpdateShift = hasPermission(ATTENDANCES_USER_GET);
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
@@ -57,29 +64,34 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
     status_ids: withDefault(StringParam, undefined),
   });
 
-  const [isCheckInDrawerShown, setIsCheckInDrawerShown] = useState(false);
+  const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
+  const [isShowUpdateDrawer, setShowUpdateDrawer] = useState(false);
+  const [isShowDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [refresh, setRefresh] = useState(false);
+
   const [dataRawShifts, setDataRawShifts] = useState({ from: 1 });
   const [dataShifts, setDataShifts] = useState([
     {
       name: "SHift Malam",
       work_time: "19.00 - 23.00",
-      rest_time: "20.00",
+      break_time: "20.00",
       status: "Aktif",
     },
   ]);
+  const [currentDataShift, setCurrentDataShift] = useState({
+    name: "",
+    work_time: "",
+    break_time: "",
+    status: "",
+  });
+
   const [loadingShifts, setLoadingShifts] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const [sortTable, setSortTable] = useState({
     sort_by: undefined,
     sort_type: undefined,
   });
-
-  const toggleCheckInDrawer = useCallback(() => {
-    return setIsCheckInDrawerShown((prev) => !prev);
-  }, []);
-
-  const handleAttendanceButtonClicked = useCallback(() => {
-    setIsCheckInDrawerShown(true);
-  }, []);
 
   useEffect(() => {
     if (!isAllowedToGetShifts) {
@@ -127,7 +139,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
     },
     {
       title: "Jam Istirahat",
-      dataIndex: "rest_time",
+      dataIndex: "break_time",
       render: (text, record, index) => {
         return {
           children: <>{text || "-"}</>,
@@ -175,10 +187,16 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         return {
           children: (
             <div className="flex items-center gap-6 justify-center">
-              <button className="bg-transparent">
+              <button
+                className="bg-transparent"
+                onClick={() => handleUpdate(record)}
+              >
                 <EditIconSvg color={"#808080"} size={24} />
               </button>
-              <button className="bg-transparent">
+              <button
+                className="bg-transparent"
+                onClick={() => handleDelete(record)}
+              >
                 <TrashIconSvg color={"#BF4A40"} size={24} />
               </button>
             </div>
@@ -187,6 +205,16 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
       },
     },
   ];
+
+  const handleUpdate = (data) => {
+    setCurrentDataShift(data);
+    setShowUpdateDrawer(true);
+  };
+
+  const handleDelete = (data) => {
+    setCurrentDataShift(data);
+    setShowDeleteModal(true);
+  };
 
   return (
     <LayoutDashboard
@@ -219,7 +247,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
                 <ButtonSys
                   fullWidth
                   type={"primary"}
-                  // onClick={onAddEmployeeButtonClicked}
+                  onClick={() => setShowCreateDrawer(true)}
                   // disabled={!isAllowedToAddEmployee}
                 >
                   <div className="flex flex-row items-center space-x-2">
@@ -246,12 +274,83 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         </div>
       </div>
 
-      <AccessControl hasPermission={ATTENDANCE_TOGGLE_SET}>
-        <AttendanceStaffCheckInDrawer
-          visible={isCheckInDrawerShown}
-          onClose={toggleCheckInDrawer}
-        />
-      </AccessControl>
+      {/* <AccessControl hasPermission={RECRUITMENT_PREVIEW_GET}> */}
+      <DrawerShiftCreate
+        title={"Tambah Shift"}
+        visible={isShowCreateDrawer}
+        buttonOkText={"Simpan Shift"}
+        initProps={token}
+        onvisible={setShowCreateDrawer}
+        setRefresh={setRefresh}
+        isAllowedToAdd={isAllowedToAddShift}
+      />
+      {/* </AccessControl> */}
+
+      {/* <AccessControl hasPermission={RECRUITMENT_UPDATE}> */}
+      <DrawerShiftUpdate
+        data={currentDataShift}
+        visible={isShowUpdateDrawer}
+        initProps={token}
+        onvisible={setShowUpdateDrawer}
+        setRefresh={setRefresh}
+        isAllowedToUpdate={isAllowedToUpdateShift}
+      />
+      {/* </AccessControl> */}
+
+      {/* <AccessControl hasPermission={RECRUITMENT_DELETE}> */}
+      <ModalCore
+        title={
+          currentDataShift?.status == "Aktif"
+            ? "Peringatan"
+            : "Konfirmasi Hapus"
+        }
+        visible={isShowDeleteModal}
+        onCancel={() => setShowDeleteModal(false)}
+        footer={
+          <Spin spinning={loadingDelete}>
+            <div className="flex gap-4 items-center justify-end">
+              <ButtonSys
+                type={"primary"}
+                color={"mono100"}
+                onClick={() => {
+                  setShowDeleteModal(false);
+                }}
+              >
+                Tutup
+              </ButtonSys>
+              {currentDataShift?.status !== "Aktif" && (
+                <div className="col-span-2 hover:opacity-75">
+                  <ButtonSys
+                    type={"primary"}
+                    color={"danger"}
+                    // onClick={onOk}
+                    // disabled={disabled}
+                  >
+                    <div className="flex flex-row space-x-2">
+                      <DeleteOutlined rev={""} />
+                      <p>Hapus Shift</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+              )}
+            </div>
+          </Spin>
+        }
+        loading={loadingDelete}
+      >
+        {currentDataShift?.status == "Aktif" ? (
+          <p>
+            Shift <strong>{currentDataShift?.name}</strong> sedang aktif. Anda
+            tidak bisa menghapus shift kerja yang sedang aktif.
+          </p>
+        ) : (
+          <p>
+            Apakah Anda yakin ingin menghapus shift{" "}
+            <strong>{currentDataShift?.name}</strong>?
+          </p>
+        )}
+      </ModalCore>
+      {/* </AccessControl> */}
     </LayoutDashboard>
   );
 };
@@ -298,4 +397,4 @@ export const getServerSideProps: GetServerSideProps<
   };
 };
 
-export default StaffAttendancePage;
+export default ShiftAttendancePage;
