@@ -95,7 +95,7 @@ const DrawerInformationEdit = ({
       }}
       destroyOnClose={true}
       maskClosable={false}
-      width={"auto"}
+      width={400}
       //   disabled={disabledcreate}
     >
       <Spin spinning={loadingeditinformation}>
