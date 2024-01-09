@@ -1196,7 +1196,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
           onClose={() => {
             setdrawcreate(false);
           }}
-          width={"auto"}
+          width={450}
           destroyOnClose={true}
         >
           <div>
@@ -1495,6 +1495,26 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                         }}
                       />
                     </Form.Item>
+                  </div>
+                  <div className="absolute bottom-0 flex justify-end">
+                    <Button
+                      type="default"
+                      onClick={() => {
+                        setdrawcreate(false);
+                      }}
+                      style={{ marginRight: `1rem` }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      htmlType="submit"
+                      type="primary"
+                      danger
+                      icon={<CheckIconSvg size={16} color={"#ffffff"} />}
+                      loading={loadingcreate}
+                    >
+                      Post Lowongan Kerja
+                    </Button>
                   </div>
                 </div>
               ) : (
@@ -1877,28 +1897,28 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                       + Tambah Field Baru
                     </div>
                   </div>
+                  <div className="mt-4 bottom-0 absolute flex justify-end right-6 mb-6">
+                    <Button
+                      type="default"
+                      onClick={() => {
+                        setdrawcreate(false);
+                      }}
+                      style={{ marginRight: `1rem` }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      htmlType="submit"
+                      type="primary"
+                      danger
+                      icon={<CheckIconSvg size={16} color={"#ffffff"} />}
+                      loading={loadingcreate}
+                    >
+                      Post Lowongan Kerja
+                    </Button>
+                  </div>
                 </div>
               )}
-              <div className="fixed bottom-0 right-6 mb-6">
-                <Button
-                  type="default"
-                  onClick={() => {
-                    setdrawcreate(false);
-                  }}
-                  style={{ marginRight: `1rem` }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  htmlType="submit"
-                  type="primary"
-                  danger
-                  icon={<CheckIconSvg size={16} color={"#ffffff"} />}
-                  loading={loadingcreate}
-                >
-                  Post Lowongan Kerja
-                </Button>
-              </div>
             </Form>
           </div>
         </Drawer>

@@ -100,7 +100,7 @@ const DrawerCareerEdit = ({
       }}
       destroyOnClose={true}
       maskClosable={false}
-      width={"auto"}
+      width={450}
       //   disabled={disabledcreate}
     >
       <Spin spinning={loadingEdit}>
@@ -435,12 +435,12 @@ const DrawerCareerEdit = ({
                             style={{ width: `100%` }}
                             onChange={(value) => {
                               var temp = [...dataedit.question];
-                              delete temp[idx].lists;
+                              delete temp[idx].list;
                               temp[idx].type = value;
                               if (value === 3) {
-                                temp[idx].lists = [];
+                                temp[idx].list = [];
                               } else if (value === 5) {
-                                temp[idx].lists = [];
+                                temp[idx].list = [];
                               }
                               temp[idx].required = false;
                               setdataedit((prev) => ({
@@ -508,7 +508,6 @@ const DrawerCareerEdit = ({
                             }}
                           ></Input>
                         </div>
-
                         {doc.type === 3 && (
                           <div className="flex flex-col mb-3 col-span-2">
                             <div className="mb-3 flex flex-col">
@@ -535,7 +534,7 @@ const DrawerCareerEdit = ({
                                       className=" cursor-pointer"
                                       onClick={() => {
                                         var temp = [...dataedit.question];
-                                        temp[idx].lists.splice(idx2, 1);
+                                        temp[idx].list.splice(idx2, 1);
                                         setdataedit((prev) => ({
                                           ...prev,
                                           question: temp,
@@ -556,7 +555,7 @@ const DrawerCareerEdit = ({
                                   onClick={() => {
                                     settempcb([]);
                                     var temp = [...dataedit.question];
-                                    temp[idx].lists.push(tempcb[idx]);
+                                    temp[idx].list.push(tempcb[idx]);
                                     setdataedit((prev) => ({
                                       ...prev,
                                       question: temp,
@@ -598,7 +597,7 @@ const DrawerCareerEdit = ({
                                       value={doc4}
                                       onChange={(e) => {
                                         var temp = [...dataedit.question];
-                                        temp[idx].lists[idx4] = e.target.value;
+                                        temp[idx].list[idx4] = e.target.value;
                                         setdataedit((prev) => ({
                                           ...prev,
                                           question: temp,
@@ -610,7 +609,7 @@ const DrawerCareerEdit = ({
                                       className="cursor-pointer flex items-center text-center justify-center"
                                       onClick={() => {
                                         var temp = [...dataedit.question];
-                                        temp[idx].lists.splice(idx4, 1);
+                                        temp[idx].list.splice(idx4, 1);
                                         setdataedit((prev) => ({
                                           ...prev,
                                           question: temp,
@@ -631,7 +630,7 @@ const DrawerCareerEdit = ({
                                 className="mr-1 cursor-pointer hover:text-primary100"
                                 onClick={() => {
                                   var temp = [...dataedit.question];
-                                  temp[idx].lists.push("");
+                                  temp[idx].list.push("");
                                   setdataedit((prev) => ({
                                     ...prev,
                                     question: temp,
@@ -663,7 +662,7 @@ const DrawerCareerEdit = ({
                                   name: doc.name,
                                   type: doc.type,
                                   description: doc.description,
-                                  lists: [...doc.list],
+                                  list: [...doc.list],
                                 };
                               } else if (doc.type === 4) {
                                 templastdata = {
@@ -676,7 +675,7 @@ const DrawerCareerEdit = ({
                                   name: doc.name,
                                   type: doc.type,
                                   description: doc.description,
-                                  lists: [...doc.list],
+                                  list: [...doc.list],
                                 };
                               } else if (doc.type === 6) {
                                 templastdata = {
