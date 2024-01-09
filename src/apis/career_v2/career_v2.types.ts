@@ -120,6 +120,7 @@ interface Details {
   name: string;
   required: boolean;
   type: number;
+  list: [];
   description: string;
 }
 
