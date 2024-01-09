@@ -50,3 +50,14 @@ export interface ShiftDetailData {
  */
 export type IGetShiftSucceedResponse =
   HttpRequestWithDataSucceedResponse<ShiftDetailData>;
+
+/**
+ * @access POST /addShift
+ */
+export interface IAddShiftPayload {
+  title: string;
+  start_at: string;
+  end_at: string;
+  start_break: string;
+  end_break: string;
+}

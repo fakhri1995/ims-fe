@@ -3,13 +3,16 @@ import { addDays } from "date-fns";
 import QueryString from "qs";
 
 import { formatDateToLocale } from "lib/date-utils";
-import { objectToFormData } from "lib/helper";
+import { objectToFormData, permissionWarningNotification } from "lib/helper";
 
 import {
+  IAddShiftPayload,
   IGetShiftSucceedResponse,
   IGetShiftsPaginateParams,
   IGetShiftsPaginateSucceedResponse,
 } from "./attendance-shift.types";
+
+import { HttpRequestBaseSucceedResponse } from "types/common";
 
 export class AttendanceShiftService {
   /**
@@ -41,6 +44,32 @@ export class AttendanceShiftService {
 
     return await axiosClient.get<IGetShiftSucceedResponse>(
       "/getShift" + querySearch
+    );
+  }
+
+  /**
+   * Add new shift
+   *
+   * @access POST /addShift
+   */
+  static async addShift(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    payload: IAddShiftPayload
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification("Menambah", "Shift Kerja");
+      return;
+    }
+
+    return await axiosClient.post<HttpRequestBaseSucceedResponse>(
+      "/addShift",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
 }

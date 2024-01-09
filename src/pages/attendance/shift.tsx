@@ -1,5 +1,5 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Input, Spin, Tooltip } from "antd";
+import { Button, Input, Spin, Tooltip, notification } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 import {
   NumberParam,
@@ -8,7 +8,7 @@ import {
   withDefault,
 } from "next-query-params";
 import { useCallback, useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
 import DrawerShiftCreate from "components/drawer/attendance/drawerShiftCreate";
@@ -44,7 +44,10 @@ import {
 import { momentFormatDate, permissionWarningNotification } from "lib/helper";
 
 import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
-import { ShiftDetailData } from "apis/attendance/attendance-shift.types";
+import {
+  IAddShiftPayload,
+  ShiftDetailData,
+} from "apis/attendance/attendance-shift.types";
 
 import httpcookie from "cookie";
 
@@ -55,6 +58,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   token,
 }) => {
   const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -125,6 +129,22 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
     }
   );
 
+  const onMutationSucceed = (queryKey: string, message: string) => {
+    queryClient.invalidateQueries(queryKey);
+    notification.success({
+      message,
+    });
+  };
+
+  const { mutate: addShift, isLoading: loadingAddShift } = useMutation(
+    (payload: IAddShiftPayload) =>
+      AttendanceShiftService.addShift(axiosClient, payload),
+    {
+      onSuccess: (response) =>
+        onMutationSucceed(ATTENDANCE_SHIFTS_GET, response.data.message),
+    }
+  );
+
   const handleUpdate = (data) => {
     setCurrentDataShift(data);
     setShowUpdateDrawer(true);
@@ -162,7 +182,8 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
         return {
           children: (
             <>
-              {record?.start_at || "-"} - {record?.end_at || "-"}
+              {record?.start_at?.slice(0, 5) || "-"} -{" "}
+              {record?.end_at?.slice(0, 5) || "-"}
             </>
           ),
         };
@@ -175,7 +196,8 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
         return {
           children: (
             <>
-              {record?.start_break || "-"} - {record?.end_break || "-"}
+              {record?.start_break?.slice(0, 5) || "-"} -{" "}
+              {record?.end_break?.slice(0, 5) || "-"}
             </>
           ),
         };
