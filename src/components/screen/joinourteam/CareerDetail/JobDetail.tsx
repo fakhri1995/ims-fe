@@ -175,6 +175,7 @@ export const JobDetail: FC = () => {
         return;
       }
       setLoading(true);
+      setStatusSent(false);
       applyJob(
         {
           name: values.name,
@@ -189,18 +190,17 @@ export const JobDetail: FC = () => {
             // TODO: handle on succeed
             // notification.success({ message: response.data.message });
 
-            setStatusSent(false);
             setTimeout(() => {
               setStatusSent(true);
             }, 3000);
             setTimeout(() => {
               setLoading(false);
+              resetForm();
               if (data.question != null) {
-                console.log("ini apa ", response.data.id);
                 setCareerApplyId(response.data.id);
                 setShowQuestion(true);
               } else {
-                showFormThankYou();
+                setShowThankyou("half");
               }
             }, 5000);
           },
@@ -218,23 +218,13 @@ export const JobDetail: FC = () => {
   const showFormThankYou = () => {
     setTimeout(() => {
       setShowThankyou("half");
-      resetForm();
-    }, 6000);
-
-    setTimeout(() => {
-      setShowThankyou("full");
-    }, 7000);
+    }, 5000);
   };
 
   const showFormThankYouQuestion = () => {
     setTimeout(() => {
       setShowThankyou("half");
-      resetForm();
     }, 2000);
-
-    setTimeout(() => {
-      setShowThankyou("full");
-    }, 4000);
   };
   const _safeCastPayloadValue = (value: any) => {
     let mValue;
@@ -299,7 +289,6 @@ export const JobDetail: FC = () => {
             setStatusSent(false);
             setTimeout(() => {
               setStatusSent(true);
-              setShowQuestion(false);
               // notification["success"]({
               //   message: res2.message,
               //   duration: 3,
@@ -307,7 +296,8 @@ export const JobDetail: FC = () => {
             }, 2000);
             setTimeout(() => {
               setLoading(false);
-              showFormThankYouQuestion();
+              resetForm();
+              setShowThankyou("half");
             }, 3000);
           } else if (!res2.success) {
             notification["error"]({
@@ -673,39 +663,33 @@ export const JobDetail: FC = () => {
         <Spin
           spinning={loading}
           indicator={
-            <div
-              style={{ position: "absolute", top: "70%", left: "5%" }}
-              className={"flex w-full flex-col gap-2.5"}
-            >
-              {statusSent ? (
+            statusSent ? (
+              <div
+                style={{ position: "absolute", top: "70%" }}
+                className={"flex w-full flex-col self-center gap-2.5"}
+              >
                 <CheckCircleOutlined
                   rev={""}
-                  style={{
-                    fontSize: 80,
-                    color: "#35763B",
-                    position: "absolute",
-                    left: "40%",
-                  }}
+                  style={{ fontSize: 80, color: "#35763B" }}
                 />
-              ) : (
+                <p className={"text-primary100 text-sm font-medium leading-6"}>
+                  Sent
+                </p>
+              </div>
+            ) : (
+              <div
+                style={{ position: "absolute", top: "70%", left: "5%" }}
+                className={"flex w-full flex-col  gap-2.5"}
+              >
                 <LoadingOutlined
                   rev={""}
                   style={{ fontSize: 80, color: "#35763B" }}
                 />
-              )}
-              {statusSent ? (
-                <p
-                  className={"text-primary100 text-sm font-medium leading-6"}
-                  style={{ position: "absolute", top: "90%" }}
-                >
-                  {/* Sent */}
-                </p>
-              ) : (
                 <p className={"text-primary100 text-sm font-medium leading-6"}>
                   Sending
                 </p>
-              )}
-            </div>
+              </div>
+            )
           }
         >
           {showThankYou != "full" && (
@@ -822,7 +806,7 @@ export const JobDetail: FC = () => {
                   <Form.Item noStyle>
                     <div className={"md:flex md:justify-end"}>
                       <Button
-                        className={`${styles.ctaButton} mt-6 w-full md:w-auto md:self-end md:mt-8 text-white`}
+                        className={`${styles.ctaButton} bg-primarygreen mt-6 w-full md:w-auto md:self-end md:mt-8 text-white`}
                         htmlType="submit"
                         disabled={!isAllowedToSubmit}
                         loading={isApplying}
@@ -906,27 +890,77 @@ export const JobDetail: FC = () => {
                   "flex flex-col justify-center content-center items-center"
                 }
               >
-                <p
-                  className={
-                    "font-gilroysemibold text-lg font-normal leading-6 text-blackmig"
-                  }
-                >
-                  Thank you for applying at MIG!
-                </p>
-                <p
-                  className={
-                    "mt-3 font-gilroyregular text-sm leading-[21px] text-blackmig"
-                  }
-                  style={{ fontFeatureSettings: "cv04" }}
-                >
-                  We’ll get back to you as soon as possible
-                </p>
-                <div className={"mt-9"}>
-                  <img
-                    src="/image/landingpage/Talents.png"
-                    className={"w-full h-full"}
-                    style={{ width: "255px", height: "152px" }}
-                  />
+                <div className={"test-animation"}>
+                  <p
+                    className={
+                      "font-gilroysemibold text-lg font-normal leading-6 text-blackmig"
+                    }
+                  >
+                    Thank you for applying at MIG!
+                  </p>
+                  <p
+                    className={
+                      "mt-3 font-gilroyregular text-sm leading-[21px] text-blackmig"
+                    }
+                    style={{ fontFeatureSettings: "cv04" }}
+                  >
+                    We’ll get back to you as soon as possible
+                  </p>
+                  <div className={"mt-9"}>
+                    <img
+                      src="/image/landingpage/Talents.png"
+                      className={"w-full h-full"}
+                      style={{ width: "255px", height: "152px" }}
+                    />
+                  </div>
+                </div>
+                <div className={"test-animation2 flex flex-col justify-center"}>
+                  <p
+                    style={{ fontFeatureSettings: "cv04" }}
+                    className={
+                      "mt-9 font-gilroyregular text-[16px] font-normal leading-6 "
+                    }
+                  >
+                    In the meantime, check other job vacancies that might suit
+                    you:
+                  </p>
+                  <div
+                    onClick={() => router.push("/joinourteam")}
+                    className={
+                      "mt-3 px-4 py-2 rounded bg-primarygreen hover:cursor-pointer max-w-fit flex self-center"
+                    }
+                  >
+                    <p
+                      className={
+                        "text-white font-gilroysemibold text-[16px] font-normal leading-6"
+                      }
+                      style={{ fontFeatureSettings: "cv04" }}
+                    >
+                      Explore Jobs
+                    </p>
+                  </div>
+                  <p
+                    className={
+                      "mt-3 text-[14px] font-gilroyregular font-normal text-center leading-[21px] text-blackmig"
+                    }
+                  >
+                    or{" "}
+                  </p>
+                  <div
+                    onClick={() => router.push("/")}
+                    className={
+                      "mt-3 px-4 py-2  max-w-fit flex self-center rounded bg-white border-2 border-primarygreen hover:cursor-pointer"
+                    }
+                  >
+                    <p
+                      className={
+                        "text-primarygreen font-gilroysemibold text-[16px] font-normal leading-6"
+                      }
+                      style={{ fontFeatureSettings: "cv04" }}
+                    >
+                      Back to Home
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
