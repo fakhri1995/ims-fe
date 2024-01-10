@@ -226,28 +226,52 @@ export const CareersAtMig: FC = () => {
         }
         footer={null}
       >
+        <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} />
+
         <Spin
           spinning={loading}
           indicator={
-            <div
-              style={{ position: "absolute", top: "70%" }}
-              className={"flex w-full flex-col self-center gap-2.5"}
-            >
-              {statusSent ? (
-                <CheckCircleOutlined
-                  rev={""}
-                  style={{ fontSize: 80, color: "#35763B" }}
-                />
-              ) : (
-                <LoadingOutlined
-                  rev={""}
-                  style={{ fontSize: 80, color: "#35763B" }}
-                />
-              )}
-              <p className={"text-primary100 text-sm font-medium leading-6"}>
-                {statusSent ? "" : "Sending.."}
-              </p>
-            </div>
+            statusSent ? (
+              <div
+                style={{ position: "absolute", top: "70%" }}
+                className={"flex w-full flex-col self-center gap-2.5"}
+              >
+                {statusSent ? (
+                  <CheckCircleOutlined
+                    rev={""}
+                    style={{ fontSize: 80, color: "#35763B" }}
+                  />
+                ) : (
+                  <LoadingOutlined
+                    rev={""}
+                    style={{ fontSize: 80, color: "#35763B" }}
+                  />
+                )}
+                <p className={"text-primary100 text-sm font-medium leading-6"}>
+                  {statusSent ? "" : "Sending.."}
+                </p>
+              </div>
+            ) : (
+              <div
+                style={{ position: "absolute", top: "70%", left: "5%" }}
+                className={"flex w-full flex-col  gap-2.5"}
+              >
+                {statusSent ? (
+                  <CheckCircleOutlined
+                    rev={""}
+                    style={{ fontSize: 80, color: "#35763B" }}
+                  />
+                ) : (
+                  <LoadingOutlined
+                    rev={""}
+                    style={{ fontSize: 80, color: "#35763B" }}
+                  />
+                )}
+                <p className={"text-primary100 text-sm font-medium leading-6"}>
+                  {statusSent ? "" : "Sending.."}
+                </p>
+              </div>
+            )
           }
         >
           {/* {showThankYou == null && ( */}
