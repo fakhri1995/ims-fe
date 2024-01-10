@@ -40,8 +40,8 @@ export interface ShiftDetailData {
   start_break: string;
   end_break: string;
   status: number;
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
   deleted_at: string | null;
 }
 
@@ -60,4 +60,24 @@ export interface IAddShiftPayload {
   end_at: string;
   start_break: string;
   end_break: string;
+}
+
+/**
+ * @access PUT /updateShift
+ */
+export interface IUpdateShiftPayload {
+  id: number;
+  title: string;
+  start_at: string;
+  end_at: string;
+  start_break: string;
+  end_break: string;
+}
+
+/**
+ * @access PUT /updateShiftStatus
+ */
+export interface IUpdateShiftStatusPayload {
+  id: number;
+  status: boolean;
 }

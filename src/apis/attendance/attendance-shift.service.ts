@@ -10,6 +10,8 @@ import {
   IGetShiftSucceedResponse,
   IGetShiftsPaginateParams,
   IGetShiftsPaginateSucceedResponse,
+  IUpdateShiftPayload,
+  IUpdateShiftStatusPayload,
 } from "./attendance-shift.types";
 
 import { HttpRequestBaseSucceedResponse } from "types/common";
@@ -70,6 +72,82 @@ export class AttendanceShiftService {
           "Content-Type": "application/json",
         },
       }
+    );
+  }
+
+  /**
+   * Update shift by its ID
+   *
+   * @access PUT /updateShift
+   */
+  static async updateShift(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    payload: IUpdateShiftPayload
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification("Mengubah", "Shift Kerja");
+      return;
+    }
+
+    return await axiosClient.put<HttpRequestBaseSucceedResponse>(
+      "/updateShift",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+
+  /**
+   * Update shift status by its ID
+   *
+   * @access PUT /updateShiftStatus
+   */
+  static async updateShiftStatus(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    payload: IUpdateShiftStatusPayload
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification("Mengubah", "Status Shift Kerja");
+      return;
+    }
+
+    return await axiosClient.put<HttpRequestBaseSucceedResponse>(
+      "/updateShiftStatus",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+
+  /**
+   * Delete shift by its ID.
+   *
+   * @access DELETE /deleteShift
+   */
+  static async deleteShift(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    shiftId: number
+  ) {
+    const querySearch = QueryString.stringify(
+      { id: shiftId },
+      { addQueryPrefix: true }
+    );
+    if (!hasFeature) {
+      permissionWarningNotification("Menghapus", "Shift Kerja");
+      return;
+    }
+
+    return await axiosClient.delete<IGetShiftSucceedResponse>(
+      "/deleteShift" + querySearch
     );
   }
 }

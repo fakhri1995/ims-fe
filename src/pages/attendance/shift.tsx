@@ -1,5 +1,5 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Input, Spin, Tooltip, notification } from "antd";
+import { Button, Input, Select, Spin, Tooltip, notification } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 import {
   NumberParam,
@@ -18,6 +18,7 @@ import { EditIconSvg, PlusIconSvg, TrashIconSvg } from "components/icon";
 import LayoutDashboard from "components/layout-dashboardNew";
 import ModalCore from "components/modal/modalCore";
 import { ModalHapus2 } from "components/modal/modalCustom";
+import { ModalUbah } from "components/modal/modalCustom";
 import {
   AttendanceStaffAktivitasSection,
   AttendanceStaffDetailCard,
@@ -46,6 +47,7 @@ import { momentFormatDate, permissionWarningNotification } from "lib/helper";
 import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
 import {
   IAddShiftPayload,
+  IUpdateShiftStatusPayload,
   ShiftDetailData,
 } from "apis/attendance/attendance-shift.types";
 
@@ -89,22 +91,22 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
   const [isShowUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [isShowDeleteModal, setShowDeleteModal] = useState(false);
+  const [isShowUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
 
   const [refresh, setRefresh] = useState(false);
-  // const [dataRawShifts, setDataRawShifts] = useState({ from: 1 });
   const [dataShifts, setDataShifts] = useState<ShiftDetailData[]>([]);
-  const [currentDataShift, setCurrentDataShift] = useState({
-    name: "",
-    work_time: "",
-    break_time: "",
-    status: "",
-  });
-
-  // const [loadingShifts, setLoadingShifts] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
-  const [sortTable, setSortTable] = useState({
-    sort_by: undefined,
-    sort_type: undefined,
+  const [currentDataShift, setCurrentDataShift] = useState<ShiftDetailData>({
+    id: 0,
+    company_id: 0,
+    title: "",
+    start_at: "",
+    end_at: "",
+    start_break: "",
+    end_break: "",
+    status: 0,
+    created_at: "",
+    updated_at: "",
+    deleted_at: "",
   });
 
   const [searchingFilterShitfs, setSearchingFilterShitfs] = useState("");
@@ -136,23 +138,85 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
     });
   };
 
-  const { mutate: addShift, isLoading: loadingAddShift } = useMutation(
-    (payload: IAddShiftPayload) =>
-      AttendanceShiftService.addShift(axiosClient, payload),
+  const { mutate: deleteShift, isLoading: loadingDeleteShift } = useMutation(
+    (shiftId: number) =>
+      AttendanceShiftService.deleteShift(
+        isAllowedToDeleteShift,
+        axiosClient,
+        shiftId
+      ),
     {
-      onSuccess: (response) =>
-        onMutationSucceed(ATTENDANCE_SHIFTS_GET, response.data.message),
+      onSuccess: (response) => {
+        onMutationSucceed(ATTENDANCE_SHIFTS_GET, response.data.message);
+        handleCloseDelete();
+      },
+      // onError: (error) => {
+      //   notification.error({"Gagal menambah shift."});
+      // }
     }
   );
 
-  const handleUpdate = (data) => {
+  const { mutate: updateShiftStatus, isLoading: loadingUpdateShiftStatus } =
+    useMutation(
+      (payload: IUpdateShiftStatusPayload) =>
+        AttendanceShiftService.updateShiftStatus(
+          isAllowedToUpdateShiftStatus,
+          axiosClient,
+          payload
+        ),
+      {
+        onSuccess: (response) => {
+          onMutationSucceed(ATTENDANCE_SHIFTS_GET, response.data.message);
+          handleCloseUpdateStatus();
+        },
+        // onError: (error) => {
+        //   notification.error({"Gagal menambah shift."});
+        // }
+      }
+    );
+
+  const handleShowUpdate = (data) => {
     setCurrentDataShift(data);
     setShowUpdateDrawer(true);
   };
 
-  const handleDelete = (data) => {
+  const handleShowDelete = (data) => {
     setCurrentDataShift(data);
     setShowDeleteModal(true);
+  };
+
+  const handleCloseDelete = () => {
+    setCurrentDataShift({
+      id: 0,
+      company_id: 0,
+      title: "",
+      start_at: "",
+      end_at: "",
+      start_break: "",
+      end_break: "",
+      status: 0,
+      created_at: "",
+      updated_at: "",
+      deleted_at: "",
+    });
+    setShowDeleteModal(false);
+  };
+
+  const handleCloseUpdateStatus = () => {
+    setCurrentDataShift({
+      id: 0,
+      company_id: 0,
+      title: "",
+      start_at: "",
+      end_at: "",
+      start_break: "",
+      end_break: "",
+      status: 0,
+      created_at: "",
+      updated_at: "",
+      deleted_at: "",
+    });
+    setShowUpdateStatusModal(false);
   };
 
   const columnShifts = [
@@ -211,12 +275,12 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
         return {
           children: (
             <>
-              {status == 1 ? (
-                <Tooltip
-                  placement="bottom"
-                  // visible={true}
-                  color={"#FFF"}
-                  title={
+              <Tooltip
+                placement="bottom"
+                visible={false}
+                color={"#FFF"}
+                title={
+                  status == 1 ? (
                     <div className="p-2">
                       <div className="flex gap-2 items-center">
                         <div className="bg-primary100 w-2 h-2 rounded-full" />
@@ -227,23 +291,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                         berlangsung
                       </p>
                     </div>
-                  }
-                >
-                  <button
-                    // disabled={disabled}
-                    // onClick={onClick}
-                    // type={buttonType}
-                    className={`rounded-md p-1 text-center bg-primary100 text-white w-full`}
-                  >
-                    Aktif
-                  </button>
-                </Tooltip>
-              ) : (
-                <Tooltip
-                  placement="bottom"
-                  // visible={true}
-                  color={"#FFF"}
-                  title={
+                  ) : (
                     <div className="p-2">
                       <div className="flex gap-2 items-center">
                         <div className="bg-mono50 w-2 h-2 rounded-full" />
@@ -255,15 +303,44 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                         Tidak terjadwal di jadwal kerja karyawan
                       </p>
                     </div>
-                  }
+                  )
+                }
+              >
+                <Select
+                  value={status}
+                  disabled={!isAllowedToUpdateShiftStatus}
+                  optionFilterProp="children"
+                  bordered={false}
+                  className={`w-2/3 rounded-md p-1 text-center ${
+                    status == 1
+                      ? "bg-primary100 text-white"
+                      : "bg-mono90 text-mono30 "
+                  }`}
+                  onChange={(value) => {
+                    setCurrentDataShift({
+                      ...record,
+                      id: record?.id,
+                      title: record?.title,
+                      status: value,
+                    });
+                    setShowUpdateStatusModal(true);
+                  }}
                 >
-                  <button
-                    className={`rounded-md p-1 text-center bg-mono90 text-mono30 w-full`}
-                  >
-                    Non-Aktif
-                  </button>
-                </Tooltip>
-              )}
+                  {dataStatusList?.map((item, id) => (
+                    <Select.Option
+                      key={id}
+                      value={item?.value}
+                      className={`rounded-md px-4 py-2 m-2 ${
+                        item?.value == 1
+                          ? "bg-primary100 text-white"
+                          : "bg-mono90 text-mono30 "
+                      }`}
+                    >
+                      {item?.title}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Tooltip>
             </>
           ),
         };
@@ -278,13 +355,13 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
             <div className="flex items-center gap-6 justify-center">
               <button
                 className="bg-transparent"
-                onClick={() => handleUpdate(record)}
+                onClick={() => handleShowUpdate(record)}
               >
                 <EditIconSvg color={"#808080"} size={24} />
               </button>
               <button
                 className="bg-transparent"
-                onClick={() => handleDelete(record)}
+                onClick={() => handleShowDelete(record)}
               >
                 <TrashIconSvg color={"#BF4A40"} size={24} />
               </button>
@@ -292,6 +369,17 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
           ),
         };
       },
+    },
+  ];
+
+  const dataStatusList = [
+    {
+      title: "Aktif",
+      value: 1,
+    },
+    {
+      title: "Non-Aktif",
+      value: 0,
     },
   ];
 
@@ -353,83 +441,109 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
         </div>
       </div>
 
-      {/* <AccessControl hasPermission={RECRUITMENT_PREVIEW_GET}> */}
-      <DrawerShiftCreate
-        title={"Tambah Shift"}
-        visible={isShowCreateDrawer}
-        buttonOkText={"Simpan Shift"}
-        initProps={token}
-        onvisible={setShowCreateDrawer}
-        setRefresh={setRefresh}
-        isAllowedToAdd={isAllowedToAddShift}
-      />
-      {/* </AccessControl> */}
+      <AccessControl hasPermission={ATTENDANCE_SHIFT_ADD}>
+        <DrawerShiftCreate
+          title={"Tambah Shift"}
+          visible={isShowCreateDrawer}
+          buttonOkText={"Simpan Shift"}
+          initProps={token}
+          onvisible={setShowCreateDrawer}
+          setRefresh={setRefresh}
+          isAllowedToAdd={isAllowedToAddShift}
+        />
+      </AccessControl>
 
-      {/* <AccessControl hasPermission={RECRUITMENT_UPDATE}> */}
-      <DrawerShiftUpdate
-        data={currentDataShift}
-        visible={isShowUpdateDrawer}
-        initProps={token}
-        onvisible={setShowUpdateDrawer}
-        setRefresh={setRefresh}
-        isAllowedToUpdate={isAllowedToUpdateShift}
-      />
-      {/* </AccessControl> */}
+      <AccessControl hasPermission={ATTENDANCE_SHIFT_UPDATE}>
+        <DrawerShiftUpdate
+          data={currentDataShift}
+          visible={isShowUpdateDrawer}
+          initProps={token}
+          onvisible={setShowUpdateDrawer}
+          setRefresh={setRefresh}
+        />
+      </AccessControl>
 
-      {/* <AccessControl hasPermission={RECRUITMENT_DELETE}> */}
-      <ModalCore
-        title={
-          currentDataShift?.status == "Aktif"
-            ? "Peringatan"
-            : "Konfirmasi Hapus"
-        }
-        visible={isShowDeleteModal}
-        onCancel={() => setShowDeleteModal(false)}
-        footer={
-          <Spin spinning={loadingDelete}>
-            <div className="flex gap-4 items-center justify-end">
-              <ButtonSys
-                type={"primary"}
-                color={"mono100"}
-                onClick={() => {
-                  setShowDeleteModal(false);
-                }}
-              >
-                Tutup
-              </ButtonSys>
-              {currentDataShift?.status !== "Aktif" && (
-                <div className="col-span-2 hover:opacity-75">
-                  <ButtonSys
-                    type={"primary"}
-                    color={"danger"}
-                    // onClick={onOk}
-                    // disabled={disabled}
-                  >
-                    <div className="flex flex-row space-x-2">
-                      <DeleteOutlined rev={""} />
-                      <p>Hapus Shift</p>
-                    </div>
-                  </ButtonSys>
-                </div>
-              )}
-            </div>
-          </Spin>
-        }
-        loading={loadingDelete}
-      >
-        {currentDataShift?.status == "Aktif" ? (
-          <p>
-            Shift <strong>{currentDataShift?.name}</strong> sedang aktif. Anda
-            tidak bisa menghapus shift kerja yang sedang aktif.
-          </p>
-        ) : (
-          <p>
-            Apakah Anda yakin ingin menghapus shift{" "}
-            <strong>{currentDataShift?.name}</strong>?
-          </p>
-        )}
-      </ModalCore>
-      {/* </AccessControl> */}
+      <AccessControl hasPermission={ATTENDANCE_SHIFT_DELETE}>
+        <ModalCore
+          title={
+            currentDataShift?.status == 1 ? "Peringatan" : "Konfirmasi Hapus"
+          }
+          visible={isShowDeleteModal}
+          onCancel={() => setShowDeleteModal(false)}
+          footer={
+            <Spin spinning={loadingDeleteShift}>
+              <div className="flex gap-4 items-center justify-end">
+                <ButtonSys
+                  type={"primary"}
+                  color={"mono100"}
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                  }}
+                >
+                  Tutup
+                </ButtonSys>
+                {currentDataShift?.status == 0 && (
+                  <div className="col-span-2 hover:opacity-75">
+                    <ButtonSys
+                      type={"primary"}
+                      color={"danger"}
+                      onClick={() => deleteShift(currentDataShift?.id)}
+                      // disabled={disabled}
+                    >
+                      <div className="flex flex-row space-x-2">
+                        <DeleteOutlined rev={""} />
+                        <p>Hapus Shift</p>
+                      </div>
+                    </ButtonSys>
+                  </div>
+                )}
+              </div>
+            </Spin>
+          }
+          loading={loadingDeleteShift}
+        >
+          {currentDataShift?.status == 1 ? (
+            <p>
+              Shift <strong>{currentDataShift?.title}</strong> sedang aktif.
+              Anda tidak bisa menghapus shift kerja yang sedang aktif.
+            </p>
+          ) : (
+            <p>
+              Apakah Anda yakin ingin menghapus shift{" "}
+              <strong>{currentDataShift?.title}</strong>?
+            </p>
+          )}
+        </ModalCore>
+      </AccessControl>
+
+      {/* Modal Update Stage */}
+      <AccessControl hasPermission={ATTENDANCE_SHIFT_STATUS_UPDATE}>
+        <ModalUbah
+          title={`Konfirmasi Perubahan`}
+          visible={isShowUpdateStatusModal}
+          onvisible={setShowUpdateStatusModal}
+          onOk={() =>
+            updateShiftStatus({
+              id: currentDataShift?.id,
+              status: Boolean(currentDataShift?.status),
+            })
+          }
+          okButtonText="Ya, saya yakin"
+          onCancel={() => handleCloseUpdateStatus()}
+          loading={loadingUpdateShiftStatus}
+          // disabled={disableUpdate}
+        >
+          <div className="space-y-4">
+            <p className="">
+              Apakah Anda yakin ingin mengubah status pada shift kerja{" "}
+              <strong>{currentDataShift.title}</strong> menjadi{" "}
+              <strong>
+                {currentDataShift.status == 1 ? "Aktif ?" : "Non-Aktif ?"}
+              </strong>
+            </p>
+          </div>
+        </ModalUbah>
+      </AccessControl>
     </LayoutDashboard>
   );
 };
