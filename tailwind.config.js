@@ -18,7 +18,7 @@ module.exports = {
         migcard: "0 0 20px rgba(0, 0, 0, 0.15)",
       },
       backgroundImage: theme => ({
-        'form-modal': "url('/assets/bg-apply-form.svg')",
+        'form_modal':"url('/public/bg-apply-form.svg)",
       }),
       backgroundColor: {
         primary: "#1890ff",
