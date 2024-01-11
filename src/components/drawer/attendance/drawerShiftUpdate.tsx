@@ -3,18 +3,11 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 
-import { AccessControl } from "components/features/AccessControl";
-
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import {
-  ATTENDANCE_SHIFTS_GET,
-  ATTENDANCE_SHIFT_UPDATE,
-  RECRUITMENT_JALUR_DAFTARS_LIST_GET,
-  RECRUITMENT_ROLES_LIST_GET,
-} from "lib/features";
+import { ATTENDANCE_SHIFTS_GET, ATTENDANCE_SHIFT_UPDATE } from "lib/features";
 
 import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
 import {
@@ -22,17 +15,9 @@ import {
   IUpdateShiftPayload,
 } from "apis/attendance/attendance-shift.types";
 
-import ButtonSys from "../../button";
-import { TrashIconSvg } from "../../icon";
 import DrawerCore from "../drawerCore";
 
-const DrawerShiftUpdate = ({
-  visible,
-  onvisible,
-  initProps,
-  setRefresh,
-  data,
-}) => {
+const DrawerShiftUpdate = ({ visible, onvisible, data }) => {
   /**
    * Dependencies
    */
@@ -61,7 +46,6 @@ const DrawerShiftUpdate = ({
   });
 
   const [loadingUpdate, setLoadingUpdate] = useState(false);
-  const [disabledUpdate, setDisabledUpdate] = useState(true);
 
   // 2. useEffect
   // 2.1. set initial dataUpdate from data
@@ -70,21 +54,6 @@ const DrawerShiftUpdate = ({
       setDataUpdate(data);
     }
   }, [data, visible]);
-
-  // 2.2. Validate input field
-  // useEffect(() => {
-  //   let allFilled = Object.values(dataUpdate).every((value) => value);
-
-  //   let attachmentIsFilled = dataUpdate?.lampiran?.every(
-  //     (attachment) => attachment.judul_lampiran && attachment.isi_lampiran
-  //   );
-
-  //   if (allFilled && attachmentIsFilled) {
-  //     setDisabledUpdate(false);
-  //   } else {
-  //     setDisabledUpdate(true);
-  //   }
-  // }, [dataUpdate]);
 
   //HANDLER
   const onChangeInput = (e) => {
@@ -125,9 +94,9 @@ const DrawerShiftUpdate = ({
         onMutationSucceed(ATTENDANCE_SHIFTS_GET, response.data.message);
         handleClose();
       },
-      // onError: (error) => {
-      //   notification.error({"Gagal menambah shift."});
-      // }
+      onError: (error) => {
+        notification.error({ message: "Gagal mengubah shift." });
+      },
     }
   );
 

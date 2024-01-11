@@ -15,15 +15,7 @@ import { IAddShiftPayload } from "apis/attendance/attendance-shift.types";
 
 import DrawerCore from "../drawerCore";
 
-const DrawerShiftCreate = ({
-  title,
-  visible,
-  onvisible,
-  buttonOkText,
-  initProps,
-  setRefresh,
-  isAllowedToAdd,
-}) => {
+const DrawerShiftCreate = ({ visible, onvisible }) => {
   /**
    * Dependencies
    */
@@ -78,9 +70,9 @@ const DrawerShiftCreate = ({
         onMutationSucceed(ATTENDANCE_SHIFTS_GET, response.data.message);
         handleClose();
       },
-      // onError: (error) => {
-      //   notification.error({"Gagal menambah shift."});
-      // }
+      onError: (error) => {
+        notification.error({ message: "Gagal menambah shift." });
+      },
     }
   );
 
@@ -107,10 +99,10 @@ const DrawerShiftCreate = ({
   };
   return (
     <DrawerCore
-      title={title}
+      title={"Tambah Shift"}
       visible={visible}
       onClose={handleClose}
-      buttonOkText={buttonOkText}
+      buttonOkText={"Simpan Shift"}
       onClick={() => addShift(dataShift)}
       disabled={!dataShift?.title || !dataShift?.start_at || !dataShift?.end_at}
     >
@@ -119,86 +111,84 @@ const DrawerShiftCreate = ({
           <p className="mb-6 text-red-500 text-xs italic">
             *Informasi ini harus diisi
           </p>
-          <Form
-            layout="vertical"
-            form={instanceForm}
-            className="grid grid-cols-2 gap-x-6"
-          >
-            <Form.Item
-              label="Nama Shift"
-              name={"title"}
-              rules={[
-                {
-                  required: true,
-                  message: "Nama Shift wajib diisi",
-                },
-              ]}
-              className="col-span-2"
-            >
-              <div>
-                <Input
-                  value={dataShift.title}
-                  name={"title"}
-                  onChange={onChangeInput}
-                  placeholder="Masukkan Nama Shift..."
-                />
-              </div>
-            </Form.Item>
-            <Form.Item
-              label="Jam Kerja"
-              name={"work_time"}
-              rules={[
-                {
-                  required: true,
-                  message: "Jam kerja wajib diisi",
-                },
-              ]}
-              className="col-span-2"
-            >
-              <div className="flex gap-2 items-center">
-                <DatePicker.RangePicker
-                  // allowEmpty={true}
-                  picker="time"
-                  className="w-full"
-                  format={"HH:mm"}
-                  order={false}
-                  onCalendarChange={(values, formatString) => {
-                    setDataShift((prev) => ({
-                      ...prev,
-                      start_at: formatString[0] || "",
-                      end_at: formatString[1] || "",
-                    }));
-                  }}
-                />
-                {dataShift?.end_at < dataShift?.start_at && (
-                  <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
-                )}
-              </div>
-            </Form.Item>
-            <Form.Item
-              label="Jam Istirahat"
-              name={"break_time"}
-              className="col-span-2"
-            >
-              <div className="flex gap-2 items-center">
-                <DatePicker.RangePicker
-                  picker="time"
-                  className="w-full"
-                  format={"HH:mm"}
-                  order={false}
-                  onCalendarChange={(values, formatString) => {
-                    setDataShift((prev) => ({
-                      ...prev,
-                      start_break: formatString[0] || "",
-                      end_break: formatString[1] || "",
-                    }));
-                  }}
-                />
-                {dataShift?.end_break < dataShift?.start_break && (
-                  <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
-                )}
-              </div>
-            </Form.Item>
+          <Form layout="vertical" form={instanceForm}>
+            <div>
+              <Form.Item
+                label="Nama Shift"
+                name={"title"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Nama Shift wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <div>
+                  <Input
+                    value={dataShift.title}
+                    name={"title"}
+                    onChange={onChangeInput}
+                    placeholder="Masukkan Nama Shift..."
+                  />
+                </div>
+              </Form.Item>
+              <Form.Item
+                label="Jam Kerja"
+                name={"work_time"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Jam kerja wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <div className="flex gap-2 items-center">
+                  <DatePicker.RangePicker
+                    // allowEmpty={true}
+                    picker="time"
+                    className="w-full"
+                    format={"HH:mm"}
+                    order={false}
+                    onCalendarChange={(values, formatString) => {
+                      setDataShift((prev) => ({
+                        ...prev,
+                        start_at: formatString[0] || "",
+                        end_at: formatString[1] || "",
+                      }));
+                    }}
+                  />
+                  {dataShift?.end_at < dataShift?.start_at && (
+                    <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
+                  )}
+                </div>
+              </Form.Item>
+              <Form.Item
+                label="Jam Istirahat"
+                name={"break_time"}
+                className="col-span-2"
+              >
+                <div className="flex gap-2 items-center">
+                  <DatePicker.RangePicker
+                    picker="time"
+                    className="w-full"
+                    format={"HH:mm"}
+                    order={false}
+                    onCalendarChange={(values, formatString) => {
+                      setDataShift((prev) => ({
+                        ...prev,
+                        start_break: formatString[0] || "",
+                        end_break: formatString[1] || "",
+                      }));
+                    }}
+                  />
+                  {dataShift?.end_break < dataShift?.start_break && (
+                    <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
+                  )}
+                </div>
+              </Form.Item>
+            </div>
           </Form>
         </div>
       </Spin>
