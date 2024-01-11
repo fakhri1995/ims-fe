@@ -271,10 +271,11 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
     {
       title: "Status",
       dataIndex: "status",
+      align: "center",
       render: (status, record, index) => {
         return {
           children: (
-            <>
+            <div className="flex justify-center">
               <Tooltip
                 placement="bottom"
                 visible={false}
@@ -311,7 +312,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                   disabled={!isAllowedToUpdateShiftStatus}
                   optionFilterProp="children"
                   bordered={false}
-                  className={`w-2/3 rounded-md p-1 text-center ${
+                  className={`w-2/3 rounded-md p-1 flex text-center ${
                     status == 1
                       ? "bg-primary100 text-white"
                       : "bg-mono90 text-mono30 "
@@ -330,18 +331,14 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                     <Select.Option
                       key={id}
                       value={item?.value}
-                      className={`rounded-md px-4 py-2 m-2 ${
-                        item?.value == 1
-                          ? "bg-primary100 text-white"
-                          : "bg-mono90 text-mono30 "
-                      }`}
+                      className={`rounded-md px-4 py-2 text-center`}
                     >
                       {item?.title}
                     </Select.Option>
                   ))}
                 </Select>
               </Tooltip>
-            </>
+            </div>
           ),
         };
       },
@@ -349,6 +346,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
     {
       title: "Aksi",
       dataIndex: "action",
+      align: "center",
       render: (status, record, index) => {
         return {
           children: (
@@ -406,6 +404,9 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                   allowClear
                   onChange={(e) => {
                     // setSearchingFilterEmployees(e.target.value);
+                    setQueryParams({
+                      keyword: e.target.value,
+                    });
                   }}
                   // disabled={!isAllowedToGetEmployees}
                 />
