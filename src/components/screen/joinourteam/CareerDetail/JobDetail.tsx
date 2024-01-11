@@ -672,9 +672,9 @@ export const JobDetail: FC = () => {
                   rev={""}
                   style={{ fontSize: 80, color: "#35763B" }}
                 />
-                <p className={"text-primary100 text-sm font-medium leading-6"}>
-                  Sent
-                </p>
+                <p
+                  className={"text-primary100 text-sm font-medium leading-6"}
+                ></p>
               </div>
             ) : (
               <div
