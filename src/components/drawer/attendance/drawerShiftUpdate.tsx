@@ -130,7 +130,7 @@ const DrawerShiftUpdate = ({
       // }
     }
   );
-  console.log({ dataUpdate });
+
   return (
     <DrawerCore
       title={"Edit Shift"}
@@ -186,29 +186,32 @@ const DrawerShiftUpdate = ({
               ]}
               className="col-span-2"
             >
-              <div>
+              <div className="flex gap-2 items-center">
                 <DatePicker.RangePicker
                   // allowEmpty
+                  picker="time"
+                  className="w-full"
+                  format={"HH:mm"}
+                  order={false}
                   value={[
-                    moment(dataUpdate.start_at).isValid()
-                      ? moment(dataUpdate.start_at)
+                    moment(dataUpdate.start_at, "HH:mm").isValid()
+                      ? moment(dataUpdate.start_at, "HH:mm")
                       : null,
-                    moment(dataUpdate.end_at).isValid()
-                      ? moment(dataUpdate.end_at)
+                    moment(dataUpdate.end_at, "HH:mm").isValid()
+                      ? moment(dataUpdate.end_at, "HH:mm")
                       : null,
                   ]}
-                  onCalendarChange={(values, formatString) => {
-                    // console.log({ formatString });
+                  onChange={(values, formatString) => {
                     setDataUpdate((prev) => ({
                       ...prev,
                       start_at: formatString[0] || "",
                       end_at: formatString[1] || "",
                     }));
                   }}
-                  picker="time"
-                  className="w-full"
-                  format={"HH:mm"}
                 />
+                {dataUpdate?.end_at < dataUpdate?.start_at && (
+                  <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
+                )}
               </div>
             </Form.Item>
 
@@ -217,28 +220,31 @@ const DrawerShiftUpdate = ({
               name={"break_time"}
               className="col-span-2"
             >
-              <div>
+              <div className="flex gap-2 items-center ">
                 <DatePicker.RangePicker
+                  picker="time"
+                  className="w-full"
+                  format={"HH:mm"}
+                  order={false}
                   value={[
-                    moment(dataUpdate.start_break).isValid()
-                      ? moment(dataUpdate.start_break)
+                    moment(dataUpdate.start_break, "HH:mm").isValid()
+                      ? moment(dataUpdate.start_break, "HH:mm")
                       : null,
-                    moment(dataUpdate.end_break).isValid()
-                      ? moment(dataUpdate.end_break)
+                    moment(dataUpdate.end_break, "HH:mm").isValid()
+                      ? moment(dataUpdate.end_break, "HH:mm")
                       : null,
                   ]}
                   onCalendarChange={(values, formatString) => {
-                    // console.log({ formatString });
                     setDataUpdate((prev) => ({
                       ...prev,
                       start_break: formatString[0] || "",
                       end_break: formatString[1] || "",
                     }));
                   }}
-                  picker="time"
-                  className="w-full"
-                  format={"HH:mm"}
                 />
+                {dataUpdate?.end_break < dataUpdate?.start_break && (
+                  <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
+                )}
               </div>
             </Form.Item>
           </Form>

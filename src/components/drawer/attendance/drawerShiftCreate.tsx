@@ -155,24 +155,24 @@ const DrawerShiftCreate = ({
               ]}
               className="col-span-2"
             >
-              <div>
+              <div className="flex gap-2 items-center">
                 <DatePicker.RangePicker
                   // allowEmpty={true}
-
-                  // open={calendarOpen}
-                  // onOpenChange={setCalendarOpen}
+                  picker="time"
+                  className="w-full"
+                  format={"HH:mm"}
+                  order={false}
                   onCalendarChange={(values, formatString) => {
-                    // console.log({ formatString });
                     setDataShift((prev) => ({
                       ...prev,
                       start_at: formatString[0] || "",
                       end_at: formatString[1] || "",
                     }));
                   }}
-                  picker="time"
-                  className="w-full"
-                  format={"HH:mm"}
                 />
+                {dataShift?.end_at < dataShift?.start_at && (
+                  <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
+                )}
               </div>
             </Form.Item>
             <Form.Item
@@ -180,24 +180,23 @@ const DrawerShiftCreate = ({
               name={"break_time"}
               className="col-span-2"
             >
-              <div>
+              <div className="flex gap-2 items-center">
                 <DatePicker.RangePicker
-                  // allowEmpty={true}
-
-                  // open={calendarOpen}
-                  // onOpenChange={setCalendarOpen}
+                  picker="time"
+                  className="w-full"
+                  format={"HH:mm"}
+                  order={false}
                   onCalendarChange={(values, formatString) => {
-                    // console.log({ formatString });
                     setDataShift((prev) => ({
                       ...prev,
                       start_break: formatString[0] || "",
                       end_break: formatString[1] || "",
                     }));
                   }}
-                  picker="time"
-                  className="w-full"
-                  format={"HH:mm"}
                 />
+                {dataShift?.end_break < dataShift?.start_break && (
+                  <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
+                )}
               </div>
             </Form.Item>
           </Form>
