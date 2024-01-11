@@ -216,6 +216,9 @@ export const CareersAtMig: FC = () => {
       </div>
       <Modal
         open={modalApply}
+        bodyStyle={{
+          backgroundImage: `url('/bg-apply-form.svg')`,
+        }}
         onCancel={handleModalApply}
         className={" w-[100px] md:w-[777px]"}
         closeIcon={
@@ -226,7 +229,7 @@ export const CareersAtMig: FC = () => {
         }
         footer={null}
       >
-        <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} />
+        {/* <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} /> */}
 
         <Spin
           spinning={loading}
@@ -275,7 +278,7 @@ export const CareersAtMig: FC = () => {
           }
         >
           {/* {showThankYou == null && ( */}
-          <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} />
+          {/* <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} /> */}
           {/* )} */}
           {showThankYou == null && (
             <div className={"relative"}>

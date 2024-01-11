@@ -651,6 +651,9 @@ export const JobDetail: FC = () => {
       <Modal
         open={modalApply}
         onCancel={handleModalApply}
+        bodyStyle={{
+          backgroundImage: `url('/bg-apply-form.svg')`,
+        }}
         className={" w-[100px] md:w-[777px]"}
         closeIcon={
           <img
@@ -692,9 +695,6 @@ export const JobDetail: FC = () => {
             )
           }
         >
-          {showThankYou != "full" && (
-            <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} />
-          )}
           {showThankYou == null && showQuestion == false && (
             <div className={"relative"}>
               <p
