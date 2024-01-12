@@ -1,4 +1,3 @@
-import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Input, Select, Spin, Tooltip, notification } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 import {
@@ -14,7 +13,12 @@ import ButtonSys from "components/button";
 import DrawerShiftCreate from "components/drawer/attendance/drawerShiftCreate";
 import DrawerShiftUpdate from "components/drawer/attendance/drawerShiftUpdate";
 import { AccessControl } from "components/features/AccessControl";
-import { EditIconSvg, PlusIconSvg, TrashIconSvg } from "components/icon";
+import {
+  AlertCircleIconSvg,
+  EditIconSvg,
+  PlusIconSvg,
+  TrashIconSvg,
+} from "components/icon";
 import LayoutDashboard from "components/layout-dashboardNew";
 import ModalCore from "components/modal/modalCore";
 import { ModalHapus2 } from "components/modal/modalCustom";
@@ -162,12 +166,12 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       }
     );
 
-  const handleShowUpdate = (data) => {
+  const handleShowUpdate = (data: ShiftDetailData) => {
     setCurrentDataShift(data);
     setShowUpdateDrawer(true);
   };
 
-  const handleShowDelete = (data) => {
+  const handleShowDelete = (data: ShiftDetailData) => {
     setCurrentDataShift(data);
     setShowDeleteModal(true);
   };
@@ -259,13 +263,14 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       title: "Status",
       dataIndex: "status",
       align: "center",
+      className: "w-2/12",
       render: (status, record, index) => {
         return {
           children: (
             <div className="flex justify-center">
               <Tooltip
-                placement="bottom"
-                overlayClassName="z-0"
+                placement="right"
+                overlayClassName="z-0 w-36"
                 // visible={false}
                 color={"#FFF"}
                 title={
@@ -376,9 +381,9 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/shift"
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 md:px-5" id="mainWrapper">
+      <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
         {/* Table Daftar Shift */}
-        <div className="md:col-span-3 flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
+        <div className="flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
             <h4 className="mig-heading--4 ">Daftar Shift</h4>
 
@@ -447,10 +452,18 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
         />
       </AccessControl>
 
+      {/* Modal Delete Shift */}
       <AccessControl hasPermission={ATTENDANCE_SHIFT_DELETE}>
         <ModalCore
           title={
-            currentDataShift?.status == 1 ? "Peringatan" : "Konfirmasi Hapus"
+            <div className="flex gap-4 items-center">
+              <AlertCircleIconSvg color={"#BF4A40"} size={24} />
+              <p>
+                {currentDataShift?.status == 1
+                  ? "Peringatan"
+                  : "Konfirmasi Hapus"}
+              </p>
+            </div>
           }
           visible={isShowDeleteModal}
           onCancel={() => setShowDeleteModal(false)}
@@ -472,10 +485,10 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                       type={"primary"}
                       color={"danger"}
                       onClick={() => deleteShift(currentDataShift?.id)}
-                      // disabled={disabled}
+                      disabled={!isAllowedToDeleteShift}
                     >
-                      <div className="flex flex-row space-x-2">
-                        <DeleteOutlined rev={""} />
+                      <div className="flex flex-row gap-2 items-center">
+                        <TrashIconSvg size={16} color={"#FFFFFF"} />
                         <p>Hapus Shift</p>
                       </div>
                     </ButtonSys>
@@ -493,14 +506,14 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
             </p>
           ) : (
             <p>
-              Apakah Anda yakin ingin menghapus shift{" "}
+              Apakah Anda yakin ingin menghapus{" "}
               <strong>{currentDataShift?.title}</strong>?
             </p>
           )}
         </ModalCore>
       </AccessControl>
 
-      {/* Modal Update Stage */}
+      {/* Modal Update Status Shift */}
       <AccessControl hasPermission={ATTENDANCE_SHIFT_STATUS_UPDATE}>
         <ModalUbah
           title={`Konfirmasi Perubahan`}
@@ -515,7 +528,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
           okButtonText="Ya, saya yakin"
           onCancel={() => handleCloseUpdateStatus()}
           loading={loadingUpdateShiftStatus}
-          // disabled={disableUpdate}
+          disabled={!isAllowedToUpdateShiftStatus}
         >
           <div className="space-y-4">
             <p className="">

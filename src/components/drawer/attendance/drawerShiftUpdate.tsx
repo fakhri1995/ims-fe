@@ -118,104 +118,102 @@ const DrawerShiftUpdate = ({ visible, onvisible, data }) => {
           <p className="mb-6 text-red-500 text-xs italic">
             *Informasi ini harus diisi
           </p>
-          <Form
-            layout="vertical"
-            form={instanceForm}
-            className="grid grid-cols-2 gap-x-6"
-          >
-            <Form.Item
-              label="Nama Shift"
-              name={"title"}
-              rules={[
-                {
-                  required: true,
-                  message: "Nama Shift wajib diisi",
-                },
-              ]}
-              className="col-span-2"
-            >
-              <div>
-                <Input
-                  value={dataUpdate.title}
-                  name={"title"}
-                  onChange={onChangeInput}
-                  placeholder="Masukkan Nama Shift..."
-                />
-              </div>
-            </Form.Item>
+          <Form layout="vertical" form={instanceForm}>
+            <div>
+              <Form.Item
+                label="Nama Shift"
+                name={"title"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Nama Shift wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <div>
+                  <Input
+                    value={dataUpdate.title}
+                    name={"title"}
+                    onChange={onChangeInput}
+                    placeholder="Masukkan Nama Shift..."
+                  />
+                </div>
+              </Form.Item>
 
-            <Form.Item
-              label="Jam Kerja"
-              name={"work_time"}
-              rules={[
-                {
-                  required: true,
-                  message: "Jam kerja wajib diisi",
-                },
-              ]}
-              className="col-span-2"
-            >
-              <div className="flex gap-2 items-center">
-                <DatePicker.RangePicker
-                  // allowEmpty
-                  picker="time"
-                  className="w-full"
-                  format={"HH:mm"}
-                  order={false}
-                  value={[
-                    moment(dataUpdate.start_at, "HH:mm").isValid()
-                      ? moment(dataUpdate.start_at, "HH:mm")
-                      : null,
-                    moment(dataUpdate.end_at, "HH:mm").isValid()
-                      ? moment(dataUpdate.end_at, "HH:mm")
-                      : null,
-                  ]}
-                  onChange={(values, formatString) => {
-                    setDataUpdate((prev) => ({
-                      ...prev,
-                      start_at: formatString[0] || "",
-                      end_at: formatString[1] || "",
-                    }));
-                  }}
-                />
-                {dataUpdate?.end_at < dataUpdate?.start_at && (
-                  <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
-                )}
-              </div>
-            </Form.Item>
+              <Form.Item
+                label="Jam Kerja"
+                name={"work_time"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Jam kerja wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <div className="flex gap-2 items-center">
+                  <DatePicker.RangePicker
+                    // allowEmpty
+                    picker="time"
+                    className="w-full"
+                    format={"HH:mm"}
+                    order={false}
+                    value={[
+                      moment(dataUpdate.start_at, "HH:mm").isValid()
+                        ? moment(dataUpdate.start_at, "HH:mm")
+                        : null,
+                      moment(dataUpdate.end_at, "HH:mm").isValid()
+                        ? moment(dataUpdate.end_at, "HH:mm")
+                        : null,
+                    ]}
+                    onChange={(values, formatString) => {
+                      setDataUpdate((prev) => ({
+                        ...prev,
+                        start_at: formatString[0] || "",
+                        end_at: formatString[1] || "",
+                      }));
+                    }}
+                  />
+                  {dataUpdate?.end_at < dataUpdate?.start_at && (
+                    <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
+                  )}
+                </div>
+              </Form.Item>
 
-            <Form.Item
-              label="Jam Istirahat"
-              name={"break_time"}
-              className="col-span-2"
-            >
-              <div className="flex gap-2 items-center ">
-                <DatePicker.RangePicker
-                  picker="time"
-                  className="w-full"
-                  format={"HH:mm"}
-                  order={false}
-                  value={[
-                    moment(dataUpdate.start_break, "HH:mm").isValid()
-                      ? moment(dataUpdate.start_break, "HH:mm")
-                      : null,
-                    moment(dataUpdate.end_break, "HH:mm").isValid()
-                      ? moment(dataUpdate.end_break, "HH:mm")
-                      : null,
-                  ]}
-                  onCalendarChange={(values, formatString) => {
-                    setDataUpdate((prev) => ({
-                      ...prev,
-                      start_break: formatString[0] || "",
-                      end_break: formatString[1] || "",
-                    }));
-                  }}
-                />
-                {dataUpdate?.end_break < dataUpdate?.start_break && (
-                  <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
-                )}
-              </div>
-            </Form.Item>
+              <Form.Item
+                label="Jam Istirahat"
+                name={"break_time"}
+                className="col-span-2"
+              >
+                <div className="flex gap-2 items-center ">
+                  <DatePicker.RangePicker
+                    picker="time"
+                    className="w-full"
+                    format={"HH:mm"}
+                    order={false}
+                    value={[
+                      moment(dataUpdate.start_break, "HH:mm").isValid()
+                        ? moment(dataUpdate.start_break, "HH:mm")
+                        : null,
+                      moment(dataUpdate.end_break, "HH:mm").isValid()
+                        ? moment(dataUpdate.end_break, "HH:mm")
+                        : null,
+                    ]}
+                    onCalendarChange={(values, formatString) => {
+                      setDataUpdate((prev) => ({
+                        ...prev,
+                        start_break: formatString[0] || "",
+                        end_break: formatString[1] || "",
+                      }));
+                    }}
+                  />
+                  {dataUpdate?.end_break < dataUpdate?.start_break && (
+                    <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
+                  )}
+                </div>
+              </Form.Item>
+            </div>
           </Form>
         </div>
       </Spin>
