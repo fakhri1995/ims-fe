@@ -2259,7 +2259,6 @@ const TableCustomShiftList = ({
   total,
   queryParams,
   setQueryParams,
-  sortTable,
 }) => {
   const [rowstate, setrowstate] = useState(0);
   return (

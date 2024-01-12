@@ -10,8 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
-import DrawerShiftCreate from "components/drawer/attendance/drawerShiftCreate";
-import DrawerShiftUpdate from "components/drawer/attendance/drawerShiftUpdate";
+import DrawerShift from "components/drawer/attendance/drawerShift";
 import { AccessControl } from "components/features/AccessControl";
 import {
   AlertCircleIconSvg,
@@ -63,6 +62,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   }
 
   const isAllowedToGetShifts = hasPermission(ATTENDANCE_SHIFTS_GET);
+  const isAllowedToAddShift = hasPermission(ATTENDANCE_SHIFT_ADD);
   const isAllowedToUpdateShiftStatus = hasPermission(
     ATTENDANCE_SHIFT_STATUS_UPDATE
   );
@@ -411,7 +411,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                   fullWidth
                   type={"primary"}
                   onClick={() => setShowCreateDrawer(true)}
-                  // disabled={!isAllowedToAddEmployee}
+                  disabled={!isAllowedToAddShift}
                 >
                   <div className="flex flex-row items-center space-x-2">
                     <PlusIconSvg size={16} color="#FFFFFF" />
@@ -430,22 +430,20 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
               total={dataRawShifts?.total}
               queryParams={queryParams}
               setQueryParams={setQueryParams}
-              // onOpenModal={onOpenModal}
-              // sortTable={sortTable}
             />
           </div>
         </div>
       </div>
 
       <AccessControl hasPermission={ATTENDANCE_SHIFT_ADD}>
-        <DrawerShiftCreate
+        <DrawerShift
           visible={isShowCreateDrawer}
           onvisible={setShowCreateDrawer}
         />
       </AccessControl>
 
       <AccessControl hasPermission={ATTENDANCE_SHIFT_UPDATE}>
-        <DrawerShiftUpdate
+        <DrawerShift
           data={currentDataShift}
           visible={isShowUpdateDrawer}
           onvisible={setShowUpdateDrawer}
