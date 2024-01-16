@@ -1,4 +1,15 @@
-import { Button, Input, Select, Spin, Tooltip, notification } from "antd";
+import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import {
+  Button,
+  DatePicker,
+  Input,
+  Select,
+  Spin,
+  Table,
+  Tooltip,
+  notification,
+} from "antd";
+import moment from "moment";
 import { GetServerSideProps, NextPage } from "next";
 import {
   NumberParam,
@@ -107,6 +118,53 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   const [isShowUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [isShowDeleteModal, setShowDeleteModal] = useState(false);
   const [isShowUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
+
+  // const [dataSchedules, setDataSchedules] = useState([])
+
+  const dataSchedules = [
+    {
+      id: 24,
+      name: "Agent 8",
+      nip: "108",
+      email: "agent8@mitramas.com",
+      role: 1,
+      company_id: 26,
+      position: "Contract Employee",
+      phone_number: "-",
+      created_time: "2022-02-09 09:37:19",
+      is_enabled: 1,
+      company_name: "WILAYAH 3 JAWA - BASE BANDUNG",
+      profile_image: {
+        id: 0,
+        link: "staging/Users/default_user.png",
+        description: "profile_image",
+      },
+      roles: [
+        {
+          id: 14,
+          name: "Default Agent Users",
+          description: "For Created Agent Users From Default",
+          deleted_at: null,
+        },
+        {
+          id: 19,
+          name: "Project Team Member",
+          description: "+ Mendapatkan fitur modul proyek\n+ Full akses tugas",
+          deleted_at: null,
+        },
+      ],
+      schedule: [
+        {
+          id: 1,
+          user_id: 24,
+          shift_id: 2,
+          date: "2024-01-01",
+          created_at: "2024-01-15T18:03:49.000000Z",
+          updated_at: "2024-01-15T18:03:49.000000Z",
+        },
+      ],
+    },
+  ];
 
   // 3. Use Effect & Use Query
   const {
@@ -230,6 +288,51 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     },
   ];
 
+  const date = new Date();
+  const currentMonth = date.toISOString();
+
+  const dateColumns = Array.from({ length: 7 }, (_, i) => {
+    return {
+      title: (
+        <div className="flex flex-col justify-center items-center w-full">
+          <div
+            className={`px-2 py-1 w-16 h-16 rounded-full flex flex-col
+            items-center justify-center 
+            ${
+              true
+                ? `bg-primary100 border-2 border-primary25 text-white text-center`
+                : `text-mono50`
+            }`}
+          >
+            <p>SEN</p>
+            <p className="font-bold text-lg">16</p>
+          </div>
+        </div>
+      ),
+      // dataIndex: "position",
+      key: `date-${i}`,
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div>
+              <div
+                className="bg-backdrop flex flex-col items-center justify-center 
+                px-5 py-4 rounded-md"
+              >
+                <p className="mig-caption--bold text-mono30 text-center">
+                  Shift Normal
+                </p>
+                <p className="mig-caption text-mono50">08:00 - 17:00</p>
+              </div>
+            </div>
+          ),
+        };
+      },
+    };
+  });
+
+  console.log({ dateColumns });
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -327,7 +430,92 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             </div>
           </div>
 
-          <div></div>
+          {/* Month header */}
+          <div>
+            <th className="flex justify-between items-center">
+              <div
+                className="bg-mono100 p-2 w-9 h-9 rounded-full 
+                flex items-center justify-center"
+              >
+                <ArrowLeftOutlined rev={""} />
+              </div>
+              <DatePicker
+                // picker="month"
+                bordered={false}
+                defaultValue={moment(currentMonth)}
+                style={{
+                  color: "#4D4D4D",
+                  fontSize: "18px",
+                  fontWeight: 700,
+                }}
+                // className ="mig-heading--4 text-mono30"
+                onChange={(value) => {
+                  console.log({ value });
+                }}
+                format={"MMMM YYYY"}
+              />
+              <div
+                className="bg-mono100 p-2 w-9 h-9 rounded-full 
+                flex items-center justify-center"
+              >
+                <ArrowRightOutlined rev={""} />
+              </div>
+            </th>
+          </div>
+
+          <Table
+            dataSource={dataSchedules}
+            rowKey={(record) => record.id}
+            className="bordered"
+            columns={[
+              {
+                title: "Karyawan",
+                dataIndex: "name",
+                key: "name",
+                fixed: "left",
+                render: (text, record, index) => {
+                  return {
+                    children: (
+                      <div className="px-3 py-2 bg-mono120 flex flex-col gap-1 rounded-md">
+                        <p className="mig-caption--bold text-mono30">
+                          {record?.name}
+                        </p>
+                        <p className="mig-caption text-mono50">
+                          {record?.position}
+                        </p>
+                        <p className="mig-caption text-mono50">
+                          {record?.company_name}
+                        </p>
+                      </div>
+                    ),
+                  };
+                },
+              },
+
+              ...dateColumns,
+            ]}
+          >
+            {/* <tr>
+              <th></th>
+              <th>16</th>
+              <th>16</th>
+              <th>16</th>
+              <th>16</th>
+              <th>16</th>
+              <th>16</th>
+              <th>16</th>
+            </tr>
+            <tr>
+              <th>nama karyawan</th>
+              <td>jadwal1</td>
+              <td>jadwal1</td>
+              <td>jadwal1</td>
+              <td>jadwal1</td>
+              <td>jadwal1</td>
+              <td>jadwal1</td>
+              <td>jadwal1</td>
+            </tr> */}
+          </Table>
         </div>
       </div>
 
