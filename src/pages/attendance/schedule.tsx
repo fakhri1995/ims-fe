@@ -9,6 +9,7 @@ import {
   Tooltip,
   notification,
 } from "antd";
+import locale from "antd/lib/date-picker/locale/id_ID";
 import moment from "moment";
 import { GetServerSideProps, NextPage } from "next";
 import {
@@ -28,7 +29,9 @@ import {
   CalendarOffIconSvg,
   CalendarStatsIconSvg,
   EditIconSvg,
+  LeftIconSvg,
   PlusIconSvg,
+  RightIconSvg,
   TrashIconSvg,
 } from "components/icon";
 import LayoutDashboard from "components/layout-dashboardNew";
@@ -118,6 +121,9 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   const [isShowUpdateDrawer, setShowUpdateDrawer] = useState(false);
   const [isShowDeleteModal, setShowDeleteModal] = useState(false);
   const [isShowUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
+
+  const [selectedMonthYear, setSelectedMonthYear] = useState(moment());
+  const [numOfDaysFromCurWeek, setNumOfDaysFromCurWeek] = useState(0);
 
   // const [dataSchedules, setDataSchedules] = useState([])
 
@@ -277,21 +283,25 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     setShowUpdateStatusModal(false);
   };
 
-  const dataStatusList = [
-    {
-      title: "Aktif",
-      value: 1,
-    },
-    {
-      title: "Non-Aktif",
-      value: 0,
-    },
-  ];
+  const handleClickNextWeek = () => {
+    setNumOfDaysFromCurWeek((prev) => prev + 7);
+  };
+
+  const handleClickPrevWeek = () => {
+    setNumOfDaysFromCurWeek((prev) => prev - 7);
+  };
 
   const date = new Date();
   const currentMonth = date.toISOString();
+  const startOfWeek = moment().startOf("week").add(1, "days").format("dddd");
+  const endOfWeek = moment().endOf("week").add(1, "days").toDate();
+  const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
 
   const dateColumns = Array.from({ length: 7 }, (_, i) => {
+    let currentDate = moment()
+      .startOf("week")
+      .add(i + 1 + numOfDaysFromCurWeek, "days");
+    let isToday = currentDate.isSame(new Date(), "day");
     return {
       title: (
         <div className="flex flex-col justify-center items-center w-full">
@@ -299,13 +309,13 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             className={`px-2 py-1 w-16 h-16 rounded-full flex flex-col
             items-center justify-center 
             ${
-              true
+              isToday
                 ? `bg-primary100 border-2 border-primary25 text-white text-center`
                 : `text-mono50`
             }`}
           >
-            <p>SEN</p>
-            <p className="font-bold text-lg">16</p>
+            <p className="">{days[i].toUpperCase()}</p>
+            <p className="font-bold text-lg">{currentDate?.format("DD")}</p>
           </div>
         </div>
       ),
@@ -431,42 +441,54 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           </div>
 
           {/* Month header */}
-          <div>
-            <th className="flex justify-between items-center">
-              <div
-                className="bg-mono100 p-2 w-9 h-9 rounded-full 
+          <div className="flex justify-between items-center p-4 border-x border-t">
+            <button
+              className="bg-mono100 p-2 w-9 h-9 rounded-full 
                 flex items-center justify-center"
-              >
-                <ArrowLeftOutlined rev={""} />
-              </div>
-              <DatePicker
-                // picker="month"
-                bordered={false}
-                defaultValue={moment(currentMonth)}
-                style={{
-                  color: "#4D4D4D",
-                  fontSize: "18px",
-                  fontWeight: 700,
-                }}
-                // className ="mig-heading--4 text-mono30"
-                onChange={(value) => {
-                  console.log({ value });
-                }}
-                format={"MMMM YYYY"}
-              />
-              <div
-                className="bg-mono100 p-2 w-9 h-9 rounded-full 
+            >
+              <LeftIconSvg color={"#808080"} size={16} />
+            </button>
+            <DatePicker
+              // picker="month"
+              bordered={false}
+              locale={locale}
+              format={"MMMM YYYY"}
+              value={selectedMonthYear}
+              style={{
+                color: "#4D4D4D",
+                fontSize: "18px",
+                fontWeight: 700,
+              }}
+              onChange={(date) => {
+                if (date) {
+                  // setQueryParams({
+                  //   month: date.format("M"),
+                  //   year: date.format("YYYY"),
+                  //   page: 1,
+                  // });
+                  setSelectedMonthYear(date);
+                } else {
+                  // setQueryParams({
+                  //   month: moment().format("M"),
+                  //   year: moment().format("YYYY"),
+                  //   page: 1,
+                  // });
+                  setSelectedMonthYear(moment());
+                }
+              }}
+            />
+            <button
+              className="bg-mono100 p-2 w-9 h-9 rounded-full 
                 flex items-center justify-center"
-              >
-                <ArrowRightOutlined rev={""} />
-              </div>
-            </th>
+            >
+              <RightIconSvg color={"#808080"} size={16} />
+            </button>
           </div>
 
           <Table
             dataSource={dataSchedules}
             rowKey={(record) => record.id}
-            className="bordered"
+            className="border border-collapse"
             columns={[
               {
                 title: "Karyawan",
@@ -491,31 +513,36 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   };
                 },
               },
+              {
+                title: (
+                  <>
+                    <button
+                      onClick={handleClickPrevWeek}
+                      className="bg-mono100 p-2 w-9 h-9 rounded-full 
+                      flex items-center justify-center"
+                    >
+                      <LeftIconSvg color={"#808080"} size={16} />
+                    </button>
+                  </>
+                ),
+              },
 
               ...dateColumns,
+              {
+                title: (
+                  <>
+                    <button
+                      onClick={handleClickNextWeek}
+                      className="bg-mono100 p-2 w-9 h-9 rounded-full 
+                      flex items-center justify-center"
+                    >
+                      <RightIconSvg color={"#808080"} size={16} />
+                    </button>
+                  </>
+                ),
+              },
             ]}
-          >
-            {/* <tr>
-              <th></th>
-              <th>16</th>
-              <th>16</th>
-              <th>16</th>
-              <th>16</th>
-              <th>16</th>
-              <th>16</th>
-              <th>16</th>
-            </tr>
-            <tr>
-              <th>nama karyawan</th>
-              <td>jadwal1</td>
-              <td>jadwal1</td>
-              <td>jadwal1</td>
-              <td>jadwal1</td>
-              <td>jadwal1</td>
-              <td>jadwal1</td>
-              <td>jadwal1</td>
-            </tr> */}
-          </Table>
+          ></Table>
         </div>
       </div>
 
