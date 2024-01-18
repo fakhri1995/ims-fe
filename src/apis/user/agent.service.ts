@@ -1,8 +1,14 @@
 import type { AxiosInstance } from "axios";
+import QueryString from "qs";
 
-import { objectToFormData } from "lib/helper";
+import { objectToFormData, permissionWarningNotification } from "lib/helper";
 
-import { CreateAgentPayload, UpdateAgentDetailPayload } from "./agent.types";
+import {
+  CreateAgentPayload,
+  IGetAgentsPaginateParams,
+  IGetAgentsPaginateSucceedResponse,
+  UpdateAgentDetailPayload,
+} from "./agent.types";
 
 import type { HttpRequestBaseSucceedResponse } from "types/common";
 
@@ -43,6 +49,28 @@ export class AgentService {
           "Content-Type": "multipart/form-data",
         },
       }
+    );
+  }
+
+  /**
+   * Retrieve all agents with pagination.
+   *
+   * @access GET /getAgentList
+   */
+  static async getAgents(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    params?: IGetAgentsPaginateParams
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification("Mendapatkan", "Daftar Agent");
+      return;
+    }
+
+    const qs = QueryString.stringify(params, { addQueryPrefix: true });
+
+    return await axiosClient.get<IGetAgentsPaginateSucceedResponse>(
+      "/getAgentList" + qs
     );
   }
 }
