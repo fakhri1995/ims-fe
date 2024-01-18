@@ -21,7 +21,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 
 import { getBase64 } from "lib/helper";
 
-import { useApplyCareer } from "apis/career_v2";
+import { useApplyCareerNoApply } from "apis/career_v2";
 
 import BgApplyForm from "assets/vectors/bg-apply-form.svg";
 
@@ -56,8 +56,9 @@ export const CareersAtMig: FC = () => {
   const [loading, setLoading] = useState(false);
   const [statusSent, setStatusSent] = useState(false);
   const [showThankYou, setShowThankyou] = useState<string | null>(null);
+  const [showThankYou2, setShowThankYou2] = useState(false);
   const [modalApply, setModalApply] = useState(false);
-  const { mutate: applyJob, isLoading: isApplying } = useApplyCareer();
+  const { mutate: applyJob, isLoading: isApplying } = useApplyCareerNoApply();
   const [captchaVerifyValue, setCaptchaVerifyValue] = useState<string | null>(
     null
   );
@@ -99,12 +100,12 @@ export const CareersAtMig: FC = () => {
         return;
       }
       setLoading(true);
+      setStatusSent(false);
       applyJob(
         {
           name: values.name,
           email: values.email,
           phone: values.phone_number,
-          career_id: null,
           "g-recaptcha-response": captchaVerifyValue,
           resume: resumeFileBlob,
         },
@@ -113,20 +114,20 @@ export const CareersAtMig: FC = () => {
             // TODO: handle on succeed
             // notification.success({ message: response.data.message });
 
-            setStatusSent(false);
             setTimeout(() => {
               setStatusSent(true);
             }, 3000);
             setTimeout(() => {
               setLoading(false);
+              resetForm();
             }, 5000);
             setTimeout(() => {
               setShowThankyou("half");
-            }, 2000);
+            }, 5000);
 
             setTimeout(() => {
-              setShowThankyou("full");
-            }, 3000);
+              setShowThankYou2(true);
+            }, 10000);
           },
           onError: (error: AxiosError) => {
             notification.error({
@@ -139,6 +140,12 @@ export const CareersAtMig: FC = () => {
     [form, captchaVerifyValue, resumeFileBlob]
   );
 
+  const resetForm = () => {
+    setCaptchaVerifyValue(null);
+    setResumeFileBlob(null);
+    setIsAgreementPassed(false);
+    form.resetFields();
+  };
   const handleModalApply = () => {
     setModalApply(false);
     setShowThankyou(null);
@@ -177,7 +184,7 @@ export const CareersAtMig: FC = () => {
       <JobListTable />
 
       {/* Notes */}
-      {/* <div className="flex flex-col justify-center items-center ">
+      <div className="flex flex-col justify-center items-center ">
         <p
           style={{ lineHeight: "120%" }}
           className="text-[32px] text-blackmig font-gilroysemibold font-normal text-center mt-[80px]"
@@ -206,33 +213,12 @@ export const CareersAtMig: FC = () => {
             Drop Resume Here
           </p>
         </div>
-      </div> */}
-      <div className="flex flex-col justify-center items-center">
-        <span className="h-[2px] bg-primarygreen w-[200px] lg:w-60 block" />
-
-        <p
-          style={{ lineHeight: "150%" }}
-          className="pb-0 text-base text-black text-center mt-4"
-        >
-          {t.vacancylistsectiondescriptionbelow}{" "}
-        </p>
-        <p
-          style={{ lineHeight: "150%" }}
-          className="pb-12 lg:pb-8 text-base text-black text-center"
-        >
-          {t.vacancylistsectiondescriptionbelow3}{" "}
-          <a
-            style={{ lineHeight: "150%" }}
-            href="mailto:hiring@mitrasolusi.group"
-            className="text-base text-blackmig font-semibold"
-          >
-            hiring@mitrasolusi.group
-          </a>{" "}
-          {t.vacancylistsectiondescriptionbelow2}
-        </p>
       </div>
       <Modal
         open={modalApply}
+        bodyStyle={{
+          backgroundImage: `url('/bg-apply-form.svg')`,
+        }}
         onCancel={handleModalApply}
         className={" w-[100px] md:w-[777px]"}
         closeIcon={
@@ -243,31 +229,57 @@ export const CareersAtMig: FC = () => {
         }
         footer={null}
       >
+        {/* <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} /> */}
+
         <Spin
           spinning={loading}
           indicator={
-            <div
-              style={{ position: "absolute", top: "70%", left: "5%" }}
-              className={"flex w-full flex-col gap-2.5"}
-            >
-              {statusSent ? (
-                <CheckCircleOutlined
-                  rev={""}
-                  style={{ fontSize: 80, color: "#35763B" }}
-                />
-              ) : (
-                <LoadingOutlined
-                  rev={""}
-                  style={{ fontSize: 80, color: "#35763B" }}
-                />
-              )}
-              <p className={"text-primary100 text-sm font-medium leading-6"}>
-                {statusSent ? "Sent" : "Sending.."}
-              </p>
-            </div>
+            statusSent ? (
+              <div
+                style={{ position: "absolute", top: "70%" }}
+                className={"flex w-full flex-col self-center gap-2.5"}
+              >
+                {statusSent ? (
+                  <CheckCircleOutlined
+                    rev={""}
+                    style={{ fontSize: 80, color: "#35763B" }}
+                  />
+                ) : (
+                  <LoadingOutlined
+                    rev={""}
+                    style={{ fontSize: 80, color: "#35763B" }}
+                  />
+                )}
+                <p className={"text-primary100 text-sm font-medium leading-6"}>
+                  {statusSent ? "" : "Sending.."}
+                </p>
+              </div>
+            ) : (
+              <div
+                style={{ position: "absolute", top: "70%", left: "5%" }}
+                className={"flex w-full flex-col  gap-2.5"}
+              >
+                {statusSent ? (
+                  <CheckCircleOutlined
+                    rev={""}
+                    style={{ fontSize: 80, color: "#35763B" }}
+                  />
+                ) : (
+                  <LoadingOutlined
+                    rev={""}
+                    style={{ fontSize: 80, color: "#35763B" }}
+                  />
+                )}
+                <p className={"text-primary100 text-sm font-medium leading-6"}>
+                  {statusSent ? "" : "Sending.."}
+                </p>
+              </div>
+            )
           }
         >
-          <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} />
+          {/* {showThankYou == null && ( */}
+          {/* <BgApplyForm className={"absolute h-320 -z-0 -top-5 -left-10"} /> */}
+          {/* )} */}
           {showThankYou == null && (
             <div className={"relative"}>
               <p
@@ -379,7 +391,7 @@ export const CareersAtMig: FC = () => {
                   <Form.Item noStyle>
                     <div className={"md:flex md:justify-end"}>
                       <Button
-                        className={`${styles.ctaButton} mt-6 w-full md:mt-8`}
+                        className={`${styles.ctaButton} mt-6 w-full md:mt-8 bg-primarygreen text-white`}
                         htmlType="submit"
                         disabled={!isAllowedToSubmit}
                         loading={isApplying}
@@ -393,41 +405,99 @@ export const CareersAtMig: FC = () => {
             </div>
           )}
           {showThankYou == "half" ? (
-            <div className={"flex justify-center h-[500px] md:h-[656px]"}>
+            <div
+              className={
+                "flex justify-center h-[500px] transition-opacity ease-in duration-700 opacity-100 md:h-[656px]"
+              }
+            >
               <div
                 className={
                   "flex flex-col justify-center content-center items-center"
                 }
               >
-                <p
-                  className={
-                    "font-gilroysemibold text-lg font-normal leading-6 text-blackmig"
-                  }
-                >
-                  Thank you for applying at MIG!
-                </p>
-                <p
-                  className={
-                    "mt-3 font-gilroyregular text-sm leading-[21px] text-blackmig"
-                  }
-                  style={{ fontFeatureSettings: "cv04" }}
-                >
-                  We’ll get back to you as soon as possible
-                </p>
-                <div className={"mt-9"}>
-                  <img
-                    src="/image/landingpage/Talents.png"
-                    className={"w-full h-full"}
-                    style={{ width: "255px", height: "152px" }}
-                  />
+                <div className={"test-animation"}>
+                  <p
+                    className={
+                      "font-gilroysemibold text-lg font-normal leading-6 text-blackmig"
+                    }
+                  >
+                    Thank you for applying at MIG!
+                  </p>
+                  <p
+                    className={
+                      "mt-3 font-gilroyregular text-sm leading-[21px] text-blackmig"
+                    }
+                    style={{ fontFeatureSettings: "cv04" }}
+                  >
+                    We’ll get back to you as soon as possible
+                  </p>
+                  <div className={"mt-9"}>
+                    <img
+                      src="/image/landingpage/Talents.png"
+                      className={"w-full h-full"}
+                      style={{ width: "255px", height: "152px" }}
+                    />
+                  </div>
+                </div>
+                <div className={"test-animation2 flex flex-col justify-center"}>
+                  <p
+                    style={{ fontFeatureSettings: "cv04" }}
+                    className={
+                      "mt-9 font-gilroyregular text-[16px] font-normal leading-6 "
+                    }
+                  >
+                    In the meantime, check other job vacancies that might suit
+                    you:
+                  </p>
+                  <div
+                    onClick={() => router.push("/joinourteam")}
+                    className={
+                      "mt-3 px-4 py-2 rounded bg-primarygreen hover:cursor-pointer max-w-fit flex self-center"
+                    }
+                  >
+                    <p
+                      className={
+                        "text-white font-gilroysemibold text-[16px] font-normal leading-6"
+                      }
+                      style={{ fontFeatureSettings: "cv04" }}
+                    >
+                      Explore Jobs
+                    </p>
+                  </div>
+                  <p
+                    className={
+                      "mt-3 text-[14px] font-gilroyregular font-normal text-center leading-[21px] text-blackmig"
+                    }
+                  >
+                    or{" "}
+                  </p>
+                  <div
+                    onClick={() => router.push("/")}
+                    className={
+                      "mt-3 px-4 py-2  max-w-fit flex self-center rounded bg-white border-2 border-primarygreen hover:cursor-pointer"
+                    }
+                  >
+                    <p
+                      className={
+                        "text-primarygreen font-gilroysemibold text-[16px] font-normal leading-6"
+                      }
+                      style={{ fontFeatureSettings: "cv04" }}
+                    >
+                      Back to Home
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           ) : showThankYou == "full" ? (
-            <div className={"flex justify-center h-[500px] md:h-[656px]"}>
+            <div
+              className={
+                "flex justify-center h-[500px] md:h-[656px] bg-form-modal"
+              }
+            >
               <div
                 className={
-                  "flex flex-col justify-center content-center items-center transition-2"
+                  "flex flex-col justify-center content-center items-center test-animation2"
                 }
               >
                 <p
@@ -461,20 +531,12 @@ export const CareersAtMig: FC = () => {
                   In the meantime, check other job vacancies that might suit
                   you:
                 </p>
-                <div
-                  className={
-                    "mt-3 px-4 py-2 rounded bg-primarygreen hover:cursor-pointer"
-                  }
+                <Button
+                  className={`${styles.ctaButton} mt-3 px-4 py-2 rounded bg-primarygreen font-gilroysemibold text-[16px] font-normal leading-6 text-white`}
+                  onClick={() => router.push("/joinourteam")}
                 >
-                  <p
-                    className={
-                      "text-white font-gilroysemibold text-[16px] font-normal leading-6"
-                    }
-                    style={{ fontFeatureSettings: "cv04" }}
-                  >
-                    Explore Jobs
-                  </p>
-                </div>
+                  Explore Jobs
+                </Button>
                 <p
                   className={
                     "mt-3 text-[14px] font-gilroyregular font-normal leading-[21px] text-blackmig"
@@ -482,20 +544,12 @@ export const CareersAtMig: FC = () => {
                 >
                   or{" "}
                 </p>
-                <div
-                  className={
-                    "mt-3 px-4 py-2 rounded bg-white border-2 border-primarygreen hover:cursor-pointer"
-                  }
+                <Button
+                  className={`${styles.ctaButton} mt-3 px-4 py-2 rounded bg-white border-2 border-primarygreen text-primarygreen font-gilroysemibold text-[16px] font-normal leading-6`}
+                  onClick={() => router.push("/")}
                 >
-                  <p
-                    className={
-                      "text-primarygreen font-gilroysemibold text-[16px] font-normal leading-6"
-                    }
-                    style={{ fontFeatureSettings: "cv04" }}
-                  >
-                    Back to Home
-                  </p>
-                </div>
+                  Back to Home
+                </Button>
               </div>
             </div>
           ) : (

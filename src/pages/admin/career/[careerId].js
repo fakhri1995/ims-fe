@@ -906,7 +906,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               </div>
             )}
           </div>
-          <div className={"flex md:flex-row md:justify-between mt-7"}>
+          <div className={"md:flex md:flex-row md:justify-between mt-7"}>
             <Tabs
               defaultActiveKey="1"
               className={`md:w-3/4`}
@@ -936,7 +936,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                   });
                 }}
                 className={
-                  "flex gap-2 border border-primarygreen rounded-[5px] px-4 py-1.5 h-8 self-center hover:cursor-pointer"
+                  "mt-2 max-w-fit md:mt-0 flex gap-2 border border-primarygreen rounded-[5px] px-4 py-1.5 h-8 self-center hover:cursor-pointer"
                 }
               >
                 <EditSquareIconSvg size={20} color={"#35763B"} />
@@ -947,16 +947,23 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
             ) : (
               <div
                 onClick={() => {
-                  setdrawedit(true);
-                  setdataedit({
-                    id: detailCareer.question.id,
-                    name: detailCareer.question.name,
-                    description: detailCareer.question.description,
-                    question: detailCareer.question.details,
-                  });
+                  if (countQuestion > 0) {
+                    setdrawedit(true);
+                    setdataedit({
+                      id: detailCareer.question.id,
+                      name: detailCareer.question.name,
+                      description: detailCareer.question.description,
+                      question: detailCareer.question.details,
+                    });
+                  } else {
+                    notification.error({
+                      message: `Tidak Dapat Diedit karena tidak ada pertanyaan`,
+                      duration: 3,
+                    });
+                  }
                 }}
                 className={
-                  "flex gap-2 border border-primarygreen rounded-[5px] px-4 py-1.5 h-8 self-center hover:cursor-pointer"
+                  "mt-2 max-w-fit md:mt-0 flex gap-2 border border-primarygreen rounded-[5px] px-4 py-1.5 h-8 self-center hover:cursor-pointer"
                 }
               >
                 <EditSquareIconSvg size={20} color={"#35763B"} />

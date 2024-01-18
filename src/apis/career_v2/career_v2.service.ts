@@ -5,6 +5,7 @@ import { objectToFormData } from "lib/helper";
 
 import type {
   AddCareerPayload,
+  AddCareerPayloadNoApply,
   GetPostedCareerParam,
   GetPostedCareerSucceedResponse,
   GetPostedCareersParams,
@@ -75,6 +76,19 @@ export class CareerV2Service {
     const payloadFormData = objectToFormData(payload);
 
     return await axiosClient.post("/v2/addCareerApply", payloadFormData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  }
+
+  static async addCareerNoApply(
+    axiosClient: AxiosInstance,
+    payload: AddCareerPayloadNoApply
+  ) {
+    const payloadFormData = objectToFormData(payload);
+
+    return await axiosClient.post("/v2/addCareerNoApply", payloadFormData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

@@ -17,7 +17,6 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   RECRUITMENT_STAGES_GET,
-  RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STAGE_ADD,
   RECRUITMENT_STAGE_DELETE,
   RECRUITMENT_STAGE_GET,
@@ -55,7 +54,6 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetStagesList = hasPermission(RECRUITMENT_STAGES_LIST_GET);
   const isAllowedToGetStages = hasPermission(RECRUITMENT_STAGES_GET);
   const isAllowedToGetStage = hasPermission(RECRUITMENT_STAGE_GET);
   const isAllowedToAddStage = hasPermission(RECRUITMENT_STAGE_ADD);

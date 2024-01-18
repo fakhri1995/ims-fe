@@ -163,6 +163,28 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
+  // Use in statistic for displaying only top 5 data and "Lainnya"
+  const getFinalStatisticCount = (resData, attrName, attrCount) => {
+    resData.sort((a, b) => b[attrCount] - a[attrCount]);
+    let top5Data = resData.filter((data) => data[attrName]).slice(0, 5);
+    let top5Name = top5Data.map((data) => data[attrName]);
+
+    let othersData = resData.filter(
+      (data) => !top5Name.includes(data[attrName])
+    );
+    let othersSum = othersData.reduce(
+      (total, data) => total + data[attrCount],
+      0
+    );
+
+    top5Data.push({
+      [attrName]: "Lainnya",
+      [attrCount]: othersSum,
+    });
+
+    return top5Data;
+  };
+
   // 3. UseEffect
   // 3.1. Get Employees
   const {
@@ -449,28 +471,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         page: 1,
       });
     }
-  };
-
-  // Use in statistic for displaying only top 5 data and "Lainnya"
-  const getFinalStatisticCount = (resData, attrName, attrCount) => {
-    resData.sort((a, b) => b[attrCount] - a[attrCount]);
-    let top5Data = resData.filter((data) => data[attrName]).slice(0, 5);
-    let top5Name = top5Data.map((data) => data[attrName]);
-
-    let othersData = resData.filter(
-      (data) => !top5Name.includes(data[attrName])
-    );
-    let othersSum = othersData.reduce(
-      (total, data) => total + data[attrCount],
-      0
-    );
-
-    top5Data.push({
-      [attrName]: "Lainnya",
-      [attrCount]: othersSum,
-    });
-
-    return top5Data;
   };
 
   // "Daftar Karyawan" Table's columns
