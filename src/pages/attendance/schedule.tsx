@@ -22,6 +22,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
+import DrawerSchedule from "components/drawer/attendance/drawerSchedule";
 import DrawerShift from "components/drawer/attendance/drawerShift";
 import { AccessControl } from "components/features/AccessControl";
 import {
@@ -35,6 +36,7 @@ import {
   TrashIconSvg,
 } from "components/icon";
 import LayoutDashboard from "components/layout-dashboardNew";
+import ModalScheduleUpdate from "components/modal/attendance/modalScheduleUpdate";
 import ModalCore from "components/modal/modalCore";
 import { ModalHapus2 } from "components/modal/modalCustom";
 import { ModalUbah } from "components/modal/modalCustom";
@@ -45,6 +47,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
+  ATTENDANCE_SCHEDULE_UPDATE,
   ATTENDANCE_SHIFTS_GET,
   ATTENDANCE_SHIFT_ADD,
   ATTENDANCE_SHIFT_DELETE,
@@ -118,9 +121,8 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   });
 
   const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
-  const [isShowUpdateDrawer, setShowUpdateDrawer] = useState(false);
+  const [isShowUpdateModal, setShowUpdateModal] = useState(false);
   const [isShowDeleteModal, setShowDeleteModal] = useState(false);
-  const [isShowUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
 
   const [selectedMonthYear, setSelectedMonthYear] = useState(moment());
   const [numOfDaysFromCurWeek, setNumOfDaysFromCurWeek] = useState(0);
@@ -241,7 +243,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const handleShowUpdate = (data: ShiftDetailData) => {
     setCurrentDataShift(data);
-    setShowUpdateDrawer(true);
+    setShowUpdateModal(true);
   };
 
   const handleShowDelete = (data: ShiftDetailData) => {
@@ -264,23 +266,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       deleted_at: "",
     });
     setShowDeleteModal(false);
-  };
-
-  const handleCloseUpdateStatus = () => {
-    setCurrentDataShift({
-      id: 0,
-      company_id: 0,
-      title: "",
-      start_at: "",
-      end_at: "",
-      start_break: "",
-      end_break: "",
-      status: 0,
-      created_at: "",
-      updated_at: "",
-      deleted_at: "",
-    });
-    setShowUpdateStatusModal(false);
   };
 
   const handleClickNextWeek = () => {
@@ -326,6 +311,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           children: (
             <div>
               <div
+                onClick={() => setShowUpdateModal(true)}
                 className="bg-backdrop flex flex-col items-center justify-center 
                 px-5 py-4 rounded-md"
               >
@@ -547,17 +533,9 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       </div>
 
       <AccessControl hasPermission={ATTENDANCE_SHIFT_ADD}>
-        <DrawerShift
+        <DrawerSchedule
           visible={isShowCreateDrawer}
           onvisible={setShowCreateDrawer}
-        />
-      </AccessControl>
-
-      <AccessControl hasPermission={ATTENDANCE_SHIFT_UPDATE}>
-        <DrawerShift
-          data={currentDataShift}
-          visible={isShowUpdateDrawer}
-          onvisible={setShowUpdateDrawer}
         />
       </AccessControl>
 
@@ -622,33 +600,13 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
         </ModalCore>
       </AccessControl>
 
-      {/* Modal Update Status Shift */}
-      <AccessControl hasPermission={ATTENDANCE_SHIFT_STATUS_UPDATE}>
-        <ModalUbah
-          title={`Konfirmasi Perubahan`}
-          visible={isShowUpdateStatusModal}
-          onvisible={setShowUpdateStatusModal}
-          onOk={() =>
-            updateShiftStatus({
-              id: currentDataShift?.id,
-              status: Boolean(currentDataShift?.status),
-            })
-          }
-          okButtonText="Ya, saya yakin"
-          onCancel={() => handleCloseUpdateStatus()}
-          loading={loadingUpdateShiftStatus}
-          disabled={!isAllowedToUpdateSchedule}
-        >
-          <div className="space-y-4">
-            <p className="">
-              Apakah Anda yakin ingin mengubah status pada shift kerja{" "}
-              <strong>{currentDataShift.title}</strong> menjadi{" "}
-              <strong>
-                {currentDataShift.status == 1 ? "Aktif ?" : "Non-Aktif ?"}
-              </strong>
-            </p>
-          </div>
-        </ModalUbah>
+      {/* Modal Update Schedule */}
+      <AccessControl hasPermission={ATTENDANCE_SCHEDULE_UPDATE}>
+        <ModalScheduleUpdate
+          initProps={token}
+          visible={isShowUpdateModal}
+          onvisible={setShowUpdateModal}
+        />
       </AccessControl>
     </LayoutDashboard>
   );
