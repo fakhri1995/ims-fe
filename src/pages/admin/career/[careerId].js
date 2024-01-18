@@ -53,9 +53,11 @@ import {
   DownloadIcon2Svg,
   DownloadIconSvg,
   EditSquareIconSvg,
+  EyeIconSvg,
   SearchIconSvg,
   ShowCareerIconSvg,
   UpIconSvg,
+  UserPlusIconSvg,
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
@@ -110,7 +112,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 2);
-  pathTitleArr.splice(1, 2, "Karir Manajemen", "Detail Lowongan Kerja");
+  pathTitleArr.splice(1, 2, "Career Management", "Detail Lowongan Kerja");
 
   const [refresh, setRefresh] = useState(-1);
   const isAllowedToGetStatusApply = hasPermission(CAREERS_V2_APPLY_STATUSES);
@@ -410,21 +412,40 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
       key: "button_action",
       render: (text, record) => {
         return {
-          children: record.resume ? (
-            <a
-              download={record.name + ".pdf"}
-              href={"https://cdn.mig.id/" + record.resume.link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ButtonSys type={"default"}>
-                <DownloadOutlined />
-              </ButtonSys>
-            </a>
-          ) : (
-            <ButtonSys type={"default"} onClick={() => downloadNoData()}>
-              <DownloadOutlined />
-            </ButtonSys>
+          // children: record.resume ? (
+          //   <a
+          //     download={record.name + ".pdf"}
+          //     href={"https://cdn.mig.id/" + record.resume.link}
+          //     target="_blank"
+          //     rel="noopener noreferrer"
+          //   >
+          //     <ButtonSys type={"default"}>
+          //       <DownloadOutlined />
+          //     </ButtonSys>
+          //   </a>
+          // ) : (
+          //   <ButtonSys type={"default"} onClick={() => downloadNoData()}>
+          //     <DownloadOutlined />
+          //   </ButtonSys>
+          // ),
+          children: (
+            <div className={"flex flex-row gap-2.5"}>
+              <div
+                className={
+                  "p-2 rounded-[5px] bg-bgstatustaskfinish flex justify-center items-center"
+                }
+              >
+                <UserPlusIconSvg size={20} color={"#35763B"} />
+              </div>
+              <div
+                onClick={() => handleClickDetailPelamar(record)}
+                className={
+                  "p-2 rounded-[5px] bg-mono100 flex justify-center items-center hover:cursor-pointer"
+                }
+              >
+                <EyeIconSvg size={20} color={"#808080"} />
+              </div>
+            </div>
           ),
         };
       },
@@ -1342,6 +1363,24 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                   </ButtonSys>
                 )}
               </div>
+              <div
+                className={"mt-6 border border-solid border-[#f0f0f0] -mx-6"}
+              ></div>
+              <p className={"text-mono30 text-lg leading-6 font-bold mt-6"}>
+                Jawaban Pertanyaan Tambahan
+              </p>
+              <div
+                className={
+                  "mt-6 py-3 px-4 rounded-[5px] border border-solid border-inputkategori "
+                }
+              >
+                <p className={"text-xs font-medium text-mono50 leading-5  "}>
+                  1. Year Experience
+                </p>
+                <p className={"text-sm font-bold leading-6 text-mono30"}>
+                  1-2 Year Experiences
+                </p>
+              </div>
             </Drawer>
           </AccessControl>
           <AccessControl hasPermission={CAREERS_V2_GET}>
@@ -1444,7 +1483,7 @@ export async function getServerSideProps({ req, res, params }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "111",
+      sidemenu: "career-management",
       careerId,
     },
   };

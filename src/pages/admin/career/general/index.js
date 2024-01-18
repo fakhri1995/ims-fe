@@ -62,6 +62,7 @@ import {
   SearchIconSvg,
   ShowCareerIconSvg,
   UpIconSvg,
+  UserPlusIconSvg,
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
@@ -453,20 +454,38 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
       render: (text, record) => {
         return {
           children: record.resume ? (
-            <a
-              download={record.name + ".pdf"}
-              href={"https://cdn.mig.id/" + record.resume.link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ButtonSys type={"default"}>
+            <div className={"flex flex-row gap-4"}>
+              <a
+                download={record.name + ".pdf"}
+                href={"https://cdn.mig.id/" + record.resume.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ButtonSys type={"default"}>
+                  <DownloadOutlined />
+                </ButtonSys>
+              </a>
+              <div
+                className={
+                  "p-1 md:p-2 w-6 h-6 md:w-8 md:h-8 rounded-[5px] bg-bgstatustaskfinish flex justify-center items-center"
+                }
+              >
+                <UserPlusIconSvg size={14} color={"#35763B"} />
+              </div>
+            </div>
+          ) : (
+            <div className={"flex flex-row gap-4"}>
+              <ButtonSys type={"default"} onClick={() => downloadNoData()}>
                 <DownloadOutlined />
               </ButtonSys>
-            </a>
-          ) : (
-            <ButtonSys type={"default"} onClick={() => downloadNoData()}>
-              <DownloadOutlined />
-            </ButtonSys>
+              <div
+                className={
+                  "p-1 md:p-2 w-6 h-6 md:w-8 md:h-8 rounded-[5px] bg-bgstatustaskfinish flex justify-center items-center"
+                }
+              >
+                <UserPlusIconSvg size={14} color={"#35763B"} />
+              </div>
+            </div>
           ),
         };
       },
@@ -540,13 +559,26 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
             style={{ boxShadow: "0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
           >
             <div className="flex items-center justify-between mb-6">
-              <div className={"w-3/4"}>
+              <div className={"w-2/4"}>
                 <h4 className="mig-heading--4 ">
                   Daftar Pelamar Tanpa Lowongan
                 </h4>
               </div>
-              <div className={"grid grid-cols-2 gap-4"}>
-                <div className="w-full customselectcareer">
+              <div className={"flex flex-row gap-4 w-2/4"}>
+                <div className="w-full">
+                  <Input
+                    // defaultValue={searchingFilterRecruitments}
+                    style={{ width: `100%` }}
+                    placeholder="Cari Nama ..."
+                    allowClear
+                    // onChange={(e) => {
+                    //   setSearchingFilterRecruitments(e.target.value);
+                    // }}
+                    // onKeyPress={onKeyPressHandler}
+                    // disabled={!isAllowedToGetCareer}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 customselectcareer">
                   <Select
                     defaultValue={queryParams.career_apply_status_id}
                     allowClear
@@ -569,7 +601,7 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
                   </Select>
                 </div>
 
-                <div className="flex justify-end">
+                <div className={"flex justify-end ml-8"}>
                   <ButtonSys
                     type={`primary`}
                     onClick={onFilterRecruitments}
