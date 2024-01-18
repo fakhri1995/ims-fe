@@ -33,16 +33,16 @@ export interface GetShiftsPaginateData {
 
 export interface ShiftDetailData {
   id: number;
-  company_id: number | null;
+  company_id?: number;
   title: string;
   start_at: string;
   end_at: string;
   start_break: string;
   end_break: string;
   status: number;
-  created_at: string | null;
-  updated_at: string | null;
-  deleted_at: string | null;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string;
 }
 
 /**

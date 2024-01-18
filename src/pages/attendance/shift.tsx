@@ -1,4 +1,3 @@
-import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Input, Select, Spin, Tooltip, notification } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 import {
@@ -11,22 +10,18 @@ import { useCallback, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
-import DrawerShiftCreate from "components/drawer/attendance/drawerShiftCreate";
-import DrawerShiftUpdate from "components/drawer/attendance/drawerShiftUpdate";
+import DrawerShift from "components/drawer/attendance/drawerShift";
 import { AccessControl } from "components/features/AccessControl";
-import { EditIconSvg, PlusIconSvg, TrashIconSvg } from "components/icon";
+import {
+  AlertCircleIconSvg,
+  EditIconSvg,
+  PlusIconSvg,
+  TrashIconSvg,
+} from "components/icon";
 import LayoutDashboard from "components/layout-dashboardNew";
 import ModalCore from "components/modal/modalCore";
 import { ModalHapus2 } from "components/modal/modalCustom";
 import { ModalUbah } from "components/modal/modalCustom";
-import {
-  AttendanceStaffAktivitasSection,
-  AttendanceStaffDetailCard,
-  AttendanceStaffKehadiranSection,
-  AttendanceStaffStatisticCard,
-  CheckInOutCard,
-} from "components/screen/attendance";
-import { AttendanceStaffCheckInDrawer } from "components/screen/attendance/staff/AttendanceStaffCheckInDrawer";
 import { TableCustomShiftList } from "components/table/tableCustom";
 
 import { useAccessControl } from "contexts/access-control";
@@ -34,19 +29,15 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
-  ATTENDANCES_USER_GET,
   ATTENDANCE_SHIFTS_GET,
   ATTENDANCE_SHIFT_ADD,
   ATTENDANCE_SHIFT_DELETE,
   ATTENDANCE_SHIFT_STATUS_UPDATE,
   ATTENDANCE_SHIFT_UPDATE,
-  ATTENDANCE_TOGGLE_SET,
 } from "lib/features";
-import { momentFormatDate, permissionWarningNotification } from "lib/helper";
 
 import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
 import {
-  IAddShiftPayload,
   IUpdateShiftStatusPayload,
   ShiftDetailData,
 } from "apis/attendance/attendance-shift.types";
@@ -59,22 +50,31 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
 }) => {
-  const axiosClient = useAxiosClient();
-  const queryClient = useQueryClient();
+  // 1. Init
+  /**
+   * Dependencies
+   */
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
-  // if (isAccessControlPending) {
-  //   return null;
-  // }
+  if (isAccessControlPending) {
+    return null;
+  }
 
   const isAllowedToGetShifts = hasPermission(ATTENDANCE_SHIFTS_GET);
   const isAllowedToAddShift = hasPermission(ATTENDANCE_SHIFT_ADD);
-  const isAllowedToUpdateShift = hasPermission(ATTENDANCE_SHIFT_UPDATE);
   const isAllowedToUpdateShiftStatus = hasPermission(
     ATTENDANCE_SHIFT_STATUS_UPDATE
   );
   const isAllowedToDeleteShift = hasPermission(ATTENDANCE_SHIFT_DELETE);
+
+  const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    keyword: withDefault(StringParam, null),
+  });
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
@@ -82,10 +82,16 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
     },
   ];
 
-  const [queryParams, setQueryParams] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    keyword: withDefault(StringParam, null),
+  // 2. Use State
+  const [dataShifts, setDataShifts] = useState<ShiftDetailData[]>([]);
+  const [currentDataShift, setCurrentDataShift] = useState<ShiftDetailData>({
+    id: 0,
+    title: "",
+    start_at: "",
+    end_at: "",
+    start_break: "",
+    end_break: "",
+    status: 0,
   });
 
   const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
@@ -93,41 +99,26 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   const [isShowDeleteModal, setShowDeleteModal] = useState(false);
   const [isShowUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
 
-  const [refresh, setRefresh] = useState(false);
-  const [dataShifts, setDataShifts] = useState<ShiftDetailData[]>([]);
-  const [currentDataShift, setCurrentDataShift] = useState<ShiftDetailData>({
-    id: 0,
-    company_id: 0,
-    title: "",
-    start_at: "",
-    end_at: "",
-    start_break: "",
-    end_break: "",
-    status: 0,
-    created_at: "",
-    updated_at: "",
-    deleted_at: "",
-  });
-
-  const [searchingFilterShitfs, setSearchingFilterShitfs] = useState("");
-
-  useEffect(() => {
-    if (!isAllowedToGetShifts) {
-      permissionWarningNotification("Mendapatkan", "Daftar Shift");
-    }
-  }, [isAllowedToGetShifts]);
-
+  // 3. Use Effect & Use Query
   const {
     data: dataRawShifts,
     isLoading: loadingShifts,
     refetch: refetchShifts,
   } = useQuery(
     [ATTENDANCE_SHIFTS_GET, queryParams],
-    () => AttendanceShiftService.getShifts(axiosClient, queryParams),
+    () =>
+      AttendanceShiftService.getShifts(
+        isAllowedToGetShifts,
+        axiosClient,
+        queryParams
+      ),
     {
       enabled: isAllowedToGetShifts,
       select: (response) => response.data.data,
       onSuccess: (data) => setDataShifts(data.data),
+      onError: (error) => {
+        notification.error({ message: "Gagal mendapatkan daftar shift." });
+      },
     }
   );
 
@@ -150,9 +141,9 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
         onMutationSucceed(ATTENDANCE_SHIFTS_GET, response.data.message);
         handleCloseDelete();
       },
-      // onError: (error) => {
-      //   notification.error({"Gagal menambah shift."});
-      // }
+      onError: (error) => {
+        notification.error({ message: "Gagal menghapus shift." });
+      },
     }
   );
 
@@ -169,18 +160,18 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
           onMutationSucceed(ATTENDANCE_SHIFTS_GET, response.data.message);
           handleCloseUpdateStatus();
         },
-        // onError: (error) => {
-        //   notification.error({"Gagal menambah shift."});
-        // }
+        onError: (error) => {
+          notification.error({ message: "Gagal mengubah status shift." });
+        },
       }
     );
 
-  const handleShowUpdate = (data) => {
+  const handleShowUpdate = (data: ShiftDetailData) => {
     setCurrentDataShift(data);
     setShowUpdateDrawer(true);
   };
 
-  const handleShowDelete = (data) => {
+  const handleShowDelete = (data: ShiftDetailData) => {
     setCurrentDataShift(data);
     setShowDeleteModal(true);
   };
@@ -272,13 +263,15 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       title: "Status",
       dataIndex: "status",
       align: "center",
+      className: "w-2/12",
       render: (status, record, index) => {
         return {
           children: (
             <div className="flex justify-center">
               <Tooltip
-                placement="bottom"
-                visible={false}
+                placement="right"
+                overlayClassName="z-0 w-36"
+                // visible={false}
                 color={"#FFF"}
                 title={
                   status == 1 ? (
@@ -388,9 +381,9 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/shift"
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 md:px-5" id="mainWrapper">
+      <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
         {/* Table Daftar Shift */}
-        <div className="md:col-span-3 flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
+        <div className="flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
             <h4 className="mig-heading--4 ">Daftar Shift</h4>
 
@@ -398,17 +391,19 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
               {/* Search by keyword (kata kunci) */}
               <div className="w-full lg:w-2/3">
                 <Input
-                  // defaultValue={searchingFilterEmployees}
                   style={{ width: `100%` }}
                   placeholder="Cari Shift..."
                   allowClear
                   onChange={(e) => {
-                    // setSearchingFilterEmployees(e.target.value);
-                    setQueryParams({
-                      keyword: e.target.value,
-                    });
+                    setTimeout(
+                      () =>
+                        setQueryParams({
+                          keyword: e.target.value,
+                        }),
+                      500
+                    );
                   }}
-                  // disabled={!isAllowedToGetEmployees}
+                  disabled={!isAllowedToGetShifts}
                 />
               </div>
               <div className="w-full xl:w-1/3">
@@ -416,7 +411,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                   fullWidth
                   type={"primary"}
                   onClick={() => setShowCreateDrawer(true)}
-                  // disabled={!isAllowedToAddEmployee}
+                  disabled={!isAllowedToAddShift}
                 >
                   <div className="flex flex-row items-center space-x-2">
                     <PlusIconSvg size={16} color="#FFFFFF" />
@@ -435,39 +430,38 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
               total={dataRawShifts?.total}
               queryParams={queryParams}
               setQueryParams={setQueryParams}
-              // onOpenModal={onOpenModal}
-              // sortTable={sortTable}
             />
           </div>
         </div>
       </div>
 
       <AccessControl hasPermission={ATTENDANCE_SHIFT_ADD}>
-        <DrawerShiftCreate
-          title={"Tambah Shift"}
+        <DrawerShift
           visible={isShowCreateDrawer}
-          buttonOkText={"Simpan Shift"}
-          initProps={token}
           onvisible={setShowCreateDrawer}
-          setRefresh={setRefresh}
-          isAllowedToAdd={isAllowedToAddShift}
         />
       </AccessControl>
 
       <AccessControl hasPermission={ATTENDANCE_SHIFT_UPDATE}>
-        <DrawerShiftUpdate
+        <DrawerShift
           data={currentDataShift}
           visible={isShowUpdateDrawer}
-          initProps={token}
           onvisible={setShowUpdateDrawer}
-          setRefresh={setRefresh}
         />
       </AccessControl>
 
+      {/* Modal Delete Shift */}
       <AccessControl hasPermission={ATTENDANCE_SHIFT_DELETE}>
         <ModalCore
           title={
-            currentDataShift?.status == 1 ? "Peringatan" : "Konfirmasi Hapus"
+            <div className="flex gap-4 items-center">
+              <AlertCircleIconSvg color={"#BF4A40"} size={24} />
+              <p>
+                {currentDataShift?.status == 1
+                  ? "Peringatan"
+                  : "Konfirmasi Hapus"}
+              </p>
+            </div>
           }
           visible={isShowDeleteModal}
           onCancel={() => setShowDeleteModal(false)}
@@ -489,10 +483,10 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                       type={"primary"}
                       color={"danger"}
                       onClick={() => deleteShift(currentDataShift?.id)}
-                      // disabled={disabled}
+                      disabled={!isAllowedToDeleteShift}
                     >
-                      <div className="flex flex-row space-x-2">
-                        <DeleteOutlined rev={""} />
+                      <div className="flex flex-row gap-2 items-center">
+                        <TrashIconSvg size={16} color={"#FFFFFF"} />
                         <p>Hapus Shift</p>
                       </div>
                     </ButtonSys>
@@ -510,14 +504,14 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
             </p>
           ) : (
             <p>
-              Apakah Anda yakin ingin menghapus shift{" "}
+              Apakah Anda yakin ingin menghapus{" "}
               <strong>{currentDataShift?.title}</strong>?
             </p>
           )}
         </ModalCore>
       </AccessControl>
 
-      {/* Modal Update Stage */}
+      {/* Modal Update Status Shift */}
       <AccessControl hasPermission={ATTENDANCE_SHIFT_STATUS_UPDATE}>
         <ModalUbah
           title={`Konfirmasi Perubahan`}
@@ -532,7 +526,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
           okButtonText="Ya, saya yakin"
           onCancel={() => handleCloseUpdateStatus()}
           loading={loadingUpdateShiftStatus}
-          // disabled={disableUpdate}
+          disabled={!isAllowedToUpdateShiftStatus}
         >
           <div className="space-y-4">
             <p className="">

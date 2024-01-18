@@ -23,9 +23,15 @@ export class AttendanceShiftService {
    * @access GET /getShifts
    */
   static async getShifts(
+    hasFeature: boolean,
     axiosClient: AxiosInstance,
     params?: IGetShiftsPaginateParams
   ) {
+    if (!hasFeature) {
+      permissionWarningNotification("Mendapatkan", "Daftar Shift Kerja");
+      return;
+    }
+
     const qs = QueryString.stringify(params, { addQueryPrefix: true });
 
     return await axiosClient.get<IGetShiftsPaginateSucceedResponse>(
@@ -38,7 +44,16 @@ export class AttendanceShiftService {
    *
    * @access GET /getShift
    */
-  static async getShift(axiosClient: AxiosInstance, shiftId: number) {
+  static async getShift(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    shiftId: number
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification("Mendapatkan", "Detail Shift Kerja");
+      return;
+    }
+
     const querySearch = QueryString.stringify(
       { id: shiftId },
       { addQueryPrefix: true }

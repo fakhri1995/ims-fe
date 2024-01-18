@@ -3472,6 +3472,57 @@ const ViewListIconSvg = ({ size, color }) => {
   return <Icon rev={""} component={viewListIconSvg}></Icon>;
 };
 
+const CalendarOffIconSvg = ({ size, color }) => {
+  const calendarOffIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-calendar-off"
+      width={size ? size : "24"}
+      height={size ? size : "24"}
+      viewBox="0 0 24 24"
+      strokeWidth="2"
+      stroke={color ? color : "#35763B"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M9 5h9a2 2 0 0 1 2 2v9m-.184 3.839a2 2 0 0 1 -1.816 1.161h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 1.158 -1.815" />
+      <path d="M16 3v4" />
+      <path d="M8 3v1" />
+      <path d="M4 11h7m4 0h5" />
+      <path d="M3 3l18 18" />
+    </svg>
+  );
+  return <Icon rev={""} component={calendarOffIconSvg}></Icon>;
+};
+
+const CalendarStatsIconSvg = ({ size, color }) => {
+  const calendarStatsIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-calendar-stats"
+      width={size ? size : "24"}
+      height={size ? size : "24"}
+      viewBox="0 0 24 24"
+      strokeWidth="2"
+      stroke={color ? color : "#35763B"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+      <path d="M18 14v4h4" />
+      <path d="M18 18m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+      <path d="M15 3v4" />
+      <path d="M7 3v4" />
+      <path d="M3 11h16" />
+    </svg>
+  );
+  return <Icon rev={""} component={calendarStatsIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -3615,4 +3666,6 @@ export {
   SpinnerIconSvg,
   ViewModuleIconSvg,
   ViewListIconSvg,
+  CalendarOffIconSvg,
+  CalendarStatsIconSvg,
 };
