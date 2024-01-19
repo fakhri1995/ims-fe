@@ -173,7 +173,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 1);
-  pathTitleArr.splice(1, 1, "Karir Manajemen");
+  pathTitleArr.splice(1, 1, "Career Management");
 
   // 2. Use state
   // 2.1. Role List & Candidate Count
