@@ -1,3 +1,12 @@
+import { DetailProfileData } from "apis/auth";
+
+import { Role } from "./requester.types";
+
+import {
+  HttpRequestWithDataSucceedResponse,
+  ProfileImageAttribute,
+} from "types/common";
+
 /**
  * @access POST /addAgentMember
  */
@@ -31,4 +40,48 @@ export interface UpdateAgentDetailPayload {
   role_ids: number[];
   attendance_form_ids: number[];
   position: string;
+}
+
+/**
+ * @access GET /getAgentList
+ */
+
+export interface IGetAgentsPaginateParams {
+  page?: number;
+  rows?: number;
+  name?: string;
+}
+
+export type IGetAgentsPaginateSucceedResponse =
+  HttpRequestWithDataSucceedResponse<GetAgentsPaginateData>;
+
+export interface GetAgentsPaginateData {
+  current_page: number;
+  data: AgentDetailData[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  next_page_url: null;
+  path: string;
+  per_page: number;
+  prev_page_url: string;
+  to: number;
+  total: number;
+}
+
+export interface AgentDetailData {
+  id: number;
+  name: string;
+  nip: string;
+  email: string;
+  role: number;
+  company_id: number;
+  position: string;
+  phone_number: string;
+  crreated_time: string;
+  is_enabled: number;
+  companye_name: string;
+  profile_image: ProfileImageAttribute;
+  roles: Role[];
 }
