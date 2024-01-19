@@ -64,6 +64,7 @@ import {
   AgentScheduleData,
   AttendanceScheduleService,
   IUpdateSchedulePayload,
+  ScheduleData,
   ScheduleDetailData,
 } from "apis/attendance";
 import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
@@ -123,16 +124,12 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   const [companyList, setCompanyList] = useState([]);
   const [roleList, setRoleList] = useState([]);
 
-  const [currentDataSchedule, setCurrentDataSchedule] =
-    useState<ShiftDetailData>({
-      id: 0,
-      title: "",
-      start_at: "",
-      end_at: "",
-      start_break: "",
-      end_break: "",
-      status: 0,
-    });
+  const [currentDataSchedule, setCurrentDataSchedule] = useState<ScheduleData>({
+    id: null,
+    user_id: null,
+    date: "",
+    shift_id: null,
+  });
 
   const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
   const [isShowUpdateModal, setShowUpdateModal] = useState(false);
@@ -228,47 +225,32 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       }
     );
 
-  const handleShowUpdate = (data: ShiftDetailData) => {
+  const handleShowUpdate = (data: ScheduleData) => {
     setCurrentDataSchedule(data);
     setShowUpdateModal(true);
   };
 
-  const handleShowDelete = (data: ShiftDetailData) => {
+  const handleShowDelete = (data: ScheduleData) => {
     setCurrentDataSchedule(data);
     setShowDeleteModal(true);
   };
 
-  const handleCloseUpdate = () => {
+  const clearCurrentDataSchedule = () => {
     setCurrentDataSchedule({
-      id: 0,
-      company_id: 0,
-      title: "",
-      start_at: "",
-      end_at: "",
-      start_break: "",
-      end_break: "",
-      status: 0,
-      created_at: "",
-      updated_at: "",
-      deleted_at: "",
+      id: null,
+      user_id: null,
+      date: "",
+      shift_id: null,
     });
+  };
+
+  const handleCloseUpdate = () => {
+    clearCurrentDataSchedule();
     setShowUpdateModal(false);
   };
 
   const handleCloseDelete = () => {
-    setCurrentDataSchedule({
-      id: 0,
-      company_id: 0,
-      title: "",
-      start_at: "",
-      end_at: "",
-      start_break: "",
-      end_break: "",
-      status: 0,
-      created_at: "",
-      updated_at: "",
-      deleted_at: "",
-    });
+    clearCurrentDataSchedule();
     setShowDeleteModal(false);
   };
 
@@ -322,7 +304,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           children: scheduleIdx > -1 && (
             <div>
               <div
-                onClick={() => setShowUpdateModal(true)}
+                onClick={() => handleShowUpdate(schedules[scheduleIdx])}
                 className="bg-backdrop flex flex-col items-center justify-center 
                 px-5 py-4 rounded-md cursor-pointer"
               >
@@ -561,10 +543,20 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
         </div>
       </div>
 
-      <AccessControl hasPermission={ATTENDANCE_SHIFT_ADD}>
+      <AccessControl hasPermission={ATTENDANCE_SCHEDULE_ADD}>
         <DrawerSchedule
           visible={isShowCreateDrawer}
           onvisible={setShowCreateDrawer}
+        />
+      </AccessControl>
+
+      {/* Modal Update Schedule */}
+      <AccessControl hasPermission={ATTENDANCE_SCHEDULE_UPDATE}>
+        <ModalScheduleUpdate
+          initProps={token}
+          visible={isShowUpdateModal}
+          onvisible={setShowUpdateModal}
+          scheduleId={currentDataSchedule?.id}
         />
       </AccessControl>
 
@@ -625,15 +617,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           )}
         </ModalCore>
       </AccessControl> */}
-
-      {/* Modal Update Schedule */}
-      <AccessControl hasPermission={ATTENDANCE_SCHEDULE_UPDATE}>
-        <ModalScheduleUpdate
-          initProps={token}
-          visible={isShowUpdateModal}
-          onvisible={setShowUpdateModal}
-        />
-      </AccessControl>
     </LayoutDashboard>
   );
 };

@@ -49,8 +49,8 @@ export interface ScheduleData {
   user_id: number;
   shift_id: number;
   date: string;
-  created_at: string;
-  upated_at: string;
+  created_at?: string;
+  upated_at?: string;
 }
 
 /**
