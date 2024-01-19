@@ -569,7 +569,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       </AccessControl>
 
       {/* Modal Delete Shift */}
-      <AccessControl hasPermission={ATTENDANCE_SHIFT_DELETE}>
+      {/* <AccessControl hasPermission={ATTENDANCE_SHIFT_DELETE}>
         <ModalCore
           title={
             <div className="flex gap-4 items-center">
@@ -591,8 +591,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   color={"mono100"}
                   onClick={() => {
                     setShowDeleteModal(false);
-                  }}
-                >
+                  }}>
                   Tutup
                 </ButtonSys>
                 {currentDataSchedule?.status == 0 && (
@@ -600,9 +599,8 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     <ButtonSys
                       type={"primary"}
                       color={"danger"}
-                      onClick={() => deleteShift(currentDataSchedule?.id)}
-                      disabled={!isAllowedToDeleteSchedule}
-                    >
+                      onClick={() => deleteSchedule(currentDataSchedule?.id)}
+                      disabled={!isAllowedToDeleteSchedule}>
                       <div className="flex flex-row gap-2 items-center">
                         <TrashIconSvg size={16} color={"#FFFFFF"} />
                         <p>Hapus Shift</p>
@@ -613,8 +611,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               </div>
             </Spin>
           }
-          loading={loadingDeleteSchedule}
-        >
+          loading={loadingDeleteSchedule}>
           {currentDataSchedule?.status == 1 ? (
             <p>
               Shift <strong>{currentDataSchedule?.title}</strong> sedang aktif.
@@ -627,7 +624,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             </p>
           )}
         </ModalCore>
-      </AccessControl>
+      </AccessControl> */}
 
       {/* Modal Update Schedule */}
       <AccessControl hasPermission={ATTENDANCE_SCHEDULE_UPDATE}>
