@@ -35,6 +35,12 @@ export interface GetSchedulesPaginateData {
 }
 
 export interface AgentScheduleData extends AgentDetailData {
+  company: {
+    id: number;
+    parent_id?: number;
+    name: string;
+    top_parent?: number;
+  };
   schedule: ScheduleData[];
 }
 
