@@ -55,11 +55,12 @@ const nextConfig = {
       destination: "/admin/candidates/:resume_id",
     },
   ],
-  webpack5: true,
-  webpack: config => {
-    config.resolve.fallback = {
-      fs: false,
-    };
+  webpack: (config, {isServer}) => {
+    if (!isServer) {
+      config.node = {
+        fs: 'empty',
+      };
+    }
 
     return config;
   },
