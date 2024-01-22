@@ -58,6 +58,7 @@ type FormType = {
   email: string;
   name: string;
   phone_number: string;
+  university: string;
   resume: {
     file: RcFile;
     fileList: RcFile[];
@@ -181,6 +182,7 @@ export const JobDetail: FC = () => {
           name: values.name,
           email: values.email,
           phone: values.phone_number,
+          university: values.university,
           career_id: data.id,
           "g-recaptcha-response": captchaVerifyValue,
           resume: resumeFileBlob,
@@ -744,6 +746,15 @@ export const JobDetail: FC = () => {
                     ]}
                   >
                     <Input placeholder="Enter your phone number here" />
+                  </Form.Item>
+                  <Form.Item
+                    name="university"
+                    label="University"
+                    rules={[
+                      { required: true, message: "University wajib diisi!" },
+                    ]}
+                  >
+                    <Input placeholder="Input your university here" />
                   </Form.Item>
                   <div
                     className={"flex items-center"}

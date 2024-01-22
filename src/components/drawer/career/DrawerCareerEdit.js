@@ -49,6 +49,7 @@ const DrawerCareerEdit = ({
   loadingEdit,
   dataRoleTypeList,
   dataExperience,
+  dataRoles,
 }) => {
   /**
    * Dependencies
@@ -223,6 +224,44 @@ const DrawerCareerEdit = ({
                 </Select>
               </Form.Item>
               <Form.Item
+                label="ID Role"
+                name="recruitment_role_id"
+                rules={[
+                  {
+                    required: true,
+                    message: "Role wajib diisi",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch={true}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  value={
+                    dataedit?.recruitment_role_id &&
+                    Number(dataedit?.recruitment_role_id)
+                  }
+                  onChange={(e) => {
+                    setdataedit({
+                      ...dataedit,
+                      recruitment_role_id: e,
+                    });
+                  }}
+                  placeholder="Pilih ID Role"
+                >
+                  <>
+                    {dataRoles?.map((option) => (
+                      <Select.Option key={option.id} value={option.id}>
+                        {option.name}
+                      </Select.Option>
+                    ))}
+                  </>
+                </Select>
+              </Form.Item>
+              <Form.Item
                 label="Salary Min"
                 name="salary_min"
                 rules={[
@@ -375,6 +414,26 @@ const DrawerCareerEdit = ({
                   }}
                 />
               </Form.Item>
+              <div className="bottom-0 flex justify-end">
+                <Button
+                  type="default"
+                  onClick={() => {
+                    setdrawedit(false);
+                  }}
+                  style={{ marginRight: `1rem` }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  danger
+                  icon={<CheckIconSvg size={16} color={"#ffffff"} />}
+                  loading={loadingEdit}
+                >
+                  Update Lowongan Kerja
+                </Button>
+              </div>
             </div>
           ) : (
             <div>
@@ -740,9 +799,52 @@ const DrawerCareerEdit = ({
                   + Tambah Field Baru
                 </div>
               </div>
+              {dataedit.question.length <= 2 ? (
+                <div className="fixed bottom-0 right-6 mb-6">
+                  <Button
+                    type="default"
+                    onClick={() => {
+                      setdrawedit(false);
+                    }}
+                    style={{ marginRight: `1rem` }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    htmlType="submit"
+                    type="primary"
+                    danger
+                    icon={<CheckIconSvg size={16} color={"#ffffff"} />}
+                    loading={loadingEdit}
+                  >
+                    Update Lowongan Kerja
+                  </Button>
+                </div>
+              ) : (
+                <div className="mt-4 flex justify-end">
+                  <Button
+                    type="default"
+                    onClick={() => {
+                      setdrawedit(false);
+                    }}
+                    style={{ marginRight: `1rem` }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    htmlType="submit"
+                    type="primary"
+                    danger
+                    icon={<CheckIconSvg size={16} color={"#ffffff"} />}
+                    loading={loadingEdit}
+                  >
+                    Update Lowongan Kerja
+                  </Button>
+                </div>
+              )}
             </div>
           )}
-          <div className="fixed bottom-0 right-6 mb-6">
+          {/* <div className="fixed bottom-0 right-6 mb-6">
             <Button
               type="default"
               onClick={() => {
@@ -761,7 +863,7 @@ const DrawerCareerEdit = ({
             >
               Update Lowongan Kerja
             </Button>
-          </div>
+          </div> */}
         </Form>
       </Spin>
     </Drawer>

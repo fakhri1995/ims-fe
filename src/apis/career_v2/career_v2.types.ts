@@ -42,6 +42,7 @@ export type AddCareerPayload = {
   name: string;
   email: string;
   phone: string;
+  university: string;
   career_id: number;
   resume: Blob | File;
   "g-recaptcha-response": string;
