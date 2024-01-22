@@ -138,4 +138,34 @@ export class AttendanceScheduleService {
       "/deleteSchedule" + querySearch
     );
   }
+
+  /**
+   * Delete all schedule by user ID.
+   *
+   * @access DELETE /deleteAllSchedule
+   */
+  static async deleteAllSchedule(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    userIds: number[]
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification("Mengosongkan", "Jadwal Kerja");
+      return;
+    }
+
+    const payload = {
+      user_ids: userIds,
+    };
+
+    return await axiosClient.post<IGetScheduleSucceedResponse>(
+      "/deleteSchedule",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
 }

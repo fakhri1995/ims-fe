@@ -1,4 +1,8 @@
-import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   DatePicker,
@@ -10,6 +14,7 @@ import {
   notification,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
+import { ColumnsType } from "antd/lib/table";
 import moment from "moment";
 import { GetServerSideProps, NextPage } from "next";
 import {
@@ -29,10 +34,12 @@ import {
   AlertCircleIconSvg,
   CalendarOffIconSvg,
   CalendarStatsIconSvg,
+  CheckIconSvg,
   EditIconSvg,
   LeftIconSvg,
   PlusIconSvg,
   RightIconSvg,
+  SearchIconSvg,
   TrashIconSvg,
 } from "components/icon";
 import LayoutDashboard from "components/layout-dashboardNew";
@@ -49,6 +56,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import {
   ATTENDANCE_SCHEDULES_GET,
   ATTENDANCE_SCHEDULE_ADD,
+  ATTENDANCE_SCHEDULE_ALL_DELETE,
   ATTENDANCE_SCHEDULE_DELETE,
   ATTENDANCE_SCHEDULE_UPDATE,
   ATTENDANCE_SHIFTS_GET,
@@ -58,6 +66,7 @@ import {
   ATTENDANCE_SHIFT_UPDATE,
   COMPANY_CLIENTS_GET,
   RECRUITMENT_ROLES_GET,
+  RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
 
 import {
@@ -72,6 +81,8 @@ import {
   IUpdateShiftStatusPayload,
   ShiftDetailData,
 } from "apis/attendance/attendance-shift.types";
+import { CompanyService } from "apis/company";
+import { EmployeeService } from "apis/employee";
 
 import httpcookie from "cookie";
 
@@ -97,7 +108,10 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   const isAllowedToUpdateSchedule = hasPermission(ATTENDANCE_SCHEDULE_UPDATE);
   const isAllowedToDeleteSchedule = hasPermission(ATTENDANCE_SCHEDULE_DELETE);
   const isAllowedToGetCompanyList = hasPermission(COMPANY_CLIENTS_GET);
-  const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_GET);
+  const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
+  const isAllowedToDeleteAllSchedule = hasPermission(
+    ATTENDANCE_SCHEDULE_ALL_DELETE
+  );
 
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
@@ -121,8 +135,8 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   // 2. Use State
   const [dataSchedules, setDataSchedules] = useState<AgentScheduleData[]>([]);
-  const [companyList, setCompanyList] = useState([]);
-  const [roleList, setRoleList] = useState([]);
+  // const [companyList, setCompanyList] = useState([]);
+  // const [roleList, setRoleList] = useState([]);
 
   const [currentDataSchedule, setCurrentDataSchedule] = useState<ScheduleData>({
     id: null,
@@ -133,12 +147,19 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
   const [isShowUpdateModal, setShowUpdateModal] = useState(false);
-  const [isShowDeleteModal, setShowDeleteModal] = useState(false);
+  const [isShowDeleteAllModal, setShowDeleteAllModal] = useState(false);
 
   const [selectedMonthYear, setSelectedMonthYear] = useState(moment());
   const [numOfDaysFromCurWeek, setNumOfDaysFromCurWeek] = useState(0);
   const [currentMonth, setCurrentMonth] = useState(moment().month()); // 0: January
   const [currentWeek, setCurrentWeek] = useState(moment().week());
+  const [searchingFilterCompany, setSearchingFilterCompany] = useState([]);
+  const [searchingFilterRole, setSearchingFilterRole] = useState([]);
+
+  const [isSelectMode, setSelectMode] = useState(false);
+  const [selectedEmployees, setSelectedEmployees] = useState<
+    AgentScheduleData[]
+  >([]);
 
   // 3. Use Effect & Use Query
   const {
@@ -180,6 +201,41 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     }
   );
 
+  const {
+    data: companyList,
+    isLoading: loadingCompanyListt,
+    refetch: refetchCompanyList,
+  } = useQuery(
+    [COMPANY_CLIENTS_GET],
+    () => CompanyService.getCompanyClientList(axiosClient, true),
+    {
+      enabled: isAllowedToGetCompanyList,
+      select: (response) => response.data.data,
+      // onSuccess: (data) => {
+      //   let schedules = data.data;
+      //   setDataSchedules(schedules);
+      // },
+      onError: (error) => {
+        notification.error({
+          message: "Gagal mendapatkan daftar company.",
+        });
+      },
+    }
+  );
+
+  const {
+    data: roleList,
+    isLoading: loadingRoleList,
+    refetch: refetchRoleList,
+  } = useQuery(
+    [RECRUITMENT_ROLES_LIST_GET],
+    () => EmployeeService.getEmployeeRoleList(token, isAllowedToGetRoleList),
+    {
+      enabled: isAllowedToGetRoleList,
+      select: (response) => response.data,
+    }
+  );
+
   const onMutationSucceed = (queryKey: string, message: string) => {
     queryClient.invalidateQueries(queryKey);
     notification.success({
@@ -187,13 +243,13 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     });
   };
 
-  const { mutate: deleteSchedule, isLoading: loadingDeleteSchedule } =
+  const { mutate: deleteAllSchedule, isLoading: loadingDeleteAllSchedule } =
     useMutation(
-      (scheduleId: number) =>
-        AttendanceScheduleService.deleteSchedule(
-          isAllowedToDeleteSchedule,
+      (userIds: number[]) =>
+        AttendanceScheduleService.deleteAllSchedule(
+          isAllowedToDeleteAllSchedule,
           axiosClient,
-          scheduleId
+          userIds
         ),
       {
         onSuccess: (response) => {
@@ -201,7 +257,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           handleCloseDelete();
         },
         onError: (error) => {
-          notification.error({ message: "Gagal menghapus jadwal." });
+          notification.error({ message: "Gagal mengosongkan jadwal." });
         },
       }
     );
@@ -232,7 +288,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const handleShowDelete = (data: ScheduleData) => {
     setCurrentDataSchedule(data);
-    setShowDeleteModal(true);
+    setShowDeleteAllModal(true);
   };
 
   const clearCurrentDataSchedule = () => {
@@ -250,8 +306,9 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   };
 
   const handleCloseDelete = () => {
-    clearCurrentDataSchedule();
-    setShowDeleteModal(false);
+    setSelectedEmployees([]);
+    setShowDeleteAllModal(false);
+    setSelectMode(false);
   };
 
   const handleClickNextWeek = () => {
@@ -323,7 +380,69 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     };
   });
 
-  // console.log({ dataSchedules });
+  const calendarColumns: ColumnsType<AgentScheduleData> = [
+    {
+      title: isSelectMode ? (
+        <ButtonSys
+          fullWidth
+          type={"default"}
+          color="danger"
+          onClick={() => setShowDeleteAllModal(true)}
+          disabled={!isAllowedToDeleteAllSchedule}
+        >
+          <div className="flex flex-row items-center space-x-2">
+            <CalendarOffIconSvg size={16} color="#BF4A40" />
+            <p className="whitespace-nowrap">Kosongkan Jadwal</p>
+          </div>
+        </ButtonSys>
+      ) : (
+        ""
+      ),
+      dataIndex: "name",
+      key: "name",
+      width: 200,
+      fixed: "left",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div className="px-3 py-2 bg-mono120 flex flex-col gap-1 rounded-md">
+              <p className="mig-caption--bold text-mono30">{record?.name}</p>
+              <p className="mig-caption text-mono50">{record?.position}</p>
+              <p className="mig-caption text-mono50">{record?.company_name}</p>
+            </div>
+          ),
+        };
+      },
+    },
+    {
+      title: (
+        <button
+          onClick={handleClickPrevWeek}
+          className="bg-mono100 p-2 w-9 h-9 rounded-full 
+            flex items-center justify-center"
+        >
+          <LeftIconSvg color={"#808080"} size={16} />
+        </button>
+      ),
+      width: 60,
+    },
+
+    ...dateColumns,
+    {
+      title: (
+        <button
+          onClick={handleClickNextWeek}
+          className="bg-mono100 p-2 w-9 h-9 rounded-full 
+            flex items-center justify-center"
+        >
+          <RightIconSvg color={"#808080"} size={16} />
+        </button>
+      ),
+      width: 60,
+    },
+  ];
+
+  // console.log({ selectedEmployees });
 
   return (
     <LayoutDashboard
@@ -333,9 +452,10 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       sidemenu="attendance/schedule"
     >
       <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
-        {/* Table Daftar Shift */}
-        <div className="flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
-          <div className="flex flex-col md:flex-row gap-2 items-end md:items-center gap-4 mb-6">
+        {/* Table Daftar Jadwal */}
+        <div className="flex flex-col shadow-md rounded-md bg-white p-4 mb-6 gap-6">
+          {/* Filter */}
+          <div className="flex flex-col md:flex-row items-end md:items-center gap-4">
             {/* Search by keyword (kata kunci) */}
             <div className="w-full lg:w-4/12">
               <Input
@@ -364,12 +484,20 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   setQueryParams({ company_id: value });
-                  // setSelectedExpYear(value);
                 }}
+                optionFilterProp="children"
+                filterOption={(
+                  input,
+                  option: { label: string; value: number }
+                ) => option?.label?.toLowerCase().includes(input.toLowerCase())}
               >
                 {companyList?.map((item) => (
-                  <Select.Option key={item.year} value={item.year}>
-                    {item.year}
+                  <Select.Option
+                    key={item.id}
+                    value={item.id}
+                    label={item.name}
+                  >
+                    {item.name}
                   </Select.Option>
                 ))}
               </Select>
@@ -386,160 +514,165 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   setQueryParams({ position: value });
                   // setSelectedExpYear(value);
                 }}
+                optionFilterProp="children"
+                filterOption={(
+                  input,
+                  option: { label: string; value: string }
+                ) => option?.label?.toLowerCase().includes(input.toLowerCase())}
               >
                 {roleList?.map((item) => (
-                  <Select.Option key={item.year} value={item.year}>
-                    {item.year}
+                  <Select.Option
+                    key={item.id}
+                    value={item.name}
+                    label={item.name}
+                  >
+                    {item.name}
                   </Select.Option>
                 ))}
               </Select>
             </div>
-            <div className="w-full lg:w-2/12">
+            {!isSelectMode ? (
+              <>
+                <div className="w-full lg:w-2/12">
+                  <ButtonSys
+                    fullWidth
+                    type={"default"}
+                    onClick={() => setSelectMode(true)}
+                    disabled={!isAllowedToAddSchedule}
+                  >
+                    <div className="flex flex-row items-center space-x-2">
+                      <CalendarOffIconSvg size={16} color="#35763B" />
+                      <p className="whitespace-nowrap">Kosongkan Jadwal</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+                <div className="w-full lg:w-2/12">
+                  <ButtonSys
+                    fullWidth
+                    type={"primary"}
+                    onClick={() => setShowCreateDrawer(true)}
+                    disabled={!isAllowedToAddSchedule}
+                  >
+                    <div className="flex flex-row items-center space-x-2">
+                      <CalendarStatsIconSvg size={16} color="#FFFFFF" />
+                      <p className="whitespace-nowrap">Jadwalkan Karywan</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+              </>
+            ) : (
               <ButtonSys
-                fullWidth
                 type={"default"}
-                onClick={() => setShowCreateDrawer(true)}
-                disabled={!isAllowedToAddSchedule}
+                color={"danger"}
+                onClick={() => {
+                  setSelectMode(false);
+                  setSelectedEmployees([]);
+                }}
               >
-                <div className="flex flex-row items-center space-x-2">
-                  <CalendarOffIconSvg size={16} color="#35763B" />
-                  <p className="whitespace-nowrap">Kosongkan Jadwal</p>
+                <div className="flex flex-row space-x-1 items-center">
+                  <CloseOutlined rev={""} />
+                  <p>Batal</p>
                 </div>
               </ButtonSys>
-            </div>
-            <div className="w-full lg:w-2/12">
-              <ButtonSys
-                fullWidth
-                type={"primary"}
-                onClick={() => setShowCreateDrawer(true)}
-                disabled={!isAllowedToAddSchedule}
-              >
-                <div className="flex flex-row items-center space-x-2">
-                  <CalendarStatsIconSvg size={16} color="#FFFFFF" />
-                  <p className="whitespace-nowrap">Jadwalkan Karywan</p>
-                </div>
-              </ButtonSys>
-            </div>
+            )}
           </div>
 
-          {/* Month header */}
-          <div className="flex justify-between items-center p-4 border-x border-t">
-            <button
-              className="bg-mono100 p-2 w-9 h-9 rounded-full 
+          {isSelectMode && (
+            <div className="flex gap-2 items-center">
+              <CheckIconSvg color="#35763B" size={20} />
+              <p className="mig-caption--bold">
+                {selectedEmployees?.length} Karyawan Dipilih
+              </p>
+            </div>
+          )}
+
+          {!!queryParams?.keyword?.length && (
+            <div className="flex gap-2 items-center">
+              <SearchIconSvg color="#35763B" size={20} />
+              <p className="mig-caption">
+                Menampilkan {dataRawSchedules?.total} data pencarian dari{" "}
+                <strong>{queryParams?.keyword}</strong>
+              </p>
+            </div>
+          )}
+
+          {/* Calendar */}
+          <div>
+            {/* Month header */}
+            <div className="flex justify-between items-center p-4 border-x border-t">
+              <button
+                className="bg-mono100 p-2 w-9 h-9 rounded-full 
                 flex items-center justify-center"
-            >
-              <LeftIconSvg color={"#808080"} size={16} />
-            </button>
-            <DatePicker
-              // picker="month"
-              bordered={false}
-              locale={locale}
-              format={"MMMM YYYY"}
-              value={selectedMonthYear}
-              style={{
-                color: "#4D4D4D",
-                fontSize: "18px",
-                fontWeight: 700,
+              >
+                <LeftIconSvg color={"#808080"} size={16} />
+              </button>
+              <DatePicker
+                // picker="month"
+                bordered={false}
+                locale={locale}
+                format={"MMMM YYYY"}
+                value={selectedMonthYear}
+                style={{
+                  color: "#4D4D4D",
+                  fontSize: "18px",
+                  fontWeight: 700,
+                }}
+                onChange={(date) => {
+                  if (date) {
+                    // setQueryParams({
+                    //   month: date.format("M"),
+                    //   year: date.format("YYYY"),
+                    //   page: 1,
+                    // });
+                    setSelectedMonthYear(date);
+                  } else {
+                    // setQueryParams({
+                    //   month: moment().format("M"),
+                    //   year: moment().format("YYYY"),
+                    //   page: 1,
+                    // });
+                    setSelectedMonthYear(moment());
+                  }
+                }}
+              />
+              <button
+                className="bg-mono100 p-2 w-9 h-9 rounded-full 
+                flex items-center justify-center"
+              >
+                <RightIconSvg color={"#808080"} size={16} />
+              </button>
+            </div>
+
+            <Table
+              dataSource={dataSchedules}
+              rowKey={(record) => record.id}
+              className="border border-collapse"
+              scroll={{ x: 200 }}
+              pagination={{
+                current: queryParams.page,
+                pageSize: queryParams.rows,
+                total: dataRawSchedules?.total,
+                showSizeChanger: true,
+                showTotal: (total, range) =>
+                  `Showing ${range[0]}-${range[1]} of ${total} items`,
               }}
-              onChange={(date) => {
-                if (date) {
-                  // setQueryParams({
-                  //   month: date.format("M"),
-                  //   year: date.format("YYYY"),
-                  //   page: 1,
-                  // });
-                  setSelectedMonthYear(date);
-                } else {
-                  // setQueryParams({
-                  //   month: moment().format("M"),
-                  //   year: moment().format("YYYY"),
-                  //   page: 1,
-                  // });
-                  setSelectedMonthYear(moment());
+              onChange={(pagination, filters, sorter, extra) => {
+                setQueryParams({
+                  page: pagination.current,
+                  rows: pagination.pageSize,
+                });
+              }}
+              rowSelection={
+                isSelectMode && {
+                  type: "checkbox",
+                  onChange: (_, selectedRows) => {
+                    setSelectedEmployees(selectedRows);
+                  },
                 }
-              }}
+              }
+              columns={calendarColumns}
             />
-            <button
-              className="bg-mono100 p-2 w-9 h-9 rounded-full 
-                flex items-center justify-center"
-            >
-              <RightIconSvg color={"#808080"} size={16} />
-            </button>
           </div>
-
-          <Table
-            dataSource={dataSchedules}
-            rowKey={(record) => record.id}
-            className="border border-collapse"
-            scroll={{ x: 200 }}
-            pagination={{
-              current: queryParams.page,
-              pageSize: queryParams.rows,
-              total: dataRawSchedules?.total,
-              showSizeChanger: true,
-            }}
-            onChange={(pagination, filters, sorter, extra) => {
-              setQueryParams({
-                page: pagination.current,
-                rows: pagination.pageSize,
-              });
-            }}
-            columns={[
-              {
-                title: "Karyawan",
-                dataIndex: "name",
-                key: "name",
-                fixed: "left",
-                render: (text, record, index) => {
-                  return {
-                    children: (
-                      <div className="px-3 py-2 bg-mono120 flex flex-col gap-1 rounded-md">
-                        <p className="mig-caption--bold text-mono30">
-                          {record?.name}
-                        </p>
-                        <p className="mig-caption text-mono50">
-                          {record?.position}
-                        </p>
-                        <p className="mig-caption text-mono50">
-                          {record?.company_name}
-                        </p>
-                      </div>
-                    ),
-                  };
-                },
-              },
-              {
-                title: (
-                  <>
-                    <button
-                      onClick={handleClickPrevWeek}
-                      className="bg-mono100 p-2 w-9 h-9 rounded-full 
-                      flex items-center justify-center"
-                    >
-                      <LeftIconSvg color={"#808080"} size={16} />
-                    </button>
-                  </>
-                ),
-                width: 70,
-              },
-
-              ...dateColumns,
-              {
-                title: (
-                  <>
-                    <button
-                      onClick={handleClickNextWeek}
-                      className="bg-mono100 p-2 w-9 h-9 rounded-full 
-                      flex items-center justify-center"
-                    >
-                      <RightIconSvg color={"#808080"} size={16} />
-                    </button>
-                  </>
-                ),
-                width: 70,
-              },
-            ]}
-          ></Table>
         </div>
       </div>
 
@@ -560,63 +693,39 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
         />
       </AccessControl>
 
-      {/* Modal Delete Shift */}
-      {/* <AccessControl hasPermission={ATTENDANCE_SHIFT_DELETE}>
-        <ModalCore
+      <AccessControl hasPermission={ATTENDANCE_SCHEDULE_ALL_DELETE}>
+        <ModalHapus2
           title={
-            <div className="flex gap-4 items-center">
+            <div className="flex items-center gap-4">
               <AlertCircleIconSvg color={"#BF4A40"} size={24} />
-              <p>
-                {currentDataSchedule?.status == 1
-                  ? "Peringatan"
-                  : "Konfirmasi Hapus"}
-              </p>
+              <p className="font-bold">Peringatan</p>
             </div>
           }
-          visible={isShowDeleteModal}
-          onCancel={() => setShowDeleteModal(false)}
-          footer={
-            <Spin spinning={loadingDeleteSchedule}>
-              <div className="flex gap-4 items-center justify-end">
-                <ButtonSys
-                  type={"primary"}
-                  color={"mono100"}
-                  onClick={() => {
-                    setShowDeleteModal(false);
-                  }}>
-                  Tutup
-                </ButtonSys>
-                {currentDataSchedule?.status == 0 && (
-                  <div className="col-span-2 hover:opacity-75">
-                    <ButtonSys
-                      type={"primary"}
-                      color={"danger"}
-                      onClick={() => deleteSchedule(currentDataSchedule?.id)}
-                      disabled={!isAllowedToDeleteSchedule}>
-                      <div className="flex flex-row gap-2 items-center">
-                        <TrashIconSvg size={16} color={"#FFFFFF"} />
-                        <p>Hapus Shift</p>
-                      </div>
-                    </ButtonSys>
-                  </div>
-                )}
-              </div>
-            </Spin>
-          }
-          loading={loadingDeleteSchedule}>
-          {currentDataSchedule?.status == 1 ? (
-            <p>
-              Shift <strong>{currentDataSchedule?.title}</strong> sedang aktif.
-              Anda tidak bisa menghapus shift kerja yang sedang aktif.
+          visible={isShowDeleteAllModal}
+          onvisible={setShowDeleteAllModal}
+          onOk={() => {
+            // const selectedEmployeeeIds = selectedEmployees?.map((e) => e.id);
+            // deleteAllSchedule(selectedEmployeeeIds);
+            handleCloseDelete();
+          }}
+          onCancel={() => setShowDeleteAllModal(false)}
+          itemName={"jadwal"}
+          loading={loadingDeleteAllSchedule}
+        >
+          <div>
+            <p className="mb-2">
+              Apakah Anda yakin ingin mengosongkan semua jadwal milik{" "}
+              <strong>{selectedEmployees.length} karyawan</strong>
+              &nbsp;berikut:
             </p>
-          ) : (
-            <p>
-              Apakah Anda yakin ingin menghapus{" "}
-              <strong>{currentDataSchedule?.title}</strong>?
-            </p>
-          )}
-        </ModalCore>
-      </AccessControl> */}
+            {selectedEmployees?.map((item, idx) => (
+              <p key={item?.id} className="font-bold">
+                {`${idx + 1}. ${item.name}`}
+              </p>
+            ))}
+          </div>
+        </ModalHapus2>
+      </AccessControl>
     </LayoutDashboard>
   );
 };
