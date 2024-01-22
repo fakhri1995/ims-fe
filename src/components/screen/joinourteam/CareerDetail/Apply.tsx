@@ -15,6 +15,7 @@ type FormType = {
   email: string;
   name: string;
   phone_number: string;
+  university: string;
   resume: {
     file: RcFile;
     fileList: RcFile[];
@@ -90,6 +91,7 @@ export const Apply: FC = () => {
           email: values.email,
           phone: values.phone_number,
           career_id: data.id,
+          university: values.university,
           "g-recaptcha-response": captchaVerifyValue,
           resume: resumeFileBlob,
         },
@@ -156,6 +158,13 @@ export const Apply: FC = () => {
           name="phone_number"
           label="Phone Number"
           rules={[{ required: true, message: "Phone Number wajib diisi!" }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="university"
+          label="University"
+          rules={[{ required: true, message: "University wajib diisi!" }]}
         >
           <Input />
         </Form.Item>
