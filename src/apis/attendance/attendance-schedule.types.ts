@@ -1,4 +1,4 @@
-import { Role } from "apis/user";
+import { AgentDetailData, Role } from "apis/user";
 
 import type {
   HttpRequestWithDataSucceedResponse,
@@ -21,7 +21,7 @@ export type IGetSchedulesPaginateSucceedResponse =
 
 export interface GetSchedulesPaginateData {
   current_page: number;
-  data: EmployeeScheduleData[];
+  data: AgentScheduleData[];
   first_page_url: string;
   from: number;
   last_page: number;
@@ -34,20 +34,13 @@ export interface GetSchedulesPaginateData {
   total: number;
 }
 
-export interface EmployeeScheduleData {
-  id: number;
-  name: string;
-  nip: number;
-  email: string;
-  role: number;
-  company_id: number;
-  position: string;
-  phone_number: string;
-  created_time: string;
-  is_enabled: number;
-  company_name: string;
-  profile_image: ProfileImageAttribute;
-  roles: Role[];
+export interface AgentScheduleData extends AgentDetailData {
+  company: {
+    id: number;
+    parent_id?: number;
+    name: string;
+    top_parent?: number;
+  };
   schedule: ScheduleData[];
 }
 

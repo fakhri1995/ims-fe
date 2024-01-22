@@ -2,25 +2,24 @@ import { DatePicker, Form, Input, Select, Spin, notification } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
+  AGENTS_GET,
   ATTENDANCE_SCHEDULES_GET,
   ATTENDANCE_SCHEDULE_ADD,
   ATTENDANCE_SHIFTS_GET,
-  ATTENDANCE_SHIFT_ADD,
-  ATTENDANCE_SHIFT_UPDATE,
 } from "lib/features";
 
+import { AttendanceScheduleService } from "apis/attendance";
+import { IAddSchedulePayload } from "apis/attendance/attendance-schedule.types";
 import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
-import {
-  IAddShiftPayload,
-  IUpdateShiftPayload,
-} from "apis/attendance/attendance-shift.types";
+import { IGetShiftsPaginateParams } from "apis/attendance/attendance-shift.types";
+import { AgentService, IGetAgentsPaginateParams } from "apis/user";
 
 import DrawerCore from "../drawerCore";
 
@@ -37,51 +36,90 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
     return null;
   }
 
+  const isAllowedToGetAgents = hasPermission(AGENTS_GET);
+  const isAllowedToGetShifts = hasPermission(ATTENDANCE_SHIFTS_GET);
   const isAllowedToAddSchedule = hasPermission(ATTENDANCE_SCHEDULE_ADD);
 
   const [instanceForm] = Form.useForm();
 
   //1. USE STATE
-  //1.1 Update
-  const [dataSchedule, setDataSchedule] = useState<IUpdateShiftPayload>({
-    id: null,
-    title: "",
-    start_at: "",
-    end_at: "",
-    start_break: "",
-    end_break: "",
+  const [dataSchedule, setDataSchedule] = useState<IAddSchedulePayload>({
+    user_ids: [],
+    shift_id: null,
+    date: "",
   });
 
+  const [agentFilterParams, setAgentFilterParams] =
+    useState<IGetAgentsPaginateParams>({
+      page: 1,
+      rows: 10,
+      name: "",
+    });
+
+  const [shiftFilterParams, setShiftFilterParams] =
+    useState<IGetShiftsPaginateParams>({
+      page: 1,
+      rows: 10,
+      keyword: "",
+    });
+
   // 2. USE EFFECT
-  // 2.1. set initial dataSchedule from data
-  useEffect(() => {
-    if (visible && data) {
-      setDataSchedule({
-        ...data,
-        start_at: data?.start_at?.slice(0, 5),
-        end_at: data?.end_at?.slice(0, 5),
-        start_break: data?.start_break?.slice(0, 5),
-        end_break: data?.end_break?.slice(0, 5),
-      });
+  const {
+    data: dataAgents,
+    isLoading: loadingAgents,
+    refetch: refetchAgents,
+  } = useQuery(
+    [AGENTS_GET, agentFilterParams],
+    () =>
+      AgentService.getAgents(
+        isAllowedToGetAgents,
+        axiosClient,
+        agentFilterParams
+      ),
+    {
+      enabled: isAllowedToGetAgents && visible,
+
+      select: (response) => response.data.data.data,
+      onError: (error) => {
+        notification.error({
+          message: "Gagal mendapatkan daftar karyawan (agent).",
+        });
+      },
     }
-  }, [data, visible]);
+  );
+
+  const {
+    data: dataShifts,
+    isLoading: loadingShifts,
+    refetch: refetchShifts,
+  } = useQuery(
+    [ATTENDANCE_SHIFTS_GET, shiftFilterParams],
+    () =>
+      AttendanceShiftService.getShifts(
+        isAllowedToGetShifts,
+        axiosClient,
+        shiftFilterParams
+      ),
+    {
+      enabled: isAllowedToGetShifts && visible,
+
+      select: (response) => response.data.data.data,
+      onError: (error) => {
+        notification.error({
+          message: "Gagal mendapatkan daftar shift.",
+        });
+      },
+    }
+  );
+
+  console.log({ dataAgents });
 
   //3. HANDLER
-  const onChangeInput = (e) => {
-    setDataSchedule({
-      ...dataSchedule,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const handleClose = () => {
     setDataSchedule({
-      id: 0,
-      title: "",
-      start_at: "",
-      end_at: "",
-      start_break: "",
-      end_break: "",
+      user_ids: [],
+      shift_id: null,
+      date: "",
     });
     onvisible(false);
   };
@@ -93,9 +131,9 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
     });
   };
 
-  const { mutate: addSchedule, isLoading: loadingAddShift } = useMutation(
-    (payload: IAddShiftPayload) =>
-      AttendanceShiftService.addShift(
+  const { mutate: addSchedule, isLoading: loadingAddSchedule } = useMutation(
+    (payload: IAddSchedulePayload) =>
+      AttendanceScheduleService.addSchedule(
         isAllowedToAddSchedule,
         axiosClient,
         payload
@@ -123,156 +161,163 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
       onClick={() => addSchedule(dataSchedule)}
       onButtonCancelClicked={() => onvisible(false)}
       disabled={
-        !dataSchedule?.title || !dataSchedule?.start_at || !dataSchedule?.end_at
+        !dataSchedule?.user_ids?.length ||
+        !dataSchedule?.date ||
+        !dataSchedule?.shift_id
       }
     >
-      <Spin spinning={!data ? null : loadingUpdateShift}>
-        <div className="flex flex-col">
-          <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
-          </p>
-          <Form layout="vertical" form={instanceForm}>
-            <div>
-              <Form.Item
-                label="Karyawan"
-                name={"title"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Karyawan wajib diisi",
-                  },
-                ]}
-                className="col-span-2"
-              >
-                <div>
-                  <Select
-                    showSearch
-                    mode="multiple"
-                    // value={dataUpdateProject?.proposed_bys}
-                    placeholder="Pilih Kayawan"
-                    // disabled={!isAllowedToGetEmployee}
-                    // onChange={(value, option) => {
-                    //   const updatedProposedBys = getUpdatedStaffs(
-                    //     dataUpdateProject?.proposed_bys,
-                    //     option
-                    //   );
-                    //   setDataUpdateProject((prev) => ({
-                    //     ...prev,
-                    //     proposed_bys: updatedProposedBys,
-                    //   }));
-                    // }}
-                    // onSearch={(value) => {
-                    //   onSearchUsers(value, setDataStaffs);
-                    // }}
-                    // optionFilterProp="children"
-                    // filterOption={(input, option) =>
-                    //   (option?.children ?? "")
-                    //     .toLowerCase()
-                    //     .includes(input.toLowerCase())
-                    // }
-                    className=" mb-2"
-                  >
-                    {/* {dataStaffs?.map((item) => (
-              <Select.Option
-                key={item?.id}
-                value={item?.id}
-                name={item?.name}
-                profile_image={item?.profile_image}
-              >
-                {item?.name}
-              </Select.Option>
-            ))} */}
-                  </Select>
-                </div>
-              </Form.Item>
+      <div className="flex flex-col">
+        <p className="mb-6 text-red-500 text-xs italic">
+          *Informasi ini harus diisi
+        </p>
+        <Form layout="vertical" form={instanceForm}>
+          <div>
+            <Form.Item
+              label="Karyawan"
+              name={"user_ids"}
+              rules={[
+                {
+                  required: true,
+                  message: "Karyawan wajib diisi",
+                },
+              ]}
+              className="col-span-2"
+            >
+              <div>
+                <Select
+                  showSearch
+                  mode="multiple"
+                  placeholder="Pilih Kayawan"
+                  disabled={!isAllowedToGetAgents}
+                  className="mb-2"
+                  onChange={(value) => {
+                    setDataSchedule((prev) => ({
+                      ...prev,
+                      user_ids: value,
+                    }));
+                  }}
+                  onSearch={(value) => {
+                    setTimeout(
+                      () =>
+                        setAgentFilterParams((prev) => ({
+                          ...prev,
+                          name: value,
+                        })),
+                      500
+                    );
+                  }}
+                  optionFilterProp="children"
+                  filterOption={(
+                    input,
+                    option: { label: string; value: number }
+                  ) =>
+                    option?.label?.toLowerCase().includes(input.toLowerCase())
+                  }
+                >
+                  {dataAgents?.map((item) => (
+                    <Select.Option
+                      key={item?.id}
+                      value={item?.id}
+                      label={item?.name}
+                    >
+                      {item?.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            </Form.Item>
 
-              <Form.Item
-                label="Tanggal Berlaku"
-                name={"tanggal_berlaku"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Tanggal Berlaku wajib diisi",
-                  },
-                ]}
-                className="col-span-2"
-              >
-                <div className="flex gap-2 items-center">
-                  <DatePicker
-                    // allowEmpty
-                    placeholder="Pilih Tanggal Berlaku"
-                    className="w-full"
-                    format={"DD MMMM YYYY"}
-                    value={
-                      moment(dataSchedule.start_at, "DD MMMM YYYY").isValid()
-                        ? moment(dataSchedule.start_at, "DD MMMM YYYY")
-                        : null
-                    }
-                    onChange={(values, formatString) => {
-                      setDataSchedule((prev) => ({
-                        ...prev,
-                        tanggal_berlaku: formatString || "",
-                      }));
-                    }}
-                  />
-                </div>
-              </Form.Item>
+            <Form.Item
+              label="Tanggal Berlaku"
+              name={"date"}
+              rules={[
+                {
+                  required: true,
+                  message: "Tanggal Berlaku wajib diisi",
+                },
+              ]}
+              className="col-span-2"
+            >
+              <div className="flex gap-2 items-center">
+                <DatePicker
+                  placeholder="Pilih Tanggal Berlaku"
+                  className="w-full"
+                  format={"DD MMMM YYYY"}
+                  locale={locale}
+                  value={
+                    moment(dataSchedule.date).isValid()
+                      ? moment(dataSchedule.date)
+                      : null
+                  }
+                  onChange={(value) => {
+                    let formattedDate = moment(value).format("YYYY-MM-DD");
+                    setDataSchedule((prev) => ({
+                      ...prev,
+                      date: formattedDate,
+                    }));
+                  }}
+                />
+              </div>
+            </Form.Item>
 
-              <Form.Item
-                label="Tetapkan Shift"
-                name={"shift"}
-                className="col-span-2"
-                rules={[
-                  {
-                    required: true,
-                    message: "Shift wajib diisi",
-                  },
-                ]}
-              >
-                <div className="flex gap-2 items-center ">
-                  <Select
-                    // value={dataUpdateProject?.proposed_bys}
-                    placeholder="Pilih Shift"
-                    locale={locale}
-                    // disabled={!isAllowedToGetEmployee}
-                    // onChange={(value, option) => {
-                    //   const updatedProposedBys = getUpdatedStaffs(
-                    //     dataUpdateProject?.proposed_bys,
-                    //     option
-                    //   );
-                    //   setDataUpdateProject((prev) => ({
-                    //     ...prev,
-                    //     proposed_bys: updatedProposedBys,
-                    //   }));
-                    // }}
-                    // onSearch={(value) => {
-                    //   onSearchUsers(value, setDataStaffs);
-                    // }}
-                    // optionFilterProp="children"
-                    // filterOption={(input, option) =>
-                    //   (option?.children ?? "")
-                    //     .toLowerCase()
-                    //     .includes(input.toLowerCase())
-                    // }
-                    className=" mb-2"
-                  >
-                    {/* {dataStaffs?.map((item) => (
-              <Select.Option
-                key={item?.id}
-                value={item?.id}
-                name={item?.name}
-                profile_image={item?.profile_image}
-              >
-                {item?.name}
-              </Select.Option>
-            ))} */}
-                  </Select>
-                </div>
-              </Form.Item>
-            </div>
-          </Form>
-        </div>
-      </Spin>
+            <Form.Item
+              label="Tetapkan Shift"
+              name={"shift_id"}
+              className="col-span-2"
+              rules={[
+                {
+                  required: true,
+                  message: "Shift wajib diisi",
+                },
+              ]}
+            >
+              <div className="flex gap-2 items-center ">
+                <Select
+                  showSearch
+                  placeholder="Pilih Shift"
+                  disabled={!isAllowedToGetShifts}
+                  className=" mb-2"
+                  onChange={(value, option) => {
+                    setDataSchedule((prev) => ({
+                      ...prev,
+                      shift_id: value,
+                    }));
+                  }}
+                  onSearch={(value) => {
+                    setTimeout(
+                      () =>
+                        setShiftFilterParams((prev) => ({
+                          ...prev,
+                          keyword: value,
+                        })),
+                      500
+                    );
+                  }}
+                  optionFilterProp="children"
+                  filterOption={(
+                    input,
+                    option: { label: string; value: number }
+                  ) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                >
+                  {dataShifts?.map((item) => (
+                    <Select.Option
+                      key={item?.id}
+                      value={item?.id}
+                      label={item?.title}
+                    >
+                      {item?.title}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            </Form.Item>
+          </div>
+        </Form>
+      </div>
     </DrawerCore>
   );
 };

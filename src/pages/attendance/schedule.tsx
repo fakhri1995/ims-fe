@@ -47,14 +47,25 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
+  ATTENDANCE_SCHEDULES_GET,
+  ATTENDANCE_SCHEDULE_ADD,
+  ATTENDANCE_SCHEDULE_DELETE,
   ATTENDANCE_SCHEDULE_UPDATE,
   ATTENDANCE_SHIFTS_GET,
   ATTENDANCE_SHIFT_ADD,
   ATTENDANCE_SHIFT_DELETE,
   ATTENDANCE_SHIFT_STATUS_UPDATE,
   ATTENDANCE_SHIFT_UPDATE,
+  COMPANY_CLIENTS_GET,
+  RECRUITMENT_ROLES_GET,
 } from "lib/features";
 
+import {
+  AgentScheduleData,
+  AttendanceScheduleService,
+  IUpdateSchedulePayload,
+  ScheduleDetailData,
+} from "apis/attendance";
 import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
 import {
   IUpdateShiftStatusPayload,
@@ -80,14 +91,12 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     return null;
   }
 
-  const isAllowedToGetSchedules = hasPermission(ATTENDANCE_SHIFTS_GET);
-  const isAllowedToAddSchedule = hasPermission(ATTENDANCE_SHIFT_ADD);
-  const isAllowedToUpdateSchedule = hasPermission(
-    ATTENDANCE_SHIFT_STATUS_UPDATE
-  );
-  const isAllowedToDeleteSchedule = hasPermission(ATTENDANCE_SHIFT_DELETE);
-  const isAllowedToGetCompanyList = hasPermission(ATTENDANCE_SHIFTS_GET);
-  const isAllowedToGetRoleList = hasPermission(ATTENDANCE_SHIFTS_GET);
+  const isAllowedToGetSchedules = hasPermission(ATTENDANCE_SCHEDULES_GET);
+  const isAllowedToAddSchedule = hasPermission(ATTENDANCE_SCHEDULE_ADD);
+  const isAllowedToUpdateSchedule = hasPermission(ATTENDANCE_SCHEDULE_UPDATE);
+  const isAllowedToDeleteSchedule = hasPermission(ATTENDANCE_SCHEDULE_DELETE);
+  const isAllowedToGetCompanyList = hasPermission(COMPANY_CLIENTS_GET);
+  const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_GET);
 
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
@@ -95,8 +104,12 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
     keyword: withDefault(StringParam, null),
+    start_at: withDefault(
+      StringParam,
+      moment().startOf("week").add(1, "day").format("YYYY-MM-DD")
+    ),
     company_id: withDefault(NumberParam, 0),
-    role_id: withDefault(NumberParam, 0),
+    position: withDefault(StringParam, null),
   });
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
@@ -106,19 +119,20 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   ];
 
   // 2. Use State
-  const [dataShifts, setDataShifts] = useState<ShiftDetailData[]>([]);
+  const [dataSchedules, setDataSchedules] = useState<AgentScheduleData[]>([]);
   const [companyList, setCompanyList] = useState([]);
   const [roleList, setRoleList] = useState([]);
 
-  const [currentDataShift, setCurrentDataShift] = useState<ShiftDetailData>({
-    id: 0,
-    title: "",
-    start_at: "",
-    end_at: "",
-    start_break: "",
-    end_break: "",
-    status: 0,
-  });
+  const [currentDataSchedule, setCurrentDataSchedule] =
+    useState<ShiftDetailData>({
+      id: 0,
+      title: "",
+      start_at: "",
+      end_at: "",
+      start_break: "",
+      end_break: "",
+      status: 0,
+    });
 
   const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
   const [isShowUpdateModal, setShowUpdateModal] = useState(false);
@@ -126,63 +140,18 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const [selectedMonthYear, setSelectedMonthYear] = useState(moment());
   const [numOfDaysFromCurWeek, setNumOfDaysFromCurWeek] = useState(0);
-
-  // const [dataSchedules, setDataSchedules] = useState([])
-
-  const dataSchedules = [
-    {
-      id: 24,
-      name: "Agent 8",
-      nip: "108",
-      email: "agent8@mitramas.com",
-      role: 1,
-      company_id: 26,
-      position: "Contract Employee",
-      phone_number: "-",
-      created_time: "2022-02-09 09:37:19",
-      is_enabled: 1,
-      company_name: "WILAYAH 3 JAWA - BASE BANDUNG",
-      profile_image: {
-        id: 0,
-        link: "staging/Users/default_user.png",
-        description: "profile_image",
-      },
-      roles: [
-        {
-          id: 14,
-          name: "Default Agent Users",
-          description: "For Created Agent Users From Default",
-          deleted_at: null,
-        },
-        {
-          id: 19,
-          name: "Project Team Member",
-          description: "+ Mendapatkan fitur modul proyek\n+ Full akses tugas",
-          deleted_at: null,
-        },
-      ],
-      schedule: [
-        {
-          id: 1,
-          user_id: 24,
-          shift_id: 2,
-          date: "2024-01-01",
-          created_at: "2024-01-15T18:03:49.000000Z",
-          updated_at: "2024-01-15T18:03:49.000000Z",
-        },
-      ],
-    },
-  ];
+  const [currentMonth, setCurrentMonth] = useState(moment().month()); // 0: January
+  const [currentWeek, setCurrentWeek] = useState(moment().week());
 
   // 3. Use Effect & Use Query
   const {
-    data: dataRawShifts,
-    isLoading: loadingShifts,
-    refetch: refetchShifts,
+    data: dataRawSchedules,
+    isLoading: loadingSchedules,
+    refetch: refetchSchedules,
   } = useQuery(
-    [ATTENDANCE_SHIFTS_GET, queryParams],
+    [ATTENDANCE_SCHEDULES_GET, queryParams],
     () =>
-      AttendanceShiftService.getShifts(
+      AttendanceScheduleService.getSchedules(
         isAllowedToGetSchedules,
         axiosClient,
         queryParams
@@ -190,9 +159,26 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     {
       enabled: isAllowedToGetSchedules,
       select: (response) => response.data.data,
-      onSuccess: (data) => setDataShifts(data.data),
+      onSuccess: (data) => {
+        let schedules = data.data;
+        // let adjustedSchedules = schedules?.map((employee) => ({
+        //   ...employee,
+        //   schedule: employee?.schedule?.map((schedule) => ({
+        //     ...schedule,
+        //     dayNoInWeek: moment(schedule?.date).day(),
+        //     startWeek: moment(schedule?.date)
+        //       .startOf("week")
+        //       .add(1, "day")
+        //       .format("YYYY-MM-DD"),
+        //   })),
+        // }));
+
+        setDataSchedules(schedules);
+      },
       onError: (error) => {
-        notification.error({ message: "Gagal mendapatkan daftar shift." });
+        notification.error({
+          message: "Gagal mendapatkan daftar jadwal kerja.",
+        });
       },
     }
   );
@@ -204,55 +190,73 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     });
   };
 
-  const { mutate: deleteShift, isLoading: loadingDeleteShift } = useMutation(
-    (shiftId: number) =>
-      AttendanceShiftService.deleteShift(
-        isAllowedToDeleteSchedule,
-        axiosClient,
-        shiftId
-      ),
-    {
-      onSuccess: (response) => {
-        onMutationSucceed(ATTENDANCE_SHIFTS_GET, response.data.message);
-        handleCloseDelete();
-      },
-      onError: (error) => {
-        notification.error({ message: "Gagal menghapus shift." });
-      },
-    }
-  );
-
-  const { mutate: updateShiftStatus, isLoading: loadingUpdateShiftStatus } =
+  const { mutate: deleteSchedule, isLoading: loadingDeleteSchedule } =
     useMutation(
-      (payload: IUpdateShiftStatusPayload) =>
-        AttendanceShiftService.updateShiftStatus(
+      (scheduleId: number) =>
+        AttendanceScheduleService.deleteSchedule(
+          isAllowedToDeleteSchedule,
+          axiosClient,
+          scheduleId
+        ),
+      {
+        onSuccess: (response) => {
+          onMutationSucceed(ATTENDANCE_SCHEDULES_GET, response.data.message);
+          handleCloseDelete();
+        },
+        onError: (error) => {
+          notification.error({ message: "Gagal menghapus jadwal." });
+        },
+      }
+    );
+
+  const { mutate: updateSchedule, isLoading: loadingUpdateSchedule } =
+    useMutation(
+      (payload: IUpdateSchedulePayload) =>
+        AttendanceScheduleService.updateSchedule(
           isAllowedToUpdateSchedule,
           axiosClient,
           payload
         ),
       {
         onSuccess: (response) => {
-          onMutationSucceed(ATTENDANCE_SHIFTS_GET, response.data.message);
-          handleCloseUpdateStatus();
+          onMutationSucceed(ATTENDANCE_SCHEDULES_GET, response.data.message);
+          handleCloseUpdate();
         },
         onError: (error) => {
-          notification.error({ message: "Gagal mengubah status shift." });
+          notification.error({ message: "Gagal mengubah jadwal." });
         },
       }
     );
 
   const handleShowUpdate = (data: ShiftDetailData) => {
-    setCurrentDataShift(data);
+    setCurrentDataSchedule(data);
     setShowUpdateModal(true);
   };
 
   const handleShowDelete = (data: ShiftDetailData) => {
-    setCurrentDataShift(data);
+    setCurrentDataSchedule(data);
     setShowDeleteModal(true);
   };
 
+  const handleCloseUpdate = () => {
+    setCurrentDataSchedule({
+      id: 0,
+      company_id: 0,
+      title: "",
+      start_at: "",
+      end_at: "",
+      start_break: "",
+      end_break: "",
+      status: 0,
+      created_at: "",
+      updated_at: "",
+      deleted_at: "",
+    });
+    setShowUpdateModal(false);
+  };
+
   const handleCloseDelete = () => {
-    setCurrentDataShift({
+    setCurrentDataSchedule({
       id: 0,
       company_id: 0,
       title: "",
@@ -277,8 +281,8 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   };
 
   const date = new Date();
-  const currentMonth = date.toISOString();
-  const startOfWeek = moment().startOf("week").add(1, "days").format("dddd");
+  // const currentMonth = date.toISOString();
+  const currentStartOfWeek = moment().startOf("week").add(1, "days");
   const endOfWeek = moment().endOf("week").add(1, "days").toDate();
   const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
 
@@ -304,21 +308,31 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           </div>
         </div>
       ),
-      // dataIndex: "position",
+      dataIndex: ["schedule"],
       key: `date-${i}`,
-      render: (text, record, index) => {
+      render: (schedules, record, index) => {
+        // console.log({ schedules });
+        // console.log(currentDate?.format("YYYY-MM-DD"));
+        // console.log(schedules[i]?.date);
+        let scheduleIdx = schedules.findIndex(
+          (i) => i.date == currentDate?.format("YYYY-MM-DD")
+        );
+
         return {
-          children: (
+          children: scheduleIdx > -1 && (
             <div>
               <div
                 onClick={() => setShowUpdateModal(true)}
                 className="bg-backdrop flex flex-col items-center justify-center 
-                px-5 py-4 rounded-md"
+                px-5 py-4 rounded-md cursor-pointer"
               >
                 <p className="mig-caption--bold text-mono30 text-center">
-                  Shift Normal
+                  {schedules[scheduleIdx]?.shift?.title}
                 </p>
-                <p className="mig-caption text-mono50">08:00 - 17:00</p>
+                <p className="mig-caption text-mono50">
+                  {schedules[scheduleIdx]?.shift?.start_at?.slice(0, 5)} -{" "}
+                  {schedules[scheduleIdx]?.shift?.end_at?.slice(0, 5)}
+                </p>
               </div>
             </div>
           ),
@@ -327,7 +341,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     };
   });
 
-  console.log({ dateColumns });
+  // console.log({ dataSchedules });
 
   return (
     <LayoutDashboard
@@ -387,7 +401,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 placeholder="Pilih Posisi"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  setQueryParams({ role_id: value });
+                  setQueryParams({ position: value });
                   // setSelectedExpYear(value);
                 }}
               >
@@ -475,6 +489,19 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             dataSource={dataSchedules}
             rowKey={(record) => record.id}
             className="border border-collapse"
+            scroll={{ x: 200 }}
+            pagination={{
+              current: queryParams.page,
+              pageSize: queryParams.rows,
+              total: dataRawSchedules?.total,
+              showSizeChanger: true,
+            }}
+            onChange={(pagination, filters, sorter, extra) => {
+              setQueryParams({
+                page: pagination.current,
+                rows: pagination.pageSize,
+              });
+            }}
             columns={[
               {
                 title: "Karyawan",
@@ -511,6 +538,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     </button>
                   </>
                 ),
+                width: 70,
               },
 
               ...dateColumns,
@@ -526,6 +554,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     </button>
                   </>
                 ),
+                width: 70,
               },
             ]}
           ></Table>
@@ -540,13 +569,13 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       </AccessControl>
 
       {/* Modal Delete Shift */}
-      <AccessControl hasPermission={ATTENDANCE_SHIFT_DELETE}>
+      {/* <AccessControl hasPermission={ATTENDANCE_SHIFT_DELETE}>
         <ModalCore
           title={
             <div className="flex gap-4 items-center">
               <AlertCircleIconSvg color={"#BF4A40"} size={24} />
               <p>
-                {currentDataShift?.status == 1
+                {currentDataSchedule?.status == 1
                   ? "Peringatan"
                   : "Konfirmasi Hapus"}
               </p>
@@ -555,25 +584,23 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           visible={isShowDeleteModal}
           onCancel={() => setShowDeleteModal(false)}
           footer={
-            <Spin spinning={loadingDeleteShift}>
+            <Spin spinning={loadingDeleteSchedule}>
               <div className="flex gap-4 items-center justify-end">
                 <ButtonSys
                   type={"primary"}
                   color={"mono100"}
                   onClick={() => {
                     setShowDeleteModal(false);
-                  }}
-                >
+                  }}>
                   Tutup
                 </ButtonSys>
-                {currentDataShift?.status == 0 && (
+                {currentDataSchedule?.status == 0 && (
                   <div className="col-span-2 hover:opacity-75">
                     <ButtonSys
                       type={"primary"}
                       color={"danger"}
-                      onClick={() => deleteShift(currentDataShift?.id)}
-                      disabled={!isAllowedToDeleteSchedule}
-                    >
+                      onClick={() => deleteSchedule(currentDataSchedule?.id)}
+                      disabled={!isAllowedToDeleteSchedule}>
                       <div className="flex flex-row gap-2 items-center">
                         <TrashIconSvg size={16} color={"#FFFFFF"} />
                         <p>Hapus Shift</p>
@@ -584,21 +611,20 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               </div>
             </Spin>
           }
-          loading={loadingDeleteShift}
-        >
-          {currentDataShift?.status == 1 ? (
+          loading={loadingDeleteSchedule}>
+          {currentDataSchedule?.status == 1 ? (
             <p>
-              Shift <strong>{currentDataShift?.title}</strong> sedang aktif.
+              Shift <strong>{currentDataSchedule?.title}</strong> sedang aktif.
               Anda tidak bisa menghapus shift kerja yang sedang aktif.
             </p>
           ) : (
             <p>
               Apakah Anda yakin ingin menghapus{" "}
-              <strong>{currentDataShift?.title}</strong>?
+              <strong>{currentDataSchedule?.title}</strong>?
             </p>
           )}
         </ModalCore>
-      </AccessControl>
+      </AccessControl> */}
 
       {/* Modal Update Schedule */}
       <AccessControl hasPermission={ATTENDANCE_SCHEDULE_UPDATE}>
