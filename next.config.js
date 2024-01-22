@@ -55,11 +55,11 @@ const nextConfig = {
       destination: "/admin/candidates/:resume_id",
     },
   ],
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: ["@svgr/webpack"],
-    });
+  webpack5: true,
+  webpack: config => {
+    config.resolve.fallback = {
+      fs: false,
+    };
 
     return config;
   },
