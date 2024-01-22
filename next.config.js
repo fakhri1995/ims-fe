@@ -55,12 +55,11 @@ const nextConfig = {
       destination: "/admin/candidates/:resume_id",
     },
   ],
-  webpack: (config, {isServer}) => {
-    if (!isServer) {
-      config.node = {
-        fs: 'empty',
-      };
-    }
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    });
 
     return config;
   },
