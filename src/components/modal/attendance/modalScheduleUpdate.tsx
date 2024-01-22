@@ -5,6 +5,8 @@ import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
+import { AccessControl } from "components/features/AccessControl";
+
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -30,7 +32,8 @@ import {
   TALENT_POOL_SHARE_ADD,
 } from "../../../lib/features";
 import ButtonSys from "../../button";
-import { CopyIconSvg, InfoCircleIconSvg } from "../../icon";
+import { AlertCircleIconSvg, CopyIconSvg, InfoCircleIconSvg } from "../../icon";
+import { ModalHapus2 } from "../../modal/modalCustom";
 import ModalCore from "../modalCore";
 
 const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
@@ -49,20 +52,13 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
 
   // 1. USE STATE
   const [loading, setLoading] = useState(false);
-  // const emptyForm: ScheduleDetailData = {
-  //   id: null,
-  //   user_id: null,
-  //   date: "",
-  //   shift_id: null,
-  //   user: {},
-  // };
-
   const [dataSchedule, setDataSchedule] = useState<ScheduleDetailData>();
   const [shiftParams, setShiftParams] = useState({
     page: 1,
     rows: 10,
     keyword: "",
   });
+  const [modalDelete, setModalDelete] = useState(false);
 
   // 2. USE QUERY & USE EFFECT
   // useEffect(() => {
@@ -119,6 +115,7 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
 
   const handleClose = () => {
     onvisible(false);
+    setModalDelete(false);
     clearData();
   };
 
@@ -148,15 +145,66 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
       }
     );
 
+  const { mutate: deleteSchedule, isLoading: loadingDeleteSchedule } =
+    useMutation(
+      (scheduleId: number) =>
+        AttendanceScheduleService.deleteSchedule(
+          isAllowedToDeleteSchedule,
+          axiosClient,
+          scheduleId
+        ),
+      {
+        onSuccess: (response) => {
+          onMutationSucceed(ATTENDANCE_SCHEDULES_GET, response.data.message);
+          handleClose();
+        },
+        onError: (error) => {
+          notification.error({ message: "Gagal menghapus jadwal." });
+        },
+      }
+    );
+
   const title = (
     <div className="flex items-center gap-4">
       <p className="mig-heading--4 w-2/3">Perubahan Shift Kerja</p>
-      <ButtonSys type={"default"} color={"danger"}>
+      <ButtonSys
+        type={"default"}
+        color={"danger"}
+        onClick={() => setModalDelete(true)}
+      >
         Hapus
       </ButtonSys>
     </div>
   );
   // console.log({ dataSchedule });
+
+  if (modalDelete) {
+    return (
+      <AccessControl hasPermission={ATTENDANCE_SCHEDULE_DELETE}>
+        <ModalHapus2
+          title={
+            <div className="flex items-center gap-4">
+              <AlertCircleIconSvg color={"#BF4A40"} size={24} />
+              <p className="font-bold">Peringatan</p>
+            </div>
+          }
+          visible={modalDelete}
+          onvisible={setModalDelete}
+          onOk={() => deleteSchedule(dataSchedule?.id)}
+          onCancel={() => {
+            setModalDelete(false);
+          }}
+          itemName={"jadwal"}
+          loading={loadingDeleteSchedule}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin melanjutkan penghapusan jadwal milik{" "}
+            <strong>{dataSchedule?.user?.name}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
+    );
+  }
 
   return (
     <ModalCore
