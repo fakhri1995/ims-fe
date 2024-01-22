@@ -8,6 +8,7 @@ import {
   Select,
   Spin,
   Switch,
+  notification,
 } from "antd";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -17,8 +18,12 @@ import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RECRUITMENT_JALUR_DAFTARS_LIST_GET } from "lib/features";
+import {
+  RECRUITMENT_JALUR_DAFTARS_LIST_GET,
+  RECRUITMENT_ROLE_TYPES_LIST_GET,
+} from "lib/features";
 
+import { permissionWarningNotification } from "../../../lib/helper";
 import {
   AlignJustifiedIconSvg,
   CheckIconSvg,
@@ -44,6 +49,7 @@ const DrawerInformationEdit = ({
   loadingeditinformation,
   dataRoleTypeList,
   dataExperience,
+  dataRoles,
 }) => {
   /**
    * Dependencies
@@ -61,14 +67,9 @@ const DrawerInformationEdit = ({
   const [instanceForm] = Form.useForm();
 
   //USESTATE
-
-  const [disabledcreate, setdisabledcreate] = useState(true);
-  const [activeTab, setActiveTab] = useState("1");
-  const [tempcb, settempcb] = useState("");
-  const [loadingRegistPlatformList, setLoadingRegistPlatformList] =
-    useState(false);
-  const [dataRegistPlatformList, setDataRegistPlatformList] = useState([]);
-
+  const isAllowedToGetRoleTypeList = hasPermission(
+    RECRUITMENT_ROLE_TYPES_LIST_GET
+  );
   const modules = {
     toolbar: [
       ["bold", "italic", "underline"],
@@ -181,6 +182,42 @@ const DrawerInformationEdit = ({
             >
               <>
                 {dataExperience?.map((option) => (
+                  <Select.Option key={option.id} value={option.id}>
+                    {option.name}
+                  </Select.Option>
+                ))}
+              </>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="ID Role"
+            name="recruitment_role_id"
+            rules={[
+              {
+                required: true,
+                message: "Role wajib diisi",
+              },
+            ]}
+          >
+            <Select
+              showSearch={true}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+              value={
+                dataeditinformation?.recruitment_role_id &&
+                Number(dataeditinformation?.recruitment_role_id)
+              }
+              onChange={(e) => {
+                setdataeditinformation({
+                  ...dataeditinformation,
+                  recruitment_role_id: e,
+                });
+              }}
+              placeholder="Pilih ID Role"
+            >
+              <>
+                {dataRoles?.map((option) => (
                   <Select.Option key={option.id} value={option.id}>
                     {option.name}
                   </Select.Option>
@@ -354,6 +391,8 @@ const DrawerInformationEdit = ({
             <Button
               htmlType="submit"
               type="primary"
+              danger
+              icon={<CheckIconSvg size={16} color={"#ffffff"} />}
               loading={loadingeditinformation}
             >
               Save
