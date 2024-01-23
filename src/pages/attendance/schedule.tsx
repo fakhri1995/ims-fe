@@ -59,11 +59,6 @@ import {
   ATTENDANCE_SCHEDULE_ALL_DELETE,
   ATTENDANCE_SCHEDULE_DELETE,
   ATTENDANCE_SCHEDULE_UPDATE,
-  ATTENDANCE_SHIFTS_GET,
-  ATTENDANCE_SHIFT_ADD,
-  ATTENDANCE_SHIFT_DELETE,
-  ATTENDANCE_SHIFT_STATUS_UPDATE,
-  ATTENDANCE_SHIFT_UPDATE,
   COMPANY_CLIENTS_GET,
   RECRUITMENT_ROLES_GET,
   RECRUITMENT_ROLES_LIST_GET,
@@ -72,15 +67,8 @@ import {
 import {
   AgentScheduleData,
   AttendanceScheduleService,
-  IUpdateSchedulePayload,
   ScheduleData,
-  ScheduleDetailData,
 } from "apis/attendance";
-import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
-import {
-  IUpdateShiftStatusPayload,
-  ShiftDetailData,
-} from "apis/attendance/attendance-shift.types";
 import { CompanyService } from "apis/company";
 import { EmployeeService } from "apis/employee";
 
@@ -105,8 +93,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const isAllowedToGetSchedules = hasPermission(ATTENDANCE_SCHEDULES_GET);
   const isAllowedToAddSchedule = hasPermission(ATTENDANCE_SCHEDULE_ADD);
-  const isAllowedToUpdateSchedule = hasPermission(ATTENDANCE_SCHEDULE_UPDATE);
-  const isAllowedToDeleteSchedule = hasPermission(ATTENDANCE_SCHEDULE_DELETE);
   const isAllowedToGetCompanyList = hasPermission(COMPANY_CLIENTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
   const isAllowedToDeleteAllSchedule = hasPermission(
@@ -135,9 +121,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   // 2. Use State
   const [dataSchedules, setDataSchedules] = useState<AgentScheduleData[]>([]);
-  // const [companyList, setCompanyList] = useState([]);
-  // const [roleList, setRoleList] = useState([]);
-
   const [currentDataSchedule, setCurrentDataSchedule] = useState<ScheduleData>({
     id: null,
     user_id: null,
@@ -149,12 +132,12 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   const [isShowUpdateModal, setShowUpdateModal] = useState(false);
   const [isShowDeleteAllModal, setShowDeleteAllModal] = useState(false);
 
-  const [selectedMonthYear, setSelectedMonthYear] = useState(moment());
-  const [numOfDaysFromCurWeek, setNumOfDaysFromCurWeek] = useState(0);
-  const [currentMonth, setCurrentMonth] = useState(moment().month()); // 0: January
-  const [currentWeek, setCurrentWeek] = useState(moment().week());
-  const [searchingFilterCompany, setSearchingFilterCompany] = useState([]);
-  const [searchingFilterRole, setSearchingFilterRole] = useState([]);
+  const [currentStartOfWeek, setCurrentStartOfWeek] = useState(
+    moment().startOf("week").add(1, "days")
+  );
+  const [currentEndOfWeek, setCurrentEndOfWeek] = useState(
+    moment().startOf("week").add(7, "days")
+  );
 
   const [isSelectMode, setSelectMode] = useState(false);
   const [selectedEmployees, setSelectedEmployees] = useState<
@@ -179,18 +162,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       select: (response) => response.data.data,
       onSuccess: (data) => {
         let schedules = data.data;
-        // let adjustedSchedules = schedules?.map((employee) => ({
-        //   ...employee,
-        //   schedule: employee?.schedule?.map((schedule) => ({
-        //     ...schedule,
-        //     dayNoInWeek: moment(schedule?.date).day(),
-        //     startWeek: moment(schedule?.date)
-        //       .startOf("week")
-        //       .add(1, "day")
-        //       .format("YYYY-MM-DD"),
-        //   })),
-        // }));
-
         setDataSchedules(schedules);
       },
       onError: (error) => {
@@ -211,10 +182,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     {
       enabled: isAllowedToGetCompanyList,
       select: (response) => response.data.data,
-      // onSuccess: (data) => {
-      //   let schedules = data.data;
-      //   setDataSchedules(schedules);
-      // },
       onError: (error) => {
         notification.error({
           message: "Gagal mendapatkan daftar company.",
@@ -243,6 +210,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     });
   };
 
+  // 4. Event Handler
   const { mutate: deleteAllSchedule, isLoading: loadingDeleteAllSchedule } =
     useMutation(
       (userIds: number[]) =>
@@ -262,47 +230,9 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       }
     );
 
-  const { mutate: updateSchedule, isLoading: loadingUpdateSchedule } =
-    useMutation(
-      (payload: IUpdateSchedulePayload) =>
-        AttendanceScheduleService.updateSchedule(
-          isAllowedToUpdateSchedule,
-          axiosClient,
-          payload
-        ),
-      {
-        onSuccess: (response) => {
-          onMutationSucceed(ATTENDANCE_SCHEDULES_GET, response.data.message);
-          handleCloseUpdate();
-        },
-        onError: (error) => {
-          notification.error({ message: "Gagal mengubah jadwal." });
-        },
-      }
-    );
-
   const handleShowUpdate = (data: ScheduleData) => {
     setCurrentDataSchedule(data);
     setShowUpdateModal(true);
-  };
-
-  const handleShowDelete = (data: ScheduleData) => {
-    setCurrentDataSchedule(data);
-    setShowDeleteAllModal(true);
-  };
-
-  const clearCurrentDataSchedule = () => {
-    setCurrentDataSchedule({
-      id: null,
-      user_id: null,
-      date: "",
-      shift_id: null,
-    });
-  };
-
-  const handleCloseUpdate = () => {
-    clearCurrentDataSchedule();
-    setShowUpdateModal(false);
   };
 
   const handleCloseDelete = () => {
@@ -311,24 +241,55 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     setSelectMode(false);
   };
 
-  const handleClickNextWeek = () => {
-    setNumOfDaysFromCurWeek((prev) => prev + 7);
+  const setCurrentWeekRange = (startDate) => {
+    setCurrentStartOfWeek(startDate);
+    setCurrentEndOfWeek(moment(startDate).add(6, "days"));
+    setQueryParams({
+      start_at: moment(startDate).format("YYYY-MM-DD"),
+    });
   };
 
   const handleClickPrevWeek = () => {
-    setNumOfDaysFromCurWeek((prev) => prev - 7);
+    let startOfWeek = moment(currentStartOfWeek)
+      .startOf("week")
+      ?.subtract(1, "week")
+      ?.add(1, "days");
+    setCurrentWeekRange(startOfWeek);
   };
 
-  const date = new Date();
-  // const currentMonth = date.toISOString();
-  const currentStartOfWeek = moment().startOf("week").add(1, "days");
-  const endOfWeek = moment().endOf("week").add(1, "days").toDate();
+  const handleClickNextWeek = () => {
+    let startOfWeek = moment(currentStartOfWeek)
+      .startOf("week")
+      ?.add(1, "week")
+      ?.add(1, "days");
+    setCurrentWeekRange(startOfWeek);
+  };
+
+  const handleClickPrevMonth = () => {
+    let startOfWeek = moment(currentStartOfWeek)
+      // .startOf("month")
+      ?.subtract(1, "month")
+      ?.startOf("week")
+      ?.add(1, "days");
+    setCurrentWeekRange(startOfWeek);
+  };
+
+  const handleClickNextMonth = () => {
+    let startOfWeek = moment(currentStartOfWeek)
+      // .startOf("month")
+      ?.add(1, "month")
+      ?.startOf("week")
+      ?.add(1, "days");
+    setCurrentWeekRange(startOfWeek);
+  };
+
+  // 5. Constants
+  const currentStartMonth = moment(currentStartOfWeek).format("MMMM YYYY");
+  const currentEndMonth = moment(currentEndOfWeek).format("MMMM YYYY");
   const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
 
   const dateColumns = Array.from({ length: 7 }, (_, i) => {
-    let currentDate = moment()
-      .startOf("week")
-      .add(i + 1 + numOfDaysFromCurWeek, "days");
+    let currentDate = moment(currentStartOfWeek).add(i, "days");
     let isToday = currentDate.isSame(new Date(), "day");
     return {
       title: (
@@ -350,9 +311,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       dataIndex: ["schedule"],
       key: `date-${i}`,
       render: (schedules, record, index) => {
-        // console.log({ schedules });
-        // console.log(currentDate?.format("YYYY-MM-DD"));
-        // console.log(schedules[i]?.date);
         let scheduleIdx = schedules.findIndex(
           (i) => i.date == currentDate?.format("YYYY-MM-DD")
         );
@@ -368,7 +326,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 <p className="mig-caption--bold text-mono30 text-center">
                   {schedules[scheduleIdx]?.shift?.title}
                 </p>
-                <p className="mig-caption text-mono50">
+                <p className="mig-caption text-mono50 whitespace-nowrap">
                   {schedules[scheduleIdx]?.shift?.start_at?.slice(0, 5)} -{" "}
                   {schedules[scheduleIdx]?.shift?.end_at?.slice(0, 5)}
                 </p>
@@ -443,6 +401,8 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   ];
 
   // console.log({ selectedEmployees });
+  // console.log("start", currentStartOfWeek.format("DD MMMM YYYY"));
+  // console.log("end", currentEndOfWeek.format("DD MMMM YYYY"));
 
   return (
     <LayoutDashboard
@@ -455,7 +415,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
         {/* Table Daftar Jadwal */}
         <div className="flex flex-col shadow-md rounded-md bg-white p-4 mb-6 gap-6">
           {/* Filter */}
-          <div className="flex flex-col md:flex-row items-end md:items-center gap-4">
+          <div className="flex flex-col lg:flex-row items-end md:items-center gap-4">
             {/* Search by keyword (kata kunci) */}
             <div className="w-full lg:w-4/12">
               <Input
@@ -601,41 +561,61 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             {/* Month header */}
             <div className="flex justify-between items-center p-4 border-x border-t">
               <button
+                onClick={() => handleClickPrevMonth()}
                 className="bg-mono100 p-2 w-9 h-9 rounded-full 
                 flex items-center justify-center"
               >
                 <LeftIconSvg color={"#808080"} size={16} />
               </button>
-              <DatePicker
-                // picker="month"
-                bordered={false}
-                locale={locale}
-                format={"MMMM YYYY"}
-                value={selectedMonthYear}
-                style={{
-                  color: "#4D4D4D",
-                  fontSize: "18px",
-                  fontWeight: 700,
-                }}
-                onChange={(date) => {
-                  if (date) {
-                    // setQueryParams({
-                    //   month: date.format("M"),
-                    //   year: date.format("YYYY"),
-                    //   page: 1,
-                    // });
-                    setSelectedMonthYear(date);
-                  } else {
-                    // setQueryParams({
-                    //   month: moment().format("M"),
-                    //   year: moment().format("YYYY"),
-                    //   page: 1,
-                    // });
-                    setSelectedMonthYear(moment());
-                  }
-                }}
-              />
+
+              <div className="flex gap-2 items-center justify-center">
+                <h4 className="mig-heading--4">
+                  {currentStartMonth == currentEndMonth
+                    ? currentStartMonth
+                    : `${currentStartMonth} - ${currentEndMonth}`}
+                </h4>
+
+                <DatePicker
+                  // picker="month"
+                  allowClear={false}
+                  bordered={false}
+                  locale={locale}
+                  format={"MMMM YYYY"}
+                  value={currentStartOfWeek}
+                  className="scheduleCalendar cursor-pointer"
+                  style={{
+                    color: "#4D4D4D",
+                    fontSize: "18px",
+                    fontWeight: 700,
+                  }}
+                  onChange={(date) => {
+                    if (date) {
+                      setQueryParams({
+                        start_at: moment(date)
+                          .startOf("week")
+                          .add(1, "day")
+                          .format("YYYY-MM-DD"),
+                      });
+                      let startOfWeek = moment(date)
+                        .startOf("week")
+                        .add(1, "days");
+
+                      setCurrentWeekRange(startOfWeek);
+                    } else {
+                      setQueryParams({
+                        start_at: moment()
+                          .startOf("week")
+                          .add(1, "day")
+                          .format("YYYY-MM-DD"),
+                      });
+                      let startOfWeek = moment().startOf("week").add(1, "days");
+                      setCurrentWeekRange(startOfWeek);
+                    }
+                  }}
+                />
+              </div>
               <button
+                onClick={handleClickNextMonth}
                 className="bg-mono100 p-2 w-9 h-9 rounded-full 
                 flex items-center justify-center"
               >
@@ -647,7 +627,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               dataSource={dataSchedules}
               rowKey={(record) => record.id}
               className="border border-collapse"
-              scroll={{ x: 200 }}
+              scroll={{ x: 70 }}
               pagination={{
                 current: queryParams.page,
                 pageSize: queryParams.rows,
@@ -676,6 +656,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
         </div>
       </div>
 
+      {/* Drawer Add Schedule */}
       <AccessControl hasPermission={ATTENDANCE_SCHEDULE_ADD}>
         <DrawerSchedule
           visible={isShowCreateDrawer}
@@ -693,6 +674,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
         />
       </AccessControl>
 
+      {/* Modal Confirmation Kosongkan Jadwal */}
       <AccessControl hasPermission={ATTENDANCE_SCHEDULE_ALL_DELETE}>
         <ModalHapus2
           title={
@@ -704,9 +686,8 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           visible={isShowDeleteAllModal}
           onvisible={setShowDeleteAllModal}
           onOk={() => {
-            // const selectedEmployeeeIds = selectedEmployees?.map((e) => e.id);
-            // deleteAllSchedule(selectedEmployeeeIds);
-            handleCloseDelete();
+            const selectedEmployeeeIds = selectedEmployees?.map((e) => e.id);
+            deleteAllSchedule(selectedEmployeeeIds);
           }}
           onCancel={() => setShowDeleteAllModal(false)}
           itemName={"jadwal"}
