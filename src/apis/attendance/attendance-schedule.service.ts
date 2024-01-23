@@ -134,7 +134,7 @@ export class AttendanceScheduleService {
       return;
     }
 
-    return await axiosClient.delete<IGetScheduleSucceedResponse>(
+    return await axiosClient.delete<HttpRequestBaseSucceedResponse>(
       "/deleteSchedule" + querySearch
     );
   }
@@ -158,7 +158,7 @@ export class AttendanceScheduleService {
       user_ids: userIds,
     };
 
-    return await axiosClient.post<IGetScheduleSucceedResponse>(
+    return await axiosClient.post<HttpRequestBaseSucceedResponse>(
       "/deleteSchedule",
       payload,
       {

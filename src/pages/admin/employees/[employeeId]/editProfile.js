@@ -1,14 +1,10 @@
 import { CloseOutlined } from "@ant-design/icons";
 import { notification } from "antd";
-import parse from "html-react-parser";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import Html from "react-pdf-html";
 import { useQuery } from "react-query";
-
-import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
