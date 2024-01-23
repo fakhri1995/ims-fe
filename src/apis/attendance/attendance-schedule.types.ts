@@ -1,5 +1,7 @@
 import { AgentDetailData, Role } from "apis/user";
 
+import { ShiftDetailData } from "./attendance-shift.types";
+
 import type {
   HttpRequestWithDataSucceedResponse,
   ProfileImageAttribute,
@@ -49,8 +51,9 @@ export interface ScheduleData {
   user_id: number;
   shift_id: number;
   date: string;
-  created_at: string;
-  upated_at: string;
+  created_at?: string;
+  upated_at?: string;
+  shift?: ShiftDetailData;
 }
 
 /**
