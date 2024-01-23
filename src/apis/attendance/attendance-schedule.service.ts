@@ -134,8 +134,38 @@ export class AttendanceScheduleService {
       return;
     }
 
-    return await axiosClient.delete<IGetScheduleSucceedResponse>(
+    return await axiosClient.delete<HttpRequestBaseSucceedResponse>(
       "/deleteSchedule" + querySearch
+    );
+  }
+
+  /**
+   * Delete all schedule by user ID.
+   *
+   * @access DELETE /deleteAllSchedule
+   */
+  static async deleteAllSchedule(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    userIds: number[]
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification("Mengosongkan", "Jadwal Kerja");
+      return;
+    }
+
+    const payload = {
+      user_ids: userIds,
+    };
+
+    return await axiosClient.post<HttpRequestBaseSucceedResponse>(
+      "/deleteSchedule",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
 }

@@ -2705,7 +2705,7 @@ const AlertCircleIconSvg = ({ size, color }) => {
       width={size ? size : 24}
       height={size ? size : 24}
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
+      strokeWidth="2"
       stroke={color ? color : "#BF4A40"}
       fill="none"
       strokeLinecap="round"
