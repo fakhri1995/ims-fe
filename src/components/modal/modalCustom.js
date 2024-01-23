@@ -1465,6 +1465,56 @@ const ModalAddCompany = ({
   );
 };
 
+const ModalEkspor = ({
+  title,
+  visible,
+  onvisible,
+  onOk,
+  onCancel,
+  loading,
+  disabled,
+  children,
+  okButtonText,
+  closable,
+}) => {
+  return (
+    <ModalCore
+      title={title}
+      visible={visible}
+      onCancel={onCancel}
+      closable={closable}
+      footer={
+        <Spin spinning={loading}>
+          <div className="flex gap-4 items-center justify-end">
+            <ButtonSys
+              type={"primary"}
+              color={"mono100"}
+              onClick={() => {
+                onvisible(false);
+              }}
+            >
+              Batalkan
+            </ButtonSys>
+            <ButtonSys type={"primary"} onClick={onOk} disabled={disabled}>
+              <div className="flex flex-row space-x-2">
+                <CheckIconSvg size={16} color={`white`} />
+                {okButtonText ? (
+                  <p>{okButtonText}</p>
+                ) : (
+                  <p>Ya, saya yakin dan akan melakukan eksport</p>
+                )}
+              </div>
+            </ButtonSys>
+          </div>
+        </Spin>
+      }
+      loading={loading}
+    >
+      {children}
+    </ModalCore>
+  );
+};
+
 export {
   ModalEdit,
   ModalEditTag,
@@ -1487,4 +1537,5 @@ export {
   ModalDownloadPayslip,
   ModalAddRole,
   ModalAddCompany,
+  ModalEkspor,
 };

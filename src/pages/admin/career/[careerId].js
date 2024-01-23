@@ -37,6 +37,7 @@ import {
   CAREERS_V2_APPLY_STATUSES,
   CAREERS_V2_GET,
   CAREER_UPDATE,
+  CAREER_V2_APPLY_EXPORT,
   CAREER_V2_APPLY_UPDATE,
   CAREER_V2_GET,
   RECRUITMENT_ROLE_TYPES_LIST_GET,
@@ -53,14 +54,16 @@ import {
   DownloadIcon2Svg,
   DownloadIconSvg,
   EditSquareIconSvg,
+  EyeIconSvg,
   SearchIconSvg,
   ShowCareerIconSvg,
   UpIconSvg,
+  UserPlusIconSvg,
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import ModalCore from "../../../components/modal/modalCore";
-import { ModalUbah } from "../../../components/modal/modalCustom";
+import { ModalEkspor, ModalUbah } from "../../../components/modal/modalCustom";
 import {
   createKeyPressHandler,
   downloadFile,
@@ -110,7 +113,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 2);
-  pathTitleArr.splice(1, 2, "Karir Manajemen", "Detail Lowongan Kerja");
+  pathTitleArr.splice(1, 2, "Career Management", "Detail Lowongan Kerja");
 
   const [refresh, setRefresh] = useState(-1);
   const isAllowedToGetStatusApply = hasPermission(CAREERS_V2_APPLY_STATUSES);
@@ -127,6 +130,8 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   });
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [disableUpdate, setDisableUpdate] = useState(false);
+  const [loadingEkspor, setLoadingEkspor] = useState(false);
+  const [disableEkspor, setDisableEkspor] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
   const [showCollapsible, setShowCollapsible] = useState(true);
   const canDownloadResume = hasPermission(RESUME_GET);
@@ -175,6 +180,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     salary_max: 0,
     career_role_type_id: null,
     career_experience_id: null,
+    recruitment_role_id: null,
     is_posted: 0,
   });
   // 2.3. Download Resume
@@ -187,6 +193,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   const [drawDetailPelamar, setDrawDetailPelamar] = useState(false);
   const [dataTerpilih, setDataTerpilih] = useState(null);
   const canUpdateStatuses = hasPermission(CAREER_V2_APPLY_UPDATE);
+  const canExportCandidate = hasPermission(CAREER_V2_APPLY_EXPORT);
   const isAllowedToGetRoleTypeList = hasPermission(
     RECRUITMENT_ROLE_TYPES_LIST_GET
   );
@@ -197,9 +204,15 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     prev_recruitment_status_name: "",
     recruitment_status_name: "",
   });
+  const [dataExportStatus, setDataExportStatus] = useState({
+    id: null,
+    name: "",
+  });
   const [modalUpdateStatus, setModalUpdateStatus] = useState(false);
+  const [modalExportStatus, setModalExportStatus] = useState(false);
   const [countQuestion, setCountQuestion] = useState(0);
   const [dataRoleTypeList, setDataRoleTypeList] = useState([]);
+  const [dataRoles, setDataRoles] = useState([]);
   const [dataExperience, setDataExperience] = useState([
     {
       id: 1,
@@ -410,26 +423,82 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
       key: "button_action",
       render: (text, record) => {
         return {
-          children: record.resume ? (
-            <a
-              download={record.name + ".pdf"}
-              href={"https://cdn.mig.id/" + record.resume.link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ButtonSys type={"default"}>
-                <DownloadOutlined />
-              </ButtonSys>
-            </a>
-          ) : (
-            <ButtonSys type={"default"} onClick={() => downloadNoData()}>
-              <DownloadOutlined />
-            </ButtonSys>
+          // children: record.resume ? (
+          //   <a
+          //     download={record.name + ".pdf"}
+          //     href={"https://cdn.mig.id/" + record.resume.link}
+          //     target="_blank"
+          //     rel="noopener noreferrer"
+          //   >
+          //     <ButtonSys type={"default"}>
+          //       <DownloadOutlined />
+          //     </ButtonSys>
+          //   </a>
+          // ) : (
+          //   <ButtonSys type={"default"} onClick={() => downloadNoData()}>
+          //     <DownloadOutlined />
+          //   </ButtonSys>
+          // ),
+          children: (
+            <div className={"flex flex-row gap-2.5"}>
+              <div
+                onClick={() => handleClickExportPelamar(record)}
+                className={
+                  "p-2 rounded-[5px] bg-bgstatustaskfinish flex justify-center items-center hover:cursor-pointer"
+                }
+              >
+                <UserPlusIconSvg size={20} color={"#35763B"} />
+              </div>
+              <div
+                onClick={() => handleClickDetailPelamar(record)}
+                className={
+                  "p-2 rounded-[5px] bg-mono100 flex justify-center items-center hover:cursor-pointer"
+                }
+              >
+                <EyeIconSvg size={20} color={"#808080"} />
+              </div>
+            </div>
           ),
         };
       },
     },
   ];
+
+  useEffect(() => {
+    if (!isAllowedToGetRoleTypeList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Role");
+      // setLoadingRoleTypeList(false);
+      return;
+    }
+
+    // setLoadingRoleTypeList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoles`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRoles(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingRoleTypeList(false);
+      });
+  }, [isAllowedToGetRoleTypeList]);
 
   //get data type role list
   useEffect(() => {
@@ -492,7 +561,6 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("hasil get ", res2);
         // if (res2.success) {
         setDataStatusApply(res2);
         // } else {
@@ -504,7 +572,6 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
         // }
       })
       .catch((err) => {
-        console.log("error apa catch ", res2);
         // notification.error({
         //     message: `${err.response}`,
         //     duration: 3,
@@ -538,7 +605,6 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     )
       .then((res) => res.json())
       .then((res2) => {
-        console.log("hasil get detail ", res2);
         if (res2.success) {
           setDetailCareer(res2.data);
           if (res2.data.question != null) {
@@ -547,7 +613,6 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
         }
       })
       .catch((err) => {
-        console.log("error apa catch ", res2);
         // notification.error({
         //     message: `${err.response}`,
         //     duration: 3,
@@ -649,7 +714,6 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
           link.parentNode.removeChild(link);
         })
         .catch((err) => {
-          console.log("error ", err);
           notification.error({
             message: `${err.response}`,
             duration: 3,
@@ -704,6 +768,63 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   const handleClickDetailPelamar = (record) => {
     setDataTerpilih(record);
     setDrawDetailPelamar(true);
+  };
+
+  const handleClickExportPelamar = (record) => {
+    setDataExportStatus({
+      id: record.id,
+      name: record.name,
+    });
+    setModalExportStatus(true);
+  };
+
+  const handleUpdateExport = () => {
+    const payload = {
+      id: dataExportStatus.id,
+    };
+
+    if (!canExportCandidate) {
+      permissionWarningNotification("Mengekspor", "Data Kandidat");
+      setLoadingEkspor(false);
+      return;
+    }
+
+    setLoadingEkspor(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/exportCareerApply`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          setTimeout(() => {
+            setDataExportStatus({});
+          }, 1500);
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+        } else {
+          notification["error"]({
+            message: `Gagal mengekspor data kandidat. ${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingEkspor(false);
+        setModalExportStatus(false);
+      })
+      .catch((err) => {
+        setLoadingEkspor(false);
+        notification["error"]({
+          message: `Gagal mengekspor data kandidat. ${err.message}`,
+          duration: 3,
+        });
+      });
   };
 
   const handleUpdateStatus = () => {
@@ -826,6 +947,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
             salary_max: 0,
             career_role_type_id: null,
             career_experience_id: null,
+            recruitment_role_id: null,
           });
           setloadingeditinformation(false);
           setdraweditinformation(false);
@@ -932,6 +1054,9 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                     salary_max: detailCareer.salary_max,
                     career_role_type_id: detailCareer.career_role_type_id,
                     career_experience_id: detailCareer.career_experience_id,
+                    recruitment_role_id: detailCareer.recruitment_role
+                      ? detailCareer.recruitment_role.id
+                      : NULL,
                     is_posted: detailCareer.is_posted,
                   });
                 }}
@@ -977,7 +1102,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
             (tabActiveKey == "1" ? (
               <div>
                 <div className={"mt-5 flex flex-col md:flex-row"}>
-                  <div className={"w-full md:w-1/3 mt-3 md:mt-0"}>
+                  <div className={"w-full md:w-1/4 mt-3 md:mt-0"}>
                     <p className={"text-mono50 font-medium leading-5 "}>
                       TIpe Kontrak
                     </p>
@@ -989,7 +1114,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       {detailCareer?.role_type?.name}
                     </p>
                   </div>
-                  <div className={"w-full md:w-1/3 mt-3 md:mt-0"}>
+                  <div className={"w-full md:w-1/4 mt-3 md:mt-0"}>
                     <p className={"text-mono50 font-medium leading-5 "}>
                       Rentang Pengalaman
                     </p>
@@ -1001,7 +1126,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       {detailCareer?.experience?.str}
                     </p>
                   </div>
-                  <div className={"w-full md:w-1/3 mt-3 md:mt-0"}>
+                  <div className={"w-full md:w-1/4 mt-3 md:mt-0"}>
                     <p className={"text-mono50 font-medium leading-5 "}>
                       Rentan Gaji
                     </p>
@@ -1017,6 +1142,16 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       {detailCareer
                         ? currencyI18n.format(detailCareer.salary_max)
                         : "0"}
+                    </p>
+                  </div>
+                  <div className={"w-full md:w-1/4 mt-3 md:mt-0"}>
+                    <p className={"text-mono50 font-medium leading-5 "}>Role</p>
+                    <p
+                      className={
+                        "mt-2.5 text-sm leading-6 font-normal text-mono30"
+                      }
+                    >
+                      {detailCareer?.recruitment_role?.name}
                     </p>
                   </div>
                 </div>
@@ -1342,6 +1477,24 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                   </ButtonSys>
                 )}
               </div>
+              <div
+                className={"mt-6 border border-solid border-[#f0f0f0] -mx-6"}
+              ></div>
+              <p className={"text-mono30 text-lg leading-6 font-bold mt-6"}>
+                Jawaban Pertanyaan Tambahan
+              </p>
+              <div
+                className={
+                  "mt-6 py-3 px-4 rounded-[5px] border border-solid border-inputkategori "
+                }
+              >
+                <p className={"text-xs font-medium text-mono50 leading-5  "}>
+                  1. Year Experience
+                </p>
+                <p className={"text-sm font-bold leading-6 text-mono30"}>
+                  1-2 Year Experiences
+                </p>
+              </div>
             </Drawer>
           </AccessControl>
           <AccessControl hasPermission={CAREERS_V2_GET}>
@@ -1371,6 +1524,30 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               </div>
             </ModalUbah>
           </AccessControl>
+          {/*drawer konfirmasi export data */}
+          <AccessControl hasPermission={CAREERS_V2_GET}>
+            <ModalEkspor
+              title={`Konfirmasi Eksport`}
+              visible={modalExportStatus}
+              onvisible={setModalExportStatus}
+              onOk={handleUpdateExport}
+              onCancel={() => {
+                setModalExportStatus(false);
+                setDataExportStatus({});
+              }}
+              loading={loadingEkspor}
+              disabled={disableEkspor}
+            >
+              <div className="space-y-4">
+                <p className="">
+                  Anda akan melakukan eksport pada kandidat{" "}
+                  <strong>{dataExportStatus.name}</strong>
+                </p>
+
+                <p>Apakah Anda yakin ingin mengeksport?</p>
+              </div>
+            </ModalEkspor>
+          </AccessControl>
           <AccessControl hasPermission={CAREER_UPDATE}>
             {/* drawer edit pertanyaan */}
             <DrawerQuestionEdit
@@ -1398,6 +1575,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               dataeditinformation={dataeditinformation}
               dataExperience={dataExperience}
               dataRoleTypeList={dataRoleTypeList}
+              dataRoles={dataRoles}
               loadingeditinformation={loadingeditinformation}
             />
           </AccessControl>
@@ -1444,7 +1622,7 @@ export async function getServerSideProps({ req, res, params }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "111",
+      sidemenu: "career-management",
       careerId,
     },
   };

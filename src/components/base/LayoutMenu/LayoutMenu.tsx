@@ -498,7 +498,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_RECRUITMENT_CAREER) && (
             <Menu.Item key="career-management">
-              <Link href="/admin/career">Karir Manajemen</Link>
+              <Link href="/admin/career">Career Management</Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_RECRUITMENT_CANDIDATE) && (

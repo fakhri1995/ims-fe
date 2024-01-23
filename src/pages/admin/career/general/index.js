@@ -42,6 +42,7 @@ import {
   CAREER_ADD,
   CAREER_DELETE,
   CAREER_UPDATE,
+  CAREER_V2_APPLY_EXPORT,
   CAREER_V2_APPLY_UPDATE,
   RECRUITMENTS_GET,
   RECRUITMENT_JALUR_DAFTARS_LIST_GET,
@@ -54,18 +55,24 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
+import DrawerPelamarDetail from "../../../../components/drawer/career/DrawerPelamarDetail";
 import {
   AddCareerIconSvg,
   DownIconSvg,
   DownloadIcon2Svg,
   DownloadIconSvg,
+  EyeIconSvg,
   SearchIconSvg,
   ShowCareerIconSvg,
   UpIconSvg,
+  UserPlusIconSvg,
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
-import { ModalUbah } from "../../../../components/modal/modalCustom";
+import {
+  ModalEkspor,
+  ModalUbah,
+} from "../../../../components/modal/modalCustom";
 import {
   createKeyPressHandler,
   momentFormatDate,
@@ -160,7 +167,6 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
   const rt = useRouter();
   // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
-  console.log("pathtitle ", pathArr);
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 1);
@@ -191,33 +197,6 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
     total: null,
   });
   //create
-  const [drawcreate, setdrawcreate] = useState(false);
-  const [loadingcreate, setloadingcreate] = useState(false);
-  const [datacreate, setdatacreate] = useState({
-    name: "",
-    description: "",
-    qualification: "",
-    overview: "",
-    salary_min: 0,
-    salary_max: 0,
-    career_role_type_id: null,
-    career_experience_id: null,
-    is_posted: 0,
-  });
-  const [drawedit, setdrawedit] = useState(false);
-  const [loadingedit, setloadingedit] = useState(false);
-  const [dataedit, setdataedit] = useState({
-    id: 0,
-    name: "",
-    description: "",
-    qualification: "",
-    overview: "",
-    salary_min: 0,
-    salary_max: 0,
-    career_role_type_id: null,
-    career_experience_id: null,
-    is_posted: 0,
-  });
   const [dataStatusApply, setDataStatusApply] = useState([]);
   const isAllowedToGetRoleTypeList = hasPermission(
     RECRUITMENT_ROLE_TYPES_LIST_GET
@@ -227,6 +206,17 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [modaldelete, setmodaldelete] = useState(false);
   const [loadingdelete, setloadingdelete] = useState(false);
   const [featureselected, setfeatureselected] = useState("");
+  const [dataExportStatus, setDataExportStatus] = useState({
+    id: null,
+    name: "",
+  });
+  const [modalExportStatus, setModalExportStatus] = useState(false);
+  const canExportCandidate = hasPermission(CAREER_V2_APPLY_EXPORT);
+  const [loadingEkspor, setLoadingEkspor] = useState(false);
+  const [disableEkspor, setDisableEkspor] = useState(false);
+  const [drawDetailPelamar, setDrawDetailPelamar] = useState(false);
+  const [dataTerpilih, setDataTerpilih] = useState(null);
+  const [refresh, setRefresh] = useState(-1);
   const [datadelete, setdatadelete] = useState({
     id: 0,
   });
@@ -251,7 +241,6 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("hasil get ", res2);
         // if (res2.success) {
         setDataStatusApply(res2);
         // } else {
@@ -263,7 +252,6 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
         // }
       })
       .catch((err) => {
-        console.log("error apa catch ", res2);
         // notification.error({
         //     message: `${err.response}`,
         //     duration: 3,
@@ -348,6 +336,68 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
       message: `Pelamar tidak punya file resume`,
       duration: 3,
     });
+  };
+
+  const handleClickExportPelamar = (record) => {
+    setDataExportStatus({
+      id: record.id,
+      name: record.name,
+    });
+    setModalExportStatus(true);
+  };
+
+  const handleClickDetailPelamar = (record) => {
+    setDataTerpilih(record);
+    setDrawDetailPelamar(true);
+  };
+
+  const handleUpdateExport = () => {
+    const payload = {
+      id: dataExportStatus.id,
+    };
+
+    if (!canExportCandidate) {
+      permissionWarningNotification("Mengekspor", "Data Kandidat");
+      setLoadingEkspor(false);
+      return;
+    }
+
+    setLoadingEkspor(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/exportCareerApply`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          setTimeout(() => {
+            setDataExportStatus({});
+          }, 1500);
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+        } else {
+          notification["error"]({
+            message: `Gagal mengekspor data kandidat. ${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingEkspor(false);
+        setModalExportStatus(false);
+      })
+      .catch((err) => {
+        setLoadingEkspor(false);
+        notification["error"]({
+          message: `Gagal mengekspor data kandidat. ${err.message}`,
+          duration: 3,
+        });
+      });
   };
 
   // "Semua Kandidat" Table's columns
@@ -452,21 +502,25 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
       key: "button_action",
       render: (text, record) => {
         return {
-          children: record.resume ? (
-            <a
-              download={record.name + ".pdf"}
-              href={"https://cdn.mig.id/" + record.resume.link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ButtonSys type={"default"}>
-                <DownloadOutlined />
-              </ButtonSys>
-            </a>
-          ) : (
-            <ButtonSys type={"default"} onClick={() => downloadNoData()}>
-              <DownloadOutlined />
-            </ButtonSys>
+          children: (
+            <div className={"flex flex-row gap-2.5"}>
+              <div
+                onClick={() => handleClickExportPelamar(record)}
+                className={
+                  "p-2 rounded-[5px] bg-bgstatustaskfinish flex justify-center items-center hover:cursor-pointer"
+                }
+              >
+                <UserPlusIconSvg size={20} color={"#35763B"} />
+              </div>
+              <div
+                onClick={() => handleClickDetailPelamar(record)}
+                className={
+                  "p-2 rounded-[5px] bg-mono100 flex justify-center items-center hover:cursor-pointer"
+                }
+              >
+                <EyeIconSvg size={20} color={"#808080"} />
+              </div>
+            </div>
           ),
         };
       },
@@ -540,13 +594,26 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
             style={{ boxShadow: "0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
           >
             <div className="flex items-center justify-between mb-6">
-              <div className={"w-3/4"}>
+              <div className={"w-2/4"}>
                 <h4 className="mig-heading--4 ">
                   Daftar Pelamar Tanpa Lowongan
                 </h4>
               </div>
-              <div className={"grid grid-cols-2 gap-4"}>
-                <div className="w-full customselectcareer">
+              <div className={"flex flex-row gap-4 w-2/4"}>
+                <div className="w-full">
+                  <Input
+                    // defaultValue={searchingFilterRecruitments}
+                    style={{ width: `100%` }}
+                    placeholder="Cari Nama ..."
+                    allowClear
+                    // onChange={(e) => {
+                    //   setSearchingFilterRecruitments(e.target.value);
+                    // }}
+                    // onKeyPress={onKeyPressHandler}
+                    // disabled={!isAllowedToGetCareer}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 customselectcareer">
                   <Select
                     defaultValue={queryParams.career_apply_status_id}
                     allowClear
@@ -569,7 +636,7 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
                   </Select>
                 </div>
 
-                <div className="flex justify-end">
+                <div className={"flex justify-end ml-8"}>
                   <ButtonSys
                     type={`primary`}
                     onClick={onFilterRecruitments}
@@ -631,6 +698,37 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
         </div>
       </div>
+      <AccessControl hasPermission={CAREER_V2_APPLY_EXPORT}>
+        <ModalEkspor
+          title={`Konfirmasi Eksport`}
+          visible={modalExportStatus}
+          onvisible={setModalExportStatus}
+          onOk={handleUpdateExport}
+          onCancel={() => {
+            setModalExportStatus(false);
+            setDataExportStatus({});
+          }}
+          loading={loadingEkspor}
+          disabled={disableEkspor}
+        >
+          <div className="space-y-4">
+            <p className="">
+              Anda akan melakukan eksport pada kandidat{" "}
+              <strong>{dataExportStatus.name}</strong>
+            </p>
+
+            <p>Apakah Anda yakin ingin mengeksport?</p>
+          </div>
+        </ModalEkspor>
+      </AccessControl>
+      <AccessControl hasPermission={CAREERS_V2_GET}>
+        <DrawerPelamarDetail
+          title={"Informasi Pelamar"}
+          visible={drawDetailPelamar}
+          setDrawDetailPelamar={setDrawDetailPelamar}
+          dataTerpilih={dataTerpilih}
+        />
+      </AccessControl>
       <AccessControl hasPermission={CAREERS_V2_GET}>
         <ModalUbah
           title={`Konfirmasi Perubahan`}
