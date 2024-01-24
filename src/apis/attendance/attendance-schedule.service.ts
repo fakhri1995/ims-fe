@@ -140,7 +140,7 @@ export class AttendanceScheduleService {
   }
 
   /**
-   * Delete all schedule by user ID.
+   * Delete all schedule by user IDs.
    *
    * @access DELETE /deleteAllSchedule
    */
@@ -158,13 +158,11 @@ export class AttendanceScheduleService {
       user_ids: userIds,
     };
 
-    return await axiosClient.post<HttpRequestBaseSucceedResponse>(
-      "/deleteSchedule",
-      payload,
+    return await axiosClient.delete<HttpRequestBaseSucceedResponse>(
+      "/deleteAllSchedule",
       {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        data: payload,
       }
     );
   }
