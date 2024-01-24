@@ -7,6 +7,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   Button,
   Drawer,
+  Input,
   Select,
   Spin,
   Switch,
@@ -126,6 +127,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     career_id: withDefault(NumberParam, careerId),
     has_career: withDefault(NumberParam, 1),
+    keyword: withDefault(StringParam, undefined),
     career_apply_status_id: withDefault(NumberParam, undefined),
   });
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -133,6 +135,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   const [loadingEkspor, setLoadingEkspor] = useState(false);
   const [disableEkspor, setDisableEkspor] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
+  const [selectedName, setSelectedName] = useState(undefined);
   const [showCollapsible, setShowCollapsible] = useState(true);
   const canDownloadResume = hasPermission(RESUME_GET);
   const [loadingCareers, setLoadingCareers] = useState(true);
@@ -235,6 +238,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   const onFilterRecruitments = () => {
     setQueryParams({
       career_apply_status_id: selectedStatus,
+      keyword: selectedName,
     });
   };
 
@@ -648,6 +652,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     queryParams.sort_by,
     queryParams.sort_type,
     queryParams.career_apply_status_id,
+    queryParams.keyword,
   ]);
 
   const getCareers = (params) => {
@@ -1245,19 +1250,33 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
             <div className={"w-3/4"}>
               <h4 className="mig-heading--4 ">Pelamar {detailCareer?.name}</h4>
             </div>
-            <div className={"grid grid-cols-2 gap-4"}>
-              <div className="w-full customselectcareer">
+            <div className={"flex flex-row gap-4 w-2/4"}>
+              <div className="w-full">
+                <Input
+                  defaultValue={queryParams.keyword}
+                  style={{ width: `100%` }}
+                  placeholder="Cari Nama ..."
+                  allowClear
+                  onChange={(e) => {
+                    setQueryParams({ keyword: e.target.value });
+                    setSelectedName(e.target.value);
+                  }}
+                  // onKeyPress={onKeyPressHandler}
+                  // disabled={!isAllowedToGetCareer}
+                />
+              </div>
+              <div className="w-full md:w-1/2 customselectcareer">
                 <Select
                   defaultValue={queryParams.career_apply_status_id}
                   allowClear
                   name={`status`}
                   placeholder="Pilih Status"
                   style={{ width: `100%` }}
-                  suffixIcon={<DownIconSvg size={24} color={"#35763B"} />}
                   onChange={(value) => {
                     setQueryParams({ career_apply_status_id: value });
                     setSelectedStatus(value);
                   }}
+                  suffixIcon={<DownIconSvg size={24} color={"#35763B"} />}
                 >
                   {dataStatusApply.map((status) => (
                     <Select.Option key={status.id} value={status.id}>
@@ -1269,7 +1288,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                 </Select>
               </div>
 
-              <div className="flex justify-end">
+              <div className={"flex justify-end ml-8"}>
                 <ButtonSys
                   type={`primary`}
                   onClick={onFilterRecruitments}
@@ -1477,24 +1496,144 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                   </ButtonSys>
                 )}
               </div>
-              <div
-                className={"mt-6 border border-solid border-[#f0f0f0] -mx-6"}
-              ></div>
-              <p className={"text-mono30 text-lg leading-6 font-bold mt-6"}>
-                Jawaban Pertanyaan Tambahan
-              </p>
-              <div
-                className={
-                  "mt-6 py-3 px-4 rounded-[5px] border border-solid border-inputkategori "
-                }
-              >
-                <p className={"text-xs font-medium text-mono50 leading-5  "}>
-                  1. Year Experience
-                </p>
-                <p className={"text-sm font-bold leading-6 text-mono30"}>
-                  1-2 Year Experiences
-                </p>
-              </div>
+              {dataTerpilih && dataTerpilih.question != null && (
+                <div>
+                  <div
+                    className={
+                      "mt-6 border border-solid border-[#f0f0f0] -mx-6"
+                    }
+                  ></div>
+                  <p className={"text-mono30 text-lg leading-6 font-bold mt-6"}>
+                    Jawaban Pertanyaan Tambahan
+                  </p>
+                  {dataTerpilih.question.details.map((data, index) =>
+                    dataTerpilih.question.question.details[index].type == 1 ||
+                    dataTerpilih.question.question.details[index].type == 2 ||
+                    dataTerpilih.question.question.details[index].type == 4 ? (
+                      <div
+                        className={
+                          "mt-6 py-3 px-4 rounded-[5px] border border-solid border-inputkategori "
+                        }
+                      >
+                        <p
+                          className={
+                            "text-xs font-medium text-mono50 leading-5  "
+                          }
+                        >
+                          {index + 1}.{" "}
+                          {
+                            dataTerpilih.question.question.details[index]
+                              .description
+                          }
+                        </p>
+                        <p
+                          className={"text-sm font-bold leading-6 text-mono30"}
+                        >
+                          {data.value}
+                        </p>
+                      </div>
+                    ) : dataTerpilih.question.question.details[index].type ==
+                      3 ? (
+                      <div
+                        className={
+                          "mt-6 py-3 px-4 rounded-[5px] border border-solid border-inputkategori "
+                        }
+                      >
+                        <p
+                          className={
+                            "text-xs font-medium text-mono50 leading-5  "
+                          }
+                        >
+                          {index + 1}.{" "}
+                          {
+                            dataTerpilih.question.question.details[index]
+                              .description
+                          }{" "}
+                          ({" "}
+                          {dataTerpilih.question.question.details[
+                            index
+                          ].list.map((data, index) => data + " ")}{" "}
+                          )
+                        </p>
+                        <p
+                          className={"text-sm font-bold leading-6 text-mono30"}
+                        >
+                          {data.value.map(
+                            (data1, index2) =>
+                              dataTerpilih.question.question.details[index]
+                                .list[data1]
+                          )}
+                        </p>
+                      </div>
+                    ) : dataTerpilih.question.question.details[index].type ==
+                      5 ? (
+                      <div
+                        className={
+                          "mt-6 py-3 px-4 rounded-[5px] border border-solid border-inputkategori "
+                        }
+                      >
+                        <p
+                          className={
+                            "text-xs font-medium text-mono50 leading-5  "
+                          }
+                        >
+                          {index + 1}.{" "}
+                          {
+                            dataTerpilih.question.question.details[index]
+                              .description
+                          }{" "}
+                          diantara berikut ini : ({" "}
+                          {dataTerpilih.question.question.details[
+                            index
+                          ].list.map((data, indexnew) => data + " ")}{" "}
+                          )
+                        </p>
+                        <p
+                          className={"text-sm font-bold leading-6 text-mono30"}
+                        >
+                          {data.value}
+                        </p>
+                      </div>
+                    ) : (
+                      <div
+                        className={
+                          "mt-6 py-3 px-4 rounded-[5px] border border-solid border-inputkategori "
+                        }
+                      >
+                        <p
+                          className={
+                            "text-xs font-medium text-mono50 leading-5  "
+                          }
+                        >
+                          {index + 1}.{" "}
+                          {
+                            dataTerpilih.question.question.details[index]
+                              .description
+                          }
+                        </p>
+                        {data.value ? (
+                          <a
+                            download
+                            href={"https://cdn.mig.id/" + data.value}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Download File
+                          </a>
+                        ) : (
+                          <p
+                            className={
+                              "text-sm font-bold leading-6 text-mono30"
+                            }
+                          >
+                            -
+                          </p>
+                        )}
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
             </Drawer>
           </AccessControl>
           <AccessControl hasPermission={CAREERS_V2_GET}>

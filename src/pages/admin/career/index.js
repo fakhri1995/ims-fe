@@ -1637,12 +1637,12 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 style={{ width: `100%` }}
                                 onChange={(value) => {
                                   var temp = [...datacreate.question];
-                                  delete temp[idx].lists;
+                                  delete temp[idx].list;
                                   temp[idx].type = value;
                                   if (value === 3) {
-                                    temp[idx].lists = [];
+                                    temp[idx].list = [];
                                   } else if (value === 5) {
-                                    temp[idx].lists = [];
+                                    temp[idx].list = [];
                                   }
                                   temp[idx].required = false;
                                   setdatacreate((prev) => ({
@@ -1729,7 +1729,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                                   <div className="mb-1">
                                     <Label>Keterangan</Label>
                                   </div>
-                                  {doc.lists.map((doc2, idx2) => {
+                                  {doc.list.map((doc2, idx2) => {
                                     return (
                                       <div
                                         key={idx2}
@@ -1749,7 +1749,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                                           className=" cursor-pointer"
                                           onClick={() => {
                                             var temp = [...datacreate.question];
-                                            temp[idx].lists.splice(idx2, 1);
+                                            temp[idx].list.splice(idx2, 1);
                                             setdatacreate((prev) => ({
                                               ...prev,
                                               question: temp,
@@ -1770,7 +1770,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                                       onClick={() => {
                                         settempcb([]);
                                         var temp = [...datacreate.question];
-                                        temp[idx].lists.push(tempcb[idx]);
+                                        temp[idx].list.push(tempcb[idx]);
                                         setdatacreate((prev) => ({
                                           ...prev,
                                           question: temp,
@@ -1796,7 +1796,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
 
                             {doc.type === 5 && (
                               <div className="flex flex-col mb-3 col-span-2">
-                                {doc.lists.map((doc4, idx4) => {
+                                {doc.list.map((doc4, idx4) => {
                                   return (
                                     <div
                                       key={idx4}
@@ -1812,7 +1812,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                                           value={doc4}
                                           onChange={(e) => {
                                             var temp = [...datacreate.question];
-                                            temp[idx].lists[idx4] =
+                                            temp[idx].list[idx4] =
                                               e.target.value;
                                             setdatacreate((prev) => ({
                                               ...prev,
@@ -1825,7 +1825,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                                           className="cursor-pointer flex items-center text-center justify-center"
                                           onClick={() => {
                                             var temp = [...datacreate.question];
-                                            temp[idx].lists.splice(idx4, 1);
+                                            temp[idx].list.splice(idx4, 1);
                                             setdatacreate((prev) => ({
                                               ...prev,
                                               question: temp,
@@ -1846,7 +1846,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                                     className="mr-1 cursor-pointer hover:text-primary100"
                                     onClick={() => {
                                       var temp = [...datacreate.question];
-                                      temp[idx].lists.push("");
+                                      temp[idx].list.push("");
                                       setdatacreate((prev) => ({
                                         ...prev,
                                         question: temp,
@@ -1878,7 +1878,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                                       name: doc.name,
                                       type: doc.type,
                                       description: doc.description,
-                                      lists: [...doc.lists],
+                                      list: [...doc.list],
                                     };
                                   } else if (doc.type === 4) {
                                     templastdata = {
@@ -1891,7 +1891,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                                       name: doc.name,
                                       type: doc.type,
                                       description: doc.description,
-                                      lists: [...doc.lists],
+                                      list: [...doc.list],
                                     };
                                   } else if (doc.type === 6) {
                                     templastdata = {
