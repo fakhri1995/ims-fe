@@ -359,7 +359,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       dataIndex: "name",
       key: "name",
       width: 200,
-      fixed: "left",
       render: (text, record, index) => {
         return {
           children: (
@@ -625,9 +624,11 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
             <Table
               dataSource={dataSchedules}
+              columns={calendarColumns}
               rowKey={(record) => record.id}
+              loading={loadingSchedules}
               className="border border-collapse"
-              scroll={{ x: 70 }}
+              scroll={{ x: 200 }}
               pagination={{
                 current: queryParams.page,
                 pageSize: queryParams.rows,
@@ -650,7 +651,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   },
                 }
               }
-              columns={calendarColumns}
             />
           </div>
         </div>
