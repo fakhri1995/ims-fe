@@ -261,6 +261,10 @@ ol {
   color: #35763b;
 }
 
+.scheduleCalendar .ant-picker-input > input {
+  display: none;
+}
+
 /* TREE */
 .treeMyCompanyMain.ant-tree,
 .treeClientMain.ant-tree {
