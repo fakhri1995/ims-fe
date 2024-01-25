@@ -22,6 +22,7 @@
     "@dnd-kit/sortable": "^7.0.2",
     "@emotion/styled": "^11.10.5",
     "@react-pdf/renderer": "~3.0.0",
+    "@react-pdf/pdfkit": "~3.0.0",
     "@tailwindcss/line-clamp": "^0.3.1",
     "antd": "^4.17.4",
     "axios": "^0.25.0",
@@ -101,6 +102,7 @@
   "resolutions": {
     "@types/react": "17.0.39",
     "react-pdf-html": "1.1.10",
-    "@react-pdf/renderer": "3.0.0"
+    "@react-pdf/renderer": "3.0.0",
+    "@react-pdf/pdfkit" : "3.0.0"
   }
 }
