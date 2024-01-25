@@ -79,7 +79,7 @@ export interface AgentDetailData {
   company_id: number;
   position: string;
   phone_number: string;
-  crreated_time: string;
+  created_time: string;
   is_enabled: number;
   company_name: string;
   profile_image: ProfileImageAttribute;
