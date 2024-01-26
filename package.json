@@ -21,7 +21,7 @@
     "@dnd-kit/modifiers": "^6.0.1",
     "@dnd-kit/sortable": "^7.0.2",
     "@emotion/styled": "^11.10.5",
-    "@react-pdf/renderer": "^3.0.0",
+    "@react-pdf/renderer": "~3.0.0",
     "@tailwindcss/line-clamp": "^0.3.1",
     "antd": "^4.17.4",
     "axios": "^0.25.0",
@@ -98,13 +98,12 @@
     "tailwindcss": "^3.0.22",
     "typescript": "^4.5.5"
   },
-  "browser": {
-    "fs": false,
-    "os": false,
-    "path": false
-  },
   "resolutions": {
     "@types/react": "17.0.39",
-    "react-pdf-html": "^1.1.10"
+    "react-pdf-html": "1.1.10",
+    "@react-pdf/renderer": "3.0.0",
+    "@react-pdf/pdfkit" : "3.0.0",
+    "@react-pdf/image":"2.2.0",
+    "@react-pdf/layout":"3.2.1"
   }
 }

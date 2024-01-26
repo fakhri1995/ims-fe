@@ -145,6 +145,7 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    keyword: withDefault(StringParam, undefined),
     // career_id: withDefault(NumberParam, undefined),
     career_apply_status_id: withDefault(NumberParam, undefined),
   });
@@ -178,6 +179,7 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [searchingFilterRecruitments, setSearchingFilterRecruitments] =
     useState("");
   const [selectedStatus, setSelectedStatus] = useState(undefined);
+  const [selectedName, setSelectedName] = useState(undefined);
   const [showCollapsible, setShowCollapsible] = useState(true);
   // table data
   const [loadingCareers, setLoadingCareers] = useState(true);
@@ -288,6 +290,7 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
     queryParams.sort_by,
     queryParams.sort_type,
     queryParams.career_apply_status_id,
+    queryParams.keyword,
   ]);
 
   const getCareers = (params) => {
@@ -328,6 +331,7 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterRecruitments = () => {
     setQueryParams({
       career_apply_status_id: selectedStatus,
+      keyword: selectedName,
     });
   };
 
@@ -602,13 +606,14 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
               <div className={"flex flex-row gap-4 w-2/4"}>
                 <div className="w-full">
                   <Input
-                    // defaultValue={searchingFilterRecruitments}
+                    defaultValue={queryParams.keyword}
                     style={{ width: `100%` }}
                     placeholder="Cari Nama ..."
                     allowClear
-                    // onChange={(e) => {
-                    //   setSearchingFilterRecruitments(e.target.value);
-                    // }}
+                    onChange={(e) => {
+                      setQueryParams({ keyword: e.target.value });
+                      setSelectedName(e.target.value);
+                    }}
                     // onKeyPress={onKeyPressHandler}
                     // disabled={!isAllowedToGetCareer}
                   />
