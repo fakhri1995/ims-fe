@@ -166,7 +166,8 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
       },
       onError: (error, variables) => {
         // console.log({ error });
-        notification.error({ message: error?.response?.data?.message });
+        // notification.error({ message: error?.response?.data?.message });
+        notification.error({ message: "Gagal menambahkan jadwal." });
       },
     }
   );
