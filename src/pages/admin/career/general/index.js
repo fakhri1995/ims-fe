@@ -475,7 +475,7 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
             <>
               <select
                 value={record.status?.id}
-                className="rounded-md py-1 hover:cursor-pointer bg-bgstatuscareer px-2"
+                className="rounded-md py-1 hover:cursor-pointer bg-bgstatuscareer2 px-2 customcareerselectstatus"
                 onClick={(e) => e.stopPropagation()}
                 onChange={(event) => {
                   setDataUpdateStatus({
@@ -487,11 +487,33 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
                       event.target.selectedOptions[0].text,
                     recruitment_status_id: Number(event.target.value),
                   });
+
                   setModalUpdateStatus(true);
+                }}
+                style={{
+                  backgroundColor:
+                    record.status?.id == 1
+                      ? "#4D4D4D1A"
+                      : record.status?.id == 2
+                      ? "#35763B"
+                      : "#BF4A40",
+                  color: record.status?.id != 1 ? "white" : "#4D4D4D",
                 }}
               >
                 {dataStatusApply.map((status) => (
-                  <option key={status.id} value={status.id}>
+                  <option
+                    key={status.id}
+                    value={status.id}
+                    style={{
+                      backgroundColor:
+                        status.id == 1
+                          ? "#4D4D4D1A"
+                          : status?.id == 2
+                          ? "#35763B"
+                          : "#BF4A40",
+                      color: status.id != 1 ? "white" : "#4D4D4D",
+                    }}
+                  >
                     {status?.name}
                   </option>
                 ))}
