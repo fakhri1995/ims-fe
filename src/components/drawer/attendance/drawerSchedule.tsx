@@ -1,8 +1,21 @@
-import { DatePicker, Form, Input, Select, Spin, notification } from "antd";
+import { RightOutlined, SearchOutlined, UpOutlined } from "@ant-design/icons";
+import {
+  Checkbox,
+  Collapse,
+  DatePicker,
+  Form,
+  Input,
+  Select,
+  Spin,
+  Table,
+  notification,
+} from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+
+import { CheckIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -14,6 +27,7 @@ import {
   ATTENDANCE_SCHEDULE_ADD,
   ATTENDANCE_SHIFTS_GET,
 } from "lib/features";
+import { getNameInitial } from "lib/helper";
 
 import { AttendanceScheduleService } from "apis/attendance";
 import { IAddSchedulePayload } from "apis/attendance/attendance-schedule.types";
@@ -22,6 +36,8 @@ import { IGetShiftsPaginateParams } from "apis/attendance/attendance-shift.types
 import { AgentService, IGetAgentsPaginateParams } from "apis/user";
 
 import DrawerCore from "../drawerCore";
+
+import { HttpRequestBaseSucceedResponse } from "types/common";
 
 const DrawerSchedule = ({ visible, onvisible, data = null }) => {
   /**
@@ -63,9 +79,14 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
       keyword: "",
     });
 
+  const [dataAgents, setDataAgents] = useState([]);
+
+  const [selectedAgents, setSelectedAgents] = useState([]);
+  const [searchAgents, setSearchAgents] = useState("");
+
   // 2. USE EFFECT
   const {
-    data: dataAgents,
+    data: dataRawAgents,
     isLoading: loadingAgents,
     refetch: refetchAgents,
   } = useQuery(
@@ -79,7 +100,8 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
     {
       enabled: isAllowedToGetAgents && visible,
 
-      select: (response) => response.data.data.data,
+      select: (response) => response.data.data,
+      onSuccess: (data) => setDataAgents(data.data),
       onError: (error) => {
         notification.error({
           message: "Gagal mendapatkan daftar karyawan (agent).",
@@ -112,8 +134,6 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
     }
   );
 
-  console.log({ dataAgents });
-
   //3. HANDLER
   const handleClose = () => {
     setDataSchedule({
@@ -121,6 +141,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
       shift_id: null,
       date: "",
     });
+    setSelectedAgents([]);
     onvisible(false);
   };
 
@@ -143,23 +164,60 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
         onMutationSucceed(ATTENDANCE_SCHEDULES_GET, response.data.message);
         handleClose();
       },
-      onError: (error) => {
-        notification.error({ message: "Gagal menambah jadwal." });
+      onError: (error, variables) => {
+        // console.log({ error });
+        notification.error({ message: error?.response?.data?.message });
       },
     }
   );
+
+  const onChangeSearchAgents = (e) => {
+    setTimeout(
+      () => setAgentFilterParams((prev) => ({ ...prev, name: e.target.value })),
+      500
+    );
+  };
+  const handleSelect = (e) => {
+    const currentSelected = e.target.value;
+    let newSelectedAgents = [];
+    let newSelectedAgentIds = [];
+    if (e.target.checked) {
+      newSelectedAgents = [...selectedAgents, currentSelected];
+      newSelectedAgentIds = newSelectedAgents.map((item) => item?.id);
+    } else {
+      newSelectedAgents = selectedAgents.filter(
+        (obj) => obj.id !== currentSelected?.id
+      );
+      newSelectedAgentIds = newSelectedAgents.map((item) => item?.id);
+    }
+    setSelectedAgents(newSelectedAgents);
+    setDataSchedule((prev) => ({ ...prev, user_ids: newSelectedAgentIds }));
+
+    setDataSchedule;
+  };
+
+  const handleSelectAll = () => {
+    setSelectedAgents(dataAgents);
+    setDataSchedule((prev) => ({
+      ...prev,
+      user_ids: dataAgents.map((item) => item?.id),
+    }));
+  };
+
+  const handleUnselectAll = () => {
+    setSelectedAgents([]);
+    setDataSchedule((prev) => ({ ...prev, user_ids: [] }));
+  };
 
   return (
     <DrawerCore
       title={"Jadwalkan Karyawan"}
       visible={visible}
-      onClose={() => {
-        onvisible(false);
-      }}
+      onClose={handleClose}
       buttonOkText={"Simpan"}
       buttonCancelText={"Batal"}
       onClick={() => addSchedule(dataSchedule)}
-      onButtonCancelClicked={() => onvisible(false)}
+      onButtonCancelClicked={handleClose}
       disabled={
         !dataSchedule?.user_ids?.length ||
         !dataSchedule?.date ||
@@ -172,60 +230,147 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
         </p>
         <Form layout="vertical" form={instanceForm}>
           <div>
-            <Form.Item
-              label="Karyawan"
-              name={"user_ids"}
-              rules={[
-                {
-                  required: true,
-                  message: "Karyawan wajib diisi",
-                },
-              ]}
-              className="col-span-2"
-            >
-              <div>
-                <Select
-                  showSearch
-                  mode="multiple"
-                  placeholder="Pilih Kayawan"
-                  disabled={!isAllowedToGetAgents}
-                  className="mb-2"
-                  onChange={(value) => {
-                    setDataSchedule((prev) => ({
-                      ...prev,
-                      user_ids: value,
-                    }));
-                  }}
-                  onSearch={(value) => {
-                    setTimeout(
-                      () =>
-                        setAgentFilterParams((prev) => ({
-                          ...prev,
-                          name: value,
-                        })),
-                      500
-                    );
-                  }}
-                  optionFilterProp="children"
-                  filterOption={(
-                    input,
-                    option: { label: string; value: number }
-                  ) =>
-                    option?.label?.toLowerCase().includes(input.toLowerCase())
+            <div className="mb-6 ">
+              <Collapse
+                className="col-span-2 bg-transparent rounded-md"
+                bordered={true}
+                expandIconPosition="right"
+                expandIcon={({ isActive }) => (
+                  <RightOutlined rev={""} rotate={isActive ? 90 : 0} />
+                )}
+                // defaultActiveKey={["1", "2"]}
+              >
+                <Collapse.Panel
+                  key={"1"}
+                  header={
+                    <div className="flex items-center justify-between w-full">
+                      <p className="text-md">Pilih Karyawan</p>
+                      <div
+                        className="flex items-center gap-2 bg-backdrop text-primary100 
+                        px-3 py-1 rounded-full mig-caption--bold"
+                      >
+                        <p>{selectedAgents?.length} Karyawan Dipilih</p>
+                      </div>
+                    </div>
                   }
                 >
-                  {dataAgents?.map((item) => (
-                    <Select.Option
-                      key={item?.id}
-                      value={item?.id}
-                      label={item?.name}
-                    >
-                      {item?.name}
-                    </Select.Option>
-                  ))}
-                </Select>
+                  <div className="grid grid-cols-1 gap-4">
+                    {/* TODO: Implement tab  */}
+                    <Input
+                      style={{ width: `100%` }}
+                      suffix={<SearchOutlined rev={""} />}
+                      placeholder="Cari Nama Talent.."
+                      onChange={onChangeSearchAgents}
+                      allowClear
+                    />
+                    <div className="flex justify-between items-center gap-2">
+                      <p className="mig-caption--bold text-mono30">
+                        Daftar Karyawan
+                      </p>
+                      {selectedAgents?.length !==
+                      dataRawAgents?.data?.length ? (
+                        <button
+                          className="mig-caption--bold text-primary100 bg-transparent 
+                        hover:opacity-75"
+                          onClick={handleSelectAll}
+                        >
+                          Pilih Semua
+                        </button>
+                      ) : (
+                        <button
+                          className="mig-caption--bold text-primary100 bg-transparent 
+                        hover:opacity-75"
+                          onClick={handleUnselectAll}
+                        >
+                          Hapus Semua
+                        </button>
+                      )}
+                    </div>
+
+                    <Table
+                      rowKey={(record) => record.id}
+                      className="tableTalentCandidate"
+                      dataSource={dataAgents}
+                      loading={loadingAgents}
+                      pagination={{
+                        current: agentFilterParams.page,
+                        pageSize: agentFilterParams.rows,
+                        total: dataRawAgents?.total,
+                        showSizeChanger: true,
+                        pageSizeOptions: [10, 20],
+                        showTotal: (total, range) =>
+                          `Showing ${range[0]}-${range[1]} of ${total} items`,
+                      }}
+                      onChange={(pagination, filters, sorter) => {
+                        setAgentFilterParams((prev) => ({
+                          ...prev,
+                          page: pagination.current,
+                          rows: pagination.pageSize,
+                        }));
+                      }}
+                      // onRow={(record) => {
+                      //   return {
+                      //     onMouseOver: () => {
+                      //       setRowState(record.id);
+                      //     },
+                      //   };
+                      // }}
+                      columns={[
+                        {
+                          title: undefined,
+                          dataIndex: "candidate",
+                          key: "candidate",
+                          render: (_, record, cardIdx) => {
+                            const isChecked = selectedAgents.some(
+                              (item) => item.id === record.id
+                            );
+                            return (
+                              <div
+                                className={`p-3 relative hover:bg-backdrop rounded-md flex 
+                              items-center mb-2 border border-mono100 cursor-pointer ${
+                                isChecked ? "bg-backdrop" : "bg-transparent"
+                              }`}
+                              >
+                                <div className="flex gap-3 items-center w-11/12">
+                                  <div
+                                    className={`rounded-full w-12 h-12 flex justify-center 
+                                  items-center mig-caption--bold p-1 bg-backdrop `}
+                                  >
+                                    {getNameInitial(record?.name)}
+                                  </div>
+                                  <div>
+                                    <p className="font-medium">
+                                      {record?.name}
+                                    </p>
+                                    <p className="mig-caption text-mono50">
+                                      {record?.last_assessment?.name}
+                                    </p>
+                                  </div>
+                                </div>
+                                <Checkbox
+                                  key={record.id}
+                                  value={record}
+                                  checked={isChecked}
+                                  onChange={handleSelect}
+                                />
+                              </div>
+                            );
+                          },
+                        },
+                      ]}
+                    />
+                  </div>
+                </Collapse.Panel>
+              </Collapse>
+              <div className="flex flex-wrap gap-2 items-center  pt-2">
+                {selectedAgents?.map((item) => (
+                  <div className="flex items-center gap-2 bg-backdrop p-2 rounded-md mig-caption--medium">
+                    <CheckIconSvg color="#35763B" size={20} />
+                    <p>{item?.name}</p>
+                  </div>
+                ))}
               </div>
-            </Form.Item>
+            </div>
 
             <Form.Item
               label="Tanggal Berlaku"
