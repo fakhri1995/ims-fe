@@ -63,6 +63,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const isAllowedToGetShifts = hasPermission(ATTENDANCE_SHIFTS_GET);
   const isAllowedToAddShift = hasPermission(ATTENDANCE_SHIFT_ADD);
+  const isAllowedToUpdateShift = hasPermission(ATTENDANCE_SHIFT_UPDATE);
   const isAllowedToUpdateShiftStatus = hasPermission(
     ATTENDANCE_SHIFT_STATUS_UPDATE
   );
@@ -251,8 +252,8 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
         return {
           children: (
             <>
-              {record?.start_break?.slice(0, 5) || "-"} -{" "}
-              {record?.end_break?.slice(0, 5) || "-"}
+              {record?.start_break?.slice(0, 5)} -{" "}
+              {record?.end_break?.slice(0, 5)}
             </>
           ),
         };
@@ -347,12 +348,14 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
               <button
                 className="bg-transparent"
                 onClick={() => handleShowUpdate(record)}
+                disabled={!isAllowedToUpdateShift}
               >
                 <EditIconSvg color={"#808080"} size={24} />
               </button>
               <button
                 className="bg-transparent"
                 onClick={() => handleShowDelete(record)}
+                disabled={!isAllowedToDeleteShift}
               >
                 <TrashIconSvg color={"#BF4A40"} size={24} />
               </button>

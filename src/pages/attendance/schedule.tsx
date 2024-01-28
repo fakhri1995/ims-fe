@@ -28,7 +28,6 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
 import DrawerSchedule from "components/drawer/attendance/drawerSchedule";
-import DrawerShift from "components/drawer/attendance/drawerShift";
 import { AccessControl } from "components/features/AccessControl";
 import {
   AlertCircleIconSvg,
@@ -93,6 +92,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const isAllowedToGetSchedules = hasPermission(ATTENDANCE_SCHEDULES_GET);
   const isAllowedToAddSchedule = hasPermission(ATTENDANCE_SCHEDULE_ADD);
+  const isAllowedToUpdateSchedule = hasPermission(ATTENDANCE_SCHEDULE_UPDATE);
   const isAllowedToGetCompanyList = hasPermission(COMPANY_CLIENTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
   const isAllowedToDeleteAllSchedule = hasPermission(
@@ -318,10 +318,11 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
         return {
           children: scheduleIdx > -1 && (
             <div>
-              <div
+              <button
                 onClick={() => handleShowUpdate(schedules[scheduleIdx])}
+                disabled={!isAllowedToUpdateSchedule}
                 className="bg-backdrop flex flex-col items-center justify-center 
-                px-5 py-4 rounded-md cursor-pointer"
+                px-5 py-4 rounded-md"
               >
                 <p className="mig-caption--bold text-mono30 text-center">
                   {schedules[scheduleIdx]?.shift?.title}
@@ -330,7 +331,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   {schedules[scheduleIdx]?.shift?.start_at?.slice(0, 5)} -{" "}
                   {schedules[scheduleIdx]?.shift?.end_at?.slice(0, 5)}
                 </p>
-              </div>
+              </button>
             </div>
           ),
         };
@@ -399,10 +400,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     },
   ];
 
-  // console.log({ selectedEmployees });
-  // console.log("start", currentStartOfWeek.format("DD MMMM YYYY"));
-  // console.log("end", currentEndOfWeek.format("DD MMMM YYYY"));
-
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -437,7 +434,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               <Select
                 allowClear
                 showSearch
-                // defaultValue={queryParams.company_id}
                 disabled={!isAllowedToGetCompanyList}
                 placeholder="Pilih Perusahaan"
                 style={{ width: `100%` }}
@@ -465,13 +461,11 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               <Select
                 allowClear
                 showSearch
-                // defaultValue={queryParams.company_id}
                 disabled={!isAllowedToGetRoleList}
                 placeholder="Pilih Posisi"
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   setQueryParams({ position: value });
-                  // setSelectedExpYear(value);
                 }}
                 optionFilterProp="children"
                 filterOption={(
@@ -497,7 +491,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     fullWidth
                     type={"default"}
                     onClick={() => setSelectMode(true)}
-                    disabled={!isAllowedToAddSchedule}
+                    disabled={!isAllowedToDeleteAllSchedule}
                   >
                     <div className="flex flex-row items-center space-x-2">
                       <CalendarOffIconSvg size={16} color="#35763B" />
@@ -661,6 +655,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
         <DrawerSchedule
           visible={isShowCreateDrawer}
           onvisible={setShowCreateDrawer}
+          companyList={companyList}
         />
       </AccessControl>
 
