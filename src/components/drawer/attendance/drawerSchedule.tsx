@@ -15,7 +15,7 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
-import { CheckIconSvg } from "components/icon";
+import { AlerttriangleIconSvg, CheckIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -26,6 +26,7 @@ import {
   ATTENDANCE_SCHEDULES_GET,
   ATTENDANCE_SCHEDULE_ADD,
   ATTENDANCE_SHIFTS_GET,
+  COMPANY_CLIENTS_GET,
 } from "lib/features";
 import { getNameInitial } from "lib/helper";
 
@@ -39,7 +40,7 @@ import DrawerCore from "../drawerCore";
 
 import { HttpRequestBaseSucceedResponse } from "types/common";
 
-const DrawerSchedule = ({ visible, onvisible, data = null }) => {
+const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
   /**
    * Dependencies
    */
@@ -55,6 +56,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
   const isAllowedToGetAgents = hasPermission(AGENTS_GET);
   const isAllowedToGetShifts = hasPermission(ATTENDANCE_SHIFTS_GET);
   const isAllowedToAddSchedule = hasPermission(ATTENDANCE_SCHEDULE_ADD);
+  const isAllowedToGetCompanyList = hasPermission(COMPANY_CLIENTS_GET);
 
   const [instanceForm] = Form.useForm();
 
@@ -70,6 +72,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
       page: 1,
       rows: 10,
       name: "",
+      company_id: null,
     });
 
   const [shiftFilterParams, setShiftFilterParams] =
@@ -82,7 +85,6 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
   const [dataAgents, setDataAgents] = useState([]);
 
   const [selectedAgents, setSelectedAgents] = useState([]);
-  const [searchAgents, setSearchAgents] = useState("");
 
   // 2. USE EFFECT
   const {
@@ -143,6 +145,12 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
     });
     setSelectedAgents([]);
     onvisible(false);
+    setAgentFilterParams({ page: 1, rows: 10, name: "", company_id: null });
+    setShiftFilterParams({
+      page: 1,
+      rows: 10,
+      keyword: "",
+    });
   };
 
   const onMutationSucceed = (queryKey: string, message: string) => {
@@ -220,6 +228,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
       onClick={() => addSchedule(dataSchedule)}
       onButtonCancelClicked={handleClose}
       disabled={
+        !isAllowedToAddSchedule ||
         !dataSchedule?.user_ids?.length ||
         !dataSchedule?.date ||
         !dataSchedule?.shift_id
@@ -239,31 +248,76 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
                 expandIcon={({ isActive }) => (
                   <RightOutlined rev={""} rotate={isActive ? 90 : 0} />
                 )}
-                // defaultActiveKey={["1", "2"]}
               >
                 <Collapse.Panel
                   key={"1"}
                   header={
                     <div className="flex items-center justify-between w-full">
                       <p className="text-md">Pilih Karyawan</p>
-                      <div
-                        className="flex items-center gap-2 bg-backdrop text-primary100 
-                        px-3 py-1 rounded-full mig-caption--bold"
-                      >
-                        <p>{selectedAgents?.length} Karyawan Dipilih</p>
-                      </div>
+                      {selectedAgents?.length ? (
+                        <div
+                          className="flex items-center gap-2 bg-backdrop text-primary100 
+                          px-3 py-1 rounded-full mig-caption--bold"
+                        >
+                          <p>{selectedAgents?.length} Karyawan Dipilih</p>
+                        </div>
+                      ) : (
+                        <div
+                          className="flex items-center gap-2 bg-warning bg-opacity-[0.15] text-warning 
+                          px-3 py-1 rounded-full text-[10px] font-bold"
+                        >
+                          <AlerttriangleIconSvg size={18} color={"#BF4A40"} />
+                          <p>Kamu Belum Memilih Karyawan</p>
+                        </div>
+                      )}
                     </div>
                   }
                 >
                   <div className="grid grid-cols-1 gap-4">
-                    {/* TODO: Implement tab  */}
-                    <Input
-                      style={{ width: `100%` }}
-                      suffix={<SearchOutlined rev={""} />}
-                      placeholder="Cari Nama Talent.."
-                      onChange={onChangeSearchAgents}
-                      allowClear
-                    />
+                    <div className="flex flex-col md:flex-row items-center gap-2">
+                      <Input
+                        allowClear
+                        style={{ width: `100%` }}
+                        suffix={<SearchOutlined rev={""} />}
+                        placeholder="Cari Nama Karyawan.."
+                        onChange={onChangeSearchAgents}
+                        disabled={!isAllowedToGetAgents}
+                      />
+                      <div className="w-full md:w-1/3">
+                        <Select
+                          allowClear
+                          showSearch
+                          disabled={!isAllowedToGetCompanyList}
+                          placeholder="Pilih Perusahaan"
+                          style={{ width: `100%` }}
+                          onChange={(value) => {
+                            setAgentFilterParams((prev) => ({
+                              ...prev,
+                              company_id: value,
+                            }));
+                          }}
+                          optionFilterProp="children"
+                          filterOption={(
+                            input,
+                            option: { label: string; value: number }
+                          ) =>
+                            option?.label
+                              ?.toLowerCase()
+                              .includes(input.toLowerCase())
+                          }
+                        >
+                          {companyList?.map((item) => (
+                            <Select.Option
+                              key={item.id}
+                              value={item.id}
+                              label={item.name}
+                            >
+                              {item.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </div>
+                    </div>
                     <div className="flex justify-between items-center gap-2">
                       <p className="mig-caption--bold text-mono30">
                         Daftar Karyawan
@@ -309,13 +363,6 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
                           rows: pagination.pageSize,
                         }));
                       }}
-                      // onRow={(record) => {
-                      //   return {
-                      //     onMouseOver: () => {
-                      //       setRowState(record.id);
-                      //     },
-                      //   };
-                      // }}
                       columns={[
                         {
                           title: undefined,
@@ -396,7 +443,9 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
                       : null
                   }
                   onChange={(value) => {
-                    let formattedDate = moment(value).format("YYYY-MM-DD");
+                    let formattedDate = moment(value).isValid()
+                      ? moment(value).format("YYYY-MM-DD")
+                      : null;
                     setDataSchedule((prev) => ({
                       ...prev,
                       date: formattedDate,

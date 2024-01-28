@@ -50,6 +50,7 @@ export interface IGetAgentsPaginateParams {
   page?: number;
   rows?: number;
   name?: string;
+  company_id?: number;
 }
 
 export type IGetAgentsPaginateSucceedResponse =
