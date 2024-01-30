@@ -7,10 +7,12 @@ import {
   Input,
   Select,
   Spin,
+  Switch,
   Table,
   notification,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
+import CheckableTag from "antd/lib/tag/CheckableTag";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -222,6 +224,16 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     setSelectedAgents([]);
     setDataSchedule((prev) => ({ ...prev, user_ids: [] }));
   };
+
+  const dayList = [
+    "Senin",
+    "Selasa",
+    "Rabu",
+    "Kamis",
+    "Jumat",
+    "Sabtu",
+    "Minggu",
+  ];
 
   return (
     <DrawerCore
@@ -516,7 +528,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
               </div>
             </Form.Item>
 
-            <div className="flex items-center justify-between bg-lightblue px-4 py-3 rounded-md">
+            <div className="flex items-center justify-between bg-lightblue px-4 py-3 rounded-md mb-6">
               <div className="flex items-center gap-2">
                 <InfoCircleIconSvg color={"#00589F"} size={18} />
                 <p className="mig-caption--medium text-secondary100">
@@ -530,6 +542,88 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
               >
                 Buat Shift
               </ButtonSys>
+            </div>
+
+            <div className="flex items-center gap-4 mb-6">
+              <p>Jadwal Repetisi</p>
+              <Switch></Switch>
+            </div>
+
+            <hr className="mb-6" />
+
+            <div className="flex flex-col gap-6">
+              <h4 className="mig-heading--4">Menyiapkan Jadwal Repetisi</h4>
+              <Form.Item
+                label="Pilih Salah Satu"
+                name={"repeat"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <div className="flex gap-2 items-center">
+                  <CheckableTag
+                    // key={idx}
+                    checked={false}
+                    className="border border-primary100 py-1 px-3 rounded-full mb-2"
+                    // checked={tag?.is_amount_for_bpjs}
+                    // onChange={(checked) => handleClickTag(tag, checked)}
+                  >
+                    <div className="flex flex-row items-center space-x-1">
+                      <p>Selamanya</p>
+                    </div>
+                  </CheckableTag>
+                  <CheckableTag
+                    // key={idx}
+                    checked={false}
+                    className="border border-primary100 py-1 px-3 rounded-full mb-2"
+                    // checked={tag?.is_amount_for_bpjs}
+                    // onChange={(checked) => handleClickTag(tag, checked)}
+                  >
+                    <div className="flex flex-row items-center space-x-1">
+                      <p>Pilih Rentang Tanggal Repetisi</p>
+                    </div>
+                  </CheckableTag>
+                </div>
+              </Form.Item>
+              <Form.Item
+                label="Tentukan Hari"
+                name={"repeat"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hari wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <div>
+                  <div className="flex flex-wrap gap-2 items-center">
+                    {dayList.map((day, idx) => (
+                      <CheckableTag
+                        key={idx}
+                        checked={false}
+                        className="border border-primary100 py-1 px-3 rounded-full mb-2"
+                        // checked={tag?.is_amount_for_bpjs}
+                        // onChange={(checked) => handleClickTag(tag, checked)}
+                      >
+                        <div className="flex flex-row items-center space-x-1">
+                          <p>{day}</p>
+                        </div>
+                      </CheckableTag>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <InfoCircleIconSvg color={"#00589F"} size={14} />
+                    <p className="mig-caption text-secondary100">
+                      Anda dapat memilih hari lebih dari satu
+                    </p>
+                  </div>
+                </div>
+              </Form.Item>
             </div>
           </div>
         </Form>
