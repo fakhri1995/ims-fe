@@ -310,6 +310,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       ),
       dataIndex: ["schedule"],
       key: `date-${i}`,
+      // width: 10,
       render: (schedules, record, index) => {
         let scheduleIdx = schedules.findIndex(
           (i) => i.date == currentDate?.format("YYYY-MM-DD")
@@ -317,12 +318,12 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
         return {
           children: scheduleIdx > -1 && (
-            <div>
+            <div className="flex justify-center">
               <button
                 onClick={() => handleShowUpdate(schedules[scheduleIdx])}
                 disabled={!isAllowedToUpdateSchedule}
                 className="bg-backdrop flex flex-col items-center justify-center 
-                px-5 py-4 rounded-md"
+                px-5 py-4 rounded-md "
               >
                 <p className="mig-caption--bold text-mono30 text-center">
                   {schedules[scheduleIdx]?.shift?.title}

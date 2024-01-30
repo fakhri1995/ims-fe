@@ -12,10 +12,16 @@ import {
 } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
-import { AlerttriangleIconSvg, CheckIconSvg } from "components/icon";
+import ButtonSys from "components/button.js";
+import {
+  AlerttriangleIconSvg,
+  CheckIconSvg,
+  InfoCircleIconSvg,
+} from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -46,6 +52,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
    */
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
+  const rt = useRouter();
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -508,6 +515,22 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                 </Select>
               </div>
             </Form.Item>
+
+            <div className="flex items-center justify-between bg-lightblue px-4 py-3 rounded-md">
+              <div className="flex items-center gap-2">
+                <InfoCircleIconSvg color={"#00589F"} size={18} />
+                <p className="mig-caption--medium text-secondary100">
+                  Belum memiliki shift yang sesuai?
+                </p>
+              </div>
+              <ButtonSys
+                type={"default"}
+                color={"secondary100"}
+                onClick={() => rt.push("/attendance/shift")}
+              >
+                Buat Shift
+              </ButtonSys>
+            </div>
           </div>
         </Form>
       </div>
