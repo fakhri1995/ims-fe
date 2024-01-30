@@ -172,10 +172,8 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
         onMutationSucceed(ATTENDANCE_SCHEDULES_GET, response.data.message);
         handleClose();
       },
-      onError: (error, variables) => {
-        // console.log({ error });
-        // notification.error({ message: error?.response?.data?.message });
-        notification.error({ message: "Gagal menambahkan jadwal." });
+      onError: (error: any, variables) => {
+        notification.error({ message: error?.response?.data?.message });
       },
     }
   );
