@@ -571,6 +571,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
                 <DatePicker
                   // picker="month"
+                  // open
                   allowClear={false}
                   bordered={false}
                   locale={locale}
