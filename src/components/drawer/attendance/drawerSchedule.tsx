@@ -46,8 +46,6 @@ import { AgentService, IGetAgentsPaginateParams } from "apis/user";
 
 import DrawerCore from "../drawerCore";
 
-import { HttpRequestBaseSucceedResponse } from "types/common";
-
 const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
   /**
    * Dependencies
