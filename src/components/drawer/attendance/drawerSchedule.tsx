@@ -7,15 +7,23 @@ import {
   Input,
   Select,
   Spin,
+  Switch,
   Table,
   notification,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
+import CheckableTag from "antd/lib/tag/CheckableTag";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
-import { AlerttriangleIconSvg, CheckIconSvg } from "components/icon";
+import ButtonSys from "components/button.js";
+import {
+  AlerttriangleIconSvg,
+  CheckIconSvg,
+  InfoCircleIconSvg,
+} from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -46,6 +54,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
    */
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
+  const rt = useRouter();
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -83,8 +92,15 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     });
 
   const [dataAgents, setDataAgents] = useState([]);
-
   const [selectedAgents, setSelectedAgents] = useState([]);
+
+  const [FOREVER, RANGE] = [1, 2]; // Repetition Mode
+  const [isRepetition, setRepetition] = useState(false);
+  const [repeatMode, setRepeatMode] = useState(FOREVER);
+  const [repetitionDate, setRepetitionDate] = useState({
+    start_at: "",
+    end_at: "",
+  });
 
   // 2. USE EFFECT
   const {
@@ -172,10 +188,8 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
         onMutationSucceed(ATTENDANCE_SCHEDULES_GET, response.data.message);
         handleClose();
       },
-      onError: (error, variables) => {
-        // console.log({ error });
-        // notification.error({ message: error?.response?.data?.message });
-        notification.error({ message: "Gagal menambahkan jadwal." });
+      onError: (error: any, variables) => {
+        notification.error({ message: error?.response?.data?.message });
       },
     }
   );
@@ -217,6 +231,16 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     setSelectedAgents([]);
     setDataSchedule((prev) => ({ ...prev, user_ids: [] }));
   };
+
+  const dayList = [
+    "Senin",
+    "Selasa",
+    "Rabu",
+    "Kamis",
+    "Jumat",
+    "Sabtu",
+    "Minggu",
+  ];
 
   return (
     <DrawerCore
@@ -510,6 +534,163 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                 </Select>
               </div>
             </Form.Item>
+
+            <div className="flex items-center justify-between bg-lightblue px-4 py-3 rounded-md mb-6">
+              <div className="flex items-center gap-2">
+                <InfoCircleIconSvg color={"#00589F"} size={18} />
+                <p className="mig-caption--medium text-secondary100">
+                  Belum memiliki shift yang sesuai?
+                </p>
+              </div>
+              <ButtonSys
+                type={"default"}
+                color={"secondary100"}
+                onClick={() => rt.push("/attendance/shift")}
+              >
+                Buat Shift
+              </ButtonSys>
+            </div>
+
+            <div className="flex items-center gap-4 mb-6">
+              <p className="mig-caption--bold">Jadwal Repetisi</p>
+              <Switch
+                checked={isRepetition}
+                onChange={(checked) => setRepetition(checked)}
+              ></Switch>
+            </div>
+
+            <hr className="mb-6" />
+
+            <div className={isRepetition ? `opacity-100` : `opacity-20`}>
+              <h4 className="mig-heading--4 mb-6">
+                Menyiapkan Jadwal Repetisi
+              </h4>
+              <Form.Item
+                label="Pilih Salah Satu"
+                name={"repeat"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <div className="flex items-center">
+                  <CheckableTag
+                    checked={repeatMode === FOREVER}
+                    onChange={(checked) => setRepeatMode(checked ? FOREVER : 0)}
+                    className="border border-primary100 py-1 px-3 rounded-full mb-2"
+                  >
+                    <div className="flex flex-row items-center space-x-1">
+                      <p>Selamanya</p>
+                    </div>
+                  </CheckableTag>
+
+                  <CheckableTag
+                    checked={repeatMode === RANGE}
+                    className="border border-primary100 py-1 px-3 rounded-full mb-2"
+                    onChange={(checked) => setRepeatMode(checked ? RANGE : 0)}
+                  >
+                    <div className="flex flex-row items-center space-x-1">
+                      <p>Pilih Rentang Tanggal Repetisi</p>
+                    </div>
+                  </CheckableTag>
+                </div>
+              </Form.Item>
+
+              {repeatMode === RANGE && (
+                <>
+                  <Form.Item
+                    label="Rentang Tanggal Repetisi"
+                    name={"repetition_date"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Rentang tanggal repetisi wajib diisi",
+                      },
+                    ]}
+                    className="col-span-2"
+                  >
+                    <div className="flex flex-col gap-2 items-center">
+                      <DatePicker.RangePicker
+                        locale={locale}
+                        picker="date"
+                        className="w-full"
+                        format={"DD MMMM YYYY"}
+                        placeholder={["Mulai", "Akhir"]}
+                        value={[
+                          moment(repetitionDate.start_at).isValid()
+                            ? moment(repetitionDate.start_at)
+                            : null,
+                          moment(repetitionDate.end_at).isValid()
+                            ? moment(repetitionDate.end_at)
+                            : null,
+                        ]}
+                        onChange={(values) => {
+                          let formattedStartDate = moment(values?.[0]).isValid()
+                            ? moment(values?.[0]).format("YYYY-MM-DD")
+                            : null;
+
+                          let formattedEndDate = moment(values?.[1]).isValid()
+                            ? moment(values?.[1]).format("YYYY-MM-DD")
+                            : null;
+
+                          setRepetitionDate({
+                            start_at: formattedStartDate,
+                            end_at: formattedEndDate,
+                          });
+                        }}
+                      />
+                    </div>
+                  </Form.Item>
+
+                  {repetitionDate?.start_at < dataSchedule?.date && (
+                    <div className="flex items-center gap-2 bg-warning px-4 py-3 rounded-md mb-6">
+                      <AlerttriangleIconSvg color={"#FFF"} size={20} />
+                      <p className="text-white">
+                        <b>Tanggal Mulai Repetisi</b> harus melebihi{" "}
+                        <b>Tanggal Berlaku</b>!
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
+
+              <Form.Item
+                label="Tentukan Hari"
+                name={"repeat"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hari wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <div>
+                  <div className="flex flex-wrap gap-y-2 items-center mb-2">
+                    {dayList.map((day, idx) => (
+                      <CheckableTag
+                        key={idx}
+                        checked={false}
+                        className="border border-primary100 py-1 px-3 rounded-full"
+                        // checked={tag?.is_amount_for_bpjs}
+                        // onChange={(checked) => handleClickTag(tag, checked)}
+                      >
+                        <p>{day}</p>
+                      </CheckableTag>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <InfoCircleIconSvg color={"#00589F"} size={14} />
+                    <p className="mig-caption text-secondary100">
+                      Anda dapat memilih hari lebih dari satu
+                    </p>
+                  </div>
+                </div>
+              </Form.Item>
+            </div>
           </div>
         </Form>
       </div>
