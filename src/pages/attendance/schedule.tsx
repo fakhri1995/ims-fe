@@ -1,8 +1,4 @@
-import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
@@ -43,10 +39,7 @@ import {
 } from "components/icon";
 import LayoutDashboard from "components/layout-dashboardNew";
 import ModalScheduleUpdate from "components/modal/attendance/modalScheduleUpdate";
-import ModalCore from "components/modal/modalCore";
 import { ModalHapus2 } from "components/modal/modalCustom";
-import { ModalUbah } from "components/modal/modalCustom";
-import { TableCustomShiftList } from "components/table/tableCustom";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -56,10 +49,8 @@ import {
   ATTENDANCE_SCHEDULES_GET,
   ATTENDANCE_SCHEDULE_ADD,
   ATTENDANCE_SCHEDULE_ALL_DELETE,
-  ATTENDANCE_SCHEDULE_DELETE,
   ATTENDANCE_SCHEDULE_UPDATE,
   COMPANY_CLIENTS_GET,
-  RECRUITMENT_ROLES_GET,
   RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
 
@@ -267,7 +258,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const handleClickPrevMonth = () => {
     let startOfWeek = moment(currentStartOfWeek)
-      // .startOf("month")
       ?.subtract(1, "month")
       ?.startOf("week")
       ?.add(1, "days");
@@ -276,7 +266,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const handleClickNextMonth = () => {
     let startOfWeek = moment(currentStartOfWeek)
-      // .startOf("month")
       ?.add(1, "month")
       ?.startOf("week")
       ?.add(1, "days");
@@ -289,11 +278,11 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
 
   const dateColumns = Array.from({ length: 7 }, (_, i) => {
-    let currentDate = moment(currentStartOfWeek).add(i, "days");
-    let isToday = currentDate.isSame(new Date(), "day");
+    const currentDate = moment(currentStartOfWeek).add(i, "days");
+    const isToday = currentDate.isSame(new Date(), "day");
     return {
       title: (
-        <div className="flex flex-col justify-center items-center w-full">
+        <div className="flex flex-col justify-center items-center">
           <div
             className={`px-2 py-1 w-16 h-16 rounded-full flex flex-col
             items-center justify-center 
@@ -361,10 +350,11 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       dataIndex: "name",
       key: "name",
       width: 200,
+      className: "border-r",
       render: (text, record, index) => {
         return {
           children: (
-            <div className="px-3 py-2 bg-mono120 flex flex-col gap-1 rounded-md">
+            <div className="px-3 py-2 bg-mono120 flex flex-col gap-1 rounded-md border-">
               <p className="mig-caption--bold text-mono30">{record?.name}</p>
               <p className="mig-caption text-mono50">{record?.position}</p>
               <p className="mig-caption text-mono50">{record?.company_name}</p>
@@ -623,7 +613,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               columns={calendarColumns}
               rowKey={(record) => record.id}
               loading={loadingSchedules}
-              className="border border-collapse"
+              className="border border-collapse tableSchedule"
               scroll={{ x: 200 }}
               pagination={{
                 current: queryParams.page,
