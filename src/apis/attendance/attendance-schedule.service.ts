@@ -7,6 +7,8 @@ import { objectToFormData, permissionWarningNotification } from "lib/helper";
 
 import {
   IAddSchedulePayload,
+  IGetCurrentScheduleParams,
+  IGetCurrentScheduleSucceedResponse,
   IGetScheduleSucceedResponse,
   IGetSchedulesPaginateParams,
   IGetSchedulesPaginateSucceedResponse,
@@ -164,6 +166,31 @@ export class AttendanceScheduleService {
         headers: { "Content-Type": "application/json" },
         data: payload,
       }
+    );
+  }
+
+  /**
+   * Retrieve user's current schedule by user ID.
+   *
+   * @access GET /getCurrentSchedule
+   */
+  static async getCurrentSchedule(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    params: IGetCurrentScheduleParams
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Jadwal Kerja Karyawan Saat Ini"
+      );
+      return;
+    }
+
+    const querySearch = QueryString.stringify(params, { addQueryPrefix: true });
+
+    return await axiosClient.get<IGetCurrentScheduleSucceedResponse>(
+      "/getCurrentSchedule" + querySearch
     );
   }
 }

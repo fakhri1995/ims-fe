@@ -117,3 +117,13 @@ export interface IUpdateSchedulePayload {
   id: number;
   shift_id: number;
 }
+
+/**
+ * @access GET /getCurrentSchedule
+ */
+export type IGetCurrentScheduleSucceedResponse =
+  HttpRequestWithDataSucceedResponse<ScheduleData>;
+export interface IGetCurrentScheduleParams {
+  user_id: number;
+  date: string;
+}
