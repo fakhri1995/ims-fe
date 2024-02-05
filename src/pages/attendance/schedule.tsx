@@ -299,6 +299,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       ),
       dataIndex: ["schedule"],
       key: `date-${i}`,
+      // width: 10,
       render: (schedules, record, index) => {
         let scheduleIdx = schedules.findIndex(
           (i) => i.date == currentDate?.format("YYYY-MM-DD")
