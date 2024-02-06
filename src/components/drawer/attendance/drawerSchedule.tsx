@@ -7,15 +7,23 @@ import {
   Input,
   Select,
   Spin,
+  Switch,
   Table,
   notification,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
+import CheckableTag from "antd/lib/tag/CheckableTag";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
-import { CheckIconSvg } from "components/icon";
+import ButtonSys from "components/button.js";
+import {
+  AlerttriangleIconSvg,
+  CheckIconSvg,
+  InfoCircleIconSvg,
+} from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -26,6 +34,7 @@ import {
   ATTENDANCE_SCHEDULES_GET,
   ATTENDANCE_SCHEDULE_ADD,
   ATTENDANCE_SHIFTS_GET,
+  COMPANY_CLIENTS_GET,
 } from "lib/features";
 import { getNameInitial } from "lib/helper";
 
@@ -37,14 +46,13 @@ import { AgentService, IGetAgentsPaginateParams } from "apis/user";
 
 import DrawerCore from "../drawerCore";
 
-import { HttpRequestBaseSucceedResponse } from "types/common";
-
-const DrawerSchedule = ({ visible, onvisible, data = null }) => {
+const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
   /**
    * Dependencies
    */
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
+  const rt = useRouter();
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -55,6 +63,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
   const isAllowedToGetAgents = hasPermission(AGENTS_GET);
   const isAllowedToGetShifts = hasPermission(ATTENDANCE_SHIFTS_GET);
   const isAllowedToAddSchedule = hasPermission(ATTENDANCE_SCHEDULE_ADD);
+  const isAllowedToGetCompanyList = hasPermission(COMPANY_CLIENTS_GET);
 
   const [instanceForm] = Form.useForm();
 
@@ -70,6 +79,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
       page: 1,
       rows: 10,
       name: "",
+      company_id: null,
     });
 
   const [shiftFilterParams, setShiftFilterParams] =
@@ -80,9 +90,15 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
     });
 
   const [dataAgents, setDataAgents] = useState([]);
-
   const [selectedAgents, setSelectedAgents] = useState([]);
-  const [searchAgents, setSearchAgents] = useState("");
+
+  const [FOREVER, RANGE] = [1, 2]; // Repetition Mode
+  const [isRepetition, setRepetition] = useState(false);
+  const [repeatMode, setRepeatMode] = useState(FOREVER);
+  const [repetitionDate, setRepetitionDate] = useState({
+    start_at: "",
+    end_at: "",
+  });
 
   // 2. USE EFFECT
   const {
@@ -143,6 +159,12 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
     });
     setSelectedAgents([]);
     onvisible(false);
+    setAgentFilterParams({ page: 1, rows: 10, name: "", company_id: null });
+    setShiftFilterParams({
+      page: 1,
+      rows: 10,
+      keyword: "",
+    });
   };
 
   const onMutationSucceed = (queryKey: string, message: string) => {
@@ -164,10 +186,8 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
         onMutationSucceed(ATTENDANCE_SCHEDULES_GET, response.data.message);
         handleClose();
       },
-      onError: (error, variables) => {
-        // console.log({ error });
-        // notification.error({ message: error?.response?.data?.message });
-        notification.error({ message: "Gagal menambahkan jadwal." });
+      onError: (error: any, variables) => {
+        notification.error({ message: error?.response?.data?.message });
       },
     }
   );
@@ -210,6 +230,16 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
     setDataSchedule((prev) => ({ ...prev, user_ids: [] }));
   };
 
+  const dayList = [
+    "Senin",
+    "Selasa",
+    "Rabu",
+    "Kamis",
+    "Jumat",
+    "Sabtu",
+    "Minggu",
+  ];
+
   return (
     <DrawerCore
       title={"Jadwalkan Karyawan"}
@@ -220,6 +250,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
       onClick={() => addSchedule(dataSchedule)}
       onButtonCancelClicked={handleClose}
       disabled={
+        !isAllowedToAddSchedule ||
         !dataSchedule?.user_ids?.length ||
         !dataSchedule?.date ||
         !dataSchedule?.shift_id
@@ -239,31 +270,76 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
                 expandIcon={({ isActive }) => (
                   <RightOutlined rev={""} rotate={isActive ? 90 : 0} />
                 )}
-                // defaultActiveKey={["1", "2"]}
               >
                 <Collapse.Panel
                   key={"1"}
                   header={
                     <div className="flex items-center justify-between w-full">
                       <p className="text-md">Pilih Karyawan</p>
-                      <div
-                        className="flex items-center gap-2 bg-backdrop text-primary100 
-                        px-3 py-1 rounded-full mig-caption--bold"
-                      >
-                        <p>{selectedAgents?.length} Karyawan Dipilih</p>
-                      </div>
+                      {selectedAgents?.length ? (
+                        <div
+                          className="flex items-center gap-2 bg-backdrop text-primary100 
+                          px-3 py-1 rounded-full mig-caption--bold"
+                        >
+                          <p>{selectedAgents?.length} Karyawan Dipilih</p>
+                        </div>
+                      ) : (
+                        <div
+                          className="flex items-center gap-2 bg-warning bg-opacity-[0.15] text-warning 
+                          px-3 py-1 rounded-full text-[10px] font-bold"
+                        >
+                          <AlerttriangleIconSvg size={18} color={"#BF4A40"} />
+                          <p>Kamu Belum Memilih Karyawan</p>
+                        </div>
+                      )}
                     </div>
                   }
                 >
                   <div className="grid grid-cols-1 gap-4">
-                    {/* TODO: Implement tab  */}
-                    <Input
-                      style={{ width: `100%` }}
-                      suffix={<SearchOutlined rev={""} />}
-                      placeholder="Cari Nama Talent.."
-                      onChange={onChangeSearchAgents}
-                      allowClear
-                    />
+                    <div className="flex flex-col md:flex-row items-center gap-2">
+                      <Input
+                        allowClear
+                        style={{ width: `100%` }}
+                        suffix={<SearchOutlined rev={""} />}
+                        placeholder="Cari Nama Karyawan.."
+                        onChange={onChangeSearchAgents}
+                        disabled={!isAllowedToGetAgents}
+                      />
+                      <div className="w-full md:w-1/3">
+                        <Select
+                          allowClear
+                          showSearch
+                          disabled={!isAllowedToGetCompanyList}
+                          placeholder="Pilih Perusahaan"
+                          style={{ width: `100%` }}
+                          onChange={(value) => {
+                            setAgentFilterParams((prev) => ({
+                              ...prev,
+                              company_id: value,
+                            }));
+                          }}
+                          optionFilterProp="children"
+                          filterOption={(
+                            input,
+                            option: { label: string; value: number }
+                          ) =>
+                            option?.label
+                              ?.toLowerCase()
+                              .includes(input.toLowerCase())
+                          }
+                        >
+                          {companyList?.map((item) => (
+                            <Select.Option
+                              key={item.id}
+                              value={item.id}
+                              label={item.name}
+                            >
+                              {item.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </div>
+                    </div>
                     <div className="flex justify-between items-center gap-2">
                       <p className="mig-caption--bold text-mono30">
                         Daftar Karyawan
@@ -309,13 +385,6 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
                           rows: pagination.pageSize,
                         }));
                       }}
-                      // onRow={(record) => {
-                      //   return {
-                      //     onMouseOver: () => {
-                      //       setRowState(record.id);
-                      //     },
-                      //   };
-                      // }}
                       columns={[
                         {
                           title: undefined,
@@ -396,7 +465,9 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
                       : null
                   }
                   onChange={(value) => {
-                    let formattedDate = moment(value).format("YYYY-MM-DD");
+                    let formattedDate = moment(value).isValid()
+                      ? moment(value).format("YYYY-MM-DD")
+                      : null;
                     setDataSchedule((prev) => ({
                       ...prev,
                       date: formattedDate,
@@ -430,14 +501,10 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
                     }));
                   }}
                   onSearch={(value) => {
-                    setTimeout(
-                      () =>
-                        setShiftFilterParams((prev) => ({
-                          ...prev,
-                          keyword: value,
-                        })),
-                      500
-                    );
+                    setShiftFilterParams((prev) => ({
+                      ...prev,
+                      keyword: value,
+                    }));
                   }}
                   optionFilterProp="children"
                   filterOption={(
@@ -449,18 +516,181 @@ const DrawerSchedule = ({ visible, onvisible, data = null }) => {
                       .includes(input.toLowerCase())
                   }
                 >
-                  {dataShifts?.map((item) => (
-                    <Select.Option
-                      key={item?.id}
-                      value={item?.id}
-                      label={item?.title}
-                    >
-                      {item?.title}
-                    </Select.Option>
-                  ))}
+                  {dataShifts?.map((item) => {
+                    const label = `${item?.title} (${item?.start_at?.slice(
+                      0,
+                      5
+                    )} - ${item?.end_at?.slice(0, 5)})`;
+                    return (
+                      <Select.Option
+                        key={item?.id}
+                        value={item?.id}
+                        label={label}
+                      >
+                        {label}
+                      </Select.Option>
+                    );
+                  })}
                 </Select>
               </div>
             </Form.Item>
+
+            <div className="flex items-center justify-between bg-lightblue px-4 py-3 rounded-md mb-6">
+              <div className="flex items-center gap-2">
+                <InfoCircleIconSvg color={"#00589F"} size={18} />
+                <p className="mig-caption--medium text-secondary100">
+                  Belum memiliki shift yang sesuai?
+                </p>
+              </div>
+              <ButtonSys
+                type={"default"}
+                color={"secondary100"}
+                onClick={() => rt.push("/attendance/shift")}
+              >
+                Buat Shift
+              </ButtonSys>
+            </div>
+
+            <div className="flex items-center gap-4 mb-6">
+              <p className="mig-caption--bold">Jadwal Repetisi</p>
+              <Switch
+                checked={isRepetition}
+                onChange={(checked) => setRepetition(checked)}
+              ></Switch>
+            </div>
+
+            <hr className="mb-6" />
+
+            <div className={isRepetition ? `opacity-100` : `opacity-20`}>
+              <h4 className="mig-heading--4 mb-6">
+                Menyiapkan Jadwal Repetisi
+              </h4>
+              <Form.Item
+                label="Pilih Salah Satu"
+                name={"repeat"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <div className="flex items-center">
+                  <CheckableTag
+                    checked={repeatMode === FOREVER}
+                    onChange={(checked) => setRepeatMode(checked ? FOREVER : 0)}
+                    className="border border-primary100 py-1 px-3 rounded-full mb-2"
+                  >
+                    <div className="flex flex-row items-center space-x-1">
+                      <p>Selamanya</p>
+                    </div>
+                  </CheckableTag>
+
+                  <CheckableTag
+                    checked={repeatMode === RANGE}
+                    className="border border-primary100 py-1 px-3 rounded-full mb-2"
+                    onChange={(checked) => setRepeatMode(checked ? RANGE : 0)}
+                  >
+                    <div className="flex flex-row items-center space-x-1">
+                      <p>Pilih Rentang Tanggal Repetisi</p>
+                    </div>
+                  </CheckableTag>
+                </div>
+              </Form.Item>
+
+              {repeatMode === RANGE && (
+                <>
+                  <Form.Item
+                    label="Rentang Tanggal Repetisi"
+                    name={"repetition_date"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Rentang tanggal repetisi wajib diisi",
+                      },
+                    ]}
+                    className="col-span-2"
+                  >
+                    <div className="flex flex-col gap-2 items-center">
+                      <DatePicker.RangePicker
+                        locale={locale}
+                        picker="date"
+                        className="w-full"
+                        format={"DD MMMM YYYY"}
+                        placeholder={["Mulai", "Akhir"]}
+                        value={[
+                          moment(repetitionDate.start_at).isValid()
+                            ? moment(repetitionDate.start_at)
+                            : null,
+                          moment(repetitionDate.end_at).isValid()
+                            ? moment(repetitionDate.end_at)
+                            : null,
+                        ]}
+                        onChange={(values) => {
+                          let formattedStartDate = moment(values?.[0]).isValid()
+                            ? moment(values?.[0]).format("YYYY-MM-DD")
+                            : null;
+
+                          let formattedEndDate = moment(values?.[1]).isValid()
+                            ? moment(values?.[1]).format("YYYY-MM-DD")
+                            : null;
+
+                          setRepetitionDate({
+                            start_at: formattedStartDate,
+                            end_at: formattedEndDate,
+                          });
+                        }}
+                      />
+                    </div>
+                  </Form.Item>
+
+                  {repetitionDate?.start_at < dataSchedule?.date && (
+                    <div className="flex items-center gap-2 bg-warning px-4 py-3 rounded-md mb-6">
+                      <AlerttriangleIconSvg color={"#FFF"} size={20} />
+                      <p className="text-white">
+                        <b>Tanggal Mulai Repetisi</b> harus melebihi{" "}
+                        <b>Tanggal Berlaku</b>!
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
+
+              <Form.Item
+                label="Tentukan Hari"
+                name={"repeat"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hari wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <div>
+                  <div className="flex flex-wrap gap-y-2 items-center mb-2">
+                    {dayList.map((day, idx) => (
+                      <CheckableTag
+                        key={idx}
+                        checked={false}
+                        className="border border-primary100 py-1 px-3 rounded-full"
+                        // checked={tag?.is_amount_for_bpjs}
+                        // onChange={(checked) => handleClickTag(tag, checked)}
+                      >
+                        <p>{day}</p>
+                      </CheckableTag>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <InfoCircleIconSvg color={"#00589F"} size={14} />
+                    <p className="mig-caption text-secondary100">
+                      Anda dapat memilih hari lebih dari satu
+                    </p>
+                  </div>
+                </div>
+              </Form.Item>
+            </div>
           </div>
         </Form>
       </div>

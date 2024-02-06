@@ -1,8 +1,4 @@
-import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
@@ -28,7 +24,6 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
 import DrawerSchedule from "components/drawer/attendance/drawerSchedule";
-import DrawerShift from "components/drawer/attendance/drawerShift";
 import { AccessControl } from "components/features/AccessControl";
 import {
   AlertCircleIconSvg,
@@ -44,10 +39,7 @@ import {
 } from "components/icon";
 import LayoutDashboard from "components/layout-dashboardNew";
 import ModalScheduleUpdate from "components/modal/attendance/modalScheduleUpdate";
-import ModalCore from "components/modal/modalCore";
 import { ModalHapus2 } from "components/modal/modalCustom";
-import { ModalUbah } from "components/modal/modalCustom";
-import { TableCustomShiftList } from "components/table/tableCustom";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -57,10 +49,8 @@ import {
   ATTENDANCE_SCHEDULES_GET,
   ATTENDANCE_SCHEDULE_ADD,
   ATTENDANCE_SCHEDULE_ALL_DELETE,
-  ATTENDANCE_SCHEDULE_DELETE,
   ATTENDANCE_SCHEDULE_UPDATE,
   COMPANY_CLIENTS_GET,
-  RECRUITMENT_ROLES_GET,
   RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
 
@@ -93,6 +83,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const isAllowedToGetSchedules = hasPermission(ATTENDANCE_SCHEDULES_GET);
   const isAllowedToAddSchedule = hasPermission(ATTENDANCE_SCHEDULE_ADD);
+  const isAllowedToUpdateSchedule = hasPermission(ATTENDANCE_SCHEDULE_UPDATE);
   const isAllowedToGetCompanyList = hasPermission(COMPANY_CLIENTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
   const isAllowedToDeleteAllSchedule = hasPermission(
@@ -267,7 +258,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const handleClickPrevMonth = () => {
     let startOfWeek = moment(currentStartOfWeek)
-      // .startOf("month")
       ?.subtract(1, "month")
       ?.startOf("week")
       ?.add(1, "days");
@@ -276,7 +266,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const handleClickNextMonth = () => {
     let startOfWeek = moment(currentStartOfWeek)
-      // .startOf("month")
       ?.add(1, "month")
       ?.startOf("week")
       ?.add(1, "days");
@@ -289,11 +278,11 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
 
   const dateColumns = Array.from({ length: 7 }, (_, i) => {
-    let currentDate = moment(currentStartOfWeek).add(i, "days");
-    let isToday = currentDate.isSame(new Date(), "day");
+    const currentDate = moment(currentStartOfWeek).add(i, "days");
+    const isToday = currentDate.isSame(new Date(), "day");
     return {
       title: (
-        <div className="flex flex-col justify-center items-center w-full">
+        <div className="flex flex-col justify-center items-center">
           <div
             className={`px-2 py-1 w-16 h-16 rounded-full flex flex-col
             items-center justify-center 
@@ -310,6 +299,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       ),
       dataIndex: ["schedule"],
       key: `date-${i}`,
+      // width: 10,
       render: (schedules, record, index) => {
         let scheduleIdx = schedules.findIndex(
           (i) => i.date == currentDate?.format("YYYY-MM-DD")
@@ -317,11 +307,12 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
         return {
           children: scheduleIdx > -1 && (
-            <div>
-              <div
+            <div className="flex justify-center">
+              <button
                 onClick={() => handleShowUpdate(schedules[scheduleIdx])}
+                disabled={!isAllowedToUpdateSchedule}
                 className="bg-backdrop flex flex-col items-center justify-center 
-                px-5 py-4 rounded-md cursor-pointer"
+                px-5 py-4 rounded-md "
               >
                 <p className="mig-caption--bold text-mono30 text-center">
                   {schedules[scheduleIdx]?.shift?.title}
@@ -330,7 +321,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   {schedules[scheduleIdx]?.shift?.start_at?.slice(0, 5)} -{" "}
                   {schedules[scheduleIdx]?.shift?.end_at?.slice(0, 5)}
                 </p>
-              </div>
+              </button>
             </div>
           ),
         };
@@ -359,10 +350,11 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       dataIndex: "name",
       key: "name",
       width: 200,
+      className: "border-r",
       render: (text, record, index) => {
         return {
           children: (
-            <div className="px-3 py-2 bg-mono120 flex flex-col gap-1 rounded-md">
+            <div className="px-3 py-2 bg-mono120 flex flex-col gap-1 rounded-md border-">
               <p className="mig-caption--bold text-mono30">{record?.name}</p>
               <p className="mig-caption text-mono50">{record?.position}</p>
               <p className="mig-caption text-mono50">{record?.company_name}</p>
@@ -399,10 +391,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     },
   ];
 
-  // console.log({ selectedEmployees });
-  // console.log("start", currentStartOfWeek.format("DD MMMM YYYY"));
-  // console.log("end", currentEndOfWeek.format("DD MMMM YYYY"));
-
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -416,7 +404,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           {/* Filter */}
           <div className="flex flex-col lg:flex-row items-end md:items-center gap-4">
             {/* Search by keyword (kata kunci) */}
-            <div className="w-full lg:w-4/12">
+            <div className="w-full lg:w-2/12">
               <Input
                 style={{ width: `100%` }}
                 placeholder="Cari Jadwal..."
@@ -437,7 +425,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               <Select
                 allowClear
                 showSearch
-                // defaultValue={queryParams.company_id}
                 disabled={!isAllowedToGetCompanyList}
                 placeholder="Pilih Perusahaan"
                 style={{ width: `100%` }}
@@ -465,13 +452,11 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               <Select
                 allowClear
                 showSearch
-                // defaultValue={queryParams.company_id}
                 disabled={!isAllowedToGetRoleList}
                 placeholder="Pilih Posisi"
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   setQueryParams({ position: value });
-                  // setSelectedExpYear(value);
                 }}
                 optionFilterProp="children"
                 filterOption={(
@@ -492,20 +477,20 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             </div>
             {!isSelectMode ? (
               <>
-                <div className="w-full lg:w-2/12">
+                <div className="w-full lg:w-3/12">
                   <ButtonSys
                     fullWidth
                     type={"default"}
                     onClick={() => setSelectMode(true)}
-                    disabled={!isAllowedToAddSchedule}
+                    disabled={!isAllowedToDeleteAllSchedule}
                   >
                     <div className="flex flex-row items-center space-x-2">
                       <CalendarOffIconSvg size={16} color="#35763B" />
-                      <p className="whitespace-nowrap">Kosongkan Jadwal</p>
+                      <p className="">Kosongkan Jadwal</p>
                     </div>
                   </ButtonSys>
                 </div>
-                <div className="w-full lg:w-2/12">
+                <div className="w-full lg:w-3/12">
                   <ButtonSys
                     fullWidth
                     type={"primary"}
@@ -514,7 +499,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   >
                     <div className="flex flex-row items-center space-x-2">
                       <CalendarStatsIconSvg size={16} color="#FFFFFF" />
-                      <p className="whitespace-nowrap">Jadwalkan Karywan</p>
+                      <p className="">Jadwalkan Karywan</p>
                     </div>
                   </ButtonSys>
                 </div>
@@ -576,6 +561,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
                 <DatePicker
                   // picker="month"
+                  // open
                   allowClear={false}
                   bordered={false}
                   locale={locale}
@@ -627,7 +613,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               columns={calendarColumns}
               rowKey={(record) => record.id}
               loading={loadingSchedules}
-              className="border border-collapse"
+              className="border border-collapse tableSchedule"
               scroll={{ x: 200 }}
               pagination={{
                 current: queryParams.page,
@@ -661,6 +647,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
         <DrawerSchedule
           visible={isShowCreateDrawer}
           onvisible={setShowCreateDrawer}
+          companyList={companyList}
         />
       </AccessControl>
 

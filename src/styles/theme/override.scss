@@ -394,6 +394,12 @@ ol {
   border: 0;
 }
 
+.tableSchedule .ant-table-thead > tr > th,
+.tableSchedule .ant-table-tbody > tr.ant-table-row:hover > td,
+.tableSchedule .ant-table-tbody > tr > td.ant-table-cell-row-hover {
+  background-color: transparent;
+}
+
 .hoverComponent {
   display: none;
 }

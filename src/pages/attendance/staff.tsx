@@ -11,10 +11,17 @@ import {
   CheckInOutCard,
 } from "components/screen/attendance";
 import { AttendanceStaffCheckInDrawer } from "components/screen/attendance/staff/AttendanceStaffCheckInDrawer";
+import { AttendanceStaffShiftCard } from "components/screen/attendance/staff/AttendanceStaffShiftCard";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ATTENDANCES_USER_GET, ATTENDANCE_TOGGLE_SET } from "lib/features";
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import {
+  ATTENDANCES_USER_GET,
+  ATTENDANCE_CURRENT_SCHEDULE_GET,
+  ATTENDANCE_TOGGLE_SET,
+} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import httpcookie from "cookie";
@@ -32,6 +39,8 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
   }
 
   const isAllowedToShowAttendanceData = hasPermission(ATTENDANCES_USER_GET);
+
+  const axiosClient = useAxiosClient();
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
@@ -70,6 +79,11 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
             onButtonClicked={handleAttendanceButtonClicked}
             checkInTime={dataProfile.data.company.check_in_time}
           />
+
+          {/* Staff Shift Card */}
+          <AccessControl hasPermission={ATTENDANCE_CURRENT_SCHEDULE_GET}>
+            <AttendanceStaffShiftCard userId={dataProfile?.data?.id} />
+          </AccessControl>
 
           {/* Staff Detail Card */}
           <AttendanceStaffDetailCard />

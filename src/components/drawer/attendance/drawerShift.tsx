@@ -136,7 +136,12 @@ const DrawerShift = ({ visible, onvisible, data = null }) => {
       }}
       buttonOkText={"Simpan Shift"}
       onClick={() => (!data ? addShift(dataShift) : updateShift(dataShift))}
-      disabled={!dataShift?.title || !dataShift?.start_at || !dataShift?.end_at}
+      disabled={
+        (!data ? !isAllowedToAddShift : !isAllowedToUpdateShift) ||
+        !dataShift?.title ||
+        !dataShift?.start_at ||
+        !dataShift?.end_at
+      }
     >
       <Spin spinning={!data ? null : loadingUpdateShift}>
         <div className="flex flex-col">

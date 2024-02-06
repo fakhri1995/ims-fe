@@ -171,6 +171,7 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
         type={"default"}
         color={"danger"}
         onClick={() => setModalDelete(true)}
+        disabled={!isAllowedToDeleteSchedule}
       >
         Hapus
       </ButtonSys>
@@ -299,6 +300,7 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
               allowClear
               value={dataSchedule?.shift_id}
               placeholder="Pilih shift"
+              disabled={!isAllowedToGetShifts}
               onChange={(value) =>
                 setDataSchedule((prev) => ({
                   ...prev,
