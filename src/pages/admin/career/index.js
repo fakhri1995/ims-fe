@@ -1047,7 +1047,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                 icon={<ShowCareerIconSvg />}
                 title="Lihat Pelamar Tanpa Lowongan"
                 onButtonClicked={onManageRecruitmentButtonClicked}
-                disabled={!isAllowedToSetupRecruitment}
+                disabled={!isAllowedToGetCareer}
               />
             </div>
             {showCollapsible && (
