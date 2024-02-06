@@ -17,7 +17,11 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { ATTENDANCES_USER_GET, ATTENDANCE_TOGGLE_SET } from "lib/features";
+import {
+  ATTENDANCES_USER_GET,
+  ATTENDANCE_CURRENT_SCHEDULE_GET,
+  ATTENDANCE_TOGGLE_SET,
+} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import httpcookie from "cookie";
@@ -77,7 +81,9 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
           />
 
           {/* Staff Shift Card */}
-          <AttendanceStaffShiftCard userId={dataProfile?.data?.id} />
+          <AccessControl hasPermission={ATTENDANCE_CURRENT_SCHEDULE_GET}>
+            <AttendanceStaffShiftCard userId={dataProfile?.data?.id} />
+          </AccessControl>
 
           {/* Staff Detail Card */}
           <AttendanceStaffDetailCard />
