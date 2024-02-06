@@ -404,7 +404,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           {/* Filter */}
           <div className="flex flex-col lg:flex-row items-end md:items-center gap-4">
             {/* Search by keyword (kata kunci) */}
-            <div className="w-full lg:w-4/12">
+            <div className="w-full lg:w-2/12">
               <Input
                 style={{ width: `100%` }}
                 placeholder="Cari Jadwal..."
@@ -477,7 +477,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             </div>
             {!isSelectMode ? (
               <>
-                <div className="w-full lg:w-2/12">
+                <div className="w-full lg:w-3/12">
                   <ButtonSys
                     fullWidth
                     type={"default"}
@@ -486,11 +486,11 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   >
                     <div className="flex flex-row items-center space-x-2">
                       <CalendarOffIconSvg size={16} color="#35763B" />
-                      <p className="whitespace-nowrap">Kosongkan Jadwal</p>
+                      <p className="">Kosongkan Jadwal</p>
                     </div>
                   </ButtonSys>
                 </div>
-                <div className="w-full lg:w-2/12">
+                <div className="w-full lg:w-3/12">
                   <ButtonSys
                     fullWidth
                     type={"primary"}
@@ -499,7 +499,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   >
                     <div className="flex flex-row items-center space-x-2">
                       <CalendarStatsIconSvg size={16} color="#FFFFFF" />
-                      <p className="whitespace-nowrap">Jadwalkan Karywan</p>
+                      <p className="">Jadwalkan Karywan</p>
                     </div>
                   </ButtonSys>
                 </div>

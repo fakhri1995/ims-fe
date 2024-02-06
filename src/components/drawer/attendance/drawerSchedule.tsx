@@ -501,14 +501,10 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                     }));
                   }}
                   onSearch={(value) => {
-                    setTimeout(
-                      () =>
-                        setShiftFilterParams((prev) => ({
-                          ...prev,
-                          keyword: value,
-                        })),
-                      500
-                    );
+                    setShiftFilterParams((prev) => ({
+                      ...prev,
+                      keyword: value,
+                    }));
                   }}
                   optionFilterProp="children"
                   filterOption={(
@@ -520,15 +516,21 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                       .includes(input.toLowerCase())
                   }
                 >
-                  {dataShifts?.map((item) => (
-                    <Select.Option
-                      key={item?.id}
-                      value={item?.id}
-                      label={item?.title}
-                    >
-                      {item?.title}
-                    </Select.Option>
-                  ))}
+                  {dataShifts?.map((item) => {
+                    const label = `${item?.title} (${item?.start_at?.slice(
+                      0,
+                      5
+                    )} - ${item?.end_at?.slice(0, 5)})`;
+                    return (
+                      <Select.Option
+                        key={item?.id}
+                        value={item?.id}
+                        label={label}
+                      >
+                        {label}
+                      </Select.Option>
+                    );
+                  })}
                 </Select>
               </div>
             </Form.Item>
