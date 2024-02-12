@@ -131,9 +131,7 @@ const DrawerShift = ({ visible, onvisible, data = null }) => {
     <DrawerCore
       title={!data ? "Tambah Shift" : "Edit Shift"}
       visible={visible}
-      onClose={() => {
-        onvisible(false);
-      }}
+      onClose={handleClose}
       buttonOkText={"Simpan Shift"}
       onClick={() => (!data ? addShift(dataShift) : updateShift(dataShift))}
       disabled={
@@ -205,8 +203,12 @@ const DrawerShift = ({ visible, onvisible, data = null }) => {
                       }));
                     }}
                   />
-                  {dataShift?.end_at < dataShift?.start_at && (
-                    <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
+                  {dataShift?.end_at < dataShift?.start_at ? (
+                    <p className="w-3/12 whitespace-nowrap text-mono80 flex justify-end">
+                      (+1 hari)
+                    </p>
+                  ) : (
+                    <p className="w-3/12"></p>
                   )}
                 </div>
               </Form.Item>
@@ -238,8 +240,12 @@ const DrawerShift = ({ visible, onvisible, data = null }) => {
                       }));
                     }}
                   />
-                  {dataShift?.end_break < dataShift?.start_break && (
-                    <p className="whitespace-nowrap text-mono80">(+1 hari)</p>
+                  {dataShift?.end_break < dataShift?.start_break ? (
+                    <p className="w-3/12 whitespace-nowrap text-mono80 flex justify-end">
+                      (+1 hari)
+                    </p>
+                  ) : (
+                    <p className="w-3/12"></p>
                   )}
                 </div>
               </Form.Item>

@@ -72,6 +72,10 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     user_ids: [],
     shift_id: null,
     date: "",
+    forever: false,
+    start_date: "",
+    end_date: "",
+    repeats: [],
   });
 
   const [agentFilterParams, setAgentFilterParams] =
@@ -156,6 +160,10 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
       user_ids: [],
       shift_id: null,
       date: "",
+      forever: false,
+      start_date: "",
+      end_date: "",
+      repeats: [],
     });
     setSelectedAgents([]);
     onvisible(false);
@@ -231,13 +239,34 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
   };
 
   const dayList = [
-    "Senin",
-    "Selasa",
-    "Rabu",
-    "Kamis",
-    "Jumat",
-    "Sabtu",
-    "Minggu",
+    {
+      label: "Senin",
+      value: 1,
+    },
+    {
+      label: "Selasa",
+      value: 2,
+    },
+    {
+      label: "Rabu",
+      value: 3,
+    },
+    {
+      label: "Kamis",
+      value: 4,
+    },
+    {
+      label: "Jumat",
+      value: 5,
+    },
+    {
+      label: "Sabtu",
+      value: 6,
+    },
+    {
+      label: "Minggu",
+      value: 0,
+    },
   ];
 
   return (
@@ -434,7 +463,10 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
               </Collapse>
               <div className="flex flex-wrap gap-2 items-center  pt-2">
                 {selectedAgents?.map((item) => (
-                  <div className="flex items-center gap-2 bg-backdrop p-2 rounded-md mig-caption--medium">
+                  <div
+                    key={item?.id}
+                    className="flex items-center gap-2 bg-backdrop p-2 rounded-md mig-caption--medium"
+                  >
                     <CheckIconSvg color="#35763B" size={20} />
                     <p>{item?.name}</p>
                   </div>
@@ -578,8 +610,13 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
               >
                 <div className="flex items-center">
                   <CheckableTag
-                    checked={repeatMode === FOREVER}
-                    onChange={(checked) => setRepeatMode(checked ? FOREVER : 0)}
+                    checked={dataSchedule?.forever}
+                    onChange={(checked) => {
+                      setDataSchedule((prev) => ({
+                        ...prev,
+                        forever: checked,
+                      }));
+                    }}
                     className="border border-primary100 py-1 px-3 rounded-full mb-2"
                   >
                     <div className="flex flex-row items-center space-x-1">
@@ -588,9 +625,16 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                   </CheckableTag>
 
                   <CheckableTag
-                    checked={repeatMode === RANGE}
+                    checked={dataSchedule?.forever === false}
                     className="border border-primary100 py-1 px-3 rounded-full mb-2"
-                    onChange={(checked) => setRepeatMode(checked ? RANGE : 0)}
+                    onChange={(checked) => {
+                      if (checked) {
+                        setDataSchedule((prev) => ({
+                          ...prev,
+                          forever: false,
+                        }));
+                      }
+                    }}
                   >
                     <div className="flex flex-row items-center space-x-1">
                       <p>Pilih Rentang Tanggal Repetisi</p>
@@ -599,7 +643,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                 </div>
               </Form.Item>
 
-              {repeatMode === RANGE && (
+              {!dataSchedule.forever && (
                 <>
                   <Form.Item
                     label="Rentang Tanggal Repetisi"
@@ -620,11 +664,11 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                         format={"DD MMMM YYYY"}
                         placeholder={["Mulai", "Akhir"]}
                         value={[
-                          moment(repetitionDate.start_at).isValid()
-                            ? moment(repetitionDate.start_at)
+                          moment(dataSchedule.start_date).isValid()
+                            ? moment(dataSchedule.start_date)
                             : null,
-                          moment(repetitionDate.end_at).isValid()
-                            ? moment(repetitionDate.end_at)
+                          moment(dataSchedule.end_date).isValid()
+                            ? moment(dataSchedule.end_date)
                             : null,
                         ]}
                         onChange={(values) => {
@@ -636,16 +680,17 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                             ? moment(values?.[1]).format("YYYY-MM-DD")
                             : null;
 
-                          setRepetitionDate({
-                            start_at: formattedStartDate,
-                            end_at: formattedEndDate,
-                          });
+                          setDataSchedule((prev) => ({
+                            ...prev,
+                            start_date: formattedStartDate,
+                            end_date: formattedEndDate,
+                          }));
                         }}
                       />
                     </div>
                   </Form.Item>
 
-                  {repetitionDate?.start_at < dataSchedule?.date && (
+                  {dataSchedule?.start_date < dataSchedule?.date && (
                     <div className="flex items-center gap-2 bg-warning px-4 py-3 rounded-md mb-6">
                       <AlerttriangleIconSvg color={"#FFF"} size={20} />
                       <p className="text-white">
@@ -659,7 +704,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
 
               <Form.Item
                 label="Tentukan Hari"
-                name={"repeat"}
+                name={"repeats"}
                 rules={[
                   {
                     required: true,
@@ -673,12 +718,28 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                     {dayList.map((day, idx) => (
                       <CheckableTag
                         key={idx}
-                        checked={false}
+                        // checked={false}
                         className="border border-primary100 py-1 px-3 rounded-full"
-                        // checked={tag?.is_amount_for_bpjs}
-                        // onChange={(checked) => handleClickTag(tag, checked)}
+                        checked={dataSchedule?.repeats?.some(
+                          (dayVal) => dayVal === day?.value
+                        )}
+                        onChange={(checked) => {
+                          let selectedDays = dataSchedule.repeats;
+                          if (checked) {
+                            selectedDays.push(day.value);
+                          } else {
+                            selectedDays = selectedDays.filter(
+                              (dayValue) => dayValue !== day.value
+                            );
+                          }
+
+                          setDataSchedule((prev) => ({
+                            ...prev,
+                            repeats: selectedDays,
+                          }));
+                        }}
                       >
-                        <p>{day}</p>
+                        <p>{day.label}</p>
                       </CheckableTag>
                     ))}
                   </div>

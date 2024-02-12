@@ -108,6 +108,10 @@ export interface IAddSchedulePayload {
   user_ids: number[];
   shift_id: number;
   date: string;
+  forever?: boolean;
+  start_date?: string;
+  end_date?: string;
+  repeats?: number[];
 }
 
 /**
