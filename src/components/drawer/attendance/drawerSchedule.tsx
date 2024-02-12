@@ -95,14 +95,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
 
   const [dataAgents, setDataAgents] = useState([]);
   const [selectedAgents, setSelectedAgents] = useState([]);
-
-  const [FOREVER, RANGE] = [1, 2]; // Repetition Mode
   const [isRepetition, setRepetition] = useState(false);
-  const [repeatMode, setRepeatMode] = useState(FOREVER);
-  const [repetitionDate, setRepetitionDate] = useState({
-    start_at: "",
-    end_at: "",
-  });
 
   // 2. USE EFFECT
   const {
@@ -166,6 +159,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
       repeats: [],
     });
     setSelectedAgents([]);
+    setRepetition(false);
     onvisible(false);
     setAgentFilterParams({ page: 1, rows: 10, name: "", company_id: null });
     setShiftFilterParams({
@@ -206,11 +200,12 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
       500
     );
   };
-  const handleSelect = (e) => {
-    const currentSelected = e.target.value;
+
+  const handleSelect = (value, checked) => {
+    const currentSelected = value;
     let newSelectedAgents = [];
     let newSelectedAgentIds = [];
-    if (e.target.checked) {
+    if (checked) {
       newSelectedAgents = [...selectedAgents, currentSelected];
       newSelectedAgentIds = newSelectedAgents.map((item) => item?.id);
     } else {
@@ -269,6 +264,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     },
   ];
 
+  // console.log({ dataSchedule });
   return (
     <DrawerCore
       title={"Jadwalkan Karyawan"}
@@ -414,6 +410,16 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                           rows: pagination.pageSize,
                         }));
                       }}
+                      onRow={(record, idx) => {
+                        return {
+                          onClick: () => {
+                            const isChecked = selectedAgents.some(
+                              (selected) => selected?.id === record?.id
+                            );
+                            handleSelect(record, isChecked ? false : true);
+                          },
+                        };
+                      }}
                       columns={[
                         {
                           title: undefined,
@@ -450,7 +456,12 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                                   key={record.id}
                                   value={record}
                                   checked={isChecked}
-                                  onChange={handleSelect}
+                                  onChange={(e) =>
+                                    handleSelect(
+                                      e.target.value,
+                                      e.target.checked
+                                    )
+                                  }
                                 />
                               </div>
                             );
