@@ -23,6 +23,8 @@ import {
   AlerttriangleIconSvg,
   CheckIconSvg,
   InfoCircleIconSvg,
+  UsercircleIconSvg,
+  XIconSvg,
 } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
@@ -95,6 +97,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
 
   const [dataAgents, setDataAgents] = useState([]);
   const [selectedAgents, setSelectedAgents] = useState([]);
+  const [isMaxAgents, setIsMaxAgents] = useState(false);
   const [isRepetition, setRepetition] = useState(false);
 
   // 2. USE EFFECT
@@ -137,7 +140,6 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
       ),
     {
       enabled: isAllowedToGetShifts && visible,
-
       select: (response) => response.data.data.data,
       onError: (error) => {
         notification.error({
@@ -205,7 +207,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     const currentSelected = value;
     let newSelectedAgents = [];
     let newSelectedAgentIds = [];
-    if (checked) {
+    if (checked && selectedAgents?.length < 20) {
       newSelectedAgents = [...selectedAgents, currentSelected];
       newSelectedAgentIds = newSelectedAgents.map((item) => item?.id);
     } else {
@@ -217,7 +219,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     setSelectedAgents(newSelectedAgents);
     setDataSchedule((prev) => ({ ...prev, user_ids: newSelectedAgentIds }));
 
-    setDataSchedule;
+    handleShowBanner(newSelectedAgents);
   };
 
   const handleSelectAll = () => {
@@ -226,11 +228,23 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
       ...prev,
       user_ids: dataAgents.map((item) => item?.id),
     }));
+
+    handleShowBanner(dataAgents);
   };
 
   const handleUnselectAll = () => {
     setSelectedAgents([]);
     setDataSchedule((prev) => ({ ...prev, user_ids: [] }));
+
+    handleShowBanner([]);
+  };
+
+  const handleShowBanner = (selectedAgents) => {
+    if (selectedAgents?.length >= 20) {
+      setIsMaxAgents(true);
+    } else {
+      setIsMaxAgents(false);
+    }
   };
 
   const dayList = [
@@ -321,6 +335,20 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                   }
                 >
                   <div className="grid grid-cols-1 gap-4">
+                    {isMaxAgents && (
+                      <div className="flex items-center justify-between bg-notice bg-opacity-[0.15] px-4 py-3 rounded-md">
+                        <div className="flex items-center gap-2">
+                          <InfoCircleIconSvg color={"#ED962F"} size={18} />
+                          <p className="mig-caption--medium text-xs text-onprogress">
+                            Maksimal karyawan yang dipilih adalah 20 orang.
+                          </p>
+                        </div>
+                        {/* <button onClick={} className="bg-transparent p-0 m-0 flex items-center">
+                          <XIconSvg size={16} color={"#4D4D4D"} />
+                        </button> */}
+                      </div>
+                    )}
+
                     <div className="flex flex-col md:flex-row items-center gap-2">
                       <Input
                         allowClear
@@ -478,7 +506,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                     key={item?.id}
                     className="flex items-center gap-2 bg-backdrop p-2 rounded-md mig-caption--medium"
                   >
-                    <CheckIconSvg color="#35763B" size={20} />
+                    <UsercircleIconSvg color="#35763B" size={20} />
                     <p>{item?.name}</p>
                   </div>
                 ))}
