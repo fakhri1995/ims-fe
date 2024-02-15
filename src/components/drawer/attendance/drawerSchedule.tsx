@@ -162,6 +162,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     });
     setSelectedAgents([]);
     setRepetition(false);
+    setIsMaxAgents(false);
     onvisible(false);
     setAgentFilterParams({ page: 1, rows: 10, name: "", company_id: null });
     setShiftFilterParams({
@@ -209,17 +210,16 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     let newSelectedAgentIds = [];
     if (checked && selectedAgents?.length < 20) {
       newSelectedAgents = [...selectedAgents, currentSelected];
-      newSelectedAgentIds = newSelectedAgents.map((item) => item?.id);
     } else {
       newSelectedAgents = selectedAgents.filter(
         (obj) => obj.id !== currentSelected?.id
       );
-      newSelectedAgentIds = newSelectedAgents.map((item) => item?.id);
     }
+    newSelectedAgentIds = newSelectedAgents.map((item) => item?.id);
     setSelectedAgents(newSelectedAgents);
     setDataSchedule((prev) => ({ ...prev, user_ids: newSelectedAgentIds }));
 
-    handleShowBanner(newSelectedAgents);
+    handleCheckMaxAgents(newSelectedAgents);
   };
 
   const handleSelectAll = () => {
@@ -229,17 +229,17 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
       user_ids: dataAgents.map((item) => item?.id),
     }));
 
-    handleShowBanner(dataAgents);
+    handleCheckMaxAgents(dataAgents);
   };
 
   const handleUnselectAll = () => {
     setSelectedAgents([]);
     setDataSchedule((prev) => ({ ...prev, user_ids: [] }));
 
-    handleShowBanner([]);
+    handleCheckMaxAgents([]);
   };
 
-  const handleShowBanner = (selectedAgents) => {
+  const handleCheckMaxAgents = (selectedAgents) => {
     if (selectedAgents?.length >= 20) {
       setIsMaxAgents(true);
     } else {
@@ -279,6 +279,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
   ];
 
   // console.log({ dataSchedule });
+  // console.log({ selectedAgents });
   return (
     <DrawerCore
       title={"Jadwalkan Karyawan"}
@@ -397,8 +398,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                       <p className="mig-caption--bold text-mono30">
                         Daftar Karyawan
                       </p>
-                      {selectedAgents?.length !==
-                      dataRawAgents?.data?.length ? (
+                      {selectedAgents?.length < agentFilterParams?.rows ? (
                         <button
                           className="mig-caption--bold text-primary100 bg-transparent 
                         hover:opacity-75"
