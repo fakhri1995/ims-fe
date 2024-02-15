@@ -162,6 +162,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     });
     setSelectedAgents([]);
     setRepetition(false);
+    setIsMaxAgents(false);
     onvisible(false);
     setAgentFilterParams({ page: 1, rows: 10, name: "", company_id: null });
     setShiftFilterParams({
@@ -209,17 +210,16 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     let newSelectedAgentIds = [];
     if (checked && selectedAgents?.length < 20) {
       newSelectedAgents = [...selectedAgents, currentSelected];
-      newSelectedAgentIds = newSelectedAgents.map((item) => item?.id);
     } else {
       newSelectedAgents = selectedAgents.filter(
         (obj) => obj.id !== currentSelected?.id
       );
-      newSelectedAgentIds = newSelectedAgents.map((item) => item?.id);
     }
+    newSelectedAgentIds = newSelectedAgents.map((item) => item?.id);
     setSelectedAgents(newSelectedAgents);
     setDataSchedule((prev) => ({ ...prev, user_ids: newSelectedAgentIds }));
 
-    handleShowBanner(newSelectedAgents);
+    handleCheckMaxAgents(newSelectedAgents);
   };
 
   const handleSelectAll = () => {
@@ -229,22 +229,31 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
       user_ids: dataAgents.map((item) => item?.id),
     }));
 
-    handleShowBanner(dataAgents);
+    handleCheckMaxAgents(dataAgents);
   };
 
   const handleUnselectAll = () => {
     setSelectedAgents([]);
     setDataSchedule((prev) => ({ ...prev, user_ids: [] }));
 
-    handleShowBanner([]);
+    handleCheckMaxAgents([]);
   };
 
-  const handleShowBanner = (selectedAgents) => {
+  const handleCheckMaxAgents = (selectedAgents) => {
     if (selectedAgents?.length >= 20) {
       setIsMaxAgents(true);
     } else {
       setIsMaxAgents(false);
     }
+  };
+
+  const validateRepetitionRange = (_, value) => {
+    if (value && value[1].diff(value[0], "days") > 90) {
+      return Promise.reject(
+        "Maksimal rentang tanggal yang dapat dipilih adalah 3 bulan"
+      );
+    }
+    return Promise.resolve();
   };
 
   const dayList = [
@@ -279,6 +288,8 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
   ];
 
   // console.log({ dataSchedule });
+  // console.log({ selectedAgents });
+
   return (
     <DrawerCore
       title={"Jadwalkan Karyawan"}
@@ -292,7 +303,11 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
         !isAllowedToAddSchedule ||
         !dataSchedule?.user_ids?.length ||
         !dataSchedule?.date ||
-        !dataSchedule?.shift_id
+        !dataSchedule?.shift_id ||
+        moment(dataSchedule.end_date).diff(
+          moment(dataSchedule.start_date),
+          "days"
+        ) > 90
       }
     >
       <div className="flex flex-col">
@@ -397,8 +412,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                       <p className="mig-caption--bold text-mono30">
                         Daftar Karyawan
                       </p>
-                      {selectedAgents?.length !==
-                      dataRawAgents?.data?.length ? (
+                      {selectedAgents?.length < agentFilterParams?.rows ? (
                         <button
                           className="mig-caption--bold text-primary100 bg-transparent 
                         hover:opacity-75"
@@ -692,41 +706,41 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                         required: true,
                         message: "Rentang tanggal repetisi wajib diisi",
                       },
+
+                      { validator: validateRepetitionRange },
                     ]}
                     className="col-span-2"
                   >
-                    <div className="flex flex-col gap-2 items-center">
-                      <DatePicker.RangePicker
-                        locale={locale}
-                        picker="date"
-                        className="w-full"
-                        format={"DD MMMM YYYY"}
-                        placeholder={["Mulai", "Akhir"]}
-                        value={[
-                          moment(dataSchedule.start_date).isValid()
-                            ? moment(dataSchedule.start_date)
-                            : null,
-                          moment(dataSchedule.end_date).isValid()
-                            ? moment(dataSchedule.end_date)
-                            : null,
-                        ]}
-                        onChange={(values) => {
-                          let formattedStartDate = moment(values?.[0]).isValid()
-                            ? moment(values?.[0]).format("YYYY-MM-DD")
-                            : null;
+                    <DatePicker.RangePicker
+                      locale={locale}
+                      picker="date"
+                      className="w-full"
+                      format={"DD MMMM YYYY"}
+                      placeholder={["Mulai", "Akhir"]}
+                      value={[
+                        moment(dataSchedule.start_date).isValid()
+                          ? moment(dataSchedule.start_date)
+                          : null,
+                        moment(dataSchedule.end_date).isValid()
+                          ? moment(dataSchedule.end_date)
+                          : null,
+                      ]}
+                      onChange={(values) => {
+                        let formattedStartDate = moment(values?.[0]).isValid()
+                          ? moment(values?.[0]).format("YYYY-MM-DD")
+                          : null;
 
-                          let formattedEndDate = moment(values?.[1]).isValid()
-                            ? moment(values?.[1]).format("YYYY-MM-DD")
-                            : null;
+                        let formattedEndDate = moment(values?.[1]).isValid()
+                          ? moment(values?.[1]).format("YYYY-MM-DD")
+                          : null;
 
-                          setDataSchedule((prev) => ({
-                            ...prev,
-                            start_date: formattedStartDate,
-                            end_date: formattedEndDate,
-                          }));
-                        }}
-                      />
-                    </div>
+                        setDataSchedule((prev) => ({
+                          ...prev,
+                          start_date: formattedStartDate,
+                          end_date: formattedEndDate,
+                        }));
+                      }}
+                    />
                   </Form.Item>
 
                   {dataSchedule?.start_date < dataSchedule?.date && (
