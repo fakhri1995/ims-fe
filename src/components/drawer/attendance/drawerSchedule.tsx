@@ -247,6 +247,15 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     }
   };
 
+  const validateRepetitionRange = (_, value) => {
+    if (value && value[1].diff(value[0], "days") > 90) {
+      return Promise.reject(
+        "Maksimal rentang tanggal yang dapat dipilih adalah 3 bulan"
+      );
+    }
+    return Promise.resolve();
+  };
+
   const dayList = [
     {
       label: "Senin",
@@ -280,6 +289,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
 
   // console.log({ dataSchedule });
   // console.log({ selectedAgents });
+
   return (
     <DrawerCore
       title={"Jadwalkan Karyawan"}
@@ -293,7 +303,11 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
         !isAllowedToAddSchedule ||
         !dataSchedule?.user_ids?.length ||
         !dataSchedule?.date ||
-        !dataSchedule?.shift_id
+        !dataSchedule?.shift_id ||
+        moment(dataSchedule.end_date).diff(
+          moment(dataSchedule.start_date),
+          "days"
+        ) > 90
       }
     >
       <div className="flex flex-col">
@@ -692,41 +706,41 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                         required: true,
                         message: "Rentang tanggal repetisi wajib diisi",
                       },
+
+                      { validator: validateRepetitionRange },
                     ]}
                     className="col-span-2"
                   >
-                    <div className="flex flex-col gap-2 items-center">
-                      <DatePicker.RangePicker
-                        locale={locale}
-                        picker="date"
-                        className="w-full"
-                        format={"DD MMMM YYYY"}
-                        placeholder={["Mulai", "Akhir"]}
-                        value={[
-                          moment(dataSchedule.start_date).isValid()
-                            ? moment(dataSchedule.start_date)
-                            : null,
-                          moment(dataSchedule.end_date).isValid()
-                            ? moment(dataSchedule.end_date)
-                            : null,
-                        ]}
-                        onChange={(values) => {
-                          let formattedStartDate = moment(values?.[0]).isValid()
-                            ? moment(values?.[0]).format("YYYY-MM-DD")
-                            : null;
+                    <DatePicker.RangePicker
+                      locale={locale}
+                      picker="date"
+                      className="w-full"
+                      format={"DD MMMM YYYY"}
+                      placeholder={["Mulai", "Akhir"]}
+                      value={[
+                        moment(dataSchedule.start_date).isValid()
+                          ? moment(dataSchedule.start_date)
+                          : null,
+                        moment(dataSchedule.end_date).isValid()
+                          ? moment(dataSchedule.end_date)
+                          : null,
+                      ]}
+                      onChange={(values) => {
+                        let formattedStartDate = moment(values?.[0]).isValid()
+                          ? moment(values?.[0]).format("YYYY-MM-DD")
+                          : null;
 
-                          let formattedEndDate = moment(values?.[1]).isValid()
-                            ? moment(values?.[1]).format("YYYY-MM-DD")
-                            : null;
+                        let formattedEndDate = moment(values?.[1]).isValid()
+                          ? moment(values?.[1]).format("YYYY-MM-DD")
+                          : null;
 
-                          setDataSchedule((prev) => ({
-                            ...prev,
-                            start_date: formattedStartDate,
-                            end_date: formattedEndDate,
-                          }));
-                        }}
-                      />
-                    </div>
+                        setDataSchedule((prev) => ({
+                          ...prev,
+                          start_date: formattedStartDate,
+                          end_date: formattedEndDate,
+                        }));
+                      }}
+                    />
                   </Form.Item>
 
                   {dataSchedule?.start_date < dataSchedule?.date && (
