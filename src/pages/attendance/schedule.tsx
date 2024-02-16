@@ -66,6 +66,11 @@ import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
 
+// Constants
+export const TODAY = new Date();
+export const DAYS = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+export const MAX_SCHEDULED_DAYS = 90; // maximum number of days that can be scheduled or accessed
+
 const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
@@ -272,14 +277,15 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     setCurrentWeekRange(startOfWeek);
   };
 
-  // 5. Constants
+  // 5. Columns
   const currentStartMonth = moment(currentStartOfWeek).format("MMMM YYYY");
   const currentEndMonth = moment(currentEndOfWeek).format("MMMM YYYY");
-  const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+  const isCanBeScheduled =
+    moment(currentEndOfWeek).diff(moment(), "days") < MAX_SCHEDULED_DAYS;
 
   const dateColumns = Array.from({ length: 7 }, (_, i) => {
     const currentDate = moment(currentStartOfWeek).add(i, "days");
-    const isToday = currentDate.isSame(new Date(), "day");
+    const isToday = currentDate.isSame(TODAY, "day");
     return {
       title: (
         <div className="flex flex-col justify-center items-center">
@@ -292,8 +298,10 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 : `text-mono50`
             }`}
           >
-            <p className="">{days[i].toUpperCase()}</p>
-            <p className="font-bold text-lg">{currentDate?.format("DD")}</p>
+            <p className="">{DAYS[i].toUpperCase()}</p>
+            <p className="font-bold text-lg leading-5">
+              {currentDate?.format("DD")}
+            </p>
           </div>
         </div>
       ),
@@ -380,8 +388,10 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       title: (
         <button
           onClick={handleClickNextWeek}
+          disabled={!isCanBeScheduled}
           className="bg-mono100 p-2 w-9 h-9 rounded-full 
             flex items-center justify-center"
+          style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
         >
           <RightIconSvg color={"#808080"} size={16} />
         </button>
@@ -403,7 +413,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           {/* Filter */}
           <div className="flex flex-col lg:flex-row items-end md:items-center gap-4">
             {/* Search by keyword (kata kunci) */}
-            <div className="w-full lg:w-2/12">
+            <div className="w-full lg:w-3/12">
               <Input
                 style={{ width: `100%` }}
                 placeholder="Cari Jadwal..."
@@ -420,7 +430,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 disabled={!isAllowedToGetSchedules}
               />
             </div>
-            <div className="w-full lg:w-2/12">
+            <div className="w-full lg:w-3/12">
               <Select
                 allowClear
                 showSearch
@@ -447,7 +457,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 ))}
               </Select>
             </div>
-            <div className="w-full lg:w-2/12">
+            <div className="w-full lg:w-3/12">
               <Select
                 allowClear
                 showSearch
@@ -476,7 +486,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             </div>
             {!isSelectMode ? (
               <>
-                <div className="w-full lg:w-3/12">
+                <div className="w-full lg:w-2/12">
                   <ButtonSys
                     fullWidth
                     type={"default"}
@@ -489,7 +499,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     </div>
                   </ButtonSys>
                 </div>
-                <div className="w-full lg:w-3/12">
+                <div className="w-full lg:w-2/12">
                   <ButtonSys
                     fullWidth
                     type={"primary"}
@@ -559,7 +569,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 </h4>
 
                 <DatePicker
-                  // picker="month"
                   // open
                   allowClear={false}
                   bordered={false}
@@ -572,6 +581,9 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     fontSize: "18px",
                     fontWeight: 700,
                   }}
+                  disabledDate={(current) =>
+                    moment(current).diff(TODAY, "days") > MAX_SCHEDULED_DAYS
+                  }
                   onChange={(date) => {
                     if (date) {
                       setQueryParams({
@@ -598,10 +610,14 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   }}
                 />
               </div>
+              {console.log({ currentEndOfWeek })}
+              {console.log(moment(currentEndOfWeek).diff(moment(), "days"))}
               <button
                 onClick={handleClickNextMonth}
+                disabled={!isCanBeScheduled}
                 className="bg-mono100 p-2 w-9 h-9 rounded-full 
                 flex items-center justify-center"
+                style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
               >
                 <RightIconSvg color={"#808080"} size={16} />
               </button>

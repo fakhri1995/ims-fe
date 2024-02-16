@@ -15,6 +15,7 @@ import locale from "antd/lib/date-picker/locale/id_ID";
 import CheckableTag from "antd/lib/tag/CheckableTag";
 import moment from "moment";
 import { useRouter } from "next/router";
+import { MAX_SCHEDULED_DAYS } from "pages/attendance/schedule";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
@@ -248,7 +249,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
   };
 
   const validateRepetitionRange = (_, value) => {
-    if (value && value[1].diff(value[0], "days") > 90) {
+    if (value && value[1].diff(value[0], "days") > MAX_SCHEDULED_DAYS) {
       return Promise.reject(
         "Maksimal rentang tanggal yang dapat dipilih adalah 3 bulan"
       );
@@ -307,7 +308,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
         moment(dataSchedule.end_date).diff(
           moment(dataSchedule.start_date),
           "days"
-        ) > 90
+        ) > MAX_SCHEDULED_DAYS
       }
     >
       <div className="flex flex-col">
