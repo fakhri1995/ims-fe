@@ -610,8 +610,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   }}
                 />
               </div>
-              {console.log({ currentEndOfWeek })}
-              {console.log(moment(currentEndOfWeek).diff(moment(), "days"))}
+
               <button
                 onClick={handleClickNextMonth}
                 disabled={!isCanBeScheduled}

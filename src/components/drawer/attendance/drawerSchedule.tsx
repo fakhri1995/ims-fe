@@ -295,6 +295,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     <DrawerCore
       title={"Jadwalkan Karyawan"}
       visible={visible}
+      width={530}
       onClose={handleClose}
       buttonOkText={"Simpan"}
       buttonCancelText={"Batal"}

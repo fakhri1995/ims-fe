@@ -17,6 +17,7 @@ const DrawerCore = ({
   onButtonCancelClicked,
   buttonUpdateText,
   buttonSpace,
+  width = 420,
 }) => {
   return (
     <Drawer
@@ -25,7 +26,7 @@ const DrawerCore = ({
       visible={visible}
       onClose={onClose}
       destroyOnClose={true}
-      width={420}
+      width={width}
       drawerStyle={drawerStyle}
       footer={
         <div
