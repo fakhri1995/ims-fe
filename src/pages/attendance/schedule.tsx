@@ -1,4 +1,4 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
@@ -45,6 +45,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
+import { DAYS, MAX_SCHEDULED_DAYS, TODAY } from "lib/constants";
 import {
   ATTENDANCE_SCHEDULES_GET,
   ATTENDANCE_SCHEDULE_ADD,
@@ -65,11 +66,6 @@ import { EmployeeService } from "apis/employee";
 import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
-
-// Constants
-export const TODAY = new Date();
-export const DAYS = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
-export const MAX_SCHEDULED_DAYS = 90; // maximum number of days that can be scheduled or accessed
 
 const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   dataProfile,
@@ -249,7 +245,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     let startOfWeek = moment(currentStartOfWeek)
       .startOf("week")
       ?.subtract(1, "week")
-      ?.add(1, "days");
+      ?.add(1, "days"); // Set first day of the week to Monday
     setCurrentWeekRange(startOfWeek);
   };
 
@@ -257,7 +253,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     let startOfWeek = moment(currentStartOfWeek)
       .startOf("week")
       ?.add(1, "week")
-      ?.add(1, "days");
+      ?.add(1, "days"); // Set first day of the week to Monday
     setCurrentWeekRange(startOfWeek);
   };
 
@@ -265,7 +261,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     let startOfWeek = moment(currentStartOfWeek)
       ?.subtract(1, "month")
       ?.startOf("week")
-      ?.add(1, "days");
+      ?.add(1, "days"); // Set first day of the week to Monday
     setCurrentWeekRange(startOfWeek);
   };
 
@@ -273,7 +269,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     let startOfWeek = moment(currentStartOfWeek)
       ?.add(1, "month")
       ?.startOf("week")
-      ?.add(1, "days");
+      ?.add(1, "days"); // Set first day of the week to Monday
     setCurrentWeekRange(startOfWeek);
   };
 
@@ -386,15 +382,41 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     ...dateColumns,
     {
       title: (
-        <button
-          onClick={handleClickNextWeek}
-          disabled={!isCanBeScheduled}
-          className="bg-mono100 p-2 w-9 h-9 rounded-full 
+        <>
+          {isCanBeScheduled ? (
+            <button
+              onClick={handleClickNextWeek}
+              disabled={!isCanBeScheduled}
+              className="bg-mono100 p-2 w-9 h-9 rounded-full 
             flex items-center justify-center"
-          style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
-        >
-          <RightIconSvg color={"#808080"} size={16} />
-        </button>
+              style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+            >
+              <RightIconSvg color={"#808080"} size={16} />
+            </button>
+          ) : (
+            <Tooltip
+              title={
+                <div className="flex gap-3 items-center p-2 text-mono30 rounded-lg">
+                  <InfoCircleOutlined rev={""} color="#4D4D4D" size={18} />
+                  <p className="font-bold">Jadwal selanjutnya belum tersedia</p>
+                </div>
+              }
+              color="#FFFFFF"
+              placement="bottomLeft"
+            >
+              <div>
+                <button
+                  disabled={!isCanBeScheduled}
+                  className="bg-mono100 p-2 w-9 h-9 rounded-full 
+                 flex items-center justify-center"
+                  style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+                >
+                  <RightIconSvg color={"#808080"} size={16} />
+                </button>
+              </div>
+            </Tooltip>
+          )}
+        </>
       ),
       width: 60,
     },
@@ -611,15 +633,41 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 />
               </div>
 
-              <button
-                onClick={handleClickNextMonth}
-                disabled={!isCanBeScheduled}
-                className="bg-mono100 p-2 w-9 h-9 rounded-full 
+              {isCanBeScheduled ? (
+                <button
+                  onClick={handleClickNextMonth}
+                  disabled={!isCanBeScheduled}
+                  className="bg-mono100 p-2 w-9 h-9 rounded-full 
                 flex items-center justify-center"
-                style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
-              >
-                <RightIconSvg color={"#808080"} size={16} />
-              </button>
+                  style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+                >
+                  <RightIconSvg color={"#808080"} size={16} />
+                </button>
+              ) : (
+                <Tooltip
+                  title={
+                    <div className="flex gap-3 items-center p-2 text-mono30 rounded-lg">
+                      <InfoCircleOutlined rev={""} color="#4D4D4D" size={18} />
+                      <p className="font-bold">
+                        Jadwal selanjutnya belum tersedia
+                      </p>
+                    </div>
+                  }
+                  color="#FFFFFF"
+                  placement="bottomLeft"
+                >
+                  <div>
+                    <button
+                      disabled={!isCanBeScheduled}
+                      className="bg-mono100 p-2 w-9 h-9 rounded-full 
+                   flex items-center justify-center"
+                      style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+                    >
+                      <RightIconSvg color={"#808080"} size={16} />
+                    </button>
+                  </div>
+                </Tooltip>
+              )}
             </div>
 
             <Table
