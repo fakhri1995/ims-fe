@@ -15,7 +15,6 @@ import locale from "antd/lib/date-picker/locale/id_ID";
 import CheckableTag from "antd/lib/tag/CheckableTag";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { MAX_SCHEDULED_DAYS } from "pages/attendance/schedule";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
@@ -32,6 +31,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
+import { MAX_SCHEDULED_DAYS, TODAY } from "lib/constants";
 import {
   AGENTS_GET,
   ATTENDANCE_SCHEDULES_GET,
@@ -697,7 +697,6 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                   </CheckableTag>
                 </div>
               </Form.Item>
-
               {!dataSchedule.forever && (
                 <>
                   <Form.Item
@@ -719,6 +718,15 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                       className="w-full"
                       format={"DD MMMM YYYY"}
                       placeholder={["Mulai", "Akhir"]}
+                      disabledDate={(current) => {
+                        return (
+                          moment(current) < moment(dataSchedule?.date) ||
+                          moment(current).diff(
+                            moment(dataSchedule.start_date),
+                            "days"
+                          ) > MAX_SCHEDULED_DAYS
+                        );
+                      }}
                       value={[
                         moment(dataSchedule.start_date).isValid()
                           ? moment(dataSchedule.start_date)
