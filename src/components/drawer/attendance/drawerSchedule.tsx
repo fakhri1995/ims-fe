@@ -481,20 +481,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                               }`}
                               >
                                 <div className="flex gap-3 items-center w-11/12">
-                                  <div
-                                    className={`rounded-full w-12 h-12 flex justify-center 
-                                  items-center mig-caption--bold p-1 bg-backdrop `}
-                                  >
-                                    {getNameInitial(record?.name)}
-                                  </div>
-                                  <div>
-                                    <p className="font-medium">
-                                      {record?.name}
-                                    </p>
-                                    <p className="mig-caption text-mono50">
-                                      {record?.last_assessment?.name}
-                                    </p>
-                                  </div>
+                                  <p className="font-medium">{record?.name}</p>
                                 </div>
                                 <Checkbox
                                   key={record.id}
