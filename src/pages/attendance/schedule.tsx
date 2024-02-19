@@ -1,4 +1,4 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
@@ -45,6 +45,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
+import { DAYS, MAX_SCHEDULED_DAYS, TODAY } from "lib/constants";
 import {
   ATTENDANCE_SCHEDULES_GET,
   ATTENDANCE_SCHEDULE_ADD,
@@ -244,7 +245,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     let startOfWeek = moment(currentStartOfWeek)
       .startOf("week")
       ?.subtract(1, "week")
-      ?.add(1, "days");
+      ?.add(1, "days"); // Set first day of the week to Monday
     setCurrentWeekRange(startOfWeek);
   };
 
@@ -252,7 +253,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     let startOfWeek = moment(currentStartOfWeek)
       .startOf("week")
       ?.add(1, "week")
-      ?.add(1, "days");
+      ?.add(1, "days"); // Set first day of the week to Monday
     setCurrentWeekRange(startOfWeek);
   };
 
@@ -260,7 +261,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     let startOfWeek = moment(currentStartOfWeek)
       ?.subtract(1, "month")
       ?.startOf("week")
-      ?.add(1, "days");
+      ?.add(1, "days"); // Set first day of the week to Monday
     setCurrentWeekRange(startOfWeek);
   };
 
@@ -268,18 +269,19 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     let startOfWeek = moment(currentStartOfWeek)
       ?.add(1, "month")
       ?.startOf("week")
-      ?.add(1, "days");
+      ?.add(1, "days"); // Set first day of the week to Monday
     setCurrentWeekRange(startOfWeek);
   };
 
-  // 5. Constants
+  // 5. Columns
   const currentStartMonth = moment(currentStartOfWeek).format("MMMM YYYY");
   const currentEndMonth = moment(currentEndOfWeek).format("MMMM YYYY");
-  const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+  const isCanBeScheduled =
+    moment(currentEndOfWeek).diff(moment(), "days") < MAX_SCHEDULED_DAYS;
 
   const dateColumns = Array.from({ length: 7 }, (_, i) => {
     const currentDate = moment(currentStartOfWeek).add(i, "days");
-    const isToday = currentDate.isSame(new Date(), "day");
+    const isToday = currentDate.isSame(TODAY, "day");
     return {
       title: (
         <div className="flex flex-col justify-center items-center">
@@ -292,8 +294,10 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 : `text-mono50`
             }`}
           >
-            <p className="">{days[i].toUpperCase()}</p>
-            <p className="font-bold text-lg">{currentDate?.format("DD")}</p>
+            <p className="">{DAYS[i].toUpperCase()}</p>
+            <p className="font-bold text-lg leading-5">
+              {currentDate?.format("DD")}
+            </p>
           </div>
         </div>
       ),
@@ -378,13 +382,41 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     ...dateColumns,
     {
       title: (
-        <button
-          onClick={handleClickNextWeek}
-          className="bg-mono100 p-2 w-9 h-9 rounded-full 
+        <>
+          {isCanBeScheduled ? (
+            <button
+              onClick={handleClickNextWeek}
+              disabled={!isCanBeScheduled}
+              className="bg-mono100 p-2 w-9 h-9 rounded-full 
             flex items-center justify-center"
-        >
-          <RightIconSvg color={"#808080"} size={16} />
-        </button>
+              style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+            >
+              <RightIconSvg color={"#808080"} size={16} />
+            </button>
+          ) : (
+            <Tooltip
+              title={
+                <div className="flex gap-3 items-center p-2 text-mono30 rounded-lg">
+                  <InfoCircleOutlined rev={""} color="#4D4D4D" size={18} />
+                  <p className="font-bold">Jadwal selanjutnya belum tersedia</p>
+                </div>
+              }
+              color="#FFFFFF"
+              placement="bottomLeft"
+            >
+              <div>
+                <button
+                  disabled={!isCanBeScheduled}
+                  className="bg-mono100 p-2 w-9 h-9 rounded-full 
+                 flex items-center justify-center"
+                  style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+                >
+                  <RightIconSvg color={"#808080"} size={16} />
+                </button>
+              </div>
+            </Tooltip>
+          )}
+        </>
       ),
       width: 60,
     },
@@ -403,7 +435,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           {/* Filter */}
           <div className="flex flex-col lg:flex-row items-end md:items-center gap-4">
             {/* Search by keyword (kata kunci) */}
-            <div className="w-full lg:w-2/12">
+            <div className="w-full lg:w-3/12">
               <Input
                 style={{ width: `100%` }}
                 placeholder="Cari Jadwal..."
@@ -420,7 +452,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 disabled={!isAllowedToGetSchedules}
               />
             </div>
-            <div className="w-full lg:w-2/12">
+            <div className="w-full lg:w-3/12">
               <Select
                 allowClear
                 showSearch
@@ -447,7 +479,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 ))}
               </Select>
             </div>
-            <div className="w-full lg:w-2/12">
+            <div className="w-full lg:w-3/12">
               <Select
                 allowClear
                 showSearch
@@ -476,7 +508,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             </div>
             {!isSelectMode ? (
               <>
-                <div className="w-full lg:w-3/12">
+                <div className="w-full lg:w-2/12">
                   <ButtonSys
                     fullWidth
                     type={"default"}
@@ -489,7 +521,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     </div>
                   </ButtonSys>
                 </div>
-                <div className="w-full lg:w-3/12">
+                <div className="w-full lg:w-2/12">
                   <ButtonSys
                     fullWidth
                     type={"primary"}
@@ -559,7 +591,6 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 </h4>
 
                 <DatePicker
-                  // picker="month"
                   // open
                   allowClear={false}
                   bordered={false}
@@ -572,6 +603,9 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     fontSize: "18px",
                     fontWeight: 700,
                   }}
+                  disabledDate={(current) =>
+                    moment(current).diff(TODAY, "days") > MAX_SCHEDULED_DAYS
+                  }
                   onChange={(date) => {
                     if (date) {
                       setQueryParams({
@@ -598,13 +632,42 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   }}
                 />
               </div>
-              <button
-                onClick={handleClickNextMonth}
-                className="bg-mono100 p-2 w-9 h-9 rounded-full 
+
+              {isCanBeScheduled ? (
+                <button
+                  onClick={handleClickNextMonth}
+                  disabled={!isCanBeScheduled}
+                  className="bg-mono100 p-2 w-9 h-9 rounded-full 
                 flex items-center justify-center"
-              >
-                <RightIconSvg color={"#808080"} size={16} />
-              </button>
+                  style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+                >
+                  <RightIconSvg color={"#808080"} size={16} />
+                </button>
+              ) : (
+                <Tooltip
+                  title={
+                    <div className="flex gap-3 items-center p-2 text-mono30 rounded-lg">
+                      <InfoCircleOutlined rev={""} color="#4D4D4D" size={18} />
+                      <p className="font-bold">
+                        Jadwal selanjutnya belum tersedia
+                      </p>
+                    </div>
+                  }
+                  color="#FFFFFF"
+                  placement="bottomLeft"
+                >
+                  <div>
+                    <button
+                      disabled={!isCanBeScheduled}
+                      className="bg-mono100 p-2 w-9 h-9 rounded-full 
+                   flex items-center justify-center"
+                      style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+                    >
+                      <RightIconSvg color={"#808080"} size={16} />
+                    </button>
+                  </div>
+                </Tooltip>
+              )}
             </div>
 
             <Table

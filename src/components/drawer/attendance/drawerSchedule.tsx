@@ -31,6 +31,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
+import { MAX_SCHEDULED_DAYS, TODAY } from "lib/constants";
 import {
   AGENTS_GET,
   ATTENDANCE_SCHEDULES_GET,
@@ -248,7 +249,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
   };
 
   const validateRepetitionRange = (_, value) => {
-    if (value && value[1].diff(value[0], "days") > 90) {
+    if (value && value[1].diff(value[0], "days") > MAX_SCHEDULED_DAYS) {
       return Promise.reject(
         "Maksimal rentang tanggal yang dapat dipilih adalah 3 bulan"
       );
@@ -294,6 +295,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     <DrawerCore
       title={"Jadwalkan Karyawan"}
       visible={visible}
+      width={530}
       onClose={handleClose}
       buttonOkText={"Simpan"}
       buttonCancelText={"Batal"}
@@ -307,7 +309,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
         moment(dataSchedule.end_date).diff(
           moment(dataSchedule.start_date),
           "days"
-        ) > 90
+        ) > MAX_SCHEDULED_DAYS
       }
     >
       <div className="flex flex-col">
@@ -695,7 +697,6 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                   </CheckableTag>
                 </div>
               </Form.Item>
-
               {!dataSchedule.forever && (
                 <>
                   <Form.Item
@@ -717,6 +718,15 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                       className="w-full"
                       format={"DD MMMM YYYY"}
                       placeholder={["Mulai", "Akhir"]}
+                      disabledDate={(current) => {
+                        return (
+                          moment(current) < moment(dataSchedule?.date) ||
+                          moment(current).diff(
+                            moment(dataSchedule.start_date),
+                            "days"
+                          ) > MAX_SCHEDULED_DAYS
+                        );
+                      }}
                       value={[
                         moment(dataSchedule.start_date).isValid()
                           ? moment(dataSchedule.start_date)
