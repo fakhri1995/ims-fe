@@ -152,6 +152,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
 
   //3. HANDLER
   const handleClose = () => {
+    instanceForm.resetFields();
     setDataSchedule({
       user_ids: [],
       shift_id: null,
@@ -246,6 +247,22 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     } else {
       setIsMaxAgents(false);
     }
+  };
+
+  const handleSwitchRepetition = (checked) => {
+    if (checked == false) {
+      setDataSchedule((prev) => ({
+        ...prev,
+        forever: false,
+        start_date: null,
+        end_date: null,
+        repeats: [],
+      }));
+
+      instanceForm.resetFields(["repetition_dates"]);
+    }
+
+    setRepetition(checked);
   };
 
   const validateRepetitionRange = (_, value) => {
@@ -419,6 +436,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                           className="mig-caption--bold text-primary100 bg-transparent 
                         hover:opacity-75"
                           onClick={handleSelectAll}
+                          type="button"
                         >
                           Pilih Semua
                         </button>
@@ -427,6 +445,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                           className="mig-caption--bold text-primary100 bg-transparent 
                         hover:opacity-75"
                           onClick={handleUnselectAll}
+                          type="button"
                         >
                           Hapus Semua
                         </button>
@@ -629,7 +648,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
               <p className="mig-caption--bold">Jadwal Repetisi</p>
               <Switch
                 checked={isRepetition}
-                onChange={(checked) => setRepetition(checked)}
+                onChange={handleSwitchRepetition}
               ></Switch>
             </div>
 
@@ -688,7 +707,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                 <>
                   <Form.Item
                     label="Rentang Tanggal Repetisi"
-                    name={"repetition_date"}
+                    name={"repetition_dates"}
                     rules={[
                       {
                         required: true,
@@ -740,15 +759,16 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                     />
                   </Form.Item>
 
-                  {dataSchedule?.start_date < dataSchedule?.date && (
-                    <div className="flex items-center gap-2 bg-warning px-4 py-3 rounded-md mb-6">
-                      <AlerttriangleIconSvg color={"#FFF"} size={20} />
-                      <p className="text-white">
-                        <b>Tanggal Mulai Repetisi</b> harus melebihi{" "}
-                        <b>Tanggal Berlaku</b>!
-                      </p>
-                    </div>
-                  )}
+                  {isRepetition &&
+                    dataSchedule?.start_date < dataSchedule?.date && (
+                      <div className="flex items-center gap-2 bg-warning px-4 py-3 rounded-md mb-6">
+                        <AlerttriangleIconSvg color={"#FFF"} size={20} />
+                        <p className="text-white">
+                          <b>Tanggal Mulai Repetisi</b> harus melebihi{" "}
+                          <b>Tanggal Berlaku</b>!
+                        </p>
+                      </div>
+                    )}
                 </>
               )}
 
