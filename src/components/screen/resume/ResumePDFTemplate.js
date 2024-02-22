@@ -13,7 +13,7 @@ import Html from "react-pdf-html";
 
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 
-const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
+const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
   const isAllResultEmpty = dataResume?.assessment_results?.every(
     (result) => result?.value === ""
   );
@@ -25,13 +25,13 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
   function checkDataDescription(data) {
     if (data.description != undefined) {
       let checkDescription = parse(data.description);
-      //jika kosong
-      if (checkDescription.length > 1) {
+
+      if (checkDescription?.props?.children?.length > 1) {
         return true;
-      } else if (checkDescription.props.children.type) {
-        return false;
+      } else if (checkDescription?.props?.children?.type !== "br") {
+        return true;
       } else {
-        return true;
+        return false;
       }
     } else return false;
   }
@@ -114,7 +114,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
               </Text>
             </View>
           </View>
-          {dataResume?.profile_image?.id && (
+          {!!dataResume?.profile_image?.id && (
             <View
               style={{
                 width: 93,
@@ -139,20 +139,21 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
         </View>
 
         {/*Summary Section */}
-        {dataResume?.summaries && checkDataDescription(dataResume?.summaries) && (
-          <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
-            <Text style={styles.sectionHeader}>SUMMARY</Text>
-            <View style={{}}>
-              <Html
-                // hyphenationCallback={e => breakText(e)}
-                style={styles.desc}
-                stylesheet={styles.htmlStyle}
-              >
-                {dataResume?.summaries?.description}
-              </Html>
+        {!!dataResume?.summaries &&
+          checkDataDescription(dataResume?.summaries) && (
+            <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
+              <Text style={styles.sectionHeader}>SUMMARY</Text>
+              <View style={{}}>
+                <Html
+                  // hyphenationCallback={e => breakText(e)}
+                  style={styles.desc}
+                  stylesheet={styles.htmlStyle}
+                >
+                  {dataResume?.summaries?.description}
+                </Html>
+              </View>
             </View>
-          </View>
-        )}
+          )}
         {/* Body */}
         {/* EXPERIENCE SECTION */}
         {dataResume?.experiences?.length !== 0 && (
@@ -183,7 +184,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                     <Text>{exp?.company} ·&nbsp;</Text>
                     <Text style={styles.textYear}>
                       {momentFormatDate(exp?.start_date, "", "MMM YYYY")}
-                      {exp?.start_date && " - "}
+                      {!!exp?.start_date && " - "}
                       {momentFormatDate(exp?.end_date, "present", "MMM YYYY")}
                     </Text>
                   </View>
@@ -242,7 +243,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                           <Text style={{ marginHorizontal: "4px" }}>·</Text>
                           <Text style={styles.textYear}>
                             {momentFormatDate(edu?.start_date, "", "MMM YYYY")}
-                            {edu?.start_date && " - "}
+                            {!!edu?.start_date && " - "}
                             {momentFormatDate(
                               edu?.end_date,
                               "present",
@@ -252,7 +253,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
                         </View>
                       )}
                     </View>
-                    {edu?.gpa && (
+                    {!!edu?.gpa && (
                       <Text style={styles.desc}>GPA {edu?.gpa}</Text>
                     )}
                   </View>
