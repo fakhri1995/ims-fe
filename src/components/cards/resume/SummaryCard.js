@@ -92,13 +92,13 @@ const SummaryCard = ({
       // console.log("datanya bro ", data);
       let checkDescription = parse(data.description);
       // console.log("deskription ", checkDescription);
-      //jika kosong
-      if (checkDescription.length > 1) {
+      // Check if description is available
+      if (checkDescription?.props?.children?.length > 1) {
         return true;
-      } else if (checkDescription.props.children.type) {
-        return false;
+      } else if (checkDescription?.props?.children?.type !== "br") {
+        return true;
       } else {
-        return true;
+        return false;
       }
     } else return false;
   }
@@ -115,7 +115,7 @@ const SummaryCard = ({
         checkDataDescription(dataDisplay.summaries) && (
           <div className={"mb-4"}>
             <div>
-              {dataDisplay.summaries.description &&
+              {!!dataDisplay.summaries.description &&
                 parse(dataDisplay.summaries?.description)}
             </div>
           </div>
