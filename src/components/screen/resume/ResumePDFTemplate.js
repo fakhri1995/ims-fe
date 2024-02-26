@@ -26,6 +26,8 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
     if (data.description != undefined) {
       let checkDescription = parse(data.description);
 
+      console.log(checkDescription);
+
       if (checkDescription?.props?.children?.length > 1) {
         return true;
       } else if (checkDescription?.props?.children?.type !== "br") {
@@ -139,21 +141,21 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
         </View>
 
         {/*Summary Section */}
-        {!!dataResume?.summaries &&
-          checkDataDescription(dataResume?.summaries) && (
-            <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
-              <Text style={styles.sectionHeader}>SUMMARY</Text>
-              <View style={{}}>
-                <Html
-                  // hyphenationCallback={e => breakText(e)}
-                  style={styles.desc}
-                  stylesheet={styles.htmlStyle}
-                >
-                  {dataResume?.summaries?.description}
-                </Html>
-              </View>
+        {Boolean(dataResume?.summaries) && (
+          // checkDataDescription(dataResume?.summaries)) && (
+          <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
+            <Text style={styles.sectionHeader}>SUMMARY</Text>
+            <View style={{}}>
+              <Html
+                // hyphenationCallback={e => breakText(e)}
+                style={styles.desc}
+                stylesheet={styles.htmlStyle}
+              >
+                {dataResume?.summaries?.description}
+              </Html>
             </View>
-          )}
+          </View>
+        )}
         {/* Body */}
         {/* EXPERIENCE SECTION */}
         {dataResume?.experiences?.length !== 0 && (
