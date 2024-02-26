@@ -7,7 +7,6 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
-import parse from "html-react-parser";
 import React from "react";
 import Html from "react-pdf-html";
 
@@ -22,21 +21,21 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
     return [text];
   }
 
-  function checkDataDescription(data) {
-    if (data.description != undefined) {
-      let checkDescription = parse(data.description);
+  // function checkDataDescription(data) {
+  //   if (data.description != undefined) {
+  //     let checkDescription = parse(data.description);
 
-      console.log(checkDescription);
+  //     console.log(checkDescription);
 
-      if (checkDescription?.props?.children?.length > 1) {
-        return true;
-      } else if (checkDescription?.props?.children?.type !== "br") {
-        return true;
-      } else {
-        return false;
-      }
-    } else return false;
-  }
+  //     if (checkDescription?.props?.children?.length > 1) {
+  //       return true;
+  //     } else if (checkDescription?.props?.children?.type !== "br") {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } else return false;
+  // }
 
   return (
     <Document>
