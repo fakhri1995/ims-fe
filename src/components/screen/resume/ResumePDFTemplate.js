@@ -12,7 +12,7 @@ import Html from "react-pdf-html";
 
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 
-const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
+const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
   const isAllResultEmpty = dataResume?.assessment_results?.every(
     (result) => result?.value === ""
   );
@@ -115,7 +115,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
               </Text>
             </View>
           </View>
-          {!!dataResume?.profile_image?.id && (
+          {Boolean(dataResume?.profile_image?.id) && (
             <View
               style={{
                 width: 93,
@@ -141,7 +141,6 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
 
         {/*Summary Section */}
         {Boolean(dataResume?.summaries) && (
-          // checkDataDescription(dataResume?.summaries)) && (
           <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
             <Text style={styles.sectionHeader}>SUMMARY</Text>
             <View style={{}}>
@@ -185,7 +184,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
                     <Text>{exp?.company} ·&nbsp;</Text>
                     <Text style={styles.textYear}>
                       {momentFormatDate(exp?.start_date, "", "MMM YYYY")}
-                      {!!exp?.start_date && " - "}
+                      {Boolean(exp?.start_date) && " - "}
                       {momentFormatDate(exp?.end_date, "present", "MMM YYYY")}
                     </Text>
                   </View>
@@ -244,7 +243,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
                           <Text style={{ marginHorizontal: "4px" }}>·</Text>
                           <Text style={styles.textYear}>
                             {momentFormatDate(edu?.start_date, "", "MMM YYYY")}
-                            {!!edu?.start_date && " - "}
+                            {Boolean(edu?.start_date) && " - "}
                             {momentFormatDate(
                               edu?.end_date,
                               "present",
@@ -254,7 +253,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
                         </View>
                       )}
                     </View>
-                    {!!edu?.gpa && (
+                    {Boolean(edu?.gpa) && (
                       <Text style={styles.desc}>GPA {edu?.gpa}</Text>
                     )}
                   </View>
@@ -650,10 +649,11 @@ const styles = StyleSheet.create({
       color: "#808080",
       lineHeight: 1.5,
       marginRight: 10,
+      width: "100%",
     },
-    ".ql-indent-1": { marginLeft: 30 },
-    ".ql-indent-2": { marginLeft: 40 },
-    ".ql-indent-3": { marginLeft: 50 },
+    ".ql-indent-1": { marginLeft: 5 },
+    ".ql-indent-2": { marginLeft: 15 },
+    ".ql-indent-3": { marginLeft: 25 },
     strong: {
       fontFamily: "Inter",
       fontWeight: 700,
