@@ -1,4 +1,9 @@
-import { RightOutlined, SearchOutlined, UpOutlined } from "@ant-design/icons";
+import {
+  CloseCircleOutlined,
+  RightOutlined,
+  SearchOutlined,
+  UpOutlined,
+} from "@ant-design/icons";
 import {
   Checkbox,
   Collapse,
@@ -9,6 +14,7 @@ import {
   Spin,
   Switch,
   Table,
+  Tag,
   notification,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
@@ -87,6 +93,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
       rows: 10,
       name: "",
       company_id: null,
+      is_enabled: 1,
     });
 
   const [shiftFilterParams, setShiftFilterParams] =
@@ -306,7 +313,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
   ];
 
   // console.log({ dataSchedule });
-  // console.log({ selectedAgents });
+  console.log({ selectedAgents });
 
   return (
     <DrawerCore
@@ -524,13 +531,15 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
               </Collapse>
               <div className="flex flex-wrap gap-2 items-center  pt-2">
                 {selectedAgents?.map((item) => (
-                  <div
+                  <Tag
                     key={item?.id}
+                    closable
+                    onClose={() => handleSelect(item, false)}
                     className="flex items-center gap-2 bg-backdrop p-2 rounded-md mig-caption--medium"
                   >
                     <UsercircleIconSvg color="#35763B" size={20} />
                     <p>{item?.name}</p>
-                  </div>
+                  </Tag>
                 ))}
               </div>
             </div>
