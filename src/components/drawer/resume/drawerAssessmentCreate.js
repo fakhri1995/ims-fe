@@ -1,6 +1,8 @@
 import { Input, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
+import { useQueryClient } from "react-query";
 
+import { ASSESSMENTS_GET, ASSESSMENT_COUNT_GET } from "../../../lib/features";
 import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
 import { Label } from "../../typography";
@@ -12,9 +14,9 @@ const DrawerAssessmentCreate = ({
   onvisible,
   buttonOkText,
   initProps,
-  setRefresh,
   isAllowedToAddRoleAssessment,
 }) => {
+  const queryClient = useQueryClient();
   //USESTATE
   const [datacreate, setdatacreate] = useState({
     id: null,
@@ -53,12 +55,13 @@ const DrawerAssessmentCreate = ({
     })
       .then((response) => response.json())
       .then((response2) => {
-        setRefresh((prev) => prev + 1);
         if (response2.success) {
           notification.success({
             message: `Form berhasil ditambahkan.`,
             duration: 3,
           });
+          queryClient.invalidateQueries(ASSESSMENTS_GET);
+          queryClient.invalidateQueries(ASSESSMENT_COUNT_GET);
           setTimeout(() => {
             setLoadingCreate(false);
             onvisible(false);

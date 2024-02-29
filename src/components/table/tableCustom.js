@@ -1,4 +1,4 @@
-import { Table, notification } from "antd";
+import { Spin, Table, notification } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
@@ -849,21 +849,12 @@ const TableCustomTickets = ({
 
 const TableCustomRoleAssessment = ({
   dataSource,
-  setDataSource,
   columns,
   loading,
-  pageSize,
-  setPageSize,
   total,
-  setpraloading,
-  initProps,
-  setpage,
-  pagefromsearch,
-  setdataraw,
-  setsorting,
-  sorting,
-  searching,
   onOpenReadDrawer,
+  queryParams,
+  setQueryParams,
 }) => {
   const [rowstate, setrowstate] = useState(0);
   return (
@@ -875,82 +866,25 @@ const TableCustomRoleAssessment = ({
       loading={loading}
       scroll={{ x: 200 }}
       pagination={{
-        current: pagefromsearch,
-        pageSize: pageSize,
+        current: queryParams.page,
+        pageSize: queryParams.rows,
         total: total,
         showSizeChanger: true,
-        onShowSizeChange: (pagefromsearch, pageSize) => {
-          setPageSize(pageSize);
-        },
-        onChange: (page, pageSize) => {
-          setpraloading(true);
-          setpage(page);
-          fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&keyword=${searching}&page=${page}&rows=${pageSize}`,
-            {
-              method: `GET`,
-              headers: {
-                Authorization: JSON.parse(initProps),
-              },
-            }
-          )
-            .then((res) => res.json())
-            .then((res2) => {
-              setdataraw(res2.data);
-              setDataSource(res2.data.data);
-              setpraloading(false);
-            });
-        },
       }}
       onChange={(pagination, filters, sorter, extra) => {
-        if (extra.action === "sort") {
-          if (sorter.column) {
-            setpraloading(true);
-            setsorting({
-              sort_by: sorter.column.dataIndex,
-              sort_type: sorter.order === "ascend" ? "asc" : "desc",
-            });
-            fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?sort_by=${
-                sorter.column.dataIndex
-              }&sort_type=${
-                sorter.order === "ascend" ? "asc" : "desc"
-              }&keyword=${searching}&page=${pagination.current}&rows=${
-                pagination.pageSize
-              }`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              });
-          } else {
-            setpraloading(true);
-            setsorting({ sort_by: "", sort_type: "" });
-            fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              });
-          }
-        }
+        const sortTypePayload =
+          sorter.order === "ascend"
+            ? "asc"
+            : sorter.order === "descend"
+            ? "desc"
+            : undefined;
+
+        setQueryParams({
+          sort_type: sortTypePayload,
+          sort_by: sortTypePayload === undefined ? undefined : sorter.field,
+          page: pagination.current,
+          rows: pagination.pageSize,
+        });
       }}
       onRow={(record, rowIndex) => {
         return {
