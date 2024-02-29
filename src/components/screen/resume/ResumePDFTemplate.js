@@ -12,7 +12,7 @@ import Html from "react-pdf-html";
 
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 
-const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
+const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
   const isAllResultEmpty = dataResume?.assessment_results?.every(
     (result) => result?.value === ""
   );

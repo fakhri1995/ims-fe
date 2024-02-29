@@ -313,7 +313,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
   ];
 
   // console.log({ dataSchedule });
-  console.log({ selectedAgents });
+  // console.log({ selectedAgents });
 
   return (
     <DrawerCore
