@@ -296,13 +296,13 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
 
           {hasPermission(SIDEBAR_ATTENDANCE_SHIFT) && (
             <Menu.Item key="attendance/shift">
-              <Link href="/attendance/shift">Shift Kerja</Link>
+              <Link href="/attendance/shift">Shift Work</Link>
             </Menu.Item>
           )}
 
           {hasPermission(SIDEBAR_ATTENDANCE_SCHEDULE) && (
             <Menu.Item key="attendance/schedule">
-              <Link href="/attendance/schedule">Jadwal Kerja</Link>
+              <Link href="/attendance/schedule">Work Schedule</Link>
             </Menu.Item>
           )}
         </SubMenu>
