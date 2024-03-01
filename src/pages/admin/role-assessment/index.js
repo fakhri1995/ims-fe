@@ -1,9 +1,18 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Input, Modal, Spin, notification } from "antd";
+import {
+  ArrayParam,
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import { useCallback, useEffect, useState } from "react";
 import { useRef } from "react";
 import { Bar } from "react-chartjs-2";
+import { useQuery, useQueryClient } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 import { AddNewFormButton } from "components/screen/resume";
@@ -74,6 +83,15 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
     ASSESSMENT_GET,
   ]);
 
+  const queryClient = useQueryClient();
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    keyword: withDefault(StringParam, undefined),
+  });
+
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -82,9 +100,7 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 2. State
   // 2.1. PENGGUNAAN TERBANYAK CARD
   const [dataCountAssessments, setDataCountAssessments] = useState(0);
-  const [top4AssessmentsCount, setTop4AssessmentsCount] = useState([]);
-  const [loadingAssessmentsCountData, setLoadingAssessmentsCountData] =
-    useState(true);
+  useState(true);
   const [dataColorBar, setDataColorBar] = useState([
     "#2F80ED",
     "#E5C471",
@@ -94,21 +110,6 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // 2.2. TABLE ROLE ASSESSMENT
   const [dataTable, setDataTable] = useState([]);
-  const [dataRawRoleAssessment, setDataRawRoleAssessment] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
-  const [loadingRoleAssesment, setLoadingRoleAssessment] = useState(true);
   const [pageRoleAssessment, setPageRoleAssessment] = useState(1);
   const [rowsRoleAssessment, setRowsRoleAssessment] = useState(10);
   const [sortingRoleAssessment, setSortingRoleAssessment] = useState({
@@ -116,14 +117,13 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
     sort_type: "",
   });
   const [searchingFilterRoleAssessment, setSearchingFilterRoleAssessment] =
-    useState("");
+    useState(undefined);
 
   // 2.3. CREATE FORM
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
   const onAddNewFormButtonClicked = useCallback(() => {
     setCreateDrawerShown(true);
   }, []);
-  const [refresh, setRefresh] = useState(-1);
 
   // 2.4 READ FORM
   const [drawread, setdrawread] = useState(false);
@@ -151,56 +151,73 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // 3.UseEffect
   // 3.1. Get Role Assessment Count
-  useEffect(() => {
-    if (!isAllowedToGetRoleAssessmentCount) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Chart Penggunaan Terbanyak"
-      );
-      setLoadingAssessmentsCountData(false);
-      return;
-    }
-
-    setLoadingAssessmentsCountData(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountAssessment`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setDataCountAssessments(res2.data.assessments_count);
-        setTop4AssessmentsCount(res2.data.resume_assessments_count.slice(0, 4));
-        setLoadingAssessmentsCountData(false);
-      });
-  }, [isAllowedToGetRoleAssessmentCount, refresh]);
+  const {
+    data: top4AssessmentsCount,
+    isLoading: loadingAssessmentsCountData,
+    refetch: refetchTop4Assessments,
+  } = useQuery({
+    enabled: isAllowedToGetRoleAssessmentCount,
+    queryKey: [ASSESSMENT_COUNT_GET, isAllowedToGetRoleAssessmentCount],
+    queryFn: async () => {
+      if (!isAllowedToGetRoleAssessmentCount) {
+        permissionWarningNotification(
+          "Mendapatkan",
+          "Data Chart Penggunaan Terbanyak"
+        );
+        return;
+      }
+      return await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountAssessment`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          const top4 = res2?.data?.resume_assessments_count?.slice(0, 4);
+          return top4;
+        });
+    },
+  });
 
   // 3.2. Get Role Assessments
-  useEffect(() => {
-    if (!isAllowedToGetRoleAssessmentList) {
-      permissionWarningNotification("Mendapatkan", "Daftar Role Assessment");
-      setLoadingRoleAssessment(false);
-      return;
-    }
-
-    setLoadingRoleAssessment(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?page=${pageRoleAssessment}&rows=${rowsRoleAssessment}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
+  const {
+    data: dataRawRoleAssessment,
+    isLoading: loadingRoleAssesment,
+    refetch: refetchRoleAssessment,
+  } = useQuery({
+    enabled: isAllowedToGetRoleAssessmentList,
+    queryKey: [ASSESSMENTS_GET, isAllowedToGetRoleAssessmentList, queryParams],
+    queryFn: async () => {
+      if (!isAllowedToGetRoleAssessmentList) {
+        permissionWarningNotification("Mendapatkan", "Daftar Role Assessment");
+        return;
       }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setDataRawRoleAssessment(res2.data);
-        setDataTable(res2.data.data);
-        setLoadingRoleAssessment(false);
+
+      const params = QueryString.stringify(queryParams, {
+        addQueryPrefix: true,
       });
-  }, [isAllowedToGetRoleAssessmentList, refresh]);
+
+      return await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments${params}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataTable(res2.data.data);
+          setDataCountAssessments(res2.data.total);
+          return res2.data;
+        });
+    },
+  });
 
   // 3.3. Auto fetch on search
   useEffect(() => {
@@ -210,22 +227,9 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // 4. Event
   const onFilterRoleAssessment = () => {
-    setLoadingRoleAssessment(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?page=${pageRoleAssessment}&sort_by=${sortingRoleAssessment.sort_by}&sort_type=${sortingRoleAssessment.sort_type}&rows=${rowsRoleAssessment}&keyword=${searchingFilterRoleAssessment}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setDataRawRoleAssessment(res2.data);
-        setDataTable(res2.data.data);
-        setLoadingRoleAssessment(false);
-      });
+    setQueryParams({
+      keyword: searchingFilterRoleAssessment,
+    });
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(
@@ -278,7 +282,8 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
         setTimeout(() => {
           setloadingdelete(false);
           setmodaldelete(false);
-          setRefresh((prev) => prev + 1);
+          refetchRoleAssessment();
+          refetchTop4Assessments();
         }, 500);
       })
       .catch((err) => {
@@ -448,11 +453,7 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
             <h4 className="mig-heading--4">Semua Role Assessment</h4>
             <div className="flex flex-row w-full mb-5 space-x-4">
               <Input
-                value={
-                  searchingFilterRoleAssessment === ""
-                    ? null
-                    : searchingFilterRoleAssessment
-                }
+                defaultValue={searchingFilterRoleAssessment}
                 style={{ width: `100%` }}
                 placeholder="Kata Kunci.."
                 allowClear
@@ -473,21 +474,12 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
             </div>
             <TableCustomRoleAssessment
               dataSource={dataTable}
-              setDataSource={setDataTable}
               columns={columnsRoleAssessment}
               loading={loadingRoleAssesment}
-              setpraloading={setLoadingRoleAssessment}
-              pageSize={rowsRoleAssessment}
-              setPageSize={setRowsRoleAssessment}
               total={dataRawRoleAssessment?.total}
-              initProps={initProps}
-              setpage={setPageRoleAssessment}
-              pagefromsearch={pageRoleAssessment}
-              setdataraw={setDataRawRoleAssessment}
-              setsorting={setSortingRoleAssessment}
-              sorting={sortingRoleAssessment}
-              searching={searchingFilterRoleAssessment}
               onOpenReadDrawer={onOpenReadDrawer}
+              queryParams={queryParams}
+              setQueryParams={setQueryParams}
             />
           </div>
         </div>
@@ -501,7 +493,6 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
           buttonOkText={"Tambah Form"}
           initProps={initProps}
           onvisible={setCreateDrawerShown}
-          setRefresh={setRefresh}
           isAllowedToAddRoleAssessment={isAllowedToAddRoleAssessment}
         />
       </AccessControl>
@@ -572,7 +563,6 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
           onvisible={setDrawUpdate}
           id={tempIdAssessmentUpdate}
           trigger={triggerAssessmentUpdate}
-          setRefresh={setRefresh}
           modalUpdate={modalUpdate}
           setModalUpdate={setModalUpdate}
         />

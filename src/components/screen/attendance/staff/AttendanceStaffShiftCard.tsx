@@ -69,7 +69,7 @@ export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
 
     return (
       <div className="p-6 bg-white flex flex-col gap-4 ">
-        <h4 className="text-base font-bold">Shift Kerja</h4>
+        <h4 className="text-base font-bold">Jadwal Kerja</h4>
 
         {currentScheduleQueries?.map((schedule, idx) => {
           return (
@@ -79,9 +79,9 @@ export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
                   <p className="mig-caption--bold text-base text-mono30">
                     Hari Ini
                   </p>
-                  <p className="mig-caption--medium text-xs text-mono50">
+                  {/* <p className="mig-caption--medium text-xs text-mono50">
                     {schedule?.data?.data?.shift?.title}
-                  </p>
+                  </p> */}
                   <h5 className="mig-heading--5 text-lg font-bold text-mono30">
                     {schedule?.data?.data?.shift?.start_at?.slice(0, 5)} -{" "}
                     {schedule?.data?.data?.shift?.end_at?.slice(0, 5)}
@@ -92,10 +92,10 @@ export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
                   <p className="w-1/3 mig-caption--medium text-xs text-mono50">
                     {moment(dateParams[idx]).format("dddd, D MMM")}
                   </p>
-                  <p className="w-1/3 mig-caption--medium text-xs text-mono50">
+                  {/* <p className="w-1/3 mig-caption--medium text-xs text-mono50">
                     {schedule?.data?.data?.shift?.title ?? "-"}
-                  </p>
-                  <p className="w-1/3 mig-caption--bold text-xs text-mono30">
+                  </p> */}
+                  <p className="w-1/3 mig-caption--bold text-xs text-mono30 text-right">
                     {schedule?.data?.data?.shift?.start_at?.slice(0, 5)} -{" "}
                     {schedule?.data?.data?.shift?.end_at?.slice(0, 5)}
                   </p>

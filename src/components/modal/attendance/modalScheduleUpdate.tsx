@@ -308,11 +308,22 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
                 }))
               }
             >
-              {shifts?.map((item) => (
-                <Select.Option key={item.id} value={item.id} {...item}>
-                  {item.title}
-                </Select.Option>
-              ))}
+              {shifts?.map((item) => {
+                const label = `${item?.title} (${item?.start_at?.slice(
+                  0,
+                  5
+                )} - ${item?.end_at?.slice(0, 5)})`;
+                return (
+                  <Select.Option
+                    {...item}
+                    key={item.id}
+                    value={item.id}
+                    label={label}
+                  >
+                    {label}
+                  </Select.Option>
+                );
+              })}
             </Select>
           </>
         </Form.Item>

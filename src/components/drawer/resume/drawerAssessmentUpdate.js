@@ -1,6 +1,7 @@
 import { Input, Spin, notification } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useQueryClient } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -8,6 +9,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { ASSESSMENT_GET, ASSESSMENT_UPDATE } from "lib/features";
 
+import { ASSESSMENTS_GET, ASSESSMENT_COUNT_GET } from "../../../lib/features";
 import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
 import { InputRequired } from "../../input";
@@ -23,13 +25,13 @@ const DrawerAssessmentUpdate = ({
   buttonOkText,
   initProps,
   trigger,
-  setRefresh,
   modalUpdate,
   setModalUpdate,
 }) => {
   /**
    * Dependencies
    */
+  const queryClient = useQueryClient();
   const { hasPermission } = useAccessControl();
   const isAllowedToUpdateRoleAssessment = hasPermission(ASSESSMENT_UPDATE);
   const isAllowedToGetRoleAssessment = hasPermission(ASSESSMENT_GET);
@@ -134,8 +136,9 @@ const DrawerAssessmentUpdate = ({
     })
       .then((res) => res.json())
       .then((res2) => {
-        setRefresh((prev) => prev + 1);
         if (res2.success) {
+          queryClient.invalidateQueries(ASSESSMENTS_GET);
+          queryClient.invalidateQueries(ASSESSMENT_COUNT_GET);
           setTimeout(() => {
             setloadingupdate(false);
             setdataupdate({
@@ -412,7 +415,6 @@ const DrawerAssessmentUpdate = ({
             setModalUpdate(false);
           }}
           loading={loadingupdate}
-          // disabled={candidateCount > 0}
         >
           <div className="space-y-4">
             <p className="">
