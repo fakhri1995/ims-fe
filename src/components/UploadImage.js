@@ -1,4 +1,8 @@
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  PictureOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { Button, Spin, Upload } from "antd";
 import React from "react";
 import { useRef } from "react";
@@ -172,13 +176,13 @@ const UploadImage = ({ useCrop = false, dataDisplay, setDataUpdate }) => {
     setUploadPictureLoading(false);
   };
 
-  const onUploadRemove = useCallback(() => {
+  const removeImage = () => {
     setFileList([]);
     setDataUpdate((prev) => ({
       ...prev,
       profile_image: null,
     }));
-  }, []);
+  };
 
   const onImageLoad = (e) => {
     if (aspect) {
@@ -208,11 +212,11 @@ const UploadImage = ({ useCrop = false, dataDisplay, setDataUpdate }) => {
     <>
       <Upload
         accept=".png, .jpg, .jpeg"
-        listType="picture"
         maxCount={1}
         beforeUpload={beforeUploadImage}
         onChange={onUploadChange}
-        onRemove={onUploadRemove}
+        showUploadList={false}
+        // onRemove={onUploadRemove}
         disabled={uploadPictureLoading}
         fileList={fileList}
       >
@@ -226,6 +230,30 @@ const UploadImage = ({ useCrop = false, dataDisplay, setDataUpdate }) => {
           <p>Unggah File</p>
         </Button>
       </Upload>
+      {fileList.length > 0 &&
+        fileList.map((item) => (
+          <div
+            className={
+              "relative p-4 border border-solid border-[##d9d9d9] rounded-sm mt-5"
+            }
+          >
+            <div className={"flex justify-between"}>
+              <div className={"flex gap-5 ml-1 items-center"}>
+                <PictureOutlined
+                  style={{ fontSize: "26px", color: "#1890ff" }}
+                />
+                <p>{item.name}</p>
+              </div>
+              <div>
+                <DeleteOutlined
+                  onClick={() => removeImage()}
+                  className={"hover:cursor-pointer"}
+                  style={{ color: "rgba(0, 0, 0, 0.45)" }}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
 
       {useCrop && (
         <ModalCore
