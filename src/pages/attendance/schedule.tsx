@@ -282,6 +282,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
   const dateColumns = Array.from({ length: 7 }, (_, i) => {
     const currentDate = moment(currentStartOfWeek).add(i, "days");
     const isToday = currentDate.isSame(TODAY, "day");
+    const isBeforeToday = currentDate.isBefore(TODAY, "day");
     return {
       title: (
         <div className="flex flex-col justify-center items-center">
@@ -313,7 +314,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             <div className="flex justify-center">
               <button
                 onClick={() => handleShowUpdate(schedules[scheduleIdx])}
-                disabled={!isAllowedToUpdateSchedule}
+                disabled={!isAllowedToUpdateSchedule || isBeforeToday}
                 className="bg-backdrop flex flex-col items-center justify-center 
                 p-3 rounded-md w-24"
               >

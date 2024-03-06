@@ -51,6 +51,7 @@ export interface IGetAgentsPaginateParams {
   rows?: number;
   name?: string;
   company_id?: number;
+  is_enabled?: number;
 }
 
 export type IGetAgentsPaginateSucceedResponse =
