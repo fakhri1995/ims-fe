@@ -310,24 +310,69 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           (i) => i.date == currentDate?.format("YYYY-MM-DD")
         );
         return {
-          children: scheduleIdx > -1 && (
-            <div className="flex justify-center">
-              <button
-                onClick={() => handleShowUpdate(schedules[scheduleIdx])}
-                disabled={!isAllowedToUpdateSchedule || isBeforeToday}
-                className="bg-backdrop flex flex-col items-center justify-center 
-                p-3 rounded-md w-24"
-              >
-                <p className="mig-caption--bold text-mono30 text-center">
-                  {schedules[scheduleIdx]?.shift?.title}
-                </p>
-                <p className="mig-caption text-mono50 whitespace-nowrap">
-                  {schedules[scheduleIdx]?.shift?.start_at?.slice(0, 5)} -{" "}
-                  {schedules[scheduleIdx]?.shift?.end_at?.slice(0, 5)}
-                </p>
-              </button>
-            </div>
-          ),
+          children:
+            scheduleIdx > -1 &&
+            schedules[scheduleIdx]?.shift?.title == "Cuti Tahunan" ? (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => handleShowUpdate(schedules[scheduleIdx])}
+                  disabled={!isAllowedToUpdateSchedule || isBeforeToday}
+                  className="bg-[#BF4A40] bg-opacity-10 flex flex-col items-center justify-center 
+                  px-3 py-2 rounded-md w-24"
+                >
+                  <p className="mig-caption--bold text-[#BF4A40] text-center">
+                    Cuti Tahunan
+                  </p>
+                </button>
+              </div>
+            ) : scheduleIdx > -1 &&
+              schedules[scheduleIdx]?.shift?.title == "Libur Nasional" ? (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => handleShowUpdate(schedules[scheduleIdx])}
+                  disabled={!isAllowedToUpdateSchedule || isBeforeToday}
+                  className="bg-[#00589F] bg-opacity-10 flex flex-col items-center justify-center 
+                  px-3 py-2 rounded-md w-24"
+                >
+                  <p className="mig-caption--bold text-[#00589F] text-center">
+                    Libur Nasional
+                  </p>
+                </button>
+              </div>
+            ) : scheduleIdx > -1 &&
+              schedules[scheduleIdx]?.shift?.title == "Cuti Bersama" ? (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => handleShowUpdate(schedules[scheduleIdx])}
+                  disabled={!isAllowedToUpdateSchedule || isBeforeToday}
+                  className="bg-[#00589F] bg-opacity-10 flex flex-col items-center justify-center 
+                      px-3 py-2 rounded-md w-24"
+                >
+                  <p className="mig-caption--bold text-[#00589F] text-center">
+                    Cuti Bersama
+                  </p>
+                </button>
+              </div>
+            ) : (
+              scheduleIdx > -1 && (
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => handleShowUpdate(schedules[scheduleIdx])}
+                    disabled={!isAllowedToUpdateSchedule || isBeforeToday}
+                    className="bg-backdrop flex flex-col items-center justify-center 
+                        p-3 rounded-md w-24"
+                  >
+                    <p className="mig-caption--bold text-mono30 text-center">
+                      {schedules[scheduleIdx]?.shift?.title}
+                    </p>
+                    <p className="mig-caption text-mono50 whitespace-nowrap">
+                      {schedules[scheduleIdx]?.shift?.start_at?.slice(0, 5)} -{" "}
+                      {schedules[scheduleIdx]?.shift?.end_at?.slice(0, 5)}
+                    </p>
+                  </button>
+                </div>
+              )
+            ),
         };
       },
     };
