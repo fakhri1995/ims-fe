@@ -1,4 +1,12 @@
-import { DatePicker, Form, Input, Select, Spin, notification } from "antd";
+import {
+  Checkbox,
+  DatePicker,
+  Form,
+  Input,
+  Select,
+  Spin,
+  notification,
+} from "antd";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
@@ -50,6 +58,8 @@ const DrawerShift = ({ visible, onvisible, data = null }) => {
     end_break: "",
   });
 
+  const [disableJamKerja, setDisableJamKerja] = useState(false);
+  const [valueShiftCheckbox, setValueShiftCheckbox] = useState(false);
   // 2. USE EFFECT
   // 2.1. set initial dataShift from data
   useEffect(() => {
@@ -61,6 +71,13 @@ const DrawerShift = ({ visible, onvisible, data = null }) => {
         start_break: data?.start_break?.slice(0, 5),
         end_break: data?.end_break?.slice(0, 5),
       });
+      if (
+        data?.start_at?.slice(0, 5) == "00:00" &&
+        data?.end_at?.slice(0, 5) == "00:00"
+      ) {
+        setDisableJamKerja(true);
+        setValueShiftCheckbox(true);
+      }
     }
   }, [data, visible]);
 
@@ -70,6 +87,17 @@ const DrawerShift = ({ visible, onvisible, data = null }) => {
       ...dataShift,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const onChangeShift = (e) => {
+    let value = e.target.checked;
+    setDisableJamKerja(value);
+    setValueShiftCheckbox(value);
+    setDataShift((prev) => ({
+      ...prev,
+      start_at: "00:00",
+      end_at: "00:00",
+    }));
   };
 
   const handleClose = () => {
@@ -184,6 +212,7 @@ const DrawerShift = ({ visible, onvisible, data = null }) => {
                   <DatePicker.RangePicker
                     // allowEmpty
                     picker="time"
+                    disabled={disableJamKerja}
                     className="w-full"
                     format={"HH:mm"}
                     order={false}
@@ -211,6 +240,17 @@ const DrawerShift = ({ visible, onvisible, data = null }) => {
                     <p className="w-3/12"></p>
                   )}
                 </div>
+              </Form.Item>
+              <Form.Item>
+                <Checkbox checked={valueShiftCheckbox} onChange={onChangeShift}>
+                  <span className={"text-[#4D4D4D] text-xs leading-5"}>
+                    Shift tidak mewajibkan absen
+                  </span>{" "}
+                  <span className={"text-[#CCCCCC]"}>
+                    (ex. : cuti bersama, libur nasional,...
+                  </span>
+                  )
+                </Checkbox>
               </Form.Item>
 
               <Form.Item
