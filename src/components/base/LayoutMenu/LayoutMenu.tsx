@@ -13,6 +13,7 @@ import {
   ItemIconSvg,
   KatalogIconSvg,
   KehadiranCompanyIconSvg,
+  MessageIconSvg,
   ProyekCompanyIconSvg,
   ResumeIconSvg,
   TaskIconSvg,
@@ -28,6 +29,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { ROLE_SUPER_ADMIN } from "lib/constants";
 import {
+  SIDEBAR_ANNOUNCEMENT,
   SIDEBAR_ASSET,
   SIDEBAR_ASSET_MANUFACTURER,
   SIDEBAR_ASSET_MODEL,
@@ -328,6 +330,17 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
         </SubMenu>
+      )}
+
+      {/* Notification / Announcement */}
+      {hasPermission(SIDEBAR_ANNOUNCEMENT) && (
+        <Menu.Item
+          key="announcement"
+          icon={<MessageIconSvg size={16} />}
+          title="Announcement"
+        >
+          <Link href="/announcement">Notification</Link>
+        </Menu.Item>
       )}
     </>
   );
