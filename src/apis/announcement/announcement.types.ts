@@ -54,7 +54,7 @@ export interface IAddAnnouncementPayload {
   title: string;
   text: string | HTMLElement;
   publish_type: "now" | "pending";
-  publish_at?: Date;
+  publish_at?: Date | string;
   thumbnail_image?: File;
 }
 
@@ -67,6 +67,6 @@ export interface IUpdateAnnouncementPayload {
   title: string;
   text: string | HTMLElement;
   publish_type: "now" | "pending";
-  publish_at?: Date;
+  publish_at?: Date | string;
   thumbnail_image?: File;
 }

@@ -1,8 +1,28 @@
-import { DatePicker, Form, Input, Select, Spin, notification } from "antd";
+import {
+  LoadingOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Select,
+  Spin,
+  Upload,
+  notification,
+} from "antd";
+import locale from "antd/lib/date-picker/locale/id_ID";
 import CheckableTag from "antd/lib/tag/CheckableTag";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import React, { useCallback, useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import "react-quill/dist/quill.snow.css";
+
+import CustomTextEditor from "components/CustomTextEditor";
+import { formats, modules } from "components/cards/resume/textEditorConfig";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -16,19 +36,18 @@ import {
   ATTENDANCE_SHIFT_ADD,
   ATTENDANCE_SHIFT_UPDATE,
 } from "lib/features";
+import { beforeUploadFileMaxSize } from "lib/helper";
 
 import {
   AnnouncementService,
   IAddAnnouncementPayload,
   IUpdateAnnouncementPayload,
 } from "apis/announcement";
-import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
-import {
-  IAddShiftPayload,
-  IUpdateShiftPayload,
-} from "apis/attendance/attendance-shift.types";
 
 import DrawerCore from "../drawerCore";
+
+// Quill library for text editor has to be imported dynamically
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
   /**
@@ -49,15 +68,17 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
   const [instanceForm] = Form.useForm();
 
   //1. USE STATE
-  //1.1 Update
   const [dataAnnouncement, setDataAnnouncement] =
-    useState<IUpdateAnnouncementPayload>({
-      _method: "PUT",
-      id: -1,
+    useState<IAddAnnouncementPayload>({
+      // _method: "PUT",
+      // id: -1,
       title: "",
       text: "",
       publish_type: "now",
     });
+  const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string>();
+  const [fileList, setFileList] = useState([]);
 
   // 2. USE EFFECT
   // 2.1. set initial dataAnnouncement from data
@@ -137,6 +158,51 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
       }
     );
 
+  // Handle upload file
+  const beforeUploadPicture = useCallback((uploadedFile, fileList) => {
+    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+    const isReachedMaxFileSize =
+      checkMaxFileSizeFilter(uploadedFile, fileList) === Upload.LIST_IGNORE;
+    const allowedFileTypes = [`image/png`, `image/jpg`, `image/jpeg`];
+
+    if (!allowedFileTypes.includes(uploadedFile.type)) {
+      notification.error({
+        message: "File harus berupa gambar",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    if (isReachedMaxFileSize) {
+      return Upload.LIST_IGNORE;
+    }
+
+    setDataAnnouncement((prev) => ({
+      ...prev,
+      thumbnail_image: uploadedFile,
+    }));
+  }, []);
+
+  const onUploadChange = useCallback(({ file }) => {
+    setUploadPictureLoading(file.status === "uploading");
+    if (file.status !== "removed") {
+      setFileList([file]);
+    }
+  }, []);
+
+  const onUploadRemove = useCallback(() => {
+    setFileList([]);
+    setDataAnnouncement((prev) => ({
+      ...prev,
+      thumbnail_image: null,
+    }));
+  }, []);
+
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      {uploadPictureLoading ? <LoadingOutlined /> : <PlusOutlined />}
+    </button>
+  );
+
   return (
     <DrawerCore
       title={!data ? "Buat Pesan" : "Edit Pesan"}
@@ -188,19 +254,34 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Thubnail Pesan Wajib Diisi",
+                    message: "Thumbnail Pesan Wajib Diisi",
                   },
                 ]}
                 className="col-span-2"
               >
-                <div>
-                  <Input
-                    value={dataAnnouncement.title}
-                    name={"title"}
-                    onChange={onChangeInput}
-                    placeholder="Masukkan Judul Pesan..."
-                  />
-                </div>
+                {/* <div> */}
+                <Upload
+                  accept=".png, .jpg, .jpeg"
+                  listType="picture-card"
+                  maxCount={1}
+                  // showUploadList={false}
+                  beforeUpload={beforeUploadPicture}
+                  onChange={onUploadChange}
+                  onRemove={onUploadRemove}
+                  disabled={uploadPictureLoading}
+                  fileList={fileList}
+                >
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt="avatar"
+                      style={{ width: "100%" }}
+                    />
+                  ) : (
+                    uploadButton
+                  )}
+                </Upload>
+                {/* </div> */}
               </Form.Item>
 
               <Form.Item
@@ -215,11 +296,18 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                 className="col-span-2"
               >
                 <div>
-                  <Input
-                    value={dataAnnouncement.title}
-                    name={"title"}
-                    onChange={onChangeInput}
-                    placeholder="Masukkan Judul Pesan..."
+                  <ReactQuill
+                    theme="snow"
+                    // value={dataAnnouncement.text}
+                    modules={modules}
+                    formats={formats}
+                    className="h-44 pb-10"
+                    onChange={(value) => {
+                      setDataAnnouncement((prev) => ({
+                        ...prev,
+                        text: value,
+                      }));
+                    }}
                   />
                 </div>
               </Form.Item>
@@ -269,73 +357,45 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                   </CheckableTag>
                 </div>
               </Form.Item>
-              {/* {dataAnnouncement.publish_type === "pending" && (
+              {dataAnnouncement.publish_type === "pending" && (
                 <>
                   <Form.Item
-                    label="Tangal & Waktu"
+                    label="Tangal & Waktu Kirim"
                     name={"publish_at"}
                     rules={[
                       {
                         required: true,
-                        message: "Tangal & Waktu wajib diisi",
+                        message: "Tangal & Waktu Kirim Wajib Diisi",
                       },
-
                     ]}
                     className="col-span-2"
                   >
                     <DatePicker
                       locale={locale}
-                      picker="date"
+                      // picker="date"
+                      showTime
                       className="w-full"
-                      format={"DD MMMM YYYY"}
-                      placeholder={["Mulai", "Akhir"]}
-                      disabledDate={(current) => {
-                        return (
-                          moment(current) < moment(dataSchedule?.date) ||
-                          moment(current).diff(
-                            moment(dataSchedule.start_date),
-                            "days"
-                          ) > MAX_SCHEDULED_DAYS
-                        );
-                      }}
-                      value={[
-                        moment(dataSchedule.start_date).isValid()
-                          ? moment(dataSchedule.start_date)
-                          : null,
-                        moment(dataSchedule.end_date).isValid()
-                          ? moment(dataSchedule.end_date)
-                          : null,
-                      ]}
+                      format={"DD MMMM YYYY HH:mm"}
+                      placeholder={"Pilih Tanggal & Waktu Kirim"}
+                      value={
+                        moment(dataAnnouncement.publish_at).isValid()
+                          ? moment(dataAnnouncement.publish_at)
+                          : null
+                      }
                       onChange={(values) => {
-                        let formattedStartDate = moment(values?.[0]).isValid()
-                          ? moment(values?.[0]).format("YYYY-MM-DD")
+                        let formattedDate = moment(values).isValid()
+                          ? moment(values).format("YYYY-MM-DD HH:mm:ss")
                           : null;
 
-                        let formattedEndDate = moment(values?.[1]).isValid()
-                          ? moment(values?.[1]).format("YYYY-MM-DD")
-                          : null;
-
-                        setDataSchedule((prev) => ({
+                        setDataAnnouncement((prev) => ({
                           ...prev,
-                          start_date: formattedStartDate,
-                          end_date: formattedEndDate,
+                          publish_at: formattedDate,
                         }));
                       }}
                     />
                   </Form.Item>
-
-                  {isRepetition &&
-                    dataSchedule?.start_date < dataSchedule?.date && (
-                      <div className="flex items-center gap-2 bg-warning px-4 py-3 rounded-md mb-6">
-                        <AlerttriangleIconSvg color={"#FFF"} size={20} />
-                        <p className="text-white">
-                          <b>Tanggal Mulai Repetisi</b> harus melebihi{" "}
-                          <b>Tanggal Berlaku</b>!
-                        </p>
-                      </div>
-                    )}
                 </>
-              )} */}
+              )}
             </div>
           </Form>
         </div>

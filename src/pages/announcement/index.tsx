@@ -23,6 +23,7 @@ const AnnouncementPage: NextPage<ProtectedPageProps> = ({
       dataProfile={dataProfile}
       tok={token}
       fixedBreadcrumbValues={pageBreadcrumb}
+      sidemenu="announcement"
     >
       <div className="px-5">
         <div className="grid grid-cols-1">

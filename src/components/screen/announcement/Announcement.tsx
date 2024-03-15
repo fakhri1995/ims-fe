@@ -1,6 +1,7 @@
 import { Form, Input, Select, Table, notification } from "antd";
 import type { DefaultOptionType } from "antd/lib/select";
 import type { ColumnsType } from "antd/lib/table";
+import parse from "html-react-parser";
 import {
   NumberParam,
   StringParam,
@@ -117,8 +118,6 @@ export const Announcement: FC = () => {
     }
   );
 
-  console.log({ dataRawAnnouncements });
-
   /**
    * Component's config
    */
@@ -157,7 +156,7 @@ export const Announcement: FC = () => {
       title: "Isi",
       dataIndex: "text",
       render: (text) => {
-        return <>{text}</>;
+        return <>{parse(text)}</>;
       },
     },
     {
