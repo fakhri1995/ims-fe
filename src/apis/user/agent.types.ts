@@ -83,7 +83,7 @@ export interface AgentDetailData {
   phone_number: string;
   created_time: string;
   is_enabled: number;
-  company_name: string;
-  profile_image: ProfileImageAttribute;
-  roles: Role[];
+  company_name?: string;
+  profile_image?: ProfileImageAttribute;
+  roles?: Role[];
 }
