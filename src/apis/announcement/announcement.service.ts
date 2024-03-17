@@ -1,7 +1,7 @@
 import type { AxiosInstance } from "axios";
 import QueryString from "qs";
 
-import { permissionWarningNotification } from "lib/helper";
+import { objectToFormData, permissionWarningNotification } from "lib/helper";
 
 import type {
   GetAnnouncementsPayload,
@@ -76,12 +76,14 @@ export class AnnouncementService {
       return;
     }
 
+    const payloadFormData = objectToFormData(payload);
+
     return await axiosClient.post<HttpRequestBaseSucceedResponse>(
       "/addAnnouncement",
-      payload,
+      payloadFormData,
       {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       }
     );
@@ -102,12 +104,14 @@ export class AnnouncementService {
       return;
     }
 
+    const payloadFormData = objectToFormData(payload);
+
     return await axiosClient.post<HttpRequestBaseSucceedResponse>(
       "/updateAnnouncement",
-      payload,
+      payloadFormData,
       {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       }
     );

@@ -1,3 +1,4 @@
+import { SearchOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Table, notification } from "antd";
 import type { DefaultOptionType } from "antd/lib/select";
 import type { ColumnsType } from "antd/lib/table";
@@ -28,7 +29,7 @@ import {
   ANNOUNCEMENT_DELETE,
   ANNOUNCEMENT_UPDATE,
 } from "lib/features";
-import { generateNotificationRedirectUrl } from "lib/helper";
+import { generateNotificationRedirectUrl, stripTags } from "lib/helper";
 
 import { AnnouncementData, AnnouncementService } from "apis/announcement";
 import {
@@ -141,22 +142,30 @@ export const Announcement: FC = () => {
     {
       key: "no",
       title: "No.",
-      render: (_, __, index) => `${(dataRawAnnouncements.from || 0) + index}.`,
+      width: "10px",
+      render: (_, __, index) => (
+        <p className="text-center">
+          {(dataRawAnnouncements?.from || 0) + index}.
+        </p>
+      ),
     },
     {
       key: "title",
       title: "Judul",
       dataIndex: "title",
+      width: "200px",
       render: (title) => {
-        return <>{title}</>;
+        return <h1 className="font-bold">{title?.slice(0, 120)}</h1>;
       },
     },
     {
       key: "text",
       title: "Isi",
       dataIndex: "text",
+      width: "500px",
       render: (text) => {
-        return <>{parse(text)}</>;
+        const slicedText = stripTags(text).slice(0, 120);
+        return <p>{slicedText}...</p>;
       },
     },
     {
@@ -164,7 +173,7 @@ export const Announcement: FC = () => {
       title: "Penulis",
       dataIndex: "user",
       render: (user) => {
-        return <>{user?.name}</>;
+        return <p>{user?.name}</p>;
       },
     },
     {
@@ -176,7 +185,6 @@ export const Announcement: FC = () => {
       sorter: (lhs, rhs) => {
         const lhsDate = new Date(lhs.created_at);
         const rhsDate = new Date(rhs.created_at);
-
         return lhsDate < rhsDate ? -1 : 1;
       },
     },
@@ -187,12 +195,23 @@ export const Announcement: FC = () => {
       {/* Keyword search, Status filter dropdown, Cari button */}
       <section className="flex justify-between items-center">
         {/* Title */}
-        {/* <div className="flex items-center justify-between"> */}
         <h4 className="mig-heading--4">Daftar Pesan</h4>
-        {/* </div> */}
-
         <div className="flex items-center gap-6">
-          <Input placeholder="Cari Sesuatu..." />
+          <Input
+            placeholder="Cari Sesuatu..."
+            prefix={<SearchOutlined rev={""} className="text-mono80" />}
+            allowClear
+            onChange={(e) => {
+              setTimeout(
+                () =>
+                  setQueryParams({
+                    keyword: e.target.value,
+                  }),
+                500
+              );
+            }}
+            disabled={!isAllowedToGetAnnouncements}
+          />
           <ButtonSys type="primary" onClick={() => setShowCreateDrawer(true)}>
             <div className="flex items-center space-x-2">
               <PlusIconSvg />
@@ -203,37 +222,29 @@ export const Announcement: FC = () => {
       </section>
 
       {/* Table */}
-      <Table<AnnouncementData>
-        dataSource={dataAnnouncements}
-        loading={loadingAnnouncements}
-        columns={tableColumns}
-        // className="tableTask"
-        pagination={{
-          total: dataRawAnnouncements?.total,
-          current: dataRawAnnouncements?.current_page,
-          pageSize: queryParams.rows,
-          showSizeChanger: true,
-          // onChange: onPaginationChanged,
-        }}
-        // onRow={({
-        //   id,
-        //   is_read,
-        //   notificationable_id,
-        //   notificationable_type,
-        // }) => {
-        //   return {
-        //     className: "cursor-pointer",
-        //     onClick: () => {
-        //       onRecordClicked(
-        //         id,
-        //         is_read,
-        //         notificationable_id,
-        //         notificationable_type
-        //       );
-        //     },
-        //   };
-        // }}
-      />
+      <div className="grid grid-cols-1">
+        <Table<AnnouncementData>
+          rowKey={(record) => record.id}
+          dataSource={dataAnnouncements}
+          loading={loadingAnnouncements}
+          columns={tableColumns}
+          // className="grid grid-cols-1"
+          scroll={{ x: 200 }}
+          pagination={{
+            total: dataRawAnnouncements?.total,
+            current: dataRawAnnouncements?.current_page,
+            pageSize: queryParams.rows,
+            showSizeChanger: true,
+            // onChange: onPaginationChanged,
+          }}
+          onRow={({ id }) => {
+            return {
+              className: "cursor-pointer",
+              onClick: () => router.push(`announcement/detail/${id}`),
+            };
+          }}
+        />
+      </div>
 
       <AccessControl hasPermission={ANNOUNCEMENT_ADD}>
         <DrawerAnnouncement
