@@ -6,8 +6,10 @@ import {
 import {
   Button,
   DatePicker,
+  Drawer,
   Form,
   Input,
+  Radio,
   Select,
   Spin,
   Upload,
@@ -22,7 +24,9 @@ import { useMutation, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
 import CustomTextEditor from "components/CustomTextEditor";
+import ButtonSys from "components/button";
 import { formats, modules } from "components/cards/resume/textEditorConfig";
+import { CheckIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -104,12 +108,14 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
 
   const handleClose = () => {
     setDataAnnouncement({
-      _method: "PUT",
-      id: -1,
+      // _method: "PUT",
+      // id: -1,
       title: "",
       text: "",
       publish_type: "now",
     });
+    instanceForm.resetFields();
+    setFileList([]);
     onvisible(false);
   };
 
@@ -208,16 +214,22 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
       title={!data ? "Buat Pesan" : "Edit Pesan"}
       visible={visible}
       onClose={handleClose}
+      width={440}
       buttonOkText={"Simpan"}
-      onClick={() =>
-        !data
-          ? addAnnouncement(dataAnnouncement)
-          : updateAnnouncement(dataAnnouncement)
+      submit={true}
+      form="formPesan"
+      onClick={
+        () => addAnnouncement(dataAnnouncement)
+        // !data
+        //   ? addAnnouncement(dataAnnouncement)
+        //   : updateAnnouncement(dataAnnouncement)
       }
       disabled={
         (!data
           ? !isAllowedToAddAnnouncement
-          : !isAllowedToUpdateAnnouncement) || !dataAnnouncement?.title
+          : !isAllowedToUpdateAnnouncement) ||
+        !dataAnnouncement?.title ||
+        !dataAnnouncement?.text
       }
     >
       <Spin spinning={!data ? null : loadingUpdateAnnouncement}>
@@ -225,7 +237,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
           <p className="mb-6 text-red-500 text-xs italic">
             *Informasi ini harus diisi
           </p>
-          <Form layout="vertical" form={instanceForm}>
+          <Form layout="vertical" form={instanceForm} id="formPesan">
             <div>
               <Form.Item
                 label="Judul Pesan"
@@ -251,37 +263,34 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
               <Form.Item
                 label="Thumbnail Pesan"
                 name={"thumbnail_image"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Thumbnail Pesan Wajib Diisi",
-                  },
-                ]}
                 className="col-span-2"
               >
-                {/* <div> */}
-                <Upload
-                  accept=".png, .jpg, .jpeg"
-                  listType="picture-card"
-                  maxCount={1}
-                  // showUploadList={false}
-                  beforeUpload={beforeUploadPicture}
-                  onChange={onUploadChange}
-                  onRemove={onUploadRemove}
-                  disabled={uploadPictureLoading}
-                  fileList={fileList}
-                >
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt="avatar"
-                      style={{ width: "100%" }}
-                    />
-                  ) : (
-                    uploadButton
-                  )}
-                </Upload>
-                {/* </div> */}
+                <>
+                  <p className="text-mono50 mr-10 mb-4">
+                    <em>Unggah Gambar (Maksimal 5 MB)</em>
+                  </p>
+                  <Upload
+                    accept=".png, .jpg, .jpeg"
+                    listType="picture-card"
+                    maxCount={1}
+                    // showUploadList={false}
+                    beforeUpload={beforeUploadPicture}
+                    onChange={onUploadChange}
+                    onRemove={onUploadRemove}
+                    disabled={uploadPictureLoading}
+                    fileList={fileList}
+                  >
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt="avatar"
+                        style={{ width: "100%" }}
+                      />
+                    ) : (
+                      uploadButton
+                    )}
+                  </Upload>
+                </>
               </Form.Item>
 
               <Form.Item
@@ -295,53 +304,53 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                 ]}
                 className="col-span-2"
               >
-                <div>
-                  <ReactQuill
-                    theme="snow"
-                    // value={dataAnnouncement.text}
-                    modules={modules}
-                    formats={formats}
-                    className="h-44 pb-10"
-                    onChange={(value) => {
-                      setDataAnnouncement((prev) => ({
-                        ...prev,
-                        text: value,
-                      }));
-                    }}
-                  />
-                </div>
+                {/* <div> */}
+                <ReactQuill
+                  theme="snow"
+                  // value={dataAnnouncement.text}
+                  // modules={modules}
+                  // formats={formats}
+                  className="h-44 pb-10"
+                  onChange={(value) => {
+                    setDataAnnouncement((prev) => ({
+                      ...prev,
+                      text: value,
+                    }));
+                  }}
+                />
+                {/* </div> */}
               </Form.Item>
 
               <Form.Item
                 label="Jadwalkan Pengiriman"
-                name={"publihs_at"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Wajib diisi",
-                  },
-                ]}
+                name={"publish_at"}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: "Wajib diisi",
+                //   },
+                // ]}
                 className="col-span-2"
               >
-                <div className="flex items-center">
-                  <CheckableTag
+                <div className="flex flex-col gap-4">
+                  <Radio
                     checked={dataAnnouncement?.publish_type === "now"}
                     onChange={(checked) => {
-                      setDataAnnouncement((prev) => ({
-                        ...prev,
-                        publish_type: checked ? "now" : "pending",
-                      }));
+                      if (checked) {
+                        setDataAnnouncement((prev) => ({
+                          ...prev,
+                          publish_type: "now",
+                        }));
+                      }
                     }}
-                    className="border border-primary100 py-1 px-3 rounded-full mb-2"
                   >
                     <div className="flex flex-row items-center space-x-1">
                       <p>Sekarang</p>
                     </div>
-                  </CheckableTag>
+                  </Radio>
 
-                  <CheckableTag
+                  <Radio
                     checked={dataAnnouncement?.publish_type === "pending"}
-                    className="border border-primary100 py-1 px-3 rounded-full mb-2"
                     onChange={(checked) => {
                       if (checked) {
                         setDataAnnouncement((prev) => ({
@@ -354,9 +363,10 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                     <div className="flex flex-row items-center space-x-1">
                       <p>Atur Jadwal</p>
                     </div>
-                  </CheckableTag>
+                  </Radio>
                 </div>
               </Form.Item>
+
               {dataAnnouncement.publish_type === "pending" && (
                 <>
                   <Form.Item
@@ -375,7 +385,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                       // picker="date"
                       showTime
                       className="w-full"
-                      format={"DD MMMM YYYY HH:mm"}
+                      format={"DD MMMM YYYY, HH:mm"}
                       placeholder={"Pilih Tanggal & Waktu Kirim"}
                       value={
                         moment(dataAnnouncement.publish_at).isValid()
