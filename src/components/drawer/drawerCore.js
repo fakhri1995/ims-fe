@@ -17,6 +17,8 @@ const DrawerCore = ({
   onButtonCancelClicked,
   buttonUpdateText,
   buttonSpace,
+  form,
+  submit = false,
   width = 420,
 }) => {
   return (
@@ -48,7 +50,13 @@ const DrawerCore = ({
           )}
 
           {buttonOkText && onClick && (
-            <ButtonSys disabled={disabled} type="primary" onClick={onClick}>
+            <ButtonSys
+              disabled={disabled}
+              type="primary"
+              onClick={onClick}
+              submit={submit}
+              form={form}
+            >
               <CheckIconSvg size={15} color="#FFFFFF" />
               {buttonOkText}
             </ButtonSys>

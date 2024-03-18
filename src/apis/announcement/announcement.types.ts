@@ -1,6 +1,11 @@
+import { RcFile } from "antd/lib/upload";
+
 import { AgentDetailData } from "apis/user";
 
-import { HttpRequestWithDataSucceedResponse } from "types/common";
+import {
+  HttpRequestWithDataSucceedResponse,
+  ProfileImageAttribute,
+} from "types/common";
 
 /**
  * @access GET /getAnnouncements
@@ -45,6 +50,7 @@ export interface AnnouncementData {
   updated_at: Date | string;
   deleted_at: Date | string;
   user: AgentDetailData;
+  thumbnail_image?: ProfileImageAttribute;
 }
 
 /**
@@ -55,7 +61,7 @@ export interface IAddAnnouncementPayload {
   text: string | HTMLElement;
   publish_type: "now" | "pending";
   publish_at?: Date | string;
-  thumbnail_image?: File;
+  thumbnail_image?: RcFile | Blob | File;
 }
 
 /**
@@ -68,5 +74,5 @@ export interface IUpdateAnnouncementPayload {
   text: string | HTMLElement;
   publish_type: "now" | "pending";
   publish_at?: Date | string;
-  thumbnail_image?: File;
+  thumbnail_image?: RcFile | Blob | File;
 }
