@@ -85,13 +85,6 @@ export const Announcement: FC = () => {
 
   const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
 
-  const [isReadFilter, setIsReadFilter] = useState<boolean | undefined>(
-    undefined
-  );
-  const [keywordFilter, setKeywordFilter] = useState<string | undefined>(
-    undefined
-  );
-
   /**
    * Queries
    */
@@ -118,25 +111,6 @@ export const Announcement: FC = () => {
       },
     }
   );
-
-  /**
-   * Component's config
-   */
-
-  const statusOptions: DefaultOptionType[] = [
-    {
-      label: "Semua Status",
-      value: -1,
-    },
-    {
-      label: "Belum dibaca",
-      value: 0,
-    },
-    {
-      label: "Sudah dibaca",
-      value: 1,
-    },
-  ];
 
   const tableColumns: ColumnsType<AnnouncementData> = [
     {

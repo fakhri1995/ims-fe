@@ -17,6 +17,7 @@ import {
 } from "components/screen/attendance";
 import { ClockCard } from "components/screen/client";
 import EmployeeList from "components/screen/client/EmployeeList";
+import { AnnouncementCard } from "components/screen/dashboard";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -66,6 +67,7 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
     { name: "Dashboard Kehadiran " + dataProfile.data.company.name },
   ];
   const isAllowedToGetStatusTaskList = hasPermission(TASK_STATUS_LIST_GET);
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -74,7 +76,7 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
       fixedBreadcrumbValues={
         hasPermission(SIDEBAR_CLIENT_DASHBOARD) && !hasRole(ROLE_SUPER_ADMIN)
           ? pageBreadcrumbValue
-          : null
+          : [{ name: "Dashboard" }]
       }
     >
       {/* <div className="grid grid-cols-3">
@@ -141,7 +143,8 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
           />
         </div>
       ) : (
-        <h1 className="px-5 md:px-0">Selamat datang di dashboard</h1>
+        <AnnouncementCard />
+        // <h1 className=" md:px-0">Selamat datang di dashboard</h1>
       )}
     </LayoutDashboard>
   );

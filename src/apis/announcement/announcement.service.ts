@@ -4,6 +4,8 @@ import QueryString from "qs";
 import { objectToFormData, permissionWarningNotification } from "lib/helper";
 
 import type {
+  GetAnnouncementEmployeeSucceedResponse,
+  GetAnnouncementMorePayload,
   GetAnnouncementsPayload,
   GetAnnouncementsSucceedResponse,
   IAddAnnouncementPayload,
@@ -138,6 +140,50 @@ export class AnnouncementService {
 
     return await axiosClient.delete<IGetAnnouncementSucceedResponse>(
       "/deleteAnnouncement" + querySearch
+    );
+  }
+
+  /**
+   * Retrieve announcements in home dashboard.
+   *
+   * @access GET /getAnnouncemenEmployee
+   */
+  static async getAnnouncementEmployee(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Daftar Employee Announcement"
+      );
+      return;
+    }
+
+    return await axiosClient.get<GetAnnouncementEmployeeSucceedResponse>(
+      "/getAnnouncementEmployee"
+    );
+  }
+
+  /**
+   * Retrieve more announcements in home dashboard
+   *
+   * @access GET /getAnnouncementMore
+   */
+  static async getAnnouncementMore(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    params: GetAnnouncementMorePayload
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification("Mendapatkan", "Daftar More Announcement");
+      return;
+    }
+
+    const qs = QueryString.stringify(params, { addQueryPrefix: true });
+
+    return await axiosClient.get<GetAnnouncementEmployeeSucceedResponse>(
+      "/getAnnouncementMore" + qs
     );
   }
 }
