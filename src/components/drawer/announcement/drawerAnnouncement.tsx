@@ -1,8 +1,4 @@
-import {
-  LoadingOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
@@ -16,17 +12,11 @@ import {
   notification,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
-import CheckableTag from "antd/lib/tag/CheckableTag";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import React, { useCallback, useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
-
-import CustomTextEditor from "components/CustomTextEditor";
-import ButtonSys from "components/button";
-import { formats, modules } from "components/cards/resume/textEditorConfig";
-import { CheckIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -36,9 +26,6 @@ import {
   ANNOUNCEMENTS_GET,
   ANNOUNCEMENT_ADD,
   ANNOUNCEMENT_UPDATE,
-  ATTENDANCE_SHIFTS_GET,
-  ATTENDANCE_SHIFT_ADD,
-  ATTENDANCE_SHIFT_UPDATE,
 } from "lib/features";
 import { beforeUploadFileMaxSize } from "lib/helper";
 
@@ -205,7 +192,11 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
 
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
-      {uploadPictureLoading ? <LoadingOutlined /> : <PlusOutlined />}
+      {uploadPictureLoading ? (
+        <LoadingOutlined rev={""} />
+      ) : (
+        <PlusOutlined rev={""} />
+      )}
     </button>
   );
 
@@ -308,8 +299,6 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                 <ReactQuill
                   theme="snow"
                   // value={dataAnnouncement.text}
-                  // modules={modules}
-                  // formats={formats}
                   className="h-44 pb-10"
                   onChange={(value) => {
                     setDataAnnouncement((prev) => ({
