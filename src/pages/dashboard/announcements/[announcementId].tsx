@@ -39,7 +39,7 @@ import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
 
-const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
+const DashboardAnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
 }) => {
@@ -128,7 +128,7 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
       dataProfile={dataProfile}
       tok={token}
       fixedBreadcrumbValues={pageBreadcrumb}
-      sidemenu="announcement"
+      sidemenu="1"
     >
       <div className="px-5">
         <Spin spinning={loadingAnnouncement}>
@@ -141,17 +141,6 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
                 <ArrowLeftIconSvg size={20} />
                 <p>Kembali</p>
               </button>
-
-              <ButtonSys
-                onClick={() => setShowDeleteModal(true)}
-                type={"default"}
-                color="danger"
-              >
-                <div className="flex gap-2 items-center">
-                  <DeleteOutlined rev={""} color="#BF4A40" />
-                  <p>Hapus</p>
-                </div>
-              </ButtonSys>
             </div>
             <hr />
             <h1 className="font-medium text-2xl">{dataAnnouncement?.title}</h1>
@@ -186,25 +175,6 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
           </div>
         </Spin>
       </div>
-
-      <AccessControl hasPermission={ANNOUNCEMENT_DELETE}>
-        <ModalHapus2
-          title={`Peringatan`}
-          visible={isShowDeleteModal}
-          onvisible={setShowDeleteModal}
-          onOk={() => deleteAnnouncement(announcementId)}
-          onCancel={() => {
-            setShowDeleteModal(false);
-          }}
-          itemName={"pesan"}
-          loading={loadingDeleteAnnouncement}
-        >
-          <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan pesan dengan judul{" "}
-            <strong>{dataAnnouncement?.title}</strong>?
-          </p>
-        </ModalHapus2>
-      </AccessControl>
     </LayoutDashboard>
   );
 };
@@ -251,4 +221,4 @@ export const getServerSideProps: GetServerSideProps<
   };
 };
 
-export default AnnouncementDetailPage;
+export default DashboardAnnouncementDetailPage;

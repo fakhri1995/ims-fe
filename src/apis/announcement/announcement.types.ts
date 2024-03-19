@@ -76,3 +76,17 @@ export interface IUpdateAnnouncementPayload {
   publish_at?: Date | string;
   thumbnail_image?: RcFile | Blob | File;
 }
+
+/**
+ * @access GET /getAnnouncementEmployee
+ */
+
+export type GetAnnouncementEmployeeSucceedResponse =
+  HttpRequestWithDataSucceedResponse<AnnouncementData[]>;
+
+/**
+ * @access GET /getAnnouncementMore
+ */
+export interface GetAnnouncementMorePayload {
+  current_id: number;
+}

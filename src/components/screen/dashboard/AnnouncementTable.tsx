@@ -50,7 +50,7 @@ type FormType = {
   is_read?: number;
 };
 
-export const Announcement: FC = () => {
+export const AnnouncementTable: FC = () => {
   /**
    * Dependencies
    */
@@ -186,12 +186,6 @@ export const Announcement: FC = () => {
             }}
             disabled={!isAllowedToGetAnnouncements}
           />
-          <ButtonSys type="primary" onClick={() => setShowCreateDrawer(true)}>
-            <div className="flex items-center space-x-2">
-              <PlusIconSvg />
-              <span>Buat Pesan</span>
-            </div>
-          </ButtonSys>
         </div>
       </section>
 
@@ -214,7 +208,7 @@ export const Announcement: FC = () => {
           onRow={({ id }) => {
             return {
               className: "cursor-pointer",
-              onClick: () => router.push(`announcement/detail/${id}`),
+              onClick: () => router.push(`/dashboard/announcements/${id}`),
             };
           }}
         />
