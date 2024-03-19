@@ -1,4 +1,5 @@
 import { DatePicker, Form, Input, Select, Spin, notification } from "antd";
+import { AxiosResponse } from "axios";
 import moment from "moment";
 import { isKeyword } from "prettier";
 import React, { useEffect, useState } from "react";
@@ -13,6 +14,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   AttendanceScheduleService,
+  IGetScheduleSucceedResponse,
   IUpdateSchedulePayload,
   ScheduleData,
   ScheduleDetailData,
@@ -97,7 +99,8 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
       ),
     {
       enabled: isAllowedToGetSchedule && visible,
-      select: (response) => response.data.data,
+      select: (response: AxiosResponse<IGetScheduleSucceedResponse>) =>
+        response.data.data,
       onSuccess: (data) => setDataSchedule(data),
     }
   );

@@ -299,10 +299,7 @@ export const JobListTable: FC = () => {
                     >
                       Apply Now
                     </p>
-                    <RiseOutlined
-                      rev={""}
-                      style={{ fontSize: 20, color: "#FFFFFF" }}
-                    />
+                    <RiseOutlined style={{ fontSize: 20, color: "#FFFFFF" }} />
                   </div>
                 </div>
               ))}

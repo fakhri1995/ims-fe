@@ -148,7 +148,7 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
                 color="danger"
               >
                 <div className="flex gap-2 items-center">
-                  <DeleteOutlined rev={""} color="#BF4A40" />
+                  <DeleteOutlined color="#BF4A40" />
                   <p>Hapus</p>
                 </div>
               </ButtonSys>

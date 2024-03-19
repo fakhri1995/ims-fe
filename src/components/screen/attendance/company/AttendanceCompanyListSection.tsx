@@ -174,13 +174,13 @@ export const AttendanceCompanyListSection: FC<
                 onClick={() => setIsExportDrawerShown(true)}
                 disabled={!canExportTableData}
               >
-                <DownloadOutlined rev={""} className="mr-2" />
+                <DownloadOutlined   className="mr-2" />
                 Unduh Tabel
               </ButtonSys>
             </div> */}
             <Form.Item noStyle name="search">
               <Input
-                prefix={<SearchOutlined rev={""} />}
+                prefix={<SearchOutlined />}
                 placeholder="Cari..."
                 disabled={!isAllowedToSearchData}
                 allowClear

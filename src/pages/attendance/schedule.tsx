@@ -11,6 +11,7 @@ import {
 } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
 import { ColumnsType } from "antd/lib/table";
+import { AxiosResponse } from "axios";
 import moment from "moment";
 import { GetServerSideProps, NextPage } from "next";
 import {
@@ -58,6 +59,7 @@ import {
 import {
   AgentScheduleData,
   AttendanceScheduleService,
+  IGetSchedulesPaginateSucceedResponse,
   ScheduleData,
 } from "apis/attendance";
 import { CompanyService } from "apis/company";
@@ -151,7 +153,8 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       ),
     {
       enabled: isAllowedToGetSchedules,
-      select: (response) => response.data.data,
+      select: (response: AxiosResponse<IGetSchedulesPaginateSucceedResponse>) =>
+        response.data.data,
       onSuccess: (data) => {
         let schedules = data.data;
         setDataSchedules(schedules);
@@ -443,7 +446,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             <Tooltip
               title={
                 <div className="flex gap-3 items-center p-2 text-mono30 rounded-lg">
-                  <InfoCircleOutlined rev={""} color="#4D4D4D" size={18} />
+                  <InfoCircleOutlined color="#4D4D4D" size={18} />
                   <p className="font-bold">Jadwal selanjutnya belum tersedia</p>
                 </div>
               }
@@ -591,7 +594,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 }}
               >
                 <div className="flex flex-row space-x-1 items-center">
-                  <CloseOutlined rev={""} />
+                  <CloseOutlined />
                   <p>Batal</p>
                 </div>
               </ButtonSys>
@@ -693,7 +696,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 <Tooltip
                   title={
                     <div className="flex gap-3 items-center p-2 text-mono30 rounded-lg">
-                      <InfoCircleOutlined rev={""} color="#4D4D4D" size={18} />
+                      <InfoCircleOutlined color="#4D4D4D" size={18} />
                       <p className="font-bold">
                         Jadwal selanjutnya belum tersedia
                       </p>

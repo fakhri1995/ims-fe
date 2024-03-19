@@ -760,7 +760,7 @@ export const AttendanceStaffAktivitasSection: FC<
             <div className="col-span-4">
               <Input
                 style={{ width: `100%` }}
-                suffix={<SearchOutlined rev={""} />}
+                suffix={<SearchOutlined />}
                 defaultValue={queryParams2.keyword}
                 placeholder="Cari Task.."
                 onChange={onChangeProductSearch}
@@ -882,7 +882,7 @@ export const AttendanceStaffAktivitasSection: FC<
                   fullWidth
                 >
                   <div className="flex items-center gap-2 whitespace-nowrap">
-                    <AppstoreAddOutlined rev={""} />
+                    <AppstoreAddOutlined />
                     <p>Masukkan Aktivitas</p>
                   </div>
                 </ButtonSys>

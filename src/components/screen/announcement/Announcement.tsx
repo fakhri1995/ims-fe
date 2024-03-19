@@ -2,6 +2,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Table, notification } from "antd";
 import type { DefaultOptionType } from "antd/lib/select";
 import type { ColumnsType } from "antd/lib/table";
+import { AxiosResponse } from "axios";
 import parse from "html-react-parser";
 import {
   NumberParam,
@@ -31,7 +32,11 @@ import {
 } from "lib/features";
 import { generateNotificationRedirectUrl, stripTags } from "lib/helper";
 
-import { AnnouncementData, AnnouncementService } from "apis/announcement";
+import {
+  AnnouncementData,
+  AnnouncementService,
+  GetAnnouncementsSucceedResponse,
+} from "apis/announcement";
 import {
   NotificationData,
   NotificationServiceQueryKeys,
@@ -102,7 +107,8 @@ export const Announcement: FC = () => {
       ),
     {
       enabled: isAllowedToGetAnnouncements,
-      select: (response) => response.data.data,
+      select: (response: AxiosResponse<GetAnnouncementsSucceedResponse>) =>
+        response.data.data,
       onSuccess: (data) => setDataAnnouncements(data.data),
       onError: (error) => {
         notification.error({
@@ -173,7 +179,7 @@ export const Announcement: FC = () => {
         <div className="flex items-center gap-6">
           <Input
             placeholder="Cari Sesuatu..."
-            prefix={<SearchOutlined rev={""} className="text-mono80" />}
+            prefix={<SearchOutlined className="text-mono80" />}
             allowClear
             onChange={(e) => {
               setTimeout(
