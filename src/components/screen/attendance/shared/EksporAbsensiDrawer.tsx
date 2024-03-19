@@ -435,10 +435,10 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                 <div className="mt-2">
                   <ButtonSys
                     type={isSortAsc ? "primary" : "default"}
-                    icon={<SortAscendingOutlined rev={""} />}
+                    icon={<SortAscendingOutlined />}
                     onClick={() => setIsSortAsc(!isSortAsc)}
                   >
-                    <SortAscendingOutlined rev={""} />
+                    <SortAscendingOutlined />
                   </ButtonSys>
                 </div>
               </div>

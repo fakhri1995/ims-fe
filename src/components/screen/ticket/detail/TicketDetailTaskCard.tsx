@@ -150,7 +150,7 @@ export const TicketDetailTaskCard: FC<Task> = ({
             <div className="flex w-1/2 justify-end items-center space-x-2">
               <span className="mig-caption">Belum ditugaskan</span>
               <div className="w-5 h-5 rounded-full flex justify-center items-center overflow-hidden bg-primary100">
-                <UserOutlined rev={""} className="text-white" />
+                <UserOutlined className="text-white" />
               </div>
             </div>
           )}

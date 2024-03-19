@@ -61,7 +61,7 @@ export const AttendanceAdminTodayStatCard: FC<
 
               <div>
                 <span className="font-bold text-mono30 text-sm flex items-center">
-                  <TeamOutlined rev={""} className="mr-1" /> Orang
+                  <TeamOutlined className="mr-1" /> Orang
                 </span>
                 <span className="mig-caption text-gray-400">Hadir</span>
               </div>
@@ -75,7 +75,7 @@ export const AttendanceAdminTodayStatCard: FC<
 
               <div>
                 <span className="font-bold text-mono30 text-s flex items-center">
-                  <TeamOutlined rev={""} className="mr-1" /> Orang
+                  <TeamOutlined className="mr-1" /> Orang
                 </span>
                 <span className="mig-caption text-gray-400">Absen</span>
               </div>

@@ -603,7 +603,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 disabled
                 value={parsedTicketId}
                 style={{ width: `100%` }}
-                suffixIcon={<SearchOutlined rev={""} />}
+                suffixIcon={<SearchOutlined />}
                 placeholder="Referensi"
                 optionFilterProp="children"
               >
@@ -647,7 +647,7 @@ export const TicketDetailTaskCreateDrawer: FC<
               placeholder="Cari Lokasi"
               disabled={!isAllowedToGetCompanyList}
               showSearch
-              suffixIcon={<SearchOutlined rev={""} />}
+              suffixIcon={<SearchOutlined />}
               showArrow
               // name={`locations_id`}
               onChange={(value) => {
@@ -686,7 +686,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 placeholder="Cari Sublokasi"
                 disabled={!isAllowedToGetCompanySubLocations}
                 showSearch
-                suffixIcon={<SearchOutlined rev={""} />}
+                suffixIcon={<SearchOutlined />}
                 showArrow
                 // name={`locations_id`}
                 onChange={(value) => {
@@ -735,7 +735,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 style={{ width: `100%` }}
                 className="dontShow"
                 mode="multiple"
-                suffixIcon={<SearchOutlined rev={""} />}
+                suffixIcon={<SearchOutlined />}
                 showArrow
                 value={datacreate.inventory_ids}
                 placeholder="Cari MIG ID, Nama Model, Nama Aset"
@@ -858,7 +858,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                   style={{ width: `100%` }}
                   className="dontShow"
                   mode="multiple"
-                  suffixIcon={<SearchOutlined rev={""} />}
+                  suffixIcon={<SearchOutlined />}
                   showArrow
                   value={datacreate.assign_ids}
                   placeholder="Cari Nama Staff, Group.."
@@ -912,7 +912,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 <Select
                   style={{ width: `100%` }}
                   className="dontShow"
-                  suffixIcon={<SearchOutlined rev={""} />}
+                  suffixIcon={<SearchOutlined />}
                   showArrow
                   value={[datacreate.assign_ids]}
                   placeholder="Cari Nama Staff, Group.."

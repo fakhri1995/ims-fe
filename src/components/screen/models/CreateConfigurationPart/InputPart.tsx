@@ -110,7 +110,7 @@ export const InputPart: FC<IInputPart> = ({
                 className="cursor-pointer bg-white/0"
                 onClick={onModalCrateNewModel}
               >
-                <PlusSquareTwoTone rev={""} style={{ fontSize: `1.5rem` }} />
+                <PlusSquareTwoTone style={{ fontSize: `1.5rem` }} />
               </button>
             </div>
           </div>
@@ -123,10 +123,7 @@ export const InputPart: FC<IInputPart> = ({
             className="flex items-center mr-4 hover:text-red-500 cursor-pointer bg-white/0"
             onClick={onCloseInputPart}
           >
-            <DeleteOutlined
-              rev={""}
-              style={{ fontSize: `1.25rem` }}
-            ></DeleteOutlined>
+            <DeleteOutlined style={{ fontSize: `1.25rem` }}></DeleteOutlined>
           </button>
 
           <Button

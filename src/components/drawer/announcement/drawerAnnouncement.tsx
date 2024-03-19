@@ -192,11 +192,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
 
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
-      {uploadPictureLoading ? (
-        <LoadingOutlined rev={""} />
-      ) : (
-        <PlusOutlined rev={""} />
-      )}
+      {uploadPictureLoading ? <LoadingOutlined /> : <PlusOutlined />}
     </button>
   );
 

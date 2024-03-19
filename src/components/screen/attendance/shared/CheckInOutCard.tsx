@@ -123,10 +123,7 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
                     placement="right"
                     className="relative z-10"
                   >
-                    <InfoCircleOutlined
-                      rev={""}
-                      className="p-2 hover:cursor-help"
-                    />
+                    <InfoCircleOutlined className="p-2 hover:cursor-help" />
                   </Tooltip>
                 </div>
               )}
