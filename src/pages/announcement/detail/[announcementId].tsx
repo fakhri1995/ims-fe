@@ -123,8 +123,6 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
       }
     );
 
-  console.log({ loadingAnnouncement });
-
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
