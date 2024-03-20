@@ -16,10 +16,10 @@ const DashboardAnnouncementPage: NextPage<ProtectedPageProps> = ({
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Dashboard",
-      hrefValue: "back",
+      hrefValue: "/dashboard/home",
     },
     {
-      name: "Berita Terdahulu",
+      name: "Daftar Pesan",
     },
   ];
 
