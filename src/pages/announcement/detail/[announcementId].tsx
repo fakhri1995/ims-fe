@@ -161,7 +161,9 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
                 {dataAnnouncement?.user?.name}
               </span>
             </p>
-            {dataAnnouncement?.thumbnail_image ? (
+            {dataAnnouncement?.thumbnail_image?.link &&
+            dataAnnouncement?.thumbnail_image?.link !=
+              "staging/Announcement/mig-announce-logo.png" ? (
               <img
                 src={generateStaticAssetUrl(
                   dataAnnouncement?.thumbnail_image?.link
