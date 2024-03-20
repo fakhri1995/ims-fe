@@ -3,7 +3,6 @@ import { Form, Input, Select, Table, notification } from "antd";
 import type { DefaultOptionType } from "antd/lib/select";
 import type { ColumnsType } from "antd/lib/table";
 import { AxiosResponse } from "axios";
-import parse from "html-react-parser";
 import {
   NumberParam,
   StringParam,
@@ -214,7 +213,8 @@ export const AnnouncementTable: FC = () => {
           onRow={({ id }) => {
             return {
               className: "cursor-pointer",
-              onClick: () => router.push(`/dashboard/announcements/${id}`),
+              onClick: () =>
+                router.push(`/dashboard/announcements/detail/${id}`),
             };
           }}
         />

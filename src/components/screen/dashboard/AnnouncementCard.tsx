@@ -2,7 +2,6 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Table, notification } from "antd";
 import type { DefaultOptionType } from "antd/lib/select";
 import type { ColumnsType } from "antd/lib/table";
-import parse from "html-react-parser";
 import {
   NumberParam,
   StringParam,
@@ -83,15 +82,6 @@ export const AnnouncementCard: FC = () => {
    * States
    */
 
-  const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
-
-  const [isReadFilter, setIsReadFilter] = useState<boolean | undefined>(
-    undefined
-  );
-  const [keywordFilter, setKeywordFilter] = useState<string | undefined>(
-    undefined
-  );
-
   /**
    * Queries
    */
@@ -116,7 +106,7 @@ export const AnnouncementCard: FC = () => {
       },
     }
   );
-  console.log({ dataAnnouncements });
+
   return (
     <section className="flex flex-col px-5" id="mainWrapper">
       <div className="mig-platform grid grid-cols-1 px-5 ">
@@ -132,24 +122,47 @@ export const AnnouncementCard: FC = () => {
             Lihat Berita Terdahulu
           </button>
         </div>
-        <div className="grid md:grid-cols-12 md:grid-rows-2 gap-6 lg:gap-10 ">
+        <div className="grid lg:grid-cols-12 lg:grid-rows-2 gap-6">
           {dataAnnouncements?.length > 0 && (
-            <div className="md:row-span-2 md:col-span-7 flex flex-col md:flex-row gap-6 md:items-center">
+            <div
+              onClick={() =>
+                router.push(
+                  "/dashboard/announcements/detail/" + dataAnnouncements[0]?.id
+                )
+              }
+              className="lg:row-span-2 lg:col-span-8 flex flex-col lg:flex-row gap-6 lg:items-center 
+              cursor-pointer hover:opacity-80"
+            >
               {/* Thumbnail */}
-              <img
-                // src="/mig.png"
-                src={generateStaticAssetUrl(
-                  dataAnnouncements[0]?.thumbnail_image?.link
-                )}
-                className="md:h-full md:w-1/3 bg-cover object-cover rounded"
-              />
+              {dataAnnouncements[0]?.thumbnail_image?.link &&
+              dataAnnouncements[0]?.thumbnail_image?.link !=
+                "staging/Announcement/mig-announce-logo.png" ? (
+                <div className="lg:w-2/5 h-60 lg:h-full">
+                  <img
+                    src={generateStaticAssetUrl(
+                      dataAnnouncements[0]?.thumbnail_image?.link
+                    )}
+                    className="w-full h-full bg-cover object-cover rounded"
+                  />
+                </div>
+              ) : (
+                <div
+                  className="lg:w-2/5 h-60 lg:h-full bg-backdrop rounded flex flex-col items-center 
+                  justify-center py-10 px-6"
+                >
+                  <img
+                    src="/mig.png"
+                    style={{ width: "10rem", mixBlendMode: "luminosity" }}
+                  />
+                </div>
+              )}
 
               {/* Content */}
-              <div className="md:h-full md:w-2/3 flex flex-col justify-between">
+              <div className="lg:h-full lg:w-2/3 flex flex-col justify-between">
                 <p className="mb-2 mig-caption--medium">
                   by {dataAnnouncements[0]?.user?.name}
                 </p>
-                <div className="mb-2 md:w-5/6">
+                <div className="mb-2 lg:w-5/6">
                   <h1 className="mb-2 font-bold text-lg">
                     {dataAnnouncements[0]?.title}
                   </h1>
@@ -169,16 +182,37 @@ export const AnnouncementCard: FC = () => {
 
           {dataAnnouncements?.length > 1 &&
             dataAnnouncements?.slice(1)?.map((item, idx) => (
-              <div className="flex flex-col md:flex-row gap-6 md:col-span-5 md:items-center ">
+              <div
+                onClick={() =>
+                  router.push("/dashboard/announcements/detail/" + item?.id)
+                }
+                className="flex flex-col lg:flex-row gap-6 lg:col-span-4 lg:items-center 
+                cursor-pointer hover:opacity-80"
+              >
                 {/* Thumbnail */}
-                <img
-                  // src="/mig.png"
-                  src={generateStaticAssetUrl(item?.thumbnail_image?.link)}
-                  className="md:h-full md:w-5/12 bg-cover object-cover rounded"
-                />
+                {item?.thumbnail_image?.link &&
+                item?.thumbnail_image?.link !=
+                  "staging/Announcement/mig-announce-logo.png" ? (
+                  <div className="lg:w-36 h-60 lg:h-36 rounded">
+                    <img
+                      src={generateStaticAssetUrl(item?.thumbnail_image?.link)}
+                      className="w-full h-full bg-cover object-cover rounded"
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="lg:w-36 h-60 lg:h-36 bg-backdrop rounded flex flex-col items-center 
+                    justify-center py-10 px-6"
+                  >
+                    <img
+                      src="/mig.png"
+                      style={{ width: "10rem", mixBlendMode: "luminosity" }}
+                    />
+                  </div>
+                )}
 
                 {/* Content */}
-                <div className="md:h-full md:w-7/12 flex flex-col justify-between">
+                <div className="lg:h-full lg:w-7/12 flex flex-col justify-between">
                   <p className="mb-2 mig-caption--medium">
                     by {item?.user?.name}
                   </p>
