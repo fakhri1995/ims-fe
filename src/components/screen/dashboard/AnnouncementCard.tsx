@@ -1,7 +1,4 @@
-import { SearchOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Table, notification } from "antd";
-import type { DefaultOptionType } from "antd/lib/select";
-import type { ColumnsType } from "antd/lib/table";
 import {
   NumberParam,
   StringParam,
@@ -12,10 +9,6 @@ import { useRouter } from "next/router";
 import { FC, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 
-import ButtonSys from "components/button";
-import DrawerAnnouncement from "components/drawer/announcement/drawerAnnouncement";
-import { AccessControl } from "components/features/AccessControl";
-import { PlusIconSvg } from "components/icon";
 import { NewsIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
@@ -23,29 +16,10 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
-import {
-  ANNOUNCEMENTS_GET,
-  ANNOUNCEMENT_ADD,
-  ANNOUNCEMENT_DELETE,
-  ANNOUNCEMENT_EMPLOYEE_GET,
-  ANNOUNCEMENT_MORE_GET,
-  ANNOUNCEMENT_UPDATE,
-} from "lib/features";
-import {
-  generateNotificationRedirectUrl,
-  generateStaticAssetUrl,
-  stripTags,
-} from "lib/helper";
+import { ANNOUNCEMENTS_GET, ANNOUNCEMENT_EMPLOYEE_GET } from "lib/features";
+import { generateStaticAssetUrl, stripTags } from "lib/helper";
 
-import { AnnouncementData, AnnouncementService } from "apis/announcement";
-import {
-  NotificationData,
-  NotificationServiceQueryKeys,
-  useGetRecentNotifications,
-  usePaginatedNotifications,
-  useReadAllNotifications,
-  useReadNotification,
-} from "apis/notification";
+import { AnnouncementService } from "apis/announcement";
 
 type FormType = {
   keyword?: string;
@@ -66,21 +40,14 @@ export const AnnouncementCard: FC = () => {
   const isAllowedToGetAnnouncementEmployee = hasPermission(
     ANNOUNCEMENT_EMPLOYEE_GET
   );
-  const isAllowedToGetAnnouncementMore = hasPermission(ANNOUNCEMENT_MORE_GET);
 
   const router = useRouter();
-  const queryClient = useQueryClient();
   const axiosClient = useAxiosClient();
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
     keyword: withDefault(StringParam, null),
   });
-  const [form] = Form.useForm<FormType>();
-
-  /**
-   * States
-   */
 
   /**
    * Queries
@@ -116,7 +83,7 @@ export const AnnouncementCard: FC = () => {
             <p>Kabar Terbaru</p>
           </div>
           <button
-            onClick={() => router.push("/dashboard/announcements")}
+            onClick={() => router.push("/dashboard/announcement")}
             className="mig-caption--bold bg-transparent text-primary100"
           >
             Lihat Berita Terdahulu
@@ -127,7 +94,7 @@ export const AnnouncementCard: FC = () => {
             <div
               onClick={() =>
                 router.push(
-                  "/dashboard/announcements/detail/" + dataAnnouncements[0]?.id
+                  "/dashboard/announcement/detail/" + dataAnnouncements[0]?.id
                 )
               }
               className="lg:row-span-2 lg:col-span-8 flex flex-col lg:flex-row gap-6 lg:items-center 
@@ -183,36 +150,37 @@ export const AnnouncementCard: FC = () => {
           {dataAnnouncements?.length > 1 &&
             dataAnnouncements?.slice(1)?.map((item, idx) => (
               <div
+                key={item?.id}
                 onClick={() =>
-                  router.push("/dashboard/announcements/detail/" + item?.id)
+                  router.push("/dashboard/announcement/detail/" + item?.id)
                 }
                 className="flex flex-col lg:flex-row gap-6 lg:col-span-4 lg:items-center 
                 cursor-pointer hover:opacity-80"
               >
                 {/* Thumbnail */}
-                {item?.thumbnail_image?.link &&
-                item?.thumbnail_image?.link !=
-                  "staging/Announcement/mig-announce-logo.png" ? (
-                  <div className="lg:w-36 h-60 lg:h-36 rounded">
+                <div className="lg:w-96 h-60 lg:h-full ">
+                  {item?.thumbnail_image?.link &&
+                  item?.thumbnail_image?.link !=
+                    "staging/Announcement/mig-announce-logo.png" ? (
                     <img
                       src={generateStaticAssetUrl(item?.thumbnail_image?.link)}
                       className="w-full h-full bg-cover object-cover rounded"
                     />
-                  </div>
-                ) : (
-                  <div
-                    className="lg:w-36 h-60 lg:h-36 bg-backdrop rounded flex flex-col items-center 
-                    justify-center py-10 px-6"
-                  >
-                    <img
-                      src="/mig.png"
-                      style={{ width: "10rem", mixBlendMode: "luminosity" }}
-                    />
-                  </div>
-                )}
+                  ) : (
+                    <div
+                      className="bg-backdrop rounded flex flex-col items-center 
+                    justify-center py-10 px-6 h-full"
+                    >
+                      <img
+                        src="/mig.png"
+                        style={{ width: "10rem", mixBlendMode: "luminosity" }}
+                      />
+                    </div>
+                  )}
+                </div>
 
                 {/* Content */}
-                <div className="lg:h-full lg:w-7/12 flex flex-col justify-between">
+                <div className="lg:h-full flex flex-col justify-between">
                   <p className="mb-2 mig-caption--medium">
                     by {item?.user?.name}
                   </p>

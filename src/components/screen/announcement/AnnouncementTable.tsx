@@ -1,6 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Table, notification } from "antd";
-import type { DefaultOptionType } from "antd/lib/select";
 import type { ColumnsType } from "antd/lib/table";
 import { AxiosResponse } from "axios";
 import {
@@ -36,25 +35,18 @@ import {
   AnnouncementService,
   GetAnnouncementsSucceedResponse,
 } from "apis/announcement";
-import {
-  NotificationData,
-  NotificationServiceQueryKeys,
-  useGetRecentNotifications,
-  usePaginatedNotifications,
-  useReadAllNotifications,
-  useReadNotification,
-} from "apis/notification";
-
-import SearchIcon from "assets/vectors/icon-magnifier.svg";
-import OpenedMailIcon from "assets/vectors/icon-mail-opened.svg";
-import MailIcon from "assets/vectors/icon-mail.svg";
 
 type FormType = {
   keyword?: string;
   is_read?: number;
 };
+interface IAnnouncementTable {
+  isAdminPage: boolean;
+}
 
-export const AnnouncementTable: FC = () => {
+export const AnnouncementTable: FC<IAnnouncementTable> = ({
+  isAdminPage = false,
+}) => {
   /**
    * Dependencies
    */
@@ -66,19 +58,14 @@ export const AnnouncementTable: FC = () => {
   }
 
   const isAllowedToGetAnnouncements = hasPermission(ANNOUNCEMENTS_GET);
-  const isAllowedToAddAnnouncement = hasPermission(ANNOUNCEMENT_ADD);
-  const isAllowedToUpdateAnnouncement = hasPermission(ANNOUNCEMENT_UPDATE);
-  const isAllowedToDeleteAnnouncement = hasPermission(ANNOUNCEMENT_DELETE);
 
   const router = useRouter();
-  const queryClient = useQueryClient();
   const axiosClient = useAxiosClient();
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
     keyword: withDefault(StringParam, null),
   });
-  const [form] = Form.useForm<FormType>();
 
   /**
    * States
@@ -134,7 +121,7 @@ export const AnnouncementTable: FC = () => {
       dataIndex: "title",
       width: "200px",
       render: (title) => {
-        return <h1 className="font-bold">{title?.slice(0, 120)}</h1>;
+        return <h1 className="font-bold">{title}</h1>;
       },
     },
     {
@@ -191,6 +178,14 @@ export const AnnouncementTable: FC = () => {
             }}
             disabled={!isAllowedToGetAnnouncements}
           />
+          {isAdminPage && (
+            <ButtonSys type="primary" onClick={() => setShowCreateDrawer(true)}>
+              <div className="flex items-center space-x-2">
+                <PlusIconSvg />
+                <span>Buat Pesan</span>
+              </div>
+            </ButtonSys>
+          )}
         </div>
       </section>
 
@@ -213,19 +208,20 @@ export const AnnouncementTable: FC = () => {
           onRow={({ id }) => {
             return {
               className: "cursor-pointer",
-              onClick: () =>
-                router.push(`/dashboard/announcements/detail/${id}`),
+              onClick: () => router.push(`announcement/detail/${id}`),
             };
           }}
         />
       </div>
 
-      <AccessControl hasPermission={ANNOUNCEMENT_ADD}>
-        <DrawerAnnouncement
-          visible={isShowCreateDrawer}
-          onvisible={setShowCreateDrawer}
-        />
-      </AccessControl>
+      {isAdminPage && (
+        <AccessControl hasPermission={ANNOUNCEMENT_ADD}>
+          <DrawerAnnouncement
+            visible={isShowCreateDrawer}
+            onvisible={setShowCreateDrawer}
+          />
+        </AccessControl>
+      )}
     </div>
   );
 };
