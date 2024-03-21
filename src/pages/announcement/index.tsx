@@ -1,8 +1,7 @@
 import { GetServerSideProps, NextPage } from "next";
 
 import LayoutDashboard from "components/layout-dashboardNew";
-import { Announcement } from "components/screen/announcement";
-import { RiwayatNotifikasiSection } from "components/screen/notifications";
+import { AnnouncementTable } from "components/screen/announcement";
 
 import httpcookie from "cookie";
 
@@ -27,7 +26,7 @@ const AnnouncementPage: NextPage<ProtectedPageProps> = ({
     >
       <div className="px-5">
         <div className="grid grid-cols-1">
-          <Announcement />
+          <AnnouncementTable isAdminPage={true} />
         </div>
       </div>
     </LayoutDashboard>
