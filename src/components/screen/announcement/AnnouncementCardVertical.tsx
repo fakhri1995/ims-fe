@@ -16,7 +16,6 @@ export const AnnouncementCardVertical: FC<IAnnouncementCardVertical> = ({
   /**
    * Dependencies
    */
-  const router = useRouter();
 
   return (
     <div className="flex flex-col gap-6 cursor-pointer hover:opacity-80 bg-white pb-4 rounded-md shadow-md">

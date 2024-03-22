@@ -25,8 +25,7 @@ import { formatDateToLocale } from "lib/date-utils";
 import {
   ANNOUNCEMENTS_GET,
   ANNOUNCEMENT_ADD,
-  ANNOUNCEMENT_DELETE,
-  ANNOUNCEMENT_UPDATE,
+  ANNOUNCEMENT_GET,
 } from "lib/features";
 import { generateNotificationRedirectUrl, stripTags } from "lib/helper";
 
@@ -36,10 +35,6 @@ import {
   GetAnnouncementsSucceedResponse,
 } from "apis/announcement";
 
-type FormType = {
-  keyword?: string;
-  is_read?: number;
-};
 interface IAnnouncementTable {
   isAdminPage: boolean;
 }
@@ -58,6 +53,8 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
   }
 
   const isAllowedToGetAnnouncements = hasPermission(ANNOUNCEMENTS_GET);
+  const isAllowedToAddAnnouncement = hasPermission(ANNOUNCEMENT_ADD);
+  const isAllowedToGetAnnouncement = hasPermission(ANNOUNCEMENT_GET);
 
   const router = useRouter();
   const axiosClient = useAxiosClient();
@@ -179,7 +176,11 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
             disabled={!isAllowedToGetAnnouncements}
           />
           {isAdminPage && (
-            <ButtonSys type="primary" onClick={() => setShowCreateDrawer(true)}>
+            <ButtonSys
+              type="primary"
+              onClick={() => setShowCreateDrawer(true)}
+              disabled={!isAllowedToAddAnnouncement}
+            >
               <div className="flex items-center space-x-2">
                 <PlusIconSvg />
                 <span>Buat Pesan</span>
@@ -208,7 +209,9 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           onRow={({ id }) => {
             return {
               className: "cursor-pointer",
-              onClick: () => router.push(`announcement/detail/${id}`),
+              onClick: () =>
+                isAllowedToGetAnnouncement &&
+                router.push(`announcement/detail/${id}`),
             };
           }}
         />

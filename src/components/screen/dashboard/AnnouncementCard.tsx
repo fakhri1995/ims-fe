@@ -16,15 +16,14 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
-import { ANNOUNCEMENTS_GET, ANNOUNCEMENT_EMPLOYEE_GET } from "lib/features";
+import {
+  ANNOUNCEMENTS_GET,
+  ANNOUNCEMENT_EMPLOYEE_GET,
+  ANNOUNCEMENT_GET,
+} from "lib/features";
 import { generateStaticAssetUrl, stripTags } from "lib/helper";
 
 import { AnnouncementService } from "apis/announcement";
-
-type FormType = {
-  keyword?: string;
-  is_read?: number;
-};
 
 export const AnnouncementCard: FC = () => {
   /**
@@ -40,6 +39,8 @@ export const AnnouncementCard: FC = () => {
   const isAllowedToGetAnnouncementEmployee = hasPermission(
     ANNOUNCEMENT_EMPLOYEE_GET
   );
+  const isAllowedToGetAnnouncements = hasPermission(ANNOUNCEMENTS_GET);
+  const isAllowedToGetAnnouncement = hasPermission(ANNOUNCEMENT_GET);
 
   const router = useRouter();
   const axiosClient = useAxiosClient();
@@ -84,7 +85,8 @@ export const AnnouncementCard: FC = () => {
           </div>
           <button
             onClick={() => router.push("/dashboard/announcement")}
-            className="mig-caption--bold bg-transparent text-primary100"
+            disabled={!isAllowedToGetAnnouncements}
+            className="mig-caption--bold bg-transparent text-primary100 hover:opacity-80"
           >
             Lihat Berita Terdahulu
           </button>
@@ -93,6 +95,7 @@ export const AnnouncementCard: FC = () => {
           {dataAnnouncements?.length > 0 && (
             <div
               onClick={() =>
+                isAllowedToGetAnnouncement &&
                 router.push(
                   "/dashboard/announcement/detail/" + dataAnnouncements[0]?.id
                 )
