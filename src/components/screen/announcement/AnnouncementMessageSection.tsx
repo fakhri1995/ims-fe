@@ -124,6 +124,7 @@ export const AnnouncementMessageSection: FC<IAnnouncementMessageSection> = ({
             onClick={() => setShowDeleteModal(true)}
             type={"default"}
             color="danger"
+            disabled={!isAllowedToDeleteAnnouncement}
           >
             <div className="flex gap-2 items-center">
               <DeleteOutlined color="#BF4A40" />

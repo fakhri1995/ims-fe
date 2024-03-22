@@ -32,10 +32,9 @@ import TaskCard from "../../components/screen/client/TaskCard";
 import { H1, H2, Label, Text } from "../../components/typography";
 import { ROLE_SUPER_ADMIN } from "../../lib/constants";
 import {
+  ANNOUNCEMENT_EMPLOYEE_GET,
   PROJECT_TASKS_COUNT_CLIENT_GET,
-  SIDEBAR_CLIENT_ATTENDANCE,
   SIDEBAR_CLIENT_DASHBOARD,
-  TASK_STATUS_LIST_GET,
 } from "../../lib/features";
 import {
   ArcElement,
@@ -66,7 +65,6 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
   const pageBreadcrumbValue = [
     { name: "Dashboard Kehadiran " + dataProfile.data.company.name },
   ];
-  const isAllowedToGetStatusTaskList = hasPermission(TASK_STATUS_LIST_GET);
 
   return (
     <LayoutDashboard
@@ -80,49 +78,21 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
       }
     >
       {/* <div className="grid grid-cols-3">
-                <div className="w-auto h-auto border rounded-xl flex flex-col mx-3">
-                    <div className="p-3 flex flex-col border-b">
-                        <h1 className="font-bold text-xl mb-0">Total Inventories</h1>
-                        <p className="text-sm text-gray-500 mb-0">Total inventories specifically:</p>
-                    </div>
-                    <div className="flex-col flex">
-                        <div className="text-2xl px-5 py-2">
-                            Total: 100 units
-                        </div>
-                        <div className="text-2xl px-5 py-2">
-                            Rented: 20 units
-                        </div>
-                    </div>
-                </div>
-                <div className="w-auto h-auto border rounded-xl flex flex-col mx-3">
-                    <div className="p-3 flex flex-col border-b">
-                        <h1 className="font-bold text-xl mb-0">Total Inventories</h1>
-                        <p className="text-sm text-gray-500 mb-0">Total inventories specifically:</p>
-                    </div>
-                    <div className="flex-col flex">
-                        <div className="text-2xl px-5 py-2">
-                            Total: 100 units
-                        </div>
-                        <div className="text-2xl px-5 py-2">
-                            Rented: 20 units
-                        </div>
-                    </div>
-                </div>
-                <div className="w-auto h-auto border rounded-xl flex flex-col mx-3">
-                    <div className="p-3 flex flex-col border-b">
-                        <h1 className="font-bold text-xl mb-0">Total Inventories</h1>
-                        <p className="text-sm text-gray-500 mb-0">Total inventories specifically:</p>
-                    </div>
-                    <div className="flex-col flex">
-                        <div className="text-2xl px-5 py-2">
-                            Total: 100 units
-                        </div>
-                        <div className="text-2xl px-5 py-2">
-                            Rented: 20 units
-                        </div>
-                    </div>
-                </div>
-            </div> */}
+        <div className="w-auto h-auto border rounded-xl flex flex-col mx-3">
+          <div className="p-3 flex flex-col border-b">
+            <h1 className="font-bold text-xl mb-0">Total Inventories</h1>
+            <p className="text-sm text-gray-500 mb-0">Total inventories specifically:</p>
+          </div>
+          <div className="flex-col flex">
+            <div className="text-2xl px-5 py-2">
+              Total: 100 units
+            </div>
+            <div className="text-2xl px-5 py-2">
+              Rented: 20 units
+            </div>
+          </div>
+        </div>
+      </div> */}
       {hasPermission(SIDEBAR_CLIENT_DASHBOARD) && !hasRole(ROLE_SUPER_ADMIN) ? (
         <div>
           <div className="grid grid-cols-1 md:grid-cols-10 px-5 gap-x-3 gap-y-6">
@@ -142,9 +112,10 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
             companyId={dataProfile.data.company.id.toString()}
           />
         </div>
-      ) : (
+      ) : hasPermission(ANNOUNCEMENT_EMPLOYEE_GET) ? (
         <AnnouncementCard />
-        // <h1 className=" md:px-0">Selamat datang di dashboard</h1>
+      ) : (
+        <h1 className=" md:px-0">Selamat datang di dashboard</h1>
       )}
     </LayoutDashboard>
   );

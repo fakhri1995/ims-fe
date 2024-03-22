@@ -47,7 +47,7 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Manajemen Pesan",
-      hrefValue: "back",
+      hrefValue: "/announcement",
     },
     {
       name: "Detail Pesan",
