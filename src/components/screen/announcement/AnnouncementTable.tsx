@@ -127,8 +127,13 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
       dataIndex: "text",
       width: "500px",
       render: (text) => {
-        const slicedText = stripTags(text).slice(0, 120);
-        return <p>{slicedText}...</p>;
+        const MAX_LENGTH = 120;
+        const slicedText = stripTags(text).slice(0, MAX_LENGTH);
+        return (
+          <p>
+            {slicedText?.length < MAX_LENGTH ? slicedText : `${slicedText}...`}
+          </p>
+        );
       },
     },
     {

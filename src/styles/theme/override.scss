@@ -83,6 +83,23 @@ ol {
   mr-3;
 }
 
+// .autoHeight .ql-container {
+//   min-height: 100%;
+//   height: auto !important;
+// }
+
+// .autoHeight .ql-editor {
+//   min-height: 100%;
+//   height: auto !important;
+// }
+
+// .autoHeight .ql-editor:focus {
+//   border-color: transparent;
+//   outline: 0;
+//   -webkit-box-shadow: 0 0 0 1px transparent;
+//   box-shadow: 0 0 0 1px transparent;
+// }
+
 /* Spin */
 .ant-spin-dot-item,
 .ant-spin-text {
@@ -720,9 +737,9 @@ ol {
   }
 }
 
-.ant-upload-list:hover {
-  pointer-events: none;
-}
+// .ant-upload-list:hover {
+//   pointer-events: none;
+// }
 .ant-upload-list-item-info:hover {
   pointer-events: none;
 }
