@@ -224,6 +224,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
           <p className="mb-6 text-red-500 text-xs italic">
             *Informasi ini harus diisi
           </p>
+
           <Form layout="vertical" form={instanceForm} id="formPesan">
             <div>
               <Form.Item
@@ -270,7 +271,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                     {imageUrl ? (
                       <img
                         src={imageUrl}
-                        alt="avatar"
+                        alt="thumbnail"
                         style={{ width: "100%" }}
                       />
                     ) : (
@@ -291,11 +292,10 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                 ]}
                 className="col-span-2"
               >
-                {/* <div> */}
                 <ReactQuill
                   theme="snow"
                   // value={dataAnnouncement.text}
-                  className="h-44 pb-10"
+                  className="h-44 pb-10 autoHeight"
                   onChange={(value) => {
                     setDataAnnouncement((prev) => ({
                       ...prev,
@@ -303,7 +303,6 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                     }));
                   }}
                 />
-                {/* </div> */}
               </Form.Item>
 
               <Form.Item
