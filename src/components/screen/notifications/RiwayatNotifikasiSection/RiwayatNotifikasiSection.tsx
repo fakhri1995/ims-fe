@@ -248,6 +248,7 @@ export const RiwayatNotifikasiSection: FC = () => {
 
       {/* Table */}
       <Table<NotificationData>
+        rowKey={(record) => record.id}
         dataSource={tableDataSource}
         loading={notificationsListFetching}
         columns={tableColumns}
