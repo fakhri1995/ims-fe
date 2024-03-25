@@ -100,35 +100,35 @@ export const AnnouncementCard: FC = () => {
                   "/dashboard/announcement/detail/" + dataAnnouncements[0]?.id
                 )
               }
-              className="lg:row-span-2 lg:col-span-8 flex flex-col lg:flex-row gap-6 lg:items-center 
+              className="lg:row-span-2 lg:col-span-8 flex flex-row gap-6 lg:items-center 
               cursor-pointer hover:opacity-80"
             >
               {/* Thumbnail */}
-              {dataAnnouncements[0]?.thumbnail_image?.link &&
-              dataAnnouncements[0]?.thumbnail_image?.link !=
-                "staging/Announcement/mig-announce-logo.png" ? (
-                <div className="lg:w-2/5 h-60 lg:h-full">
+              <div className="w-6/12 h-60 lg:h-full">
+                {dataAnnouncements[0]?.thumbnail_image?.link &&
+                dataAnnouncements[0]?.thumbnail_image?.link !=
+                  "staging/Announcement/mig-announce-logo.png" ? (
                   <img
                     src={generateStaticAssetUrl(
                       dataAnnouncements[0]?.thumbnail_image?.link
                     )}
                     className="w-full h-full bg-cover object-cover rounded"
                   />
-                </div>
-              ) : (
-                <div
-                  className="lg:w-2/5 h-60 lg:h-full bg-backdrop rounded flex flex-col items-center 
+                ) : (
+                  <div
+                    className="w-full h-full bg-backdrop rounded flex flex-col items-center 
                   justify-center py-10 px-6"
-                >
-                  <img
-                    src="/mig.png"
-                    style={{ width: "10rem", mixBlendMode: "luminosity" }}
-                  />
-                </div>
-              )}
+                  >
+                    <img
+                      src="/mig.png"
+                      style={{ width: "10rem", mixBlendMode: "luminosity" }}
+                    />
+                  </div>
+                )}
+              </div>
 
               {/* Content */}
-              <div className="lg:h-full lg:w-2/3 flex flex-col justify-between">
+              <div className="lg:h-full w-7/12 flex flex-col justify-between">
                 <p className="mb-2 mig-caption--medium">
                   by {dataAnnouncements[0]?.user?.name}
                 </p>
@@ -157,11 +157,11 @@ export const AnnouncementCard: FC = () => {
                 onClick={() =>
                   router.push("/dashboard/announcement/detail/" + item?.id)
                 }
-                className="flex flex-col lg:flex-row gap-6 lg:col-span-4 lg:items-center 
+                className="flex flex-row gap-6 lg:col-span-4 lg:items-center 
                 cursor-pointer hover:opacity-80"
               >
                 {/* Thumbnail */}
-                <div className="lg:w-96 h-60 lg:h-full ">
+                <div className="w-96 h-60 lg:h-full ">
                   {item?.thumbnail_image?.link &&
                   item?.thumbnail_image?.link !=
                     "staging/Announcement/mig-announce-logo.png" ? (
@@ -183,7 +183,7 @@ export const AnnouncementCard: FC = () => {
                 </div>
 
                 {/* Content */}
-                <div className="lg:h-full flex flex-col justify-between">
+                <div className="lg:w-96 lg:h-full flex flex-col justify-between">
                   <p className="mb-2 mig-caption--medium">
                     by {item?.user?.name}
                   </p>
