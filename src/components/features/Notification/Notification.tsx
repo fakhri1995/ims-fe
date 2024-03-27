@@ -346,7 +346,7 @@ const NotificationItem: FC<INotificationItem> = ({
             )}
             {imageType === "ticket" && <TicketIcon className={iconClassName} />}
             {imageType === "announcement" && (
-              <MessageIconSvg className={iconClassName} />
+              <MessageIconSvg className={iconClassName} color="#00589F" />
             )}
           </div>
         </div>

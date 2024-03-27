@@ -141,7 +141,7 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
       title: "Penulis",
       dataIndex: "user",
       render: (user) => {
-        return <p>{user?.name}</p>;
+        return <p>{isAdminPage ? user?.name : user?.position}</p>;
       },
     },
     {

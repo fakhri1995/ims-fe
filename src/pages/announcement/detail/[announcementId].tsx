@@ -119,6 +119,7 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
       <div className="px-5">
         <AnnouncementMessageSection
           announcementId={announcementId}
+          isAdminPage={true}
           setShowDeleteModal={setShowDeleteModal}
         />
       </div>

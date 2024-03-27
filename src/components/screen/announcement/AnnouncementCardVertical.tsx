@@ -43,7 +43,7 @@ export const AnnouncementCardVertical: FC<IAnnouncementCardVertical> = ({
 
       {/* Content */}
       <div className=" flex flex-col justify-between px-4">
-        <p className="mb-2 mig-caption--medium">by {data?.user?.name}</p>
+        <p className="mb-2 mig-caption--medium">by {data?.user?.position}</p>
         <h1 className="mb-2 font-bold text-lg">{data?.title}</h1>
         <p className="">
           {formatDateToLocale(
