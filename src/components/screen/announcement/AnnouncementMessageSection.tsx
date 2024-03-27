@@ -25,11 +25,13 @@ import { AnnouncementData, AnnouncementService } from "apis/announcement";
 
 interface IAnnouncementMessageSection {
   announcementId: number;
+  isAdminPage?: boolean;
   setShowDeleteModal?: Dispatch<SetStateAction<boolean>>;
 }
 
 export const AnnouncementMessageSection: FC<IAnnouncementMessageSection> = ({
   announcementId,
+  isAdminPage,
   setShowDeleteModal,
 }) => {
   /**
@@ -145,7 +147,11 @@ export const AnnouncementMessageSection: FC<IAnnouncementMessageSection> = ({
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <p className="">
           <span className="text-mono50">Oleh: </span>
-          <span className="font-medium">{dataAnnouncement?.user?.name}</span>
+          <span className="font-medium">
+            {isAdminPage
+              ? dataAnnouncement?.user?.name
+              : dataAnnouncement?.user?.position}
+          </span>
         </p>
         <p className="text-mono50">
           {formatDateToLocale(

@@ -130,14 +130,17 @@ export const AnnouncementCard: FC = () => {
               {/* Content */}
               <div className="lg:h-full w-7/12 flex flex-col justify-between">
                 <p className="mb-2 mig-caption--medium">
-                  by {dataAnnouncements[0]?.user?.name}
+                  by {dataAnnouncements[0]?.user?.position}
                 </p>
                 <div className="mb-2 lg:w-5/6">
                   <h1 className="mb-2 font-bold text-lg">
                     {dataAnnouncements[0]?.title}
                   </h1>
                   <p className="">
-                    {stripTags(dataAnnouncements[0]?.text).slice(0, 200)}...
+                    {stripTags(dataAnnouncements[0]?.text)?.length > 200
+                      ? stripTags(dataAnnouncements[0]?.text).slice(0, 200) +
+                        "..."
+                      : stripTags(dataAnnouncements[0]?.text)}
                   </p>
                 </div>
                 <p className="">
@@ -185,7 +188,7 @@ export const AnnouncementCard: FC = () => {
                 {/* Content */}
                 <div className="lg:w-96 lg:h-full flex flex-col justify-between">
                   <p className="mb-2 mig-caption--medium">
-                    by {item?.user?.name}
+                    by {item?.user?.position}
                   </p>
                   <h1 className="mb-2 font-bold text-lg">{item?.title}</h1>
                   <p className="">
