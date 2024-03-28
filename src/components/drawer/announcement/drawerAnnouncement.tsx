@@ -18,6 +18,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
+import RichText from "components/migwebsite/RichText";
+
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -40,7 +42,7 @@ import DrawerCore from "../drawerCore";
 // Quill library for text editor has to be imported dynamically
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
-const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
+const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
   /**
    * Dependencies
    */
@@ -66,7 +68,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
       title: "",
       text: "",
       publish_type: "now",
-      publish_at: "",
+      publish_at: null,
     });
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
@@ -101,7 +103,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
       title: "",
       text: "",
       publish_type: "now",
-      publish_at: "",
+      publish_at: null,
     });
     instanceForm.resetFields();
     setFileList([]);
@@ -197,47 +199,6 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
       {uploadPictureLoading ? <LoadingOutlined /> : <PlusOutlined />}
     </button>
   );
-
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-      ["bold", "italic", "underline", "strike", { align: [] }],
-      [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
-      [{ script: "sub" }, { script: "super" }], // superscript/subscript
-      [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-
-      [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-      ["link", "image", "formula"],
-
-      ["clean"],
-    ],
-  };
-
-  const formats = [
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-
-    "link",
-    "image",
-    "formula",
-
-    "list",
-    "bullet",
-    "oredered",
-    "check",
-    "script",
-    "sub",
-    "super",
-    "indent",
-
-    "header",
-    "color",
-    "background",
-    "align",
-  ];
 
   // console.log({ dataAnnouncement });
   return (
@@ -336,12 +297,9 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                 ]}
                 className="col-span-2"
               >
-                <ReactQuill
-                  theme="snow"
-                  // value={dataAnnouncement.text}
-                  modules={modules}
-                  formats={formats}
-                  className="autoHeight"
+                <RichText
+                  initProps={initProps}
+                  placeholder={"Isi Pesan..."}
                   onChange={(value) => {
                     setDataAnnouncement((prev) => ({
                       ...prev,
@@ -371,6 +329,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                           ...prev,
                           publish_type: "now",
                         }));
+                        instanceForm.resetFields(["publish_at"]);
                       }
                     }}
                   >
@@ -386,6 +345,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                         setDataAnnouncement((prev) => ({
                           ...prev,
                           publish_type: "pending",
+                          publish_at: null,
                         }));
                       }
                     }}
@@ -415,20 +375,20 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                       picker="date"
                       showTime
                       className="w-full"
-                      format={"DD MMMM YYYY, HH:mm"}
+                      format={"DD MMMM YYYY HH:mm"}
                       placeholder={"Pilih Tanggal & Waktu Kirim"}
-                      // value={
-                      //   moment(
-                      //     dataAnnouncement.publish_at,
-                      //     "YYYY-MM-DD HH:mm:ss"
-                      //   ).isValid()
-                      //     ? moment(dataAnnouncement.publish_at)
-                      //     : null
-                      // }
-                      onChange={(values) => {
-                        // console.log({ values });
-                        let formattedDate = moment(values).isValid()
-                          ? moment(values).format("YYYY-MM-DD HH:mm:ss")
+                      value={
+                        moment(
+                          dataAnnouncement.publish_at,
+                          "YYYY-MM-DD HH:mm:ss"
+                        ).isValid()
+                          ? moment(dataAnnouncement.publish_at)
+                          : null
+                      }
+                      onChange={(value) => {
+                        // console.log({ value });
+                        let formattedDate = moment(value).isValid()
+                          ? moment(value).format("YYYY-MM-DD HH:mm:ss")
                           : null;
 
                         setDataAnnouncement((prev) => ({

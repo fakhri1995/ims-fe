@@ -26,7 +26,7 @@ const AnnouncementPage: NextPage<ProtectedPageProps> = ({
     >
       <div className="px-5">
         <div className="grid grid-cols-1">
-          <AnnouncementTable isAdminPage={true} />
+          <AnnouncementTable isAdminPage={true} initProps={token} />
         </div>
       </div>
     </LayoutDashboard>
