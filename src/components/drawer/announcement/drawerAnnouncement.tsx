@@ -198,6 +198,47 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
     </button>
   );
 
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+      ["bold", "italic", "underline", "strike", { align: [] }],
+      [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+      [{ script: "sub" }, { script: "super" }], // superscript/subscript
+      [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+
+      [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+      ["link", "image", "formula"],
+
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+
+    "link",
+    "image",
+    "formula",
+
+    "list",
+    "bullet",
+    "oredered",
+    "check",
+    "script",
+    "sub",
+    "super",
+    "indent",
+
+    "header",
+    "color",
+    "background",
+    "align",
+  ];
+
   // console.log({ dataAnnouncement });
   return (
     <DrawerCore
@@ -298,7 +339,9 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                 <ReactQuill
                   theme="snow"
                   // value={dataAnnouncement.text}
-                  className="h-44 pb-10 autoHeight"
+                  modules={modules}
+                  formats={formats}
+                  className="autoHeight"
                   onChange={(value) => {
                     setDataAnnouncement((prev) => ({
                       ...prev,
@@ -374,14 +417,14 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                       className="w-full"
                       format={"DD MMMM YYYY, HH:mm"}
                       placeholder={"Pilih Tanggal & Waktu Kirim"}
-                      value={
-                        moment(
-                          dataAnnouncement.publish_at,
-                          "DD MMMM YYYY, HH:mm"
-                        ).isValid()
-                          ? moment(dataAnnouncement.publish_at)
-                          : null
-                      }
+                      // value={
+                      //   moment(
+                      //     dataAnnouncement.publish_at,
+                      //     "YYYY-MM-DD HH:mm:ss"
+                      //   ).isValid()
+                      //     ? moment(dataAnnouncement.publish_at)
+                      //     : null
+                      // }
                       onChange={(values) => {
                         // console.log({ values });
                         let formattedDate = moment(values).isValid()

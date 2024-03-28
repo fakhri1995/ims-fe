@@ -88,10 +88,9 @@ ol {
 //   height: auto !important;
 // }
 
-// .autoHeight .ql-editor {
-//   min-height: 100%;
-//   height: auto !important;
-// }
+.autoHeight .ql-editor {
+  min-height: 200px;
+}
 
 // .autoHeight .ql-editor:focus {
 //   border-color: transparent;
