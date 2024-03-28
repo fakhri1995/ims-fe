@@ -68,25 +68,13 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
       title: "",
       text: "",
       publish_type: "now",
-      publish_at: null,
+      publish_at: moment().format("YYYY-MM-DD HH:mm:ss"),
     });
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
   const [fileList, setFileList] = useState([]);
 
   // 2. USE EFFECT
-  // 2.1. set initial dataAnnouncement from data
-  // useEffect(() => {
-  //   if (visible && data) {
-  //     setDataAnnouncement({
-  //       ...data,
-  //       title: "",
-  //       text: "",
-  //       publish_type: "now",
-  //       publish_at: "",
-  //     });
-  //   }
-  // }, [data, visible]);
 
   //3. HANDLER
   const onChangeInput = (e) => {
@@ -103,7 +91,7 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
       title: "",
       text: "",
       publish_type: "now",
-      publish_at: null,
+      publish_at: moment().format("YYYY-MM-DD HH:mm:ss"),
     });
     instanceForm.resetFields();
     setFileList([]);
@@ -329,7 +317,6 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
                           ...prev,
                           publish_type: "now",
                         }));
-                        instanceForm.resetFields(["publish_at"]);
                       }
                     }}
                   >
@@ -345,7 +332,6 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
                         setDataAnnouncement((prev) => ({
                           ...prev,
                           publish_type: "pending",
-                          publish_at: null,
                         }));
                       }
                     }}
@@ -383,13 +369,13 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
                           "YYYY-MM-DD HH:mm:ss"
                         ).isValid()
                           ? moment(dataAnnouncement.publish_at)
-                          : null
+                          : moment()
                       }
                       onChange={(value) => {
                         // console.log({ value });
                         let formattedDate = moment(value).isValid()
                           ? moment(value).format("YYYY-MM-DD HH:mm:ss")
-                          : null;
+                          : moment().format("YYYY-MM-DD HH:mm:ss");
 
                         setDataAnnouncement((prev) => ({
                           ...prev,
