@@ -205,10 +205,15 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           scroll={{ x: 200 }}
           pagination={{
             total: dataRawAnnouncements?.total,
-            current: dataRawAnnouncements?.current_page,
+            current: queryParams?.page,
             pageSize: queryParams.rows,
             showSizeChanger: true,
-            // onChange: onPaginationChanged,
+          }}
+          onChange={(pagination, filters, sorter, extra) => {
+            setQueryParams({
+              page: pagination.current,
+              rows: pagination.pageSize,
+            });
           }}
           onRow={({ id }) => {
             return {
