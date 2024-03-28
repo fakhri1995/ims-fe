@@ -116,7 +116,6 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
       key: "title",
       title: "Judul",
       dataIndex: "title",
-      width: "200px",
       render: (title) => {
         return <h1 className="font-bold">{title}</h1>;
       },
@@ -125,12 +124,11 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
       key: "text",
       title: "Isi",
       dataIndex: "text",
-      width: "500px",
       render: (text) => {
         const MAX_LENGTH = 120;
         const slicedText = stripTags(text).slice(0, MAX_LENGTH);
         return (
-          <p>
+          <p className="w-36 md:w-72 lg:w-96 xl:w-120">
             {slicedText?.length < MAX_LENGTH ? slicedText : `${slicedText}...`}
           </p>
         );

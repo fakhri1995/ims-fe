@@ -66,6 +66,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
       title: "",
       text: "",
       publish_type: "now",
+      publish_at: "",
     });
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
@@ -77,10 +78,10 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
   //   if (visible && data) {
   //     setDataAnnouncement({
   //       ...data,
-  //       start_at: data?.start_at?.slice(0, 5),
-  //       end_at: data?.end_at?.slice(0, 5),
-  //       start_break: data?.start_break?.slice(0, 5),
-  //       end_break: data?.end_break?.slice(0, 5),
+  //       title: "",
+  //       text: "",
+  //       publish_type: "now",
+  //       publish_at: "",
   //     });
   //   }
   // }, [data, visible]);
@@ -100,6 +101,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
       title: "",
       text: "",
       publish_type: "now",
+      publish_at: "",
     });
     instanceForm.resetFields();
     setFileList([]);
@@ -196,6 +198,7 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
     </button>
   );
 
+  // console.log({ dataAnnouncement });
   return (
     <DrawerCore
       title={!data ? "Buat Pesan" : "Edit Pesan"}
@@ -366,17 +369,21 @@ const DrawerAnnouncement = ({ visible, onvisible, data = null }) => {
                   >
                     <DatePicker
                       locale={locale}
-                      // picker="date"
+                      picker="date"
                       showTime
                       className="w-full"
                       format={"DD MMMM YYYY, HH:mm"}
                       placeholder={"Pilih Tanggal & Waktu Kirim"}
                       value={
-                        moment(dataAnnouncement.publish_at).isValid()
+                        moment(
+                          dataAnnouncement.publish_at,
+                          "DD MMMM YYYY, HH:mm"
+                        ).isValid()
                           ? moment(dataAnnouncement.publish_at)
                           : null
                       }
                       onChange={(values) => {
+                        // console.log({ values });
                         let formattedDate = moment(values).isValid()
                           ? moment(values).format("YYYY-MM-DD HH:mm:ss")
                           : null;
