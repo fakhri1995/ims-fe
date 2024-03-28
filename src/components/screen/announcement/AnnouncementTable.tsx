@@ -37,10 +37,12 @@ import {
 
 interface IAnnouncementTable {
   isAdminPage: boolean;
+  initProps?: string;
 }
 
 export const AnnouncementTable: FC<IAnnouncementTable> = ({
   isAdminPage = false,
+  initProps,
 }) => {
   /**
    * Dependencies
@@ -51,7 +53,6 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
   if (isAccessControlPending) {
     return null;
   }
-
   const isAllowedToGetAnnouncements = hasPermission(ANNOUNCEMENTS_GET);
   const isAllowedToAddAnnouncement = hasPermission(ANNOUNCEMENT_ADD);
   const isAllowedToGetAnnouncement = hasPermission(ANNOUNCEMENT_GET);
@@ -223,6 +224,7 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
       {isAdminPage && (
         <AccessControl hasPermission={ANNOUNCEMENT_ADD}>
           <DrawerAnnouncement
+            initProps={initProps}
             visible={isShowCreateDrawer}
             onvisible={setShowCreateDrawer}
           />

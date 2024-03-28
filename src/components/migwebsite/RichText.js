@@ -79,9 +79,15 @@ const RichText = ({ placeholder, value, onChange, initProps }) => {
       toolbar: {
         container: [
           [{ header: [1, 2, 3, 4, 5, 6, false] }],
-          ["bold", "italic", "underline"],
-          [{ list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
-          ["link", "image"],
+
+          ["bold", "italic", "underline", "strike", { align: [] }],
+          [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+          [{ script: "sub" }, { script: "super" }],
+          [{ indent: "-1" }, { indent: "+1" }],
+
+          ["link", "image", "formula"],
+
+          ["clean"],
         ],
         handlers: {
           image: imageHandler,
@@ -95,17 +101,27 @@ const RichText = ({ placeholder, value, onChange, initProps }) => {
     "bold",
     "italic",
     "underline",
-    "header",
-    "list",
-    "bullet",
-    "indent",
+    "strike",
+
     "link",
     "image",
+    "formula",
+
+    "list",
+    "bullet",
+    "oredered",
+    "check",
+    "script",
+    "sub",
+    "super",
+    "indent",
+
+    "header",
+    "align",
   ];
 
   return (
     <div className="text-editor">
-      {/* <CustomToolbar /> */}
       <ReactQuill
         forwardedRef={editorRef}
         theme="snow"
@@ -114,7 +130,7 @@ const RichText = ({ placeholder, value, onChange, initProps }) => {
         placeholder={placeholder}
         modules={modules}
         formats={formats}
-        className="h-44 pb-10"
+        className="autoHeight"
       />
     </div>
   );
