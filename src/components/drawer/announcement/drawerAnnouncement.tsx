@@ -12,7 +12,7 @@ import {
   notification,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
-import moment, { MomentInput } from "moment";
+import moment, { Moment, MomentInput } from "moment";
 import dynamic from "next/dynamic";
 import React, { useCallback, useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
@@ -371,10 +371,14 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
                           ? moment(dataAnnouncement.publish_at)
                           : null
                       }
-                      onChange={(value: MomentInput) => {
+                      onChange={(value) => {
                         // console.log({ value });
-                        let formattedDate = moment(value).isValid()
-                          ? moment(value).format("YYYY-MM-DD HH:mm:ss")
+                        let formattedDate = moment(
+                          value as MomentInput
+                        ).isValid()
+                          ? moment(value as MomentInput).format(
+                              "YYYY-MM-DD HH:mm:ss"
+                            )
                           : null;
 
                         setDataAnnouncement((prev) => ({
