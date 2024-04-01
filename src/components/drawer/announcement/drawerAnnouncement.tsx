@@ -68,7 +68,7 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
       title: "",
       text: "",
       publish_type: "now",
-      publish_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+      publish_at: null,
     });
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
@@ -91,7 +91,7 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
       title: "",
       text: "",
       publish_type: "now",
-      publish_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+      publish_at: null,
     });
     instanceForm.resetFields();
     setFileList([]);
@@ -369,13 +369,13 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
                           "YYYY-MM-DD HH:mm:ss"
                         ).isValid()
                           ? moment(dataAnnouncement.publish_at)
-                          : moment()
+                          : null
                       }
                       onChange={(value) => {
                         // console.log({ value });
                         let formattedDate = moment(value).isValid()
                           ? moment(value).format("YYYY-MM-DD HH:mm:ss")
-                          : moment().format("YYYY-MM-DD HH:mm:ss");
+                          : null;
 
                         setDataAnnouncement((prev) => ({
                           ...prev,
