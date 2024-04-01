@@ -31,6 +31,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
+import ResumePDFTemplate from "components/screen/resume/ResumePDFTemplate";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -70,7 +71,6 @@ import {
   downloadFile,
   momentFormatDate,
 } from "../../../lib/helper";
-import { ResumePDFTemplate } from "../candidates/[candidateId]";
 import {
   ArcElement,
   BarElement,
