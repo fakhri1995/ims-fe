@@ -100,11 +100,11 @@ export const AnnouncementCard: FC = () => {
                   "/dashboard/announcement/detail/" + dataAnnouncements[0]?.id
                 )
               }
-              className="lg:row-span-2 lg:col-span-8 flex flex-row gap-6 lg:items-center 
+              className="grid grid-cols-1 md:grid-cols-6 gap-6 lg:row-span-2 lg:col-span-8  lg:items-center 
               cursor-pointer hover:opacity-80"
             >
               {/* Thumbnail */}
-              <div className="w-6/12 h-60 lg:h-full">
+              <div className="col-span-3 h-60 lg:h-full">
                 {dataAnnouncements[0]?.thumbnail_image?.link &&
                 dataAnnouncements[0]?.thumbnail_image?.link !=
                   "staging/Announcement/mig-announce-logo.png" ? (
@@ -128,7 +128,7 @@ export const AnnouncementCard: FC = () => {
               </div>
 
               {/* Content */}
-              <div className="lg:h-full w-7/12 flex flex-col justify-between">
+              <div className="col-span-3 lg:h-full flex flex-col justify-between">
                 <p className="mb-2 mig-caption--medium">
                   by {dataAnnouncements[0]?.user?.position}
                 </p>
@@ -160,11 +160,11 @@ export const AnnouncementCard: FC = () => {
                 onClick={() =>
                   router.push("/dashboard/announcement/detail/" + item?.id)
                 }
-                className="flex flex-row gap-6 lg:col-span-4 lg:items-center 
+                className="grid grid-cols-1 md:grid-cols-6 gap-6 lg:col-span-4 lg:items-center 
                 cursor-pointer hover:opacity-80"
               >
                 {/* Thumbnail */}
-                <div className="w-96 h-60 lg:h-full ">
+                <div className="col-span-3 h-60 lg:h-full ">
                   {item?.thumbnail_image?.link &&
                   item?.thumbnail_image?.link !=
                     "staging/Announcement/mig-announce-logo.png" ? (
@@ -186,7 +186,7 @@ export const AnnouncementCard: FC = () => {
                 </div>
 
                 {/* Content */}
-                <div className="lg:w-96 lg:h-full flex flex-col justify-between">
+                <div className="col-span-3 lg:h-full flex flex-col justify-between">
                   <p className="mb-2 mig-caption--medium">
                     by {item?.user?.position}
                   </p>
