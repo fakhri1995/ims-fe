@@ -7,7 +7,14 @@ import {
   UserDeleteOutlined,
 } from "@ant-design/icons";
 import { Button, Empty, Form, Input, Modal, Spin } from "antd";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useQuery } from "react-query";
 
 import { useAccessControl } from "contexts/access-control";
@@ -208,7 +215,7 @@ export const AktivitasUserListEditableCard: FC<
                   ([staffName, staffFormAktivitas], idx) => (
                     <li key={idx}>
                       <strong>
-                        {++idx}. {staffName} ({staffFormAktivitas})
+                        {`${++idx}. ${staffName} (${staffFormAktivitas})`}
                       </strong>
                     </li>
                   )
@@ -617,6 +624,7 @@ interface IStaffSectionContainer {
   emptyMessage?: string;
   isLoading?: boolean;
   isItemHoverable?: boolean;
+  children?: ReactNode;
 }
 
 const StaffSectionContainer: FC<IStaffSectionContainer> = ({
@@ -648,16 +656,17 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
       {!isLoading && children}
 
       {data.map(({ id, name, position, profile_image }) => (
-        <StaffListItem
-          key={id}
-          id={id}
-          name={name}
-          position={position}
-          profileImageUrl={generateStaticAssetUrl(profile_image.link)}
-          onClick={onItemClicked}
-          isSelected={isSelectableSection}
-          isSelectable={isItemHoverable}
-        />
+        <div key={id}>
+          <StaffListItem
+            id={id}
+            name={name}
+            position={position}
+            profileImageUrl={generateStaticAssetUrl(profile_image.link)}
+            onClick={onItemClicked}
+            isSelected={isSelectableSection}
+            isSelectable={isItemHoverable}
+          />
+        </div>
       ))}
     </section>
   );

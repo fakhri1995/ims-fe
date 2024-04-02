@@ -25,7 +25,7 @@ const DrawerCore = ({
     <Drawer
       title={title}
       maskClosable={false}
-      visible={visible}
+      open={visible}
       onClose={onClose}
       destroyOnClose={true}
       width={width}

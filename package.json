@@ -107,6 +107,6 @@
   "resolutions": {
     "@types/react": "17.0.39",
     "react-pdf-html": "1.1.22",
-    "moment": "2.29.4"
+    "antd": "4.17.4"
   }
 }
