@@ -355,6 +355,7 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
                       },
                     ]}
                     className="col-span-2"
+                    valuePropName={"date"}
                   >
                     <DatePicker
                       locale={locale}

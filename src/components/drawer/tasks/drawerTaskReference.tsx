@@ -486,6 +486,7 @@ const PanelHeader: FC<IPanelHeader> = ({ label }) => {
  */
 interface ICollapsePanel {
   name: string;
+  children: ReactNode;
 }
 
 /**
