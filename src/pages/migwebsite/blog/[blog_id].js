@@ -366,10 +366,10 @@ function BlogDetail({}) {
                 </p>
                 <div className={"border border-dividermig mt-2"}></div>
                 <div className={"mt-1"}>
-                  <ul class="">
+                  <ul className="">
                     {tableContent.map((data, index) => (
                       <li
-                        class={
+                        className={
                           "text-blackmig text-sm font-regular font-gilroyregular"
                         }
                       >
@@ -381,7 +381,7 @@ function BlogDetail({}) {
                     <ul className={"ml-12"}>
                       {tableContentH3.map((data, index) => (
                         <li
-                          class={
+                          className={
                             "text-blackmig text-sm font-regular font-gilroyregular"
                           }
                         >
@@ -422,7 +422,7 @@ function BlogDetail({}) {
       </section>
       <section
         className={
-          "section1articlepagephone block lg:hidden pt-6 mt-8 lg:mt-6 px-4 sm:px-10 lg:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "section1articlepagephone block lg:hidden pt-6 mt-8 lg:mt-6 px-4 sm:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
       >
         <div className={"px-2 py-2"}>
@@ -536,9 +536,9 @@ function BlogDetail({}) {
             </p>
             <div className={"mt-2 border border-dividermig"}></div>
             <div className={"mt-2"}>
-              <ul class="list-disc">
+              <ul className="list-disc">
                 {tableContent.map((data, index) => (
-                  <li class={"text-blackmig text-sm font-gilroyregular"}>
+                  <li className={"text-blackmig text-sm font-gilroyregular"}>
                     {data}
                   </li>
                 ))}
@@ -546,7 +546,7 @@ function BlogDetail({}) {
               {tableContentH3.length > 0 && (
                 <ul className={"ml-12"}>
                   {tableContentH3.map((data, index) => (
-                    <li class={"text-blackmig text-sm font-gilroyregular"}>
+                    <li className={"text-blackmig text-sm font-gilroyregular"}>
                       {data}
                     </li>
                   ))}
@@ -714,7 +714,7 @@ function BlogDetail({}) {
                           : data1.description_id
                       )}
                     </p>
-                    <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                    <span className="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                       {data1.tags}
                     </span>
                   </div>
@@ -778,7 +778,7 @@ function BlogDetail({}) {
                           : dataarticle.description_id
                       )}
                     </p>
-                    <span class="text-xs mt-1 font-gilroyregular text-primarygreen bg-greenTrans20 px-2 py-1 rounded-[20px]">
+                    <span className="text-xs mt-1 font-gilroyregular text-primarygreen bg-greenTrans20 px-2 py-1 rounded-[20px]">
                       {locale == "en" ? dataarticle.tags : dataarticle.tags_id}
                     </span>
                   </div>

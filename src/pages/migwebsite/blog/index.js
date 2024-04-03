@@ -411,7 +411,7 @@ function Blog({ dataBlog }) {
                           }}
                         />
                         <div className={"mt-1.5"}>
-                          <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                          <span className="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                             {locale == "en"
                               ? dataarticle.tags
                               : dataarticle.tags_id}
@@ -495,7 +495,7 @@ function Blog({ dataBlog }) {
                         {stripTags(dataarticle.description)}
                       </p>
                       <div className={"mt-1.5"}>
-                        <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                        <span className="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                           {dataarticle.tags}
                         </span>
                       </div>

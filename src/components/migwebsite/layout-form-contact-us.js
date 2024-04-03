@@ -18,7 +18,7 @@ function LayoutFormContactUs({ title, description, button_title }) {
           />
         </div>
         <div className={"container w-1/2 mx-auto"}>
-          <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-16 py-4 px-8">
+          <div className="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-16 py-4 px-8">
             <h2
               style={{ lineHeight: "120%" }}
               className={"text-[28px] font-gilroysemibold text-black"}
@@ -72,7 +72,7 @@ function LayoutFormContactUs({ title, description, button_title }) {
         }
       >
         <div className={"container mx-auto"}>
-          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
+          <div className="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
             <p className={"text-xl font-gilroysemibold"}>
               {title ? title : "Fulfill your IT needs easily!"}
             </p>

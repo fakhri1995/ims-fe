@@ -3242,7 +3242,7 @@ const AddCareerIconSvg = ({ size, color }) => {
   const addCareerIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-clipboard-plus"
+      className="icon icon-tabler icon-tabler-clipboard-plus"
       width={size ? size : "36"}
       height={size ? size : "36"}
       viewBox="0 0 24 24"
