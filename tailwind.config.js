@@ -18,7 +18,7 @@ module.exports = {
         migcard: "0 0 20px rgba(0, 0, 0, 0.15)",
       },
       backgroundImage: theme => ({
-        'form_modal':"url('/public/bg-apply-form.svg)",
+        'form_modal': "url('/public/bg-apply-form.svg)",
       }),
       backgroundColor: {
         primary: "#1890ff",
@@ -192,7 +192,7 @@ module.exports = {
       },
     },
   },
-  plugins: [require("daisyui"), require("@tailwindcss/line-clamp")],
+  plugins: [require("daisyui")],
   daisyui: {
     styled: false,
   },

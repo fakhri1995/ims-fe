@@ -434,7 +434,7 @@ function layout({ children }) {
             style={{ lineHeight: "3.9rem" }}
             className={"hidden md:block float-right menu pt-2 mr-[55px]"}
           >
-            <Dropdown overlay={menuLanguanges} placement="bottomCenter">
+            <Dropdown overlay={menuLanguanges} placement="bottom">
               <Button
                 type={"text"}
                 style={{ background: "white" }}

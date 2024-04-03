@@ -5709,7 +5709,7 @@ function Talents({}) {
               />
             </div>
             <div className={"container w-1/2 mx-auto"}>
-              <div class="bg-white border-3 mx-auto  max-w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-[220px] py-4 px-8">
+              <div className="bg-white border-3 mx-auto  max-w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-[220px] py-4 px-8">
                 <h4
                   style={{ lineHeight: "120%" }}
                   className={"text-[24px] font-gilroysemibold text-black"}

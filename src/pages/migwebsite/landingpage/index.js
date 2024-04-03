@@ -428,10 +428,10 @@ function LandingPage({ dataBlog }) {
               {t.landingpagetitlelogo}
             </h5>
           </div>
-          <div class="slider">
-            <div class="slide-track">
-              {dataImages.map((data1) => (
-                <div class="slide ">
+          <div className="slider">
+            <div className="slide-track">
+              {dataImages.map((data1, idx) => (
+                <div key={idx} className="slide ">
                   <img
                     className={
                       "mx-[30px] max-h-[45px] filter grayscale opacity-80"
@@ -559,10 +559,10 @@ function LandingPage({ dataBlog }) {
               {t.landingpagetitlelogo}
             </h2>
           </div>
-          <div class="slider">
-            <div class="slide-track">
-              {dataImages.map((data1) => (
-                <div class="slide ">
+          <div className="slider">
+            <div className="slide-track">
+              {dataImages.map((data1, idx) => (
+                <div key={idx} className="slide ">
                   <img
                     className={
                       "mx-[21px] h-[50px] max-w-[100px] filter grayscale opacity-80"
@@ -1112,8 +1112,11 @@ function LandingPage({ dataBlog }) {
             >
               <Slider {...sliderSettings2} ref={slider}>
                 {dataTestimonial
-                  ? dataTestimonial.map((data1) => (
-                      <div className="pt-6 pb-8 md:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
+                  ? dataTestimonial.map((data1, idx) => (
+                      <div
+                        key={idx}
+                        className="pt-6 pb-8 md:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg"
+                      >
                         <div className={"flex flex-row justify-between"}>
                           <div className={"w-[45%]"}>
                             <div className={"flex relative self-center "}>
@@ -1287,8 +1290,8 @@ function LandingPage({ dataBlog }) {
           </p>
           <div className={"block lg:hidden"} style={{ maxWidth: 1000 }}>
             <Slider {...sliderSettingsPhone}>
-              {dataTestimonial.map((data1) => (
-                <div className={"p-4 bg-bgadvantagecard rounded-lg"}>
+              {dataTestimonial.map((data1, idx) => (
+                <div key={idx} className={"p-4 bg-bgadvantagecard rounded-lg"}>
                   <div className={"flex flex-row justify-between h-[67px]"}>
                     <div className={"flex flex-col"}>
                       <p className={"font-gilroybold text-sm text-blackmig"}>
