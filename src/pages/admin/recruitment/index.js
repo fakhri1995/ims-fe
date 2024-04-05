@@ -1437,10 +1437,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
           {/* Table Kandidat */}
           <div className="lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <h4 className="mig-heading--4 ">Semua Kandidat</h4>
+            <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between mb-6">
+              <h4 className="mig-heading--4 mb-2 md:mb-0">Semua Kandidat</h4>
               {isBulk === false ? (
-                <div className="flex flex-col lg:flex-row space-x-6 space-y-2 lg:space-y-0">
+                <div className="flex flex-col lg:flex-row md:space-x-6 space-y-2 lg:space-y-0 w-full md:w-fit">
                   <ButtonSys type={"default"} onClick={() => setBulk(true)}>
                     <div className="flex flex-row space-x-2.5 items-center">
                       <AppstoreOutlined />
@@ -1461,7 +1461,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                       className="btn btn-sm text-white font-semibold px-6 border 
                         bg-primary100 hover:bg-primary75 border-primary100 
                         hover:border-primary75 focus:bg-primary100 focus:border-primary100 
-                        flex-nowrap"
+                        flex-nowrap w-full md:w-fit"
                       icon={<UserPlusIconSvg size={16} color="#FFFFFF" />}
                     >
                       Tambah Kandidat
@@ -1469,7 +1469,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   </Dropdown>
                 </div>
               ) : (
-                <div className="flex flex-row space-x-6">
+                <div className="flex flex-row space-x-6 w-full md:w-fit justify-between md:justify-normal">
                   <ButtonSys
                     type={"default"}
                     color={"danger"}
