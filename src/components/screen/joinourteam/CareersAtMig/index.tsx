@@ -215,7 +215,7 @@ export const CareersAtMig: FC = () => {
         </div>
       </div>
       <Modal
-        open={modalApply}
+        visible={modalApply}
         bodyStyle={{
           backgroundImage: `url('/bg-apply-form.svg')`,
         }}
@@ -241,14 +241,10 @@ export const CareersAtMig: FC = () => {
               >
                 {statusSent ? (
                   <CheckCircleOutlined
-                    rev={""}
                     style={{ fontSize: 80, color: "#35763B" }}
                   />
                 ) : (
-                  <LoadingOutlined
-                    rev={""}
-                    style={{ fontSize: 80, color: "#35763B" }}
-                  />
+                  <LoadingOutlined style={{ fontSize: 80, color: "#35763B" }} />
                 )}
                 <p className={"text-primary100 text-sm font-medium leading-6"}>
                   {statusSent ? "" : "Sending.."}
@@ -261,14 +257,10 @@ export const CareersAtMig: FC = () => {
               >
                 {statusSent ? (
                   <CheckCircleOutlined
-                    rev={""}
                     style={{ fontSize: 80, color: "#35763B" }}
                   />
                 ) : (
-                  <LoadingOutlined
-                    rev={""}
-                    style={{ fontSize: 80, color: "#35763B" }}
-                  />
+                  <LoadingOutlined style={{ fontSize: 80, color: "#35763B" }} />
                 )}
                 <p className={"text-primary100 text-sm font-medium leading-6"}>
                   {statusSent ? "" : "Sending.."}

@@ -18,13 +18,15 @@ const DrawerCore = ({
   buttonUpdateText,
   buttonSpace,
   iconButtonText,
+  form,
+  submit = false,
   width = 420,
 }) => {
   return (
     <Drawer
       title={title}
       maskClosable={false}
-      visible={visible}
+      open={visible}
       onClose={onClose}
       destroyOnClose={true}
       width={width}

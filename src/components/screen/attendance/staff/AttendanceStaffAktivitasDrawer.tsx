@@ -564,7 +564,7 @@ const _renderDynamicUpload = (
               setIsWebcamModalShown(true);
             }}
           >
-            <CameraOutlined rev={""} />
+            <CameraOutlined />
             Ambil Foto
           </Button>
 
@@ -590,7 +590,7 @@ const _renderDynamicUpload = (
           onChange={onUploadChange}
         >
           <Button className="mig-button mig-button--outlined-primary absolute top-0 right-0">
-            <UploadOutlined rev={""} />
+            <UploadOutlined />
             Unggah File
           </Button>
         </Upload>

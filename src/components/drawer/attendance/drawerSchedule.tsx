@@ -19,6 +19,7 @@ import {
 } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
 import CheckableTag from "antd/lib/tag/CheckableTag";
+import { AxiosResponse } from "axios";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -51,7 +52,11 @@ import { AttendanceScheduleService } from "apis/attendance";
 import { IAddSchedulePayload } from "apis/attendance/attendance-schedule.types";
 import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
 import { IGetShiftsPaginateParams } from "apis/attendance/attendance-shift.types";
-import { AgentService, IGetAgentsPaginateParams } from "apis/user";
+import {
+  AgentService,
+  IGetAgentsPaginateParams,
+  IGetAgentsPaginateSucceedResponse,
+} from "apis/user";
 
 import DrawerCore from "../drawerCore";
 
@@ -123,8 +128,9 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
       ),
     {
       enabled: isAllowedToGetAgents && visible,
-
-      select: (response) => response.data.data,
+      select: (response: AxiosResponse<IGetAgentsPaginateSucceedResponse>) => {
+        return response.data.data;
+      },
       onSuccess: (data) => setDataAgents(data.data),
       onError: (error) => {
         notification.error({
@@ -348,7 +354,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                 bordered={true}
                 expandIconPosition="right"
                 expandIcon={({ isActive }) => (
-                  <RightOutlined rev={""} rotate={isActive ? 90 : 0} />
+                  <RightOutlined rotate={isActive ? 90 : 0} />
                 )}
               >
                 <Collapse.Panel
@@ -394,7 +400,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                       <Input
                         allowClear
                         style={{ width: `100%` }}
-                        suffix={<SearchOutlined rev={""} />}
+                        suffix={<SearchOutlined />}
                         placeholder="Cari Nama Karyawan.."
                         onChange={onChangeSearchAgents}
                         disabled={!isAllowedToGetAgents}

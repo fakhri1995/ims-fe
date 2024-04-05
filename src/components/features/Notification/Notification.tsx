@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import type { FC, MouseEventHandler } from "react";
 
+import { MessageIconSvg } from "components/icon";
 import { H2 } from "components/typography";
 
 import { formatDateToLocale } from "lib/date-utils";
@@ -229,8 +230,8 @@ interface INotificationItem {
 
   content: string;
 
-  colorType: "red" | "green";
-  imageType: "task" | "ticket" | "exclamation";
+  colorType: "red" | "green" | "blue";
+  imageType: "task" | "ticket" | "exclamation" | "announcement";
   createdAt: Date | string;
 
   notificationableId?: number;
@@ -285,6 +286,7 @@ const NotificationItem: FC<INotificationItem> = ({
     {
       "bg-primary100/25": colorType === "green",
       "bg-state1/25": colorType === "red",
+      "bg-secondary/10": colorType === "blue",
     },
     "h-12 w-12 rounded-full flex items-center justify-center"
   );
@@ -293,6 +295,7 @@ const NotificationItem: FC<INotificationItem> = ({
     {
       "text-primary100": colorType === "green",
       "text-state1": colorType === "red",
+      "bg-secondary": colorType === "blue",
     },
     "stroke-2 w-8 h-8"
   );
@@ -308,13 +311,21 @@ const NotificationItem: FC<INotificationItem> = ({
 
   const hrefValue = generateNotificationRedirectUrl(
     notificationableId,
-    notificationableTypeValue.toLowerCase() as "task" | "ticket" | "projecttask"
+    notificationableTypeValue.toLowerCase() as
+      | "task"
+      | "ticket"
+      | "projecttask"
+      | "announcement"
   );
 
   const notificationContent = (
-    <strong>
-      {notificationableTypeValue} {notificationableId}
-    </strong>
+    <>
+      {notificationableTypeValue !== "Announcement" && (
+        <strong>
+          {notificationableTypeValue} {notificationableId}
+        </strong>
+      )}
+    </>
   );
 
   return (
@@ -334,6 +345,9 @@ const NotificationItem: FC<INotificationItem> = ({
               <ClipboardCheckedIcon className={iconClassName} />
             )}
             {imageType === "ticket" && <TicketIcon className={iconClassName} />}
+            {imageType === "announcement" && (
+              <MessageIconSvg className={iconClassName} color="#00589F" />
+            )}
           </div>
         </div>
 

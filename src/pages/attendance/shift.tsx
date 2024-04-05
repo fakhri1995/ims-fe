@@ -1,4 +1,5 @@
 import { Button, Input, Select, Spin, Tooltip, notification } from "antd";
+import { AxiosResponse } from "axios";
 import { GetServerSideProps, NextPage } from "next";
 import {
   NumberParam,
@@ -38,6 +39,7 @@ import {
 
 import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
 import {
+  IGetShiftsPaginateSucceedResponse,
   IUpdateShiftStatusPayload,
   ShiftDetailData,
 } from "apis/attendance/attendance-shift.types";
@@ -115,7 +117,8 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       ),
     {
       enabled: isAllowedToGetShifts,
-      select: (response) => response.data.data,
+      select: (response: AxiosResponse<IGetShiftsPaginateSucceedResponse>) =>
+        response.data.data,
       onSuccess: (data) => setDataShifts(data.data),
       onError: (error) => {
         notification.error({ message: "Gagal mendapatkan daftar shift." });

@@ -93,7 +93,7 @@ const resumePdfView = () => {
         start_date: "2023-06-01",
         end_date: null,
         description:
-          '<ul><li>dess</li><li>tess</li><li class="ql-indent-1">tess</li></ul>',
+          '<ul><li>dess</li><li>tess</li><li className="ql-indent-1">tess</li></ul>',
         resume_id: 1,
         display_order: 2,
       },

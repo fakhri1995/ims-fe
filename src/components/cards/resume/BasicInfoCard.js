@@ -120,7 +120,7 @@ const BasicInfoCard = ({
           </div>
           <hr />
           {isCreateForm && (
-            <div className="px-2.5 py-2 space-x-2.5 flex flex-row items-center mt-4">
+            <div className="px-2.5 py-2 space-x-2.5 flex flex-row items-center mt-4 mb-4 md:mb-0">
               <InfoCircleIconSvg size={20} color={"#35763B"} />
               <p className="text-mono30">
                 Harap mengisi <strong>Basic Information</strong> terlebih dahulu

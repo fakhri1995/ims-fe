@@ -7,7 +7,14 @@ import {
   UserDeleteOutlined,
 } from "@ant-design/icons";
 import { Button, Empty, Form, Input, Modal, Spin } from "antd";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useQuery } from "react-query";
 
 import { useAccessControl } from "contexts/access-control";
@@ -136,12 +143,7 @@ export const AktivitasUserListEditableCard: FC<
   const onDeleteStaffButtonClicked = () => {
     confirm({
       title: "Hapus Staff",
-      icon: (
-        <ExclamationCircleOutlined
-          rev={""}
-          style={{ color: "rgb(191 74 64)" }}
-        />
-      ),
+      icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
       content: (
         <p>
           Apakah Anda yakin ingin menghapus staff{" "}
@@ -202,12 +204,7 @@ export const AktivitasUserListEditableCard: FC<
 
     confirm({
       title: "Menambahkan Staff",
-      icon: (
-        <ExclamationCircleOutlined
-          rev={""}
-          style={{ color: "rgb(191 74 64)" }}
-        />
-      ),
+      icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
       content: (
         <>
           {someStaffHaveFormAttendance && (
@@ -218,7 +215,7 @@ export const AktivitasUserListEditableCard: FC<
                   ([staffName, staffFormAktivitas], idx) => (
                     <li key={idx}>
                       <strong>
-                        {++idx}. {staffName} ({staffFormAktivitas})
+                        {`${++idx}. ${staffName} (${staffFormAktivitas})`}
                       </strong>
                     </li>
                   )
@@ -321,10 +318,7 @@ export const AktivitasUserListEditableCard: FC<
                   className="rounded-full bg-primary100/25 w-12 h-12 flex items-center justify-center group-hover:border-primary100 group-hover:bg-primary100/50 focus:border-primary100"
                   disabled={!canAddNewStaffToFormActivity}
                 >
-                  <UserAddOutlined
-                    rev={""}
-                    className="text-xl text-primary100"
-                  />
+                  <UserAddOutlined className="text-xl text-primary100" />
                 </Button>
 
                 <span className="text-mono30 text-center">Tambah Staff</span>
@@ -423,7 +417,7 @@ const CardHeader: FC<ICardHeader> = ({
             className="flex items-center text-mono30 hover:text-mono50 focus:text-mono50"
             onClick={onBackButtonClicked}
           >
-            <LeftOutlined rev={""} />
+            <LeftOutlined />
           </Button>
         )}
         <span className="font-bold text-mono30 text-lg">
@@ -439,7 +433,7 @@ const CardHeader: FC<ICardHeader> = ({
             className="mig-button mig-button--outlined-danger"
             onClick={onRemoveButtonClicked}
           >
-            <UserDeleteOutlined rev={""} />
+            <UserDeleteOutlined />
             Hapus Staff
           </Button>
         )}
@@ -467,7 +461,7 @@ const CardHeader: FC<ICardHeader> = ({
             <Button
               htmlType="submit"
               className="mig-button mig-button--solid-primary"
-              icon={<SearchOutlined rev={""} />}
+              icon={<SearchOutlined />}
             >
               Cari
             </Button>
@@ -546,9 +540,9 @@ const CardFooter: FC<ICardFooter> = ({
             disabled={disableActionButton}
           >
             {cardPhase === "add" ? (
-              <UserAddOutlined rev={""} className="text-base" />
+              <UserAddOutlined className="text-base" />
             ) : (
-              <UserDeleteOutlined rev={""} className="text-base" />
+              <UserDeleteOutlined className="text-base" />
             )}
             {cardPhase === "add" ? "Tambah" : "Hapus Terpilih"}
           </Button>
@@ -607,7 +601,7 @@ const StaffListItem: FC<IStaffListItem> = ({
         </div>
         {isSelected && (
           <button className="bg-state1/40 rounded-full flex items-center p-1 absolute -top-1 -right-2">
-            <CloseOutlined rev={""} className="text-state1" />
+            <CloseOutlined className="text-state1" />
           </button>
         )}
       </div>
@@ -630,6 +624,7 @@ interface IStaffSectionContainer {
   emptyMessage?: string;
   isLoading?: boolean;
   isItemHoverable?: boolean;
+  children?: ReactNode;
 }
 
 const StaffSectionContainer: FC<IStaffSectionContainer> = ({
@@ -661,16 +656,17 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
       {!isLoading && children}
 
       {data.map(({ id, name, position, profile_image }) => (
-        <StaffListItem
-          key={id}
-          id={id}
-          name={name}
-          position={position}
-          profileImageUrl={generateStaticAssetUrl(profile_image.link)}
-          onClick={onItemClicked}
-          isSelected={isSelectableSection}
-          isSelectable={isItemHoverable}
-        />
+        <div key={id}>
+          <StaffListItem
+            id={id}
+            name={name}
+            position={position}
+            profileImageUrl={generateStaticAssetUrl(profile_image.link)}
+            onClick={onItemClicked}
+            isSelected={isSelectableSection}
+            isSelectable={isItemHoverable}
+          />
+        </div>
       ))}
     </section>
   );

@@ -1,6 +1,8 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
+import { IAccessControl } from "components/features/AccessControl";
+
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { getClientToken } from "lib/auth";
@@ -14,7 +16,7 @@ import {
   IAccessControlCtx,
 } from "./access-control.context";
 
-export const AccessControlProvider: FC = ({ children }) => {
+export const AccessControlProvider: FC<IAccessControl> = ({ children }) => {
   /**
    * Dependencies
    */

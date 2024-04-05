@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, ReactNode, useMemo } from "react";
 import React from "react";
 
 import { useAccessControl } from "contexts/access-control";
@@ -6,6 +6,7 @@ import { useAccessControl } from "contexts/access-control";
 export interface IAccessControl {
   hasPermission?: string | string[];
   hasRole?: string | string[];
+  children: ReactNode;
 }
 
 /**

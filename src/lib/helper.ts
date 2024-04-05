@@ -137,7 +137,7 @@ export const generateStaticAssetUrl = (path: string) => {
  */
 export const generateNotificationRedirectUrl = (
   notificationableId: number,
-  notificationableType: "task" | "ticket" | "projecttask"
+  notificationableType: "task" | "ticket" | "projecttask" | "announcement"
 ) => {
   switch (notificationableType) {
     case "task":
@@ -146,6 +146,8 @@ export const generateNotificationRedirectUrl = (
       return `/tickets/detail/${notificationableId}`;
     case "projecttask":
       return `/projects?showtaskid=${notificationableId}`;
+    case "announcement":
+      return `/dashboard/announcement/detail/${notificationableId}`;
   }
 };
 

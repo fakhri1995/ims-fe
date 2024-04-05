@@ -518,7 +518,7 @@ export const JobDetail: FC = () => {
         onClick={() => router.back()}
         className={"flex flex-row gap-2 hover:cursor-pointer"}
       >
-        <LeftOutlined rev={""} style={{ fontSize: 20, color: "#188E4D" }} />
+        <LeftOutlined style={{ fontSize: 20, color: "#188E4D" }} />
         <p
           className={
             "text-[16px] text-primary100 font-normal leading-6 font-gilroysemibold"
@@ -557,10 +557,7 @@ export const JobDetail: FC = () => {
               >
                 Share
               </p>
-              <ShareAltOutlined
-                rev={""}
-                style={{ color: "#B8B8B8", fontSize: 20 }}
-              />
+              <ShareAltOutlined style={{ color: "#B8B8B8", fontSize: 20 }} />
             </div>
           </Tooltip>
 
@@ -577,7 +574,7 @@ export const JobDetail: FC = () => {
             >
               Apply Now
             </p>
-            <RiseOutlined rev={""} style={{ fontSize: 20, color: "#FFFFFF" }} />
+            <RiseOutlined style={{ fontSize: 20, color: "#FFFFFF" }} />
           </div>
         </div>
       </div>
@@ -628,7 +625,11 @@ export const JobDetail: FC = () => {
       </div>
       <div
         className={"mt-8"}
-        style={{ width: "100%", height: "100%", border: "1px #E5E7E6 solid" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          border: "1px #E5E7E6 solid",
+        }}
       ></div>
       <div className={"mt-8 "}>
         <p
@@ -651,7 +652,7 @@ export const JobDetail: FC = () => {
         <div className={"mt-2"}>{data && parse(data.qualification)}</div>
       </div>
       <Modal
-        open={modalApply}
+        visible={modalApply}
         onCancel={handleModalApply}
         bodyStyle={{
           backgroundImage: `url('/bg-apply-form.svg')`,
@@ -674,7 +675,6 @@ export const JobDetail: FC = () => {
                 className={"flex w-full flex-col self-center gap-2.5"}
               >
                 <CheckCircleOutlined
-                  rev={""}
                   style={{ fontSize: 80, color: "#35763B" }}
                 />
                 <p
@@ -686,10 +686,7 @@ export const JobDetail: FC = () => {
                 style={{ position: "absolute", top: "70%", left: "5%" }}
                 className={"flex w-full flex-col  gap-2.5"}
               >
-                <LoadingOutlined
-                  rev={""}
-                  style={{ fontSize: 80, color: "#35763B" }}
-                />
+                <LoadingOutlined style={{ fontSize: 80, color: "#35763B" }} />
                 <p className={"text-primary100 text-sm font-medium leading-6"}>
                   Sending
                 </p>

@@ -2831,7 +2831,7 @@ function Software({}) {
               />
             </div>
             <div className={"container w-1/2 mx-auto"}>
-              <div class="bg-white border-3 mx-auto  max-w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-36 py-4 px-8">
+              <div className="bg-white border-3 mx-auto  max-w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-36 py-4 px-8">
                 <h4
                   style={{ lineHeight: "120%" }}
                   className={"text-2xl font-gilroysemibold text-black"}
