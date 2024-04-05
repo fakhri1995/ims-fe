@@ -17,6 +17,7 @@ const DrawerCore = ({
   onButtonCancelClicked,
   buttonUpdateText,
   buttonSpace,
+  iconButtonText,
   width = 420,
 }) => {
   return (
@@ -49,8 +50,14 @@ const DrawerCore = ({
 
           {buttonOkText && onClick && (
             <ButtonSys disabled={disabled} type="primary" onClick={onClick}>
-              <CheckIconSvg size={15} color="#FFFFFF" />
-              {buttonOkText}
+              <div className={"flex gap-3"}>
+                {iconButtonText ? (
+                  iconButtonText
+                ) : (
+                  <CheckIconSvg size={16} color="#FFFFFF" />
+                )}
+                {buttonOkText}
+              </div>
             </ButtonSys>
           )}
 

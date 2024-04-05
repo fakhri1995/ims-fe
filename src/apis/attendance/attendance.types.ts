@@ -27,9 +27,18 @@ export type AttendanceExportExcelDataCriteria = {
   user_ids?: number[];
 };
 
+export type AttendanceExportPdfDataCriteria = {
+  from: Date;
+  to: Date;
+};
+
 export type AttendanceExportExcelDataResult = {
   file: Blob | null;
   fileName: string;
+};
+
+export type AttendanceExportPdfDataResult = {
+  data: string;
 };
 
 /**

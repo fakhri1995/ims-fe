@@ -102,10 +102,9 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
                 idUser={dataProfile.data.id}
               />
             </div>
-
             <div className="col-span-full">
               {/* Section: Kehadiran Table */}
-              <AttendanceStaffKehadiranSection />
+              <AttendanceStaffKehadiranSection initProps={token} />
             </div>
           </div>
         </div>
