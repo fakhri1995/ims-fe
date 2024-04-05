@@ -70,8 +70,7 @@ const TalentPoolSection = ({
   const [dataRowClicked, setDataRowClicked] = useState({});
   const [rowState, setRowState] = useState({});
   const [isHovered, setIsHovered] = useState(false);
-
-  const [isLargeScreen, setIsLargeScreen] = useState(true);
+  // const [isLargeScreen, setIsLargeScreen] = useState(true);
 
   // 3. Use Effect & Use Query
   // 3.1. Get Talent Pools
@@ -114,21 +113,21 @@ const TalentPoolSection = ({
   );
 
   // 3.3. Set layout based on screen size
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 820) {
-        setIsLargeScreen(false); // up to medium screen
-      } else {
-        setIsLargeScreen(true);
-      }
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     if (window.innerWidth <= 820) {
+  //       setIsLargeScreen(false); // up to medium screen
+  //     } else {
+  //       setIsLargeScreen(true);
+  //     }
+  //   };
 
-    window.addEventListener("resize", handleResize);
+  //   window.addEventListener("resize", handleResize);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, []);
 
   // cleanup
   useEffect(() => {
@@ -344,7 +343,7 @@ const TalentPoolSection = ({
   return (
     <div className="grid grid-cols-1 gap-6">
       {/* Start: Search criteria */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:flex lg:flex-row gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:flex lg:flex-row gap-2">
         {/* Search by keyword (kata kunci) */}
         <div className="w-full lg:w-2/12">
           <Input
@@ -473,7 +472,7 @@ const TalentPoolSection = ({
           </Select>
         </div> */}
         {/* End: Search criteria */}
-        <div className="w-full col-span-2 md:col-span-3 lg:w-2/12">
+        <div className="w-full md:col-span-3 lg:w-2/12">
           <ButtonSys
             type={`primary`}
             onClick={onFilterTalentPools}
@@ -487,21 +486,23 @@ const TalentPoolSection = ({
           </ButtonSys>
         </div>
       </div>
-      <TableCustomTalentPoolList
-        dataSource={dataTalents?.data}
-        columns={columnTalents}
-        loading={loadingTalents}
-        total={dataTalents?.total}
-        queryParams={queryParams}
-        setQueryParams={setQueryParams}
-        isAllowedToGetTalentPool={isAllowedToGetTalentPool}
-        setDrawerShown={setDrawerTalentDetail}
-        setDataRowClicked={setDataRowClicked}
-        rowstate={rowState}
-        setrowstate={setRowState}
-        setIsHovered={setIsHovered}
-        isLargeScreen={isLargeScreen}
-      />
+      <div>
+        <TableCustomTalentPoolList
+          dataSource={dataTalents?.data}
+          columns={columnTalents}
+          loading={loadingTalents}
+          total={dataTalents?.total}
+          queryParams={queryParams}
+          setQueryParams={setQueryParams}
+          isAllowedToGetTalentPool={isAllowedToGetTalentPool}
+          setDrawerShown={setDrawerTalentDetail}
+          setDataRowClicked={setDataRowClicked}
+          rowstate={rowState}
+          setrowstate={setRowState}
+          setIsHovered={setIsHovered}
+          // isLargeScreen={isLargeScreen}
+        />
+      </div>
       <div
         className="flex flex-col md:flex-row gap-2 md:gap-6 
         justify-center md:items-center"

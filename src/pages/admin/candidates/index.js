@@ -460,10 +460,10 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
           <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mt-6 md:mt-0">
             <h4 className="mig-heading--4">Semua Kandidat</h4>
             <div className="mt-5 flex flex-col">
-              <div className="flex flex-row w-full mb-5 space-x-4">
+              <div className="flex flex-col md:flex-row w-full mb-5 gap-4">
                 <Input
                   defaultValue={searchingFilterResume}
-                  style={{ width: `100%` }}
+                  className="w-full md:w-2/3"
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
@@ -478,7 +478,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
                   placeholder="Semua Role"
                   defaultValue={queryParams.assessment_ids}
                   allowClear
-                  style={{ width: `50%` }}
+                  className="w-full md:w-1/3"
                   onChange={(value) => {
                     setQueryParams({ assessment_ids: value });
                     setSelectedRoleId(value);

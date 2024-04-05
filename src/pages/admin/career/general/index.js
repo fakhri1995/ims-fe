@@ -619,13 +619,13 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
             className="lg:col-span-3 flex flex-col rounded-md bg-white p-5 mb-6"
             style={{ boxShadow: "0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
           >
-            <div className="flex items-center justify-between mb-6">
-              <div className={"w-2/4"}>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
+              <div className={"w-2/4 mb-2 lg:mb-0"}>
                 <h4 className="mig-heading--4 ">
                   Daftar Pelamar Tanpa Lowongan
                 </h4>
               </div>
-              <div className={"flex flex-row gap-4 w-2/4"}>
+              <div className={"flex flex-col md:flex-row gap-4 lg:w-2/4"}>
                 <div className="w-full">
                   <Input
                     defaultValue={queryParams.keyword}
@@ -640,7 +640,7 @@ const CareerGeneralIndex = ({ dataProfile, sidemenu, initProps }) => {
                     // disabled={!isAllowedToGetCareer}
                   />
                 </div>
-                <div className="w-full md:w-1/2 customselectcareer">
+                <div className="w-full lg:w-1/2 customselectcareer">
                   <Select
                     defaultValue={queryParams.career_apply_status_id}
                     allowClear

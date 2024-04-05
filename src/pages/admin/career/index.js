@@ -1032,9 +1032,9 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
 
           <div className={"flex flex-col gap-6"}>
             <div
-              className="lg:col-span-2 flex flex-row items-center w-full 
+              className="lg:col-span-2 flex flex-col md:flex-row items-center w-full 
                           justify-between rounded-md
-                          gap-6"
+                          gap-4 md:gap-6"
             >
               <AddNewFormButton
                 icon={<AddCareerIconSvg />}
@@ -1052,14 +1052,14 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
             {showCollapsible && (
               <div
-                className={"bg-white h-[178px] rounded-[5px] py-6 px-[22px]"}
+                className={"bg-white md:h-[178px] rounded-[5px] py-6 px-[22px]"}
                 style={{ boxShadow: "0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
               >
                 <p className={"text-lg leading-4 text-mono30 font-bold"}>
                   Ikhtisar Pelamar
                 </p>
                 {dataIkhtisar.length > 0 && (
-                  <div className={"mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4"}>
+                  <div className={"mt-6 grid grid-cols-1 md:grid-cols-3 gap-4"}>
                     {dataIkhtisar.map((dataIkhtisar1) => (
                       <div
                         className={`py-2 self-stretch ${
@@ -1217,7 +1217,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
           onClose={() => {
             setdrawcreate(false);
           }}
-          width={450}
+          width={400}
           destroyOnClose={true}
         >
           <div>
