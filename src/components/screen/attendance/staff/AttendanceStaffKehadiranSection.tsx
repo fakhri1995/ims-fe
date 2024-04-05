@@ -33,14 +33,16 @@ import clsx from "clsx";
 /**
  * Component AttendanceStaffKehadiranSection's props.
  */
-export interface IAttendanceStaffKehadiranSection {}
+export interface IAttendanceStaffKehadiranSection {
+  initProps: string;
+}
 
 /**
  * Component AttendanceStaffKehadiranSection
  */
 export const AttendanceStaffKehadiranSection: FC<
   IAttendanceStaffKehadiranSection
-> = () => {
+> = (initProps) => {
   const router = useRouter();
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
@@ -170,17 +172,17 @@ export const AttendanceStaffKehadiranSection: FC<
       <section className="mig-platform space-y-6">
         {/* Header: Title and Unduh Table button */}
         <div className="flex items-center justify-between">
+          {console.log("init props ", initProps)}
           <h3 className="mig-heading--4">Kehadiran</h3>
           <ButtonSys
             type={!isAllowedToExportTable ? "primary" : "default"}
             onClick={() => setIsExportDrawerShown(true)}
             disabled={!isAllowedToExportTable}
           >
-            <DownloadOutlined className="mr-2" />
-            Unduh Tabel
+            <DownloadOutlined rev={""} className="mr-2" />
+            Unduh Aktivitas
           </ButtonSys>
         </div>
-
         <ConfigProvider
           renderEmpty={() => (
             <DataEmptyState caption="Data kehadiran kosong." />
@@ -210,6 +212,7 @@ export const AttendanceStaffKehadiranSection: FC<
       <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
         <EksporAbsensiDrawer
           visible={isExportDrawerShown}
+          token={initProps.initProps}
           onClose={() => setIsExportDrawerShown(false)}
         />
       </AccessControl>

@@ -1,5 +1,16 @@
 import { SortAscendingOutlined } from "@ant-design/icons";
-import { Button, Checkbox, DatePicker, Form, Select, notification } from "antd";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Form,
+  Input,
+  Select,
+  Spin,
+  Tabs,
+  notification,
+} from "antd";
 import type { AxiosError } from "axios";
 import moment from "moment";
 import type { Moment } from "moment";
@@ -8,6 +19,7 @@ import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import DrawerCore from "components/drawer/drawerCore";
+import ModalCore from "components/modal/modalCore";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
@@ -16,19 +28,28 @@ import { downloadFile, generateStaticAssetUrl } from "lib/helper";
 
 import {
   AttendanceExportExcelDataResult,
+  AttendanceExportPdfDataResult,
   AttendanceFormAktivitasService,
   AttendanceFormAktivitasServiceQueryKeys,
   AttendanceService,
 } from "apis/attendance";
 
+import { DownloadIcon2Svg, DownloadIconSvg } from "../../../icon";
+import ExportActivityTemplate from "../ExportActivityTemplate";
+
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+
+const { TabPane } = Tabs;
 
 /**
  * Component EksporAbsensiDrawer's props.
  */
 export interface IEksporAbsensiDrawer {
   visible: boolean;
+  token: string;
+  name_profile: string;
+  position_profile: string;
   onClose: () => void;
 
   /**
@@ -44,21 +65,44 @@ export interface IEksporAbsensiDrawer {
 export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   visible,
   onClose,
+  token,
   exportAsAdmin = false,
 }) => {
   const [form] = Form.useForm();
+  const [formPdf] = Form.useForm();
   const axiosClient = useAxiosClient();
   const [dataFormAktifitas, setDataFormAktifitas] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearchValue = useDebounce(searchValue);
   const [namaSelected, setNamaSelected] = useState([]);
   const [namaTempSelected, setNamaTempSelected] = useState([]);
+  const [namaSupervisor, setNamaSupervisor] = useState(null);
+  const [activeTabKey, setActiveTabKey] = useState("1");
+  const [dataProfile, setDataProfile] = useState({
+    name: null,
+    position: null,
+  });
   const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState<
     Array<number> | undefined
   >(undefined);
 
+  const [dataFormat, setDataFormat] = useState({
+    from: null,
+    to: null,
+    supervisor: null,
+  });
+  const [dataPdf, setDataPdf] = useState(null);
+  const [loadingData, setLoadingData] = useState(false);
+
+  const [modalConfirmExportPdf, setModalConfirmExportPdf] = useState(false);
+
   // default time in range picker
   const [selectedDateRange, setSelectedDateRange] = useState({
+    start_date: moment().subtract(1, "months"),
+    end_date: moment(),
+  });
+
+  const [selectedDateRangePdf, setSelectedDateRangePdf] = useState({
     start_date: moment().subtract(1, "months"),
     end_date: moment(),
   });
@@ -172,6 +216,100 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       }
     },
     [exportAsAdmin, dataFormAktifitas]
+  );
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(token),
+      },
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setDataProfile({
+            name: response2.data.name,
+            position: response2.data.position,
+          });
+        } else {
+          notification.error({
+            message: `${response2.message}`,
+            duration: 3,
+          });
+          setLoadingData(false);
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingData(false);
+      });
+  }, []);
+  useEffect(() => {
+    const from = selectedDateRangePdf.start_date.toDate();
+    const to = selectedDateRangePdf.end_date.toDate();
+    const payload = {
+      from,
+      to,
+    };
+  }, [selectedDateRangePdf]);
+  const handleOnFormTerpaduSubmitted = useCallback(
+    async (fieldValues: {
+      rentang_waktu_pdf?: [Moment, Moment];
+      supervisor?: string;
+    }) => {
+      console.log("fieldvalues ", fieldValues);
+      const from = fieldValues.rentang_waktu_pdf[0].toDate();
+      const to = fieldValues.rentang_waktu_pdf[1].toDate();
+      const nama_supervisor = fieldValues.supervisor;
+      setDataFormat({
+        from: from,
+        to: to,
+        supervisor: nama_supervisor,
+      });
+      console.log("isi ", nama_supervisor);
+      const from_format = moment(from).format("YYYY-MM-DD");
+      const to_format = moment(to).format("YYYY-MM-DD");
+      /**
+       * 1. Form Aktivitas is required
+       * 2. Transform array of selected staff (string) into their respective ID (number)
+       */
+      setModalConfirmExportPdf(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTimeSheet?from=${from_format}&to=${to_format}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(token),
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((response2) => {
+          console.log("get time sheet ", response2);
+          if (response2.success) {
+            setDataPdf(response2.data);
+            setLoadingData(false);
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+            setLoadingData(false);
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+          setLoadingData(false);
+        });
+    },
+    [namaSupervisor]
   );
 
   /**
@@ -300,10 +438,35 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
         value: formAktivitasStaffListOnlyName || [],
       });
     }
+    fieldData.push({
+      name: "rentang_waktu_pdf",
+      value: [
+        moment(selectedDateRangePdf.start_date),
+        moment(selectedDateRangePdf.end_date),
+      ],
+      // value: [moment().subtract(1, "months"), moment()],
+    });
 
     form.setFields(fieldData);
-  }, [form, formAktivitasStaffList, exportAsAdmin]);
+  }, [form, formPdf, formAktivitasStaffList, exportAsAdmin]);
 
+  // useEffect(() => {
+  //   if (!formPdf) {
+  //     return;
+  //   }
+  //   const fieldData = [];
+
+  //   // selected time in range picker
+  //   fieldData.push({
+  //     name: "rentang_waktu_pdf",
+  //     value: [
+  //       moment(selectedDateRangePdf.start_date),
+  //       moment(selectedDateRangePdf.end_date),
+  //     ],
+  //     // value: [moment().subtract(1, "months"), moment()],
+  //   });
+  //   formPdf.setFields(fieldData);
+  // }, [formPdf]);
   /**
    * Effect untuk mencari Form Aktivitas setelah User melakukan Search pada Select component.
    */
@@ -355,175 +518,288 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     }
   }, [formAktivitasStaffList]);
 
+  const handleChangeSupervisor = (e) => {
+    setNamaSupervisor(e.target.value);
+  };
+
   return (
     <DrawerCore
       visible={visible}
       title="Ekspor Absensi"
-      buttonOkText="Ekspor Absensi"
+      buttonOkText={activeTabKey == "1" ? "Ekspor Absensi" : "Unduh"}
+      iconButtonText={
+        activeTabKey == "2" && <DownloadIconSvg size={16} color={"#ffffff"} />
+      }
       onClick={() => form.submit()}
+      buttonCancelText={"Batalkan"}
+      onButtonCancelClicked={onClose}
       onClose={onClose}
     >
-      <div className="space-y-6">
-        <em className="text-state1">* Informasi ini harus diisi</em>
-
-        <h4 className="mig-heading--4">Pilih Filter:</h4>
-
-        <Form
-          layout="vertical"
-          form={form}
-          onFinish={handleOnFormSubmitted}
-          validateMessages={{
-            required: "Field ini harus diisi!",
-          }}
+      <div className="">
+        <Tabs
+          defaultActiveKey="1"
+          className="w-full"
+          onChange={setActiveTabKey}
         >
-          {/* Pick export date range */}
-          <Form.Item name="rentang_waktu" label="Rentang Waktu">
-            <RangePicker
-              format="DD MMM YYYY"
-              allowClear={false}
-              value={[selectedDateRange.start_date, selectedDateRange.end_date]}
-              onCalendarChange={(value) => {
-                if (value) {
-                  let startDate = value[0];
-                  let endDate = value[1];
-                  setSelectedDateRange({
-                    start_date: startDate,
-                    end_date: endDate,
-                  });
-                }
+          <TabPane tab="Sheet Absensi" key="1" />
+          <TabPane tab="Format Terpadu" key="2" />
+        </Tabs>
+        <div className={"space-y-6"}>
+          <em className="text-state1">* Informasi ini harus diisi</em>
+          <h4 className="mig-heading--4">Pilih Filter:</h4>
+        </div>
+        {activeTabKey == "1" ? (
+          <div className={"space-y-6 mt-6"}>
+            <Form
+              layout="vertical"
+              form={form}
+              onFinish={handleOnFormSubmitted}
+              validateMessages={{
+                required: "Field ini harus diisi!",
               }}
-            />
-          </Form.Item>
-
-          {exportAsAdmin && (
-            <>
-              {/* Select Form Aktivitas */}
-              <div className="flex flex-row space-x-2 items-center">
-                <Form.Item
-                  name="form_aktivitas"
-                  label="Form Aktivitas"
-                  className="w-full"
-                  rules={[{ required: true }]}
-                >
-                  <Select
-                    showSearch
-                    mode={"multiple"}
-                    allowClear
-                    placeholder="Pilih form aktivitas"
-                    optionFilterProp="children"
-                    filterSort={(optionA, optionB) => {
-                      if (isSortAsc) {
-                        return String(optionA.children ?? "")
-                          .toLowerCase()
-                          .localeCompare(
-                            String(optionB?.children ?? "").toLowerCase()
-                          );
-                      } else {
-                        return 1;
-                      }
-                    }}
-                    onChange={handleOnChangeFormAktivitas}
-                    onSearch={handleOnSearchFormAktivitas}
-                  >
-                    {formAktivitasData?.map(({ id, name }) => (
-                      <Option key={id} value={id}>
-                        {name}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-                <div className="mt-2">
-                  <ButtonSys
-                    type={isSortAsc ? "primary" : "default"}
-                    icon={<SortAscendingOutlined />}
-                    onClick={() => setIsSortAsc(!isSortAsc)}
-                  >
-                    <SortAscendingOutlined />
-                  </ButtonSys>
-                </div>
-              </div>
-              {/* Selectable staff */}
-              <Form.Item label="Staff" required className="relative">
-                {Array.isArray(formAktivitasStaffList) &&
-                  formAktivitasStaffList.length > 0 &&
-                  namaSelected.length == namaTempSelected.length &&
-                  namaSelected.length != 0 && (
-                    <Button
-                      type="link"
-                      onClick={handleOnUnSelectAllStaff}
-                      className="absolute -top-8 right-0 p-0 m-0 border text-primary100 hover:text-primary75 active:text-primary75 focus:text-primary75"
-                    >
-                      Hapus Semua
-                    </Button>
-                  )}
-                {Array.isArray(formAktivitasStaffList) &&
-                  formAktivitasStaffList.length > 0 &&
-                  namaSelected.length > namaTempSelected.length && (
-                    <Button
-                      type="link"
-                      onClick={handleOnSelectAllStaff}
-                      className="absolute -top-8 right-0 p-0 m-0 border text-primary100 hover:text-primary75 active:text-primary75 focus:text-primary75"
-                    >
-                      Pilih Semua
-                    </Button>
-                  )}
-
-                {!formAktivitasStaffList && !formAktivitasStaffListLoading && (
-                  <span className="text-mono50">
-                    Mohon pilih Form Aktivitas terlebih dahulu untuk memilih
-                    staff.
-                  </span>
-                )}
-
-                {Array.isArray(formAktivitasStaffList) &&
-                  formAktivitasStaffList.length === 0 && (
-                    <span className="text-mono50">
-                      Form Aktivitas ini belum memiliki staff.
-                    </span>
-                  )}
-                {dataFormAktifitas && (
-                  <Form.Item
-                    name="selected_staff"
-                    rules={[{ required: true }]}
-                    shouldUpdate
-                  >
-                    <Checkbox.Group>
-                      <div className="flex flex-col space-x-0 space-y-4">
-                        {dataFormAktifitas.map((user) => (
-                          <Checkbox
-                            key={user.id}
-                            value={user.name}
-                            onChange={(e) => {
-                              handleOnSelectStaff(e);
-                            }}
-                            className="flex items-center"
-                          >
-                            <div className="flex items-center space-x-4">
-                              {/* Profile Picture */}
-                              <div className="w-8 h-8 bg-mono80 rounded-full overflow-hidden">
-                                <img
-                                  src={generateStaticAssetUrl(
-                                    user.profile_image.link
-                                  )}
-                                  alt={`${user.name}'s Avatar`}
-                                  className="w-full h-full bg-cover"
-                                />
-                              </div>
-
-                              {/* Staff name */}
-                              <span className="text-mono30">{user.name}</span>
-                            </div>
-                          </Checkbox>
-                        ))}
-                      </div>
-                    </Checkbox.Group>
-                  </Form.Item>
-                )}
+            >
+              {/* Pick export date range */}
+              <Form.Item name="rentang_waktu" label="Rentang Waktu">
+                <RangePicker
+                  format="DD MMM YYYY"
+                  allowClear={false}
+                  value={[
+                    selectedDateRange.start_date,
+                    selectedDateRange.end_date,
+                  ]}
+                  onCalendarChange={(value) => {
+                    if (value) {
+                      let startDate = value[0];
+                      let endDate = value[1];
+                      setSelectedDateRange({
+                        start_date: startDate,
+                        end_date: endDate,
+                      });
+                    }
+                  }}
+                />
               </Form.Item>
-            </>
-          )}
-        </Form>
+
+              {exportAsAdmin && (
+                <>
+                  {/* Select Form Aktivitas */}
+                  <div className="flex flex-row space-x-2 items-center">
+                    <Form.Item
+                      name="form_aktivitas"
+                      label="Form Aktivitas"
+                      className="w-full"
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        showSearch
+                        mode={"multiple"}
+                        allowClear
+                        placeholder="Pilih form aktivitas"
+                        optionFilterProp="children"
+                        filterSort={(optionA, optionB) => {
+                          if (isSortAsc) {
+                            return String(optionA.children ?? "")
+                              .toLowerCase()
+                              .localeCompare(
+                                String(optionB?.children ?? "").toLowerCase()
+                              );
+                          } else {
+                            return 1;
+                          }
+                        }}
+                        onChange={handleOnChangeFormAktivitas}
+                        onSearch={handleOnSearchFormAktivitas}
+                      >
+                        {formAktivitasData?.map(({ id, name }) => (
+                          <Option key={id} value={id}>
+                            {name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <div className="mt-2">
+                      <ButtonSys
+                        type={isSortAsc ? "primary" : "default"}
+                        icon={<SortAscendingOutlined rev={""} />}
+                        onClick={() => setIsSortAsc(!isSortAsc)}
+                      >
+                        <SortAscendingOutlined rev={""} />
+                      </ButtonSys>
+                    </div>
+                  </div>
+                  {/* Selectable staff */}
+                  <Form.Item label="Staff" required className="relative">
+                    {Array.isArray(formAktivitasStaffList) &&
+                      formAktivitasStaffList.length > 0 &&
+                      namaSelected.length == namaTempSelected.length &&
+                      namaSelected.length != 0 && (
+                        <Button
+                          type="link"
+                          onClick={handleOnUnSelectAllStaff}
+                          className="absolute -top-8 right-0 p-0 m-0 border text-primary100 hover:text-primary75 active:text-primary75 focus:text-primary75"
+                        >
+                          Hapus Semua
+                        </Button>
+                      )}
+                    {Array.isArray(formAktivitasStaffList) &&
+                      formAktivitasStaffList.length > 0 &&
+                      namaSelected.length > namaTempSelected.length && (
+                        <Button
+                          type="link"
+                          onClick={handleOnSelectAllStaff}
+                          className="absolute -top-8 right-0 p-0 m-0 border text-primary100 hover:text-primary75 active:text-primary75 focus:text-primary75"
+                        >
+                          Pilih Semua
+                        </Button>
+                      )}
+
+                    {!formAktivitasStaffList &&
+                      !formAktivitasStaffListLoading && (
+                        <span className="text-mono50">
+                          Mohon pilih Form Aktivitas terlebih dahulu untuk
+                          memilih staff.
+                        </span>
+                      )}
+
+                    {Array.isArray(formAktivitasStaffList) &&
+                      formAktivitasStaffList.length === 0 && (
+                        <span className="text-mono50">
+                          Form Aktivitas ini belum memiliki staff.
+                        </span>
+                      )}
+                    {dataFormAktifitas && (
+                      <Form.Item
+                        name="selected_staff"
+                        rules={[{ required: true }]}
+                        shouldUpdate
+                      >
+                        <Checkbox.Group>
+                          <div className="flex flex-col space-x-0 space-y-4">
+                            {dataFormAktifitas.map((user) => (
+                              <Checkbox
+                                key={user.id}
+                                value={user.name}
+                                onChange={(e) => {
+                                  handleOnSelectStaff(e);
+                                }}
+                                className="flex items-center"
+                              >
+                                <div className="flex items-center space-x-4">
+                                  {/* Profile Picture */}
+                                  <div className="w-8 h-8 bg-mono80 rounded-full overflow-hidden">
+                                    <img
+                                      src={generateStaticAssetUrl(
+                                        user.profile_image.link
+                                      )}
+                                      alt={`${user.name}'s Avatar`}
+                                      className="w-full h-full bg-cover"
+                                    />
+                                  </div>
+
+                                  {/* Staff name */}
+                                  <span className="text-mono30">
+                                    {user.name}
+                                  </span>
+                                </div>
+                              </Checkbox>
+                            ))}
+                          </div>
+                        </Checkbox.Group>
+                      </Form.Item>
+                    )}
+                  </Form.Item>
+                </>
+              )}
+            </Form>
+          </div>
+        ) : (
+          <div className={"space-y-6 mt-6"}>
+            <Form
+              layout="vertical"
+              form={formPdf}
+              onFinish={handleOnFormTerpaduSubmitted}
+              validateMessages={{
+                required: "Field ini harus diisi!",
+              }}
+            >
+              {/* Pick export date range */}
+              <Form.Item name="rentang_waktu_pdf" label="Rentang Waktu">
+                <RangePicker
+                  format="DD MMM YYYY"
+                  allowClear={false}
+                  className={"h-[52px]"}
+                  value={[
+                    selectedDateRangePdf.start_date,
+                    selectedDateRangePdf.end_date,
+                  ]}
+                  onCalendarChange={(value) => {
+                    if (value) {
+                      let startDate = value[0];
+                      let endDate = value[1];
+                      setSelectedDateRangePdf({
+                        start_date: startDate,
+                        end_date: endDate,
+                      });
+                    }
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="supervisor"
+                label="Nama Supervisor"
+                className="w-full"
+                rules={[{ required: true }]}
+              >
+                <Input
+                  className={"h-[52px]"}
+                  type="text"
+                  value={namaSupervisor}
+                  onChange={(e) => handleChangeSupervisor(e)}
+                />
+              </Form.Item>
+            </Form>
+          </div>
+        )}
       </div>
+      <ModalCore
+        title={"Unduh PDF"}
+        visible={modalConfirmExportPdf}
+        onCancel={() => setModalConfirmExportPdf(false)}
+        footer={<></>}
+      >
+        <Spin spinning={loadingData}>
+          <p className={"text-base text-black font-semibold mb-4"}>
+            Apakah kamu akan mengunduh data aktivitas?
+          </p>
+          {dataPdf && (
+            <div className="flex justify-center">
+              <PDFDownloadLink
+                document={
+                  <ExportActivityTemplate
+                    dataResume={dataPdf}
+                    logoStatus={true}
+                    supervisor={dataFormat.supervisor}
+                    from_data={dataFormat.from}
+                    to_data={dataFormat.to}
+                    dataProfile={dataProfile}
+                  />
+                }
+                fileName={`test.pdf`}
+              >
+                <ButtonSys
+                  type={"primary"}
+                  // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
+                >
+                  <div className={"flex flex-row"}>
+                    <DownloadIcon2Svg size={16} color={"#fffffff"} />
+                    <p className={"ml-2 text-xs text-white"}>Unduh PDF</p>
+                  </div>
+                </ButtonSys>
+              </PDFDownloadLink>
+            </div>
+          )}
+        </Spin>
+      </ModalCore>
     </DrawerCore>
   );
 };
