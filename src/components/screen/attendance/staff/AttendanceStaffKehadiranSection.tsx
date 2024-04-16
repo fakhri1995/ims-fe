@@ -179,7 +179,7 @@ export const AttendanceStaffKehadiranSection: FC<
             onClick={() => setIsExportDrawerShown(true)}
             disabled={!isAllowedToExportTable}
           >
-            <DownloadOutlined rev={""} className="mr-2" />
+            <DownloadOutlined className="mr-2" />
             Unduh Aktivitas
           </ButtonSys>
         </div>
