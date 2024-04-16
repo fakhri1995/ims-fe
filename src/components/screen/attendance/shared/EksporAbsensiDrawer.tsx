@@ -19,11 +19,15 @@ import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import DrawerCore from "components/drawer/drawerCore";
+import { AccessControl } from "components/features/AccessControl";
 import ModalCore from "components/modal/modalCore";
+
+import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
+import { TIME_SHEET_GET } from "lib/features";
 import { downloadFile, generateStaticAssetUrl } from "lib/helper";
 
 import {
@@ -79,6 +83,8 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   const [namaTempSelected, setNamaTempSelected] = useState([]);
   const [namaSupervisor, setNamaSupervisor] = useState(null);
   const [activeTabKey, setActiveTabKey] = useState("1");
+  const { hasPermission } = useAccessControl();
+  const isAllowedToExportActivity = hasPermission(TIME_SHEET_GET);
   const [dataProfile, setDataProfile] = useState({
     name: null,
     position: null,
@@ -542,7 +548,11 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           onChange={setActiveTabKey}
         >
           <TabPane tab="Sheet Absensi" key="1" />
-          {exportActivity && <TabPane tab="Format Terpadu" key="2" />}
+          {exportActivity && (
+            <AccessControl hasPermission={TIME_SHEET_GET}>
+              <TabPane tab="Format Terpadu" key="2" />
+            </AccessControl>
+          )}
         </Tabs>
         <div className={"space-y-6"}>
           <em className="text-state1">* Informasi ini harus diisi</em>
