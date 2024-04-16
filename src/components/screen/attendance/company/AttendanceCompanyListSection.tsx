@@ -62,6 +62,7 @@ const { TabPane } = Tabs;
  */
 export interface IAttendanceCompanyListSection {
   companyId: string;
+  initProps?: string;
 }
 
 /**
@@ -69,7 +70,7 @@ export interface IAttendanceCompanyListSection {
  */
 export const AttendanceCompanyListSection: FC<
   IAttendanceCompanyListSection
-> = ({ companyId }) => {
+> = ({ companyId, initProps }) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
 

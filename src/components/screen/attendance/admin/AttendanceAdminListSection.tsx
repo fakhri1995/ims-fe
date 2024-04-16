@@ -60,14 +60,16 @@ const { TabPane } = Tabs;
 /**
  * Component AttendanceAdminListSection's props.
  */
-export interface IAttendanceAdminListSection {}
+export interface IAttendanceAdminListSection {
+  initProps: string;
+}
 
 /**
  * Component AttendanceAdminListSection
  */
-export const AttendanceAdminListSection: FC<
-  IAttendanceAdminListSection
-> = () => {
+export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
+  initProps
+) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
 

@@ -74,7 +74,7 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
         {/* Second row: Table all attendance */}
         <div className="grid grid-cols-12">
           <div className="col-span-full">
-            <AttendanceAdminListSection />
+            <AttendanceAdminListSection initProps={token} />
           </div>
         </div>
       </div>

@@ -213,6 +213,7 @@ export const AttendanceStaffKehadiranSection: FC<
         <EksporAbsensiDrawer
           visible={isExportDrawerShown}
           token={initProps.initProps}
+          exportActivity
           onClose={() => setIsExportDrawerShown(false)}
         />
       </AccessControl>
