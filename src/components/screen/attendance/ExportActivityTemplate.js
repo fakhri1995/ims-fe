@@ -61,22 +61,6 @@ const ExportActivityTemplate = ({
     setBulanPdf(bulan);
   }, []);
 
-  // function checkDataDescription(data) {
-  //   if (data.description != undefined) {
-  //     let checkDescription = parse(data.description);
-
-  //     console.log(checkDescription);
-
-  //     if (checkDescription?.props?.children?.length > 1) {
-  //       return true;
-  //     } else if (checkDescription?.props?.children?.type !== "br") {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } else return false;
-  // }
-
   return (
     <Document>
       <Page size={"A4"} style={styles.page}>
@@ -407,7 +391,13 @@ const ExportActivityTemplate = ({
                 paddingVertical: 4,
                 paddingHorizontal: 4,
                 width: 75,
-                height: 24,
+                minHeight: 24,
+                borderRightColor: "white",
+                borderLeftColor: "white",
+                borderTopColor: "white",
+                borderBottomColor:
+                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
+                borderWidth: idx == dataResume.length - 1 ? 1 : 0,
               }}
             >
               <Text
@@ -438,7 +428,13 @@ const ExportActivityTemplate = ({
                 paddingHorizontal: 4,
                 paddingVertical: 4,
                 width: 56,
-                height: 24,
+                minHeight: 24,
+                borderRightColor: "white",
+                borderLeftColor: "white",
+                borderTopColor: "white",
+                borderBottomColor:
+                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
+                borderWidth: idx == dataResume.length - 1 ? 1 : 0,
               }}
             >
               <Text
@@ -470,7 +466,13 @@ const ExportActivityTemplate = ({
                 paddingHorizontal: 4,
                 paddingVertical: 4,
                 width: 56,
-                height: 24,
+                minHeight: 24,
+                borderRightColor: "white",
+                borderLeftColor: "white",
+                borderTopColor: "white",
+                borderBottomColor:
+                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
+                borderWidth: idx == dataResume.length - 1 ? 1 : 0,
               }}
             >
               <Text
@@ -501,7 +503,13 @@ const ExportActivityTemplate = ({
                 paddingHorizontal: 4,
                 paddingVertical: 4,
                 width: 45,
-                height: 24,
+                minHeight: 24,
+                borderBottomColor:
+                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
+                borderRightColor: "white",
+                borderLeftColor: "white",
+                borderTopColor: "white",
+                borderWidth: idx == dataResume.length - 1 ? 1 : 0,
               }}
             >
               <Text
@@ -513,7 +521,7 @@ const ExportActivityTemplate = ({
                   flexWrap: "wrap",
                 }}
               >
-                {data.work == 0 ? "WFO" : "WFH"}
+                {data.work == 0 ? "WFO" : data.work == 1 ? "WFH" : "-"}
               </Text>
             </View>
             <View
@@ -531,7 +539,13 @@ const ExportActivityTemplate = ({
                 paddingVertical: 4,
                 paddingHorizontal: 4,
                 width: 300,
-                height: "auto",
+                minHeight: 24,
+                borderBottomColor:
+                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
+                borderRightColor: "white",
+                borderLeftColor: "white",
+                borderTopColor: "white",
+                borderWidth: idx == dataResume.length - 1 ? 1 : 0,
               }}
             >
               {data["daily activity"] == null ? (
@@ -614,11 +628,12 @@ const ExportActivityTemplate = ({
                 borderRightColor: "#FAFAFA",
                 borderLeftColor: "#FAFAFA",
                 borderTopColor: "white",
-                borderBottomColor: "white",
+                borderBottomColor:
+                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
                 borderWidth: 1,
                 paddingVertical: 4,
                 width: 63,
-                height: 24,
+                minHeight: 24,
               }}
             >
               <Text
@@ -627,6 +642,8 @@ const ExportActivityTemplate = ({
                   color: `#4D4D4D`,
                   fontWeight: 500,
                   textAlign: "center",
+                  flexWrap: "wrap",
+                  flexDirection: "row",
                 }}
               >
                 {idx == dataResume.length / 2 ? supervisor : ""}
@@ -638,11 +655,12 @@ const ExportActivityTemplate = ({
                 borderRightColor: "#FAFAFA",
                 borderLeftColor: "#FAFAFA",
                 borderTopColor: "white",
-                borderBottomColor: "white",
+                borderBottomColor:
+                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
                 borderWidth: 1,
                 paddingVertical: 4,
                 width: 63,
-                height: 24,
+                minHeight: 24,
               }}
             >
               <Text
@@ -656,207 +674,6 @@ const ExportActivityTemplate = ({
             </View>
           </View>
         ))}
-        {/*         
-          <View style={{display:'flex',flexDirection:'row',paddingHorizontal:48}}>
-            <View style={{backgroundColor:'#E0F1FF',marginRight:1,paddingVertical:4,width:75, height:24}}>
-              <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',
-                alignItems:'center'
-              }}>2 Des 2023</Text>
-            </View>
-            <View style={{backgroundColor:'#E0F1FF', marginRight:1,paddingVertical:4,width:56, height:24}}>
-              
-            </View>
-            <View style={{backgroundColor:'#E0F1FF', marginRight:1,paddingVertical:4,width:56, height:24}}>
-             
-            </View>
-            <View style={{backgroundColor:'#E0F1FF', marginRight:1,paddingVertical:4,width:45, height:24}}>
-              
-            </View>
-            <View style={{backgroundColor:'#E0F1FF', paddingVertical:4,width:372, height:24}}>
-              
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1,paddingVertical:4,width:63, height:24}}>
-              <Text style={{ fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',}}></Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1,paddingVertical:4,width:63, height:24}}>
-              <Text style={{ fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',}}></Text>
-            </View>
-  
-          </View>
-          <View style={{display:'flex',flexDirection:'row',paddingHorizontal:48}}>
-            <View style={{backgroundColor:'#E0F1FF',marginRight:1,paddingVertical:4,width:75, height:24}}>
-              <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',
-                alignItems:'center'
-              }}>3 Des 2023</Text>
-            </View>
-            <View style={{backgroundColor:'#E0F1FF', marginRight:1,paddingVertical:4,width:56, height:24}}>
-              
-            </View>
-            <View style={{backgroundColor:'#E0F1FF', marginRight:1,paddingVertical:4,width:56, height:24}}>
-             
-            </View>
-            <View style={{backgroundColor:'#E0F1FF', marginRight:1,paddingVertical:4,width:45, height:24}}>
-              
-            </View>
-            <View style={{backgroundColor:'#E0F1FF', paddingVertical:4,width:372, height:24}}>
-              
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1,paddingVertical:4,width:63, height:24}}>
-              <Text style={{ fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',}}></Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1,paddingVertical:4,width:63, height:24}}>
-              <Text style={{ fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',}}></Text>
-            </View>
-  
-          </View>
-          <View style={{display:'flex',flexDirection:'row',paddingHorizontal:48}}>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1,marginRight:1,paddingVertical:4,width:75, height:'auto'}}>
-              <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',
-                alignItems:'center'
-              }}>4 Des 2023</Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1, marginRight:1,paddingVertical:4,width:56, height:'auto'}}>
-            <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',
-                alignItems:'center'
-              }}>08:00</Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1, marginRight:1,paddingVertical:4,width:56, height:'auto'}}>
-            <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',
-                alignItems:'center'
-              }}>19:00</Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1, marginRight:1,paddingVertical:4,width:45, height:'auto'}}>
-            <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',
-                alignItems:'center'
-              }}>WFO</Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1, paddingVertical:4,width:372, height:'auto'}}>
-            <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',
-                alignItems:'center',
-                flexWrap:'wrap'
-              }}>Analisis user behavior sebelum mengeksekusi desain yang akan dibuat.</Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1,paddingVertical:4,width:63, height:24}}>
-              <Text style={{ fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',}}></Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1,paddingVertical:4,width:63, height:24}}>
-              <Text style={{ fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',}}></Text>
-            </View>
-  
-          </View>
-          <View style={{display:'flex',flexDirection:'row',alignItems:'center',paddingHorizontal:48}}>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1,marginRight:1,paddingVertical:4,width:75, height:'auto'}}>
-              <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',
-                alignItems:'center'
-              }}>5 Des 2023</Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1, marginRight:1,paddingVertical:4,width:56, height:'auto'}}>
-            <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',
-                alignItems:'center'
-              }}>08:00</Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1, marginRight:1,paddingVertical:4,width:56, height:'auto'}}>
-            <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',
-                alignItems:'center'
-              }}>19:00</Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1, marginRight:1,paddingVertical:4,width:45, height:'auto'}}>
-            <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',
-                alignItems:'center'
-              }}>WFO</Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1,paddingHorizontal:4, paddingVertical:4,width:372, height:'auto'}}>
-            <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                alignItems:'center',
-                flexWrap:'wrap'
-              }}>Analisis user behavior sebelum mengeksekusi desain yang akan dibuat.</Text>
-                <Text style={{
-                fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                alignItems:'center',
-                flexWrap:'wrap'
-              }}>Analisis user behavior sebelum mengeksekusi desain yang akan dibuat.</Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1,paddingVertical:4,width:63, height:24}}>
-              <Text style={{ fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',}}></Text>
-            </View>
-            <View style={{backgroundColor:'white',borderRightColor:'#FAFAFA',borderLeftColor:'#FAFAFA',borderTopColor:'white',borderBottomColor:'white',borderWidth:1,paddingVertical:4,width:63, height:24}}>
-              <Text style={{ fontSize:10,
-                color: `#4D4D4D`,
-                fontWeight:500,
-                textAlign:'center',}}></Text>
-            </View>
-  
-          </View> */}
         {/* Footer */}
         <View fixed style={styles.footer}>
           <View style={{ flexDirection: "row" }}>
