@@ -33,14 +33,16 @@ import clsx from "clsx";
 /**
  * Component AttendanceStaffKehadiranSection's props.
  */
-export interface IAttendanceStaffKehadiranSection {}
+export interface IAttendanceStaffKehadiranSection {
+  initProps: string;
+}
 
 /**
  * Component AttendanceStaffKehadiranSection
  */
 export const AttendanceStaffKehadiranSection: FC<
   IAttendanceStaffKehadiranSection
-> = () => {
+> = (initProps) => {
   const router = useRouter();
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
@@ -177,10 +179,9 @@ export const AttendanceStaffKehadiranSection: FC<
             disabled={!isAllowedToExportTable}
           >
             <DownloadOutlined className="mr-2" />
-            Unduh Tabel
+            Unduh Aktivitas
           </ButtonSys>
         </div>
-
         <ConfigProvider
           renderEmpty={() => (
             <DataEmptyState caption="Data kehadiran kosong." />
@@ -210,6 +211,8 @@ export const AttendanceStaffKehadiranSection: FC<
       <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
         <EksporAbsensiDrawer
           visible={isExportDrawerShown}
+          token={initProps.initProps}
+          exportActivity
           onClose={() => setIsExportDrawerShown(false)}
         />
       </AccessControl>

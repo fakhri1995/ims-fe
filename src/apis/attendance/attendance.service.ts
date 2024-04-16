@@ -8,6 +8,8 @@ import { objectToFormData } from "lib/helper";
 import {
   AttendanceExportExcelDataCriteria,
   AttendanceExportExcelDataResult,
+  AttendanceExportPdfDataCriteria,
+  AttendanceExportPdfDataResult,
   IGetAttendanceUserSucceedResponse,
   IGetAttendanceUsersPaginateParams,
   IGetAttendanceUsersPaginateSucceedResponse,
@@ -179,6 +181,44 @@ export class AttendanceService {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
       result.fileName = fileNamePrefix.concat("-", fileName);
+    } catch (error) {
+      return error;
+    }
+
+    return result;
+  }
+
+  static async exportPdfData(
+    axiosClient: AxiosInstance,
+    criteria: AttendanceExportPdfDataCriteria
+  ): Promise<AttendanceExportPdfDataResult | Error> {
+    /** NOTE: we need to add `to` a day to include today's activities */
+    const [formattedFrom, formattedTo] = [
+      criteria.from,
+      addDays(new Date(criteria.to), 1),
+    ].map((value) => formatDateToLocale(value, "yyyy-MM-dd"));
+
+    const qsParam: any = {
+      from: formattedFrom,
+      to: formattedTo,
+    };
+
+    const querySearch = QueryString.stringify(qsParam, {
+      addQueryPrefix: true,
+    });
+
+    const endpoint = "/exportAttendanceActivityUser";
+
+    const result: AttendanceExportPdfDataResult = {
+      data: null,
+    };
+
+    try {
+      const response = await axiosClient.get(endpoint + querySearch, {
+        responseType: "json",
+      });
+      console.log("hasil query api ", response);
+      result.data = response.data;
     } catch (error) {
       return error;
     }

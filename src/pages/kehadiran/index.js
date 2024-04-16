@@ -104,6 +104,7 @@ const KehadiranIndex = ({ dataProfile, sidemenu, initProps }) => {
         <div className="grid grid-cols-12">
           <div className="col-span-full">
             <AttendanceCompanyListSection
+              initProps={initProps}
               companyId={dataProfile.data.company.id.toString()}
             />
           </div>
