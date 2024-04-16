@@ -47,16 +47,16 @@ const { TabPane } = Tabs;
  */
 export interface IEksporAbsensiDrawer {
   visible: boolean;
-  token: string;
-  name_profile: string;
-  position_profile: string;
+  token?: string;
   onClose: () => void;
 
   /**
    * Set it to true to show more filter options.
    * It only used for Admin and not Staff.
    */
+
   exportAsAdmin?: boolean;
+  exportActivity?: boolean;
 }
 
 /**
@@ -67,6 +67,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   onClose,
   token,
   exportAsAdmin = false,
+  exportActivity = false,
 }) => {
   const [form] = Form.useForm();
   const [formPdf] = Form.useForm();
@@ -219,34 +220,36 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   );
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(token),
-      },
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          setDataProfile({
-            name: response2.data.name,
-            position: response2.data.position,
-          });
-        } else {
+    if (exportActivity) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(token),
+        },
+      })
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            setDataProfile({
+              name: response2.data.name,
+              position: response2.data.position,
+            });
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+            setLoadingData(false);
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${response2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
           setLoadingData(false);
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
         });
-        setLoadingData(false);
-      });
+    }
   }, []);
   useEffect(() => {
     const from = selectedDateRangePdf.start_date.toDate();
@@ -542,7 +545,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           onChange={setActiveTabKey}
         >
           <TabPane tab="Sheet Absensi" key="1" />
-          <TabPane tab="Format Terpadu" key="2" />
+          {exportActivity && <TabPane tab="Format Terpadu" key="2" />}
         </Tabs>
         <div className={"space-y-6"}>
           <em className="text-state1">* Informasi ini harus diisi</em>
