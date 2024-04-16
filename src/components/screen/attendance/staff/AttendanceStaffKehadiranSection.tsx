@@ -172,7 +172,6 @@ export const AttendanceStaffKehadiranSection: FC<
       <section className="mig-platform space-y-6">
         {/* Header: Title and Unduh Table button */}
         <div className="flex items-center justify-between">
-          {console.log("init props ", initProps)}
           <h3 className="mig-heading--4">Kehadiran</h3>
           <ButtonSys
             type={!isAllowedToExportTable ? "primary" : "default"}

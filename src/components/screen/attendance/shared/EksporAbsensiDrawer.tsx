@@ -1,4 +1,4 @@
-import { SortAscendingOutlined } from "@ant-design/icons";
+import { LoadingOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   Button,
@@ -264,7 +264,6 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       rentang_waktu_pdf?: [Moment, Moment];
       supervisor?: string;
     }) => {
-      console.log("fieldvalues ", fieldValues);
       const from = fieldValues.rentang_waktu_pdf[0].toDate();
       const to = fieldValues.rentang_waktu_pdf[1].toDate();
       const nama_supervisor = fieldValues.supervisor;
@@ -273,7 +272,6 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
         to: to,
         supervisor: nama_supervisor,
       });
-      console.log("isi ", nama_supervisor);
       const from_format = moment(from).format("YYYY-MM-DD");
       const to_format = moment(to).format("YYYY-MM-DD");
       /**
@@ -292,7 +290,6 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       )
         .then((response) => response.json())
         .then((response2) => {
-          console.log("get time sheet ", response2);
           if (response2.success) {
             setDataPdf(response2.data);
             setLoadingData(false);
@@ -774,7 +771,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           <p className={"text-base text-black font-semibold mb-4"}>
             Apakah kamu akan mengunduh data aktivitas?
           </p>
-          {dataPdf && (
+          {dataPdf ? (
             <div className="flex justify-center">
               <PDFDownloadLink
                 document={
@@ -787,7 +784,9 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                     dataProfile={dataProfile}
                   />
                 }
-                fileName={`test.pdf`}
+                fileName={`my-attendance_data-${moment().format(
+                  "DD_MM_YYYY"
+                )}.pdf`}
               >
                 <ButtonSys
                   type={"primary"}
@@ -799,6 +798,23 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                   </div>
                 </ButtonSys>
               </PDFDownloadLink>
+            </div>
+          ) : (
+            <div className={"flex flex-col justify-center"}>
+              <Spin
+                indicator={
+                  <LoadingOutlined
+                    style={{
+                      fontSize: 24,
+                    }}
+                    spin
+                  />
+                }
+              >
+                <p className="text-blackmig text-sm font-semibold text-center">
+                  Please wait, get data
+                </p>
+              </Spin>
             </div>
           )}
         </Spin>
