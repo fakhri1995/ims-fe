@@ -548,7 +548,9 @@ const ExportActivityTemplate = ({
                     flexWrap: "wrap",
                   }}
                 >
-                  {data["daily activity"][0].details[0].value}
+                  {data["daily activity"][0].details
+                    ? data["daily activity"][0].details[0].value
+                    : data["daily activity"][0].activity}
                 </Text>
               ) : Array.isArray(data["daily activity"]) &&
                 data["daily activity"].length > 1 ? (
@@ -573,7 +575,9 @@ const ExportActivityTemplate = ({
                         flexWrap: "wrap",
                       }}
                     >
-                      {datanew.details[0].value}
+                      {datanew.details
+                        ? datanew.details[0].value
+                        : datanew.activity}
                     </Text>
                   </View>
                 ))
