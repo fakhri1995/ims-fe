@@ -617,51 +617,59 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="flex items-center justify-between mb-6">
             <h4 className="mig-heading--4 ">Slip Gaji</h4>
             <div
-              className="flex flex-col md:flex-row space-y-2 md:space-y-0 
-              md:space-x-3 lg:space-x-6 items-end md:items-center"
+              className="flex flex-col lg:flex-row space-y-2 lg:space-y-0 
+              lg:space-x-3 xl:space-x-6 items-end lg:items-center"
             >
-              <ButtonSys
-                type={"default"}
-                onClick={() => setModalSalaryVar(true)}
-                disabled={!isAllowedToGetSalaryColumns}
-              >
-                <div className="flex space-x-2 items-center">
-                  <SettingOutlined />
-                  <p>Kelola Variabel Gaji</p>
-                </div>
-              </ButtonSys>
-              {dataPayslips.some(
-                (employee) => !employee?.last_month_payslip
-              ) ? (
+              <div className="w-full">
                 <ButtonSys
-                  type={"primary"}
-                  onClick={handleRaisePayslip}
-                  disabled={!isAllowedToRaisePayslip}
+                  type={"default"}
+                  onClick={() => setModalSalaryVar(true)}
+                  disabled={!isAllowedToGetSalaryColumns}
+                  fullWidth={true}
                 >
                   <div className="flex space-x-2 items-center">
-                    <CirclePlusIconSvg size={16} color="#FFFFFF" />
-                    <p>Buat Draft Slip Gaji</p>
+                    <SettingOutlined />
+                    <p>Kelola Variabel Gaji</p>
                   </div>
                 </ButtonSys>
-              ) : (
-                <ButtonSys
-                  type={"primary"}
-                  onClick={() => setModalPost(true)}
-                  disabled={!isAllowedToPostPayslips}
-                >
-                  <div className="flex space-x-2 items-center">
-                    <CheckIconSvg size={16} color="#FFFFFF" />
-                    <p>Terbitkan Draft Slip Gaji</p>
-                  </div>
-                </ButtonSys>
-              )}
+              </div>
+
+              <div className="w-full">
+                {dataPayslips.some(
+                  (employee) => !employee?.last_month_payslip
+                ) ? (
+                  <ButtonSys
+                    type={"primary"}
+                    onClick={handleRaisePayslip}
+                    disabled={!isAllowedToRaisePayslip}
+                    fullWidth={true}
+                  >
+                    <div className="flex space-x-2 items-center whitespace-nowrap">
+                      <CirclePlusIconSvg size={16} color="#FFFFFF" />
+                      <p>Buat Draft Slip Gaji</p>
+                    </div>
+                  </ButtonSys>
+                ) : (
+                  <ButtonSys
+                    type={"primary"}
+                    onClick={() => setModalPost(true)}
+                    disabled={!isAllowedToPostPayslips}
+                    fullWidth={true}
+                  >
+                    <div className="flex space-x-2 items-center whitespace-nowrap">
+                      <CheckIconSvg size={16} color="#FFFFFF" />
+                      <p>Terbitkan Draft Slip Gaji</p>
+                    </div>
+                  </ButtonSys>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Start: Search criteria */}
-          <div className="grid grid-cols-2 gap-2 md:flex md:flex-row justify-between w-full items-center mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:flex lg:flex-row justify-between w-full items-center mb-4">
             {/* Search by keyword (kata kunci) */}
-            <div className="md:w-4/12">
+            <div className="lg:w-4/12">
               <Input
                 defaultValue={searchingFilterPayslips}
                 style={{ width: `100%` }}
@@ -675,7 +683,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by position (dropdown) */}
-            <div className="md:w-2/12">
+            <div className="lg:w-2/12">
               <Select
                 allowClear
                 showSearch
@@ -704,7 +712,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by company (dropdown) */}
-            <div className="md:w-2/12">
+            <div className="lg:w-2/12">
               <Select
                 allowClear
                 showSearch
@@ -733,7 +741,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by payslip status (dropdown) */}
-            <div className="md:w-2/12">
+            <div className="lg:w-2/12">
               <Select
                 defaultValue={queryParams.is_posted}
                 allowClear
@@ -753,16 +761,19 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
               </Select>
             </div>
 
-            <ButtonSys
-              type={`primary`}
-              onClick={onFilterPayslips}
-              disabled={!isAllowedToGetPayslips}
-            >
-              <div className="flex flex-row space-x-2.5 w-full items-center">
-                <SearchIconSvg size={15} color={`#ffffff`} />
-                <p>Cari</p>
-              </div>
-            </ButtonSys>
+            <div className="md:col-span-2">
+              <ButtonSys
+                type={`primary`}
+                onClick={onFilterPayslips}
+                disabled={!isAllowedToGetPayslips}
+                fullWidth={true}
+              >
+                <div className="flex space-x-2.5 items-center">
+                  <SearchIconSvg size={15} color={`#ffffff`} />
+                  <p>Cari</p>
+                </div>
+              </ButtonSys>
+            </div>
           </div>
           {/* End: Search criteria */}
           <TableCustomPayslipList
