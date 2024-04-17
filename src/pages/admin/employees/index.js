@@ -208,6 +208,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       onSuccess: (data) => {
         setDataEmployees(data.data);
       },
+      onError: (error) => {
+        notification.error({ message: "Gagal mendapatkan daftar karyawan." });
+      },
     }
   );
 
@@ -234,7 +237,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     {
       enabled: isAllowedToGetCompanyClients,
       select: (response) => response.data,
-      initialData: [],
     }
   );
 
@@ -758,9 +760,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
 
           {/* Start: Search criteria */}
-          <div className="grid grid-cols-2 gap-2 md:flex md:flex-row justify-between w-full items-center mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:flex lg:flex-row justify-between w-full items-center mb-4">
             {/* Search by keyword (kata kunci) */}
-            <div className="md:w-4/12">
+            <div className="lg:w-4/12">
               <Input
                 defaultValue={searchingFilterEmployees}
                 style={{ width: `100%` }}
@@ -774,7 +776,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by company (dropdown) */}
-            <div className="md:w-2/12">
+            <div className="lg:w-2/12">
               <Select
                 allowClear
                 showSearch
@@ -806,7 +808,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by position (dropdown) */}
-            <div className="md:w-2/12">
+            <div className="lg:w-2/12">
               <Select
                 allowClear
                 showSearch
@@ -835,7 +837,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by contract status (dropdown) */}
-            <div className="md:w-2/12">
+            <div className="lg:w-2/12">
               <Select
                 allowClear
                 name={`status`}
@@ -858,16 +860,19 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               </Select>
             </div>
 
-            <ButtonSys
-              type={`primary`}
-              onClick={onFilterEmployees}
-              disabled={!isAllowedToGetEmployees}
-            >
-              <div className="flex flex-row space-x-2.5 w-full items-center">
-                <SearchIconSvg size={15} color={`#ffffff`} />
-                <p>Cari</p>
-              </div>
-            </ButtonSys>
+            <div className="md:col-span-2">
+              <ButtonSys
+                type={`primary`}
+                onClick={onFilterEmployees}
+                disabled={!isAllowedToGetEmployees}
+                fullWidth={true}
+              >
+                <div className="flex space-x-2.5 items-center">
+                  <SearchIconSvg size={15} color={`#ffffff`} />
+                  <p>Cari</p>
+                </div>
+              </ButtonSys>
+            </div>
           </div>
           {/* End: Search criteria */}
           <div>

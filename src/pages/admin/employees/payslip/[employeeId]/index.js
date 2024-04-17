@@ -576,9 +576,9 @@ const EmployeePayslipDetailIndex = ({
           <h4 className="mig-heading--4 mb-6">Daftar Slip Gaji</h4>
 
           {/* Start: Search criteria */}
-          <div className="flex flex-row gap-2 justify-between w-full items-center mb-4">
+          <div className="grid grid-cols-1 md:flex md:flex-row gap-2 justify-between w-full items-center mb-4">
             {/* Search by keyword (kata kunci) */}
-            <div className="w-7/12">
+            <div className="md:w-7/12">
               <Input
                 defaultValue={searchingFilterPayslips}
                 style={{ width: `100%` }}
@@ -592,7 +592,7 @@ const EmployeePayslipDetailIndex = ({
             </div>
 
             {/* Filter by payslip status (dropdown) */}
-            <div className="w-3/12">
+            <div className="md:w-3/12">
               <Select
                 defaultValue={queryParams.is_posted}
                 allowClear
@@ -612,16 +612,19 @@ const EmployeePayslipDetailIndex = ({
               </Select>
             </div>
 
-            <ButtonSys
-              type={`primary`}
-              onClick={onFilterPayslips}
-              disabled={!isAllowedToGetPayslips}
-            >
-              <div className="flex flex-row space-x-2.5 w-full items-center">
-                <SearchIconSvg size={15} color={`#ffffff`} />
-                <p>Cari</p>
-              </div>
-            </ButtonSys>
+            <div>
+              <ButtonSys
+                type={`primary`}
+                onClick={onFilterPayslips}
+                disabled={!isAllowedToGetPayslips}
+                fullWidth={true}
+              >
+                <div className="flex space-x-2.5 items-center">
+                  <SearchIconSvg size={15} color={`#ffffff`} />
+                  <p>Cari</p>
+                </div>
+              </ButtonSys>
+            </div>
           </div>
           {/* End: Search criteria */}
           <TableCustomPayslipEmployeeList

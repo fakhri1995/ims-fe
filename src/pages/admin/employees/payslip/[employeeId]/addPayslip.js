@@ -505,46 +505,54 @@ const EmployeePayslipAddIndex = ({
         <div className="flex flex-row items-center justify-between mb-7">
           <h4 className="mig-heading--4">Buat Slip Gaji</h4>
           <div
-            className="space-y-2 md:space-y-0 md:space-x-6 flex flex-col 
-            md:flex-row items-end "
+            className="space-y-2 lg:space-y-0 lg:space-x-6 flex flex-col 
+            lg:flex-row items-end"
           >
-            <ButtonSys
-              color={"danger"}
-              type={"default"}
-              onClick={() => rt.back()}
-            >
-              <div className="flex flex-row space-x-2">
-                <CloseOutlined />
-                <p>Batalkan</p>
-              </div>
-            </ButtonSys>
-            <ButtonSys
-              type={"default"}
-              onClick={() => {
-                setIsDraft(true);
-                setModalUpdate(true);
-              }}
-              disabled={!isAllowedToUpdatePayslip}
-            >
-              <div className="flex flex-row space-x-2">
-                {/* <ClipboardListIconSvg color={"#35763B"} size={16} /> */}
-                <ProfileOutlined />
-                <p>Simpan Draft</p>
-              </div>
-            </ButtonSys>
-            <ButtonSys
-              type={"primary"}
-              onClick={() => {
-                setIsDraft(false);
-                setModalUpdate(true);
-              }}
-              disabled={!isAllowedToUpdatePayslip || disablePublish}
-            >
-              <div className="flex flex-row space-x-2">
-                <CheckIconSvg color={"white"} size={16} />
-                <p>Terbitkan</p>
-              </div>
-            </ButtonSys>
+            <div className="w-full">
+              <ButtonSys
+                color={"danger"}
+                type={"default"}
+                onClick={() => rt.back()}
+                fullWidth={true}
+              >
+                <div className="flex flex-row space-x-2">
+                  <CloseOutlined />
+                  <p>Batalkan</p>
+                </div>
+              </ButtonSys>
+            </div>
+            <div className="w-full">
+              <ButtonSys
+                type={"default"}
+                onClick={() => {
+                  setIsDraft(true);
+                  setModalUpdate(true);
+                }}
+                disabled={!isAllowedToUpdatePayslip}
+                fullWidth={true}
+              >
+                <div className="flex flex-row space-x-2 whitespace-nowrap">
+                  <ProfileOutlined />
+                  <p>Simpan Draft</p>
+                </div>
+              </ButtonSys>
+            </div>
+            <div className="w-full">
+              <ButtonSys
+                type={"primary"}
+                onClick={() => {
+                  setIsDraft(false);
+                  setModalUpdate(true);
+                }}
+                disabled={!isAllowedToUpdatePayslip || disablePublish}
+                fullWidth={true}
+              >
+                <div className="flex flex-row space-x-2">
+                  <CheckIconSvg color={"white"} size={16} />
+                  <p>Terbitkan</p>
+                </div>
+              </ButtonSys>
+            </div>
           </div>
         </div>
 
@@ -730,32 +738,33 @@ const EmployeePayslipAddIndex = ({
                       </Form.Item>
                     ))}
 
-                  {dataPayslip?.pph21 !== false && dataPayslip?.pph21 != null && (
-                    <Form.Item
-                      label="PPh 21"
-                      name={"pph21"}
-                      rules={[
-                        {
-                          required: true,
-                          message: "PPh 21 wajib diisi",
-                        },
-                      ]}
-                    >
-                      <>
-                        <CurrencyFormat
-                          customInput={Input}
-                          placeholder={"Masukkan PPh 21"}
-                          value={Number(dataPayslip?.pph21 || 0)}
-                          thousandSeparator={"."}
-                          decimalSeparator={","}
-                          prefix={"Rp"}
-                          allowNegative={false}
-                          disabled={true}
-                          renderText={(value) => <p>{value}</p>}
-                        />
-                      </>
-                    </Form.Item>
-                  )}
+                  {dataPayslip?.pph21 !== false &&
+                    dataPayslip?.pph21 != null && (
+                      <Form.Item
+                        label="PPh 21"
+                        name={"pph21"}
+                        rules={[
+                          {
+                            required: true,
+                            message: "PPh 21 wajib diisi",
+                          },
+                        ]}
+                      >
+                        <>
+                          <CurrencyFormat
+                            customInput={Input}
+                            placeholder={"Masukkan PPh 21"}
+                            value={Number(dataPayslip?.pph21 || 0)}
+                            thousandSeparator={"."}
+                            decimalSeparator={","}
+                            prefix={"Rp"}
+                            allowNegative={false}
+                            disabled={true}
+                            renderText={(value) => <p>{value}</p>}
+                          />
+                        </>
+                      </Form.Item>
+                    )}
                 </>
               )}
 
