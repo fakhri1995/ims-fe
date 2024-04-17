@@ -548,10 +548,8 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           onChange={setActiveTabKey}
         >
           <TabPane tab="Sheet Absensi" key="1" />
-          {exportActivity && (
-            <AccessControl hasPermission={TIME_SHEET_GET}>
-              <TabPane tab="Format Terpadu" key="2" />
-            </AccessControl>
+          {exportActivity && isAllowedToExportActivity && (
+            <TabPane tab="Format Terpadu" key="2" />
           )}
         </Tabs>
         <div className={"space-y-6"}>
