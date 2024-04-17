@@ -148,7 +148,7 @@ const ModalServiceCreate = ({
       {dataServiceList.map((service, idx) => (
         <div key={idx}>
           <Form layout="vertical" form={form}>
-            <div className="grid grid-cols-2 gap-x-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
               <Form.Item
                 label="Jenis Service"
                 name={"name"}

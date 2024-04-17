@@ -293,46 +293,56 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           <div className="col-span-6 flex flex-row items-center justify-between mb-7">
             <h4 className="mig-heading--4">Form Tambah Kontrak</h4>
             <div className="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-6 items-end lg:items-center">
-              <ButtonSys
-                color={"danger"}
-                type={"default"}
-                onClick={() => {
-                  if (prevpath == "add") {
-                    handleDeleteContract();
-                  } else {
-                    rt.push("/admin/contracts");
+              <div className="w-full">
+                <ButtonSys
+                  color={"danger"}
+                  type={"default"}
+                  onClick={() => {
+                    if (prevpath == "add") {
+                      handleDeleteContract();
+                    } else {
+                      rt.push("/admin/contracts");
+                    }
+                  }}
+                  fullWidth={true}
+                >
+                  <div className="flex flex-row space-x-2">
+                    {prevpath == "add" ? <DeleteOutlined /> : <CloseOutlined />}
+                    <p>Batalkan</p>
+                  </div>
+                </ButtonSys>
+              </div>
+              <div className="w-full">
+                <ButtonSys
+                  type={"default"}
+                  className="flex flex-row"
+                  onClick={() => handleUpdateContract(dataContractUpdate, 0)}
+                  disabled={
+                    !isAllowedToUpdateContract ||
+                    (!dataContractUpdate.code_number &&
+                      !dataContractUpdate.title)
                   }
-                }}
-              >
-                <div className="flex flex-row space-x-2">
-                  {prevpath == "add" ? <DeleteOutlined /> : <CloseOutlined />}
-                  <p>Batalkan</p>
-                </div>
-              </ButtonSys>
-              <ButtonSys
-                type={"default"}
-                className="flex flex-row"
-                onClick={() => handleUpdateContract(dataContractUpdate, 0)}
-                disabled={
-                  !isAllowedToUpdateContract ||
-                  (!dataContractUpdate.code_number && !dataContractUpdate.title)
-                }
-              >
-                <div className="flex flex-row space-x-2">
-                  <ProfileOutlined />
-                  <p className="ml-2">Simpan Draft</p>
-                </div>
-              </ButtonSys>
-              <ButtonSys
-                type={"primary"}
-                onClick={() => handleUpdateContract(dataContractUpdate, 1)}
-                disabled={!isAllowedToUpdateContract || disablePublish}
-              >
-                <div className="flex flex-row space-x-2">
-                  <p>Simpan Kontrak</p>
-                  <ArrowNarrowRightIconSvg color={"white"} size={16} />
-                </div>
-              </ButtonSys>
+                  fullWidth={true}
+                >
+                  <div className="flex flex-row space-x-2 whitespace-nowrap">
+                    <ProfileOutlined />
+                    <p className="ml-2">Simpan Draft</p>
+                  </div>
+                </ButtonSys>
+              </div>
+              <div className="w-full">
+                <ButtonSys
+                  type={"primary"}
+                  onClick={() => handleUpdateContract(dataContractUpdate, 1)}
+                  disabled={!isAllowedToUpdateContract || disablePublish}
+                  fullWidth={true}
+                >
+                  <div className="flex flex-row space-x-2 whitespace-nowrap">
+                    <p>Simpan Kontrak</p>
+                    <ArrowNarrowRightIconSvg color={"white"} size={16} />
+                  </div>
+                </ButtonSys>
+              </div>
             </div>
           </div>
 

@@ -80,7 +80,7 @@ const ContractDetailIndex = ({
 
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
-  const [isMobileView, setIsMobileView] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1024);
   const [currentHistoryId, setCurrentHistoryId] = useState(0);
   const [dataDisplayedContract, setDataDisplayedContract] = useState({});
   const [loadingContractHistory, setLoadingContractHistory] = useState(false);
@@ -91,11 +91,7 @@ const ContractDetailIndex = ({
   // Responsive view for action button section
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setIsMobileView(true); // Set smaller page size for smaller devices
-      } else {
-        setIsMobileView(false); // Set default page size for larger devices
-      }
+      setIsMobileView(window.innerWidth < 1024); // Set smaller page size for smaller devices
     };
 
     window.addEventListener("resize", handleResize);
@@ -227,7 +223,7 @@ const ContractDetailIndex = ({
         )}
 
         {/* Catatan & Aktivitas */}
-        <section className="md:col-span-4 h-max order-last md:order-none">
+        <section className="md:col-span-6 lg:col-span-4 h-max order-last md:order-none">
           <ContractAddendumSection
             setCurrentVersion={setCurrentHistoryId}
             isAllowedToGetContractHistories={isAllowedToGetContractHistories}
@@ -260,7 +256,7 @@ const ContractDetailIndex = ({
         </section>
 
         {/* Detail Kontrak & Daftar Service */}
-        <div className="md:col-span-8 ">
+        <div className="md:col-span-6  lg:col-span-8 ">
           <ContractInfoSection
             initProps={initProps}
             contractId={contractId}
