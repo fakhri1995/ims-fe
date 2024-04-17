@@ -3546,6 +3546,34 @@ const MessageIconSvg = ({ size, color }) => {
   return <Icon rev={""} component={messageIconSvg}></Icon>;
 };
 
+const CloseIconSvg = ({ size, color }) => {
+  const closeIconSvg = () => (
+    <svg
+      width={size ? size : "16"}
+      height={size ? size : "16"}
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 4L4 12"
+        stroke={color ? color : "white"}
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M4 4L12 12"
+        stroke={color ? color : "white"}
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={closeIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -3692,4 +3720,5 @@ export {
   CalendarOffIconSvg,
   CalendarStatsIconSvg,
   MessageIconSvg,
+  CloseIconSvg,
 };
