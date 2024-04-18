@@ -421,6 +421,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   allowClear
                   onChange={(e) => {
                     setSearchingFilterEmailTemplates(e.target.value);
+                    setPageEmailTemplates(1);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetEmailTemplates}

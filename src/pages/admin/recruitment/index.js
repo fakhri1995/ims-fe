@@ -1665,6 +1665,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   allowClear
                   onChange={(e) => {
                     setSearchingFilterRecruitments(e.target.value);
+                    setQueryParams({ page: 1 });
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetRecruitments}
