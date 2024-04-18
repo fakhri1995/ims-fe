@@ -1,8 +1,4 @@
-import {
-  DeleteOutlined,
-  DownloadOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
+import { CloseOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   Button,
@@ -52,6 +48,8 @@ import DrawerInformationEdit from "../../../components/drawer/career/DrawerInfor
 import DrawerQuestionEdit from "../../../components/drawer/career/DrawerQuestionEdit";
 import {
   AddCareerIconSvg,
+  CheckIconSvg,
+  CloseIconSvg,
   DownIconSvg,
   DownloadIcon2Svg,
   DownloadIconSvg,
@@ -984,6 +982,19 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     }
   };
 
+  const exportRejectPelamar = (data, type) => {
+    setDataUpdateStatus({
+      ...dataUpdateStatus,
+      id: data?.id,
+      name: data?.name,
+      prev_recruitment_status_name: data?.status.name,
+      recruitment_status_name: type == "export" ? "Shortlisted" : "Rejected",
+      recruitment_status_id: type == "export" ? 2 : 3,
+    });
+
+    setModalUpdateStatus(true);
+  };
+
   return (
     <Layout
       dataProfile={dataProfile}
@@ -1411,53 +1422,162 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               onClose={() => {
                 setDrawDetailPelamar(false);
               }}
-              width={380}
+              width={731}
               destroyOnClose={true}
             >
-              <div className={"flex flex-col gap-4"}>
-                <div className={"flex flex-col gap-2.5"}>
+              <div
+                className={
+                  "flex flex-col gap-4 mt-4 border border-[#F3F3F3] rounded-[6px] p-4"
+                }
+              >
+                {console.log("data terpilih ", dataTerpilih)}
+                <div className={"flex flex-row items-center gap-2"}>
                   <p className={"text-xs font-medium leading-5 text-mono50"}>
-                    Tanggal Melamar
+                    Status:
                   </p>
-                  <p className={"text-sm text-mono30 font-medium leading-5"}>
-                    {dataTerpilih
-                      ? moment(dataTerpilih.created_at).format("DD MMMM YYYY")
-                      : "-"}
-                  </p>
-                </div>
+                  <select
+                    value={dataTerpilih?.status?.id}
+                    className="rounded-md py-1 hover:cursor-pointer bg-bgstatuscareer2 px-2 customcareerselectstatus"
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(event) => {
+                      setDataUpdateStatus({
+                        ...dataUpdateStatus,
+                        id: dataTerpilih?.id,
+                        name: dataTerpilih?.name,
+                        prev_recruitment_status_name: dataTerpilih?.status.name,
+                        recruitment_status_name:
+                          event.target.selectedOptions[0].text,
+                        recruitment_status_id: Number(event.target.value),
+                      });
 
-                <div className={"flex flex-col gap-2.5"}>
-                  <p className={"text-xs font-medium leading-5 text-mono50"}>
-                    Nama Pelamar
-                  </p>
-                  <p className={"text-sm text-mono30 font-medium leading-5"}>
-                    {dataTerpilih ? dataTerpilih?.name : "-"}
-                  </p>
+                      setModalUpdateStatus(true);
+                    }}
+                    style={{
+                      backgroundColor:
+                        dataTerpilih?.status?.id == 1
+                          ? "#4D4D4D1A"
+                          : dataTerpilih?.status?.id == 2
+                          ? "#35763B"
+                          : "#BF4A40",
+                      color:
+                        dataTerpilih?.status?.id != 1 ? "white" : "#4D4D4D",
+                    }}
+                  >
+                    {dataStatusApply.map((status) => (
+                      <option
+                        key={status.id}
+                        value={status.id}
+                        style={{
+                          backgroundColor:
+                            status.id == 1
+                              ? "#4D4D4D1A"
+                              : status?.id == 2
+                              ? "#35763B"
+                              : "#BF4A40",
+                          color: status.id != 1 ? "white" : "#4D4D4D",
+                        }}
+                      >
+                        {status?.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <div className={"flex flex-col gap-2.5"}>
-                  <p className={"text-xs font-medium leading-5 text-mono50"}>
-                    Nomor Ponsel
-                  </p>
-                  <p className={"text-sm text-mono30 font-medium leading-5"}>
-                    {dataTerpilih ? dataTerpilih?.phone : "-"}
-                  </p>
+                <div className={"flex flex-row"}>
+                  <div className={"flex flex-col gap-2.5 w-1/2"}>
+                    <p className={"text-xs font-medium leading-5 text-mono50"}>
+                      Nama Pelamar
+                    </p>
+                    <p className={"text-sm text-mono30 font-medium leading-5"}>
+                      {dataTerpilih ? dataTerpilih?.name : "-"}
+                    </p>
+                  </div>
+                  <div className={"flex flex-col gap-2.5 w-1/2"}>
+                    <p className={"text-xs font-medium leading-5 text-mono50"}>
+                      Tanggal Melamar
+                    </p>
+                    <p className={"text-sm text-mono30 font-medium leading-5"}>
+                      {dataTerpilih
+                        ? moment(dataTerpilih.created_at).format("DD MMMM YYYY")
+                        : "-"}
+                    </p>
+                  </div>
                 </div>
-                <div className={"flex flex-col gap-2.5"}>
-                  <p className={"text-xs font-medium leading-5 text-mono50"}>
-                    Email Pelamar
-                  </p>
-                  <p className={"text-sm text-mono30 font-medium leading-5"}>
-                    {dataTerpilih ? dataTerpilih?.email : "-"}
-                  </p>
+                <div className={"flex flex-row"}>
+                  <div className={"flex flex-col gap-2.5 w-1/2"}>
+                    <p className={"text-xs font-medium leading-5 text-mono50"}>
+                      Nomor Ponsel
+                    </p>
+                    <p className={"text-sm text-mono30 font-medium leading-5"}>
+                      {dataTerpilih ? dataTerpilih?.phone : "-"}
+                    </p>
+                  </div>
+                  <div className={"flex flex-col gap-2.5 w-1/2"}>
+                    <p className={"text-xs font-medium leading-5 text-mono50"}>
+                      Email Pelamar
+                    </p>
+                    <p className={"text-sm text-mono30 font-medium leading-5"}>
+                      {dataTerpilih ? dataTerpilih?.email : "-"}
+                    </p>
+                  </div>
                 </div>
-                <div className={"flex flex-col gap-2.5"}>
-                  <p className={"text-xs font-medium leading-5 text-mono50"}>
-                    Status
-                  </p>
-                  <p className={"text-sm text-mono30 font-medium leading-5"}>
-                    {dataTerpilih ? dataTerpilih?.status?.name : "-"}
-                  </p>
-                </div>
+                {dataTerpilih?.status?.id == 1 && (
+                  <div className={"flex gap-4"}>
+                    <div
+                      onClick={() =>
+                        exportRejectPelamar(dataTerpilih, "export")
+                      }
+                      className={
+                        "flex gap-2 items-center justify-center w-[143px] h-6 bg-[#F4FAF5] rounded hover:cursor-pointer"
+                      }
+                    >
+                      <UserPlusIconSvg size={14} color={"#35763B"} />
+                      <p
+                        className={"text-[#35763B] text-xs leading-4 font-bold"}
+                      >
+                        Export Pelamar
+                      </p>
+                    </div>
+                    <div
+                      onClick={() =>
+                        exportRejectPelamar(dataTerpilih, "reject")
+                      }
+                      className={
+                        "flex gap-2 items-center justify-center w-[143px] h-6 bg-[#BF4A40] bg-opacity-20 rounded hover:cursor-pointer"
+                      }
+                    >
+                      <CloseIconSvg size={14} color={"#BF4A40"} />
+                      <p
+                        className={"text-[#BF4A40] text-xs leading-4 font-bold"}
+                      >
+                        Reject
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {dataTerpilih?.status?.id == 2 && (
+                  <div
+                    className={
+                      "flex gap-2 justify-center items-center rounded-[3px] bg-[#35763B] h-[28px] py-1.5"
+                    }
+                  >
+                    <CheckIconSvg color={"#ffffff"} size={16} />
+                    <p className={"text-white text-xs leading-4 font-bold"}>
+                      Pelamar ini Sudah Diekspor
+                    </p>
+                  </div>
+                )}
+                {dataTerpilih?.status?.id == 3 && (
+                  <div
+                    className={
+                      "flex gap-2 justify-center items-center rounded-[3px] bg-[#BF4A40] h-[28px] py-1.5"
+                    }
+                  >
+                    <CloseIconSvg />
+                    <p className={"text-white text-xs leading-4 font-bold"}>
+                      Pelamar ini Sudah Tersisihkan
+                    </p>
+                  </div>
+                )}
               </div>
               <div className={"mt-10"}>
                 {dataTerpilih && dataTerpilih.resume ? (
