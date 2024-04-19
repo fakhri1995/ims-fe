@@ -440,6 +440,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   allowClear
                   onChange={(e) => {
                     setSearchingFilterStatus(e.target.value);
+                    setPageStatus(1);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetStatuses}

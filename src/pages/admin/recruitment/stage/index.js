@@ -418,6 +418,7 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   allowClear
                   onChange={(e) => {
                     setSearchingFilterStages(e.target.value);
+                    setPageStages(1);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetStages}

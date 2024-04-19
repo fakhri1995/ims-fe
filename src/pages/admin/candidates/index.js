@@ -468,6 +468,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
                   allowClear
                   onChange={(e) => {
                     setSearchingFilterResume(e.target.value);
+                    setQueryParams({ page: 1 });
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetResumeList}

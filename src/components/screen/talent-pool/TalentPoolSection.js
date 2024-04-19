@@ -352,7 +352,10 @@ const TalentPoolSection = ({
             placeholder="Cari Talent.."
             allowClear
             onChange={(e) => {
-              setTimeout(() => setSearchingFilterTalents(e.target.value), 500);
+              setTimeout(() => {
+                setQueryParams({ page: 1 });
+                setSearchingFilterTalents(e.target.value);
+              }, 1000);
             }}
             onKeyPress={onKeyPressHandler}
             disabled={!isAllowedToGetTalentPools}
@@ -370,7 +373,7 @@ const TalentPoolSection = ({
             placeholder="Posisi"
             style={{ width: `100%` }}
             onChange={(value) => {
-              setQueryParams({ roles: value });
+              setQueryParams({ roles: value, page: 1 });
               setSelectedRole(value);
             }}
           >
@@ -393,7 +396,7 @@ const TalentPoolSection = ({
             placeholder="Skill"
             style={{ width: `100%` }}
             onChange={(value) => {
-              setQueryParams({ skills: value });
+              setQueryParams({ skills: value, page: 1 });
               setSelectedSkill(value);
             }}
           >
@@ -416,7 +419,7 @@ const TalentPoolSection = ({
             placeholder="Tahun Pengalaman"
             style={{ width: `100%` }}
             onChange={(value) => {
-              setQueryParams({ years: value });
+              setQueryParams({ years: value, page: 1 });
               setSelectedExpYear(value);
             }}
           >
@@ -439,7 +442,7 @@ const TalentPoolSection = ({
             placeholder="Universitas"
             style={{ width: `100%` }}
             onChange={(value) => {
-              setQueryParams({ educations: value });
+              setQueryParams({ educations: value, page: 1 });
               setSelectedEdu(value);
             }}
           >

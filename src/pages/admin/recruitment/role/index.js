@@ -432,6 +432,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   allowClear
                   onChange={(e) => {
                     setSearchingFilterRoles(e.target.value);
+                    setPageRoles(1);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetRoles}

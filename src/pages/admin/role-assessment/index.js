@@ -229,6 +229,7 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
   const onFilterRoleAssessment = () => {
     setQueryParams({
       keyword: searchingFilterRoleAssessment,
+      page: 1,
     });
   };
 

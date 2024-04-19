@@ -49,7 +49,7 @@ const TalentDetailCard = ({
               <p className="mig-caption--medium text-mono50">
                 {dataResume?.last_education?.university} ·{" "}
                 {dataResume?.last_education?.major} ·{" "}
-                {dataResume?.last_education?.graduation_year?.slice(0, 4)}
+                {dataResume?.last_education?.end_date?.slice(0, 4)}
                 {dataResume?.last_education?.gpa &&
                   ` · ${dataResume?.last_education?.gpa}`}
               </p>
