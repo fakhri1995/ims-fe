@@ -9,6 +9,8 @@ import {
   Switch,
   Table,
   Tabs,
+  Tag,
+  Timeline,
   notification,
 } from "antd";
 import axios from "axios";
@@ -67,6 +69,8 @@ import { ModalEkspor, ModalUbah } from "../../../components/modal/modalCustom";
 import {
   createKeyPressHandler,
   downloadFile,
+  generateStaticAssetUrl,
+  getNameInitial,
   momentFormatDate,
 } from "../../../lib/helper";
 import {
@@ -214,6 +218,287 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   const [countQuestion, setCountQuestion] = useState(0);
   const [dataRoleTypeList, setDataRoleTypeList] = useState([]);
   const [dataRoles, setDataRoles] = useState([]);
+  const [dataTalent, setDataTalent] = useState({
+    id: 1,
+    name: "Yasmin A",
+    telp: "0888881",
+    email: "yasminadelia@mitrasolusi.group",
+    city: "Bogor",
+    province: "Jawa Barat",
+    assessment_id: 1,
+    created_at: "2023-06-09 10:52:00",
+    updated_at: "2024-03-06 15:45:40",
+    created_by: 26,
+    deleted_at: null,
+    owner_id: 26,
+    educations: [
+      {
+        id: 18,
+        university: "Harvard",
+        major: "S2",
+        gpa: "3.33",
+        start_date: null,
+        end_date: null,
+        graduation_year: null,
+        resume_id: 1,
+        display_order: 1,
+        start_date_format: null,
+        end_date_format: null,
+      },
+      {
+        id: 22,
+        university: "testt",
+        major: "www",
+        gpa: null,
+        start_date: "2023-02-01",
+        end_date: null,
+        graduation_year: null,
+        resume_id: 1,
+        display_order: 2,
+        start_date_format: "2023-02",
+        end_date_format: null,
+      },
+      {
+        id: 20,
+        university: "MIT",
+        major: "S23 Ultra",
+        gpa: "3.33",
+        start_date: null,
+        end_date: "2023-03-31",
+        graduation_year: null,
+        resume_id: 1,
+        display_order: 3,
+        start_date_format: null,
+        end_date_format: "2023-03",
+      },
+      {
+        id: 19,
+        university: "Stanford",
+        major: "S3",
+        gpa: null,
+        start_date: "2023-02-01",
+        end_date: "2024-04-30",
+        graduation_year: null,
+        resume_id: 1,
+        display_order: 4,
+        start_date_format: "2023-02",
+        end_date_format: "2024-04",
+      },
+    ],
+    experiences: [
+      {
+        id: 22,
+        role: "QA",
+        company: "MIG",
+        start_date: "2023-12-08",
+        end_date: "0000-00-00",
+        description: "<p>deskripsi</p>",
+        resume_id: 1,
+        display_order: 1,
+      },
+      {
+        id: 4,
+        role: "testt baru update",
+        company: "ccc",
+        start_date: "2023-12-01",
+        end_date: "0000-00-00",
+        description:
+          '<ul><li>dess</li><li>tess</li><li class="ql-indent-1">tess</li></ul>',
+        resume_id: 1,
+        display_order: 2,
+      },
+      {
+        id: 3,
+        role: "test update",
+        company: "company3",
+        start_date: "2023-05-02",
+        end_date: "0000-00-00",
+        description: "<p>testt</p>",
+        resume_id: 1,
+        display_order: 3,
+      },
+    ],
+    projects: [
+      {
+        id: 2,
+        name: "project 2 upp",
+        year: "2021-09-21",
+        description: "test lagi",
+        resume_id: 1,
+        display_order: 1,
+      },
+      {
+        id: 1,
+        name: "project 1",
+        year: "2020-09-21",
+        description: "testt",
+        resume_id: 1,
+        display_order: 2,
+      },
+      {
+        id: 3,
+        name: "project 32",
+        year: "2022-09-21",
+        description: "yoooo",
+        resume_id: 1,
+        display_order: 3,
+      },
+      {
+        id: 12,
+        name: "proyek pembangunan negeri",
+        year: "2020-12-11",
+        description:
+          '<ul><li>satu</li><li>dua</li></ul><p><u>underline </u><em>italic </em><strong>bold </strong><a href="http://localhost:3000/admin/candidates/1" rel="noopener noreferrer" target="_blank">link</a></p>',
+        resume_id: 1,
+        display_order: 4,
+      },
+    ],
+    skills: [
+      {
+        id: 3,
+        name: "React",
+        resume_id: 1,
+      },
+      {
+        id: 4,
+        name: "TailwindCSS",
+        resume_id: 1,
+      },
+      {
+        id: 5,
+        name: "Javascript",
+        resume_id: 1,
+      },
+      {
+        id: 22,
+        name: "Apache",
+        resume_id: 1,
+      },
+    ],
+    trainings: [
+      {
+        id: 3,
+        name: "test6",
+        organizer: "rrr",
+        year: "2020-09-25",
+        resume_id: 1,
+        display_order: 1,
+      },
+      {
+        id: 2,
+        name: "trainq",
+        organizer: "comp",
+        year: "2021-09-25",
+        resume_id: 1,
+        display_order: 2,
+      },
+      {
+        id: 7,
+        name: "yyy",
+        organizer: "yy",
+        year: "2021-09-26",
+        resume_id: 1,
+        display_order: 3,
+      },
+      {
+        id: 10,
+        name: "aaa",
+        organizer: "aaaa",
+        year: "2020-12-18",
+        resume_id: 1,
+        display_order: 4,
+      },
+    ],
+    certificates: [
+      {
+        id: 5,
+        name: "rrrw",
+        organizer: "hhh",
+        year: "2020-09-26",
+        resume_id: 1,
+        display_order: 1,
+      },
+      {
+        id: 2,
+        name: "cert36",
+        organizer: "comp",
+        year: "2020-09-25",
+        resume_id: 1,
+        display_order: 2,
+      },
+      {
+        id: 7,
+        name: "sss",
+        organizer: "aa",
+        year: "2023-12-18",
+        resume_id: 1,
+        display_order: 3,
+      },
+    ],
+    achievements: [
+      {
+        id: 1,
+        name: "adddtt",
+        organizer: "fff",
+        year: "2020-09-21",
+        resume_id: 1,
+        display_order: 1,
+      },
+      {
+        id: 4,
+        name: "weewww",
+        organizer: "qqqq",
+        year: "2020-09-26",
+        resume_id: 1,
+        display_order: 2,
+      },
+      {
+        id: 5,
+        name: "testt",
+        organizer: "yyy",
+        year: "2020-09-26",
+        resume_id: 1,
+        display_order: 3,
+      },
+    ],
+    assessment: {
+      id: 1,
+      name: "Frontend Developer",
+      created_at: "2023-06-09 10:51:08",
+      updated_at: "2024-02-29 08:54:36",
+    },
+    assessment_results: [
+      {
+        id: 232,
+        criteria: "HTML",
+        value: "",
+        resume_id: 1,
+      },
+      {
+        id: 233,
+        criteria: "CSS",
+        value: "",
+        resume_id: 1,
+      },
+      {
+        id: 234,
+        criteria: "JS",
+        value: "",
+        resume_id: 1,
+      },
+    ],
+    summaries: {
+      id: 3,
+      description:
+        '<p>test <strong>bold </strong><em>italic </em><u>underline </u><a href="https://developers.google.com/fonts/docs/developer_api?apix_params=%7B%22sort%22%3A%22ALPHA%22%7D" rel="noopener noreferrer" target="_blank">link</a></p>',
+      resume_id: 1,
+    },
+    profile_image: {
+      id: 0,
+      link: "staging/Users/default_user.png",
+      description: "profile_image",
+    },
+  });
   const [dataExperience, setDataExperience] = useState([
     {
       id: 1,
@@ -384,7 +669,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       event.target.selectedOptions[0].text,
                     recruitment_status_id: Number(event.target.value),
                   });
-
+                  setDataTerpilih(null);
                   setModalUpdateStatus(true);
                 }}
                 style={{
@@ -444,7 +729,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
           children: (
             <div className={"flex flex-row gap-2.5"}>
               <div
-                onClick={() => handleClickExportPelamar(record)}
+                onClick={() => handleClickExportPelamar(record, "")}
                 className={
                   "p-2 rounded-[5px] bg-bgstatustaskfinish flex justify-center items-center hover:cursor-pointer"
                 }
@@ -773,7 +1058,10 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     setDrawDetailPelamar(true);
   };
 
-  const handleClickExportPelamar = (record) => {
+  const handleClickExportPelamar = (record, jenis) => {
+    if (jenis != "terpilih") {
+      setDataTerpilih(null);
+    }
     setDataExportStatus({
       id: record.id,
       name: record.name,
@@ -807,6 +1095,16 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
         if (res2.success) {
           setTimeout(() => {
             setDataExportStatus({});
+            if (dataTerpilih) {
+              setDataTerpilih({
+                ...dataTerpilih,
+                status: {
+                  id: 2,
+                  name: "Shortlisted",
+                  display_oder: 2,
+                },
+              });
+            }
           }, 1500);
           notification["success"]({
             message: res2.message,
@@ -858,6 +1156,16 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
         if (res2.success) {
           setTimeout(() => {
             setDataUpdateStatus({});
+            if (dataTerpilih) {
+              setDataTerpilih({
+                ...dataTerpilih,
+                status: {
+                  id: dataUpdateStatus.recruitment_status_id,
+                  name: dataUpdateStatus.recruitment_status_name,
+                  display_order: dataUpdateStatus.recruitment_status_id,
+                },
+              });
+            }
           }, 1500);
           notification["success"]({
             message: res2.message,
@@ -1430,7 +1738,6 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                   "flex flex-col gap-4 mt-4 border border-[#F3F3F3] rounded-[6px] p-4"
                 }
               >
-                {console.log("data terpilih ", dataTerpilih)}
                 <div className={"flex flex-row items-center gap-2"}>
                   <p className={"text-xs font-medium leading-5 text-mono50"}>
                     Status:
@@ -1520,11 +1827,12 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                     </p>
                   </div>
                 </div>
+
                 {dataTerpilih?.status?.id == 1 && (
                   <div className={"flex gap-4"}>
                     <div
                       onClick={() =>
-                        exportRejectPelamar(dataTerpilih, "export")
+                        handleClickExportPelamar(dataTerpilih, "terpilih")
                       }
                       className={
                         "flex gap-2 items-center justify-center w-[143px] h-6 bg-[#F4FAF5] rounded hover:cursor-pointer"
@@ -1579,7 +1887,15 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                   </div>
                 )}
               </div>
-              <div className={"mt-10"}>
+              <div
+                className={"mt-6 border border-solid border-[#f0f0f0] -mx-6"}
+              ></div>
+              <div className={"mt-6"}>
+                <p className={"text-[#4D4D4D] text-[14px] leading-6 font-bold"}>
+                  Resume Pelamar
+                </p>
+              </div>
+              <div className={"mt-4"}>
                 {dataTerpilih && dataTerpilih.resume ? (
                   <a
                     download
@@ -1616,6 +1932,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                   </ButtonSys>
                 )}
               </div>
+
               {dataTerpilih && dataTerpilih.question != null && (
                 <div>
                   <div
