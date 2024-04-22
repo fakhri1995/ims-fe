@@ -9,6 +9,8 @@ import {
   Switch,
   Table,
   Tabs,
+  Tag,
+  Timeline,
   notification,
 } from "antd";
 import axios from "axios";
@@ -25,6 +27,7 @@ import { useRouter } from "next/router";
 import QueryString from "qs";
 import React from "react";
 import { useEffect, useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
 
 import { AccessControl } from "components/features/AccessControl";
 import ResumePDFTemplate from "components/screen/resume/ResumePDFTemplate";
@@ -67,6 +70,8 @@ import { ModalEkspor, ModalUbah } from "../../../components/modal/modalCustom";
 import {
   createKeyPressHandler,
   downloadFile,
+  generateStaticAssetUrl,
+  getNameInitial,
   momentFormatDate,
 } from "../../../lib/helper";
 import {
@@ -115,6 +120,9 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   pathTitleArr.splice(1, 2, "Career Management", "Detail Lowongan Kerja");
 
   const [refresh, setRefresh] = useState(-1);
+  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.js`;
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
   const isAllowedToGetStatusApply = hasPermission(CAREERS_V2_APPLY_STATUSES);
   const isAllowedToGetCareer = hasPermission(CAREERS_V2_GET);
   const isAllowedToGetDetailCareer = hasPermission(CAREERS_V2_GET);
@@ -384,7 +392,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       event.target.selectedOptions[0].text,
                     recruitment_status_id: Number(event.target.value),
                   });
-
+                  setDataTerpilih(null);
                   setModalUpdateStatus(true);
                 }}
                 style={{
@@ -444,7 +452,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
           children: (
             <div className={"flex flex-row gap-2.5"}>
               <div
-                onClick={() => handleClickExportPelamar(record)}
+                onClick={() => handleClickExportPelamar(record, "")}
                 className={
                   "p-2 rounded-[5px] bg-bgstatustaskfinish flex justify-center items-center hover:cursor-pointer"
                 }
@@ -501,6 +509,10 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
         // setLoadingRoleTypeList(false);
       });
   }, [isAllowedToGetRoleTypeList]);
+
+  function onDocumentLoadSuccess({ numPages }) {
+    setNumPages(numPages);
+  }
 
   //get data type role list
   useEffect(() => {
@@ -773,7 +785,10 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     setDrawDetailPelamar(true);
   };
 
-  const handleClickExportPelamar = (record) => {
+  const handleClickExportPelamar = (record, jenis) => {
+    if (jenis != "terpilih") {
+      setDataTerpilih(null);
+    }
     setDataExportStatus({
       id: record.id,
       name: record.name,
@@ -807,6 +822,16 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
         if (res2.success) {
           setTimeout(() => {
             setDataExportStatus({});
+            if (dataTerpilih) {
+              setDataTerpilih({
+                ...dataTerpilih,
+                status: {
+                  id: 2,
+                  name: "Shortlisted",
+                  display_oder: 2,
+                },
+              });
+            }
           }, 1500);
           notification["success"]({
             message: res2.message,
@@ -858,6 +883,16 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
         if (res2.success) {
           setTimeout(() => {
             setDataUpdateStatus({});
+            if (dataTerpilih) {
+              setDataTerpilih({
+                ...dataTerpilih,
+                status: {
+                  id: dataUpdateStatus.recruitment_status_id,
+                  name: dataUpdateStatus.recruitment_status_name,
+                  display_order: dataUpdateStatus.recruitment_status_id,
+                },
+              });
+            }
           }, 1500);
           notification["success"]({
             message: res2.message,
@@ -1430,7 +1465,6 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                   "flex flex-col gap-4 mt-4 border border-[#F3F3F3] rounded-[6px] p-4"
                 }
               >
-                {console.log("data terpilih ", dataTerpilih)}
                 <div className={"flex flex-row items-center gap-2"}>
                   <p className={"text-xs font-medium leading-5 text-mono50"}>
                     Status:
@@ -1520,11 +1554,12 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                     </p>
                   </div>
                 </div>
+
                 {dataTerpilih?.status?.id == 1 && (
                   <div className={"flex gap-4"}>
                     <div
                       onClick={() =>
-                        exportRejectPelamar(dataTerpilih, "export")
+                        handleClickExportPelamar(dataTerpilih, "terpilih")
                       }
                       className={
                         "flex gap-2 items-center justify-center w-[143px] h-6 bg-[#F4FAF5] rounded hover:cursor-pointer"
@@ -1579,27 +1614,43 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                   </div>
                 )}
               </div>
-              <div className={"mt-10"}>
+              <div
+                className={"mt-6 border border-solid border-[#f0f0f0] -mx-6"}
+              ></div>
+              <div className={"mt-6"}>
+                <p className={"text-[#4D4D4D] text-[14px] leading-6 font-bold"}>
+                  Resume Pelamar
+                </p>
+              </div>
+              <div className={"mt-4"}>
                 {dataTerpilih && dataTerpilih.resume ? (
-                  <a
-                    download
-                    href={"https://cdn.mig.id/" + dataTerpilih.resume.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  // <a
+                  //   download
+                  //   href={"https://cdn.mig.id/" + dataTerpilih.resume.link}
+                  //   target="_blank"
+                  //   rel="noopener noreferrer"
+                  // >
+                  //   <ButtonSys
+                  //     fullWidth={true}
+                  //     type={"primary"}
+                  //     // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
+                  //   >
+                  //     <div className={"flex flex-row"}>
+                  //       <DownloadIcon2Svg size={16} color={"#fffffff"} />
+                  //       <p className={"ml-2 text-xs text-white"}>
+                  //         Unduh CV Pelamar
+                  //       </p>
+                  //     </div>
+                  //   </ButtonSys>
+                  // </a>
+                  <Document
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    file={"https://cdn.mig.id/" + dataTerpilih.resume.link}
                   >
-                    <ButtonSys
-                      fullWidth={true}
-                      type={"primary"}
-                      // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
-                    >
-                      <div className={"flex flex-row"}>
-                        <DownloadIcon2Svg size={16} color={"#fffffff"} />
-                        <p className={"ml-2 text-xs text-white"}>
-                          Unduh CV Pelamar
-                        </p>
-                      </div>
-                    </ButtonSys>
-                  </a>
+                    {Array.from(new Array(numPages), (el, index) => (
+                      <Page key={`page_${index + 1}`} pageNumber={index + 1} />
+                    ))}
+                  </Document>
                 ) : (
                   <ButtonSys
                     onClick={() => downloadNoData()}
@@ -1616,6 +1667,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                   </ButtonSys>
                 )}
               </div>
+
               {dataTerpilih && dataTerpilih.question != null && (
                 <div>
                   <div
