@@ -27,7 +27,6 @@ import { useRouter } from "next/router";
 import QueryString from "qs";
 import React from "react";
 import { useEffect, useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
 
 import { AccessControl } from "components/features/AccessControl";
 import ResumePDFTemplate from "components/screen/resume/ResumePDFTemplate";
@@ -120,9 +119,6 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   pathTitleArr.splice(1, 2, "Career Management", "Detail Lowongan Kerja");
 
   const [refresh, setRefresh] = useState(-1);
-  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-  const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
   const isAllowedToGetStatusApply = hasPermission(CAREERS_V2_APPLY_STATUSES);
   const isAllowedToGetCareer = hasPermission(CAREERS_V2_GET);
   const isAllowedToGetDetailCareer = hasPermission(CAREERS_V2_GET);
@@ -509,10 +505,6 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
         // setLoadingRoleTypeList(false);
       });
   }, [isAllowedToGetRoleTypeList]);
-
-  function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
-  }
 
   //get data type role list
   useEffect(() => {
@@ -1624,33 +1616,25 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               </div>
               <div className={"mt-4"}>
                 {dataTerpilih && dataTerpilih.resume ? (
-                  // <a
-                  //   download
-                  //   href={"https://cdn.mig.id/" + dataTerpilih.resume.link}
-                  //   target="_blank"
-                  //   rel="noopener noreferrer"
-                  // >
-                  //   <ButtonSys
-                  //     fullWidth={true}
-                  //     type={"primary"}
-                  //     // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
-                  //   >
-                  //     <div className={"flex flex-row"}>
-                  //       <DownloadIcon2Svg size={16} color={"#fffffff"} />
-                  //       <p className={"ml-2 text-xs text-white"}>
-                  //         Unduh CV Pelamar
-                  //       </p>
-                  //     </div>
-                  //   </ButtonSys>
-                  // </a>
-                  <Document
-                    onLoadSuccess={onDocumentLoadSuccess}
-                    file={"https://cdn.mig.id/" + dataTerpilih.resume.link}
+                  <a
+                    download
+                    href={"https://cdn.mig.id/" + dataTerpilih.resume.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    {Array.from(new Array(numPages), (el, index) => (
-                      <Page key={`page_${index + 1}`} pageNumber={index + 1} />
-                    ))}
-                  </Document>
+                    <ButtonSys
+                      fullWidth={true}
+                      type={"primary"}
+                      // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
+                    >
+                      <div className={"flex flex-row"}>
+                        <DownloadIcon2Svg size={16} color={"#fffffff"} />
+                        <p className={"ml-2 text-xs text-white"}>
+                          Unduh CV Pelamar
+                        </p>
+                      </div>
+                    </ButtonSys>
+                  </a>
                 ) : (
                   <ButtonSys
                     onClick={() => downloadNoData()}
