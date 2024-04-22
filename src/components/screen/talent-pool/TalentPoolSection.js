@@ -70,7 +70,7 @@ const TalentPoolSection = ({
   const [dataRowClicked, setDataRowClicked] = useState({});
   const [rowState, setRowState] = useState({});
   const [isHovered, setIsHovered] = useState(false);
-  // const [isLargeScreen, setIsLargeScreen] = useState(true);
+  const [isLargeScreen, setIsLargeScreen] = useState(true);
 
   // 3. Use Effect & Use Query
   // 3.1. Get Talent Pools
@@ -113,21 +113,21 @@ const TalentPoolSection = ({
   );
 
   // 3.3. Set layout based on screen size
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     if (window.innerWidth <= 820) {
-  //       setIsLargeScreen(false); // up to medium screen
-  //     } else {
-  //       setIsLargeScreen(true);
-  //     }
-  //   };
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 820) {
+        setIsLargeScreen(false); // up to medium screen
+      } else {
+        setIsLargeScreen(true);
+      }
+    };
 
-  //   window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize);
 
-  //   return () => {
-  //     window.removeEventListener("resize", handleResize);
-  //   };
-  // }, []);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // cleanup
   useEffect(() => {
@@ -503,7 +503,7 @@ const TalentPoolSection = ({
           rowstate={rowState}
           setrowstate={setRowState}
           setIsHovered={setIsHovered}
-          // isLargeScreen={isLargeScreen}
+          isLargeScreen={isLargeScreen}
         />
       </div>
       <div
