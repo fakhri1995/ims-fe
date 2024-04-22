@@ -68,7 +68,7 @@ export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
     );
 
     return (
-      <div className="p-6 bg-white flex flex-col gap-4 ">
+      <div className="mig-platform flex flex-col gap-4 ">
         <h4 className="text-base font-bold">Jadwal Kerja</h4>
 
         {currentScheduleQueries?.map((schedule, idx) => {
