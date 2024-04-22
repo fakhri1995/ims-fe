@@ -120,7 +120,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   pathTitleArr.splice(1, 2, "Career Management", "Detail Lowongan Kerja");
 
   const [refresh, setRefresh] = useState(-1);
-  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.js`;
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const isAllowedToGetStatusApply = hasPermission(CAREERS_V2_APPLY_STATUSES);
