@@ -63,6 +63,7 @@ const DrawerTalentDetail = ({ visible, onvisible, dataTalent, onDelete }) => {
       title={`Detail Informasi Talent`}
       visible={visible}
       onClose={() => onvisible(false)}
+      width={400}
     >
       <div className="grid grid-cols-1 gap-4">
         <div className="flex gap-6 items-center">

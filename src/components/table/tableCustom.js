@@ -2132,7 +2132,7 @@ const TableCustomTalentPoolList = ({
   rowstate,
   setrowstate,
   setIsHovered,
-  // isLargeScreen,
+  isLargeScreen,
   isPublic,
 }) => {
   return (
@@ -2141,7 +2141,7 @@ const TableCustomTalentPoolList = ({
       columns={columns}
       rowKey={(record) => record.id}
       loading={loading}
-      scroll={{ x: 200 }}
+      scroll={!isLargeScreen && { x: 200 }}
       pagination={{
         current: queryParams.page,
         pageSize: queryParams.rows,
