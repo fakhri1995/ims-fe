@@ -134,6 +134,8 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   });
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [disableUpdate, setDisableUpdate] = useState(false);
+  const [loadingUpdateNew, setLoadingUpdateNew] = useState(false);
+  const [disableUpdateNew, setDisableUpdateNew] = useState(false);
   const [loadingEkspor, setLoadingEkspor] = useState(false);
   const [disableEkspor, setDisableEkspor] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
@@ -214,6 +216,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     name: "",
   });
   const [modalUpdateStatus, setModalUpdateStatus] = useState(false);
+  const [modalUpdateStatusNew, setModalUpdateStatusNew] = useState(false);
   const [modalExportStatus, setModalExportStatus] = useState(false);
   const [countQuestion, setCountQuestion] = useState(0);
   const [dataRoleTypeList, setDataRoleTypeList] = useState([]);
@@ -907,6 +910,67 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
         });
       });
   };
+
+  const handleUpdateStatusNew = () => {
+    const payload = {
+      id: dataUpdateStatus.id,
+      career_id: careerId,
+      career_apply_status_id: dataUpdateStatus.recruitment_status_id,
+    };
+
+    if (!canUpdateStatuses) {
+      permissionWarningNotification("Mengubah", "Status Kandidat");
+      setLoadingUpdateNew(false);
+      return;
+    }
+
+    setLoadingUpdateNew(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/updateCareerApply`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          setTimeout(() => {
+            setDataUpdateStatus({});
+            if (dataTerpilih) {
+              setDataTerpilih({
+                ...dataTerpilih,
+                status: {
+                  id: dataUpdateStatus.recruitment_status_id,
+                  name: dataUpdateStatus.recruitment_status_name,
+                  display_order: dataUpdateStatus.recruitment_status_id,
+                },
+              });
+            }
+          }, 1500);
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+        } else {
+          notification["error"]({
+            message: `Gagal mengubah status kandidat. ${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingUpdateNew(false);
+        setModalUpdateStatusNew(false);
+      })
+      .catch((err) => {
+        setLoadingUpdateNew(false);
+        notification["error"]({
+          message: `Gagal mengubah status kandidat. ${err.message}`,
+          duration: 3,
+        });
+      });
+  };
   const handleUpdateQuestion = () => {
     setloadingedit(true);
     let dataUpdateQuestion = {
@@ -1476,7 +1540,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                         recruitment_status_id: Number(event.target.value),
                       });
 
-                      setModalUpdateStatus(true);
+                      setModalUpdateStatusNew(true);
                     }}
                     style={{
                       backgroundColor:
@@ -1546,6 +1610,31 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                     </p>
                   </div>
                 </div>
+                <ModalUbah
+                  title={`Konfirmasi Perubahan`}
+                  visible={modalUpdateStatusNew}
+                  onvisible={setModalUpdateStatusNew}
+                  onOk={handleUpdateStatusNew}
+                  onCancel={() => {
+                    setModalUpdateStatusNew(false);
+                    setDataUpdateStatus({});
+                  }}
+                  loading={loadingUpdateNew}
+                  disabled={disableUpdateNew}
+                >
+                  <div className="space-y-4">
+                    <p className="">
+                      Anda telah melakukan perubahan pada kandidat{" "}
+                      <strong>{dataUpdateStatus.name}</strong>
+                      &nbsp;pada item berikut
+                    </p>
+                    <p className="font-bold">
+                      {`Status ${dataUpdateStatus.prev_recruitment_status_name} → ${dataUpdateStatus.recruitment_status_name}`}
+                    </p>
+
+                    <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
+                  </div>
+                </ModalUbah>
 
                 {dataTerpilih?.status?.id == 1 && (
                   <div className={"flex gap-4"}>
