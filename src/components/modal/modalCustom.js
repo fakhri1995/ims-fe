@@ -888,7 +888,7 @@ const ModalUbah = ({
       closable={closable}
       footer={
         <Spin spinning={loading}>
-          <div className="flex gap-4 items-center justify-end">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-end">
             <ButtonSys
               type={"primary"}
               color={"mono100"}
