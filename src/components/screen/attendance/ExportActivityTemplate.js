@@ -684,27 +684,6 @@ const ExportActivityTemplate = ({
             <Text>&nbsp;/ </Text>
             <Text render={({ totalPages }) => `${totalPages}`} />
           </View>
-
-          {logoStatus && (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text
-                style={{
-                  fontSize: 6,
-                  fontFamily: "Inter",
-                  fontWeight: 700,
-                  letterSpacing: 1,
-                  marginRight: 5,
-                }}
-              >
-                {" "}
-                APPROVED BY:
-              </Text>
-              <Image
-                style={{ width: 80, height: 31.86 }}
-                src={`/image/LogoMig2.png`}
-              />
-            </View>
-          )}
         </View>
       </Page>
     </Document>
