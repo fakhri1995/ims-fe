@@ -217,6 +217,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
   const onChangeProductSearch = (e) => {
     setQueryParams({
       keyword: e.target.value === "" ? undefined : e.target.value,
+      page: 1,
     });
   };
 
@@ -538,12 +539,14 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     setIdKategori(value);
     setQueryParams({
       category_id: value != 0 ? value : undefined,
+      page: 1,
     });
   };
   const onChangeStatus = (value) => {
     setIsActive(value);
     setQueryParams({
       is_active: value,
+      page: 1,
     });
   };
 

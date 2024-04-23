@@ -529,7 +529,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Rentang Durasi"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ duration: value });
+                    setQueryParams({ duration: value, page: 1 });
                     setSelectedDuration(value);
                   }}
                   dropdownRender={(options) => (
@@ -584,7 +584,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Semua Klien"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ client_ids: value });
+                    setQueryParams({ client_ids: value, page: 1 });
                     setSelectedCompany(value);
                   }}
                 >
@@ -606,7 +606,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Semua Status"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ status_types: value });
+                    setQueryParams({ status_types: value, page: 1 });
                     setSelectedStatus(value);
                   }}
                   optionLabelProp="children"
@@ -633,10 +633,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Cari.."
                   allowClear
                   onChange={(e) => {
-                    setTimeout(
-                      () => setSearchingFilterContracts(e.target.value),
-                      500
-                    );
+                    setTimeout(() => {
+                      setQueryParams({ page: 1 });
+                      setSearchingFilterContracts(e.target.value);
+                    }, 500);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetContracts}

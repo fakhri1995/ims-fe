@@ -426,6 +426,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       role_ids: selectedRoleId,
       placements: selectedPlacement,
       is_posted: selectedPayslipStatusId,
+      page: 1,
     });
   };
 
@@ -676,6 +677,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 placeholder="Kata Kunci.."
                 allowClear
                 onChange={(e) => {
+                  setQueryParams({ page: 1 });
                   setSearchingFilterPayslips(e.target.value);
                 }}
                 disabled={!isAllowedToGetPayslips}
@@ -693,7 +695,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 placeholder="Semua Posisi"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  setQueryParams({ role_ids: value });
+                  setQueryParams({ role_ids: value, page: 1 });
                   setSelectedRoleId(value);
                 }}
                 optionFilterProp="children"
@@ -722,7 +724,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 placeholder="Semua Penempatan"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  setQueryParams({ placements: value });
+                  setQueryParams({ placements: value, page: 1 });
                   setSelectedPlacement(value);
                 }}
                 filterOption={(input, option) =>
@@ -749,7 +751,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 style={{ width: `100%` }}
                 placeholder="Semua status"
                 onChange={(value) => {
-                  setQueryParams({ is_posted: value });
+                  setQueryParams({ is_posted: value, page: 1 });
                   setSelectedPayslipStatusId(value);
                 }}
               >
