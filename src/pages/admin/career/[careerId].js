@@ -1705,25 +1705,12 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               </div>
               <div className={"mt-4"}>
                 {dataTerpilih && dataTerpilih.resume ? (
-                  <a
-                    download
-                    href={"https://cdn.mig.id/" + dataTerpilih.resume.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ButtonSys
-                      fullWidth={true}
-                      type={"primary"}
-                      // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
-                    >
-                      <div className={"flex flex-row"}>
-                        <DownloadIcon2Svg size={16} color={"#fffffff"} />
-                        <p className={"ml-2 text-xs text-white"}>
-                          Unduh CV Pelamar
-                        </p>
-                      </div>
-                    </ButtonSys>
-                  </a>
+                  <object
+                    class="pdf"
+                    data={"https://cdn.mig.id/" + dataTerpilih.resume.link}
+                    width="100%"
+                    height="500"
+                  ></object>
                 ) : (
                   <ButtonSys
                     onClick={() => downloadNoData()}
