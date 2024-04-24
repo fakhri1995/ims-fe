@@ -142,16 +142,19 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
   const onChangeSearch = (e) => {
     setQueryParams({
       name: e.target.value === "" ? undefined : e.target.value,
+      page: 1,
     });
   };
   const onChangeCompany = (value) => {
     setQueryParams({
       company_id: value,
+      page: 1,
     });
   };
   const onChangeStatus = (value) => {
     setQueryParams({
       is_enabled: value === undefined ? undefined : Number(Boolean(value)),
+      page: 1,
     });
   };
   const onFinalClick = () => {
