@@ -576,15 +576,18 @@ function RequestersUpdate({
                             isAllowedToGetRolesList ? idrole : undefined
                           }
                           style={{ width: `100%` }}
-                        >
-                          {dataraw1.data.map((doc, idx) => {
-                            return (
-                              <Option key={idx} value={doc.id}>
-                                {doc.name}
-                              </Option>
-                            );
-                          })}
-                        </Select>
+                          options={dataraw1.data.map((doc) => ({
+                            label: doc.name,
+                            value: doc.id,
+                          }))}
+                          optionFilterProp="children"
+                          filterOption={(input, option) =>
+                            option?.label
+                              ?.toLowerCase()
+                              .includes(input.toLowerCase())
+                          }
+                        />
+
                         // :
                         // <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
                         //     {
