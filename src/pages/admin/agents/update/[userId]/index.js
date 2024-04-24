@@ -546,6 +546,7 @@ function AgentUpdate({
                     {
                       <Select
                         mode="multiple"
+                        showSearch
                         disabled={!isAllowedToGetRolesList}
                         placeholder="Pilih Role"
                         onChange={(value) => {
@@ -553,15 +554,17 @@ function AgentUpdate({
                         }}
                         defaultValue={defaultroles}
                         style={{ width: `100%` }}
-                      >
-                        {dataroles.data.map((doc, idx) => {
-                          return (
-                            <Option key={idx} value={doc.id}>
-                              {doc.name}
-                            </Option>
-                          );
-                        })}
-                      </Select>
+                        options={dataroles.data.map((doc) => ({
+                          label: doc.name,
+                          value: doc.id,
+                        }))}
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          option?.label
+                            ?.toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                      />
                     }
                   </Form>
                 </div>

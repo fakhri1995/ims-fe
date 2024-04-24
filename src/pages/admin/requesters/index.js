@@ -108,6 +108,7 @@ function Requesters({
   const onChangeSearch = (e) => {
     setQueryParams({
       name: e.target.value === "" ? undefined : e.target.value,
+      page: 1,
     });
   };
 
@@ -115,6 +116,7 @@ function Requesters({
     setQueryParams({
       company_id: value,
       location_id: undefined,
+      page: 1,
     });
 
     /** Always reset the datalokasi state */
@@ -123,11 +125,13 @@ function Requesters({
   const onChangeAsalLokasi = (value) => {
     setQueryParams({
       location_id: value,
+      page: 1,
     });
   };
   const onChangeStatus = (value) => {
     setQueryParams({
       is_enabled: value === undefined ? undefined : Number(Boolean(value)),
+      page: 1,
     });
   };
   const [triggerRefetchAgentList, setTriggerRefetchAgentList] = useState(0);

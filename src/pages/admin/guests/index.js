@@ -145,11 +145,13 @@ function Guests({ initProps, dataProfile, sidemenu }) {
   const onChangeSearch = (e) => {
     setQueryParams({
       name: e.target.value === "" ? undefined : e.target.value,
+      page: 1,
     });
   };
   const onChangeStatus = (value) => {
     setQueryParams({
       is_enabled: value === undefined ? undefined : Number(Boolean(value)),
+      page: 1,
     });
   };
   const onFinalClick = () => {

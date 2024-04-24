@@ -518,20 +518,24 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                   <Form.Item label="Role" name="role">
                     <Select
                       mode="multiple"
+                      showSearch
                       disabled={!isAllowedToGetRolesList}
                       onChange={(value) => {
                         setNewuser({ ...newuser, role_ids: value });
                       }}
-                      /*defaultValue={idrole}*/ style={{ width: `100%` }}
-                    >
-                      {dataroles.map((doc, idx) => {
-                        return (
-                          <Select.Option key={doc.id} value={doc.id}>
-                            {doc.name}
-                          </Select.Option>
-                        );
-                      })}
-                    </Select>
+                      /*defaultValue={idrole}*/
+                      style={{ width: `100%` }}
+                      options={dataroles.map((doc) => ({
+                        label: doc.name,
+                        value: doc.id,
+                      }))}
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        option?.label
+                          ?.toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                    />
                   </Form.Item>
                 </Form>
               </div>
