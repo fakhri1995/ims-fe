@@ -494,8 +494,9 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     () =>
                       setQueryParams({
                         keyword: e.target.value,
+                        page: 1,
                       }),
-                    500
+                    1000
                   );
                 }}
                 disabled={!isAllowedToGetSchedules}
@@ -509,7 +510,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 placeholder="Pilih Perusahaan"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  setQueryParams({ company_id: value });
+                  setQueryParams({ company_id: value, page: 1 });
                 }}
                 optionFilterProp="children"
                 filterOption={(
@@ -536,7 +537,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 placeholder="Pilih Posisi"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  setQueryParams({ position: value });
+                  setQueryParams({ position: value, page: 1 });
                 }}
                 optionFilterProp="children"
                 filterOption={(

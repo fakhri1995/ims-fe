@@ -179,7 +179,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
     isLoading: loadingTasks,
     refetch: refetchTasks,
   } = useQuery(
-    [PROJECT_TASKS_GET, queryParams, searchingFilterTasks],
+    [PROJECT_TASKS_GET, queryParams],
     () =>
       ProjectManagementService.getAdminTaskList(
         initProps,
@@ -201,6 +201,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   useEffect(() => {
     const delaySearch = setTimeout(() => {
       refetchTasks();
+      setQueryParams({ page: 1 });
     }, 500);
 
     return () => clearTimeout(delaySearch);
@@ -282,6 +283,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
       sort_by: sortTable.sort_by,
       sort_type: sortTable.sort_type,
       status_ids: selectedStatus,
+      page: 1,
     });
   };
 
@@ -334,7 +336,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "num",
       render: (text, record, index) => {
         return {
-          children: <>{dataRawTasks?.from + index}</>,
+          children: <>{Number(dataRawTasks?.from + index)}</>,
         };
       },
     },
@@ -898,13 +900,18 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                     setQueryParams({
                       sort_by: undefined,
                       sort_type: undefined,
+                      page: 1,
                     });
                     setSortTable({
                       sort_by: undefined,
                       sort_type: undefined,
                     });
                   } else {
-                    setQueryParams({ sort_by: "end_date", sort_type: value });
+                    setQueryParams({
+                      sort_by: "end_date",
+                      sort_type: value,
+                      page: 1,
+                    });
                     setSortTable({ sort_by: "end_date", sort_type: value });
                   }
                 }}
@@ -931,7 +938,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   const stringStatusIds = value.toString();
-                  setQueryParams({ status_ids: stringStatusIds });
+                  setQueryParams({ status_ids: stringStatusIds, page: 1 });
                   setSelectedStatus(stringStatusIds);
                 }}
                 optionFilterProp="children"

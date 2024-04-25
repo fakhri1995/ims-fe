@@ -246,6 +246,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   useEffect(() => {
     const delaySearch = setTimeout(() => {
       refetchProjects();
+      setQueryParams({ page: 1 });
     }, 500);
 
     return () => clearTimeout(delaySearch);
@@ -401,6 +402,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       to: selectedToDate,
       status_ids: selectedStatus,
       category_ids: selectedCategory,
+      page: 1,
     });
   };
   const exportExcelProject = async () => {
@@ -495,7 +497,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "num",
       render: (text, record, index) => {
         return {
-          children: <>{dataRawProjects?.from + index}</>,
+          children: <>{Number(dataRawProjects?.from + index)}</>,
         };
       },
     },
@@ -614,6 +616,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
               setQueryParams({
                 from: datestrings[0],
                 to: datestrings[1],
+                page: 1,
               });
               setSelectedFromDate(datestrings[0]);
               setSelectedToDate(datestrings[1]);
@@ -633,7 +636,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             style={{ width: `100%` }}
             onChange={(value) => {
               const stringStatusIds = value?.toString();
-              setQueryParams({ status_ids: stringStatusIds });
+              setQueryParams({ status_ids: stringStatusIds, page: 1 });
               setSelectedStatus(stringStatusIds);
             }}
             optionFilterProp="children"
@@ -663,7 +666,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             style={{ width: `100%` }}
             onChange={(value) => {
               const stringCategoryIds = value?.toString();
-              setQueryParams({ category_ids: stringCategoryIds });
+              setQueryParams({ category_ids: stringCategoryIds, page: 1 });
               setSelectedStatus(stringCategoryIds);
             }}
             optionFilterProp="children"
