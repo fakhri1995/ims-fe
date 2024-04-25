@@ -173,6 +173,7 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
                 () =>
                   setQueryParams({
                     keyword: e.target.value,
+                    page: 1,
                   }),
                 500
               );
