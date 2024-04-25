@@ -646,7 +646,7 @@ const ExportActivityTemplate = ({
                   flexDirection: "row",
                 }}
               >
-                {idx == dataResume.length / 2 ? supervisor : ""}
+                {idx == parseInt(dataResume.length / 2) ? supervisor : ""}
               </Text>
             </View>
             <View
