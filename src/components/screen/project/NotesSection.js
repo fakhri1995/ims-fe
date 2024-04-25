@@ -86,6 +86,7 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
   useEffect(() => {
     const delaySearch = setTimeout(() => {
       refetchProjectNotes();
+      setPageProjectNotes(1);
     }, 500);
 
     return () => clearTimeout(delaySearch);

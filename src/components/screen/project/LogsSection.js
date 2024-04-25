@@ -77,6 +77,7 @@ const LogsSection = ({ initProps, projectId, projectName }) => {
   useEffect(() => {
     const delaySearch = setTimeout(() => {
       refetchProjectLogs();
+      setPageProjectLogs(1);
     }, 500);
 
     return () => clearTimeout(delaySearch);
@@ -158,15 +159,17 @@ const LogsSection = ({ initProps, projectId, projectName }) => {
                         className="grid grid-cols-1 cursor-pointer"
                       >
                         <div className="flex justify-between items-center mb-2">
-                          <div className="flex items-center space-x-2 w-2/3">
-                            <img
-                              src={generateStaticAssetUrl(
-                                log?.causer?.profile_image?.link ??
-                                  "staging/Users/default_user.png"
-                              )}
-                              alt={"profile image"}
-                              className="w-8 h-8 bg-cover object-cover rounded-full"
-                            />
+                          <div className="flex items-center gap-2 w-2/3">
+                            <div className="w-16">
+                              <img
+                                src={generateStaticAssetUrl(
+                                  log?.causer?.profile_image?.link ??
+                                    "staging/Users/default_user.png"
+                                )}
+                                alt={"profile image"}
+                                className="w-8 h-8 bg-cover object-cover rounded-full"
+                              />
+                            </div>
                             <p className="truncate">
                               <strong>{log?.causer?.name}</strong> -{" "}
                               {log?.causer?.roles?.[0]?.name}

@@ -280,7 +280,7 @@ const ProjectDetailIndex = ({
     isLoading: loadingTasks,
     refetch: refetchTasks,
   } = useQuery(
-    [PROJECT_TASKS_GET, taskListParams],
+    [PROJECT_TASKS_GET, queryParams, projectId],
     () =>
       ProjectManagementService.getTaskList(
         initProps,
@@ -297,6 +297,15 @@ const ProjectDetailIndex = ({
       },
     }
   );
+
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      refetchTasks();
+      setQueryParams({ page: 1 });
+    }, 500);
+
+    return () => clearTimeout(delaySearch);
+  }, [searchingFilterTasks]);
 
   // 3.6. Get Data Chart Status Task
   const statusParams = {
@@ -363,6 +372,7 @@ const ProjectDetailIndex = ({
       sort_by: "deadline",
       sort_type: selectedSortType,
       status_ids: selectedStatus,
+      page: 1,
     });
   };
 
@@ -1114,7 +1124,11 @@ const ProjectDetailIndex = ({
                     placeholder="Urutkan Deadline"
                     style={{ width: `100%` }}
                     onChange={(value) => {
-                      setQueryParams({ sort_by: "deadline", sort_type: value });
+                      setQueryParams({
+                        sort_by: "deadline",
+                        sort_type: value,
+                        page: 1,
+                      });
                       setSelectedSortType(value);
                     }}
                     optionFilterProp="children"
@@ -1140,7 +1154,7 @@ const ProjectDetailIndex = ({
                     style={{ width: `100%` }}
                     onChange={(value) => {
                       const stringStatusIds = value.toString();
-                      setQueryParams({ status_ids: stringStatusIds });
+                      setQueryParams({ status_ids: stringStatusIds, page: 1 });
                       setSelectedStatus(stringStatusIds);
                     }}
                     optionFilterProp="children"
