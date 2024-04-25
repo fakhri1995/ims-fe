@@ -451,6 +451,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       role_ids: selectedRoleId,
       placements: selectedPlacement,
       contract_status_ids: selectedContractStatusId,
+      page: 1,
     });
   };
 
@@ -769,6 +770,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 placeholder="Kata Kunci.."
                 allowClear
                 onChange={(e) => {
+                  setQueryParams({ page: 1 });
                   setSearchingFilterEmployees(e.target.value);
                 }}
                 disabled={!isAllowedToGetEmployees}
@@ -786,7 +788,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 placeholder="Semua Penempatan"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  setQueryParams({ placements: value });
+                  setQueryParams({ placements: value, page: 1 });
                   setSelectedPlacement(value);
                 }}
                 filterOption={(input, option) =>
@@ -818,7 +820,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 placeholder="Semua Posisi"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  setQueryParams({ role_ids: value });
+                  setQueryParams({ role_ids: value, page: 1 });
                   setSelectedRoleId(value);
                 }}
                 optionFilterProp="children"
@@ -847,7 +849,10 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   const stringStatusIds = value?.toString();
-                  setQueryParams({ contract_status_ids: stringStatusIds });
+                  setQueryParams({
+                    contract_status_ids: stringStatusIds,
+                    page: 1,
+                  });
                   setSelectedContractStatusId(value);
                 }}
                 optionFilterProp="children"

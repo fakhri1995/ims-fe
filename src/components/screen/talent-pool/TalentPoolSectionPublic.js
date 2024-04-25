@@ -357,7 +357,10 @@ const TalentPoolSectionPublic = ({ shareId, setModalEliminatedTalent }) => {
             placeholder="Cari Talent.."
             allowClear
             onChange={(e) => {
-              setTimeout(() => setSearchingFilterTalents(e.target.value), 500);
+              setTimeout(() => {
+                setQueryParams({ page: 1 });
+                setSearchingFilterTalents(e.target.value);
+              }, 500);
             }}
             onKeyPress={onKeyPressHandler}
             // disabled={!isAllowedToGetTalentPoolSharePublics}

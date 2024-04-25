@@ -633,6 +633,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     allowClear
                     onChange={(e) => {
                       setTimeout(() => {
+                        setQueryParams({ page: 1 });
                         setSearchingFilterInvoices(e.target.value);
                       }, 1000);
                     }}
@@ -651,7 +652,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     style={{ width: `100%` }}
                     className="themedSelector"
                     onChange={(value) => {
-                      setQueryParams({ is_posted: value });
+                      setQueryParams({ is_posted: value, page: 1 });
                       setSelectedStatus(value);
                     }}
                     optionLabelProp="children"
@@ -681,7 +682,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     style={{ width: `100%` }}
                     className="themedSelector"
                     onChange={(value) => {
-                      setQueryParams({ client_ids: value });
+                      setQueryParams({ client_ids: value, page: 1 });
                       setSelectedCompany(value);
                     }}
                   >
@@ -712,12 +713,14 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                         setQueryParams({
                           total_min: tempPriceRange[0],
                           total_max: tempPriceRange[1],
+                          page: 1,
                         });
                         setSelectedPriceRange(tempPriceRange);
                       } else {
                         setQueryParams({
                           total_min: undefined,
                           total_max: undefined,
+                          page: 1,
                         });
                         setSelectedPriceRange([0, 0]);
                       }

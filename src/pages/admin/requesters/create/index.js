@@ -455,16 +455,18 @@ function RequestersCreate({
                           role_ids: value,
                         });
                       }}
-                      /*defaultValue={idrole}*/ style={{ width: `100%` }}
-                    >
-                      {dataraw1.map((doc, idx) => {
-                        return (
-                          <Select.Option key={doc.id} value={doc.id}>
-                            {doc.name}
-                          </Select.Option>
-                        );
-                      })}
-                    </Select>
+                      style={{ width: `100%` }}
+                      options={dataraw1.map((doc) => ({
+                        label: doc.name,
+                        value: doc.id,
+                      }))}
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        option?.label
+                          ?.toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                    />
                   </Form.Item>
                 </Form>
               </div>

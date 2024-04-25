@@ -220,7 +220,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       dataIndex: "num",
       render: (text, record, index) => {
         return {
-          children: <>{dataRawShifts?.from + index}</>,
+          children: <>{Number(dataRawShifts?.from + index)}</>,
         };
       },
     },
@@ -405,8 +405,9 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                       () =>
                         setQueryParams({
                           keyword: e.target.value,
+                          page: 1,
                         }),
-                      500
+                      1000
                     );
                   }}
                   disabled={!isAllowedToGetShifts}

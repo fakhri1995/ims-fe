@@ -95,7 +95,7 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
           <div className="flex items-center space-x-3 text-gray-500">
             <div className="w-8 h-8 rounded-full bg-mono80">
               <img
-                className="w-full h-full bg-cover"
+                className="w-full h-full bg-cover rounded-full"
                 src={data.creator.profile_image || "/image/staffTask.png"}
                 alt="Avatar"
               />
