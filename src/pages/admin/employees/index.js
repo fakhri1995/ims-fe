@@ -794,7 +794,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 filterOption={(input, option) =>
                   (option?.value ?? "")
                     .toLowerCase()
-                    .includes(input.toLocaleLowerCase())
+                    .includes(input.toLowerCase())
                 }
                 optionFilterProp="children"
               >
