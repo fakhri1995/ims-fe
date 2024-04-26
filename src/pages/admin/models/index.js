@@ -105,28 +105,31 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
       setQueryParams({
         name: undefined,
       });
-    } else {
-      setnamavalue(e.target.value);
     }
+
+    setnamavalue(e.target.value);
   };
   const onChangeSkuSearch = (e) => {
     if (e.target.value === "") {
       setQueryParams({
         sku: undefined,
       });
-    } else {
-      setSkuSearchValue(e.target.value);
     }
+    setSkuSearchValue(e.target.value);
   };
+
   const onChangeAssetType = (id) => {
     setQueryParams({
+      page: 1,
       asset_id: id,
     });
   };
+
   const onFinalClick = () => {
     setQueryParams({
       name: namavalue,
       sku: skuSearchValue,
+      page: 1,
     });
   };
 

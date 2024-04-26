@@ -261,12 +261,14 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onChangeMigid = (e) => {
     setQueryParams({
       mig_id: e.target.value === "" ? undefined : e.target.value,
+      page: 1,
     });
   };
   //search location
   const onChangeLocation = (id) => {
     setQueryParams({
       location_id: id === undefined ? undefined : id,
+      page: 1,
     });
   };
   //search asset type
@@ -275,6 +277,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     setQueryParams({
       asset_id: isIdUndefined ? undefined : id,
       model_id: isIdUndefined ? undefined : queryParams.model_id,
+      page: 1,
     });
 
     if (isIdUndefined) {
@@ -307,6 +310,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onChangeModel = (idmodel) => {
     setQueryParams({
       model_id: idmodel,
+      page: 1,
     });
 
     if (idmodel === undefined) {
@@ -323,12 +327,14 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onChangeKondisi = (idkondisi) => {
     setQueryParams({
       status_condition: idkondisi,
+      page: 1,
     });
   };
   //search Pemakaian
   const onChangePemakaian = (idpemakaian) => {
     setQueryParams({
       status_usage: idpemakaian,
+      page: 1,
     });
   };
   const onFinalClick = () => {

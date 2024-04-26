@@ -1667,6 +1667,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       if (e.target.value === "") {
                         setsearchstate("");
                       } else {
+                        setQueryParams({ page: 1 });
                         setsearchstate(e.target.value);
                       }
                     }}
@@ -1714,7 +1715,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     onChange={(value) => {
                       typeof value === "undefined"
                         ? settasktypefilterstate("")
-                        : settasktypefilterstate(value);
+                        : settasktypefilterstate(value),
+                        setQueryParams({ page: 1 });
                     }}
                   >
                     {datafiltertipetasks.map((doc, idx) => (
@@ -1740,6 +1742,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                           ]
                     }
                     onChange={(dates, datestrings) => {
+                      setQueryParams({ page: 1 });
                       setfromdatefilterstate(datestrings[0]);
                       settodatefilterstate(datestrings[1]);
                     }}
@@ -1760,7 +1763,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     onChange={(value) => {
                       typeof value === "undefined"
                         ? setlokasifilterstate("")
-                        : setlokasifilterstate(value);
+                        : setlokasifilterstate(value),
+                        setQueryParams({ page: 1 });
                     }}
                     treeData={datafilterlokasi}
                     treeDefaultExpandAll
@@ -1788,7 +1792,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     onChange={(value) => {
                       typeof value === "undefined"
                         ? setstatusfilterstate("")
-                        : setstatusfilterstate(value);
+                        : setstatusfilterstate(value),
+                        setQueryParams({ page: 1 });
                     }}
                   >
                     <Select.Option value={1}>
