@@ -384,7 +384,8 @@ const ExportActivityTemplate = ({
                     ? "#E0F1FF"
                     : data["daily activity"] == "Cuti"
                     ? "#E0F1FF"
-                    : data["daily activity"].length == 0
+                    : // : data["daily activity"].length == 0
+                    data["daily activity"] == "Empty"
                     ? "#FFDFDC"
                     : "#ffffff",
                 marginRight: 1,
@@ -421,7 +422,8 @@ const ExportActivityTemplate = ({
                     ? "#E0F1FF"
                     : data["daily activity"] == "Cuti"
                     ? "#E0F1FF"
-                    : data["daily activity"].length == 0
+                    : // : data["daily activity"].length == 0
+                    data["daily activity"] == "Empty"
                     ? "#FFDFDC"
                     : "#ffffff",
                 marginRight: 1,
@@ -459,7 +461,8 @@ const ExportActivityTemplate = ({
                     ? "#E0F1FF"
                     : data["daily activity"] == "Cuti"
                     ? "#E0F1FF"
-                    : data["daily activity"].length == 0
+                    : // : data["daily activity"].length == 0
+                    data["daily activity"] == "EMpty"
                     ? "#FFDFDC"
                     : "#ffffff",
                 marginRight: 1,
@@ -496,7 +499,8 @@ const ExportActivityTemplate = ({
                     ? "#E0F1FF"
                     : data["daily activity"] == "Cuti"
                     ? "#E0F1FF"
-                    : data["daily activity"].length == 0
+                    : // : data["daily activity"].length == 0
+                    data["daily activity"] == "Empty"
                     ? "#FFDFDC"
                     : "#ffffff",
                 marginRight: 1,
@@ -533,7 +537,8 @@ const ExportActivityTemplate = ({
                     ? "#E0F1FF"
                     : data["daily activity"] == "Cuti"
                     ? "#E0F1FF"
-                    : data["daily activity"].length == 0
+                    : // : data["daily activity"].length == 0
+                    data["daily activity"] == "Empty"
                     ? "#FFDFDC"
                     : "#ffffff",
                 paddingVertical: 4,
