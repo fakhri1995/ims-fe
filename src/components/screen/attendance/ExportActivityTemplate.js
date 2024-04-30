@@ -462,7 +462,7 @@ const ExportActivityTemplate = ({
                     : data["daily activity"] == "Cuti"
                     ? "#E0F1FF"
                     : // : data["daily activity"].length == 0
-                    data["daily activity"] == "EMpty"
+                    data["daily activity"] == "Empty"
                     ? "#FFDFDC"
                     : "#ffffff",
                 marginRight: 1,
@@ -525,7 +525,7 @@ const ExportActivityTemplate = ({
                   flexWrap: "wrap",
                 }}
               >
-                {data.work == 0 ? "WFO" : data.work == 1 ? "WFH" : "-"}
+                {data.work == 0 ? "WFH" : data.work == 1 ? "WFO" : "-"}
               </Text>
             </View>
             <View
@@ -554,6 +554,10 @@ const ExportActivityTemplate = ({
               }}
             >
               {data["daily activity"] == null ? (
+                <Text></Text>
+              ) : data["daily activity"] == "Empty" ? (
+                <Text></Text>
+              ) : data["daily activity"] == "Other" ? (
                 <Text></Text>
               ) : data["daily activity"] == [] ? (
                 <Text></Text>
