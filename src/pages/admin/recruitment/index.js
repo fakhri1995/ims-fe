@@ -1682,7 +1682,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Semua Role"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ recruitment_role_id: value });
+                    setQueryParams({ recruitment_role_id: value, page: 1 });
                     setSelectedRoleId(value);
                   }}
                 >
@@ -1704,7 +1704,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Semua Stage"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ recruitment_stage_id: value });
+                    setQueryParams({ recruitment_stage_id: value, page: 1 });
                     setSelectedStage(value);
                   }}
                 >
@@ -1726,7 +1726,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Semua Status"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ recruitment_status_id: value });
+                    setQueryParams({ recruitment_status_id: value, page: 1 });
                     setSelectedStatus(value);
                   }}
                 >
