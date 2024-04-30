@@ -148,7 +148,12 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
     const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
     const isReachedMaxFileSize =
       checkMaxFileSizeFilter(uploadedFile, fileList) === Upload.LIST_IGNORE;
-    const allowedFileTypes = [`image/png`, `image/jpg`, `image/jpeg`];
+    const allowedFileTypes = [
+      `image/png`,
+      `image/jpg`,
+      `image/jpeg`,
+      `image/gif`,
+    ];
 
     if (!allowedFileTypes.includes(uploadedFile.type)) {
       notification.error({
@@ -248,10 +253,13 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
               >
                 <>
                   <p className="text-mono50 mr-10 mb-4">
-                    <em>Unggah Gambar (Maksimal 5 MB)</em>
+                    <em>
+                      Unggah Gambar (Maksimal 5 MB dengan format PNG / JPG /
+                      JPEG / GIF)
+                    </em>
                   </p>
                   <Upload
-                    accept=".png, .jpg, .jpeg"
+                    accept=".png, .jpg, .jpeg, .gif"
                     listType="picture-card"
                     maxCount={1}
                     // showUploadList={false}
