@@ -893,6 +893,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       setsearcingfiltertickets("");
                     } else {
                       setsearcingfiltertickets(e.target.value);
+                      setQueryParams({ page: 1 });
                     }
                   }}
                   onKeyPress={onKeyPressHandler}
@@ -916,7 +917,8 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   onChange={(value) => {
                     typeof value === "undefined"
                       ? settickettypefiltertickets("")
-                      : settickettypefiltertickets(value);
+                      : settickettypefiltertickets(value),
+                      setQueryParams({ page: 1 });
                   }}
                 >
                   {dataticketrelation.ticket_types.map((doc, idx) => (
@@ -940,6 +942,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       : [moment(fromfiltertickets), moment(tofiltertickets)]
                   }
                   onChange={(dates, datestrings) => {
+                    setQueryParams({ page: 1 });
                     setfromfiltertickets(datestrings[0]);
                     settofiltertickets(datestrings[1]);
                   }}
@@ -960,7 +963,8 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   onChange={(value) => {
                     typeof value === "undefined"
                       ? setlocfiltertickets("")
-                      : setlocfiltertickets(value);
+                      : setlocfiltertickets(value),
+                      setQueryParams({ page: 1 });
                   }}
                   treeData={[dataticketrelation.companies]}
                   // treeData={[
@@ -996,7 +1000,8 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   onChange={(value, option) => {
                     typeof value === "undefined"
                       ? setstatusfiltertickets("")
-                      : setstatusfiltertickets(value);
+                      : setstatusfiltertickets(value),
+                      setQueryParams({ page: 1 });
                   }}
                 >
                   {dataProfile.data.role === 1

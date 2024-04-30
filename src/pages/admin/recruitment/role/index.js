@@ -452,7 +452,8 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   onChange={(value) => {
                     typeof value === "undefined"
                       ? setRoleTypeId(0)
-                      : setRoleTypeId(value);
+                      : setRoleTypeId(value),
+                      setPageRoles(1);
                   }}
                 >
                   <Select.Option value={0}>Semua Tipe</Select.Option>

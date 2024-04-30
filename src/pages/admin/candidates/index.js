@@ -481,7 +481,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
                   allowClear
                   className="w-full md:w-1/3"
                   onChange={(value) => {
-                    setQueryParams({ assessment_ids: value });
+                    setQueryParams({ assessment_ids: value, page: 1 });
                     setSelectedRoleId(value);
                   }}
                 >

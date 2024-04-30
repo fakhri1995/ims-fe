@@ -139,22 +139,8 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // table data
   const [dataEmployees, setDataEmployees] = useState([]);
-  // const [dataRawEmployees, setDataRawEmployees] = useState({
-  //   current_page: "",
-  //   data: [],
-  //   first_page_url: "",
-  //   from: null,
-  //   last_page: null,
-  //   last_page_url: "",
-  //   next_page_url: "",
-  //   path: "",
-  //   per_page: null,
-  //   prev_page_url: null,
-  //   to: null,
-  //   total: null,
-  // });
-
   const [dataRowClicked, setDataRowClicked] = useState({});
+  const [dataCompanyList, setDataCompanyList] = useState([]);
 
   // 2.3. Add employee
   const [loadingAdd, setLoadingAdd] = useState(false);
@@ -224,7 +210,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.2. Get Company Client List
   const {
-    data: dataCompanyList,
+    data: dataQueryCompanyList,
     isLoading: loadingCompanyList,
     refetch: refetchCompanyList,
   } = useQuery(
@@ -237,6 +223,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     {
       enabled: isAllowedToGetCompanyClients,
       select: (response) => response.data,
+      onSuccess: (data) => setDataCompanyList(data),
     }
   );
 
@@ -794,7 +781,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 filterOption={(input, option) =>
                   (option?.value ?? "")
                     .toLowerCase()
-                    .includes(input.toLocaleLowerCase())
+                    .includes(input.toLowerCase())
                 }
                 optionFilterProp="children"
               >

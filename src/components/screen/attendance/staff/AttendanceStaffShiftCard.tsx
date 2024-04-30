@@ -56,6 +56,7 @@ export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
         {
           enabled: isAllowedToGetCurrentSchedule,
           select: (response) => response.data,
+          retry: 1,
           onError: (error: any) => {
             if (error?.response?.status !== 404) {
               notification.error({

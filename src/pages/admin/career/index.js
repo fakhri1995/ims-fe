@@ -1138,7 +1138,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Semua Status"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ is_posted: value });
+                    setQueryParams({ is_posted: value, page: 1 });
                     setSelectedStatus(value);
                   }}
                 >
