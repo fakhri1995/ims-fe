@@ -61,6 +61,22 @@ const ExportActivityTemplate = ({
     setBulanPdf(bulan);
   }, []);
 
+  const renderDetailDailyActivity = (daily) => {
+    if (daily.length == 0) {
+      return daily[0].value;
+    } else {
+      let kata = "";
+      for (let a = 0; a < daily.length; a++) {
+        if (a != daily.length - 1) {
+          kata = kata + daily[a].value + ", ";
+        } else {
+          kata = kata + daily[a].value;
+        }
+      }
+      return kata;
+    }
+  };
+
   return (
     <Document>
       <Page size={"A4"} style={styles.page}>
@@ -572,7 +588,9 @@ const ExportActivityTemplate = ({
                   }}
                 >
                   {data["daily activity"][0].details
-                    ? data["daily activity"][0].details[0].value
+                    ? renderDetailDailyActivity(
+                        data["daily activity"][0].details
+                      )
                     : data["daily activity"][0].activity}
                 </Text>
               ) : Array.isArray(data["daily activity"]) &&
@@ -599,7 +617,7 @@ const ExportActivityTemplate = ({
                       }}
                     >
                       {datanew.details
-                        ? datanew.details[0].value
+                        ? renderDetailDailyActivity(datanew.details)
                         : datanew.activity}
                     </Text>
                   </View>
