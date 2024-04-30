@@ -533,9 +533,9 @@ function AgentDetail({
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
                         <h1 className="font-semibold text-sm">Role:</h1>
-                        <div className=" flex items-center">
+                        <div className=" flex flex-wrap items-center gap-2 ">
                           {namarolearr.map((doc, idx) => (
-                            <div className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100 mr-2">
+                            <div className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100">
                               {doc.name}
                             </div>
                           ))}
