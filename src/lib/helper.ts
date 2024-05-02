@@ -369,9 +369,10 @@ export const getFileName = (pathString: string = "") => {
 };
 
 export const stripTags = (text: string) => {
-  const pattern = "<\\w+(\\s+(\"[^\"]*\"|\\'[^\\']*'|[^>])+)?>|<\\/\\w+>";
+  const pattern =
+    "<\\w+(\\s+(\"[^\"]*\"|\\'[^\\']*'|[^>])+)?>|<\\/\\w+>|&[^;]+;";
   const reg = new RegExp(pattern, "gi");
-  return text.replace(reg, "");
+  return text.replace(reg, " ");
 };
 
 export const wordsCount = (text: string) => {
