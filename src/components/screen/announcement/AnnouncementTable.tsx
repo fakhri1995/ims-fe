@@ -1,6 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Table, notification } from "antd";
 import type { ColumnsType } from "antd/lib/table";
+import { SorterResult } from "antd/lib/table/interface";
 import { AxiosResponse } from "axios";
 import {
   NumberParam,
@@ -62,7 +63,10 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
+    order_by: withDefault(StringParam, /** @type {"publish_at"} */ undefined),
+    order_to: withDefault(StringParam, /** @type {"asc"|"desc"} */ "asc"),
     keyword: withDefault(StringParam, null),
+    status: withDefault(StringParam, !isAdminPage ? "published" : null),
   });
 
   /**
@@ -202,7 +206,6 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           dataSource={dataAnnouncements}
           loading={loadingAnnouncements}
           columns={tableColumns}
-          // className="grid grid-cols-1"
           scroll={{ x: 200 }}
           pagination={{
             total: dataRawAnnouncements?.total,
@@ -210,10 +213,20 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
             pageSize: queryParams.rows,
             showSizeChanger: true,
           }}
-          onChange={(pagination, filters, sorter, extra) => {
+          onChange={(pagination, filters, sorter: SorterResult<any>, extra) => {
+            const sortTypePayload =
+              sorter.order === "ascend"
+                ? "asc"
+                : sorter.order === "descend"
+                ? "desc"
+                : undefined;
+
             setQueryParams({
               page: pagination.current,
               rows: pagination.pageSize,
+              order_by:
+                sortTypePayload === undefined ? undefined : sorter.field,
+              order_to: sortTypePayload,
             });
           }}
           onRow={({ id }) => {
