@@ -28,7 +28,7 @@ import {
   ANNOUNCEMENT_ADD,
   ANNOUNCEMENT_GET,
 } from "lib/features";
-import { generateNotificationRedirectUrl, stripTags } from "lib/helper";
+import { generateStaticAssetUrl, stripTags } from "lib/helper";
 
 import {
   AnnouncementData,
@@ -116,6 +116,32 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           {(dataRawAnnouncements?.from || 0) + index}.
         </p>
       ),
+    },
+    {
+      key: "thumbnail",
+      title: "Thumbnail",
+      dataIndex: "thumbnail_image",
+      render: (image) => {
+        return image?.link &&
+          image?.link != "staging/Announcement/mig-announce-logo.png" ? (
+          <div className="h-18 ">
+            <img
+              src={generateStaticAssetUrl(image?.link)}
+              className="h-18 w-20 object-cover rounded"
+            />
+          </div>
+        ) : (
+          <div
+            className="h-18 w-20 bg-backdrop rounded flex flex-col items-center 
+                  justify-center py-4 px-3"
+          >
+            <img
+              src="/mig.png"
+              style={{ width: "10rem", mixBlendMode: "luminosity" }}
+            />
+          </div>
+        );
+      },
     },
     {
       key: "title",
