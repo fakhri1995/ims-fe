@@ -122,16 +122,17 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
       title: "Thumbnail",
       dataIndex: "thumbnail_image",
       render: (image) => {
-        return image?.link ? (
-          <div className="h-8 w-12">
+        return image?.link &&
+          image?.link != "staging/Announcement/mig-announce-logo.png" ? (
+          <div className="h-18 ">
             <img
               src={generateStaticAssetUrl(image?.link)}
-              className="w-full h-full object-cover rounded"
+              className="h-18 w-20 object-cover rounded"
             />
           </div>
         ) : (
           <div
-            className="h-18 bg-backdrop rounded flex flex-col items-center 
+            className="h-18 w-20 bg-backdrop rounded flex flex-col items-center 
                   justify-center py-4 px-3"
           >
             <img
