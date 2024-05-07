@@ -17,6 +17,7 @@ import ButtonSys from "components/button";
 import DrawerAnnouncement from "components/drawer/announcement/drawerAnnouncement";
 import { AccessControl } from "components/features/AccessControl";
 import { PlusIconSvg } from "components/icon";
+import ModalThumbnailPreview from "components/modal/attendance/modalThumbnailPreview";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -77,6 +78,8 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
   >([]);
 
   const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
+  const [isShowPreviewModal, setShowPreviewModal] = useState(false);
+  const [currentImageLink, setCurrentImageLink] = useState("");
 
   /**
    * Queries
@@ -106,6 +109,15 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
     }
   );
 
+  const handleClickThumbnail = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    imageLink: string
+  ) => {
+    e.stopPropagation();
+    setCurrentImageLink(imageLink);
+    setShowPreviewModal(true);
+  };
+
   const tableColumns: ColumnsType<AnnouncementData> = [
     {
       key: "no",
@@ -124,7 +136,13 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
       render: (image) => {
         return image?.link &&
           image?.link != "staging/Announcement/mig-announce-logo.png" ? (
-          <div className="h-18 ">
+          <div
+            className="h-18"
+            onClick={(e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+              const imageElement = e.target as HTMLImageElement;
+              handleClickThumbnail(e, imageElement.src);
+            }}
+          >
             <img
               src={generateStaticAssetUrl(image?.link)}
               className="h-18 w-20 object-cover rounded"
@@ -132,6 +150,7 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           </div>
         ) : (
           <div
+            onClick={(e) => handleClickThumbnail(e, "/mig.png")}
             className="h-18 w-20 bg-backdrop rounded flex flex-col items-center 
                   justify-center py-4 px-3"
           >
@@ -275,6 +294,14 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           />
         </AccessControl>
       )}
+
+      <AccessControl hasPermission={ANNOUNCEMENTS_GET}>
+        <ModalThumbnailPreview
+          imageLink={currentImageLink}
+          visible={isShowPreviewModal}
+          onvisible={setShowPreviewModal}
+        />
+      </AccessControl>
     </div>
   );
 };
