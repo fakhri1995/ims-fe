@@ -70,7 +70,6 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
         {/* Name Section */}
         <View
           style={{
-            paddingHorizontal: 48,
             paddingBottom: 10,
             display: "flex",
             flexDirection: "row",
@@ -286,6 +285,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
         {dataResume?.projects?.length !== 0 && (
           <View
             style={styles.rowOneCol}
+            // debug
             // wrap={false}
           >
             <Text style={styles.sectionHeader}>PROJECTS</Text>
@@ -542,16 +542,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     paddingTop: 30,
     paddingBottom: 88,
+    paddingHorizontal: 48,
     color: "#4D4D4D",
   },
 
   rowOneCol: {
-    paddingHorizontal: 48,
+    paddingRight: 30,
     paddingBottom: 30,
   },
 
   rowTwoCol: {
-    paddingHorizontal: 48,
     flexDirection: "row",
     justifyContent: `space-between`,
   },
@@ -669,7 +669,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     paddingBottom: 28,
-    paddingRight: 48,
     color: "#4D4D4D",
   },
 
