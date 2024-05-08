@@ -111,7 +111,7 @@ export const AnnouncementMessageSection: FC<IAnnouncementMessageSection> = ({
     );
 
   return (
-    <div className="mig-platform grid grid-cols-1 space-y-5 h-full">
+    <div className="mig-platform grid grid-cols-1 space-y-5">
       <div className="flex justify-between items-center">
         <button
           onClick={() => router.back()}
