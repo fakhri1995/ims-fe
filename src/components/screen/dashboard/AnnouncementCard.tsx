@@ -21,7 +21,7 @@ import {
   ANNOUNCEMENT_EMPLOYEE_GET,
   ANNOUNCEMENT_GET,
 } from "lib/features";
-import { generateStaticAssetUrl, stripTags } from "lib/helper";
+import { generateStaticAssetUrl, stripTagsNewLine } from "lib/helper";
 
 import { AnnouncementService } from "apis/announcement";
 
@@ -136,12 +136,20 @@ export const AnnouncementCard: FC = () => {
                   <h1 className="mb-2 font-bold text-lg">
                     {dataAnnouncements[0]?.title}
                   </h1>
-                  <p className="text-wrap break-words">
-                    {stripTags(dataAnnouncements[0]?.text)?.length > 200
-                      ? stripTags(dataAnnouncements[0]?.text).slice(0, 200) +
-                        "..."
-                      : stripTags(dataAnnouncements[0]?.text)}
-                  </p>
+
+                  <p
+                    className="text-wrap break-words"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        stripTagsNewLine(dataAnnouncements[0]?.text)?.length >
+                        220
+                          ? stripTagsNewLine(dataAnnouncements[0]?.text).slice(
+                              0,
+                              220
+                            ) + "..."
+                          : stripTagsNewLine(dataAnnouncements[0]?.text),
+                    }}
+                  />
                 </div>
                 <p className="">
                   {formatDateToLocale(
