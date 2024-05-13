@@ -21,7 +21,7 @@ import {
   ANNOUNCEMENT_EMPLOYEE_GET,
   ANNOUNCEMENT_GET,
 } from "lib/features";
-import { generateStaticAssetUrl, stripTags } from "lib/helper";
+import { generateStaticAssetUrl, stripTagsNewLine } from "lib/helper";
 
 import { AnnouncementService } from "apis/announcement";
 
@@ -77,7 +77,7 @@ export const AnnouncementCard: FC = () => {
 
   return (
     <section className="flex flex-col px-5" id="mainWrapper">
-      <div className="mig-platform grid grid-cols-1 px-5 ">
+      <div className="grid grid-cols-1 px-5 ">
         <div className="flex justify-between items-center mb-6">
           <div className="flex gap-2 items-center">
             <NewsIconSvg size={20} color="#808080" />
@@ -91,7 +91,7 @@ export const AnnouncementCard: FC = () => {
             Lihat Berita Terdahulu
           </button>
         </div>
-        <div className="grid lg:grid-cols-12 lg:grid-rows-2 gap-6">
+        <div className="grid lg:grid-cols-12 lg:grid-rows-2 gap-4">
           {dataAnnouncements?.length > 0 && (
             <div
               onClick={() =>
@@ -100,24 +100,29 @@ export const AnnouncementCard: FC = () => {
                   "/dashboard/announcement/detail/" + dataAnnouncements[0]?.id
                 )
               }
-              className="grid grid-cols-1 md:grid-cols-6 gap-6 lg:row-span-2 lg:col-span-8  lg:items-center 
-              cursor-pointer hover:opacity-80"
+              className="mig-platform flex flex-col md:flex-row gap-6 lg:row-span-2 lg:col-span-7 lg:items-center 
+              cursor-pointer hover:opacity-80 w-full"
             >
               {/* Thumbnail */}
-              <div className="col-span-3 h-60 lg:h-full">
+              <div className="">
                 {dataAnnouncements[0]?.thumbnail_image?.link &&
                 dataAnnouncements[0]?.thumbnail_image?.link !=
                   "staging/Announcement/mig-announce-logo.png" ? (
-                  <img
-                    src={generateStaticAssetUrl(
-                      dataAnnouncements[0]?.thumbnail_image?.link
-                    )}
-                    className="w-full h-full bg-cover object-cover rounded"
-                  />
+                  <div
+                    className="w-full md:w-60 h-60 bg-backdrop rounded flex flex-col items-center 
+                    justify-center"
+                  >
+                    <img
+                      src={generateStaticAssetUrl(
+                        dataAnnouncements[0]?.thumbnail_image?.link
+                      )}
+                      className="w-full md:w-60 h-60 bg-cover object-cover rounded"
+                    />
+                  </div>
                 ) : (
                   <div
-                    className="w-full h-full bg-backdrop rounded flex flex-col items-center 
-                  justify-center py-10 px-6"
+                    className="w-full md:w-60 h-60 bg-backdrop rounded flex flex-col items-center 
+                    justify-center py-10 px-6"
                   >
                     <img
                       src="/mig.png"
@@ -128,22 +133,33 @@ export const AnnouncementCard: FC = () => {
               </div>
 
               {/* Content */}
-              <div className="col-span-3 lg:h-full flex flex-col justify-between">
-                <p className="mb-2 mig-caption--medium">
-                  by {dataAnnouncements[0]?.user?.position}
-                </p>
-                <div className="mb-2 lg:w-5/6">
-                  <h1 className="mb-2 font-bold text-lg">
+              <div className="flex flex-col justify-between">
+                <div className="mb-2 ">
+                  <h1 className="mb-2 font-bold text-lg text-mono30">
                     {dataAnnouncements[0]?.title}
                   </h1>
-                  <p className="text-wrap break-words">
-                    {stripTags(dataAnnouncements[0]?.text)?.length > 200
-                      ? stripTags(dataAnnouncements[0]?.text).slice(0, 200) +
-                        "..."
-                      : stripTags(dataAnnouncements[0]?.text)}
+                  <p className="mb-2 mig-caption--medium text-mono50">
+                    by{" "}
+                    <span className="text-mono30">
+                      {dataAnnouncements[0]?.user?.position}
+                    </span>
                   </p>
+
+                  <p
+                    className="text-wrap break-words text-mono50"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        stripTagsNewLine(dataAnnouncements[0]?.text)?.length >
+                        200
+                          ? stripTagsNewLine(dataAnnouncements[0]?.text).slice(
+                              0,
+                              200
+                            ) + "..."
+                          : stripTagsNewLine(dataAnnouncements[0]?.text),
+                    }}
+                  />
                 </div>
-                <p className="">
+                <p className="text-mono50">
                   {formatDateToLocale(
                     dataAnnouncements[0]?.publish_at as unknown as Date,
                     "dd MMM yyyy, HH:mm"
@@ -160,22 +176,29 @@ export const AnnouncementCard: FC = () => {
                 onClick={() =>
                   router.push("/dashboard/announcement/detail/" + item?.id)
                 }
-                className="grid grid-cols-1 md:grid-cols-6 gap-6 lg:col-span-4 lg:items-center 
+                className="mig-platform flex flex-col md:flex-row gap-6 lg:col-span-5 lg:items-center 
                 cursor-pointer hover:opacity-80"
               >
                 {/* Thumbnail */}
-                <div className="col-span-3 h-60 lg:h-full ">
+                <div className="">
                   {item?.thumbnail_image?.link &&
                   item?.thumbnail_image?.link !=
                     "staging/Announcement/mig-announce-logo.png" ? (
-                    <img
-                      src={generateStaticAssetUrl(item?.thumbnail_image?.link)}
-                      className="w-full h-full bg-cover object-cover rounded"
-                    />
+                    <div
+                      className="bg-backdrop rounded flex flex-col items-center 
+                      justify-center w-full md:w-24 h-24"
+                    >
+                      <img
+                        src={generateStaticAssetUrl(
+                          item?.thumbnail_image?.link
+                        )}
+                        className="w-full md:w-24 h-24 bg-cover object-cover rounded"
+                      />
+                    </div>
                   ) : (
                     <div
                       className="bg-backdrop rounded flex flex-col items-center 
-                    justify-center py-10 px-6 h-full"
+                    justify-center py-10 px-6 w-full md:w-24 h-24"
                     >
                       <img
                         src="/mig.png"
@@ -186,12 +209,15 @@ export const AnnouncementCard: FC = () => {
                 </div>
 
                 {/* Content */}
-                <div className="col-span-3 lg:h-full flex flex-col justify-between">
-                  <p className="mb-2 mig-caption--medium">
-                    by {item?.user?.position}
+                <div className=" flex flex-col justify-between">
+                  <h1 className="mb-2 font-bold text-lg text-mono30">
+                    {item?.title}
+                  </h1>
+                  <p className="mb-2 mig-caption--medium text-mono50">
+                    by{" "}
+                    <span className="text-mono30">{item?.user?.position}</span>
                   </p>
-                  <h1 className="mb-2 font-bold text-lg">{item?.title}</h1>
-                  <p className="">
+                  <p className="text-mono50">
                     {formatDateToLocale(
                       item?.publish_at as unknown as Date,
                       "dd MMM yyyy, HH:mm"

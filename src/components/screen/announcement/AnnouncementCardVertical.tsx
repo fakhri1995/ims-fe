@@ -18,7 +18,7 @@ export const AnnouncementCardVertical: FC<IAnnouncementCardVertical> = ({
    */
 
   return (
-    <div className="flex flex-col gap-6 cursor-pointer hover:opacity-80 bg-white pb-4 rounded-md shadow-md">
+    <div className="flex flex-col gap-6 cursor-pointer hover:opacity-80 bg-white pb-4 rounded-md shadow-md h-64">
       {/* Thumbnail */}
       {data?.thumbnail_image?.link &&
       data?.thumbnail_image?.link !=
@@ -44,7 +44,7 @@ export const AnnouncementCardVertical: FC<IAnnouncementCardVertical> = ({
       {/* Content */}
       <div className=" flex flex-col justify-between px-4">
         <p className="mb-2 mig-caption--medium">by {data?.user?.position}</p>
-        <h1 className="mb-2 font-bold text-lg">{data?.title}</h1>
+        <h1 className="mb-2 font-bold text-lg truncate">{data?.title}</h1>
         <p className="">
           {formatDateToLocale(
             data?.publish_at as unknown as Date,

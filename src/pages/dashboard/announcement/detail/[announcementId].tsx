@@ -92,7 +92,7 @@ const DashboardAnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
             <NewsIconSvg size={20} color="#808080" />
             <p>Kabar Lainnya</p>
           </div>
-          <div className="flex flex-col md:flex-row lg:flex-col gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
             {dataAnnouncementMore?.length > 0 &&
               dataAnnouncementMore?.map((item, idx) => (
                 <div
