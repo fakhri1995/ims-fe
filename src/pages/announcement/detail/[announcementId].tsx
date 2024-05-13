@@ -126,13 +126,13 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
             setShowDeleteModal={setShowDeleteModal}
           />
         </div>
-        <div className="md:col-span-5">
+        {/* <div className="md:col-span-5">
           <AnnouncementEmailHistory
             token={token}
             announcementId={announcementId}
             setShowEmailDrawer={setShowEmailDrawer}
           />
-        </div>
+        </div> */}
       </div>
 
       <AccessControl hasPermission={ANNOUNCEMENT_DELETE}>
@@ -153,6 +153,15 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
           </p>
         </ModalHapus2>
       </AccessControl>
+
+      {/* <AccessControl hasPermission={ANNOUNCEMENT_ADD}>
+        <DrawerAnnouncementEmail
+          initProps={token}
+          visible={isShowEmailDrawer}
+          onvisible={setShowEmailDrawer}
+          dataAnnouncement={dataAnnouncement}
+        />
+      </AccessControl> */}
     </LayoutDashboard>
   );
 };
