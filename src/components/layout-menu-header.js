@@ -72,7 +72,7 @@ function LayoutMenuHeader({
       <div className="md:mr-8 mr-4 flex items-center">
         {!isPublic && <Notification />}
       </div>
-      <div className="md:mr-12 mr-4 flex items-center">
+      <div className="md:mr-6 mr-4 flex items-center">
         <Dropdown overlay={menuProfile2} trigger={["click"]}>
           {dataProfile.data?.profile_image?.link ? (
             <img

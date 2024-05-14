@@ -831,8 +831,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         {viewtaskpick ? (
           <>
             {viewtaskpick && (
-              <div className="px-5">
-                <div className="flex flex-col shadow-md rounded-lg bg-white p-5 mb-6 mx-3">
+              <div className="px-6 md:px-0">
+                <div className="flex flex-col shadow-md rounded-lg bg-white p-5 mb-6">
                   <div className="flex justify-between items-center mb-5">
                     <div className="flex">
                       <div
@@ -1016,7 +1016,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             )}
           </>
         ) : (
-          <div className="grid grid-cols-12 px-5 gap-6" id="wrapper1">
+          <div className="grid grid-cols-12 px-6 md:px-0 gap-6" id="wrapper1">
             {/* SEGERA BERAKHIR */}
             <div className="col-span-12 lg:col-span-6 flex flex-col shadow-md rounded-md bg-gray-50 p-5">
               {loadinguserlasttwo ? (
