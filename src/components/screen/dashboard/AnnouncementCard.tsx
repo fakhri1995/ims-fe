@@ -76,7 +76,7 @@ export const AnnouncementCard: FC = () => {
   );
 
   return (
-    <section className="flex flex-col px-5" id="mainWrapper">
+    <section className="flex flex-col px-1 md:px-5" id="mainWrapper">
       <div className="grid grid-cols-1 px-5 ">
         <div className="flex justify-between items-center mb-6">
           <div className="flex gap-2 items-center">
@@ -109,19 +109,19 @@ export const AnnouncementCard: FC = () => {
                 dataAnnouncements[0]?.thumbnail_image?.link !=
                   "staging/Announcement/mig-announce-logo.png" ? (
                   <div
-                    className="w-full md:w-60 h-60 bg-backdrop rounded flex flex-col items-center 
+                    className="w-full h-72 md:w-48 md:h-48 lg:w-60 lg:h-60 bg-backdrop rounded flex flex-col items-center 
                     justify-center"
                   >
                     <img
                       src={generateStaticAssetUrl(
                         dataAnnouncements[0]?.thumbnail_image?.link
                       )}
-                      className="w-full md:w-60 h-60 bg-cover object-cover rounded"
+                      className="w-full h-72 md:w-48 md:h-48 lg:w-60 lg:h-60 bg-cover object-cover rounded"
                     />
                   </div>
                 ) : (
                   <div
-                    className="w-full md:w-60 h-60 bg-backdrop rounded flex flex-col items-center 
+                    className="w-full h-72 md:w-48 md:h-48 lg:w-60 lg:h-60 bg-backdrop rounded flex flex-col items-center 
                     justify-center py-10 px-6"
                   >
                     <img
@@ -133,7 +133,7 @@ export const AnnouncementCard: FC = () => {
               </div>
 
               {/* Content */}
-              <div className="flex flex-col justify-between">
+              <div className="flex flex-col justify-between ">
                 <div className="mb-2 ">
                   <h1 className="mb-2 font-bold text-lg text-mono30">
                     {dataAnnouncements[0]?.title}
@@ -150,10 +150,10 @@ export const AnnouncementCard: FC = () => {
                     dangerouslySetInnerHTML={{
                       __html:
                         stripTagsNewLine(dataAnnouncements[0]?.text)?.length >
-                        200
+                        180
                           ? stripTagsNewLine(dataAnnouncements[0]?.text).slice(
                               0,
-                              200
+                              180
                             ) + "..."
                           : stripTagsNewLine(dataAnnouncements[0]?.text),
                     }}
@@ -186,19 +186,19 @@ export const AnnouncementCard: FC = () => {
                     "staging/Announcement/mig-announce-logo.png" ? (
                     <div
                       className="bg-backdrop rounded flex flex-col items-center 
-                      justify-center w-full md:w-24 h-24"
+                      justify-center w-full h-72 md:w-24 md:h-24"
                     >
                       <img
                         src={generateStaticAssetUrl(
                           item?.thumbnail_image?.link
                         )}
-                        className="w-full md:w-24 h-24 bg-cover object-cover rounded"
+                        className="w-full h-72 md:w-24 md:h-24 bg-cover object-cover rounded"
                       />
                     </div>
                   ) : (
                     <div
                       className="bg-backdrop rounded flex flex-col items-center 
-                    justify-center py-10 px-6 w-full md:w-24 h-24"
+                    justify-center py-10 px-6 w-full h-72 md:w-24 md:h-24"
                     >
                       <img
                         src="/mig.png"
