@@ -62,4 +62,7 @@ export interface Company {
 export interface Group {
   id: number;
   name: string;
+  description?: string;
+  group_head?: number;
+  is_agent?: 0 | 1;
 }
