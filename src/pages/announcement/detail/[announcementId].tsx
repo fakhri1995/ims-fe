@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
+import DrawerAnnouncementEmail from "components/drawer/announcement/drawerAnnouncementEmail";
 import { AccessControl } from "components/features/AccessControl";
 import LayoutDashboard from "components/layout-dashboardNew";
 import { ModalHapus2 } from "components/modal/modalCustom";
@@ -16,6 +17,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   ANNOUNCEMENTS_GET,
+  ANNOUNCEMENT_ADD,
   ANNOUNCEMENT_DELETE,
   ANNOUNCEMENT_GET,
 } from "lib/features";
@@ -126,13 +128,13 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
             setShowDeleteModal={setShowDeleteModal}
           />
         </div>
-        {/* <div className="md:col-span-5">
+        <div className="md:col-span-5">
           <AnnouncementEmailHistory
             token={token}
             announcementId={announcementId}
             setShowEmailDrawer={setShowEmailDrawer}
           />
-        </div> */}
+        </div>
       </div>
 
       <AccessControl hasPermission={ANNOUNCEMENT_DELETE}>
@@ -154,14 +156,14 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
         </ModalHapus2>
       </AccessControl>
 
-      {/* <AccessControl hasPermission={ANNOUNCEMENT_ADD}>
+      <AccessControl hasPermission={ANNOUNCEMENT_ADD}>
         <DrawerAnnouncementEmail
           initProps={token}
           visible={isShowEmailDrawer}
           onvisible={setShowEmailDrawer}
           dataAnnouncement={dataAnnouncement}
         />
-      </AccessControl> */}
+      </AccessControl>
     </LayoutDashboard>
   );
 };
