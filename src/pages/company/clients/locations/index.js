@@ -452,8 +452,8 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
       extra={company_name}
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
-      <div className="grid grid-cols-12">
-        <div className="col-span-6 flex flex-col m-3">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+        <div className="md:col-span-6 flex flex-col m-6 md:m-0">
           <div className="flex justify-around mb-5">
             <div className="mx-0">
               <Input
@@ -511,7 +511,7 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
             )}
           </div>
         </div>
-        <div className="col-span-6 m-3 flex flex-col">
+        <div className="md:col-span-6 m-6 md:m-0 flex flex-col gap-5">
           {selected ? (
             loadingselected ? (
               <div className="flex items-center justify-center">
@@ -519,7 +519,7 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
               </div>
             ) : (
               <AccessControl hasPermission={COMPANY_SUB_PROFILE_GET}>
-                <div className="flex shadow-md rounded-md bg-white p-5 mb-5 mx-2">
+                <div className="flex shadow-md rounded-md bg-white p-5">
                   <div className="mr-5">
                     <img
                       src={selecteddata.image_logo}
@@ -555,7 +555,7 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col shadow-md rounded-md bg-white p-5 mb-5 mx-2">
+                <div className="flex flex-col shadow-md rounded-md bg-white p-5">
                   <div className="flex items-center mb-3">
                     <H1>Kondisi Aset</H1>
                   </div>
@@ -632,7 +632,7 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col shadow-md rounded-md bg-white p-5 mb-5 mx-2">
+                <div className="flex flex-col shadow-md rounded-md bg-white p-5">
                   <div className="flex items-center mb-3">
                     <H1>Keuangan</H1>
                   </div>
