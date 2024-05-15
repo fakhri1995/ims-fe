@@ -63,7 +63,7 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
   const queryClient = useQueryClient();
 
   const [queryParams, setQueryParams] = useQueryParams({
-    project_id: withDefault(NumberParam, 3),
+    id: withDefault(NumberParam, 3),
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
     // keyword: withDefault(StringParam, null),
@@ -100,6 +100,30 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
     }
   );
 
+  // 3.1. Get Announcement Email History
+  const {
+    data: dataRawHistory,
+    isLoading: loadingHistory,
+    refetch: refetchHistory,
+  } = useQuery(
+    [PROJECT_LOGS_GET, queryParams, search],
+    () =>
+      AnnouncementService.getMailAnnouncement(
+        isAllowedToGetAnnouncement,
+        axiosClient,
+        queryParams
+      ),
+    {
+      enabled: isAllowedToGetAnnouncement,
+      select: (response) => {
+        return response.data.data;
+      },
+      onSuccess: (data) => {
+        setDataHistory(data.data);
+      },
+    }
+  );
+
   const handleCloseDelete = () => {
     setShowEmailDrawer(false);
   };
@@ -130,36 +154,6 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
         },
       }
     );
-
-  // 3.1. Get Project Logs
-  const logParams = {
-    project_id: 3,
-    page: 1,
-    rows: 5,
-  };
-  const {
-    data: dataRawHistory,
-    isLoading: loadingHistory,
-    refetch: refetchHistory,
-  } = useQuery(
-    [PROJECT_LOGS_GET, queryParams, search],
-    () =>
-      ProjectManagementService.getProjectLogs(
-        token,
-        isAllowedToGetAnnouncement,
-        queryParams,
-        search
-      ),
-    {
-      enabled: isAllowedToGetAnnouncement,
-      select: (response) => {
-        return response.data;
-      },
-      onSuccess: (data) => {
-        setDataHistory(data.data);
-      },
-    }
-  );
 
   return (
     <div className="mig-platform flex flex-col gap-5">
@@ -222,20 +216,15 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
             title: "Email History",
             dataIndex: "id",
             key: "id",
-            render: (_, log) => {
-              // remove html tag in description
-              const stringDescription = log?.description?.replace(
-                /(<([^>]+)>)/gi,
-                ""
-              );
+            render: (_, item) => {
               return (
-                <div key={log?.id} className="grid grid-cols-1 cursor-pointer">
+                <div key={item?.id} className="grid grid-cols-1 cursor-pointer">
                   <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-2 w-2/3">
                       <div className="w-10">
                         <img
                           src={generateStaticAssetUrl(
-                            log?.causer?.profile_image?.link ??
+                            item?.causer?.profile_image?.link ??
                               "staging/Users/default_user.png"
                           )}
                           alt={"profile image"}
@@ -243,32 +232,31 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
                         />
                       </div>
                       <p className="truncate">
-                        <strong>{log?.causer?.name}</strong> -{" "}
-                        {log?.causer?.roles?.[0]?.name}
+                        <strong>{item?.causer?.name}</strong> -{" "}
+                        {item?.causer?.roles?.[0]?.name}
                       </p>
                     </div>
                     <p className="text-right w-1/3">
                       {momentFormatDate(
-                        log?.created_at,
+                        item?.created_at,
                         "-",
                         "D MMM YYYY, HH:mm",
                         true
                       )}
                     </p>
                   </div>
-                  <div className="flex gap-2 items-center mb-2">
+                  <div className="flex flex-wrap gap-2 items-center mb-2">
                     <p>Kepada:</p>
-                    <div className="flex items-center gap-2">
-                      <p className="bg-backdrop px-2 rounded-full w-max text-primary100 mig-caption--bold">
-                        Engineer
-                      </p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {item?.purposes?.length > 0 &&
+                        item.purposes.map((name) => (
+                          <p className="bg-backdrop px-2 rounded-full w-max text-primary100 mig-caption--bold">
+                            {name}
+                          </p>
+                        ))}
                     </div>
                   </div>
-                  <p>
-                    {stringDescription?.length > 140
-                      ? stringDescription?.slice(0, 140) + "..."
-                      : stringDescription}
-                  </p>
+                  <p>{item?.result?.description}</p>
                 </div>
               );
             },
