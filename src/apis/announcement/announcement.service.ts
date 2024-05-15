@@ -8,8 +8,10 @@ import type {
   GetAnnouncementMorePayload,
   GetAnnouncementsPayload,
   GetAnnouncementsSucceedResponse,
+  GetMailAnnouncementPayload,
   IAddAnnouncementPayload,
   IGetAnnouncementSucceedResponse,
+  IGetMailAnnouncementSucceedResponse,
   IUpdateAnnouncementPayload,
 } from "./announcement.types";
 
@@ -184,6 +186,31 @@ export class AnnouncementService {
 
     return await axiosClient.get<GetAnnouncementEmployeeSucceedResponse>(
       "/getAnnouncementMore" + qs
+    );
+  }
+
+  /**
+   * Retrieve email history of an announcement by announcement ID.
+   *
+   * @access GET /getMailAnnouncement
+   */
+  static async getMailAnnouncement(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    params?: GetMailAnnouncementPayload
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Riwayat Email Announcement"
+      );
+      return;
+    }
+
+    const qs = QueryString.stringify(params, { addQueryPrefix: true });
+
+    return await axiosClient.get<IGetMailAnnouncementSucceedResponse>(
+      "/getMailAnnouncement" + qs
     );
   }
 }
