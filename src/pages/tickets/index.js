@@ -466,11 +466,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-2 md:grid-cols-8 lg:grid-cols-10 px-5">
+        <div className="grid grid-cols-2 md:grid-cols-8 lg:grid-cols-10 px-6 md:px-0">
           {dataProfile.data.role === 1 ? (
             <>
               {/* PENYELESAIAN TIKET */}
-              <div className="col-span-2 md:col-span-4 lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 md:mx-3">
+              <div className="col-span-2 md:col-span-4 lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mr-3">
                 <div className="flex items-center justify-between mb-4">
                   <H1>Penyelesaian Tiket</H1>
                 </div>
@@ -691,7 +691,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               <div className="col-span-2 md:col-span-8 lg:col-span-3 xl:col-span-4 flex flex-col mb-6">
                 {/* BUAT TIKET */}
                 <div
-                  className="btn-gradient shadow-md rounded-md transition ease-in-out cursor-pointer p-5 md:mx-3 flex items-center mb-2 "
+                  className="btn-gradient shadow-md rounded-md transition ease-in-out cursor-pointer p-5 md:ml-3 flex items-center mb-2 "
                   onClick={() => {
                     if (!canCreateNewTicket) {
                       permissionWarningNotification("Membuat", "Tiket Baru");
@@ -713,7 +713,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   </div>
                 </div>
                 {/* KELOLA TIKET */}
-                <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mt-2 md:mx-3 h-full">
+                <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mt-2 md:ml-3 h-full">
                   <div className="flex flex-col justify-center h-full">
                     <div
                       className=" h-2/6 flex flex-row items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
@@ -872,7 +872,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
             </div>
           )}
           {/* TABLE TIKET */}
-          <div className="col-span-2 md:col-span-10 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
+          <div className="col-span-2 md:col-span-10 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 ">
             <div className="flex items-center justify-between mb-4">
               <H1>Semua Tiket</H1>
             </div>
