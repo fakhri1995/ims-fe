@@ -33,7 +33,6 @@ import {
   ATTENDANCE_SHIFTS_GET,
   ATTENDANCE_SHIFT_ADD,
   ATTENDANCE_SHIFT_DELETE,
-  ATTENDANCE_SHIFT_STATUS_UPDATE,
   ATTENDANCE_SHIFT_UPDATE,
 } from "lib/features";
 
@@ -66,9 +65,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
   const isAllowedToGetShifts = hasPermission(ATTENDANCE_SHIFTS_GET);
   const isAllowedToAddShift = hasPermission(ATTENDANCE_SHIFT_ADD);
   const isAllowedToUpdateShift = hasPermission(ATTENDANCE_SHIFT_UPDATE);
-  const isAllowedToUpdateShiftStatus = hasPermission(
-    ATTENDANCE_SHIFT_STATUS_UPDATE
-  );
+
   const isAllowedToDeleteShift = hasPermission(ATTENDANCE_SHIFT_DELETE);
 
   const axiosClient = useAxiosClient();
@@ -155,7 +152,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
     useMutation(
       (payload: IUpdateShiftStatusPayload) =>
         AttendanceShiftService.updateShiftStatus(
-          isAllowedToUpdateShiftStatus,
+          isAllowedToUpdateShift,
           axiosClient,
           payload
         ),
@@ -306,7 +303,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
               >
                 <Select
                   value={status}
-                  disabled={!isAllowedToUpdateShiftStatus}
+                  disabled={!isAllowedToUpdateShift}
                   optionFilterProp="children"
                   bordered={false}
                   className={`w-2/3 rounded-md p-1 flex text-center ${
@@ -519,7 +516,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       </AccessControl>
 
       {/* Modal Update Status Shift */}
-      <AccessControl hasPermission={ATTENDANCE_SHIFT_STATUS_UPDATE}>
+      <AccessControl hasPermission={ATTENDANCE_SHIFT_UPDATE}>
         <ModalUbah
           title={`Konfirmasi Perubahan`}
           visible={isShowUpdateStatusModal}
@@ -533,7 +530,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
           okButtonText="Ya, saya yakin"
           onCancel={() => handleCloseUpdateStatus()}
           loading={loadingUpdateShiftStatus}
-          disabled={!isAllowedToUpdateShiftStatus}
+          disabled={!isAllowedToUpdateShift}
         >
           <div className="space-y-4">
             <p className="">

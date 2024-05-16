@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { AccessControl } from "components/features/AccessControl";
 import LayoutDashboard from "components/layout-dashboardNew";
 import { ModalHapus2 } from "components/modal/modalCustom";
+import { AnnouncementEmailHistory } from "components/screen/announcement/AnnouncementEmailHistory";
 import { AnnouncementMessageSection } from "components/screen/announcement/AnnouncementMessageSection";
 
 import { useAccessControl } from "contexts/access-control";
@@ -43,6 +44,7 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
   const announcementId = router.query.announcementId as unknown as number;
 
   const [isShowDeleteModal, setShowDeleteModal] = useState(false);
+  const [isShowEmailDrawer, setShowEmailDrawer] = useState(false);
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
@@ -116,12 +118,21 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="announcement"
     >
-      <div className="px-5">
-        <AnnouncementMessageSection
-          announcementId={announcementId}
-          isAdminPage={true}
-          setShowDeleteModal={setShowDeleteModal}
-        />
+      <div className="px-5 grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="md:col-span-7">
+          <AnnouncementMessageSection
+            announcementId={announcementId}
+            isAdminPage={true}
+            setShowDeleteModal={setShowDeleteModal}
+          />
+        </div>
+        {/* <div className="md:col-span-5">
+          <AnnouncementEmailHistory
+            token={token}
+            announcementId={announcementId}
+            setShowEmailDrawer={setShowEmailDrawer}
+          />
+        </div> */}
       </div>
 
       <AccessControl hasPermission={ANNOUNCEMENT_DELETE}>
@@ -142,6 +153,15 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
           </p>
         </ModalHapus2>
       </AccessControl>
+
+      {/* <AccessControl hasPermission={ANNOUNCEMENT_ADD}>
+        <DrawerAnnouncementEmail
+          initProps={token}
+          visible={isShowEmailDrawer}
+          onvisible={setShowEmailDrawer}
+          dataAnnouncement={dataAnnouncement}
+        />
+      </AccessControl> */}
     </LayoutDashboard>
   );
 };

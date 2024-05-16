@@ -1,6 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Table, notification } from "antd";
 import type { ColumnsType } from "antd/lib/table";
+import { SorterResult } from "antd/lib/table/interface";
 import { AxiosResponse } from "axios";
 import {
   NumberParam,
@@ -16,6 +17,7 @@ import ButtonSys from "components/button";
 import DrawerAnnouncement from "components/drawer/announcement/drawerAnnouncement";
 import { AccessControl } from "components/features/AccessControl";
 import { PlusIconSvg } from "components/icon";
+import ModalThumbnailPreview from "components/modal/attendance/modalThumbnailPreview";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -27,7 +29,7 @@ import {
   ANNOUNCEMENT_ADD,
   ANNOUNCEMENT_GET,
 } from "lib/features";
-import { generateNotificationRedirectUrl, stripTags } from "lib/helper";
+import { generateStaticAssetUrl, stripTags } from "lib/helper";
 
 import {
   AnnouncementData,
@@ -62,7 +64,10 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
+    order_by: withDefault(StringParam, /** @type {"publish_at"} */ undefined),
+    order_to: withDefault(StringParam, /** @type {"asc"|"desc"} */ "asc"),
     keyword: withDefault(StringParam, null),
+    status: withDefault(StringParam, !isAdminPage ? "published" : null),
   });
 
   /**
@@ -73,6 +78,8 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
   >([]);
 
   const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
+  const [isShowPreviewModal, setShowPreviewModal] = useState(false);
+  const [currentImageLink, setCurrentImageLink] = useState("");
 
   /**
    * Queries
@@ -102,6 +109,15 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
     }
   );
 
+  const handleClickThumbnail = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    imageLink: string
+  ) => {
+    e.stopPropagation();
+    setCurrentImageLink(imageLink);
+    setShowPreviewModal(true);
+  };
+
   const tableColumns: ColumnsType<AnnouncementData> = [
     {
       key: "no",
@@ -112,6 +128,39 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           {(dataRawAnnouncements?.from || 0) + index}.
         </p>
       ),
+    },
+    {
+      key: "thumbnail",
+      title: "Thumbnail",
+      dataIndex: "thumbnail_image",
+      render: (image) => {
+        return image?.link &&
+          image?.link != "staging/Announcement/mig-announce-logo.png" ? (
+          <div
+            className="h-18"
+            onClick={(e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+              const imageElement = e.target as HTMLImageElement;
+              handleClickThumbnail(e, imageElement.src);
+            }}
+          >
+            <img
+              src={generateStaticAssetUrl(image?.link)}
+              className="h-18 w-20 object-cover rounded"
+            />
+          </div>
+        ) : (
+          <div
+            onClick={(e) => handleClickThumbnail(e, "/mig.png")}
+            className="h-18 w-20 bg-backdrop rounded flex flex-col items-center 
+                  justify-center py-4 px-3"
+          >
+            <img
+              src="/mig.png"
+              style={{ width: "10rem", mixBlendMode: "luminosity" }}
+            />
+          </div>
+        );
+      },
     },
     {
       key: "title",
@@ -202,7 +251,6 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           dataSource={dataAnnouncements}
           loading={loadingAnnouncements}
           columns={tableColumns}
-          // className="grid grid-cols-1"
           scroll={{ x: 200 }}
           pagination={{
             total: dataRawAnnouncements?.total,
@@ -210,10 +258,20 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
             pageSize: queryParams.rows,
             showSizeChanger: true,
           }}
-          onChange={(pagination, filters, sorter, extra) => {
+          onChange={(pagination, filters, sorter: SorterResult<any>, extra) => {
+            const sortTypePayload =
+              sorter.order === "ascend"
+                ? "asc"
+                : sorter.order === "descend"
+                ? "desc"
+                : undefined;
+
             setQueryParams({
               page: pagination.current,
               rows: pagination.pageSize,
+              order_by:
+                sortTypePayload === undefined ? undefined : sorter.field,
+              order_to: sortTypePayload,
             });
           }}
           onRow={({ id }) => {
@@ -236,6 +294,14 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           />
         </AccessControl>
       )}
+
+      <AccessControl hasPermission={ANNOUNCEMENTS_GET}>
+        <ModalThumbnailPreview
+          imageLink={currentImageLink}
+          visible={isShowPreviewModal}
+          onvisible={setShowPreviewModal}
+        />
+      </AccessControl>
     </div>
   );
 };

@@ -1399,7 +1399,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <AccessControl hasPermission={TASK_GET}>
-        <div className="grid grid-cols-1 md:grid-cols-12 px-5">
+        <div className="grid grid-cols-1 md:grid-cols-12 px-6 md:px-0">
           <div className="md:col-span-8 lg:col-span-9 flex flex-col">
             <div className="shadow-md rounded-md bg-white p-5 mb-6 md:mr-3 flex flex-col">
               <div className="flex justify-between items-center mb-10">

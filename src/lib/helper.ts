@@ -375,6 +375,22 @@ export const stripTags = (text: string) => {
   return text.replace(reg, " ");
 };
 
+export const stripTagsNewLine = (text: string) => {
+  const textArr = text.split("<br>");
+  const finalText = textArr.reduce((acc, text, index) => {
+    const pattern =
+      "<\\w+(\\s+(\"[^\"]*\"|\\'[^\\']*'|[^>])+)?>|<\\/\\w+>|&[^;]+;";
+    const reg = new RegExp(pattern, "gi");
+    const cleanedText = text.replace(reg, " ");
+    if (index === 0) {
+      return cleanedText;
+    }
+    return acc + "<br />" + cleanedText;
+  }, "");
+
+  return finalText;
+};
+
 export const wordsCount = (text: string) => {
   const pattern = "\\w+";
   const reg = new RegExp(pattern, "g");
