@@ -930,3 +930,10 @@ ol {
     visibility: visible;
   }
 }
+
+.calendar-cuti .ant-picker .ant-picker-input span.ant-picker-suffix,
+.calendar-cuti .ant-picker.ant-picker-range span.ant-picker-suffix {
+  margin-left: 1px;
+  margin-right: 10px;
+  order: -1;
+}

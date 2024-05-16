@@ -305,6 +305,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               <Link href="/attendance/schedule">Work Schedule</Link>
             </Menu.Item>
           )}
+          {/* {hasPermission(SIDEBAR_ATTENDANCE_SCHEDULE) && (
+            <Menu.Item key="attendance/annualLeave">
+              <Link href="/attendance/annual-leave">Cuti/Libur</Link>
+            </Menu.Item>
+          )} */}
         </SubMenu>
       )}
 
