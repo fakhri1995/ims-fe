@@ -141,3 +141,14 @@ interface AnnouncementMailGroupData {
   updated_at: Date | string;
   groups: Group;
 }
+
+/**
+ * @access GET /sendMailAnnouncement
+ */
+export interface SendMailAnnouncementPayload {
+  id: number;
+  purpose_type: string; // "staff" | "group"
+  purpose_ids: number[]; // array (id user || id group);
+  publish_type: string; //"now" | "pending";
+  publish_at?: Date | string;
+}

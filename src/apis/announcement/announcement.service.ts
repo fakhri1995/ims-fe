@@ -13,6 +13,7 @@ import type {
   IGetAnnouncementSucceedResponse,
   IGetMailAnnouncementSucceedResponse,
   IUpdateAnnouncementPayload,
+  SendMailAnnouncementPayload,
 } from "./announcement.types";
 
 import type { HttpRequestBaseSucceedResponse } from "types/common";
@@ -211,6 +212,32 @@ export class AnnouncementService {
 
     return await axiosClient.get<IGetMailAnnouncementSucceedResponse>(
       "/getMailAnnouncement" + qs
+    );
+  }
+
+  /**
+   * Send mail announcement
+   *
+   * @access POST /sendMailAnnouncement
+   */
+  static async sendMailAnnouncement(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    payload: SendMailAnnouncementPayload
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification("Mengirim", "Email Announcement");
+      return;
+    }
+
+    return await axiosClient.post<HttpRequestBaseSucceedResponse>(
+      "/sendMailAnnouncement",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
 }
