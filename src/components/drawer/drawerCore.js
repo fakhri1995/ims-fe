@@ -52,7 +52,7 @@ const DrawerCore = ({
 
           {buttonOkText && onClick && (
             <ButtonSys disabled={disabled} type="primary" onClick={onClick}>
-              <div className={"flex gap-3"}>
+              <div className={"flex items-center gap-3"}>
                 {iconButtonText ? (
                   iconButtonText
                 ) : (

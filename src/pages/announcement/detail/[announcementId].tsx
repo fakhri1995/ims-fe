@@ -130,7 +130,6 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
         </div>
         <div className="md:col-span-5">
           <AnnouncementEmailHistory
-            token={token}
             announcementId={announcementId}
             setShowEmailDrawer={setShowEmailDrawer}
           />

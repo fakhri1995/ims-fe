@@ -6,8 +6,9 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { UserService } from "apis/user";
+import { GetFilterUsersDatum, UserService } from "apis/user";
 import { GroupService } from "apis/user/group.service";
+import { GetFilterGroupsWithUsersDatum } from "apis/user/group.types ";
 
 import {
   GROUPS_GET,
@@ -22,7 +23,7 @@ import {
 } from "../lib/helper";
 import { CirclePlusIconSvg } from "./icon";
 
-const SelectStaffOrGroup = ({ title, dataProfile, initProps }) => {
+const SelectStaffOrGroup = ({ title, initProps, selected, setSelected }) => {
   const { hasPermission } = useAccessControl();
 
   const isAllowedToGetFilterGroups = hasPermission(GROUPS_GET);
@@ -36,36 +37,29 @@ const SelectStaffOrGroup = ({ title, dataProfile, initProps }) => {
   // 1. USE STATE
   // Current state: detail, edit
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
-  const [refresh, setRefresh] = useState(-1);
-
-  const [dataUpdate, setDataUpdate] = useState({
-    id: 0,
-    name: "",
-    status_id: 0,
-    project_id: 0,
-    start_date: "",
-    end_date: "",
-    task_staffs: [],
-    description: "",
-    categories: [],
-  });
-
   const [loadingSave, setLoadingSave] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
-  const [modalDelete, setModalDelete] = useState(false);
-  const [modalStaffs, setModalStaffs] = useState(false);
+  const [searchField, setSearchField] = useState("");
+  const [selectedGroups, setSelectedGroups] = useState([]);
+  const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState<
+    GetFilterGroupsWithUsersDatum[] | GetFilterUsersDatum[]
+  >([]);
 
   // Option data
-  const [dataProjectList, setDataProjectList] = useState([]);
-  const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
-  const [loadingTagList, setLoadingTagList] = useState(false);
-  const [tagList, setTagList] = useState([]);
-  const [searchField, setSearchField] = useState("");
-
-  // Selected data
-  const [currentStatus, setCurrentStatus] = useState({});
-  const [selectedGroups, setSelectedGroups] = useState([]);
-  const [currentProject, setCurrentProject] = useState({});
+  const {
+    data: dataUsers,
+    isLoading: loadingUsers,
+    refetch: refetchUsers,
+  } = useQuery([USERS_GET], () => UserService.filterUsers(axiosClient), {
+    enabled: isAllowedToGetFilterUsers,
+    select: (response) => {
+      return response.data.data;
+    },
+    onError: (error) => {
+      notification.error({
+        message: "Gagal mendapatkan daftar user.",
+      });
+    },
+  });
 
   const {
     data: dataGroups,
@@ -83,7 +77,6 @@ const SelectStaffOrGroup = ({ title, dataProfile, initProps }) => {
       select: (response) => {
         return response.data.data;
       },
-      onSuccess: (data) => setDataStaffsOrGroups(data),
       onError: (error) => {
         notification.error({
           message: "Gagal mendapatkan daftar grup.",
@@ -92,29 +85,23 @@ const SelectStaffOrGroup = ({ title, dataProfile, initProps }) => {
     }
   );
 
-  const {
-    data: dataUsers,
-    isLoading: loadingUsers,
-    refetch: refetchUsers,
-  } = useQuery([USERS_GET], () => UserService.filterUsers(axiosClient), {
-    enabled: isAllowedToGetFilterUsers,
-    select: (response) => {
-      return response.data.data;
-    },
-    onSuccess: (data) => setDataStaffsOrGroups(data),
-    onError: (error) => {
-      notification.error({
-        message: "Gagal mendapatkan daftar user.",
-      });
-    },
-  });
+  useEffect(() => {
+    setDataStaffsOrGroups(dataUsers);
+
+    return () => {
+      setDataStaffsOrGroups([]);
+      setSelected([]);
+    };
+  }, []);
 
   useEffect(() => {
     if (isSwitchGroup) {
-      refetchGroups();
+      setDataStaffsOrGroups(dataGroups);
     } else {
-      refetchUsers();
+      setDataStaffsOrGroups(dataUsers);
     }
+
+    return () => setDataStaffsOrGroups([]);
   }, [isSwitchGroup]);
 
   const onSearchUsers = (searchKey, setData) => {
@@ -161,7 +148,7 @@ const SelectStaffOrGroup = ({ title, dataProfile, initProps }) => {
             showSearch
             mode="multiple"
             className="dontShow"
-            // value={isSwitchGroup ? selectedGroups : dataUpdate.task_staffs}
+            value={isSwitchGroup ? selectedGroups : selected}
             disabled={!isAllowedToGetFilterUsers}
             placeholder={
               isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
@@ -170,10 +157,11 @@ const SelectStaffOrGroup = ({ title, dataProfile, initProps }) => {
             onSearch={(value) =>
               !isSwitchGroup && onSearchUsers(value, setDataStaffsOrGroups)
             }
-            onChange={(value, option) => {
+            onChange={(value, option: any) => {
+              // TODO: change option types
               // use when group switch is on
               const getStaffsFromGroups = () => {
-                let staffs = dataUpdate?.task_staffs || [];
+                let staffs = [...selected] || [];
                 for (let group of option) {
                   for (let user of group?.users) {
                     if (!staffs?.map((staff) => staff.key)?.includes(user.id)) {
@@ -192,7 +180,7 @@ const SelectStaffOrGroup = ({ title, dataProfile, initProps }) => {
               // use when group switch is off
               const getUpdatedStaffs = () => {
                 // cannot use "option" directly because the dropdown options are dynamic
-                let staffs = dataUpdate?.task_staffs || [];
+                let staffs = [...selected] || [];
                 for (let user of option) {
                   if (
                     user?.key &&
@@ -214,10 +202,7 @@ const SelectStaffOrGroup = ({ title, dataProfile, initProps }) => {
                 ? getStaffsFromGroups()
                 : getUpdatedStaffs();
 
-              setDataUpdate((prev) => ({
-                ...prev,
-                task_staffs: newTaskStaffs,
-              }));
+              setSelected(newTaskStaffs);
             }}
             optionFilterProp="children"
             filterOption={(input, option) =>
@@ -226,7 +211,7 @@ const SelectStaffOrGroup = ({ title, dataProfile, initProps }) => {
                 .includes(input.toLowerCase())
             }
           >
-            {dataStaffsOrGroups.map((item) => (
+            {dataStaffsOrGroups?.map((item) => (
               <Select.Option
                 key={Number(item?.id)}
                 value={Number(item?.id)}
@@ -255,19 +240,16 @@ const SelectStaffOrGroup = ({ title, dataProfile, initProps }) => {
 
       {/* List of selected users */}
       <div className="flex flex-wrap mb-4">
-        {dataUpdate?.task_staffs?.map((staff, idx) => {
+        {selected?.map((staff, idx) => {
           return (
             <Tag
               key={staff.key}
               closable
               onClose={() => {
-                const newTags = dataUpdate?.task_staffs?.filter(
+                const newTags = selected?.filter(
                   (tag) => tag.key !== staff.key
                 );
-                setDataUpdate((prev) => ({
-                  ...prev,
-                  task_staffs: newTags.map((tag) => tag),
-                }));
+                setSelected(newTags?.map((tag) => tag));
               }}
               className="flex items-center p-2 w-max mb-2"
             >
@@ -281,7 +263,7 @@ const SelectStaffOrGroup = ({ title, dataProfile, initProps }) => {
                   className="w-6 h-6 bg-cover object-cover rounded-full"
                 />
                 <p className="truncate">
-                  <strong>{staff?.name}</strong> - {staff?.position}
+                  <strong>{staff?.name}</strong>
                 </p>
               </div>
             </Tag>

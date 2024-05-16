@@ -30,7 +30,13 @@ const CustomToolbar = () => (
   </div>
 );
 
-const RichText = ({ placeholder, value, onChange, initProps }) => {
+const RichText = ({
+  placeholder,
+  value,
+  onChange,
+  initProps,
+  readOnly = false,
+}) => {
   const editorRef = React.useRef(null);
   const imageHandler = (a) => {
     const input = document.createElement("input");
@@ -131,6 +137,7 @@ const RichText = ({ placeholder, value, onChange, initProps }) => {
         modules={modules}
         formats={formats}
         className="autoHeight"
+        readOnly={readOnly}
       />
     </div>
   );
