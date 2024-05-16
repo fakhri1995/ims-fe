@@ -25,24 +25,18 @@ import {
   ANNOUNCEMENTS_GET,
   ANNOUNCEMENT_DELETE,
   ANNOUNCEMENT_GET,
-  PROJECT_LOGS_GET,
 } from "lib/features";
 import { generateStaticAssetUrl, momentFormatDate } from "lib/helper";
 
 import { AnnouncementData, AnnouncementService } from "apis/announcement";
-import { ProjectManagementService } from "apis/project-management";
 
 interface IAnnouncementEmailHistory {
-  token: string;
   announcementId: number;
-  isAdminPage?: boolean;
   setShowEmailDrawer?: Dispatch<SetStateAction<boolean>>;
 }
 
 export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
-  token,
   announcementId,
-  isAdminPage,
   setShowEmailDrawer,
 }) => {
   /**
@@ -58,12 +52,11 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
   const isAllowedToGetAnnouncement = hasPermission(ANNOUNCEMENT_GET);
   const isAllowedToDeleteAnnouncement = hasPermission(ANNOUNCEMENT_DELETE);
 
-  const router = useRouter();
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
 
   const [queryParams, setQueryParams] = useQueryParams({
-    id: withDefault(NumberParam, 3),
+    id: withDefault(NumberParam, announcementId),
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
     // keyword: withDefault(StringParam, null),
@@ -76,37 +69,13 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  const {
-    data: dataAnnouncement,
-    isLoading: loadingAnnouncement,
-    refetch: refetchAnnouncement,
-  } = useQuery(
-    [ANNOUNCEMENT_GET, announcementId],
-    () =>
-      AnnouncementService.getAnnouncement(
-        isAllowedToGetAnnouncement,
-        axiosClient,
-        announcementId
-      ),
-    {
-      enabled: isAllowedToGetAnnouncement && !!announcementId,
-      select: (response) => response.data.data,
-      // onSuccess: (data) => setDataAnnouncements(data.data),
-      onError: (error) => {
-        notification.error({
-          message: "Gagal mendapatkan detail announcement.",
-        });
-      },
-    }
-  );
-
-  // 3.1. Get Announcement Email History
+  // Get Announcement Email History
   const {
     data: dataRawHistory,
     isLoading: loadingHistory,
     refetch: refetchHistory,
   } = useQuery(
-    [PROJECT_LOGS_GET, queryParams, search],
+    [ANNOUNCEMENT_GET, queryParams, search],
     () =>
       AnnouncementService.getMailAnnouncement(
         isAllowedToGetAnnouncement,
@@ -124,36 +93,41 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
     }
   );
 
-  const handleCloseDelete = () => {
-    setShowEmailDrawer(false);
-  };
-
-  const onMutationSucceed = (queryKey: string, message: string) => {
-    queryClient.invalidateQueries(queryKey);
-    notification.success({
-      message,
-    });
-  };
-
-  const { mutate: deleteAnnouncement, isLoading: loadingDeleteAnnouncement } =
-    useMutation(
-      (announcementId: number) =>
-        AnnouncementService.deleteAnnouncement(
-          isAllowedToDeleteAnnouncement,
-          axiosClient,
-          announcementId
-        ),
-      {
-        onSuccess: (response) => {
-          router.back();
-          onMutationSucceed(ANNOUNCEMENTS_GET, response.data.message);
-          handleCloseDelete();
+  const dummy = [
+    {
+      id: 1,
+      announcement_id: 9,
+      publish_at: "2024-05-15 01:42:00",
+      is_send: 1,
+      created_at: "2024-05-14T18:42:48.000000Z",
+      updated_at: "2024-05-14T19:25:26.000000Z",
+      purposes: ["Engineer"],
+      result: {
+        id: 1,
+        announcement_mail_id: 1,
+        description: "Gagal kirim pesan ke email Admin MIG, Achmad Naufal.",
+        created_at: "2024-05-14T19:25:26.000000Z",
+        updated_at: "2024-05-14T19:25:26.000000Z",
+      },
+      staff: [],
+      group: [
+        {
+          id: 1,
+          announcement_mail_id: 1,
+          group_id: 1,
+          created_at: "2024-05-14T18:42:48.000000Z",
+          updated_at: "2024-05-14T18:42:48.000000Z",
+          groups: {
+            id: 1,
+            name: "Engineer",
+            description: "For Engineer",
+            group_head: 1,
+            is_agent: 1,
+          },
         },
-        onError: (error) => {
-          notification.error({ message: "Gagal menghapus pesan pengumuman." });
-        },
-      }
-    );
+      ],
+    },
+  ];
 
   return (
     <div className="mig-platform flex flex-col gap-5">
@@ -162,7 +136,6 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
         <ButtonSys
           onClick={() => setShowEmailDrawer(true)}
           type={"primary"}
-          // color="danger"
           disabled={!isAllowedToDeleteAnnouncement}
         >
           <div className="flex gap-2 items-center whitespace-nowrap">
@@ -186,7 +159,7 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
               500;
           });
         }}
-        // disabled={!isAllowedToGetAnnouncements}
+        disabled={!isAllowedToGetAnnouncement}
       />
       <Table
         rowKey={(record) => record.id}
@@ -250,7 +223,10 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
                     <div className="flex flex-wrap items-center gap-2">
                       {item?.purposes?.length > 0 &&
                         item.purposes.map((name) => (
-                          <p className="bg-backdrop px-2 rounded-full w-max text-primary100 mig-caption--bold">
+                          <p
+                            key={name}
+                            className="bg-backdrop px-2 rounded-full w-max text-primary100 mig-caption--bold"
+                          >
                             {name}
                           </p>
                         ))}
