@@ -58,16 +58,14 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
   const [queryParams, setQueryParams] = useQueryParams({
     id: withDefault(NumberParam, announcementId),
     page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    // keyword: withDefault(StringParam, null),
+    rows: withDefault(NumberParam, 5),
+    keyword: withDefault(StringParam, null),
   });
 
   /**
    * States
    */
   const [dataHistory, setDataHistory] = useState([]);
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
 
   // Get Announcement Email History
   const {
@@ -75,7 +73,7 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
     isLoading: loadingHistory,
     refetch: refetchHistory,
   } = useQuery(
-    [ANNOUNCEMENT_GET, queryParams, search],
+    [ANNOUNCEMENT_GET, queryParams],
     () =>
       AnnouncementService.getMailAnnouncement(
         isAllowedToGetAnnouncement,
@@ -89,6 +87,11 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
       },
       onSuccess: (data) => {
         setDataHistory(data.data);
+      },
+      onError: (error) => {
+        notification.error({
+          message: "Gagal mendapatkan daftar riwayat email announcement.",
+        });
       },
     }
   );
@@ -150,14 +153,14 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
         placeholder="Cari riwayat pengiriman..."
         allowClear
         onChange={(e) => {
-          setTimeout(() => {
-            setSearch(e.target.value);
-            setQueryParams({
-              // keyword: e.target.value,
-              page: 1,
-            }),
-              500;
-          });
+          setTimeout(
+            () =>
+              setQueryParams({
+                keyword: e.target.value,
+                page: 1,
+              }),
+            1000
+          );
         }}
         disabled={!isAllowedToGetAnnouncement}
       />
@@ -168,13 +171,16 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
         dataSource={dataHistory}
         loading={loadingHistory}
         pagination={{
-          current: page,
-          pageSize: 5,
+          current: queryParams?.page,
+          pageSize: queryParams?.rows,
           total: dataRawHistory?.total,
           showSizeChanger: false,
         }}
         onChange={(pagination) => {
-          setPage(pagination.current);
+          setQueryParams({
+            page: pagination.current,
+            rows: pagination.pageSize,
+          });
         }}
         // onRow={(record, rowIndex) => {
         //   return {
@@ -197,7 +203,7 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
                       <div className="w-10">
                         <img
                           src={generateStaticAssetUrl(
-                            item?.causer?.profile_image?.link ??
+                            item?.user?.profile_image?.link ??
                               "staging/Users/default_user.png"
                           )}
                           alt={"profile image"}
@@ -205,8 +211,8 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
                         />
                       </div>
                       <p className="truncate">
-                        <strong>{item?.causer?.name}</strong> -{" "}
-                        {item?.causer?.roles?.[0]?.name}
+                        <strong>{item?.user?.name}</strong> -{" "}
+                        {item?.user?.roles?.[0]?.name}
                       </p>
                     </div>
                     <p className="text-right w-1/3">
@@ -225,7 +231,7 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
                         item.purposes.map((name) => (
                           <p
                             key={name}
-                            className="bg-backdrop px-2 rounded-full w-max text-primary100 mig-caption--bold"
+                            className="bg-backdrop px-2 rounded-full w-max text-primary100 mig-caption--bold truncate"
                           >
                             {name}
                           </p>
