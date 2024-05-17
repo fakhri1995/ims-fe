@@ -26,15 +26,12 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
+import { ANNOUNCEMENT_GET, ANNOUNCEMENT_SEND_MAIL } from "lib/features";
 import {
-  ANNOUNCEMENTS_GET,
-  ANNOUNCEMENT_ADD,
-  ANNOUNCEMENT_GET,
-  ANNOUNCEMENT_UPDATE,
-  GROUPS_GET,
-  USERS_GET,
-} from "lib/features";
-import { beforeUploadFileMaxSize, generateStaticAssetUrl } from "lib/helper";
+  beforeUploadFileMaxSize,
+  generateStaticAssetUrl,
+  onMutationSucceed,
+} from "lib/helper";
 
 import {
   AnnouncementService,
@@ -68,17 +65,11 @@ const DrawerAnnouncementEmail = ({
     return null;
   }
 
-  const isAllowedToAddAnnouncement = hasPermission(ANNOUNCEMENT_ADD);
-  const isAllowedToUpdateAnnouncement = hasPermission(ANNOUNCEMENT_UPDATE);
+  const isAllowedToSendAnnouncement = hasPermission(ANNOUNCEMENT_SEND_MAIL);
 
   const [instanceForm] = Form.useForm();
 
   //1. USE STATE
-  const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>();
-  const [fileList, setFileList] = useState([]);
-  const [dataMail, setDataMail] = useState<SendMailAnnouncementPayload>();
-  const [selectedStaffs, setSelectedStaffs] = useState([]);
   const dataForm = {
     id: dataAnnouncement?.id, // id announcement
     purpose_type: "staff", // staff || group
@@ -86,6 +77,12 @@ const DrawerAnnouncementEmail = ({
     publish_type: "now", // now || pending
     publish_at: "", // Y-m-d H:i | required if publish_type is pending
   };
+
+  const [imageUrl, setImageUrl] = useState<string>();
+  const [fileList, setFileList] = useState([]);
+  const [dataMail, setDataMail] =
+    useState<SendMailAnnouncementPayload>(dataForm);
+  const [selectedStaffs, setSelectedStaffs] = useState([]);
 
   // 2. USE EFFECT
 
@@ -97,14 +94,6 @@ const DrawerAnnouncementEmail = ({
     }
   }, [dataAnnouncement?.thumbnail_image]);
 
-  //3. HANDLER
-  // const onChangeInput = (e) => {
-  //   setDataAnnouncement({
-  //     ...dataAnnouncement,
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
-
   const handleClose = () => {
     setDataMail(dataForm);
     instanceForm.resetFields();
@@ -112,31 +101,24 @@ const DrawerAnnouncementEmail = ({
     onvisible(false);
   };
 
-  const onMutationSucceed = (queryKey: string, message: string) => {
-    queryClient.invalidateQueries(queryKey);
-    notification.success({
-      message,
-    });
-  };
-
   const {
     mutate: sendMailAnnouncement,
     isLoading: loadingSendMailAnnouncement,
   } = useMutation({
     mutationFn: () => {
-      let data = {
+      let payload = {
         ...dataMail,
-        purpose_ids: selectedStaffs.map((staff) => staff.id),
+        purpose_ids: selectedStaffs.map((staff) => staff.key),
       };
 
       return AnnouncementService.sendMailAnnouncement(
-        isAllowedToAddAnnouncement,
+        isAllowedToSendAnnouncement,
         axiosClient,
-        data
+        payload
       );
     },
     onSuccess: (response) => {
-      onMutationSucceed(ANNOUNCEMENT_GET, response.data.message);
+      onMutationSucceed(queryClient, ANNOUNCEMENT_GET, response.data.message);
       handleClose();
     },
     onError: (error) => {
@@ -159,11 +141,7 @@ const DrawerAnnouncementEmail = ({
       form="formPesan"
       onClick={sendMailAnnouncement}
       onButtonCancelClicked={() => onvisible(false)}
-      disabled={
-        !isAllowedToAddAnnouncement ||
-        !dataAnnouncement?.title ||
-        !dataAnnouncement?.text
-      }
+      disabled={!isAllowedToSendAnnouncement}
     >
       <Spin spinning={!dataAnnouncement ? null : loadingSendMailAnnouncement}>
         <div className="flex flex-col">
@@ -247,12 +225,6 @@ const DrawerAnnouncementEmail = ({
                     placeholder={"Isi Pesan..."}
                     value={dataAnnouncement?.text}
                     readOnly={true}
-                    // onChange={(value) => {
-                    //   setDataAnnouncement((prev) => ({
-                    //     ...prev,
-                    //     text: value,
-                    //   }));
-                    // }}
                   />
                 </>
               </Form.Item>
