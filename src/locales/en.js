@@ -452,6 +452,13 @@ export default {
   footeraboutus: `About&nbsp;Us`,
   getintouch: ` Get in touch`,
   footersosmed: `Follow`,
+  productpopuppoint1: `Proven experience with rapid prototyping tools and techniques, such as story mapping, design sprints, and product methodology`,
+  productpopuppoint2: `Excellent analytical skills and strong intuitions of user behaviors`,
+  productpopuppoint3: `Solid oral and written communications skills`,
+  productpopuppoint4: `Strong business requirement analysis`,
+  productpopupskill1: `Doing the research and analysis of the competitive landscape, product metrics, and latest internet trends to identify and fill product gaps and generate new ideas that improve customer experience`,
+  productpopupskill2: `Scope and prioritize activities based on business and customer impact`,
+  productpopupskill3: `Analyzing user requirements into specification and architectural design for developers`,
   blogherodescription:
     "Stay ahead of the technology and business game with our latest insights and expert solutions",
   p1: `Tim Berners-Lee, a British scientist, invented the World Wide Web (WWW) in 1989, while working at CERN. The web was originally conceived and developed to meet the demand for automated information-sharing between scientists in universities and institutes around the world.`,

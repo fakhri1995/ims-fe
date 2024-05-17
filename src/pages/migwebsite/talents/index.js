@@ -64,7 +64,9 @@ function Talents({}) {
     // time_used:null,
     // open_remote:null,
   });
-  const [dateNow, setDateNow] = useState(new Date());
+  const [dateNow, setDateNow] = useState(
+    new Date(Date.now() + 3600 * 1000 * 24)
+  );
   const [modalTalents, setModalTalents] = useState(false);
   const [modalTalentsData, setModalTalentsData] = useState(false);
   const [modalTalentsProduct, setModalTalentsProduct] = useState(false);

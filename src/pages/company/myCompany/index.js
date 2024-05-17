@@ -829,16 +829,16 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
       pathArr={patharr}
       st={st}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {praloadingedit ? null : (
-          <div className="col-span-3 flex flex-col shadow-md rounded bg-white mx-5 my-2 lg:m-3">
+          <div className="lg:col-span-3 flex flex-col shadow-md rounded bg-white mx-6 lg:m-0">
             <Spin spinning={editloading}>
               <Form form={instanceForm} initialValues={displaydata}>
                 <div className="max-h-24 relative">
                   <img
                     src={`/image/Rectangle.png`}
                     alt=""
-                    className="object-fit max-h-24 w-full rounded-t"
+                    className="object-cover max-h-24 w-full rounded-t"
                   />
                   <div className="absolute -bottom-1/2 left-1/2">
                     <div className="relative -left-1/2 bg-white rounded-full">
@@ -897,7 +897,9 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                       </Form.Item>
                     </div>
                   ) : (
-                    <H1>{rawdata.name ?? "-"}</H1>
+                    <div className="px-2">
+                      <H1>{rawdata.name ?? "-"}</H1>
+                    </div>
                   )}
                   <Label>{rawdata.singkatan ?? "-"}</Label>
                 </div>
@@ -1204,9 +1206,9 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             </Spin>
           </div>
         )}
-        <div className="col-span-9 m-3 flex flex-col">
+        <div className="lg:col-span-9 flex flex-col gap-5">
           {/* Location */}
-          <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5 mx-2">
+          <div className="flex flex-col shadow-md rounded-md bg-white p-8 mx-6 lg:mx-0">
             <div className="flex justify-between items-center">
               <H1>Lokasi</H1>
               <div
@@ -1257,7 +1259,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             </div>
           </div>
           {viewrelasi ? (
-            <div className="flex flex-col shadow-md rounded-md bg-white p-8 mx-2 h-screen">
+            <div className="flex flex-col shadow-md rounded-md bg-white p-8 mx-6 lg:mx-0 h-screen">
               <div className="flex justify-between items-center mb-5">
                 <div className="flex">
                   <div
@@ -1559,10 +1561,10 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
               </ModalCore>
             </div>
           ) : (
-            <div className="flex flex-col md:flex-row gap-5 md:gap-0">
-              <div className="md:w-6/12 flex flex-col mx-2">
+            <div className="flex flex-col md:flex-row gap-5">
+              <div className="md:w-6/12 flex flex-col mx-6 lg:mx-0 gap-5">
                 {/* Bank */}
-                <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5">
+                <div className="flex flex-col shadow-md rounded-md bg-white p-8 ">
                   <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center">
                     <H1>Akun Bank</H1>
                     <Buttonsys
@@ -1864,7 +1866,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 </div>
               </div>
               {/* Aktivitas */}
-              <div className="md:w-6/12 flex flex-col shadow-md rounded-md bg-white p-8 mx-2">
+              <div className="md:w-6/12 flex flex-col shadow-md rounded-md bg-white p-8 mx-6 lg:mx-0">
                 <div className="mb-8">
                   <H1>Aktivitas</H1>
                 </div>

@@ -95,7 +95,7 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
       </div> */}
       {hasPermission(SIDEBAR_CLIENT_DASHBOARD) && !hasRole(ROLE_SUPER_ADMIN) ? (
         <div>
-          <div className="grid grid-cols-1 md:grid-cols-10 px-5 gap-x-3 gap-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-10 px-5 md:px-0 gap-x-3 gap-y-6">
             <KehadiranCard initProps={initProps} />
             {hasPermission(PROJECT_TASKS_COUNT_CLIENT_GET) && (
               <TaskCard initProps={initProps} />
@@ -115,7 +115,7 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
       ) : hasPermission(ANNOUNCEMENT_EMPLOYEE_GET) ? (
         <AnnouncementCard />
       ) : (
-        <h1 className=" md:px-0">Selamat datang di dashboard</h1>
+        <h1 className="px-6 md:px-0">Selamat datang di dashboard</h1>
       )}
     </LayoutDashboard>
   );

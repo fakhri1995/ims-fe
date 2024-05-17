@@ -76,8 +76,8 @@ export const AnnouncementCard: FC = () => {
   );
 
   return (
-    <section className="flex flex-col px-1 md:px-5" id="mainWrapper">
-      <div className="grid grid-cols-1 px-5 ">
+    <section className="flex flex-col px-6 md:px-0" id="mainWrapper">
+      <div className="grid grid-cols-1">
         <div className="flex justify-between items-center mb-6">
           <div className="flex gap-2 items-center">
             <NewsIconSvg size={20} color="#808080" />

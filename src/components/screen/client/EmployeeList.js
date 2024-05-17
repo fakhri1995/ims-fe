@@ -513,7 +513,7 @@ function EmployeeList({ initProps, companyId }) {
     setVisibleDetail(false);
   };
   return (
-    <div className="mt-6 py-6 px-5 mx-5 bg-white rounded-[5px] shadow-md ">
+    <div className="mt-6 py-6 px-5 mx-5 md:mx-0 bg-white rounded-[5px] shadow-md ">
       <H1>Daftar Karyawan</H1>
       <div className="grid grid-cols-2 gap-2 mt-6 md:flex md:flex-row justify-between w-full items-center mb-4">
         {/* Search by keyword (kata kunci) */}
