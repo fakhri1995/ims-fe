@@ -20,12 +20,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { formatDateToLocale } from "lib/date-utils";
-import {
-  ANNOUNCEMENTS_GET,
-  ANNOUNCEMENT_DELETE,
-  ANNOUNCEMENT_GET,
-} from "lib/features";
+import { ANNOUNCEMENT_DELETE, ANNOUNCEMENT_MAIL_GET } from "lib/features";
 import { generateStaticAssetUrl, momentFormatDate } from "lib/helper";
 
 import { AnnouncementData, AnnouncementService } from "apis/announcement";
@@ -49,7 +44,7 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
     return null;
   }
 
-  const isAllowedToGetAnnouncement = hasPermission(ANNOUNCEMENT_GET);
+  const isAllowedToGetAnnouncementMail = hasPermission(ANNOUNCEMENT_MAIL_GET);
   const isAllowedToDeleteAnnouncement = hasPermission(ANNOUNCEMENT_DELETE);
 
   const axiosClient = useAxiosClient();
@@ -73,15 +68,15 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
     isLoading: loadingHistory,
     refetch: refetchHistory,
   } = useQuery(
-    [ANNOUNCEMENT_GET, queryParams],
+    [ANNOUNCEMENT_MAIL_GET, queryParams],
     () =>
       AnnouncementService.getMailAnnouncement(
-        isAllowedToGetAnnouncement,
+        isAllowedToGetAnnouncementMail,
         axiosClient,
         queryParams
       ),
     {
-      enabled: isAllowedToGetAnnouncement,
+      enabled: isAllowedToGetAnnouncementMail,
       select: (response) => {
         return response.data.data;
       },
@@ -162,7 +157,7 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
             1000
           );
         }}
-        disabled={!isAllowedToGetAnnouncement}
+        disabled={!isAllowedToGetAnnouncementMail}
       />
       <Table
         rowKey={(record) => record.id}
