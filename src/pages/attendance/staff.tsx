@@ -71,7 +71,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/staff"
     >
-      <div className="px-5 flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
+      <div className="px-6 md:px-0 flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
         {/* Column 1: Check In/Out Button, Staff detail card, Statistic Card */}
         <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5 space-y-6">
           {/* Card Check In/Out */}

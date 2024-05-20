@@ -478,7 +478,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/schedule"
     >
-      <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
+      <div className="grid grid-cols-1 px-6 md:px-0" id="mainWrapper">
         {/* Table Daftar Jadwal */}
         <div className="flex flex-col shadow-md rounded-md bg-white p-4 mb-6 gap-6">
           {/* Filter */}

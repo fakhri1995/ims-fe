@@ -139,9 +139,9 @@ const CandidateRecruitmentDetailIndex = ({
       st={st}
       pathArr={pathArr}
     >
-      <div className="flex flex-row gap-6 w-full">
+      <div className="flex flex-col md:flex-row gap-6 w-full">
         {/* Left Column */}
-        <div className="flex flex-col gap-6 w-1/3">
+        <div className="flex flex-col gap-6 md:w-1/3">
           {/* Card Primary Info */}
           <div className="flex flex-col shadow-lg rounded-md bg-white p-6 space-y-4">
             <h4 className="mig-heading--4">Detail Lamaran</h4>
@@ -182,7 +182,7 @@ const CandidateRecruitmentDetailIndex = ({
         </div>
 
         {/* Right Column */}
-        <div className="flex flex-col gap-6 w-2/3">
+        <div className="flex flex-col gap-6 md:w-2/3">
           {/* Card Profil Kandidat */}
           <div className="shadow-lg rounded-md bg-white p-6 divide-y-2">
             <div className="flex flex-row justify-between items-center mb-4">

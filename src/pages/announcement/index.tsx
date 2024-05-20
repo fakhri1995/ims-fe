@@ -24,7 +24,7 @@ const AnnouncementPage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="announcement"
     >
-      <div className="px-5">
+      <div className="px-6 md:px-0">
         <div className="grid grid-cols-1">
           <AnnouncementTable isAdminPage={true} initProps={token} />
         </div>
