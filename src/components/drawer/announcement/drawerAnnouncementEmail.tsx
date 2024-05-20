@@ -26,7 +26,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { ANNOUNCEMENT_GET, ANNOUNCEMENT_SEND_MAIL } from "lib/features";
+import { ANNOUNCEMENT_MAIL_GET, ANNOUNCEMENT_MAIL_SEND } from "lib/features";
 import {
   beforeUploadFileMaxSize,
   generateStaticAssetUrl,
@@ -65,7 +65,7 @@ const DrawerAnnouncementEmail = ({
     return null;
   }
 
-  const isAllowedToSendAnnouncement = hasPermission(ANNOUNCEMENT_SEND_MAIL);
+  const isAllowedToSendAnnouncement = hasPermission(ANNOUNCEMENT_MAIL_SEND);
 
   const [instanceForm] = Form.useForm();
 
@@ -118,7 +118,11 @@ const DrawerAnnouncementEmail = ({
       );
     },
     onSuccess: (response) => {
-      onMutationSucceed(queryClient, ANNOUNCEMENT_GET, response.data.message);
+      onMutationSucceed(
+        queryClient,
+        ANNOUNCEMENT_MAIL_GET,
+        response.data.message
+      );
       handleClose();
     },
     onError: (error) => {
