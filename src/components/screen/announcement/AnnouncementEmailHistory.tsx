@@ -25,24 +25,18 @@ import {
   ANNOUNCEMENTS_GET,
   ANNOUNCEMENT_DELETE,
   ANNOUNCEMENT_GET,
-  PROJECT_LOGS_GET,
 } from "lib/features";
 import { generateStaticAssetUrl, momentFormatDate } from "lib/helper";
 
 import { AnnouncementData, AnnouncementService } from "apis/announcement";
-import { ProjectManagementService } from "apis/project-management";
 
 interface IAnnouncementEmailHistory {
-  token: string;
   announcementId: number;
-  isAdminPage?: boolean;
   setShowEmailDrawer?: Dispatch<SetStateAction<boolean>>;
 }
 
 export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
-  token,
   announcementId,
-  isAdminPage,
   setShowEmailDrawer,
 }) => {
   /**
@@ -58,108 +52,85 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
   const isAllowedToGetAnnouncement = hasPermission(ANNOUNCEMENT_GET);
   const isAllowedToDeleteAnnouncement = hasPermission(ANNOUNCEMENT_DELETE);
 
-  const router = useRouter();
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
 
   const [queryParams, setQueryParams] = useQueryParams({
-    project_id: withDefault(NumberParam, 3),
+    id: withDefault(NumberParam, announcementId),
     page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    // keyword: withDefault(StringParam, null),
+    rows: withDefault(NumberParam, 5),
+    keyword: withDefault(StringParam, null),
   });
 
   /**
    * States
    */
   const [dataHistory, setDataHistory] = useState([]);
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
 
-  const {
-    data: dataAnnouncement,
-    isLoading: loadingAnnouncement,
-    refetch: refetchAnnouncement,
-  } = useQuery(
-    [ANNOUNCEMENT_GET, announcementId],
-    () =>
-      AnnouncementService.getAnnouncement(
-        isAllowedToGetAnnouncement,
-        axiosClient,
-        announcementId
-      ),
-    {
-      enabled: isAllowedToGetAnnouncement && !!announcementId,
-      select: (response) => response.data.data,
-      // onSuccess: (data) => setDataAnnouncements(data.data),
-      onError: (error) => {
-        notification.error({
-          message: "Gagal mendapatkan detail announcement.",
-        });
-      },
-    }
-  );
-
-  const handleCloseDelete = () => {
-    setShowEmailDrawer(false);
-  };
-
-  const onMutationSucceed = (queryKey: string, message: string) => {
-    queryClient.invalidateQueries(queryKey);
-    notification.success({
-      message,
-    });
-  };
-
-  const { mutate: deleteAnnouncement, isLoading: loadingDeleteAnnouncement } =
-    useMutation(
-      (announcementId: number) =>
-        AnnouncementService.deleteAnnouncement(
-          isAllowedToDeleteAnnouncement,
-          axiosClient,
-          announcementId
-        ),
-      {
-        onSuccess: (response) => {
-          router.back();
-          onMutationSucceed(ANNOUNCEMENTS_GET, response.data.message);
-          handleCloseDelete();
-        },
-        onError: (error) => {
-          notification.error({ message: "Gagal menghapus pesan pengumuman." });
-        },
-      }
-    );
-
-  // 3.1. Get Project Logs
-  const logParams = {
-    project_id: 3,
-    page: 1,
-    rows: 5,
-  };
+  // Get Announcement Email History
   const {
     data: dataRawHistory,
     isLoading: loadingHistory,
     refetch: refetchHistory,
   } = useQuery(
-    [PROJECT_LOGS_GET, queryParams, search],
+    [ANNOUNCEMENT_GET, queryParams],
     () =>
-      ProjectManagementService.getProjectLogs(
-        token,
+      AnnouncementService.getMailAnnouncement(
         isAllowedToGetAnnouncement,
-        queryParams,
-        search
+        axiosClient,
+        queryParams
       ),
     {
       enabled: isAllowedToGetAnnouncement,
       select: (response) => {
-        return response.data;
+        return response.data.data;
       },
       onSuccess: (data) => {
         setDataHistory(data.data);
       },
+      onError: (error) => {
+        notification.error({
+          message: "Gagal mendapatkan daftar riwayat email announcement.",
+        });
+      },
     }
   );
+
+  const dummy = [
+    {
+      id: 1,
+      announcement_id: 9,
+      publish_at: "2024-05-15 01:42:00",
+      is_send: 1,
+      created_at: "2024-05-14T18:42:48.000000Z",
+      updated_at: "2024-05-14T19:25:26.000000Z",
+      purposes: ["Engineer"],
+      result: {
+        id: 1,
+        announcement_mail_id: 1,
+        description: "Gagal kirim pesan ke email Admin MIG, Achmad Naufal.",
+        created_at: "2024-05-14T19:25:26.000000Z",
+        updated_at: "2024-05-14T19:25:26.000000Z",
+      },
+      staff: [],
+      group: [
+        {
+          id: 1,
+          announcement_mail_id: 1,
+          group_id: 1,
+          created_at: "2024-05-14T18:42:48.000000Z",
+          updated_at: "2024-05-14T18:42:48.000000Z",
+          groups: {
+            id: 1,
+            name: "Engineer",
+            description: "For Engineer",
+            group_head: 1,
+            is_agent: 1,
+          },
+        },
+      ],
+    },
+  ];
 
   return (
     <div className="mig-platform flex flex-col gap-5">
@@ -168,7 +139,6 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
         <ButtonSys
           onClick={() => setShowEmailDrawer(true)}
           type={"primary"}
-          // color="danger"
           disabled={!isAllowedToDeleteAnnouncement}
         >
           <div className="flex gap-2 items-center whitespace-nowrap">
@@ -183,16 +153,16 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
         placeholder="Cari riwayat pengiriman..."
         allowClear
         onChange={(e) => {
-          setTimeout(() => {
-            setSearch(e.target.value);
-            setQueryParams({
-              // keyword: e.target.value,
-              page: 1,
-            }),
-              500;
-          });
+          setTimeout(
+            () =>
+              setQueryParams({
+                keyword: e.target.value,
+                page: 1,
+              }),
+            1000
+          );
         }}
-        // disabled={!isAllowedToGetAnnouncements}
+        disabled={!isAllowedToGetAnnouncement}
       />
       <Table
         rowKey={(record) => record.id}
@@ -201,13 +171,16 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
         dataSource={dataHistory}
         loading={loadingHistory}
         pagination={{
-          current: page,
-          pageSize: 5,
+          current: queryParams?.page,
+          pageSize: queryParams?.rows,
           total: dataRawHistory?.total,
           showSizeChanger: false,
         }}
         onChange={(pagination) => {
-          setPage(pagination.current);
+          setQueryParams({
+            page: pagination.current,
+            rows: pagination.pageSize,
+          });
         }}
         // onRow={(record, rowIndex) => {
         //   return {
@@ -222,20 +195,15 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
             title: "Email History",
             dataIndex: "id",
             key: "id",
-            render: (_, log) => {
-              // remove html tag in description
-              const stringDescription = log?.description?.replace(
-                /(<([^>]+)>)/gi,
-                ""
-              );
+            render: (_, item) => {
               return (
-                <div key={log?.id} className="grid grid-cols-1 cursor-pointer">
+                <div key={item?.id} className="grid grid-cols-1 cursor-pointer">
                   <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-2 w-2/3">
                       <div className="w-10">
                         <img
                           src={generateStaticAssetUrl(
-                            log?.causer?.profile_image?.link ??
+                            item?.user?.profile_image?.link ??
                               "staging/Users/default_user.png"
                           )}
                           alt={"profile image"}
@@ -243,32 +211,34 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
                         />
                       </div>
                       <p className="truncate">
-                        <strong>{log?.causer?.name}</strong> -{" "}
-                        {log?.causer?.roles?.[0]?.name}
+                        <strong>{item?.user?.name}</strong> -{" "}
+                        {item?.user?.roles?.[0]?.name}
                       </p>
                     </div>
                     <p className="text-right w-1/3">
                       {momentFormatDate(
-                        log?.created_at,
+                        item?.created_at,
                         "-",
                         "D MMM YYYY, HH:mm",
                         true
                       )}
                     </p>
                   </div>
-                  <div className="flex gap-2 items-center mb-2">
+                  <div className="flex flex-wrap gap-2 items-center mb-2">
                     <p>Kepada:</p>
-                    <div className="flex items-center gap-2">
-                      <p className="bg-backdrop px-2 rounded-full w-max text-primary100 mig-caption--bold">
-                        Engineer
-                      </p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {item?.purposes?.length > 0 &&
+                        item.purposes.map((name) => (
+                          <p
+                            key={name}
+                            className="bg-backdrop px-2 rounded-full w-max text-primary100 mig-caption--bold truncate"
+                          >
+                            {name}
+                          </p>
+                        ))}
                     </div>
                   </div>
-                  <p>
-                    {stringDescription?.length > 140
-                      ? stringDescription?.slice(0, 140) + "..."
-                      : stringDescription}
-                  </p>
+                  <p>{item?.result?.description}</p>
                 </div>
               );
             },

@@ -91,7 +91,7 @@ export const AnnouncementCard: FC = () => {
             Lihat Berita Terdahulu
           </button>
         </div>
-        <div className="grid lg:grid-cols-12 lg:grid-rows-2 gap-4">
+        <div className="grid xl:grid-cols-12 xl:grid-rows-2 gap-4">
           {dataAnnouncements?.length > 0 && (
             <div
               onClick={() =>
@@ -100,7 +100,7 @@ export const AnnouncementCard: FC = () => {
                   "/dashboard/announcement/detail/" + dataAnnouncements[0]?.id
                 )
               }
-              className="mig-platform flex flex-col md:flex-row gap-6 lg:row-span-2 lg:col-span-7 lg:items-center 
+              className="mig-platform flex flex-col md:flex-row gap-6 xl:row-span-2 xl:col-span-7 xl:items-center 
               cursor-pointer hover:opacity-80 w-full"
             >
               {/* Thumbnail */}
@@ -109,19 +109,19 @@ export const AnnouncementCard: FC = () => {
                 dataAnnouncements[0]?.thumbnail_image?.link !=
                   "staging/Announcement/mig-announce-logo.png" ? (
                   <div
-                    className="w-full h-72 md:w-48 md:h-48 lg:w-60 lg:h-60 bg-backdrop rounded flex flex-col items-center 
+                    className="w-full h-72 md:w-48 md:h-48 xl:w-60 xl:h-60 bg-backdrop rounded flex flex-col items-center 
                     justify-center"
                   >
                     <img
                       src={generateStaticAssetUrl(
                         dataAnnouncements[0]?.thumbnail_image?.link
                       )}
-                      className="w-full h-72 md:w-48 md:h-48 lg:w-60 lg:h-60 bg-cover object-cover rounded"
+                      className="w-full h-72 md:w-48 md:h-48 xl:w-60 xl:h-60 bg-cover object-cover rounded"
                     />
                   </div>
                 ) : (
                   <div
-                    className="w-full h-72 md:w-48 md:h-48 lg:w-60 lg:h-60 bg-backdrop rounded flex flex-col items-center 
+                    className="w-full h-72 md:w-48 md:h-48 xl:w-60 xl:h-60 bg-backdrop rounded flex flex-col items-center 
                     justify-center py-10 px-6"
                   >
                     <img
@@ -133,12 +133,12 @@ export const AnnouncementCard: FC = () => {
               </div>
 
               {/* Content */}
-              <div className="flex flex-col justify-between ">
-                <div className="mb-2 ">
-                  <h1 className="mb-2 font-bold text-lg text-mono30">
+              <div className="flex flex-col justify-between h-52 md:h-48 xl:h-60">
+                <div className="flex flex-col justify-between gap-2">
+                  <h1 className="font-bold text-lg text-mono30">
                     {dataAnnouncements[0]?.title}
                   </h1>
-                  <p className="mb-2 mig-caption--medium text-mono50">
+                  <p className="mig-caption--medium text-mono50">
                     by{" "}
                     <span className="text-mono30">
                       {dataAnnouncements[0]?.user?.position}
@@ -150,10 +150,10 @@ export const AnnouncementCard: FC = () => {
                     dangerouslySetInnerHTML={{
                       __html:
                         stripTagsNewLine(dataAnnouncements[0]?.text)?.length >
-                        180
+                        120
                           ? stripTagsNewLine(dataAnnouncements[0]?.text).slice(
                               0,
-                              180
+                              120
                             ) + "..."
                           : stripTagsNewLine(dataAnnouncements[0]?.text),
                     }}
@@ -176,7 +176,7 @@ export const AnnouncementCard: FC = () => {
                 onClick={() =>
                   router.push("/dashboard/announcement/detail/" + item?.id)
                 }
-                className="mig-platform flex flex-col md:flex-row gap-6 lg:col-span-5 lg:items-center 
+                className="mig-platform flex flex-col md:flex-row gap-6 xl:col-span-5 xl:items-center 
                 cursor-pointer hover:opacity-80"
               >
                 {/* Thumbnail */}
@@ -209,8 +209,8 @@ export const AnnouncementCard: FC = () => {
                 </div>
 
                 {/* Content */}
-                <div className=" flex flex-col justify-between">
-                  <h1 className="mb-2 font-bold text-lg text-mono30">
+                <div className=" flex flex-col justify-between max-h-24 ">
+                  <h1 className="mb-2 font-bold text-md text-mono30 max-h-20 text-ellipsis ">
                     {item?.title}
                   </h1>
                   <p className="mb-2 mig-caption--medium text-mono50">
