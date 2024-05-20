@@ -49,17 +49,21 @@ const SelectStaffOrGroup = ({ title, initProps, selected, setSelected }) => {
     data: dataUsers,
     isLoading: loadingUsers,
     refetch: refetchUsers,
-  } = useQuery([USERS_GET], () => UserService.filterUsers(axiosClient), {
-    enabled: isAllowedToGetFilterUsers,
-    select: (response) => {
-      return response.data.data;
-    },
-    onError: (error) => {
-      notification.error({
-        message: "Gagal mendapatkan daftar user.",
-      });
-    },
-  });
+  } = useQuery(
+    [USERS_GET, searchField],
+    () => UserService.filterUsers(axiosClient, { name: searchField }),
+    {
+      enabled: isAllowedToGetFilterUsers,
+      select: (response) => {
+        return response.data.data;
+      },
+      onError: (error) => {
+        notification.error({
+          message: "Gagal mendapatkan daftar user.",
+        });
+      },
+    }
+  );
 
   const {
     data: dataGroups,
@@ -86,13 +90,16 @@ const SelectStaffOrGroup = ({ title, initProps, selected, setSelected }) => {
   );
 
   useEffect(() => {
-    setDataStaffsOrGroups(dataUsers);
-
     return () => {
       setDataStaffsOrGroups([]);
       setSelected([]);
+      setIsSwitchGroup(false);
     };
   }, []);
+
+  useEffect(() => {
+    setDataStaffsOrGroups(dataUsers);
+  }, [dataUsers]);
 
   useEffect(() => {
     if (isSwitchGroup) {
@@ -104,38 +111,13 @@ const SelectStaffOrGroup = ({ title, initProps, selected, setSelected }) => {
     return () => setDataStaffsOrGroups([]);
   }, [isSwitchGroup]);
 
-  const onSearchUsers = (searchKey, setData) => {
-    if (!isAllowedToGetFilterUsers) {
-      permissionWarningNotification("Mendapatkan", "Daftar User");
-      return;
-    }
-
+  const onSearchUsers = (searchKey) => {
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
     }
 
-    setLoadingSave(true);
     searchTimeoutRef.current = setTimeout(() => {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=1&name=${searchKey}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          setData(res2.data);
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan daftar user",
-            duration: 3,
-          })
-        )
-        .finally(() => setLoadingSave(false));
+      setSearchField(searchKey);
     }, 500);
   };
 
@@ -154,17 +136,17 @@ const SelectStaffOrGroup = ({ title, initProps, selected, setSelected }) => {
               isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
             }
             style={{ width: `100%` }}
-            onSearch={(value) =>
-              !isSwitchGroup && onSearchUsers(value, setDataStaffsOrGroups)
-            }
+            onSearch={(value) => !isSwitchGroup && onSearchUsers(value)}
             onChange={(value, option: any) => {
               // TODO: change option types
               // use when group switch is on
               const getStaffsFromGroups = () => {
-                let staffs = [...selected] || [];
+                let staffs = [...selected];
                 for (let group of option) {
                   for (let user of group?.users) {
-                    if (!staffs?.map((staff) => staff.key)?.includes(user.id)) {
+                    if (
+                      !staffs?.map((staff) => staff.name)?.includes(user.name)
+                    ) {
                       let userWithKey = {
                         ...user,
                         key: Number(user?.id),
@@ -177,30 +159,13 @@ const SelectStaffOrGroup = ({ title, initProps, selected, setSelected }) => {
                 return staffs;
               };
 
-              // use when group switch is off
-              const getUpdatedStaffs = () => {
-                // cannot use "option" directly because the dropdown options are dynamic
-                let staffs = [...selected] || [];
-                for (let user of option) {
-                  if (
-                    user?.key &&
-                    !staffs
-                      ?.map((staff) => Number(staff.key))
-                      ?.includes(Number(user.key))
-                  ) {
-                    staffs.push(user);
-                  }
-                }
-                return staffs;
-              };
-
               if (isSwitchGroup) {
                 setSelectedGroups(option);
               }
 
               let newTaskStaffs = isSwitchGroup
                 ? getStaffsFromGroups()
-                : getUpdatedStaffs();
+                : option;
 
               setSelected(newTaskStaffs);
             }}
