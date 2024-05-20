@@ -20,6 +20,7 @@ import {
   ANNOUNCEMENT_ADD,
   ANNOUNCEMENT_DELETE,
   ANNOUNCEMENT_GET,
+  ANNOUNCEMENT_MAIL_GET,
 } from "lib/features";
 
 import { AnnouncementService } from "apis/announcement";
@@ -128,12 +129,15 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
             setShowDeleteModal={setShowDeleteModal}
           />
         </div>
-        <div className="lg:col-span-5">
-          <AnnouncementEmailHistory
-            announcementId={announcementId}
-            setShowEmailDrawer={setShowEmailDrawer}
-          />
-        </div>
+
+        <AccessControl hasPermission={ANNOUNCEMENT_MAIL_GET}>
+          <div className="lg:col-span-5">
+            <AnnouncementEmailHistory
+              announcementId={announcementId}
+              setShowEmailDrawer={setShowEmailDrawer}
+            />
+          </div>
+        </AccessControl>
       </div>
 
       <AccessControl hasPermission={ANNOUNCEMENT_DELETE}>
