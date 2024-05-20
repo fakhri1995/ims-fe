@@ -1,8 +1,10 @@
 import { RcFile } from "antd/lib/upload";
 
+import { Group } from "apis/auth";
 import { AgentDetailData } from "apis/user";
 
 import {
+  HttpRequestWithDataAndPagingSucceedResponse,
   HttpRequestWithDataSucceedResponse,
   ProfileImageAttribute,
 } from "types/common";
@@ -89,4 +91,63 @@ export type GetAnnouncementEmployeeSucceedResponse =
  */
 export interface GetAnnouncementMorePayload {
   current_id: number;
+}
+
+/**
+ * @access GET /getMailAnnouncement
+ */
+export interface GetMailAnnouncementPayload {
+  id: number;
+  page: number;
+  rows: number;
+  keyword?: string;
+}
+
+export type IGetMailAnnouncementSucceedResponse =
+  HttpRequestWithDataAndPagingSucceedResponse<AnnouncementMailData>;
+
+export interface AnnouncementMailData {
+  user_id: number;
+  title: string;
+  deleted_at: Date | string;
+  user: AgentDetailData;
+  thumbnail_image?: ProfileImageAttribute;
+  id: number;
+  announcement_id: number;
+  publish_at: Date | string;
+  created_at: Date | string;
+  updated_at: Date | string;
+  is_send: number;
+  purposes: string[];
+  result: AnnouncementMailResultData;
+  staff: [];
+  group: AnnouncementMailGroupData[];
+}
+
+interface AnnouncementMailResultData {
+  id: number;
+  announcement_mail_id: number;
+  description: string;
+  created_at: Date | string;
+  updated_at: Date | string;
+}
+
+interface AnnouncementMailGroupData {
+  id: number;
+  announcement_mail_id: number;
+  group_id: number;
+  created_at: Date | string;
+  updated_at: Date | string;
+  groups: Group;
+}
+
+/**
+ * @access GET /sendMailAnnouncement
+ */
+export interface SendMailAnnouncementPayload {
+  id: number;
+  purpose_type: string; // "staff" | "group"
+  purpose_ids: number[]; // array (id user || id group);
+  publish_type: string; //"now" | "pending";
+  publish_at?: Date | string;
 }

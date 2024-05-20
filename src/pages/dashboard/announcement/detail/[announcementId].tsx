@@ -29,7 +29,6 @@ const DashboardAnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetAnnouncement = hasPermission(ANNOUNCEMENT_GET);
   const isAllowedToGetAnnouncementMore = hasPermission(ANNOUNCEMENT_MORE_GET);
 
   const router = useRouter();
@@ -58,7 +57,7 @@ const DashboardAnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
     [ANNOUNCEMENT_MORE_GET, announcementId],
     () =>
       AnnouncementService.getAnnouncementMore(
-        isAllowedToGetAnnouncement,
+        isAllowedToGetAnnouncementMore,
         axiosClient,
         { current_id: announcementId }
       ),

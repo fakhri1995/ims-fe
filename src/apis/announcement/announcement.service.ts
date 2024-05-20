@@ -8,9 +8,12 @@ import type {
   GetAnnouncementMorePayload,
   GetAnnouncementsPayload,
   GetAnnouncementsSucceedResponse,
+  GetMailAnnouncementPayload,
   IAddAnnouncementPayload,
   IGetAnnouncementSucceedResponse,
+  IGetMailAnnouncementSucceedResponse,
   IUpdateAnnouncementPayload,
+  SendMailAnnouncementPayload,
 } from "./announcement.types";
 
 import type { HttpRequestBaseSucceedResponse } from "types/common";
@@ -184,6 +187,57 @@ export class AnnouncementService {
 
     return await axiosClient.get<GetAnnouncementEmployeeSucceedResponse>(
       "/getAnnouncementMore" + qs
+    );
+  }
+
+  /**
+   * Retrieve email history of an announcement by announcement ID.
+   *
+   * @access GET /getMailAnnouncement
+   */
+  static async getMailAnnouncement(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    params?: GetMailAnnouncementPayload
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Riwayat Email Announcement"
+      );
+      return;
+    }
+
+    const qs = QueryString.stringify(params, { addQueryPrefix: true });
+
+    return await axiosClient.get<IGetMailAnnouncementSucceedResponse>(
+      "/getMailAnnouncement" + qs
+    );
+  }
+
+  /**
+   * Send mail announcement
+   *
+   * @access POST /sendMailAnnouncement
+   */
+  static async sendMailAnnouncement(
+    hasFeature: boolean,
+    axiosClient: AxiosInstance,
+    payload: SendMailAnnouncementPayload
+  ) {
+    if (!hasFeature) {
+      permissionWarningNotification("Mengirim", "Email Announcement");
+      return;
+    }
+
+    return await axiosClient.post<HttpRequestBaseSucceedResponse>(
+      "/sendMailAnnouncement",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
 }

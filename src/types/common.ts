@@ -42,6 +42,29 @@ export interface HttpRequestWithDataSucceedResponse<DataType>
 }
 
 /**
+ * Response backend ketika endpoint menghasilkan suatu data dan terdapat paging.
+ */
+export interface HttpRequestWithDataAndPagingSucceedResponse<DataType>
+  extends HttpRequestBaseSucceedResponse {
+  data: Paging<DataType>;
+}
+
+export interface Paging<DataType> {
+  current_page: number;
+  data: DataType[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  next_page_url: string;
+  path: string;
+  per_page: string;
+  prev_page_url: null;
+  to: number;
+  total: number;
+}
+
+/**
  * Sama seperti @see HttpRequestBaseSucceedResponse akan tetapi digunakan ketika
  * transaksi gagal.
  *

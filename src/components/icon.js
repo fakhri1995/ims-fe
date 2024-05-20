@@ -1482,11 +1482,11 @@ const SendIconSvg = ({ size, color }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-send"
-      width={size}
-      height={size}
+      width={size ? size : 20}
+      height={size ? size : 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={color ? color : "#4D4D4D"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"

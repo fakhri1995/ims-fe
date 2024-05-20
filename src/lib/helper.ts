@@ -4,6 +4,7 @@ import type { RcFile } from "antd/lib/upload";
 import { format } from "date-fns";
 import moment from "moment";
 import { ReactNode } from "react";
+import { QueryClient, useQueryClient } from "react-query";
 
 moment.locale("id");
 
@@ -450,4 +451,18 @@ export const getNameInitial = (text: string) => {
   );
 
   return initial;
+};
+
+/**
+ * Function ran when success in useMutation
+ */
+export const onMutationSucceed = (
+  queryClient: QueryClient,
+  queryKey: string,
+  message: string
+) => {
+  queryClient.invalidateQueries(queryKey);
+  notification.success({
+    message,
+  });
 };
