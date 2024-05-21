@@ -182,7 +182,7 @@ const ChartHorizontalBar = ({ dataChart, objName, value, colorBarList }) => {
 
 const ChartVerticalBar = ({ dataChart, objName, value, colorBarList }) => {
   return (
-    <div className="flex flex-col shadow-md rounded-md bg-white p-5 my-6">
+    <div className="flex flex-col shadow-md rounded-md bg-white p-5 ">
       <div className="flex items-center justify-between mb-4">
         <H1>Penggunaan Terbanyak</H1>
       </div>

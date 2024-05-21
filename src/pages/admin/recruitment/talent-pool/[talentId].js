@@ -109,7 +109,7 @@ const TalentDetailIndex = ({ dataProfile, sidemenu, initProps, talentId }) => {
       pathArr={pathArr}
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
-      <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
+      <div className="grid grid-cols-1 px-6 md:px-0" id="mainWrapper">
         <Spin spinning={loadingResume}>
           <div className="flex flex-col shadow-md rounded-md bg-white p-6 gap-4 ">
             <div>

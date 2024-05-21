@@ -421,8 +421,8 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
       pathArr={pathArr}
     >
       <div className="grid grid-cols-1">
-        <div className="flex flex-col lg:flex-row">
-          <div className="flex flex-col lg:px-5 lg:w-1/3">
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col lg:w-1/3 gap-6">
             <AddNewFormButton
               title="Tambah Form"
               disabled={!isAllowedToAddRoleAssessment}
@@ -443,14 +443,14 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
             )}
 
             {/* CARD TOTAL FORM */}
-            <div className="flex flex-row justify-between items-center shadow-md rounded-md bg-white p-5 mb-6">
+            <div className="flex flex-row justify-between items-center shadow-md rounded-md bg-white p-5 ">
               <H1>Total Form</H1>
               <p className="font-semibold text-4xl">{dataCountAssessments}</p>
             </div>
           </div>
 
           {/* TABEL SEMUA ROLE ASSESSMENT */}
-          <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2 space-y-6">
+          <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 space-y-6">
             <h4 className="mig-heading--4">Semua Role Assessment</h4>
             <div className="flex flex-row w-full mb-5 space-x-4">
               <Input

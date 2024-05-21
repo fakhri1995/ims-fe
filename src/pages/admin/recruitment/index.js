@@ -1378,7 +1378,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-1 lg:grid-cols-3 md:px-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div
             className="lg:col-span-2 flex flex-row items-center w-full 
 						justify-between px-6 py-2 shadow-md rounded-md bg-white

@@ -590,7 +590,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="grid grid-cols-1 md:px-5" id="mainWrapper">
+      <div className="grid grid-cols-1" id="mainWrapper">
         <div className="shadow-md rounded-md bg-white p-4 mb-6">
           <h4 className="mig-heading--4 ">
             Status Slip Gaji (

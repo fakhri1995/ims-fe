@@ -796,7 +796,7 @@ const RecruitmentDetailIndex = ({
               <Spin spinning={loadingActivities}>
                 {dataActivities?.slice(0, 5).map((activity) => (
                   <div key={activity?.id} className="mb-6">
-                    <p className="text-md mb-2">{activity?.notes}</p>
+                    <p className="text-md mb-2 truncate">{activity?.notes}</p>
                     <div className="flex flex-row justify-between flex-wrap items-center">
                       <div className="flex flex-row text-wrap w-30">
                         <img
