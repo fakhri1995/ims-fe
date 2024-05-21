@@ -368,7 +368,9 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
                     <DatePicker
                       locale={locale}
                       picker="date"
-                      showTime
+                      showTime={{
+                        minuteStep: 30,
+                      }}
                       className="w-full"
                       format={"DD MMMM YYYY HH:mm"}
                       placeholder={"Pilih Tanggal & Waktu Kirim"}
