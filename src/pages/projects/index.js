@@ -736,7 +736,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <div
-        className="grid grid-cols-1 xl:grid-cols-6 gap-6 px-4 md:px-5"
+        className="grid grid-cols-1 xl:grid-cols-6 gap-6 px-6 md:px-0"
         id="mainWrapper"
       >
         <div className="flex flex-col xl:col-span-4 gap-6">

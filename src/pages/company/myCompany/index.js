@@ -831,7 +831,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {praloadingedit ? null : (
-          <div className="lg:col-span-3 flex flex-col shadow-md rounded bg-white mx-6 lg:m-0">
+          <div className="lg:col-span-3 flex flex-col shadow-md rounded bg-white mx-6 md:m-0">
             <Spin spinning={editloading}>
               <Form form={instanceForm} initialValues={displaydata}>
                 <div className="max-h-24 relative">
@@ -1208,7 +1208,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         )}
         <div className="lg:col-span-9 flex flex-col gap-5">
           {/* Location */}
-          <div className="flex flex-col shadow-md rounded-md bg-white p-8 mx-6 lg:mx-0">
+          <div className="flex flex-col shadow-md rounded-md bg-white p-8 mx-6 md:mx-0">
             <div className="flex justify-between items-center">
               <H1>Lokasi</H1>
               <div
@@ -1259,7 +1259,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             </div>
           </div>
           {viewrelasi ? (
-            <div className="flex flex-col shadow-md rounded-md bg-white p-8 mx-6 lg:mx-0 h-screen">
+            <div className="flex flex-col shadow-md rounded-md bg-white p-8 mx-6 md:mx-0 h-screen">
               <div className="flex justify-between items-center mb-5">
                 <div className="flex">
                   <div
@@ -1562,7 +1562,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             </div>
           ) : (
             <div className="flex flex-col md:flex-row gap-5">
-              <div className="md:w-6/12 flex flex-col mx-6 lg:mx-0 gap-5">
+              <div className="md:w-6/12 flex flex-col mx-6 md:mx-0 gap-5">
                 {/* Bank */}
                 <div className="flex flex-col shadow-md rounded-md bg-white p-8 ">
                   <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center">
@@ -1866,7 +1866,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 </div>
               </div>
               {/* Aktivitas */}
-              <div className="md:w-6/12 flex flex-col shadow-md rounded-md bg-white p-8 mx-6 lg:mx-0">
+              <div className="md:w-6/12 flex flex-col shadow-md rounded-md bg-white p-8 mx-6 md:mx-0">
                 <div className="mb-8">
                   <H1>Aktivitas</H1>
                 </div>

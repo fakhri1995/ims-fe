@@ -384,7 +384,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/shift"
     >
-      <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
+      <div className="grid grid-cols-1 px-6 md:px-0" id="mainWrapper">
         {/* Table Daftar Shift */}
         <div className="flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">

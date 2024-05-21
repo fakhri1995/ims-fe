@@ -937,7 +937,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-1 lg:grid-cols-2 md:px-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {showCollapsible ? (
             <div
               className={"bg-white p-6 h-[282px] rounded-[5px]"}

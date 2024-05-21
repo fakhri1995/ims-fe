@@ -9,12 +9,14 @@ import { MESSAGES_GET } from "lib/features";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { momentFormatDate } from "../../../lib/helper";
 import httpcookie from "cookie";
 
 const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
   const rt = useRouter();
 
   const pathArr = rt.pathname.split("/").slice(1);
+  // console.log(dataMessages.data)
 
   //Definisi table
   const columnsFeature = [
@@ -104,6 +106,24 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
       },
     },
     {
+      title: "Sending Date",
+      dataIndex: "created_at",
+      render: (text, record, index) => {
+        return {
+          props: {
+            style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
+          },
+          children: (
+            <p className="text-xs">
+              {momentFormatDate(text, "-", "DD MMM YYYY hh:mm")}
+            </p>
+          ),
+        };
+      },
+      // defaultSortOrder: "descend",
+      sorter: (a, b) => a?.created_at?.localeCompare(b?.created_at),
+    },
+    {
       dataIndex: "status",
       key: "status",
       render: (text, record, index) => {
@@ -127,6 +147,7 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
                     company_name: record.company_name,
                     interseted_in: record.interested_in,
                     message: record.message,
+                    sending_date: record.created_at,
                   });
                   setmodaldetail(true);
                 }}
@@ -141,7 +162,10 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
   ];
 
   //useState
-  const datatemp = dataMessages.data ?? [];
+  const datatemp =
+    dataMessages.data.sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    ) ?? [];
   const dataMessagesMap = datatemp.map((doc, idx) => {
     return {
       ...doc,
@@ -204,6 +228,14 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
           <p className="text-sm mb-5">{datadetail.company_email}</p>
           <h1 className="text-sm font-semibold mb-2">Interested In:</h1>
           <p className="text-sm mb-5">{datadetail.interseted_in}</p>
+          <h1 className="text-sm font-semibold mb-2">Sending Date:</h1>
+          <p className="text-sm mb-5">
+            {momentFormatDate(
+              datadetail.sending_date,
+              "-",
+              "DD MMM YYYY hh:mm"
+            )}
+          </p>
           <h1 className="text-sm font-semibold mb-2">Message:</h1>
           <p className="text-sm mb-5">{datadetail.message}</p>
         </div>

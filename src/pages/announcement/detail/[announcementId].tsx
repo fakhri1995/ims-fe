@@ -121,7 +121,7 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="announcement"
     >
-      <div className="px-5 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="px-6 md:px-0 grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7">
           <AnnouncementMessageSection
             announcementId={announcementId}

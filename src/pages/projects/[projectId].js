@@ -495,7 +495,7 @@ const ProjectDetailIndex = ({
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <div
-        className="grid grid-cols-1 gap-4 lg:gap-6 px-4 md:px-5"
+        className="grid grid-cols-1 gap-4 lg:gap-6 px-6 md:px-0"
         id="mainWrapper"
       >
         {/* Statistik Task Proyek */}

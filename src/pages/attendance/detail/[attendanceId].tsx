@@ -56,7 +56,7 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
       tok={token}
       fixedBreadcrumbValues={pageBreadcrumb}
     >
-      <div className="px-5 flex space-y-6 lg:space-y-0 lg:space-x-6 flex-col lg:flex-row">
+      <div className="px-6 md:px-0 flex space-y-6 lg:space-y-0 lg:space-x-6 flex-col lg:flex-row">
         {/* First column */}
         <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5 space-y-6">
           {/* Detail attendance meta */}

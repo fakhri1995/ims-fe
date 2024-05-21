@@ -451,7 +451,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
-      <div className="grid grid-cols-1 gap-6 px-4 md:px-5" id="mainWrapper">
+      <div className="grid grid-cols-1 gap-6 px-6 md:px-0" id="mainWrapper">
         {/* Statistik Task */}
         <Collapse
           className="shadow-md rounded-md bg-white"

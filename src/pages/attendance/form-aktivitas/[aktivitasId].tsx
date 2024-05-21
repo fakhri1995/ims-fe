@@ -97,7 +97,7 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
       sidemenu="attendance/form-aktivitas"
     >
       <AccessControl hasPermission={ATTENDANCE_FORM_GET}>
-        <div className="px-5 flex flex-wrap lg:flex-nowrap lg:space-x-6 space-y-6 lg:space-y-0">
+        <div className="px-6 md:px-0 flex flex-wrap lg:flex-nowrap lg:space-x-6 space-y-6 lg:space-y-0">
           {/* First Column */}
           <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5">
             {/* Project detail card */}

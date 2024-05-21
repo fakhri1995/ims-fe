@@ -625,7 +625,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 md:px-5" id="mainWrapper">
+      <div className="grid grid-cols-1 md:grid-cols-3 " id="mainWrapper">
         <div
           className="relative mb-5 col-span-3"
           onMouseMove={(e) => {

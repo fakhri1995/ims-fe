@@ -49,7 +49,7 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
       sidemenu="attendance/admin"
       fixedBreadcrumbValues={pageBreadcrumb}
     >
-      <div className="px-5 space-y-6">
+      <div className="px-6 md:px-0 space-y-6">
         {/* First row: real time clock, today attendance stat, maps */}
         <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
           {/* First column: real time clock, today attendance stat */}

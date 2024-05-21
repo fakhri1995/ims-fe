@@ -407,9 +407,9 @@ const CardHeader: FC<ICardHeader> = ({
   }, [searchValue]);
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="grid grid-cols-12 grid-rows-2  lg:flex-row lg:items-center justify-between gap-4">
       {/* LHS: Back Button, Title */}
-      <div className="flex items-center">
+      <div className="col-span-6 row-span-1 lg:col-span-3 flex items-center ">
         {/* Back button */}
         {cardPhase !== "default" && (
           <Button
@@ -425,19 +425,21 @@ const CardHeader: FC<ICardHeader> = ({
         </span>
       </div>
 
+      {/* Sampe sini */}
       {/* RHS: Search Input, Button */}
-      <div className="flex space-x-4">
+      <div className="col-span-6 lg:col-span-3 row-span-1 flex justify-end">
         {cardPhase === "default" && isAllowedToDeleteStaff && (
           <Button
             type="ghost"
-            className="mig-button mig-button--outlined-danger"
+            className="mig-button mig-button--outlined-danger "
             onClick={onRemoveButtonClicked}
           >
             <UserDeleteOutlined />
             Hapus Staff
           </Button>
         )}
-
+      </div>
+      <div className="col-span-full lg:col-span-6 row-span-1">
         <Form
           form={form}
           layout="inline"
@@ -445,27 +447,31 @@ const CardHeader: FC<ICardHeader> = ({
             onSearch(value.search);
           }}
         >
-          <Form.Item name="search">
-            <Input
-              allowClear
-              placeholder="Cari..."
-              onChange={(ev) => {
-                if (ev.target.value === "") {
-                  onSearch("");
-                }
-              }}
-            />
-          </Form.Item>
+          <div className="flex w-full justify-between gap-2">
+            <div className="w-full">
+              <Form.Item name="search">
+                <Input
+                  allowClear
+                  placeholder="Cari..."
+                  onChange={(ev) => {
+                    if (ev.target.value === "") {
+                      onSearch("");
+                    }
+                  }}
+                />
+              </Form.Item>
+            </div>
 
-          <Form.Item noStyle>
-            <Button
-              htmlType="submit"
-              className="mig-button mig-button--solid-primary"
-              icon={<SearchOutlined />}
-            >
-              Cari
-            </Button>
-          </Form.Item>
+            <Form.Item noStyle>
+              <Button
+                htmlType="submit"
+                className="mig-button mig-button--solid-primary"
+                icon={<SearchOutlined />}
+              >
+                Cari
+              </Button>
+            </Form.Item>
+          </div>
         </Form>
       </div>
     </div>

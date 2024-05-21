@@ -197,7 +197,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
-      <div className="grid grid-cols-1 px-4 md:px-5" id="mainWrapper">
+      <div className="grid grid-cols-1 px-6 md:px-0" id="mainWrapper">
         <div className="flex flex-col shadow-md rounded-md bg-white px-5 py-6 gap-6 mb-6">
           <div className="flex flex-col md:flex-row gap-2 justify-between md:items-center">
             <h4 className="mig-heading--4 w-full md:w-2/12">Daftar Talent</h4>
