@@ -82,7 +82,9 @@ function Software({}) {
     type_project: null,
     attachment: null,
   });
-  const [dateNow, setDateNow] = useState(new Date());
+  const [dateNow, setDateNow] = useState(
+    new Date(Date.now() + 3600 * 1000 * 24)
+  );
   const [email, setEmail] = useState(null);
   const [showForm, setShowform] = useState(false);
   const [showThankForm, setShowThankForm] = useState(false);

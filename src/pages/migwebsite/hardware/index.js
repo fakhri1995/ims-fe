@@ -48,7 +48,9 @@ function Hardware({}) {
   const [dataWorkstation, setDataWorkStation] = useState(null);
   const [dataServer, setDataServer] = useState(null);
   const [dataUps, setDataUps] = useState(null);
-  const [dateNow, setDateNow] = useState(new Date());
+  const [dateNow, setDateNow] = useState(
+    new Date(Date.now() + 3600 * 1000 * 24)
+  );
   const [dataTestimonial, setDataTestimonial] = useState(null);
   const [showCollapsible, setShowCollapsible] = useState(false);
 
@@ -1956,6 +1958,7 @@ function Hardware({}) {
                   <div className={"w-[392px]"}>
                     <div className="site-calendar-demo-card">
                       <Calendar
+                        minDate={dateNow}
                         locale={locale == "en" ? "en" : "id"}
                         onChange={onPanelChange}
                         value={valueDate}
@@ -3065,7 +3068,8 @@ function Hardware({}) {
                     </p>
                     <div className="site-calendar-demo-card">
                       <Calendar
-                        locale={"en"}
+                        minDate={dateNow}
+                        locale={locale == "en" ? "en" : "id"}
                         onChange={onPanelChange}
                         value={valueDate}
                         tileDisabled={tileDisabled}
