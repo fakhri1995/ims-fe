@@ -16,6 +16,7 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
   const rt = useRouter();
 
   const pathArr = rt.pathname.split("/").slice(1);
+  // console.log(dataMessages.data)
 
   //Definisi table
   const columnsFeature = [
@@ -161,7 +162,10 @@ const Messages = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
   ];
 
   //useState
-  const datatemp = dataMessages.data ?? [];
+  const datatemp =
+    dataMessages.data.sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    ) ?? [];
   const dataMessagesMap = datatemp.map((doc, idx) => {
     return {
       ...doc,
@@ -266,7 +270,7 @@ export async function getServerSideProps({ req, res }) {
   const dataProfile = resjsonGP;
 
   const resourcesGM = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getMessages?sort_by=created_at&sort_type=desc`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getMessages`,
     {
       method: `GET`,
       headers: {
