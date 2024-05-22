@@ -125,7 +125,7 @@ const SelectStaffOrGroup = ({ title, initProps, selected, setSelected }) => {
     <div className="">
       <div className="flex flex-col md:flex-row">
         <div className="w-full mb-2">
-          <p className="mb-2">{title}</p>
+          <div className="mb-2">{title}</div>
           <Select
             showSearch
             mode="multiple"
