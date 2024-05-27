@@ -35,12 +35,8 @@ import {
 
 import {
   AnnouncementService,
-  IAddAnnouncementPayload,
-  IUpdateAnnouncementPayload,
   SendMailAnnouncementPayload,
 } from "apis/announcement";
-import { UserService } from "apis/user";
-import { GroupService } from "apis/user/group.service";
 
 import DrawerCore from "../drawerCore";
 

@@ -9,10 +9,9 @@ import type {
   GetAnnouncementsPayload,
   GetAnnouncementsSucceedResponse,
   GetMailAnnouncementPayload,
-  IAddAnnouncementPayload,
+  IAnnouncementPayload,
   IGetAnnouncementSucceedResponse,
   IGetMailAnnouncementSucceedResponse,
-  IUpdateAnnouncementPayload,
   SendMailAnnouncementPayload,
 } from "./announcement.types";
 
@@ -74,7 +73,7 @@ export class AnnouncementService {
   static async addAnnouncement(
     hasFeature: boolean,
     axiosClient: AxiosInstance,
-    payload: IAddAnnouncementPayload
+    payload: IAnnouncementPayload
   ) {
     if (!hasFeature) {
       permissionWarningNotification("Menambah", "Announcement");
@@ -102,7 +101,7 @@ export class AnnouncementService {
   static async updateAnnouncement(
     hasFeature: boolean,
     axiosClient: AxiosInstance,
-    payload: IUpdateAnnouncementPayload
+    payload: IAnnouncementPayload
   ) {
     if (!hasFeature) {
       permissionWarningNotification("Mengubah", "Announcement");

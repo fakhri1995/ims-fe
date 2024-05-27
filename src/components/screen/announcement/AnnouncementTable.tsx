@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@ant-design/icons";
+import { EditOutlined, SearchOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Table, notification } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { SorterResult } from "antd/lib/table/interface";
@@ -35,6 +35,7 @@ import {
   AnnouncementData,
   AnnouncementService,
   GetAnnouncementsSucceedResponse,
+  IAnnouncementPayload,
 } from "apis/announcement";
 
 interface IAnnouncementTable {
@@ -77,9 +78,10 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
     AnnouncementData[]
   >([]);
 
-  const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
+  const [isShowDrawer, setShowDrawer] = useState(false);
   const [isShowPreviewModal, setShowPreviewModal] = useState(false);
   const [currentImageLink, setCurrentImageLink] = useState("");
+  const [currentData, setCurrentData] = useState<IAnnouncementPayload>();
 
   /**
    * Queries
@@ -116,6 +118,15 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
     e.stopPropagation();
     setCurrentImageLink(imageLink);
     setShowPreviewModal(true);
+  };
+
+  const onOpenEditDrawer = (data) => {
+    setShowDrawer(true);
+    setCurrentData({
+      ...data,
+      _method: "PUT",
+      publish_type: "pending",
+    });
   };
 
   const tableColumns: ColumnsType<AnnouncementData> = [
@@ -204,11 +215,33 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
         return lhsDate < rhsDate ? -1 : 1;
       },
     },
+    isAdminPage
+      ? {
+          key: "id",
+          dataIndex: "id",
+          render: (text, record, index) => {
+            return (
+              <div className="flex items-center space-x-2">
+                <ButtonSys
+                  type={"default"}
+                  // disabled={true}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenEditDrawer(record);
+                  }}
+                >
+                  <EditOutlined />
+                </ButtonSys>
+              </div>
+            );
+          },
+        }
+      : {},
   ];
 
   return (
     <div className="mig-platform flex flex-col space-y-5">
-      {/* Keyword search, Status filter dropdown, Cari button */}
+      {/* Keyword search, Cari button */}
       <section className="flex justify-between items-center">
         {/* Title */}
         <h4 className="mig-heading--4">Daftar Pesan</h4>
@@ -232,7 +265,7 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           {isAdminPage && (
             <ButtonSys
               type="primary"
-              onClick={() => setShowCreateDrawer(true)}
+              onClick={() => setShowDrawer(true)}
               disabled={!isAllowedToAddAnnouncement}
             >
               <div className="flex items-center space-x-2">
@@ -289,8 +322,10 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
         <AccessControl hasPermission={ANNOUNCEMENT_ADD}>
           <DrawerAnnouncement
             initProps={initProps}
-            visible={isShowCreateDrawer}
-            onvisible={setShowCreateDrawer}
+            visible={isShowDrawer}
+            onvisible={setShowDrawer}
+            data={currentData}
+            setData={setCurrentData}
           />
         </AccessControl>
       )}
