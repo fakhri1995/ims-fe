@@ -124,6 +124,7 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
       <div className="px-6 md:px-0 grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7">
           <AnnouncementMessageSection
+            initProps={token}
             announcementId={announcementId}
             isAdminPage={true}
             setShowDeleteModal={setShowDeleteModal}

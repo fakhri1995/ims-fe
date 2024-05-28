@@ -27,6 +27,7 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import {
   ANNOUNCEMENTS_GET,
   ANNOUNCEMENT_ADD,
+  ANNOUNCEMENT_GET,
   ANNOUNCEMENT_UPDATE,
 } from "lib/features";
 import { beforeUploadFileMaxSize } from "lib/helper";
@@ -43,7 +44,7 @@ const DrawerAnnouncement = ({
   visible,
   onvisible,
   data = null,
-  setData,
+  setData = null,
 }) => {
   /**
    * Dependencies
@@ -155,7 +156,7 @@ const DrawerAnnouncement = ({
         ),
       {
         onSuccess: (response) => {
-          onMutationSucceed(ANNOUNCEMENTS_GET, response.data.message);
+          onMutationSucceed(ANNOUNCEMENT_GET, response.data.message);
           handleClose();
         },
         onError: (error) => {

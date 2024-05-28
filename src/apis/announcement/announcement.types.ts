@@ -52,6 +52,7 @@ export interface AnnouncementData {
   updated_at: Date | string;
   deleted_at: Date | string;
   push_notif: number;
+  is_publish: boolean;
   user: AgentDetailData;
   thumbnail_image?: ProfileImageAttribute;
 }
@@ -66,7 +67,7 @@ export interface IAnnouncementPayload {
   text: string | HTMLElement;
   publish_type: "now" | "pending";
   publish_at?: Date | string;
-  thumbnail_image?: RcFile | Blob | File;
+  thumbnail_image?: RcFile | Blob | File | ProfileImageAttribute;
 }
 
 /**
