@@ -27,22 +27,25 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import {
   ANNOUNCEMENTS_GET,
   ANNOUNCEMENT_ADD,
+  ANNOUNCEMENT_GET,
   ANNOUNCEMENT_UPDATE,
 } from "lib/features";
 import { beforeUploadFileMaxSize } from "lib/helper";
 
-import {
-  AnnouncementService,
-  IAddAnnouncementPayload,
-  IUpdateAnnouncementPayload,
-} from "apis/announcement";
+import { AnnouncementService, IAnnouncementPayload } from "apis/announcement";
 
 import DrawerCore from "../drawerCore";
 
 // Quill library for text editor has to be imported dynamically
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
-const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
+const DrawerAnnouncement = ({
+  initProps,
+  visible,
+  onvisible,
+  data = null,
+  setData = null,
+}) => {
   /**
    * Dependencies
    */
@@ -62,19 +65,33 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
 
   //1. USE STATE
   const [dataAnnouncement, setDataAnnouncement] =
-    useState<IAddAnnouncementPayload>({
+    useState<IAnnouncementPayload>({
       // _method: "PUT",
       // id: -1,
       title: "",
       text: "",
       publish_type: "now",
-      publish_at: null,
+      publish_at: "",
     });
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
   const [fileList, setFileList] = useState([]);
 
   // 2. USE EFFECT
+  useEffect(() => {
+    if (data?.id) {
+      setDataAnnouncement(data);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (data?.thumbnail_image?.link) {
+      const currentFileName = data?.thumbnail_image?.link?.split("/")[2];
+      setFileList([{ name: currentFileName }]);
+    } else {
+      setFileList([]);
+    }
+  }, [data]);
 
   //3. HANDLER
   const onChangeInput = (e) => {
@@ -95,6 +112,11 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
     });
     instanceForm.resetFields();
     setFileList([]);
+
+    if (setData) {
+      setData(null);
+    }
+
     onvisible(false);
   };
 
@@ -107,7 +129,7 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
 
   const { mutate: addAnnouncement, isLoading: loadingAddAnnouncement } =
     useMutation(
-      (payload: IAddAnnouncementPayload) =>
+      (payload: IAnnouncementPayload) =>
         AnnouncementService.addAnnouncement(
           isAllowedToAddAnnouncement,
           axiosClient,
@@ -126,7 +148,7 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
 
   const { mutate: updateAnnouncement, isLoading: loadingUpdateAnnouncement } =
     useMutation(
-      (payload: IUpdateAnnouncementPayload) =>
+      (payload: IAnnouncementPayload) =>
         AnnouncementService.updateAnnouncement(
           isAllowedToUpdateAnnouncement,
           axiosClient,
@@ -134,7 +156,7 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
         ),
       {
         onSuccess: (response) => {
-          onMutationSucceed(ANNOUNCEMENTS_GET, response.data.message);
+          onMutationSucceed(ANNOUNCEMENT_GET, response.data.message);
           handleClose();
         },
         onError: (error) => {
@@ -193,6 +215,7 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
     </button>
   );
 
+  // console.log({ data });
   // console.log({ dataAnnouncement });
   return (
     <DrawerCore
@@ -203,11 +226,10 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
       buttonOkText={"Simpan"}
       submit={true}
       form="formPesan"
-      onClick={
-        () => addAnnouncement(dataAnnouncement)
-        // !data
-        //   ? addAnnouncement(dataAnnouncement)
-        //   : updateAnnouncement(dataAnnouncement)
+      onClick={() =>
+        !data
+          ? addAnnouncement(dataAnnouncement)
+          : updateAnnouncement(dataAnnouncement)
       }
       disabled={
         (!data
@@ -293,16 +315,19 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
                 ]}
                 className="col-span-2"
               >
-                <RichText
-                  initProps={initProps}
-                  placeholder={"Isi Pesan..."}
-                  onChange={(value) => {
-                    setDataAnnouncement((prev) => ({
-                      ...prev,
-                      text: value,
-                    }));
-                  }}
-                />
+                <>
+                  <RichText
+                    initProps={initProps}
+                    placeholder={"Isi Pesan..."}
+                    value={dataAnnouncement?.text}
+                    onChange={(value) => {
+                      setDataAnnouncement((prev) => ({
+                        ...prev,
+                        text: value,
+                      }));
+                    }}
+                  />
+                </>
               </Form.Item>
 
               <Form.Item
@@ -383,7 +408,6 @@ const DrawerAnnouncement = ({ initProps, visible, onvisible, data = null }) => {
                           : null
                       }
                       onChange={(value) => {
-                        // console.log({ value });
                         let formattedDate = moment(
                           value as MomentInput
                         ).isValid()

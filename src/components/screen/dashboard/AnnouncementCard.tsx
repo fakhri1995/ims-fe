@@ -150,10 +150,10 @@ export const AnnouncementCard: FC = () => {
                     dangerouslySetInnerHTML={{
                       __html:
                         stripTagsNewLine(dataAnnouncements[0]?.text)?.length >
-                        120
+                        150
                           ? stripTagsNewLine(dataAnnouncements[0]?.text).slice(
                               0,
-                              120
+                              150
                             ) + "..."
                           : stripTagsNewLine(dataAnnouncements[0]?.text),
                     }}

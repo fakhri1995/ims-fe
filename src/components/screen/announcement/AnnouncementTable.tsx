@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@ant-design/icons";
+import { EditOutlined, SearchOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Table, notification } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { SorterResult } from "antd/lib/table/interface";
@@ -35,6 +35,7 @@ import {
   AnnouncementData,
   AnnouncementService,
   GetAnnouncementsSucceedResponse,
+  IAnnouncementPayload,
 } from "apis/announcement";
 
 interface IAnnouncementTable {
@@ -64,8 +65,11 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
-    order_by: withDefault(StringParam, /** @type {"publish_at"} */ undefined),
-    order_to: withDefault(StringParam, /** @type {"asc"|"desc"} */ "asc"),
+    order_by: withDefault(
+      StringParam,
+      /** @type {"publish_at"} */ "publish_at"
+    ),
+    order_to: withDefault(StringParam, /** @type {"asc"|"desc"} */ "desc"),
     keyword: withDefault(StringParam, null),
     status: withDefault(StringParam, !isAdminPage ? "published" : null),
   });
@@ -77,7 +81,7 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
     AnnouncementData[]
   >([]);
 
-  const [isShowCreateDrawer, setShowCreateDrawer] = useState(false);
+  const [isShowDrawer, setShowDrawer] = useState(false);
   const [isShowPreviewModal, setShowPreviewModal] = useState(false);
   const [currentImageLink, setCurrentImageLink] = useState("");
 
@@ -204,11 +208,29 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
         return lhsDate < rhsDate ? -1 : 1;
       },
     },
+    isAdminPage
+      ? {
+          key: "status",
+          title: "Status",
+          dataIndex: "is_publish",
+          render: (published) => {
+            return published ? (
+              <div className="rounded-md h-auto px-3 text-center py-1 bg-primary10 text-primary100 font-semibold">
+                Delivered
+              </div>
+            ) : (
+              <div className="rounded-md h-auto px-3 text-center py-1 bg-mono90 text-mono-30 font-semibold">
+                Scheduled
+              </div>
+            );
+          },
+        }
+      : {},
   ];
 
   return (
     <div className="mig-platform flex flex-col space-y-5">
-      {/* Keyword search, Status filter dropdown, Cari button */}
+      {/* Keyword search, Cari button */}
       <section className="flex justify-between items-center">
         {/* Title */}
         <h4 className="mig-heading--4">Daftar Pesan</h4>
@@ -232,7 +254,7 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           {isAdminPage && (
             <ButtonSys
               type="primary"
-              onClick={() => setShowCreateDrawer(true)}
+              onClick={() => setShowDrawer(true)}
               disabled={!isAllowedToAddAnnouncement}
             >
               <div className="flex items-center space-x-2">
@@ -269,8 +291,8 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
             setQueryParams({
               page: pagination.current,
               rows: pagination.pageSize,
-              order_by:
-                sortTypePayload === undefined ? undefined : sorter.field,
+              // order_by:
+              //   sortTypePayload === undefined ? undefined : sorter.field,
               order_to: sortTypePayload,
             });
           }}
@@ -289,8 +311,8 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
         <AccessControl hasPermission={ANNOUNCEMENT_ADD}>
           <DrawerAnnouncement
             initProps={initProps}
-            visible={isShowCreateDrawer}
-            onvisible={setShowCreateDrawer}
+            visible={isShowDrawer}
+            onvisible={setShowDrawer}
           />
         </AccessControl>
       )}

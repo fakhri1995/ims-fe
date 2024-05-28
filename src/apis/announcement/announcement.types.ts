@@ -51,32 +51,23 @@ export interface AnnouncementData {
   created_at: Date | string;
   updated_at: Date | string;
   deleted_at: Date | string;
+  push_notif: number;
+  is_publish: boolean;
   user: AgentDetailData;
   thumbnail_image?: ProfileImageAttribute;
 }
 
 /**
- * @access POST /addAnnouncement
+ * @access POST /addAnnouncement or POST /updateAnnouncement
  */
-export interface IAddAnnouncementPayload {
-  title: string;
-  text: string | HTMLElement;
-  publish_type: "now" | "pending";
-  publish_at?: Date | string;
-  thumbnail_image?: RcFile | Blob | File;
-}
-
-/**
- * @access POST /updateAnnouncement
- */
-export interface IUpdateAnnouncementPayload {
+export interface IAnnouncementPayload {
   _method?: "PUT";
-  id: number;
+  id?: number;
   title: string;
   text: string | HTMLElement;
   publish_type: "now" | "pending";
   publish_at?: Date | string;
-  thumbnail_image?: RcFile | Blob | File;
+  thumbnail_image?: RcFile | Blob | File | ProfileImageAttribute;
 }
 
 /**
