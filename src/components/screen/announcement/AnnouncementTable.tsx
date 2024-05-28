@@ -65,8 +65,11 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
-    order_by: withDefault(StringParam, /** @type {"publish_at"} */ undefined),
-    order_to: withDefault(StringParam, /** @type {"asc"|"desc"} */ "asc"),
+    order_by: withDefault(
+      StringParam,
+      /** @type {"publish_at"} */ "publish_at"
+    ),
+    order_to: withDefault(StringParam, /** @type {"asc"|"desc"} */ "desc"),
     keyword: withDefault(StringParam, null),
     status: withDefault(StringParam, !isAdminPage ? "published" : null),
   });
@@ -81,7 +84,6 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
   const [isShowDrawer, setShowDrawer] = useState(false);
   const [isShowPreviewModal, setShowPreviewModal] = useState(false);
   const [currentImageLink, setCurrentImageLink] = useState("");
-  const [currentData, setCurrentData] = useState<IAnnouncementPayload>();
 
   /**
    * Queries
@@ -118,15 +120,6 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
     e.stopPropagation();
     setCurrentImageLink(imageLink);
     setShowPreviewModal(true);
-  };
-
-  const onOpenEditDrawer = (data) => {
-    setShowDrawer(true);
-    setCurrentData({
-      ...data,
-      _method: "PUT",
-      publish_type: "pending",
-    });
   };
 
   const tableColumns: ColumnsType<AnnouncementData> = [
@@ -217,21 +210,17 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
     },
     isAdminPage
       ? {
-          key: "id",
-          dataIndex: "id",
-          render: (text, record, index) => {
-            return (
-              <div className="flex items-center space-x-2">
-                <ButtonSys
-                  type={"default"}
-                  // disabled={true}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenEditDrawer(record);
-                  }}
-                >
-                  <EditOutlined />
-                </ButtonSys>
+          key: "status",
+          title: "Status",
+          dataIndex: "is_publish",
+          render: (published) => {
+            return published ? (
+              <div className="rounded-md h-auto px-3 text-center py-1 bg-primary10 text-primary100 font-semibold">
+                Delivered
+              </div>
+            ) : (
+              <div className="rounded-md h-auto px-3 text-center py-1 bg-mono90 text-mono-30 font-semibold">
+                Scheduled
               </div>
             );
           },
@@ -302,8 +291,8 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
             setQueryParams({
               page: pagination.current,
               rows: pagination.pageSize,
-              order_by:
-                sortTypePayload === undefined ? undefined : sorter.field,
+              // order_by:
+              //   sortTypePayload === undefined ? undefined : sorter.field,
               order_to: sortTypePayload,
             });
           }}
@@ -324,8 +313,6 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
             initProps={initProps}
             visible={isShowDrawer}
             onvisible={setShowDrawer}
-            data={currentData}
-            setData={setCurrentData}
           />
         </AccessControl>
       )}
