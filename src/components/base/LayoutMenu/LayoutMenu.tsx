@@ -170,24 +170,30 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           <Link href="/dashboard/home">Dashboard</Link>
         </Menu.Item>
       )}
-      {hasPermission(SIDEBAR_CLIENT_DASHBOARD) && !hasRole(ROLE_SUPER_ADMIN) && (
-        <Menu.Item key="1" icon={<DashboardCompanyIconSvg />} title="Dashboard">
-          <Link href="/dashboard/home">
-            <p>Dashboard {dataPerusahaan}</p>
-          </Link>
-        </Menu.Item>
-      )}
-      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN) && (
-        <Menu.Item
-          key="kehadirancompany"
-          icon={<KehadiranCompanyIconSvg />}
-          title="Dashboard"
-        >
-          <Link href="/kehadiran/">
-            <p>Kehadiran {dataPerusahaan}</p>
-          </Link>
-        </Menu.Item>
-      )}
+      {hasPermission(SIDEBAR_CLIENT_DASHBOARD) &&
+        !hasRole(ROLE_SUPER_ADMIN) && (
+          <Menu.Item
+            key="1"
+            icon={<DashboardCompanyIconSvg />}
+            title="Dashboard"
+          >
+            <Link href="/dashboard/home">
+              <p>Dashboard {dataPerusahaan}</p>
+            </Link>
+          </Menu.Item>
+        )}
+      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) &&
+        !hasRole(ROLE_SUPER_ADMIN) && (
+          <Menu.Item
+            key="kehadirancompany"
+            icon={<KehadiranCompanyIconSvg />}
+            title="Dashboard"
+          >
+            <Link href="/kehadiran/">
+              <p>Kehadiran {dataPerusahaan}</p>
+            </Link>
+          </Menu.Item>
+        )}
       {hasPermission(SIDEBAR_CLIENT_PROJECT) && !hasRole(ROLE_SUPER_ADMIN) && (
         <Menu.Item
           key="projectscompany"
@@ -335,14 +341,14 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         </SubMenu>
       )}
 
-      {/* Notification / Announcement */}
+      {/* Announcement */}
       {hasPermission(SIDEBAR_ANNOUNCEMENT) && (
         <Menu.Item
           key="announcement"
           icon={<MessageIconSvg size={16} />}
           title="Announcement"
         >
-          <Link href="/announcement">Notification</Link>
+          <Link href="/announcement">Announcement</Link>
         </Menu.Item>
       )}
     </>
