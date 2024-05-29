@@ -394,7 +394,7 @@ const DrawerAnnouncement = ({
                       locale={locale}
                       picker="date"
                       showTime={{
-                        minuteStep: 30,
+                        minuteStep: 15,
                       }}
                       className="w-full"
                       format={"DD MMMM YYYY HH:mm"}
