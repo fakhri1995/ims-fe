@@ -356,6 +356,20 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   </p>
                 </button>
               </div>
+            ) : scheduleIdx > -1 &&
+              schedules[scheduleIdx]?.shift?.title == "Sakit" ? (
+              <div className="flex justify-center h-16">
+                <button
+                  onClick={() => handleShowUpdate(schedules[scheduleIdx])}
+                  disabled={!isAllowedToUpdateSchedule || isBeforeToday}
+                  className="bg-[#FBEAD5] flex flex-col items-center justify-center 
+                    px-3 py-2 rounded-md w-24"
+                >
+                  <p className="mig-caption--bold text-[#ED962F] text-center">
+                    Sakit
+                  </p>
+                </button>
+              </div>
             ) : (
               scheduleIdx > -1 && (
                 <div className="flex justify-center">
