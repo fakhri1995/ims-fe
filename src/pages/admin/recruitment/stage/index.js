@@ -383,7 +383,7 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-5 md:px-5 gap-6">
+        <div className="grid grid-cols-5 gap-6">
           <SetupMenu menu={"3"} />
 
           {/* Table Semua Stage */}

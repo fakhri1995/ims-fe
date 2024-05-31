@@ -491,7 +491,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathTitleArr={pathTitleArr}
     >
       <div className="grid grid-cols-1 gap-6" id="mainWrapper">
-        <div className="grid grid-cols-1 lg:grid-cols-2 md:px-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div
             className="flex flex-row items-center w-full 
 						justify-between px-6 py-2 shadow-md rounded-md bg-white
@@ -513,15 +513,15 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
             disabled={!isAllowedToAddContract || loadingAdd}
           />
         </div>
-        <div className="md:px-5">
+        <div className="">
           {/* Table Kontrak */}
           <div className="flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-            <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
-              <h4 className="mig-heading--4 w-full md:w-2/12">Kontrak</h4>
+            <div className="flex flex-col gap-4 lg:flex-row lg:justify-between w-full lg:items-center mb-4">
+              <h4 className="mig-heading--4 w-full lg:w-2/12">Kontrak</h4>
               {/* Start: Search criteria */}
 
               {/* Filter by duration (dropdown) */}
-              <div className="w-full md:w-2/12">
+              <div className="w-full lg:w-2/12">
                 <Select
                   defaultValue={queryParams.duration}
                   allowClear
@@ -575,7 +575,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by company client */}
-              <div className="w-full md:w-2/12">
+              <div className="w-full lg:w-2/12">
                 <Select
                   defaultValue={queryParams.client_ids}
                   allowClear
@@ -597,7 +597,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Search by status (dropdown) */}
-              <div className="w-full md:w-2/12">
+              <div className="w-full lg:w-2/12">
                 <Select
                   defaultValue={queryParams.status_types}
                   allowClear
@@ -626,7 +626,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Search by keyword (kata kunci) */}
-              <div className="w-full md:w-4/12">
+              <div className="w-full lg:w-4/12">
                 <Input
                   defaultValue={searchingFilterContracts}
                   style={{ width: `100%` }}

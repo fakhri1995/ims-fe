@@ -35,12 +35,8 @@ import {
 
 import {
   AnnouncementService,
-  IAddAnnouncementPayload,
-  IUpdateAnnouncementPayload,
   SendMailAnnouncementPayload,
 } from "apis/announcement";
-import { UserService } from "apis/user";
-import { GroupService } from "apis/user/group.service";
 
 import DrawerCore from "../drawerCore";
 
@@ -51,6 +47,7 @@ const DrawerAnnouncementEmail = ({
   initProps,
   visible,
   onvisible,
+  announcementId = -1,
   dataAnnouncement = null,
 }) => {
   /**
@@ -71,7 +68,7 @@ const DrawerAnnouncementEmail = ({
 
   //1. USE STATE
   const dataForm = {
-    id: dataAnnouncement?.id, // id announcement
+    id: announcementId, // id announcement
     purpose_type: "staff", // staff || group
     purpose_ids: [], // array (id user || id group)
     publish_type: "now", // now || pending
@@ -108,6 +105,7 @@ const DrawerAnnouncementEmail = ({
     mutationFn: () => {
       let payload = {
         ...dataMail,
+        id: announcementId,
         purpose_ids: selectedStaffs.map((staff) => staff.key),
       };
 
@@ -145,7 +143,11 @@ const DrawerAnnouncementEmail = ({
       form="formPesan"
       onClick={sendMailAnnouncement}
       onButtonCancelClicked={() => onvisible(false)}
-      disabled={!isAllowedToSendAnnouncement}
+      disabled={
+        !isAllowedToSendAnnouncement ||
+        selectedStaffs?.length < 1 || // disable if "Pesan Untuk" is not yet filled
+        (dataMail.publish_type == "pending" && !dataMail.publish_at) // disable if "Tanggal & Waktu Kirim" is not yet filled
+      }
     >
       <Spin spinning={!dataAnnouncement ? null : loadingSendMailAnnouncement}>
         <div className="flex flex-col">
@@ -156,7 +158,11 @@ const DrawerAnnouncementEmail = ({
           <Form layout="vertical" form={instanceForm} id="formPesan">
             <div>
               <SelectStaffOrGroup
-                title="Pesan Untuk :"
+                title={
+                  <p>
+                    <span className="required-mark">*</span>Pesan Untuk :
+                  </p>
+                }
                 initProps={initProps}
                 selected={selectedStaffs}
                 setSelected={setSelectedStaffs}
@@ -297,7 +303,7 @@ const DrawerAnnouncementEmail = ({
                       locale={locale}
                       picker="date"
                       showTime={{
-                        minuteStep: 30,
+                        minuteStep: 15,
                       }}
                       className="w-full"
                       format={"DD MMMM YYYY HH:mm"}

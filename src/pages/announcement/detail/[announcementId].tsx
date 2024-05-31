@@ -17,10 +17,10 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   ANNOUNCEMENTS_GET,
-  ANNOUNCEMENT_ADD,
   ANNOUNCEMENT_DELETE,
   ANNOUNCEMENT_GET,
   ANNOUNCEMENT_MAIL_GET,
+  ANNOUNCEMENT_MAIL_SEND,
 } from "lib/features";
 
 import { AnnouncementService } from "apis/announcement";
@@ -64,7 +64,7 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
     isLoading: loadingAnnouncement,
     refetch: refetchAnnouncement,
   } = useQuery(
-    [ANNOUNCEMENT_GET],
+    [ANNOUNCEMENT_GET, announcementId],
     () =>
       AnnouncementService.getAnnouncement(
         isAllowedToGetAnnouncement,
@@ -121,9 +121,10 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="announcement"
     >
-      <div className="px-5 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="px-6 md:px-0 grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7">
           <AnnouncementMessageSection
+            initProps={token}
             announcementId={announcementId}
             isAdminPage={true}
             setShowDeleteModal={setShowDeleteModal}
@@ -159,11 +160,12 @@ const AnnouncementDetailPage: NextPage<ProtectedPageProps> = ({
         </ModalHapus2>
       </AccessControl>
 
-      <AccessControl hasPermission={ANNOUNCEMENT_ADD}>
+      <AccessControl hasPermission={ANNOUNCEMENT_MAIL_SEND}>
         <DrawerAnnouncementEmail
           initProps={token}
           visible={isShowEmailDrawer}
           onvisible={setShowEmailDrawer}
+          announcementId={announcementId}
           dataAnnouncement={dataAnnouncement}
         />
       </AccessControl>

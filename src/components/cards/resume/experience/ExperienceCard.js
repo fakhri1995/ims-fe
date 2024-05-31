@@ -114,7 +114,7 @@ const ExperienceCard = ({
       useSortable({ id });
 
     const style = {
-      transform: CSS.Transform.toString(transform),
+      transform: `translate3d(${transform?.x}px, ${transform?.y}px, 0)`,
       transition,
     };
     return (

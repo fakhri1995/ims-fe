@@ -5,7 +5,7 @@ import clsx from "clsx";
 
 const ButtonSys = ({
   size,
-  type,
+  type = "default",
   children,
   color,
   submit,

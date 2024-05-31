@@ -19,7 +19,7 @@ import {
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { ModalHapus2 } from "../../../components/modal/modalCustom";
-import { generateStaticAssetUrl } from "../../../lib/helper";
+import { generateStaticAssetUrl, stripTags } from "../../../lib/helper";
 import httpcookie from "cookie";
 
 const Blog = ({ initProps, dataProfile, sidemenu }) => {
@@ -77,7 +77,7 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
           },
           children: (
             <>
-              <p className="text-xs">{record.description}</p>
+              <p className="text-xs">{stripTags(record.description)}</p>
             </>
           ),
         };

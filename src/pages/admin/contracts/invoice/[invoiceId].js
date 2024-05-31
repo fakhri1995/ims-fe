@@ -382,10 +382,7 @@ const ContractInvoiceFormIndex = ({
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div
-        className="grid grid-cols-1 gap-4 lg:gap-6 md:px-5 "
-        id="mainWrapper"
-      >
+      <div className="grid grid-cols-1 gap-4 lg:gap-6" id="mainWrapper">
         {/* Detail Invoice */}
 
         <section

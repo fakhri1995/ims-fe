@@ -20,7 +20,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { ANNOUNCEMENT_DELETE, ANNOUNCEMENT_MAIL_GET } from "lib/features";
+import { ANNOUNCEMENT_MAIL_GET, ANNOUNCEMENT_MAIL_SEND } from "lib/features";
 import { generateStaticAssetUrl, momentFormatDate } from "lib/helper";
 
 import { AnnouncementData, AnnouncementService } from "apis/announcement";
@@ -45,7 +45,7 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
   }
 
   const isAllowedToGetAnnouncementMail = hasPermission(ANNOUNCEMENT_MAIL_GET);
-  const isAllowedToDeleteAnnouncement = hasPermission(ANNOUNCEMENT_DELETE);
+  const isAllowedToSendAnnouncementMail = hasPermission(ANNOUNCEMENT_MAIL_SEND);
 
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
@@ -134,7 +134,7 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
         <ButtonSys
           onClick={() => setShowEmailDrawer(true)}
           type={"primary"}
-          disabled={!isAllowedToDeleteAnnouncement}
+          disabled={!isAllowedToSendAnnouncementMail}
         >
           <div className="flex gap-2 items-center whitespace-nowrap">
             <p>Kirim Email</p>
@@ -177,14 +177,6 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
             rows: pagination.pageSize,
           });
         }}
-        // onRow={(record, rowIndex) => {
-        //   return {
-        //     onClick: () => {
-        //       setDataCurrentLog(record);
-        //       setModalDetailLog(true);
-        //     },
-        //   };
-        // }}
         columns={[
           {
             title: "Email History",
@@ -207,12 +199,12 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
                       </div>
                       <p className="truncate">
                         <strong>{item?.user?.name}</strong> -{" "}
-                        {item?.user?.roles?.[0]?.name}
+                        {item?.user?.position}
                       </p>
                     </div>
                     <p className="text-right w-1/3">
                       {momentFormatDate(
-                        item?.created_at,
+                        item?.publish_at,
                         "-",
                         "D MMM YYYY, HH:mm",
                         true

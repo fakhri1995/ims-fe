@@ -609,10 +609,14 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                     }));
                   }}
                   onSearch={(value) => {
-                    setShiftFilterParams((prev) => ({
-                      ...prev,
-                      keyword: value,
-                    }));
+                    setTimeout(
+                      () =>
+                        setShiftFilterParams((prev) => ({
+                          ...prev,
+                          keyword: value,
+                        })),
+                      500
+                    );
                   }}
                   optionFilterProp="children"
                   filterOption={(

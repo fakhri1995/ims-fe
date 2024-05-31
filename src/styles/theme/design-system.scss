@@ -44,6 +44,11 @@
 
 /** Typography: Refer to Figma design */
 .mig-heading {
+  /** H2 */
+  &--2 {
+    @apply text-mono30 font-bold text-3xl;
+  }
+
   /** H3 */
   &--3 {
     @apply text-mono30 font-bold text-2xl;
@@ -98,4 +103,14 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+.required-mark {
+  display: inline-block;
+  margin-right: 4px;
+  color: #ff4d4f;
+  font-size: 14px;
+  font-family: SimSun, sans-serif;
+  line-height: 1;
+  content: "*";
 }

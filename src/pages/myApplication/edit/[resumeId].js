@@ -342,6 +342,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, resumeId }) => {
               initProps={initProps}
               dataDisplay={dataDisplay}
               handleAddSection={handleAddSection}
+              handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
               isAllowedToGetSkillLists={isAllowedToGetSkillLists}
               isAllowedToAddSection={isAllowedToAddSection}

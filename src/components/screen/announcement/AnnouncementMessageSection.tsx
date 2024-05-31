@@ -1,4 +1,4 @@
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Table, notification } from "antd";
 import parse from "html-react-parser";
 import moment from "moment";
@@ -7,6 +7,8 @@ import { Dispatch, FC, SetStateAction, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
+import DrawerAnnouncement from "components/drawer/announcement/drawerAnnouncement";
+import { AccessControl } from "components/features/AccessControl";
 import { ArrowLeftIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
@@ -18,18 +20,21 @@ import {
   ANNOUNCEMENTS_GET,
   ANNOUNCEMENT_DELETE,
   ANNOUNCEMENT_GET,
+  ANNOUNCEMENT_UPDATE,
 } from "lib/features";
 import { generateStaticAssetUrl } from "lib/helper";
 
-import { AnnouncementData, AnnouncementService } from "apis/announcement";
+import { AnnouncementService, IAnnouncementPayload } from "apis/announcement";
 
 interface IAnnouncementMessageSection {
+  initProps?: string;
   announcementId: number;
   isAdminPage?: boolean;
   setShowDeleteModal?: Dispatch<SetStateAction<boolean>>;
 }
 
 export const AnnouncementMessageSection: FC<IAnnouncementMessageSection> = ({
+  initProps,
   announcementId,
   isAdminPage,
   setShowDeleteModal,
@@ -46,6 +51,7 @@ export const AnnouncementMessageSection: FC<IAnnouncementMessageSection> = ({
 
   const isAllowedToGetAnnouncement = hasPermission(ANNOUNCEMENT_GET);
   const isAllowedToDeleteAnnouncement = hasPermission(ANNOUNCEMENT_DELETE);
+  const isAllowedToUpdateAnnouncement = hasPermission(ANNOUNCEMENT_UPDATE);
 
   const router = useRouter();
   const axiosClient = useAxiosClient();
@@ -54,6 +60,8 @@ export const AnnouncementMessageSection: FC<IAnnouncementMessageSection> = ({
   /**
    * States
    */
+  const [isShowDrawer, setShowDrawer] = useState(false);
+  const [currentData, setCurrentData] = useState<IAnnouncementPayload>();
 
   const {
     data: dataAnnouncement,
@@ -79,36 +87,18 @@ export const AnnouncementMessageSection: FC<IAnnouncementMessageSection> = ({
     }
   );
 
-  const handleCloseDelete = () => {
-    setShowDeleteModal(false);
-  };
-
-  const onMutationSucceed = (queryKey: string, message: string) => {
-    queryClient.invalidateQueries(queryKey);
-    notification.success({
-      message,
+  const onOpenEditDrawer = () => {
+    setShowDrawer(true);
+    setCurrentData({
+      _method: "PUT",
+      id: announcementId,
+      title: dataAnnouncement.title,
+      text: dataAnnouncement.text,
+      publish_type: "pending",
+      publish_at: dataAnnouncement.publish_at,
+      thumbnail_image: dataAnnouncement.thumbnail_image,
     });
   };
-
-  const { mutate: deleteAnnouncement, isLoading: loadingDeleteAnnouncement } =
-    useMutation(
-      (announcementId: number) =>
-        AnnouncementService.deleteAnnouncement(
-          isAllowedToDeleteAnnouncement,
-          axiosClient,
-          announcementId
-        ),
-      {
-        onSuccess: (response) => {
-          router.back();
-          onMutationSucceed(ANNOUNCEMENTS_GET, response.data.message);
-          handleCloseDelete();
-        },
-        onError: (error) => {
-          notification.error({ message: "Gagal menghapus pesan pengumuman." });
-        },
-      }
-    );
 
   return (
     <div className="mig-platform grid grid-cols-1 space-y-5">
@@ -121,26 +111,48 @@ export const AnnouncementMessageSection: FC<IAnnouncementMessageSection> = ({
           <p>Kembali</p>
         </button>
 
-        {!!setShowDeleteModal && (
-          <ButtonSys
-            onClick={() => setShowDeleteModal(true)}
-            type={"default"}
-            color="danger"
-            disabled={!isAllowedToDeleteAnnouncement}
-          >
-            <div className="flex gap-2 items-center">
-              <DeleteOutlined color="#BF4A40" />
-              <p>Hapus</p>
-            </div>
-          </ButtonSys>
+        {!!isAdminPage && (
+          <div className="flex gap-2">
+            <ButtonSys
+              onClick={() => setShowDeleteModal(true)}
+              type={"default"}
+              color="danger"
+              disabled={!isAllowedToDeleteAnnouncement}
+            >
+              <div className="flex gap-2 items-center">
+                <DeleteOutlined color="#BF4A40" />
+                <p>Hapus</p>
+              </div>
+            </ButtonSys>
+
+            {!dataAnnouncement?.is_publish && (
+              <ButtonSys
+                onClick={onOpenEditDrawer}
+                type={"default"}
+                color="mono50"
+                disabled={!isAllowedToUpdateAnnouncement}
+              >
+                <div className="flex gap-2 items-center">
+                  <EditOutlined color="#808080" />
+                  <p>Edit Pesan</p>
+                </div>
+              </ButtonSys>
+            )}
+          </div>
         )}
       </div>
       <hr />
       <div className="flex gap-2 items-center">
         <h1 className="font-medium text-2xl">{dataAnnouncement?.title}</h1>
-        {moment().diff(moment(dataAnnouncement?.publish_at), "days") <= 2 && (
-          <div className="bg-primary100 px-3 py-0.5 rounded-md text-white mig-caption--bold">
-            Baru
+        {dataAnnouncement?.is_publish ? (
+          moment().diff(moment(dataAnnouncement?.publish_at), "days") <= 2 ? (
+            <div className="bg-primary100 px-3 py-0.5 rounded-md text-white mig-caption--bold">
+              Baru
+            </div>
+          ) : null
+        ) : (
+          <div className="bg-mono50 px-3 py-0.5 rounded-md text-white mig-caption--bold">
+            Terjadwal
           </div>
         )}
       </div>
@@ -182,6 +194,18 @@ export const AnnouncementMessageSection: FC<IAnnouncementMessageSection> = ({
       <div className="py-4 parsed">
         {dataAnnouncement?.text ? parse(dataAnnouncement?.text) : ""}
       </div>
+
+      {isAdminPage && (
+        <AccessControl hasPermission={ANNOUNCEMENT_UPDATE}>
+          <DrawerAnnouncement
+            initProps={initProps}
+            visible={isShowDrawer}
+            onvisible={setShowDrawer}
+            data={currentData}
+            setData={setCurrentData}
+          />
+        </AccessControl>
+      )}
     </div>
   );
 };

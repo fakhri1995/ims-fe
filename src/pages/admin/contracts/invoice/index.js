@@ -587,7 +587,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathTitleArr={pathTitleArr}
     >
       <div className="grid grid-cols-1 gap-6" id="mainWrapper">
-        <div className="md:px-5">
+        <div className="">
           {/* Table Kontrak */}
           <div className="flex flex-col gap-6 shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex gap-4 items-center">
