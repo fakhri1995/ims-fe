@@ -590,7 +590,7 @@ export const JobDetail: FC = () => {
         </div>
         <div className={"w-full md:w-1/4"}>
           <div className={"flex flex-col gap-3"}>
-            <div className={"flex flex-row gap-4"}>
+            {/* <div className={"flex flex-row gap-4"}>
               <WorkIconSvg />
               <p
                 className={
@@ -599,7 +599,7 @@ export const JobDetail: FC = () => {
               >
                 {formattedSalaryRange}
               </p>
-            </div>
+            </div> */}
             <div className={"flex flex-row gap-4"}>
               <ArchivedIconSvg size={24} color={"#585858"} />
               <p
