@@ -335,14 +335,14 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         </SubMenu>
       )}
 
-      {/* Notification / Announcement */}
+      {/* Announcement */}
       {hasPermission(SIDEBAR_ANNOUNCEMENT) && (
         <Menu.Item
           key="announcement"
           icon={<MessageIconSvg size={16} />}
           title="Announcement"
         >
-          <Link href="/announcement">Notification</Link>
+          <Link href="/announcement">Announcement</Link>
         </Menu.Item>
       )}
     </>
