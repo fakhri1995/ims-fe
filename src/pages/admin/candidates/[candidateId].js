@@ -554,8 +554,9 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             {/* SECTION SKILLS */}
             <SkillCard
               initProps={initProps}
-              dataDisplay={dataDisplay}
+              dataDisplay={dataDisplay?.skills}
               handleAddSection={handleAddSection}
+              handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
               isAllowedToGetSkillLists={isAllowedToGetSkillLists}
               isAllowedToAddSection={isAllowedToAddSection}

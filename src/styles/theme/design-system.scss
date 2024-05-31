@@ -44,6 +44,11 @@
 
 /** Typography: Refer to Figma design */
 .mig-heading {
+  /** H2 */
+  &--2 {
+    @apply text-mono30 font-bold text-3xl;
+  }
+
   /** H3 */
   &--3 {
     @apply text-mono30 font-bold text-2xl;
