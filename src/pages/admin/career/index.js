@@ -321,7 +321,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
 
     // setLoadingRoleTypeList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoles`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRolesList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -330,7 +330,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRoles(res2.data.data);
+          setDataRoles(res2.data);
         } else {
           notification.error({
             message: `${res2.message}`,
