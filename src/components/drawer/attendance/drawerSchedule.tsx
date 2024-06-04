@@ -615,6 +615,8 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
             >
               <div className="flex gap-2 items-center ">
                 <AsyncSelect
+                  allowClear
+                  value={dataSchedule.shift_id}
                   placeholder="Pilih Shift"
                   disabled={!isAllowedToGetShifts}
                   className=" mb-2"
@@ -628,7 +630,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                   }}
                   data={dataShifts?.map((item) => ({
                     ...item,
-                    label: `${item?.title} (${item?.start_at?.slice(
+                    name: `${item?.title} (${item?.start_at?.slice(
                       0,
                       5
                     )} - ${item?.end_at?.slice(0, 5)})`,
