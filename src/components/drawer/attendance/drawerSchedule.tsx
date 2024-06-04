@@ -25,6 +25,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
+import AsyncSelect from "components/AsyncSelect";
 import ButtonSys from "components/button.js";
 import {
   AlerttriangleIconSvg,
@@ -109,9 +110,11 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
     });
 
   const [dataAgents, setDataAgents] = useState([]);
+  const [dataShifts, setDataShifts] = useState([]);
   const [selectedAgents, setSelectedAgents] = useState([]);
   const [isMaxAgents, setIsMaxAgents] = useState(false);
   const [isRepetition, setRepetition] = useState(false);
+  const [lockScroll, setLockScroll] = useState(false);
 
   // 2. USE EFFECT
   const {
@@ -141,7 +144,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
   );
 
   const {
-    data: dataShifts,
+    data: dataRawShifts,
     isLoading: loadingShifts,
     refetch: refetchShifts,
   } = useQuery(
@@ -154,7 +157,20 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
       ),
     {
       enabled: isAllowedToGetShifts && visible,
-      select: (response) => response.data.data.data,
+      select: (response) => response.data.data,
+      onSuccess: (data) => {
+        setLockScroll(false);
+        if (shiftFilterParams.page == 1) {
+          setDataShifts(data.data);
+        } else {
+          if (data.data.length > 0) {
+            let updatedData = [...dataShifts, ...data.data];
+            setDataShifts(updatedData);
+          } else {
+            setLockScroll(true);
+          }
+        }
+      },
       onError: (error) => {
         notification.error({
           message: "Gagal mendapatkan daftar shift.",
@@ -185,6 +201,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
       rows: 10,
       keyword: "",
     });
+    setLockScroll(false);
   };
 
   const onMutationSucceed = (queryKey: string, message: string) => {
@@ -597,53 +614,26 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
               ]}
             >
               <div className="flex gap-2 items-center ">
-                <Select
-                  showSearch
+                <AsyncSelect
                   placeholder="Pilih Shift"
                   disabled={!isAllowedToGetShifts}
                   className=" mb-2"
+                  lock={lockScroll}
+                  setFilterParams={setShiftFilterParams}
                   onChange={(value, option) => {
                     setDataSchedule((prev) => ({
                       ...prev,
                       shift_id: value,
                     }));
                   }}
-                  onSearch={(value) => {
-                    setTimeout(
-                      () =>
-                        setShiftFilterParams((prev) => ({
-                          ...prev,
-                          keyword: value,
-                        })),
-                      500
-                    );
-                  }}
-                  optionFilterProp="children"
-                  filterOption={(
-                    input,
-                    option: { label: string; value: number }
-                  ) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                >
-                  {dataShifts?.map((item) => {
-                    const label = `${item?.title} (${item?.start_at?.slice(
+                  data={dataShifts?.map((item) => ({
+                    ...item,
+                    label: `${item?.title} (${item?.start_at?.slice(
                       0,
                       5
-                    )} - ${item?.end_at?.slice(0, 5)})`;
-                    return (
-                      <Select.Option
-                        key={item?.id}
-                        value={item?.id}
-                        label={label}
-                      >
-                        {label}
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
+                    )} - ${item?.end_at?.slice(0, 5)})`,
+                  }))}
+                />
               </div>
             </Form.Item>
 
