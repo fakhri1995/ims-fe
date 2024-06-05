@@ -27,11 +27,13 @@ import {
   CheckIconSvg,
   CheckboxIconSvg,
   CircleXIconSvg,
+  CloseIconSvg,
   CopyIconSvg,
   DownloadIcon2Svg,
   ListNumbersSvg,
   TrashIconSvg,
   UploadIconSvg,
+  UserPlusIconSvg,
 } from "../../icon";
 import { ModalUbah } from "../../modal/modalCustom";
 import { H2, Label } from "../../typography";
