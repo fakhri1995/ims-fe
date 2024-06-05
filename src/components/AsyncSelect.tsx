@@ -5,6 +5,7 @@ import React, { useEffect, useRef } from "react";
  * A select component + auto loads more options on scrolled
  */
 const AsyncSelect = ({
+  value,
   placeholder,
   disabled,
   className = "",
@@ -12,6 +13,7 @@ const AsyncSelect = ({
   data,
   lock,
   setFilterParams,
+  allowClear = false,
 }) => {
   const timeoutRef = useRef(null);
 
@@ -43,6 +45,8 @@ const AsyncSelect = ({
   return (
     <Select
       showSearch
+      value={value}
+      allowClear={allowClear}
       placeholder={placeholder}
       disabled={disabled}
       className={className}
@@ -60,8 +64,8 @@ const AsyncSelect = ({
     >
       {data?.map((item) => {
         return (
-          <Select.Option key={item?.id} value={item?.id} label={item?.label}>
-            {item?.label}
+          <Select.Option key={item?.id} value={item?.id} label={item?.name}>
+            {item?.name}
           </Select.Option>
         );
       })}

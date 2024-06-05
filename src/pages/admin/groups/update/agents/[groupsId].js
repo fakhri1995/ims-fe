@@ -173,11 +173,13 @@ function GroupsAgentsDetail({
                   Edit Group Agents
                 </h1>
                 <div className="flex space-x-2">
-                  <Link href="/admin/groups">
-                    <Button type="default" size="middle">
-                      Cancel
-                    </Button>
-                  </Link>
+                  <Button
+                    onClick={() => rt.back()}
+                    type="default"
+                    size="middle"
+                  >
+                    Cancel
+                  </Button>
                   {
                     // [137].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <Button
@@ -296,7 +298,7 @@ function GroupsAgentsDetail({
                     </h1>
                     <div className="border-gray-300 md:px-4 px-0 py-4 mb-5 border bg-white w-full h-auto ">
                       <Radio.Group
-                        className="flex flex-col md:flex-row"
+                        className="flex flex-col md:flex-row mb-4"
                         row
                         onChange={onChange}
                         value={value}
@@ -304,7 +306,7 @@ function GroupsAgentsDetail({
                         <Radio className="flex-initial font-bold " value={1}>
                           Add as a Member
                           <p
-                            className="pl-6 whitespace-normal font-normal"
+                            className="whitespace-normal font-normal"
                             style={{ width: "min-content", minWidth: "15rem" }}
                           >
                             Members can be assigned tickets, tasks and other
@@ -318,7 +320,7 @@ function GroupsAgentsDetail({
                         >
                           Add as an Observer
                           <p
-                            className="pl-6 whitespace-normal font-normal"
+                            className="whitespace-normal font-normal"
                             style={{ width: "min-content", minWidth: "15rem" }}
                           >
                             Members can be assigned tickets, tasks and other

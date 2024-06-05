@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
+import AsyncSelect from "components/AsyncSelect";
+
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -45,6 +47,9 @@ const ModalShare = ({ initProps, visible, onvisible, category }) => {
   const [dataForm, setDataForm] = useState(emptyForm);
   const [modalLink, setModalLink] = useState(false);
   const [generatedData, setGeneratedData] = useState(null);
+  const [lockScroll, setLockScroll] = useState(false);
+  const [requesterList, setRequesterList] = useState([]);
+
   const sharedLink = getTalentPoolLink(generatedData?.code);
 
   const [filterParams, setFilterParams] = useState({
@@ -55,15 +60,33 @@ const ModalShare = ({ initProps, visible, onvisible, category }) => {
 
   // 2. USE QUERY & USE EFFECT
   const {
-    data: requesterList,
-    isLoading: loadingRequesterList,
+    data: dataRawRequesters,
+    isLoading: loadingRequesters,
     refetch: refetchRequesters,
   } = useQuery(
     [REQUESTERS_GET, filterParams],
     () => RequesterService.getRequesterList(axiosClient, filterParams),
     {
       enabled: isAllowedToGetRequesters && visible,
-      select: (response) => response.data.data.data,
+      select: (response) => response.data.data,
+      onSuccess: (data) => {
+        setLockScroll(false);
+        if (filterParams.page == 1) {
+          setRequesterList(data.data);
+        } else {
+          if (data.data.length > 0) {
+            let updatedData = [...requesterList, ...data.data];
+            setRequesterList(updatedData);
+          } else {
+            setLockScroll(true);
+          }
+        }
+      },
+      onError: (error) => {
+        notification.error({
+          message: "Gagal mendapatkan daftar requester.",
+        });
+      },
     }
   );
 
@@ -82,6 +105,7 @@ const ModalShare = ({ initProps, visible, onvisible, category }) => {
     onvisible(false);
     setModalLink(false);
     clearData();
+    setLockScroll(false);
   };
 
   const handleGenerate = () => {
@@ -189,17 +213,13 @@ const ModalShare = ({ initProps, visible, onvisible, category }) => {
           ]}
         >
           <>
-            <Select
-              showSearch
+            <AsyncSelect
               allowClear
               value={dataForm.requester_id}
               placeholder="Pilih nama peminta"
-              onSearch={(value) => {
-                setTimeout(() =>
-                  setFilterParams((prev) => ({ ...prev, name: value }), 500)
-                );
-              }}
-              optionFilterProp="children"
+              disabled={!isAllowedToGetRequesters}
+              lock={lockScroll}
+              setFilterParams={setFilterParams}
               onChange={(value, option) => {
                 setDataForm((prev) => ({
                   ...prev,
@@ -207,14 +227,8 @@ const ModalShare = ({ initProps, visible, onvisible, category }) => {
                   company_name: option?.company_name ?? null,
                 }));
               }}
-              disabled={!isAllowedToGetRequesters}
-            >
-              {requesterList?.map((item) => (
-                <Select.Option key={item.id} value={item.id} {...item}>
-                  {item.name}
-                </Select.Option>
-              ))}
-            </Select>
+              data={requesterList}
+            />
           </>
         </Form.Item>
 

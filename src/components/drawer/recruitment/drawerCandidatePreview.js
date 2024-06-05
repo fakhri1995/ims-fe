@@ -126,32 +126,37 @@ const DrawerCandidatePreview = ({
           <div className="flex flex-row justify-between mb-6">
             <div className="flex flex-col space-y-2">
               <p className="mig-caption--medium text-mono80">Role</p>
-              <p>{dataPreview.role}</p>
+              <p>{dataPreview.role ?? "-"}</p>
             </div>
             <div className="flex flex-col space-y-2">
               <p className="mig-caption--medium text-mono80">Tanggal Daftar</p>
               <p>
-                {dataPreview.created_at &&
-                  `${moment(dataPreview.created_at).format("LL")}, ${moment(
-                    dataPreview.created_at
-                  ).format("LT")}`}
+                {dataPreview.created_at
+                  ? `${moment(dataPreview.created_at).format("LL")}, ${moment(
+                      dataPreview.created_at
+                    ).format("LT")}`
+                  : "-"}
               </p>
             </div>
           </div>
           <div className="flex flex-col">
-            <p className="mig-caption--medium text-mono80 mb-6">Stage</p>
-            <Timeline>
-              {/* loop stage history */}
-              {dataPreview.recruitment_stage?.map((stage, idx) => (
-                <Timeline.Item key={idx} color="#35763B">
-                  <p>{stage.name}</p>
-                  <p className="mig-caption--medium text-mono80">
-                    {moment(stage.updated_at).format("ll")},&nbsp;
-                    {moment(stage.updated_at).format("LT")}
-                  </p>
-                </Timeline.Item>
-              ))}
-            </Timeline>
+            <p className="mig-caption--medium text-mono80">Stage</p>
+            {dataPreview.recruitment_stage?.length > 0 ? (
+              <Timeline className="mt-6">
+                {/* loop stage history */}
+                {dataPreview.recruitment_stage?.map((stage, idx) => (
+                  <Timeline.Item key={idx} color="#35763B">
+                    <p>{stage.name}</p>
+                    <p className="mig-caption--medium text-mono80">
+                      {moment(stage.updated_at).format("ll")},&nbsp;
+                      {moment(stage.updated_at).format("LT")}
+                    </p>
+                  </Timeline.Item>
+                ))}
+              </Timeline>
+            ) : (
+              <div className="mt-2">-</div>
+            )}
           </div>
         </div>
       </Spin>

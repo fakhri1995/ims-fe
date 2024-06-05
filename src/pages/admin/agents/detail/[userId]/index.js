@@ -404,9 +404,9 @@ function AgentDetail({
             <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
               <h1 className="font-semibold py-2">Detail Profil Agent</h1>
               <div className="flex items-end space-x-0 space-y-2 md:space-y-0 md:space-x-2 md:flex-row flex-col">
-                <Link href={`/admin/agents`}>
-                  <Button type="default">Kembali</Button>
-                </Link>
+                <Button type="default" onClick={() => rt.back()}>
+                  Kembali
+                </Button>
                 <ButtonSys
                   type={"primary"}
                   onClick={onAddEmployeeButtonClicked}
