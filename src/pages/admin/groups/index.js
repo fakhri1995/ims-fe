@@ -229,7 +229,6 @@ function Groups({
         title: "action", // Non-breakable space is char 0xa0 (160 dec)
         dataIndex: "actionss",
         key: "action",
-        width: 50,
         render: (text, record, index) => {
           return {
             props: {
@@ -253,7 +252,9 @@ function Groups({
                             },
                           }}
                         >
-                          <EditOutlined />
+                          <div className="flex items-center">
+                            <EditOutlined />
+                          </div>
                         </Link>
                       </Button>
                     }
@@ -274,7 +275,9 @@ function Groups({
                             },
                           }}
                         >
-                          <EditOutlined />
+                          <div className="flex items-center">
+                            <EditOutlined />
+                          </div>
                         </Link>
                       </Button>
                     }
@@ -289,7 +292,6 @@ function Groups({
         title: "action", // Non-breakable space is char 0xa0 (160 dec)
         dataIndex: "actionss",
         key: "action",
-        width: 100,
         render: (text, record, index) => {
           return {
             props: {
