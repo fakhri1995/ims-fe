@@ -404,9 +404,9 @@ function AgentDetail({
             <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
               <h1 className="font-semibold py-2">Detail Profil Agent</h1>
               <div className="flex items-end space-x-0 space-y-2 md:space-y-0 md:space-x-2 md:flex-row flex-col">
-                <Button type="default" onClick={() => rt.back()}>
-                  Kembali
-                </Button>
+                <Link href={`/admin/agents`}>
+                  <Button type="default">Kembali</Button>
+                </Link>
                 <ButtonSys
                   type={"primary"}
                   onClick={onAddEmployeeButtonClicked}
@@ -535,7 +535,10 @@ function AgentDetail({
                         <h1 className="font-semibold text-sm">Role:</h1>
                         <div className=" flex flex-wrap items-center gap-2 ">
                           {namarolearr.map((doc, idx) => (
-                            <div className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100">
+                            <div
+                              key={doc.id}
+                              className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100"
+                            >
                               {doc.name}
                             </div>
                           ))}
@@ -648,7 +651,10 @@ function AgentDetail({
                         <h1 className="font-semibold text-sm">Role:</h1>
                         <div className=" flex items-center">
                           {namarolearr.map((doc, idx) => (
-                            <div className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100 mr-2">
+                            <div
+                              key={doc.id}
+                              className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100 mr-2"
+                            >
                               {doc.name}
                             </div>
                           ))}

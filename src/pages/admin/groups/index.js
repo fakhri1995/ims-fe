@@ -235,7 +235,7 @@ function Groups({
               style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
             },
             children: (
-              <>
+              <div className="flex justify-center">
                 {variabel === "agents" ? (
                   <>
                     {
@@ -283,7 +283,7 @@ function Groups({
                     }
                   </>
                 )}
-              </>
+              </div>
             ),
           };
         },
@@ -298,7 +298,7 @@ function Groups({
               style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
             },
             children: (
-              <>
+              <div className="flex justify-center">
                 {variabel === "agents" ? (
                   <>
                     {
@@ -332,7 +332,7 @@ function Groups({
                     }
                   </>
                 )}
-              </>
+              </div>
             ),
           };
         },
