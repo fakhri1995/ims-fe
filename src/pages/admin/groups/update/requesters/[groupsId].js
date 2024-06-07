@@ -182,11 +182,13 @@ function GroupsRequestersDetail({
                   Edit Requesters Group
                 </h1>
                 <div className="flex space-x-2">
-                  <Link href="/admin/groups">
-                    <Button type="default" size="middle">
-                      Cancel
-                    </Button>
-                  </Link>
+                  <Button
+                    type="default"
+                    size="middle"
+                    onClick={() => rt.back()}
+                  >
+                    Cancel
+                  </Button>
                   {
                     // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <Button

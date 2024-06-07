@@ -22,7 +22,7 @@ import CheckableTag from "antd/lib/tag/CheckableTag";
 import { AxiosResponse } from "axios";
 import moment from "moment";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import AsyncSelect from "components/AsyncSelect";
@@ -53,6 +53,7 @@ import { AttendanceScheduleService } from "apis/attendance";
 import { IAddSchedulePayload } from "apis/attendance/attendance-schedule.types";
 import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
 import { IGetShiftsPaginateParams } from "apis/attendance/attendance-shift.types";
+import { GetCompanyClientListData } from "apis/company";
 import {
   AgentService,
   IGetAgentsPaginateParams,
@@ -61,7 +62,17 @@ import {
 
 import DrawerCore from "../drawerCore";
 
-const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
+interface IDrawerSchedule {
+  visible: boolean;
+  onvisible: Dispatch<SetStateAction<boolean>>;
+  companyList: GetCompanyClientListData[];
+}
+
+const DrawerSchedule: FC<IDrawerSchedule> = ({
+  visible,
+  onvisible,
+  companyList,
+}) => {
   /**
    * Dependencies
    */
@@ -615,6 +626,8 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
             >
               <div className="flex gap-2 items-center ">
                 <AsyncSelect
+                  allowClear
+                  value={dataSchedule.shift_id}
                   placeholder="Pilih Shift"
                   disabled={!isAllowedToGetShifts}
                   className=" mb-2"
@@ -628,7 +641,7 @@ const DrawerSchedule = ({ visible, onvisible, data = null, companyList }) => {
                   }}
                   data={dataShifts?.map((item) => ({
                     ...item,
-                    label: `${item?.title} (${item?.start_at?.slice(
+                    name: `${item?.title} (${item?.start_at?.slice(
                       0,
                       5
                     )} - ${item?.end_at?.slice(0, 5)})`,

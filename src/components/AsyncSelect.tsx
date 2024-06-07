@@ -1,10 +1,23 @@
 import { Select } from "antd";
-import React, { useEffect, useRef } from "react";
+import React, { FC, useEffect, useRef } from "react";
 
 /**
  * A select component + auto loads more options on scrolled
  */
-const AsyncSelect = ({
+interface IAsyncSelect {
+  value: number;
+  placeholder: string;
+  disabled: boolean;
+  className: string;
+  onChange: (value: any, option: any) => void;
+  data: any[];
+  lock: boolean;
+  setFilterParams: React.Dispatch<React.SetStateAction<any>>;
+  allowClear: true;
+}
+
+const AsyncSelect: FC<IAsyncSelect> = ({
+  value,
   placeholder,
   disabled,
   className = "",
@@ -12,6 +25,7 @@ const AsyncSelect = ({
   data,
   lock,
   setFilterParams,
+  allowClear = false,
 }) => {
   const timeoutRef = useRef(null);
 
@@ -43,6 +57,8 @@ const AsyncSelect = ({
   return (
     <Select
       showSearch
+      value={value}
+      allowClear={allowClear}
       placeholder={placeholder}
       disabled={disabled}
       className={className}
@@ -60,8 +76,8 @@ const AsyncSelect = ({
     >
       {data?.map((item) => {
         return (
-          <Select.Option key={item?.id} value={item?.id} label={item?.label}>
-            {item?.label}
+          <Select.Option key={item?.id} value={item?.id} label={item?.name}>
+            {item?.name}
           </Select.Option>
         );
       })}

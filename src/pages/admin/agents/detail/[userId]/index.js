@@ -535,7 +535,10 @@ function AgentDetail({
                         <h1 className="font-semibold text-sm">Role:</h1>
                         <div className=" flex flex-wrap items-center gap-2 ">
                           {namarolearr.map((doc, idx) => (
-                            <div className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100">
+                            <div
+                              key={doc.id}
+                              className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100"
+                            >
                               {doc.name}
                             </div>
                           ))}
@@ -648,7 +651,10 @@ function AgentDetail({
                         <h1 className="font-semibold text-sm">Role:</h1>
                         <div className=" flex items-center">
                           {namarolearr.map((doc, idx) => (
-                            <div className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100 mr-2">
+                            <div
+                              key={doc.id}
+                              className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100 mr-2"
+                            >
                               {doc.name}
                             </div>
                           ))}

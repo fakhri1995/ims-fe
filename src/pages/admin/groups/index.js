@@ -229,14 +229,13 @@ function Groups({
         title: "action", // Non-breakable space is char 0xa0 (160 dec)
         dataIndex: "actionss",
         key: "action",
-        width: 50,
         render: (text, record, index) => {
           return {
             props: {
               style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
             },
             children: (
-              <>
+              <div className="flex justify-center">
                 {variabel === "agents" ? (
                   <>
                     {
@@ -253,7 +252,9 @@ function Groups({
                             },
                           }}
                         >
-                          <EditOutlined />
+                          <div className="flex items-center">
+                            <EditOutlined />
+                          </div>
                         </Link>
                       </Button>
                     }
@@ -274,13 +275,15 @@ function Groups({
                             },
                           }}
                         >
-                          <EditOutlined />
+                          <div className="flex items-center">
+                            <EditOutlined />
+                          </div>
                         </Link>
                       </Button>
                     }
                   </>
                 )}
-              </>
+              </div>
             ),
           };
         },
@@ -289,14 +292,13 @@ function Groups({
         title: "action", // Non-breakable space is char 0xa0 (160 dec)
         dataIndex: "actionss",
         key: "action",
-        width: 100,
         render: (text, record, index) => {
           return {
             props: {
               style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
             },
             children: (
-              <>
+              <div className="flex justify-center">
                 {variabel === "agents" ? (
                   <>
                     {
@@ -330,7 +332,7 @@ function Groups({
                     }
                   </>
                 )}
-              </>
+              </div>
             ),
           };
         },
