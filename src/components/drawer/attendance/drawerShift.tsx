@@ -8,7 +8,13 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { useMutation, useQueryClient } from "react-query";
 
 import { useAccessControl } from "contexts/access-control";
@@ -25,11 +31,18 @@ import { AttendanceShiftService } from "apis/attendance/attendance-shift.service
 import {
   IAddShiftPayload,
   IUpdateShiftPayload,
+  ShiftDetailData,
 } from "apis/attendance/attendance-shift.types";
 
 import DrawerCore from "../drawerCore";
 
-const DrawerShift = ({ visible, onvisible, data = null }) => {
+interface IDrawerShift {
+  visible: boolean;
+  onvisible: Dispatch<SetStateAction<boolean>>;
+  data?: ShiftDetailData;
+}
+
+const DrawerShift: FC<IDrawerShift> = ({ visible, onvisible, data = null }) => {
   /**
    * Dependencies
    */
@@ -60,6 +73,7 @@ const DrawerShift = ({ visible, onvisible, data = null }) => {
 
   const [disableJamKerja, setDisableJamKerja] = useState(false);
   const [valueShiftCheckbox, setValueShiftCheckbox] = useState(false);
+
   // 2. USE EFFECT
   // 2.1. set initial dataShift from data
   useEffect(() => {

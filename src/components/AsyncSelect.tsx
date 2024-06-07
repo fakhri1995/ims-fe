@@ -1,10 +1,22 @@
 import { Select } from "antd";
-import React, { useEffect, useRef } from "react";
+import React, { FC, useEffect, useRef } from "react";
 
 /**
  * A select component + auto loads more options on scrolled
  */
-const AsyncSelect = ({
+interface IAsyncSelect {
+  value: number;
+  placeholder: string;
+  disabled: boolean;
+  className: string;
+  onChange: (value: any, option: any) => void;
+  data: any[];
+  lock: boolean;
+  setFilterParams: React.Dispatch<React.SetStateAction<any>>;
+  allowClear: true;
+}
+
+const AsyncSelect: FC<IAsyncSelect> = ({
   value,
   placeholder,
   disabled,

@@ -183,13 +183,13 @@ function AgentUpdate({
   };
 
   //useEffect
-  useEffect(() => {
+  useEffect(async () => {
     if (!isAllowedToGetAgentDetail) {
       permissionWarningNotification("Mendapatkan", "Detail Agent");
       return;
     }
 
-    fetch(
+    await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentDetail?account_id=${userid}`,
       {
         method: `GET`,
@@ -563,7 +563,7 @@ function AgentUpdate({
                         onChange={(value) => {
                           onChangeRole(value);
                         }}
-                        value={defaultroles}
+                        defaultValue={defaultroles}
                         style={{ width: `100%` }}
                         options={dataroles.data.map((doc) => ({
                           label: doc.name,
