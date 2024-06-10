@@ -16,7 +16,7 @@ import { useQuery, useQueryClient } from "react-query";
 import ButtonSys from "components/button";
 import DrawerAnnouncement from "components/drawer/announcement/drawerAnnouncement";
 import { AccessControl } from "components/features/AccessControl";
-import { ArrowsSortIconSvg, PlusIconSvg } from "components/icon";
+import { PlusIconSvg } from "components/icon";
 import ModalThumbnailPreview from "components/modal/attendance/modalThumbnailPreview";
 
 import { useAccessControl } from "contexts/access-control";
@@ -124,96 +124,89 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
 
   const tableColumns: ColumnsType<AnnouncementData> = [
     {
+      key: "no",
+      title: "No.",
+      width: "10px",
+      render: (_, __, index) => (
+        <p className="text-center">
+          {(dataRawAnnouncements?.from || 0) + index}.
+        </p>
+      ),
+    },
+    {
       key: "thumbnail",
       title: "Thumbnail",
       dataIndex: "thumbnail_image",
-      width: 130,
-      render: (image, record, index) => {
-        const thisDate = (record?.publish_at as string).slice(0, 10);
-        const prevDate =
-          index > 0
-            ? (dataAnnouncements?.[index - 1]?.publish_at as string).slice(
-                0,
-                10
-              )
-            : "";
-
-        return (
-          <div>
-            {thisDate != prevDate && (
-              <p className="mb-3 text-mono50">
-                {formatDateToLocale(
-                  record?.publish_at as unknown as Date,
-                  "d MMM yyyy"
-                )}
-              </p>
-            )}
-            {image?.link &&
-            image?.link != "staging/Announcement/mig-announce-logo.png" ? (
-              <div
-                onClick={(
-                  e: React.MouseEvent<HTMLImageElement, MouseEvent>
-                ) => {
-                  const imageElement = e.target as HTMLImageElement;
-                  handleClickThumbnail(e, imageElement.src);
-                }}
-              >
-                <img
-                  src={generateStaticAssetUrl(image?.link)}
-                  className="h-[130px] w-[130px] object-cover rounded"
-                />
-              </div>
-            ) : (
-              <div
-                onClick={(e) => handleClickThumbnail(e, "/mig.png")}
-                className="h-[130px] w-[130px] bg-backdrop rounded flex flex-col items-center 
+      render: (image) => {
+        return image?.link &&
+          image?.link != "staging/Announcement/mig-announce-logo.png" ? (
+          <div
+            className="h-18"
+            onClick={(e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+              const imageElement = e.target as HTMLImageElement;
+              handleClickThumbnail(e, imageElement.src);
+            }}
+          >
+            <img
+              src={generateStaticAssetUrl(image?.link)}
+              className="h-18 w-20 object-cover rounded"
+            />
+          </div>
+        ) : (
+          <div
+            onClick={(e) => handleClickThumbnail(e, "/mig.png")}
+            className="h-18 w-20 bg-backdrop rounded flex flex-col items-center 
                   justify-center py-4 px-3"
-              >
-                <img
-                  src="/mig.png"
-                  style={{ width: "10rem", mixBlendMode: "luminosity" }}
-                />
-              </div>
-            )}
+          >
+            <img
+              src="/mig.png"
+              style={{ width: "10rem", mixBlendMode: "luminosity" }}
+            />
           </div>
         );
       },
     },
-
+    {
+      key: "title",
+      title: "Judul",
+      dataIndex: "title",
+      render: (title) => {
+        return <h1 className="font-bold">{title}</h1>;
+      },
+    },
     {
       key: "text",
       title: "Isi",
       dataIndex: "text",
-      render: (text, record, index) => {
+      render: (text) => {
         const MAX_LENGTH = 120;
         const slicedText = stripTags(text).slice(0, MAX_LENGTH);
         return (
-          <div className="flex flex-col gap-2">
-            <h1 className="mig-heading--4">{record?.title}</h1>
-            <p className="mig-caption--medium">
-              oleh {isAdminPage ? record?.user?.name : record?.user?.position}
-            </p>
-            <p className="text-mono50 w-36 md:w-72 lg:w-96 xl:w-120">
-              {slicedText?.length < MAX_LENGTH
-                ? slicedText
-                : `${slicedText}...`}
-            </p>
-          </div>
+          <p className="w-36 md:w-72 lg:w-96 xl:w-120">
+            {slicedText?.length < MAX_LENGTH ? slicedText : `${slicedText}...`}
+          </p>
         );
       },
     },
-
+    {
+      key: "user",
+      title: "Penulis",
+      dataIndex: "user",
+      render: (user) => {
+        return <p>{isAdminPage ? user?.name : user?.position}</p>;
+      },
+    },
     {
       key: "date",
       title: "Waktu",
       dataIndex: "publish_at",
       render: (publishAt) =>
-        formatDateToLocale(publishAt as unknown as Date, "HH:mm"),
-      // sorter: (lhs, rhs) => {
-      //   const lhsDate = new Date(lhs.created_at);
-      //   const rhsDate = new Date(rhs.created_at);
-      //   return lhsDate < rhsDate ? -1 : 1;
-      // },
+        formatDateToLocale(publishAt as unknown as Date, "dd MMM yyyy, HH:mm"),
+      sorter: (lhs, rhs) => {
+        const lhsDate = new Date(lhs.created_at);
+        const rhsDate = new Date(rhs.created_at);
+        return lhsDate < rhsDate ? -1 : 1;
+      },
     },
     isAdminPage
       ? {
@@ -238,10 +231,12 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
   return (
     <div className="mig-platform flex flex-col space-y-5">
       {/* Keyword search, Cari button */}
-      <section className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-        <div className="w-full md:w-4/12">
+      <section className="flex justify-between items-center">
+        {/* Title */}
+        <h4 className="mig-heading--4">Daftar Pesan</h4>
+        <div className="flex items-center gap-6">
           <Input
-            placeholder="Cari Pengumuman Di sini..."
+            placeholder="Cari Sesuatu..."
             prefix={<SearchOutlined className="text-mono80" />}
             allowClear
             onChange={(e) => {
@@ -256,29 +251,6 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
             }}
             disabled={!isAllowedToGetAnnouncements}
           />
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-center gap-4">
-          {
-            <button
-              className="bg-transparent"
-              onClick={() =>
-                setQueryParams({
-                  order_to: queryParams.order_to == "asc" ? "desc" : "asc",
-                })
-              }
-            >
-              <div className="flex gap-2 items-center">
-                <ArrowsSortIconSvg size={16} />
-                <p className="text-mono50 text-left">
-                  {queryParams.order_to == "asc"
-                    ? "Urutkan Waktu Terbaru"
-                    : "Urutkan Waktu Terlama"}
-                </p>
-              </div>
-            </button>
-          }
-
           {isAdminPage && (
             <ButtonSys
               type="primary"
@@ -302,8 +274,6 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
           loading={loadingAnnouncements}
           columns={tableColumns}
           scroll={{ x: 200 }}
-          showHeader={false}
-          className="customTable"
           pagination={{
             total: dataRawAnnouncements?.total,
             current: queryParams?.page,

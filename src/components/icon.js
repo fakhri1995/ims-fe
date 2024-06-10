@@ -570,11 +570,11 @@ const SortingIconSvg = ({ size, color }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-sort-ascending-letters"
-      width={size}
-      height={size}
+      width={size ? size : 24}
+      height={size ? size : 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={color ? color : "#808080"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1193,11 +1193,11 @@ const ArrowsSortIconSvg = ({ size, color }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-arrows-sort"
-      width={size}
-      height={size}
+      width={size ? size : 24}
+      height={size ? size : 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={color ? color : "#808080"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
