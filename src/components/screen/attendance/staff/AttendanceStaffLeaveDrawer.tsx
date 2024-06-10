@@ -1,14 +1,21 @@
-import { CameraOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  CameraOutlined,
+  LoadingOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Checkbox,
   DatePicker,
+  Drawer,
   Form,
   Input,
   InputNumber,
   Modal,
   Select,
   Skeleton,
+  Spin,
+  Tag,
   Upload,
   UploadProps,
   notification,
@@ -17,6 +24,7 @@ import { FormInstance } from "antd/es/form/Form";
 import { UploadChangeParam } from "antd/lib/upload";
 import { RcFile, UploadFile } from "antd/lib/upload/interface";
 import type { AxiosError, AxiosResponse } from "axios";
+import moment from "moment";
 import {
   Dispatch,
   FC,
@@ -24,6 +32,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useQuery } from "react-query";
@@ -39,11 +48,15 @@ import {
   ATTENDANCE_ACTIVITY_ADD,
   ATTENDANCE_ACTIVITY_DELETE,
   ATTENDANCE_ACTIVITY_UPDATE,
+  FILTER_EMPLOYEES_GET,
+  LEAVE_TYPES_GET,
 } from "lib/features";
 import {
+  generateStaticAssetUrl,
   getBase64,
   getFileName,
   objectToFormData,
+  objectToFormDataNew,
   permissionWarningNotification,
 } from "lib/helper";
 
@@ -67,8 +80,11 @@ export interface IAttendanceStaffLeaveDrawer {
    * Arg ini diperlukan untuk `action === "update"`.
    */
   activityFormId?: number;
-
+  username: string;
+  idUser: number;
+  dataToken: string;
   visible: boolean;
+  getDataNew: () => void;
   onClose: () => void;
 }
 
@@ -77,11 +93,15 @@ export interface IAttendanceStaffLeaveDrawer {
  */
 export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
   action = "create",
+  getDataNew,
   visible,
   onClose,
+  username,
+  dataToken,
+  idUser,
   activityFormId,
 }) => {
-  const [form] = Form.useForm();
+  const [instanceForm] = Form.useForm();
   const axiosClient = useAxiosClient();
   const { todayActivities, findTodayActivity } =
     useGetUserAttendanceTodayActivities();
@@ -89,11 +109,19 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
   const isAllowedToAddActivity = hasPermission(ATTENDANCE_ACTIVITY_ADD);
   const isAllowedToUpdateActivity = hasPermission(ATTENDANCE_ACTIVITY_UPDATE);
   const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
-
+  const isAllowedToGetLeaveTypes = hasPermission(LEAVE_TYPES_GET);
+  const isAllowedToGetEmployees = hasPermission(FILTER_EMPLOYEES_GET);
+  const [resumeFileBlob, setResumeFileBlob] = useState<RcFile | Blob | File>(
+    null
+  );
+  const [dataTipeCutis, setDataTipeCutis] = useState([]);
+  const [dataEmployees, setDataEmployees] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const searchTimeoutRef = useRef(null);
   useEffect(() => {
     /** Always clean up the form fields on close */
     if (!visible) {
-      form.resetFields();
+      instanceForm.resetFields();
     }
   }, [visible]);
 
@@ -106,127 +134,391 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
     catatan: null,
   });
 
-  const handleChangeTipe = (value) => {
-    console.log(`selected ${value}`);
+  useEffect(() => {
+    fetchData();
+    fetchDataEmployees();
+  }, []);
+
+  const fetchData = async () => {
+    if (!isAllowedToGetLeaveTypes) {
+      permissionWarningNotification("Mendapatkan", "Daftar Tipe Cuti");
+    } else {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaveTypes`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(dataToken),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          // setDataRawTipeCuti(res2.data); // table-related data source
+          setDataTipeCutis(res2.data);
+        });
+    }
+  };
+
+  const fetchDataEmployees = async () => {
+    if (!isAllowedToGetEmployees) {
+      permissionWarningNotification("Mendapatkan", "Daftar Karyawan");
+    } else {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterEmployees`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(dataToken),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataEmployees(res2.data);
+        });
+    }
+  };
+  const onSearchUsers = (searchKey, setData) => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    if (!isAllowedToGetEmployees) {
+      permissionWarningNotification("Mendapatkan", "Daftar Karyawan");
+    } else {
+      setLoading(true);
+      searchTimeoutRef.current = setTimeout(() => {
+        fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterEmployees?name=${searchKey}`,
+          {
+            method: `GET`,
+            headers: {
+              Authorization: JSON.parse(dataToken),
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then((res2) => {
+            setData(res2.data);
+          })
+          .catch((err) =>
+            notification.error({
+              message: "Gagal mendapatkan daftar user",
+              duration: 3,
+            })
+          )
+          .finally(() => setLoading(false));
+      }, 500);
+    }
+  };
+
+  const onChangeFile = async (info) => {
+    if (info.file.status === "uploading") {
+      // setLoadingupload(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      const blobFile = info.file.originFileObj;
+      const base64Data = await getBase64(blobFile);
+      setResumeFileBlob(blobFile);
+    }
+  };
+
+  const handleSubmit = (values) => {
+    let formData = new FormData();
+    formData.append("type", values.type);
+    formData.append(
+      "start_date",
+      moment(values.start_date).format("YYYY-MM-DD")
+    );
+    formData.append("end_date", moment(values.end_date).format("YYYY-MM-DD"));
+    if (values.notes) {
+      formData.append("notes", values.notes);
+    }
+    if (values.delegate_id) {
+      formData.append("delegate_id", values.delegate_id);
+    }
+    if (resumeFileBlob) {
+      formData.append("document", resumeFileBlob);
+    }
+    setLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addLeaveUser`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(dataToken),
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setLoading(false);
+          onClose();
+          getDataNew();
+          notification["success"]({
+            message: "Pengajuan Cuti Berhasil",
+            duration: 3,
+          });
+        } else {
+          notification["error"]({
+            message: "Pengajuan Cuti gagal karena ada kesalahan dalam server",
+            duration: 3,
+          });
+        }
+      });
   };
 
   return (
-    <DrawerCore
+    <Drawer
       title={`Pengajuan Cuti`}
-      buttonOkText="Simpan"
-      visible={visible}
+      open={visible}
       width={550}
       onClose={onClose}
-      onClick={() => form.submit()}
-      buttonCancelText={"Batalkan"}
+      footer={
+        <div className={"flex gap-4 justify-end p-2"}>
+          <div
+            onClick={onClose}
+            className={
+              "bg-[#F3F3F3] py-2.5 px-8 rounded-[5px] hover:cursor-pointer"
+            }
+          >
+            <p className={"text-xs leading-5 text-[#808080] font-bold"}>
+              Batalkan
+            </p>
+          </div>
+          <div
+            onClick={() => instanceForm.submit()}
+            className={
+              "bg-[#35763B] py-2.5 px-8 flex items-center gap-2 rounded-[5px] hover:cursor-pointer"
+            }
+          >
+            {loading && (
+              <Spin indicator={<LoadingOutlined style={{ fontSize: 12 }} />} />
+            )}
+            <p className="text-white text-xs leading-5 font-bold">Simpan</p>
+          </div>
+        </div>
+      }
     >
       <div className="space-y-6">
         <p className={"text-[#BF4A40] text-xs leading-4 font-normal"}>
           *Informasi ini harus diisi
         </p>
-        <div className={"mt-4 flex flex-col gap-2"}>
-          <p className={"text-mono30 text-xs font-medium leading-5"}>
-            Nama Karyawan
-          </p>
-          <Input
-            value={"Bakhtiar"}
-            className={"h-[52px] border border-solid border-[#E6E6E6]"}
-            disabled
-          />
-        </div>
-        <div className={"mt-4 flex"}>
-          <div className={"w-5/12"}>
+        <Form layout="vertical" form={instanceForm} onFinish={handleSubmit}>
+          <div className={"mt-4 flex flex-col gap-2"}>
             <p className={"text-mono30 text-xs font-medium leading-5"}>
-              Mulai Cuti*
+              Nama Karyawan
             </p>
-          </div>
-          <div className="w-2/12"></div>
-          <div className="w-5/12">
-            <p className={"text-mono30 text-xs font-medium leading-5"}>
-              Selesai Cuti
-            </p>
-          </div>
-        </div>
-        <div className={"mt-2 flex items-center"}>
-          <div className={"w-[47%] calendar-cuti"}>
-            <DatePicker
-              placeholder="Pilih Mulai Cuti"
-              style={{ height: 52, width: "100%", borderColor: "#E6E6E6" }}
-              suffixIcon={<CalendartimeIconSvg size={20} color={"#808080"} />}
+            <Input
+              value={username}
+              className={"h-[52px] border border-solid border-[#E6E6E6]"}
+              disabled
             />
           </div>
-          <div className={"w-[6%] flex justify-center items-center"}>
-            <p>-</p>
-          </div>
-          <div className={"w-[47%] calendar-cuti"}>
-            <DatePicker
-              placeholder="Pilih Selesai Cuti"
-              style={{ height: 52, width: "100%", borderColor: "#E6E6E6" }}
-              suffixIcon={<CalendartimeIconSvg size={20} color={"#808080"} />}
-            />
-          </div>
-        </div>
-        <div className={"mt-4 flex flex-col gap-2"}>
-          <p className={"text-mono30 text-xs font-medium leading-5"}>
-            Delegasi Tugas
-          </p>
-          <Input
-            className={"h-[52px] border border-solid border-[#E6E6E6]"}
-            placeholder="Cari nama atau masukkan manual"
-          />
-        </div>
-        <div className={"mt-4 flex flex-col gap-2"}>
-          <p className={"text-mono30 text-xs font-medium leading-5"}>
-            Tipe Cuti
-          </p>
-          <Select
-            defaultValue="liburan"
-            placeholder="Pilih Tipe Cuti"
-            size="large"
-            onChange={handleChangeTipe}
-            options={[
-              {
-                value: "sakit",
-                label: "Sakit",
-              },
-              {
-                value: "liburan",
-                label: "Liburan",
-              },
-            ]}
-          />
-        </div>
-        <div className={"mt-4 flex flex-col gap-2"}>
-          <p className={"text-mono30 text-xs font-medium leading-5"}>Catatan</p>
-          <Input.TextArea
-            rows={4}
-            className={"h-[164px] border border-solid border-[#E6E6E6]"}
-            placeholder="Masukan scope kerja dan alasan mengambil Overtime"
-          />
-        </div>
-        <div className={"mt-4 flex flex-col gap-2"}>
-          <p className={"text-mono30 text-xs font-medium leading-5"}>
-            Unggah Dokumen Pendukung
-          </p>
-          <div className={"flex justify-between items-center"}>
-            <p
-              className={"text-[#808080] text-xs leading-4 font-normal italic"}
-            >
-              Unggah File (Maksimal 5 MB), bisa lebih dari satu.
-            </p>
-            <Upload>
-              <div
-                className={
-                  "flex justify-center items-center gap-2 hover:cursor-pointer py-2 px-4 border border-[#35763B] rounded-[5px]"
-                }
+          <div className={"mt-2 flex items-center"}>
+            <div className={"w-[47%] calendar-cuti"}>
+              <Form.Item
+                label="Mulai Cuti"
+                name={"start_date"}
+                className="col-span-2"
+                rules={[
+                  {
+                    required: true,
+                    message: "Mulai Cuti wajib diisi",
+                  },
+                ]}
               >
-                <UploadOutlined size={16} />
-                <p>Unggah File</p>
-              </div>
-            </Upload>
+                <DatePicker
+                  disabledDate={(current) =>
+                    current.isBefore(moment().subtract(1, "day"))
+                  }
+                  placeholder="Pilih Mulai Cuti"
+                  style={{ height: 52, width: "100%", borderColor: "#E6E6E6" }}
+                  suffixIcon={
+                    <CalendartimeIconSvg size={20} color={"#808080"} />
+                  }
+                />
+              </Form.Item>
+            </div>
+            <div className={"w-[6%] flex justify-center items-center"}>
+              <p>-</p>
+            </div>
+            <div className={"w-[47%] calendar-cuti"}>
+              <Form.Item
+                label="Selesai Cuti"
+                name={"end_date"}
+                className="col-span-2"
+                rules={[
+                  {
+                    required: true,
+                    message: "Selesai Cuti wajib diisi",
+                  },
+                ]}
+              >
+                <DatePicker
+                  disabledDate={(current) =>
+                    current.isBefore(moment().subtract(1, "day"))
+                  }
+                  placeholder="Pilih Selesai Cuti"
+                  style={{ height: 52, width: "100%", borderColor: "#E6E6E6" }}
+                  suffixIcon={
+                    <CalendartimeIconSvg size={20} color={"#808080"} />
+                  }
+                />
+              </Form.Item>
+            </div>
           </div>
-        </div>
+          <div className={"mt-4 flex flex-col gap-2"}>
+            <Form.Item
+              label="Delegasi Tugas"
+              name={"delegate_id"}
+              className="col-span-2"
+              rules={[
+                {
+                  required: true,
+                  message: "Delegasi Tugas wajib diisi",
+                },
+              ]}
+            >
+              <Select
+                showSearch
+                className="dontShow"
+                value={dataCuti?.delegasi}
+                placeholder={"Cari Nama"}
+                style={{ width: `100%` }}
+                onSearch={(value) => onSearchUsers(value, setDataEmployees)}
+                optionFilterProp="children"
+                onChange={(value, option) => {
+                  setDataCuti((prev) => ({
+                    ...prev,
+                    delegasi: option,
+                  }));
+                }}
+              >
+                {dataEmployees?.map((item) => {
+                  return (
+                    <Select.Option
+                      key={item?.id}
+                      value={item.id}
+                      position={item?.contract?.role?.name}
+                      name={item?.name}
+                    >
+                      {item?.name}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+          </div>
+          <div className="flex flex-wrap mb-4">
+            {dataCuti?.delegasi && (
+              <Tag
+                closable
+                onClose={() => {
+                  setDataCuti((prev) => ({
+                    ...prev,
+                    delegasi: null,
+                  }));
+                }}
+                className="flex items-center p-2 w-max mb-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <img
+                    src={generateStaticAssetUrl(
+                      dataCuti?.delegasi?.profile_image?.link ??
+                        "staging/Users/default_user.png"
+                    )}
+                    alt={dataCuti?.delegasi?.name}
+                    className="w-6 h-6 bg-cover object-cover rounded-full"
+                  />
+                  <p className="truncate">
+                    <strong>{dataCuti?.delegasi?.name}</strong> -{" "}
+                    {dataCuti?.delegasi?.position}
+                  </p>
+                </div>
+              </Tag>
+            )}
+          </div>
+          <div className={"mt-4 flex flex-col gap-2"}>
+            <Form.Item
+              label="Tipe Cuti"
+              name={"type"}
+              className="col-span-2"
+              rules={[
+                {
+                  required: true,
+                  message: "Tipe Cuti wajib diisi",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Pilih Tipe Cuti"
+                size="large"
+                onChange={(value, option) => {
+                  setDataCuti((prev) => ({
+                    ...prev,
+                    tipe_cuti: option,
+                  }));
+                }}
+              >
+                {dataTipeCutis?.map((item) => {
+                  return (
+                    <Select.Option
+                      key={item?.id}
+                      value={item.id}
+                      is_document_required={item?.is_document_required}
+                      name={item?.name}
+                    >
+                      {item?.name}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+          </div>
+          <div className={"mt-4 flex flex-col gap-2"}>
+            <Form.Item label="Catatan" name={"notes"} className="col-span-2">
+              <Input.TextArea
+                rows={4}
+                className={"h-[164px] border border-solid border-[#E6E6E6]"}
+                placeholder="Masukan alasan mengambil Cuti"
+              />
+            </Form.Item>
+          </div>
+          <div className={"mt-4 flex flex-col gap-2"}>
+            <Form.Item
+              label="Unggah Dokumen Pendukung"
+              name={"dokumen"}
+              className="col-span-2"
+              rules={[
+                {
+                  required:
+                    dataCuti.tipe_cuti == null
+                      ? true
+                      : dataCuti?.tipe_cuti?.is_document_required
+                      ? true
+                      : false,
+                  message: "Dokumen Pendukung wajib diisi",
+                },
+              ]}
+            >
+              <div className={"flex justify-between items-center"}>
+                <p
+                  className={
+                    "text-[#808080] text-xs leading-4 font-normal italic"
+                  }
+                >
+                  Unggah File (Maksimal 5 MB).
+                </p>
+                <Upload accept=".pdf" multiple={false} onChange={onChangeFile}>
+                  <div
+                    className={
+                      "flex justify-center items-center gap-2 hover:cursor-pointer py-2 px-4 border border-[#35763B] rounded-[5px]"
+                    }
+                  >
+                    <UploadOutlined size={16} />
+                    <p>Unggah File</p>
+                  </div>
+                </Upload>
+              </div>
+            </Form.Item>
+          </div>
+        </Form>
       </div>
-    </DrawerCore>
+    </Drawer>
   );
 };

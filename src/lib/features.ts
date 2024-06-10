@@ -1748,3 +1748,15 @@ export const ANNOUNCEMENT_MAIL_SEND = "ANNOUNCEMENT_MAIL_SEND";
 
 // export activity
 export const TIME_SHEET_GET = "TIME_SHEET_GET";
+//manajemen cuti
+export const LEAVES_GET = "LEAVES_GET";
+export const LEAVES_USER_GET = "LEAVES_USER_GET";
+export const LEAVE_ADD = "LEAVE_ADD";
+export const LEAVE_USER_ADD = "LEAVE_USER_ADD";
+export const LEAVE_APPROVE = "LEAVE_APPROVE";
+export const LEAVE_TYPES_GET = "LEAVE_TYPES_GET";
+export const LEAVE_TYPE_ADD = "LEAVE_TYPE_ADD";
+export const LEAVES_COUNT_GET = "LEAVES_COUNT_GET";
+export const FILTER_EMPLOYEES_GET = "FILTER_EMPLOYEES_GET";
+export const LEAVE_STATUSES_GET = "LEAVE_STATUSES_GET";
+export const LEAVE_STATISTICS_GET = "LEAVE_STATISTICS_GET";
