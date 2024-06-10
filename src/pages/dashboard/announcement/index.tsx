@@ -17,7 +17,7 @@ const DashboardAnnouncementPage: NextPage<ProtectedPageProps> = ({
       hrefValue: "/dashboard/home",
     },
     {
-      name: "Daftar Pesan",
+      name: "Daftar Pengumuman",
     },
   ];
 

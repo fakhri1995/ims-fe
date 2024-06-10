@@ -13,7 +13,7 @@ const AnnouncementPage: NextPage<ProtectedPageProps> = ({
 }) => {
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
-      name: "Manajemen Pesan",
+      name: "Manajemen Pengumuman",
     },
   ];
 
