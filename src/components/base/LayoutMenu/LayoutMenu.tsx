@@ -29,6 +29,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { ROLE_SUPER_ADMIN } from "lib/constants";
 import {
+  LEAVES_GET,
   SIDEBAR_ANNOUNCEMENT,
   SIDEBAR_ASSET,
   SIDEBAR_ASSET_MANUFACTURER,
@@ -170,30 +171,24 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           <Link href="/dashboard/home">Dashboard</Link>
         </Menu.Item>
       )}
-      {hasPermission(SIDEBAR_CLIENT_DASHBOARD) &&
-        !hasRole(ROLE_SUPER_ADMIN) && (
-          <Menu.Item
-            key="1"
-            icon={<DashboardCompanyIconSvg />}
-            title="Dashboard"
-          >
-            <Link href="/dashboard/home">
-              <p>Dashboard {dataPerusahaan}</p>
-            </Link>
-          </Menu.Item>
-        )}
-      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) &&
-        !hasRole(ROLE_SUPER_ADMIN) && (
-          <Menu.Item
-            key="kehadirancompany"
-            icon={<KehadiranCompanyIconSvg />}
-            title="Dashboard"
-          >
-            <Link href="/kehadiran/">
-              <p>Kehadiran {dataPerusahaan}</p>
-            </Link>
-          </Menu.Item>
-        )}
+      {hasPermission(SIDEBAR_CLIENT_DASHBOARD) && !hasRole(ROLE_SUPER_ADMIN) && (
+        <Menu.Item key="1" icon={<DashboardCompanyIconSvg />} title="Dashboard">
+          <Link href="/dashboard/home">
+            <p>Dashboard {dataPerusahaan}</p>
+          </Link>
+        </Menu.Item>
+      )}
+      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN) && (
+        <Menu.Item
+          key="kehadirancompany"
+          icon={<KehadiranCompanyIconSvg />}
+          title="Dashboard"
+        >
+          <Link href="/kehadiran/">
+            <p>Kehadiran {dataPerusahaan}</p>
+          </Link>
+        </Menu.Item>
+      )}
       {hasPermission(SIDEBAR_CLIENT_PROJECT) && !hasRole(ROLE_SUPER_ADMIN) && (
         <Menu.Item
           key="projectscompany"
@@ -311,11 +306,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               <Link href="/attendance/schedule">Work Schedule</Link>
             </Menu.Item>
           )}
-          {/* {hasPermission(SIDEBAR_ATTENDANCE_SCHEDULE) && (
+          {hasPermission(LEAVES_GET) && (
             <Menu.Item key="attendance/annualLeave">
               <Link href="/attendance/annual-leave">Cuti/Libur</Link>
             </Menu.Item>
-          )} */}
+          )}
         </SubMenu>
       )}
 
