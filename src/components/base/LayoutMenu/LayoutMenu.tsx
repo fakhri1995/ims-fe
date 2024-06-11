@@ -3,6 +3,7 @@ import { Layout, Menu } from "antd";
 import Link from "next/link";
 import type { FC } from "react";
 
+import MigsysLogo from "components/MigsysLogo";
 import {
   AsetIconSvg,
   CompanyIconSvg,
@@ -145,7 +146,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
    * Class names
    */
   const menuSectionLabelClassName = clsx(
-    "mb-2 font-sans text-gray-400 md:pl-6 uppercase text-sm",
+    "mb-2 font-sans text-gray-400 pl-4 md:pl-6 uppercase text-sm",
     {
       hidden: coll,
     }
@@ -565,23 +566,6 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
     </>
   );
 
-  const siderHeader = (
-    <div className="logo flex items-center justify-center my-5">
-      <img
-        src="/image/Brand.png"
-        alt="brand"
-        className={`object-contain w-12 h-12 ${
-          !coll || (!collsmall && "mr-0")
-        }`}
-      />
-      {(!coll || !collsmall) && (
-        <h1 className="text-sm mb-0">
-          <span className="font-bold text-2xl mb-0">MIG</span> sys
-        </h1>
-      )}
-    </div>
-  );
-
   return (
     <div>
       {/* Untuk toggle sidebar pada smaller screen device */}
@@ -602,7 +586,9 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         style={{ borderRight: `1px solid #f0f0f0`, height: "100%" }}
       >
         {/* Sider Header (image) */}
-        {siderHeader}
+        <div className="my-5">
+          <MigsysLogo isUseText={!coll || !collsmall} />
+        </div>
 
         <Menu
           theme="light"
@@ -633,20 +619,9 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           zIndex: 9999,
         }}
       >
-        {
-          <div className="logo flex items-center justify-center my-5">
-            <img
-              src="/image/Brand.png"
-              alt="brand"
-              className={`object-contain w-12 h-12 ${!collsmall && "mr-0"}`}
-            />
-            {!coll && (
-              <h1 className="text-sm mb-0">
-                <span className="font-bold text-2xl mb-0">MIG</span> sys
-              </h1>
-            )}
-          </div>
-        }
+        <div className="my-5">
+          <MigsysLogo isUseText={!coll || !collsmall} />
+        </div>
         <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
           {menuSitusContent}
           <hr className="my-3 invisible" />
