@@ -159,7 +159,7 @@ function RequestersUpdate({
             duration: 3,
           });
           setTimeout(() => {
-            rt.push(`/admin/requesters/detail/${data1.id}`);
+            rt.back();
           }, 300);
         } else if (!res2.success) {
           notification["error"]({
@@ -355,11 +355,13 @@ function RequestersUpdate({
             <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
               <h1 className="font-semibold py-2">Ubah Profil Requester</h1>
               <div className="flex space-x-2">
-                <Link href={`/admin/requesters/detail/${data1.id}`}>
-                  <Button disabled={preloading} type="default">
-                    Batal
-                  </Button>
-                </Link>
+                <Button
+                  disabled={preloading}
+                  onClick={() => rt.back()}
+                  type="default"
+                >
+                  Batal
+                </Button>
                 {
                   // [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <Button

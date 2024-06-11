@@ -130,7 +130,7 @@ function GuestUpdate({
             duration: 3,
           });
           setTimeout(() => {
-            rt.push(`/admin/guests/detail/${dataUpdate.id}`);
+            rt.back();
           }, 1000);
         } else {
           notification.error({
@@ -225,7 +225,7 @@ function GuestUpdate({
                 <Button
                   disabled={preloading}
                   onClick={() => {
-                    rt.push(`/admin/guests/detail/${userid}`);
+                    rt.back();
                   }}
                   type="default"
                 >
