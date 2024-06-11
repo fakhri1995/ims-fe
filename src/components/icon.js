@@ -768,7 +768,7 @@ const EditTablerIconSvg = ({ size, color }) => {
       height="16"
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#FFFFFF"
+      stroke={color ? color : "#FFFFFF"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -790,7 +790,7 @@ const DeleteTablerIconSvg = ({ size, color }) => {
       height="16"
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#FFFFFF"
+      stroke={color ? color : "#FFFFFF"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3592,6 +3592,48 @@ const AddNoteSvg = ({ size, color }) => {
   return <Icon rev={""} component={addNoteSvg}></Icon>;
 };
 
+const CloseOverlay = ({ size, color }) => {
+  const closeOverlay = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size ? size : "24"}
+      height={size ? size : "24"}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color ? color : "#333333"}
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="icon icon-tabler icons-tabler-outline icon-tabler-x"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M18 6l-12 12" />
+      <path d="M6 6l12 12" />
+    </svg>
+  );
+  return <Icon rev={""} component={closeOverlay}></Icon>;
+};
+const CheckBoldSvg = ({ size, color }) => {
+  const checkBoldSvg = () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3.33398 8.00033L6.66732 11.3337L13.334 4.66699"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={checkBoldSvg}></Icon>;
+};
+
 const CopyrightIconSvg = ({ size, color }) => {
   const copyrightIconSvg = () => (
     <svg
@@ -3762,5 +3804,7 @@ export {
   MessageIconSvg,
   CloseIconSvg,
   AddNoteSvg,
+  CloseOverlay,
+  CheckBoldSvg,
   CopyrightIconSvg,
 };

@@ -20,11 +20,23 @@ import {
 } from "next-query-params";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import { useCallback, useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 
+import DrawerCutiSatuan from "components/drawer/attendance/drawerCutiSatuan";
+
 import { useAccessControl } from "contexts/access-control";
 
+import {
+  LEAVES_GET,
+  LEAVE_ADD,
+  LEAVE_STATISTICS_GET,
+  LEAVE_STATUSES_GET,
+  LEAVE_TYPES_GET,
+} from "lib/features";
+
+import DrawerAnnualLeave from "../../../components/drawer/attendance/drawerAnnualLeave";
 import {
   AddNoteSvg,
   EyeIconSvg,
@@ -32,6 +44,10 @@ import {
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import ModalPengajuanCuti from "../../../components/modal/attendance/modalPengajuanCuti";
+import ModalSetujuiCuti from "../../../components/modal/attendance/modalSetujuiCuti";
+import ModalTipeCuti from "../../../components/modal/attendance/modalTipeCuti";
+import { permissionWarningNotification } from "../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -81,23 +97,8 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
   });
   const [loadingAnualLeave, setLoadingAnnualLeave] = useState(true);
-  const [dataAnnualLeave, setDataAnnualLeave] = useState([
-    {
-      id: 1,
-      nama: "Alex",
-      tgl_awal_cuti: "10 April 2024",
-      tgl_pengajuan_cuti: "12 April 2024",
-      durasi_cuti: "2 hari",
-    },
-    {
-      id: 2,
-      nama: "Alex Chrsiti",
-      tgl_awal_cuti: "10 April 2024",
-      tgl_pengajuan_cuti: "12 April 2024",
-      durasi_cuti: "2 hari",
-    },
-  ]);
-  const [dataRawAnnualLeave, setDataRawAnnualLeave] = useState({
+  const [showDrawerCutiSatuan, setShowDrawerCutiSatuan] = useState(false);
+  const [displayDataLeaves, setDisplayDataLeaves] = useState({
     current_page: "",
     data: [],
     first_page_url: "",
@@ -111,28 +112,134 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
     to: null,
     total: null,
   });
+  const [dataAnnualLeave, setDataAnnualLeave] = useState([]);
+  const [dataStatusCuti, setDataStatusCuti] = useState([]);
+  const [dataStatusPengajuan, setDataStatusPengajuan] = useState([]);
+  const isAllowedToManageLeaveTypes = hasPermission(LEAVE_TYPES_GET);
+  const isAllowedToAddLeave = hasPermission(LEAVE_ADD);
+  const isAllowedToGetLeave = hasPermission(LEAVES_GET);
+  const isAllowedToGetLeaveStatus = hasPermission(LEAVE_STATUSES_GET);
+  const isAllowedToGetLeaveStatics = hasPermission(LEAVE_STATISTICS_GET);
+  const [dataDefault, setDataDefault] = useState(null);
+  useEffect(() => {
+    fetchData();
+  }, [queryParams.page, queryParams.rows]);
+
+  useEffect(() => {
+    fetchDataStatus();
+    fetchDataStatusPengajuan();
+  }, []);
+
+  const fetchData = async () => {
+    if (!isAllowedToGetLeave) {
+      permissionWarningNotification("Mendapatkan", "Data Cuti");
+    } else {
+      const params = QueryString.stringify(queryParams, {
+        addQueryPrefix: true,
+      });
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaves${params}`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDisplayDataLeaves(res2.data); // table-related data source
+          setDataAnnualLeave(res2.data.data);
+        });
+    }
+  };
+
+  const fetchDataStatus = async () => {
+    if (!isAllowedToGetLeaveStatus) {
+      permissionWarningNotification("Mendapatkan", "Data Status Cuti");
+    } else {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaveStatuses`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          let dataTemp = [];
+          for (let a = 0; a < res2.data.length; a++) {
+            if (res2.data[a].status == 2) {
+              dataTemp[0] = res2.data[a].total;
+            }
+            if (res2.data[a].status == 1) {
+              dataTemp[1] = res2.data[a].total;
+            }
+            if (res2.data[a].status == 3) {
+              dataTemp[2] = res2.data[a].total;
+            }
+          }
+          setDataStatusCuti(dataTemp);
+        });
+    }
+  };
+
+  const fetchDataStatusPengajuan = async () => {
+    if (!isAllowedToGetLeaveStatics) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Data Status Pengajuan Cuti"
+      );
+    } else {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaveStatistics`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          let dataTemp = [];
+          dataTemp.push(res2.data.has_leave);
+          dataTemp.push(res2.data.no_leave);
+          setDataStatusPengajuan(dataTemp);
+        });
+    }
+  };
+
+  const detailCuti = (record) => {
+    setShowDrawer(true);
+    setDataDefault(record);
+  };
 
   const columns = [
     {
       title: "Nama Karyawan",
       dataIndex: "nama",
       key: "nama",
-      render: (text) => <a>{text}</a>,
+      render: (text, record, index) => <p>{record.employee?.name}</p>,
     },
     {
       title: "Tanggal Awal Cuti",
-      dataIndex: "tgl_awal_cuti",
-      key: "tgl_awal_cuti",
+      dataIndex: "start_date",
+      key: "start_date",
+      render: (text, record, index) => (
+        <p>{moment(record.start_date).format("DD MMMM YYYY")}</p>
+      ),
     },
     {
       title: "Tanggal Pengajuan Cuti",
-      dataIndex: "tgl_pengajuan_cuti",
-      key: "tgl_pengajuan_cuti",
+      dataIndex: "issued_date",
+      key: "issued_date",
+      render: (text, record, index) => (
+        <p>{moment(record.issued_date).format("DD MMMM YYYY")}</p>
+      ),
     },
     {
       title: "Durasi Cuti",
       dataIndex: "durasi_cuti",
       key: "durasi_cuti",
+      render: (text, record, index) => (
+        <p>
+          {moment(record.end_date).diff(moment(record.start_date), "days")} Hari
+        </p>
+      ),
     },
     {
       title: "Status",
@@ -141,68 +248,56 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
       render: (text, record, index) => {
         return {
           children: (
-            <>
-              {record.status === 1 && (
-                <div className="flex flex-row gap-8">
-                  <div className={"bg-[#E6E6E6] rounded-[5px] py-1 px-4 h-6"}>
-                    <p
-                      className={"text-[#BF4A40] text-xs leading-4 font-medium"}
-                    >
-                      Pending
-                    </p>
-                  </div>
-                  <EyeIconSvg size={16} />
-                </div>
-              )}
-              {record.status === 2 && (
-                <div className="flex flex-row gap-8">
-                  <div className={"bg-[#35763B] rounded-[5px] py-1 px-4 h-6"}>
-                    <p
-                      className={"text-[#F3F3F3] text-xs leading-4 font-medium"}
-                    >
-                      Disetujui
-                    </p>
-                  </div>
-                  <EyeIconSvg size={16} />
-                </div>
-              )}
-              {record.status === 3 && (
-                <div className="flex flex-row gap-8">
-                  <div className={"bg-[#BF4A40] rounded-[5px] py-1 px-4 h-6"}>
-                    <p
-                      className={"text-[#FFFFFF] text-xs leading-4 font-medium"}
-                    >
-                      Ditolak
-                    </p>
-                  </div>
-                  <EyeIconSvg size={16} />
-                </div>
-              )}
-            </>
+            <div className={"flex gap-8 justify-center"}>
+              <div
+                className={`${
+                  record.status == 1
+                    ? "bg-[#E6E6E6]"
+                    : record.status == 2
+                    ? "bg-[#35763B]"
+                    : "bg-[#BF4A40]"
+                } py-1 px-4 max-w-max rounded-[5px]`}
+              >
+                <p
+                  className={`${
+                    record.status == 2
+                      ? "text-[#F3F3F3]"
+                      : record.status == 1
+                      ? "text-[#4D4D4D]"
+                      : "text-white"
+                  } leading-4 text-[10px] font-medium`}
+                >
+                  {record.status == 1
+                    ? "Pending"
+                    : record.status == 2
+                    ? "Diterima"
+                    : "Ditolak"}
+                </p>
+              </div>
+              <div
+                onClick={() => detailCuti(record)}
+                className={"hover:cursor-pointer"}
+              >
+                <EyeIconSvg size={16} />
+              </div>
+            </div>
           ),
         };
       },
     },
   ];
-  const data = [
-    {
-      id: 1,
-      nama: "Alex",
-      tgl_awal_cuti: "10 April 2024",
-      tgl_pengajuan_cuti: "12 April 2024",
-      durasi_cuti: "2 hari",
-      status: 1,
-    },
-    {
-      id: 2,
-      nama: "Alex Chrsiti",
-      tgl_awal_cuti: "10 April 2024",
-      tgl_pengajuan_cuti: "12 April 2024",
-      durasi_cuti: "2 hari",
-      status: 2,
-    },
-  ];
 
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [modalAdd, setModalAdd] = useState(false);
+  const [modalTipeCuti, setModalTipeCuti] = useState(false);
+
+  const closeModalAdd = () => {
+    setModalAdd(false);
+  };
+
+  const closeDrawer = () => {
+    setShowDrawer(false);
+  };
   return (
     <Layout
       tok={initProps}
@@ -228,7 +323,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                     labels: ["Disetujui", "Dipending", "Ditolak"],
                     datasets: [
                       {
-                        data: [213, 10, 36],
+                        data: dataStatusCuti,
                         backgroundColor: ["#35763B", "#E6E6E6", "#BF4A40"],
                         borderColor: ["#35763B", "#E6E6E6", "#BF4A40"],
                         barPercentage: 1.0,
@@ -286,7 +381,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                       <p
                         className={"text-[#4D4D4D] text-sm leading-6 font-bold"}
                       >
-                        213
+                        {dataStatusCuti.length > 0 ? dataStatusCuti[0] : "-"}
                       </p>
                     </div>
                   </div>
@@ -303,7 +398,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                       <p
                         className={"text-[#4D4D4D] text-sm leading-6 font-bold"}
                       >
-                        10
+                        {dataStatusCuti.length > 0 ? dataStatusCuti[1] : "-"}
                       </p>
                     </div>
                   </div>
@@ -320,7 +415,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                       <p
                         className={"text-[#4D4D4D] text-sm leading-6 font-bold"}
                       >
-                        36
+                        {dataStatusCuti.length > 0 ? dataStatusCuti[2] : "-"}
                       </p>
                     </div>
                   </div>
@@ -345,7 +440,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                     ],
                     datasets: [
                       {
-                        data: [10, 70],
+                        data: dataStatusPengajuan,
                         backgroundColor: ["#35763B", "#BF4A40"],
                         borderColor: ["#35763B", "#BF4A40"],
                         borderWidth: 1,
@@ -375,7 +470,9 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                       Karyawan Mengajukan
                     </p>
                     <p className={"text-[#4D4D4D] text-sm leading-6 font-bold"}>
-                      10
+                      {dataStatusPengajuan.length > 0
+                        ? dataStatusPengajuan[0]
+                        : "-"}
                     </p>
                   </div>
                 </div>
@@ -388,7 +485,9 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                       Karyawan Tidak Mengajukan
                     </p>
                     <p className={"text-[#4D4D4D] text-sm leading-6 font-bold"}>
-                      70
+                      {dataStatusPengajuan.length > 0
+                        ? dataStatusPengajuan[1]
+                        : "-"}
                     </p>
                   </div>
                 </div>
@@ -405,33 +504,76 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
               Daftar Pengajuan Cuti
             </p>
             <div className={"flex gap-4"}>
-              <div
-                className={
-                  "flex hover:cursor-pointer gap-2 justify-center items-center px-5 h-9 rounded-[5px] bg-[#00589F]"
-                }
-                style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
-              >
-                <SettingsIconSvg size={16} color={"white"} />
-                <p className={"text-white text-xs leading-5 font-bold"}>
-                  Kelola Cuti
-                </p>
-              </div>
-              <div
-                className={
-                  "flex hover:cursor-pointer gap-2 justify-center items-center px-5 h-9 rounded-[5px] bg-[#35763B]"
-                }
-                style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
-              >
-                <AddNoteSvg />
-                <p className={"text-white text-xs leading-5 font-bold"}>
-                  Tambah Pengajuan
-                </p>
-              </div>
+              {isAllowedToManageLeaveTypes && (
+                <div
+                  onClick={() => setModalTipeCuti(true)}
+                  className={
+                    "flex hover:cursor-pointer gap-2 justify-center items-center px-5 h-9 rounded-[5px] bg-[#00589F]"
+                  }
+                  style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
+                >
+                  <SettingsIconSvg size={16} color={"white"} />
+                  <p className={"text-white text-xs leading-5 font-bold"}>
+                    Kelola Cuti
+                  </p>
+                </div>
+              )}
+              {isAllowedToAddLeave && (
+                <div
+                  onClick={() => setModalAdd(true)}
+                  className={
+                    "flex hover:cursor-pointer gap-2 justify-center items-center px-5 h-9 rounded-[5px] bg-[#35763B]"
+                  }
+                  style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
+                >
+                  <AddNoteSvg />
+                  <p className={"text-white text-xs leading-5 font-bold"}>
+                    Tambah Pengajuan
+                  </p>
+                </div>
+              )}
             </div>
           </div>
           <div className={"mt-6"}>
-            <Table columns={columns} dataSource={data} />
+            <Table
+              columns={columns}
+              dataSource={dataAnnualLeave}
+              pagination={{
+                current: queryParams.page,
+                pageSize: queryParams.rows,
+                total: displayDataLeaves.total,
+              }}
+              onChange={(pagination, _, sorter) => {
+                setQueryParams({
+                  page: pagination.current,
+                  rows: pagination.pageSize,
+                });
+              }}
+            />
           </div>
+          <DrawerAnnualLeave
+            dataDefault={dataDefault}
+            visible={showDrawer}
+            closeDrawer={closeDrawer}
+            initProps={initProps}
+            fetchData={fetchData}
+          />
+          <ModalPengajuanCuti
+            visible={modalAdd}
+            onClose={closeModalAdd}
+            setShowDrawerCutiSatuan={() => setShowDrawerCutiSatuan(true)}
+          />
+          <DrawerCutiSatuan
+            dataToken={initProps}
+            visible={showDrawerCutiSatuan}
+            onCancel={() => setShowDrawerCutiSatuan(false)}
+          />
+          <ModalSetujuiCuti />
+          <ModalTipeCuti
+            visible={modalTipeCuti}
+            onClose={() => setModalTipeCuti(false)}
+            initProps={initProps}
+          />
         </div>
       </div>
     </Layout>
