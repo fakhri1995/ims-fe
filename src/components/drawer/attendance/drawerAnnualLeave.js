@@ -392,14 +392,15 @@ const DrawerAnnualLeave = ({
                 <div className={"flex gap-2 items-center"}>
                   <PdfIcon />
                   <div className="flex flex-col gap-1">
-                    <p className="text-[14px] leading-6 text-[#4D4D4D] ">
-                      dokumen-pendukung-pengajuan-cuti.pdf
-                    </p>
-                    <p
-                      className={"text-[#808080] text-xs leading-4 font-normal"}
+                    <a
+                      href={"https://cdn.mig.id/" + dataDefault?.document.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      2.01 MB
-                    </p>
+                      <p className="text-[14px] leading-6 text-[#4D4D4D] ">
+                        dokumen-pendukung-pengajuan-cuti.pdf
+                      </p>
+                    </a>
                   </div>
                 </div>
               </div>
