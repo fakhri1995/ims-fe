@@ -131,6 +131,8 @@ function AgentUpdate({
       ...dataupdate,
       [e.target.name]: e.target.value,
     });
+
+    instanceForm.setFieldValue(e.target.name, e.target.value);
   };
   const onChangeEditFoto = async (e) => {
     setLoadingfoto(true);
@@ -165,7 +167,7 @@ function AgentUpdate({
             duration: 3,
           });
           setTimeout(() => {
-            rt.push(`/admin/agents/detail/${dataupdate.id}`);
+            rt.back();
           }, 300);
         } else if (!res2.success) {
           notification["error"]({
@@ -243,6 +245,11 @@ function AgentUpdate({
       });
   }, [isAllowedToGetAgentDetail, userid]);
 
+  useEffect(() => {
+    // Update form values when initialValues change
+    instanceForm.setFieldsValue(dataupdate);
+  }, [dataupdate, instanceForm]);
+
   // Get Role options
   useEffect(() => {
     if (isAllowedToGetRolesList) {
@@ -306,7 +313,7 @@ function AgentUpdate({
                 <Button
                   disabled={preloading}
                   onClick={() => {
-                    rt.push(`/admin/agents/detail/${userid}`);
+                    rt.back();
                   }}
                   type="default"
                 >
@@ -378,33 +385,30 @@ function AgentUpdate({
                 <div className="p-3 col-span-1 md:col-span-3">
                   <Form
                     layout="vertical"
-                    // initialValues={dataupdate}
+                    initialValues={dataupdate}
                     form={instanceForm}
                     onFinish={handleSubmitEditAccount}
                   >
-                    {/* </Form.Item> */}
                     <Form.Item label="Company" name="company_id">
-                      <>
-                        <Select
-                          showSearch
-                          allowClear
-                          placeholder="Pilih company"
-                          value={dataupdate?.company_id}
-                          options={dataCompanyList.map((company) => ({
-                            label: company.name,
-                            value: company.id,
-                          }))}
-                          filterOption={(input, option) => {
-                            return (option?.label ?? "")
-                              .toLowerCase()
-                              .includes(input.toLowerCase());
-                          }}
-                          onChange={(value) => {
-                            setdataupdate({ ...dataupdate, company_id: value });
-                          }}
-                          disabled={!isAllowedToGetCompanyClients}
-                        />
-                      </>
+                      <Select
+                        showSearch
+                        allowClear
+                        placeholder="Pilih company"
+                        value={dataupdate?.company_id}
+                        options={dataCompanyList.map((company) => ({
+                          label: company.name,
+                          value: company.id,
+                        }))}
+                        filterOption={(input, option) => {
+                          return (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase());
+                        }}
+                        onChange={(value) => {
+                          setdataupdate({ ...dataupdate, company_id: value });
+                        }}
+                        disabled={!isAllowedToGetCompanyClients}
+                      />
                     </Form.Item>
                     <Form.Item
                       label="Nama Lengkap"
@@ -417,13 +421,11 @@ function AgentUpdate({
                         },
                       ]}
                     >
-                      <>
-                        <Input
-                          value={dataupdate.fullname}
-                          onChange={onChangeEditAgents}
-                          name="fullname"
-                        />
-                      </>
+                      <Input
+                        value={dataupdate.fullname}
+                        onChange={onChangeEditAgents}
+                        name="fullname"
+                      />
                     </Form.Item>
                     <Form.Item
                       label="Email"
@@ -441,14 +443,12 @@ function AgentUpdate({
                         },
                       ]}
                     >
-                      <>
-                        <Input
-                          disabled
-                          value={dataupdate.email}
-                          name={`email`}
-                          onChange={onChangeEditAgents}
-                        />
-                      </>
+                      <Input
+                        disabled
+                        value={dataupdate.email}
+                        name={`email`}
+                        onChange={onChangeEditAgents}
+                      />
                     </Form.Item>
                     <Form.Item
                       label="Posisi"
@@ -461,13 +461,11 @@ function AgentUpdate({
                         },
                       ]}
                     >
-                      <>
-                        <Input
-                          value={dataupdate.position}
-                          name={`position`}
-                          onChange={onChangeEditAgents}
-                        />
-                      </>
+                      <Input
+                        value={dataupdate.position}
+                        name={`position`}
+                        onChange={onChangeEditAgents}
+                      />
                     </Form.Item>
                     <Form.Item
                       label="No. Handphone"
@@ -484,13 +482,11 @@ function AgentUpdate({
                         },
                       ]}
                     >
-                      <>
-                        <Input
-                          value={dataupdate.phone_number}
-                          onChange={onChangeEditAgents}
-                          name="phone_number"
-                        />
-                      </>
+                      <Input
+                        value={dataupdate.phone_number}
+                        onChange={onChangeEditAgents}
+                        name="phone_number"
+                      />
                     </Form.Item>
                     <Form.Item
                       label="NIP"
@@ -506,13 +502,11 @@ function AgentUpdate({
                         },
                       ]}
                     >
-                      <>
-                        <Input
-                          value={dataupdate.nip}
-                          name="nip"
-                          onChange={onChangeEditAgents}
-                        />
-                      </>
+                      <Input
+                        value={dataupdate.nip}
+                        name="nip"
+                        onChange={onChangeEditAgents}
+                      />
                     </Form.Item>
 
                     {/* Form Aktivitas */}
@@ -520,37 +514,35 @@ function AgentUpdate({
                       label="Form Aktivitas"
                       name="attendance_form_ids"
                     >
-                      <>
-                        <Select
-                          showSearch
-                          allowClear
-                          placeholder="Pilih form aktivitas"
-                          filterOption={false}
-                          onSearch={(value) => setFormAktivitasValue(value)}
-                          onChange={(value) => {
-                            if (value === undefined || value === "") {
-                              setdataupdate((prev) => ({
-                                ...prev,
-                                attendance_form_ids: [],
-                              }));
-                              setFormAktivitasValue("");
-                              return;
-                            }
-
+                      <Select
+                        showSearch
+                        allowClear
+                        placeholder="Pilih form aktivitas"
+                        filterOption={false}
+                        onSearch={(value) => setFormAktivitasValue(value)}
+                        onChange={(value) => {
+                          if (value === undefined || value === "") {
                             setdataupdate((prev) => ({
                               ...prev,
-                              attendance_form_ids: [value],
+                              attendance_form_ids: [],
                             }));
-                          }}
-                          value={dataupdate?.attendance_form_ids}
-                        >
-                          {formAktivitasData?.map(({ id, name }) => (
-                            <Select.Option key={id} value={id}>
-                              {name}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </>
+                            setFormAktivitasValue("");
+                            return;
+                          }
+
+                          setdataupdate((prev) => ({
+                            ...prev,
+                            attendance_form_ids: [value],
+                          }));
+                        }}
+                        value={dataupdate?.attendance_form_ids}
+                      >
+                        {formAktivitasData?.map(({ id, name }) => (
+                          <Select.Option key={id} value={id}>
+                            {name}
+                          </Select.Option>
+                        ))}
+                      </Select>
                     </Form.Item>
 
                     <h1 className="text-sm">Role:</h1>

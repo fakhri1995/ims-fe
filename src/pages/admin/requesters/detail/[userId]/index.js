@@ -510,9 +510,9 @@ function RequestersDetail({
             <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
               <h1 className="font-semibold py-2">Detail Profil Requester</h1>
               <div className="flex space-x-2">
-                <Link href={`/admin/requesters`}>
-                  <Button type="default">Kembali</Button>
-                </Link>
+                <Button type="default" onClick={() => rt.back()}>
+                  Kembali
+                </Button>
                 {
                   // [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <Button

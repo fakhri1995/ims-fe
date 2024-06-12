@@ -5,6 +5,9 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+import MigsysLogo from "../../components/MigsysLogo";
+import { CopyrightIconSvg } from "../../components/icon";
+import AuthScreen from "../../components/screen/login/AuthScreen";
 import httpcookie from "cookie";
 
 export default function Home({ initProps }) {
@@ -76,88 +79,84 @@ export default function Home({ initProps }) {
       });
   };
   return (
-    <>
-      {/* {
-        spin1 ?
-          <Spin size="large"> */}
-      <div
-        className="container-xl bg-blue-600 h-screen" /*style={{background:`linear-gradient(#035ea3, #198e07)`}}*/
-      >
-        <div className="pt-20 relative" id="wrapper">
-          <div className="mx-auto bg-white rounded-lg w-10/12 md:w-5/12 max-h-80 md:max-h-80 text-black shadow-lg px-3 md:px-5 pt-10 pb-1 text-center">
-            <h1 className="mb-5 font-mont text-xl font-semibold">
-              LogIn MIGSYS v3
-            </h1>
-            <Form
-              name="email"
-              className="loginForm"
-              initialValues={{ remember: true }}
-              onFinish={handleLogin}
-            >
-              <Form.Item
-                name="email"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Email!",
-                  },
-                ]}
-              >
-                <Input
-                  prefix={<UserOutlined className="site-form-item-icon" />}
-                  name="email"
-                  value={formdata}
-                  placeholder="Email"
-                  onChange={onChangeLogin}
-                />
-              </Form.Item>
-              <Form.Item
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Password!",
-                  },
-                ]}
-                style={{ marginBottom: `3rem` }}
-              >
-                <Input.Password
-                  prefix={<LockOutlined className="site-form-item-icon" />}
-                  name="password"
-                  value={formdata}
-                  placeholder="Password"
-                  type="password"
-                  onChange={onChangeLogin}
-                />
-              </Form.Item>
-              <Form.Item style={{ justifyContent: `center` }}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loadinglogin}
-                  className="login-form-button"
-                  style={{ width: `100%` }}
-                >
-                  Log in
-                </Button>
-              </Form.Item>
-            </Form>
-            <div className=" flex justify-center items-center">
-              <p
-                className=" mb-5 text-primary hover:text-secondary cursor-pointer"
-                onClick={() => {
-                  rt.push(`/requestForgetPassword`);
-                }}
-              >
-                Lupa Password
-              </p>
-            </div>
-          </div>
-        </div>
+    <AuthScreen>
+      <div className="pb-8">
+        <MigsysLogo />
       </div>
-      {/* </Spin> */}
-      {/* } */}
-    </>
+      <Form
+        name="email"
+        layout="vertical"
+        className="loginForm"
+        requiredMark={false}
+        initialValues={{ remember: true }}
+        onFinish={handleLogin}
+      >
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: "Email wajib diisi",
+            },
+            {
+              pattern:
+                /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+              message: "Email belum diisi dengan benar",
+            },
+          ]}
+        >
+          <Input
+            // prefix={<UserOutlined className="site-form-item-icon" />}
+            name="email"
+            value={formdata}
+            placeholder="Email"
+            onChange={onChangeLogin}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Kata Sandi"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: "Kata Sandi wajib diisi",
+            },
+          ]}
+          style={{ marginBottom: `2rem` }}
+        >
+          <Input.Password
+            // prefix={<LockOutlined className="site-form-item-icon" />}
+            name="password"
+            value={formdata}
+            placeholder="Kata Sandi"
+            type="password"
+            onChange={onChangeLogin}
+          />
+        </Form.Item>
+        <Form.Item style={{ justifyContent: `center` }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loadinglogin}
+            className="login-form-button font-semibold"
+            style={{ width: `100%` }}
+          >
+            Login
+          </Button>
+        </Form.Item>
+      </Form>
+      <div className=" flex justify-center items-center">
+        <p
+          className=" mb-5 text-secondary100 hover:text-secondary cursor-pointer"
+          onClick={() => {
+            rt.push(`/requestForgetPassword`);
+          }}
+        >
+          Lupa Kata Sandi
+        </p>
+      </div>
+    </AuthScreen>
   );
 }
 

@@ -4,6 +4,7 @@ import { Form, notification } from "antd";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+import AuthScreen from "../../components/screen/login/AuthScreen";
 import httpcookie from "cookie";
 
 export default function RequestForgetPassword({ initProps }) {
@@ -53,64 +54,63 @@ export default function RequestForgetPassword({ initProps }) {
       });
   };
   return (
-    <>
-      <div
-        className="container-xl bg-blue-600 h-screen" /*style={{background:`linear-gradient(#035ea3, #198e07)`}}*/
-      >
-        <div className="pt-20 relative" id="wrapper">
-          <div className=" mx-auto bg-white rounded-lg w-10/12 md:w-5/12 max-h-80 md:max-h-80 text-black shadow-lg px-3 md:px-5 pt-10 pb-1 text-center">
-            {success ? (
-              <Result
-                status="success"
-                subTitle="Silahkan cek Email anda untuk verifikasi akun"
-                title="Berhasil"
+    <AuthScreen>
+      {success ? (
+        <Result
+          status="success"
+          subTitle="Silahkan cek email Anda untuk reset kata sandi"
+          title="Berhasil"
+        />
+      ) : (
+        <>
+          <h1 className="mb-5 text-xl font-semibold text-mono30">
+            Lupa Kata Sandi
+          </h1>
+          <Form
+            layout="vertical"
+            className="loginForm"
+            requiredMark={false}
+            onFinish={handleForgetPassword}
+          >
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: "Email wajib diisi",
+                },
+                {
+                  pattern:
+                    /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                  message: "Email belum diisi dengan benar",
+                },
+              ]}
+              style={{ marginBottom: `2rem` }}
+            >
+              <Input
+                // prefix={<UserOutlined className="site-form-item-icon" />}
+                name="email"
+                value={formdata}
+                placeholder="Email"
+                onChange={onChangeForgetPassword}
               />
-            ) : (
-              <>
-                <h1 className="mb-5 font-mont text-xl font-semibold">
-                  Lupa Password
-                </h1>
-                <Form className="loginForm" onFinish={handleForgetPassword}>
-                  <Form.Item
-                    name="email"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Email wajib diisi",
-                      },
-                      {
-                        pattern:
-                          /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
-                        message: "Email belum diisi dengan benar",
-                      },
-                    ]}
-                  >
-                    <Input
-                      prefix={<UserOutlined className="site-form-item-icon" />}
-                      name="email"
-                      value={formdata}
-                      placeholder="Email"
-                      onChange={onChangeForgetPassword}
-                    />
-                  </Form.Item>
-                  <Form.Item style={{ justifyContent: `center` }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      loading={loadingforgetpass}
-                      className="login-form-button mb-5"
-                      style={{ width: `100%` }}
-                    >
-                      Submit
-                    </Button>
-                  </Form.Item>
-                </Form>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    </>
+            </Form.Item>
+            <Form.Item style={{ justifyContent: `center` }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loadingforgetpass}
+                className="login-form-button font-semibold"
+                style={{ width: `100%` }}
+              >
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
+        </>
+      )}
+    </AuthScreen>
   );
 }
 

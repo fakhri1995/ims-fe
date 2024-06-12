@@ -4,6 +4,7 @@ import { Form, notification } from "antd";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+import AuthScreen from "../../components/screen/login/AuthScreen";
 import httpcookie from "cookie";
 
 export default function ResetPassword({ initProps }) {
@@ -14,7 +15,6 @@ export default function ResetPassword({ initProps }) {
     password: "",
     confirm_password: "",
   });
-  const [alerterror, setAlerterror] = useState(false);
   const [loadingresetpass, setloadingresetpass] = useState(false);
   const onChangeResetPassword = (e) => {
     setFormdata({
@@ -43,97 +43,96 @@ export default function ResetPassword({ initProps }) {
           setloadingresetpass(false);
           if (res2.success) {
             notification["success"]({
-              message: res2.data,
+              message: "Berhasil Mengubah Kata Sandi",
               duration: 3,
             });
             rt.push("/login");
           } else if (!res2.success) {
-            message.error(
-              {
-                content: res2.message,
-                style: {
-                  marginTop: `1rem`,
-                },
-              },
-              5
-            );
-            setAlerterror(true);
+            notification["error"]({
+              message: res2.data,
+              duration: 3,
+            });
           }
-        });
+        })
+        .catch((err) =>
+          notification["error"]({
+            message: "Gagal Mengubah Kata Sandi",
+            duration: 3,
+          })
+        );
     }
   };
   return (
-    <>
-      <div
-        className="container-xl bg-blue-600 h-screen" /*style={{background:`linear-gradient(#035ea3, #198e07)`}}*/
+    <AuthScreen>
+      <h1 className="mb-5 text-xl font-semibold text-mono30">
+        Reset Kata Sandi
+      </h1>
+      <Form
+        layout="vertical"
+        className="loginForm"
+        requiredMark={false}
+        onFinish={handleResetPassword}
       >
-        <div className="pt-20 relative" id="wrapper">
-          <div className=" mx-auto bg-white rounded-lg w-10/12 md:w-5/12 max-h-80 md:max-h-80 text-black shadow-lg px-3 md:px-5 pt-10 pb-1 text-center">
-            <h1 className="mb-5 font-mont text-xl font-semibold">
-              Reset Password
-            </h1>
-            <Form className="loginForm" onFinish={handleResetPassword}>
-              <Form.Item
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Password baru wajib diisi",
-                  },
-                  {
-                    pattern: /([A-z0-9]{8})/,
-                    message: "Password minimal 8 karakter",
-                  },
-                ]}
-              >
-                <Input.Password
-                  prefix={<LockOutlined className="site-form-item-icon" />}
-                  name="password"
-                  value={formdata}
-                  placeholder="Password"
-                  type={`password`}
-                  onChange={onChangeResetPassword}
-                />
-              </Form.Item>
-              <Form.Item
-                name="confirm_password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Konfirmasi Password baru wajib diisi",
-                  },
-                  {
-                    pattern: /([A-z0-9]{8})/,
-                    message: "Password minimal 8 karakter",
-                  },
-                ]}
-                style={{ marginBottom: `3rem` }}
-              >
-                <Input.Password
-                  prefix={<LockOutlined className="site-form-item-icon" />}
-                  name="confirm_password"
-                  value={formdata}
-                  placeholder="Konfirmasi Password"
-                  type="password"
-                  onChange={onChangeResetPassword}
-                />
-              </Form.Item>
-              <Form.Item style={{ justifyContent: `center` }}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loadingresetpass}
-                  className="login-form-button mb-5"
-                  style={{ width: `100%` }}
-                >
-                  Reset Password
-                </Button>
-              </Form.Item>
-            </Form>
-          </div>
-        </div>
-      </div>
-    </>
+        <Form.Item
+          label="Kata Sandi"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: "Kata Sandi Baru wajib diisi",
+            },
+            {
+              pattern: /([A-z0-9]{8})/,
+              message: "Kata Sandi minimal 8 karakter",
+            },
+          ]}
+        >
+          <Input.Password
+            // prefix={<LockOutlined className="site-form-item-icon" />}
+            name="password"
+            value={formdata}
+            placeholder="Kata Sandi Baru"
+            type={`password`}
+            onChange={onChangeResetPassword}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Konfirmasi Kata Sandi"
+          name="confirm_password"
+          rules={[
+            {
+              required: true,
+              message: "Konfirmasi Kata Sandi wajib diisi",
+            },
+            {
+              pattern: /([A-z0-9]{8})/,
+              message: "Kata Sandi minimal 8 karakter",
+            },
+          ]}
+          style={{ marginBottom: `2rem` }}
+        >
+          <Input.Password
+            // prefix={<LockOutlined className="site-form-item-icon" />}
+            name="confirm_password"
+            value={formdata}
+            placeholder="Konfirmasi Kata Sandi Baru"
+            type="password"
+            onChange={onChangeResetPassword}
+          />
+        </Form.Item>
+        <Form.Item style={{ justifyContent: `center` }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loadingresetpass}
+            className="login-form-button font-semibold"
+            style={{ width: `100%` }}
+          >
+            Reset Kata Sandi
+          </Button>
+        </Form.Item>
+      </Form>
+    </AuthScreen>
   );
 }
 
