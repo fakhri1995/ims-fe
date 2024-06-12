@@ -70,6 +70,7 @@ export default function ResetPassword({ initProps }) {
       <Form
         layout="vertical"
         className="loginForm"
+        requiredMark={false}
         onFinish={handleResetPassword}
       >
         <Form.Item
@@ -119,15 +120,17 @@ export default function ResetPassword({ initProps }) {
             onChange={onChangeResetPassword}
           />
         </Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          loading={loadingresetpass}
-          className="login-form-button"
-          style={{ width: `100%` }}
-        >
-          Reset Kata Sandi
-        </Button>
+        <Form.Item style={{ justifyContent: `center` }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loadingresetpass}
+            className="login-form-button font-semibold"
+            style={{ width: `100%` }}
+          >
+            Reset Kata Sandi
+          </Button>
+        </Form.Item>
       </Form>
     </AuthScreen>
   );

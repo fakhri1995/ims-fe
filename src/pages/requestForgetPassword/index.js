@@ -69,6 +69,7 @@ export default function RequestForgetPassword({ initProps }) {
           <Form
             layout="vertical"
             className="loginForm"
+            requiredMark={false}
             onFinish={handleForgetPassword}
           >
             <Form.Item
@@ -85,6 +86,7 @@ export default function RequestForgetPassword({ initProps }) {
                   message: "Email belum diisi dengan benar",
                 },
               ]}
+              style={{ marginBottom: `2rem` }}
             >
               <Input
                 // prefix={<UserOutlined className="site-form-item-icon" />}
@@ -94,16 +96,17 @@ export default function RequestForgetPassword({ initProps }) {
                 onChange={onChangeForgetPassword}
               />
             </Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loadingforgetpass}
-              className="login-form-button font-semibold"
-              style={{ width: `100%` }}
-              size="large"
-            >
-              Submit
-            </Button>
+            <Form.Item style={{ justifyContent: `center` }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loadingforgetpass}
+                className="login-form-button font-semibold"
+                style={{ width: `100%` }}
+              >
+                Submit
+              </Button>
+            </Form.Item>
           </Form>
         </>
       )}
