@@ -87,6 +87,7 @@ export default function Home({ initProps }) {
         name="email"
         layout="vertical"
         className="loginForm"
+        requiredMark={false}
         initialValues={{ remember: true }}
         onFinish={handleLogin}
       >
@@ -140,7 +141,6 @@ export default function Home({ initProps }) {
             loading={loadinglogin}
             className="login-form-button font-semibold"
             style={{ width: `100%` }}
-            size="large"
           >
             Login
           </Button>
