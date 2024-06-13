@@ -1,6 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Empty, Input, Pagination, notification } from "antd";
 import { AxiosResponse } from "axios";
+import moment from "moment";
 import {
   NumberParam,
   StringParam,
@@ -181,95 +182,110 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
       {/* Table */}
       <div className="grid grid-cols-1 gap-5 overflow-x-auto">
         {dataAnnouncements.length > 0 ? (
-          dataAnnouncements.map((item, idx) => {
-            const thisDate = (item?.publish_at as string).slice(0, 10);
-            const prevDate =
-              idx > 0
-                ? (dataAnnouncements?.[idx - 1]?.publish_at as string).slice(
-                    0,
-                    10
-                  )
-                : "";
+          <>
+            {dataAnnouncements.map((item, idx) => {
+              const thisDate = (item?.publish_at as string).slice(0, 10);
+              const prevDate =
+                idx > 0
+                  ? (dataAnnouncements?.[idx - 1]?.publish_at as string).slice(
+                      0,
+                      10
+                    )
+                  : "";
 
-            const MAX_LENGTH = 120;
-            const slicedText = stripTags(item?.text).slice(0, MAX_LENGTH);
+              const MAX_LENGTH = 120;
+              const slicedText = stripTags(item?.text).slice(0, MAX_LENGTH);
 
-            return (
-              <div key={item.id} className="flex flex-col gap-5">
-                {thisDate != prevDate && (
-                  <p className="text-mono50">
-                    {formatDateToLocale(
-                      item?.publish_at as unknown as Date,
-                      "d MMM yyyy"
-                    )}
-                  </p>
-                )}
+              return (
+                <div key={item.id} className="flex flex-col gap-3">
+                  {thisDate != prevDate && (
+                    <>
+                      {idx !== 0 && <hr />}
+                      <p className="text-mono30 font-medium ">
+                        {formatDateToLocale(
+                          item?.publish_at as unknown as Date,
+                          "d MMM yyyy"
+                        )}
+                      </p>
+                    </>
+                  )}
 
-                <div
-                  onClick={() =>
-                    isAllowedToGetAnnouncement &&
-                    router.push(`announcement/detail/${item?.id}`)
-                  }
-                  className="flex gap-6 items-center justify-between 
+                  <div
+                    onClick={() =>
+                      isAllowedToGetAnnouncement &&
+                      router.push(`announcement/detail/${item?.id}`)
+                    }
+                    className="flex gap-6 items-center justify-between 
                 hover:bg-mono120 hover:cursor-pointer"
-                >
-                  <div className="flex items-center gap-6 lg:w-10/12">
-                    {/* Cover Image */}
-                    <div>
-                      {item?.thumbnail_image?.link &&
-                      item?.thumbnail_image?.link !=
-                        "staging/Announcement/mig-announce-logo.png" ? (
-                        <div
-                          onClick={(
-                            e: React.MouseEvent<HTMLImageElement, MouseEvent>
-                          ) => {
-                            const imageElement = e.target as HTMLImageElement;
-                            handleClickThumbnail(e, imageElement.src);
-                          }}
-                          className="hover:shadow-md"
-                        >
-                          <img
-                            src={generateStaticAssetUrl(
-                              item?.thumbnail_image?.link
-                            )}
-                            className="h-20 w-20 lg:h-[130px] lg:w-[130px] 
+                  >
+                    <div className="flex items-center gap-6 lg:w-10/12">
+                      {/* Cover Image */}
+                      <div>
+                        {item?.thumbnail_image?.link &&
+                        item?.thumbnail_image?.link !=
+                          "staging/Announcement/mig-announce-logo.png" ? (
+                          <div
+                            onClick={(
+                              e: React.MouseEvent<HTMLImageElement, MouseEvent>
+                            ) => {
+                              const imageElement = e.target as HTMLImageElement;
+                              handleClickThumbnail(e, imageElement.src);
+                            }}
+                            className="hover:shadow-md"
+                          >
+                            <img
+                              src={generateStaticAssetUrl(
+                                item?.thumbnail_image?.link
+                              )}
+                              className="h-20 w-20 lg:h-[130px] lg:w-[130px] 
                             object-cover rounded"
-                          />
-                        </div>
-                      ) : (
-                        <div
-                          onClick={(e) => handleClickThumbnail(e, "/mig.png")}
-                          className="h-20 w-20 lg:h-[130px] lg:w-[130px] 
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            onClick={(e) => handleClickThumbnail(e, "/mig.png")}
+                            className="h-20 w-20 lg:h-[130px] lg:w-[130px] 
                           bg-backdrop rounded flex flex-col items-center 
                           justify-center py-4 px-3"
-                        >
-                          <img
-                            src="/mig.png"
-                            style={{
-                              width: "10rem",
-                              mixBlendMode: "luminosity",
-                            }}
-                          />
+                          >
+                            <img
+                              src="/mig.png"
+                              style={{
+                                width: "10rem",
+                                mixBlendMode: "luminosity",
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/*Announcement Text */}
+                      <div className="flex flex-col gap-2 w-80 lg:w-96 xl:w-[600px]">
+                        <div className="flex items-center gap-2">
+                          <h1 className="mig-heading--4 ">{item?.title}</h1>
+                          {moment().diff(moment(item?.publish_at), "days") <=
+                          2 ? (
+                            <div className="bg-primary100 px-2 py-0.5 rounded-md text-white mig-caption--bold">
+                              Baru
+                            </div>
+                          ) : null}
                         </div>
-                      )}
+
+                        <p className="mig-caption--medium">
+                          oleh{" "}
+                          {isAdminPage
+                            ? item?.user?.name
+                            : item?.user?.position}
+                        </p>
+                        <p className="text-mono50 break-all ">
+                          {slicedText?.length < MAX_LENGTH
+                            ? slicedText
+                            : `${slicedText}...`}
+                        </p>
+                      </div>
                     </div>
 
-                    {/*Announcement Text */}
-                    <div className="flex flex-col gap-2 w-80 lg:w-96 xl:w-[600px]">
-                      <h1 className="mig-heading--4 ">{item?.title}</h1>
-                      <p className="mig-caption--medium">
-                        oleh{" "}
-                        {isAdminPage ? item?.user?.name : item?.user?.position}
-                      </p>
-                      <p className="text-mono50 break-all ">
-                        {slicedText?.length < MAX_LENGTH
-                          ? slicedText
-                          : `${slicedText}...`}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* <div>
+                    {/* <div>
                     <p>
                       {formatDateToLocale(
                         item?.publish_at as unknown as Date,
@@ -278,23 +294,25 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
                     </p>
                   </div> */}
 
-                  {isAdminPage && (
-                    <div>
-                      {item?.is_publish ? (
-                        <div className="rounded-md h-auto px-3 text-center py-1 bg-primary10 text-primary100 font-semibold">
-                          Delivered
-                        </div>
-                      ) : (
-                        <div className="rounded-md h-auto px-3 text-center py-1 bg-mono90 text-mono-30 font-semibold">
-                          Scheduled
-                        </div>
-                      )}
-                    </div>
-                  )}
+                    {isAdminPage && (
+                      <div>
+                        {item?.is_publish ? (
+                          <div className="rounded-md h-auto px-3 text-center py-1 bg-primary10 text-primary100 font-semibold">
+                            Delivered
+                          </div>
+                        ) : (
+                          <div className="rounded-md h-auto px-3 text-center py-1 bg-mono90 text-mono-30 font-semibold">
+                            Scheduled
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })
+              );
+            })}
+            <hr />
+          </>
         ) : (
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         )}
