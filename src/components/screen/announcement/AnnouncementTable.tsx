@@ -269,14 +269,14 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
                     </div>
                   </div>
 
-                  <div>
+                  {/* <div>
                     <p>
                       {formatDateToLocale(
                         item?.publish_at as unknown as Date,
                         "HH:mm"
                       )}
                     </p>
-                  </div>
+                  </div> */}
 
                   {isAdminPage && (
                     <div>
@@ -302,12 +302,13 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
 
       <div className="flex justify-end">
         <Pagination
-          defaultCurrent={queryParams.page}
+          current={queryParams.page}
           total={dataRawAnnouncements?.total}
+          pageSize={queryParams.rows}
           onChange={(page, pageSize) => {
             setQueryParams({
               page: page,
-              rows: pageSize,
+              // rows: pageSize,
             });
           }}
         />
