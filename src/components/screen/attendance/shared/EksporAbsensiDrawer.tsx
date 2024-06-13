@@ -88,6 +88,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   const [dataProfile, setDataProfile] = useState({
     name: null,
     position: null,
+    placement: null,
   });
   const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState<
     Array<number> | undefined
@@ -239,6 +240,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
             setDataProfile({
               name: response2.data.name,
               position: response2.data.position,
+              placement: response2.data.employee.contract.placement,
             });
           } else {
             notification.error({
@@ -792,9 +794,14 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                     dataProfile={dataProfile}
                   />
                 }
-                fileName={`my-attendance_data-${moment().format(
-                  "DD_MM_YYYY"
-                )}.pdf`}
+                fileName={`${moment(dataFormat.from).format(
+                  "YYYY-MM"
+                )} - Timesheet TKTI - ${dataProfile.placement} ${
+                  dataProfile.position
+                } - ${dataProfile.name} .pdf`}
+                // fileName={`my-attendance_data-${moment().format(
+                //   "DD_MM_YYYY"
+                // )}.pdf`}
               >
                 <ButtonSys
                   type={"primary"}
