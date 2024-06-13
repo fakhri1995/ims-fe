@@ -687,8 +687,7 @@ const ExportActivityTemplate = ({
             </View>
             <View
               style={{
-                backgroundColor:
-                  idx == parseInt(dataResume.length / 2) ? "#E5FFFE" : "white",
+                backgroundColor: "#E5FFFE",
                 borderRightColor: "#FAFAFA",
                 borderLeftColor: "#FAFAFA",
                 borderTopColor: "white",
