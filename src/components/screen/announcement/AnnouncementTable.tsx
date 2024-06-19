@@ -1,8 +1,7 @@
-import { EditOutlined, SearchOutlined } from "@ant-design/icons";
-import { Form, Input, Select, Table, notification } from "antd";
-import type { ColumnsType } from "antd/lib/table";
-import { SorterResult } from "antd/lib/table/interface";
+import { SearchOutlined } from "@ant-design/icons";
+import { Empty, Input, Pagination, notification } from "antd";
 import { AxiosResponse } from "axios";
+import moment from "moment";
 import {
   NumberParam,
   StringParam,
@@ -11,7 +10,7 @@ import {
 } from "next-query-params";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import DrawerAnnouncement from "components/drawer/announcement/drawerAnnouncement";
@@ -35,7 +34,6 @@ import {
   AnnouncementData,
   AnnouncementService,
   GetAnnouncementsSucceedResponse,
-  IAnnouncementPayload,
 } from "apis/announcement";
 
 interface IAnnouncementTable {
@@ -122,121 +120,8 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
     setShowPreviewModal(true);
   };
 
-  const tableColumns: ColumnsType<AnnouncementData> = [
-    {
-      key: "thumbnail",
-      title: "Thumbnail",
-      dataIndex: "thumbnail_image",
-      width: 130,
-      render: (image, record, index) => {
-        const thisDate = (record?.publish_at as string).slice(0, 10);
-        const prevDate =
-          index > 0
-            ? (dataAnnouncements?.[index - 1]?.publish_at as string).slice(
-                0,
-                10
-              )
-            : "";
-
-        return (
-          <div>
-            {thisDate != prevDate && (
-              <p className="mb-3 text-mono50">
-                {formatDateToLocale(
-                  record?.publish_at as unknown as Date,
-                  "d MMM yyyy"
-                )}
-              </p>
-            )}
-            {image?.link &&
-            image?.link != "staging/Announcement/mig-announce-logo.png" ? (
-              <div
-                onClick={(
-                  e: React.MouseEvent<HTMLImageElement, MouseEvent>
-                ) => {
-                  const imageElement = e.target as HTMLImageElement;
-                  handleClickThumbnail(e, imageElement.src);
-                }}
-              >
-                <img
-                  src={generateStaticAssetUrl(image?.link)}
-                  className="h-[130px] w-[130px] object-cover rounded"
-                />
-              </div>
-            ) : (
-              <div
-                onClick={(e) => handleClickThumbnail(e, "/mig.png")}
-                className="h-[130px] w-[130px] bg-backdrop rounded flex flex-col items-center 
-                  justify-center py-4 px-3"
-              >
-                <img
-                  src="/mig.png"
-                  style={{ width: "10rem", mixBlendMode: "luminosity" }}
-                />
-              </div>
-            )}
-          </div>
-        );
-      },
-    },
-
-    {
-      key: "text",
-      title: "Isi",
-      dataIndex: "text",
-      render: (text, record, index) => {
-        const MAX_LENGTH = 120;
-        const slicedText = stripTags(text).slice(0, MAX_LENGTH);
-        return (
-          <div className="flex flex-col gap-2">
-            <h1 className="mig-heading--4">{record?.title}</h1>
-            <p className="mig-caption--medium">
-              oleh {isAdminPage ? record?.user?.name : record?.user?.position}
-            </p>
-            <p className="text-mono50 w-36 md:w-72 lg:w-96 xl:w-120">
-              {slicedText?.length < MAX_LENGTH
-                ? slicedText
-                : `${slicedText}...`}
-            </p>
-          </div>
-        );
-      },
-    },
-
-    {
-      key: "date",
-      title: "Waktu",
-      dataIndex: "publish_at",
-      render: (publishAt) =>
-        formatDateToLocale(publishAt as unknown as Date, "HH:mm"),
-      // sorter: (lhs, rhs) => {
-      //   const lhsDate = new Date(lhs.created_at);
-      //   const rhsDate = new Date(rhs.created_at);
-      //   return lhsDate < rhsDate ? -1 : 1;
-      // },
-    },
-    isAdminPage
-      ? {
-          key: "status",
-          title: "Status",
-          dataIndex: "is_publish",
-          render: (published) => {
-            return published ? (
-              <div className="rounded-md h-auto px-3 text-center py-1 bg-primary10 text-primary100 font-semibold">
-                Delivered
-              </div>
-            ) : (
-              <div className="rounded-md h-auto px-3 text-center py-1 bg-mono90 text-mono-30 font-semibold">
-                Scheduled
-              </div>
-            );
-          },
-        }
-      : {},
-  ];
-
   return (
-    <div className="mig-platform flex flex-col space-y-5">
+    <div className="mig-platform flex flex-col space-y-6">
       {/* Keyword search, Cari button */}
       <section className="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <div className="w-full md:w-4/12">
@@ -295,44 +180,154 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
       </section>
 
       {/* Table */}
-      <div className="grid grid-cols-1">
-        <Table<AnnouncementData>
-          rowKey={(record) => record.id}
-          dataSource={dataAnnouncements}
-          loading={loadingAnnouncements}
-          columns={tableColumns}
-          scroll={{ x: 200 }}
-          showHeader={false}
-          className="customTable"
-          pagination={{
-            total: dataRawAnnouncements?.total,
-            current: queryParams?.page,
-            pageSize: queryParams.rows,
-            showSizeChanger: true,
-          }}
-          onChange={(pagination, filters, sorter: SorterResult<any>, extra) => {
-            const sortTypePayload =
-              sorter.order === "ascend"
-                ? "asc"
-                : sorter.order === "descend"
-                ? "desc"
-                : undefined;
+      <div className="grid grid-cols-1 gap-5 overflow-x-auto">
+        {dataAnnouncements.length > 0 ? (
+          <>
+            {dataAnnouncements.map((item, idx) => {
+              const thisDate = (item?.publish_at as string).slice(0, 10);
+              const prevDate =
+                idx > 0
+                  ? (dataAnnouncements?.[idx - 1]?.publish_at as string).slice(
+                      0,
+                      10
+                    )
+                  : "";
 
+              const MAX_LENGTH = 120;
+              const slicedText = stripTags(item?.text).slice(0, MAX_LENGTH);
+
+              return (
+                <div key={item.id} className="flex flex-col gap-3">
+                  {thisDate != prevDate && (
+                    <>
+                      {idx !== 0 && <hr />}
+                      <p className="text-mono30 font-medium ">
+                        {formatDateToLocale(
+                          item?.publish_at as unknown as Date,
+                          "d MMM yyyy"
+                        )}
+                      </p>
+                    </>
+                  )}
+
+                  <div
+                    onClick={() =>
+                      isAllowedToGetAnnouncement &&
+                      router.push(`announcement/detail/${item?.id}`)
+                    }
+                    className="flex gap-6 items-center justify-between 
+                hover:bg-mono120 hover:cursor-pointer"
+                  >
+                    <div className="flex items-center gap-6 lg:w-10/12">
+                      {/* Cover Image */}
+                      <div>
+                        {item?.thumbnail_image?.link &&
+                        item?.thumbnail_image?.link !=
+                          "staging/Announcement/mig-announce-logo.png" ? (
+                          <div
+                            onClick={(
+                              e: React.MouseEvent<HTMLImageElement, MouseEvent>
+                            ) => {
+                              const imageElement = e.target as HTMLImageElement;
+                              handleClickThumbnail(e, imageElement.src);
+                            }}
+                            className="hover:shadow-md"
+                          >
+                            <img
+                              src={generateStaticAssetUrl(
+                                item?.thumbnail_image?.link
+                              )}
+                              className="h-20 w-20 lg:h-[130px] lg:w-[130px] 
+                            object-cover rounded"
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            onClick={(e) => handleClickThumbnail(e, "/mig.png")}
+                            className="h-20 w-20 lg:h-[130px] lg:w-[130px] 
+                          bg-backdrop rounded flex flex-col items-center 
+                          justify-center py-4 px-3"
+                          >
+                            <img
+                              src="/mig.png"
+                              style={{
+                                width: "10rem",
+                                mixBlendMode: "luminosity",
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/*Announcement Text */}
+                      <div className="flex flex-col gap-2 w-80 lg:w-96 xl:w-[600px]">
+                        <div className="flex items-center gap-2">
+                          <h1 className="mig-heading--4 ">{item?.title}</h1>
+                          {moment().diff(moment(item?.publish_at), "days") <=
+                          2 ? (
+                            <div className="bg-primary100 px-2 py-0.5 rounded-md text-white mig-caption--bold">
+                              Baru
+                            </div>
+                          ) : null}
+                        </div>
+
+                        <p className="mig-caption--medium">
+                          oleh{" "}
+                          {isAdminPage
+                            ? item?.user?.name
+                            : item?.user?.position}
+                        </p>
+                        <p className="text-mono50 break-all ">
+                          {slicedText?.length < MAX_LENGTH
+                            ? slicedText
+                            : `${slicedText}...`}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* <div>
+                    <p>
+                      {formatDateToLocale(
+                        item?.publish_at as unknown as Date,
+                        "HH:mm"
+                      )}
+                    </p>
+                  </div> */}
+
+                    {isAdminPage && (
+                      <div>
+                        {item?.is_publish ? (
+                          <div className="rounded-md h-auto px-3 text-center py-1 bg-primary10 text-primary100 font-semibold">
+                            Delivered
+                          </div>
+                        ) : (
+                          <div className="rounded-md h-auto px-3 text-center py-1 bg-mono90 text-mono-30 font-semibold">
+                            Scheduled
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            <hr />
+          </>
+        ) : (
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        )}
+      </div>
+
+      <div className="flex justify-end">
+        <Pagination
+          current={queryParams.page}
+          total={dataRawAnnouncements?.total}
+          pageSize={queryParams.rows}
+          onChange={(page, pageSize) => {
             setQueryParams({
-              page: pagination.current,
-              rows: pagination.pageSize,
-              // order_by:
-              //   sortTypePayload === undefined ? undefined : sorter.field,
-              order_to: sortTypePayload,
+              page: page,
+              // rows: pageSize,
             });
-          }}
-          onRow={({ id }) => {
-            return {
-              className: "cursor-pointer",
-              onClick: () =>
-                isAllowedToGetAnnouncement &&
-                router.push(`announcement/detail/${id}`),
-            };
           }}
         />
       </div>
