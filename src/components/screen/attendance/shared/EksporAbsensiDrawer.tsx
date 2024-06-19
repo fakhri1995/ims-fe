@@ -89,6 +89,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     name: null,
     position: null,
     placement: null,
+    form_activity_name: null,
   });
   const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState<
     Array<number> | undefined
@@ -237,10 +238,12 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
         .then((response) => response.json())
         .then((response2) => {
           if (response2.success) {
+            console.log("response ", response2.data);
             setDataProfile({
               name: response2.data.name,
               position: response2.data.position,
               placement: response2.data.employee.contract.placement,
+              form_activity_name: response2.data.attendance_forms[0].name,
             });
           } else {
             notification.error({
@@ -771,6 +774,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           </div>
         )}
       </div>
+      {console.log("isi data profile ", dataProfile)}
       <ModalCore
         title={"Unduh PDF"}
         visible={modalConfirmExportPdf}
@@ -798,7 +802,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                   "YYYY-MM"
                 )} - Timesheet TKTI - ${dataProfile.placement} ${
                   dataProfile.position
-                } - ${dataProfile.name} .pdf`}
+                } - ${dataProfile.form_activity_name} ${dataProfile.name}.pdf`}
                 // fileName={`my-attendance_data-${moment().format(
                 //   "DD_MM_YYYY"
                 // )}.pdf`}
