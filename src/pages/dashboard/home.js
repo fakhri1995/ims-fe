@@ -113,7 +113,7 @@ function DashboardIndex({ initProps, dataProfile, sidemenu }) {
           />
         </div>
       ) : hasPermission(ANNOUNCEMENT_EMPLOYEE_GET) ? (
-        <AnnouncementCard />
+        <AnnouncementCard isPopup={dataProfile?.data?.is_announcement} />
       ) : (
         <h1 className="px-6 md:px-0">Selamat datang di dashboard</h1>
       )}
