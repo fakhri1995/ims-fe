@@ -114,13 +114,16 @@ ol {
 }
 
 /* MENU */
+
 /* selected menu bg */
 .ant-menu-item-selected {
+  // background-color: #35763b !important;
   background-color: #d8e8da !important;
 }
 
 /* selected menu title */
 .ant-menu-item-selected a {
+  // color: #FFFFFF !important;
   color: #35763b !important;
 }
 
@@ -129,32 +132,64 @@ ol {
   color: #65976a !important;
 }
 
+/* menu bg hover */
+.ant-menu-item:hover {
+  background-color: #fafafa;
+}
+
 /* menu title hover */
 .ant-menu-light .ant-menu-item a:hover {
-  color: #65976a;
+  // color: #65976a;
+  color: #808080;
 }
 
 /* after menu */
 .ant-menu-inline .ant-menu-item::after {
   border-right: 3px solid #35763b;
+  // border-right: 0px;
+  // width: 8px;
+  // height: 8px;
+  // color: #35763b;
 }
 
 /* SUBMENU */
 /* submenu bg dan submenu title */
-.ant-menu-submenu-selected {
-  color: #35763b;
-  background-color: #d8e8da;
+.ant-menu-submenu:hover {
+  background-color: #fafafa;
+}
+
+.ant-menu-submenu-selected,
+.ant-menu-submenu.ant-menu-submenu-active.ant-menu-submenu-selected:hover {
+  color: #ffffff;
+  background-color: #35763b;
+  border-radius: 5px;
+  // color: #35763b;
+  // background-color: #d8e8da;
+}
+
+.ant-menu-submenu.ant-menu-submenu-active.ant-menu-submenu-selected
+  .ant-menu-submenu-title:hover {
+  color: #ffffff;
+}
+
+.ant-menu-submenu-title {
+  padding-inline: 10px;
 }
 
 /* submenu title hover */
-.ant-menu-submenu-active,
-.ant-menu-light .ant-menu-submenu-title:hover {
-  color: #65976a;
+.ant-menu-light .ant-menu-submenu-title:hover,
+.ant-menu-submenu-selected:hover {
+  color: #808080;
 }
 
 /* arrow */
 .ant-menu-submenu-arrow {
   color: #35763b;
+}
+
+/* arrow selected */
+.ant-menu-submenu-selected .ant-menu-submenu-arrow {
+  color: #ffffff;
 }
 
 /* arrow hover */

@@ -147,7 +147,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
    * Class names
    */
   const menuSectionLabelClassName = clsx(
-    "mb-2 font-sans text-gray-400 pl-4 md:pl-6 uppercase text-sm",
+    "mb-2 font-sans text-gray-400 pl-4 md:pl-0 uppercase text-sm",
     {
       hidden: coll,
     }
@@ -168,7 +168,12 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       {/* ------------------ Menu Situs ------------------ */}
       {/* Dashboard */}
       {hasPermission(SIDEBAR_DASHBOARD) && (
-        <Menu.Item key="1" icon={<DashboardIconSvg />} title="Dashboard">
+        <Menu.Item
+          key="1"
+          icon={<DashboardIconSvg />}
+          // style={{ paddingInline: 0 }}
+          title="Dashboard"
+        >
           <Link href="/dashboard/home">Dashboard</Link>
         </Menu.Item>
       )}
@@ -223,13 +228,13 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       {hasPermission(SIDEBAR_TASK) && (
         <SubMenu title="Task" key="20" icon={<TaskIconSvg />}>
           {hasPermission(SIDEBAR_TASK_ADMIN) && (
-            <Menu.Item key="201" icon={<TaskIconSvg />} title="Admin Task">
+            <Menu.Item key="201" title="Admin Task">
               <Link href="/tasks/admin">Admin Task</Link>
             </Menu.Item>
           )}
 
           {hasPermission(SIDEBAR_TASK_MY) && (
-            <Menu.Item key="202" icon={<TaskIconSvg />} title="My Task">
+            <Menu.Item key="202" title="My Task">
               <Link href="/tasks/mytask">My Task</Link>
             </Menu.Item>
           )}
@@ -584,7 +589,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         width={230}
         theme="light"
         className={`${commonLayoutStyle.siderLayout} sider`}
-        style={{ borderRight: `1px solid #f0f0f0`, height: "100%" }}
+        style={{
+          // borderRight: `1px solid #f0f0f0`,
+          height: "100%",
+          paddingInline: "14px",
+        }}
       >
         {/* Sider Header (image) */}
         <div className="my-5">
@@ -596,6 +605,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           mode="inline"
           defaultSelectedKeys={[sidemenu]}
           triggerSubMenuAction="hover"
+          style={{
+            borderRight: 0,
+            paddingInline: "10px",
+            // paddingLeft: "0px",
+          }}
         >
           {menuSitusContent}
           <hr className="my-3 invisible" />
@@ -613,7 +627,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         theme="light"
         className={commonLayoutStyle.siderLayoutSmall}
         style={{
-          borderRight: `1px solid #f0f0f0`,
+          // borderRight: `1px solid #f0f0f0`,
           position: "absolute",
           height: `100%`,
           backgroundColor: "white",
