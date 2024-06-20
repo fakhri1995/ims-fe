@@ -800,9 +800,9 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                 }
                 fileName={`${moment(dataFormat.from).format(
                   "YYYY-MM"
-                )} - Timesheet TKTI - ${dataProfile.placement} ${
-                  dataProfile.position
-                } - ${dataProfile.form_activity_name} ${dataProfile.name}.pdf`}
+                )} Timesheet TKTI ${dataProfile.form_activity_name} ${
+                  dataProfile.name
+                }.pdf`}
                 // fileName={`my-attendance_data-${moment().format(
                 //   "DD_MM_YYYY"
                 // )}.pdf`}
