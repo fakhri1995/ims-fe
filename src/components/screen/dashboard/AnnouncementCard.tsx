@@ -7,9 +7,11 @@ import {
 } from "next-query-params";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 
+import { AccessControl } from "components/features/AccessControl";
 import { NewsIconSvg } from "components/icon";
+import ModalAnnouncementPopup from "components/modal/attendance/modalAnnouncementPopup";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -25,7 +27,13 @@ import { generateStaticAssetUrl, stripTagsNewLine } from "lib/helper";
 
 import { AnnouncementService } from "apis/announcement";
 
-export const AnnouncementCard: FC = () => {
+interface IAnnouncementCard {
+  isPopup: boolean;
+}
+
+export const AnnouncementCard: FC<IAnnouncementCard> = ({
+  isPopup = false,
+}) => {
   /**
    * Dependencies
    */
@@ -49,6 +57,11 @@ export const AnnouncementCard: FC = () => {
     rows: withDefault(NumberParam, 10),
     keyword: withDefault(StringParam, null),
   });
+
+  /**
+   * States
+   */
+  const [showModalPopup, setShowModalPopup] = useState(isPopup);
 
   /**
    * Queries
@@ -228,6 +241,14 @@ export const AnnouncementCard: FC = () => {
             ))}
         </div>
       </div>
+
+      <AccessControl hasPermission={ANNOUNCEMENTS_GET}>
+        <ModalAnnouncementPopup
+          data={dataAnnouncements?.[0]}
+          visible={showModalPopup}
+          onvisible={setShowModalPopup}
+        />
+      </AccessControl>
     </section>
   );
 };
