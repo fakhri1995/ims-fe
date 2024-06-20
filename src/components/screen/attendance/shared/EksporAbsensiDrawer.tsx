@@ -238,7 +238,6 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
         .then((response) => response.json())
         .then((response2) => {
           if (response2.success) {
-            console.log("response ", response2.data);
             setDataProfile({
               name: response2.data.name,
               position: response2.data.position,
@@ -774,7 +773,6 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           </div>
         )}
       </div>
-      {console.log("isi data profile ", dataProfile)}
       <ModalCore
         title={"Unduh PDF"}
         visible={modalConfirmExportPdf}
