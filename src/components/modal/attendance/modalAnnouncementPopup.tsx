@@ -24,7 +24,6 @@ const ModalAnnouncementPopup = ({ data, visible, onvisible }) => {
       open={visible}
       onCancel={handleClose}
       footer={false}
-      // okButtonProps={{ loading: loading }}
       width={500}
       // maskClosable={false}
       // closable={closable}
