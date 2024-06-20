@@ -355,7 +355,7 @@ const ExportActivityTemplate = ({
                 borderBottomWidth: idx == dataResume.length - 1 ? 1 : 0,
                 marginTop: 0,
                 alignItems: "center",
-                height: 24,
+                minHeight: 24,
                 textAlign: "center",
                 fontSize: 8,
                 color: `#4D4D4D`,
@@ -366,7 +366,11 @@ const ExportActivityTemplate = ({
               <View
                 style={{
                   width: "10%",
-                  height: 24,
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
@@ -379,7 +383,11 @@ const ExportActivityTemplate = ({
               <View
                 style={{
                   width: "10%",
-                  height: 24,
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
@@ -394,7 +402,11 @@ const ExportActivityTemplate = ({
               <View
                 style={{
                   width: "10%",
-                  height: 24,
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
@@ -409,7 +421,11 @@ const ExportActivityTemplate = ({
               <View
                 style={{
                   width: "10%",
-                  height: 24,
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
@@ -422,16 +438,26 @@ const ExportActivityTemplate = ({
                 </Text>
               </View>
               <View
-                style={{
-                  width: "30%",
-                  height: 24,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  paddingHorizontal: 5,
-                  // justifyContent:'center',
-                  borderRightColor: "#CCCCCC",
-                  borderRightWidth: 1,
-                }}
+                style={
+                  Array.isArray(data["daily activity"]) &&
+                  data["daily activity"].length > 1
+                    ? {
+                        width: "30%",
+                        minHeight: 24,
+                        paddingHorizontal: 5,
+                        borderRightColor: "#CCCCCC",
+                        borderRightWidth: 1,
+                      }
+                    : {
+                        width: "30%",
+                        minHeight: 24,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        paddingHorizontal: 5,
+                        borderRightColor: "#CCCCCC",
+                        borderRightWidth: 1,
+                      }
+                }
               >
                 {data["daily activity"] == null ? (
                   <Text></Text>
@@ -516,7 +542,11 @@ const ExportActivityTemplate = ({
               <View
                 style={{
                   width: "15%",
-                  height: 24,
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
                   flexDirection: "row",
                   backgroundColor: "white",
                   alignItems: "center",
@@ -532,7 +562,11 @@ const ExportActivityTemplate = ({
               <View
                 style={{
                   width: "15%",
-                  height: 24,
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
                   backgroundColor: "white",
                   flexDirection: "row",
                   alignItems: "center",
