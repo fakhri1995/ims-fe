@@ -242,14 +242,18 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           className="text-mono50"
         >
           {hasPermission(SIDEBAR_TASK_ADMIN) && (
-            <Menu.Item key="201" title="Admin Task">
-              <Link href="/tasks/admin">Admin Task</Link>
+            <Menu.Item key="201" title="Admin Task" className="text-mono50">
+              <Link href="/tasks/admin">
+                <p>Admin Task</p>
+              </Link>
             </Menu.Item>
           )}
 
           {hasPermission(SIDEBAR_TASK_MY) && (
-            <Menu.Item key="202" title="My Task">
-              <Link href="/tasks/mytask">My Task</Link>
+            <Menu.Item key="202" title="My Task" className="text-mono50">
+              <Link href="/tasks/mytask">
+                <p>My Task</p>
+              </Link>
             </Menu.Item>
           )}
         </SubMenu>
