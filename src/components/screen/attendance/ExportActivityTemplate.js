@@ -214,185 +214,127 @@ const ExportActivityTemplate = ({
             fontFamily: "Inter",
             fontWeight: 500,}}>MARKETING SPECIALIST</Text> */}
         </View>
-
         <View
           style={{
-            marginTop: 10,
-            display: "flex",
             flexDirection: "row",
+            flexWrap: "wrap",
+            marginTop: 24,
+            // borderWidth: 1,
+            // borderColor: '#CCCCCC',
             paddingHorizontal: 48,
           }}
         >
           <View
             style={{
-              backgroundColor: "#FAFAFA",
-              borderColor: "#FAFAFA",
-              borderWidth: 1,
-              borderStyle: "solid",
-              marginRight: 1,
-              paddingVertical: 4,
-              width: 75,
-              height: 24,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 8,
-                color: `#4D4D4D`,
-                fontWeight: 500,
-                textAlign: "center",
-                alignItems: "center",
-              }}
-            >
-              Date
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: "#FAFAFA",
-              borderColor: "#FAFAFA",
-              borderWidth: 1,
-              borderStyle: "solid",
-              marginRight: 1,
-              paddingVertical: 4,
-              width: 56,
-              height: 24,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 8,
-                color: `#4D4D4D`,
-                fontWeight: 500,
-                textAlign: "center",
-              }}
-            >
-              From
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: "#FAFAFA",
-              borderColor: "#FAFAFA",
-              borderWidth: 1,
-              borderStyle: "solid",
-              marginRight: 1,
-              paddingVertical: 4,
-              width: 56,
-              height: 24,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 8,
-                color: `#4D4D4D`,
-                fontWeight: 500,
-                textAlign: "center",
-              }}
-            >
-              To
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: "#FAFAFA",
-              borderColor: "#FAFAFA",
-              borderWidth: 1,
-              borderStyle: "solid",
-              marginRight: 1,
-              paddingVertical: 4,
-              width: 45,
-              height: 24,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 8,
-                color: `#4D4D4D`,
-                fontWeight: 500,
-                textAlign: "center",
-              }}
-            >
-              Work
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: "#FAFAFA",
-              borderColor: "#FAFAFA",
-              borderWidth: 1,
-              borderStyle: "solid",
-              paddingVertical: 4,
-              width: 300,
-              height: 24,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 8,
-                color: `#4D4D4D`,
-                fontWeight: 500,
-                textAlign: "center",
-              }}
-            >
-              Daily Activity
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: "#FAFAFA",
-              borderColor: "#FAFAFA",
-              borderWidth: 1,
-              borderStyle: "solid",
-              paddingVertical: 4,
-              width: 63,
-              height: 24,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 8,
-                color: `#4D4D4D`,
-                fontWeight: 500,
-                textAlign: "center",
-              }}
-            >
-              Supervisor
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: "#FAFAFA",
-              borderColor: "#FAFAFA",
-              borderWidth: 1,
-              borderStyle: "solid",
-              paddingVertical: 4,
-              width: 63,
-              height: 24,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 8,
-                color: `#4D4D4D`,
-                fontWeight: 500,
-                textAlign: "center",
-              }}
-            >
-              Signature
-            </Text>
-          </View>
-        </View>
-        {dataResume?.map((data, idx) => (
-          <View
-            style={{
-              display: "flex",
               flexDirection: "row",
-              paddingHorizontal: 48,
+              borderColor: "#CCCCCC",
+              backgroundColor: "#FAFAFA",
+              borderWidth: 1,
+              alignItems: "center",
+              height: 24,
+              textAlign: "center",
+              fontSize: 8,
+              color: `#4D4D4D`,
+              fontWeight: 500,
+              flexGrow: 1,
             }}
           >
             <View
               style={{
+                width: "10%",
+                height: 24,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRightColor: "#CCCCCC",
+                borderRightWidth: 1,
+              }}
+            >
+              <Text>Date</Text>
+            </View>
+
+            <View
+              style={{
+                width: "10%",
+                height: 24,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRightColor: "#CCCCCC",
+                borderRightWidth: 1,
+              }}
+            >
+              <Text>From</Text>
+            </View>
+            <View
+              style={{
+                width: "10%",
+                height: 24,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRightColor: "#CCCCCC",
+                borderRightWidth: 1,
+              }}
+            >
+              <Text>To</Text>
+            </View>
+            <View
+              style={{
+                width: "10%",
+                height: 24,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRightColor: "#CCCCCC",
+                borderRightWidth: 1,
+              }}
+            >
+              <Text>Work</Text>
+            </View>
+            <View
+              style={{
+                width: "30%",
+                height: 24,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRightColor: "#CCCCCC",
+                borderRightWidth: 1,
+              }}
+            >
+              <Text>Daily Activity</Text>
+            </View>
+            <View
+              style={{
+                width: "15%",
+                height: 24,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRightColor: "#CCCCCC",
+                borderRightWidth: 1,
+              }}
+            >
+              <Text>Supervisor</Text>
+            </View>
+            <View
+              style={{
+                width: "15%",
+                height: 24,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text>Signature</Text>
+            </View>
+          </View>
+          {dataResume?.map((data, idx) => (
+            <View
+              style={{
+                flexDirection: "row",
+                borderRightColor: "#CCCCCC",
                 backgroundColor:
                   data["daily activity"] == "Libur Nasional"
                     ? "#E0F1FF"
@@ -405,311 +347,238 @@ const ExportActivityTemplate = ({
                     : data["daily activity"] == "Empty"
                     ? "#FFDFDC"
                     : "#ffffff",
-                marginRight: 1,
-                paddingVertical: 4,
-                paddingHorizontal: 4,
-                width: 75,
-                minHeight: 24,
-                borderRightColor: "white",
-                borderLeftColor: "white",
-                borderTopColor: "white",
+                borderRightWidth: 1,
+                borderLeftColor: "#CCCCCC",
+                borderLeftWidth: 1,
                 borderBottomColor:
-                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
-                borderWidth: idx == dataResume.length - 1 ? 1 : 0,
+                  idx == dataResume.length - 1 ? "#CCCCCC" : "white",
+                borderBottomWidth: idx == dataResume.length - 1 ? 1 : 0,
+                marginTop: 0,
+                alignItems: "center",
+                minHeight: 24,
+                textAlign: "center",
+                fontSize: 8,
+                color: `#4D4D4D`,
+                fontWeight: 500,
+                flexGrow: 1,
               }}
             >
-              <Text
+              <View
                 style={{
-                  fontSize: 8,
-                  color: `#4D4D4D`,
-                  fontWeight: 500,
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                }}
-              >
-                {moment(data.date).format("DD MMM YYYY")}
-              </Text>
-            </View>
-            <View
-              style={{
-                backgroundColor:
-                  data["daily activity"] == "Libur Nasional"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Cuti Bersama"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Cuti"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Weekend"
-                    ? "#E0F1FF"
-                    : // : data["daily activity"].length == 0
-                    data["daily activity"] == "Empty"
-                    ? "#FFDFDC"
-                    : "#ffffff",
-                marginRight: 1,
-                paddingHorizontal: 4,
-                paddingVertical: 4,
-                width: 56,
-                minHeight: 24,
-                borderRightColor: "white",
-                borderLeftColor: "white",
-                borderTopColor: "white",
-                borderBottomColor:
-                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
-                borderWidth: idx == dataResume.length - 1 ? 1 : 0,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 8,
-                  color: `#4D4D4D`,
-                  fontWeight: 500,
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                }}
-              >
-                {" "}
-                {data.from == null ? "-" : moment(data.from).format("HH:mm")}
-              </Text>
-            </View>
-            <View
-              style={{
-                backgroundColor:
-                  data["daily activity"] == "Libur Nasional"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Cuti Bersama"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Cuti"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Weekend"
-                    ? "#E0F1FF"
-                    : // : data["daily activity"].length == 0
-                    data["daily activity"] == "Empty"
-                    ? "#FFDFDC"
-                    : "#ffffff",
-                marginRight: 1,
-                paddingHorizontal: 4,
-                paddingVertical: 4,
-                width: 56,
-                minHeight: 24,
-                borderRightColor: "white",
-                borderLeftColor: "white",
-                borderTopColor: "white",
-                borderBottomColor:
-                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
-                borderWidth: idx == dataResume.length - 1 ? 1 : 0,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 8,
-                  color: `#4D4D4D`,
-                  fontWeight: 500,
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                }}
-              >
-                {data.to == null ? "-" : moment(data.to).format("HH:mm")}
-              </Text>
-            </View>
-            <View
-              style={{
-                backgroundColor:
-                  data["daily activity"] == "Libur Nasional"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Cuti Bersama"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Cuti"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Weekend"
-                    ? "#E0F1FF"
-                    : // : data["daily activity"].length == 0
-                    data["daily activity"] == "Empty"
-                    ? "#FFDFDC"
-                    : "#ffffff",
-                marginRight: 1,
-                paddingHorizontal: 4,
-                paddingVertical: 4,
-                width: 45,
-                minHeight: 24,
-                borderBottomColor:
-                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
-                borderRightColor: "white",
-                borderLeftColor: "white",
-                borderTopColor: "white",
-                borderWidth: idx == dataResume.length - 1 ? 1 : 0,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 8,
-                  color: `#4D4D4D`,
-                  fontWeight: 500,
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                }}
-              >
-                {data.work == 0 ? "WFH" : data.work == 1 ? "WFO" : "-"}
-              </Text>
-            </View>
-            <View
-              style={{
-                backgroundColor:
-                  data["daily activity"] == "Libur Nasional"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Cuti Bersama"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Cuti"
-                    ? "#E0F1FF"
-                    : data["daily activity"] == "Weekend"
-                    ? "#E0F1FF"
-                    : // : data["daily activity"].length == 0
-                    data["daily activity"] == "Empty"
-                    ? "#FFDFDC"
-                    : "#ffffff",
-                paddingVertical: 4,
-                paddingHorizontal: 4,
-                width: 300,
-                minHeight: 24,
-                borderBottomColor:
-                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
-                borderRightColor: "white",
-                borderLeftColor: "white",
-                borderTopColor: "white",
-                borderWidth: idx == dataResume.length - 1 ? 1 : 0,
-              }}
-            >
-              {data["daily activity"] == null ? (
-                <Text></Text>
-              ) : data["daily activity"] == "Empty" ? (
-                <Text></Text>
-              ) : data["daily activity"] == "Other" ? (
-                <Text></Text>
-              ) : data["daily activity"] == [] ? (
-                <Text></Text>
-              ) : data["daily activity"].length == 1 ? (
-                <Text
-                  style={{
-                    fontSize: 8,
-                    color: `#4D4D4D`,
-                    fontWeight: 500,
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {data["daily activity"][0].details
-                    ? renderDetailDailyActivity(
-                        data["daily activity"][0].details
-                      )
-                    : data["daily activity"][0].activity}
-                </Text>
-              ) : Array.isArray(data["daily activity"]) &&
-                data["daily activity"].length > 1 ? (
-                data["daily activity"].map((datanew, idxnew) => (
-                  <View style={{ flexDirection: "row" }}>
-                    <View
-                      style={{
-                        width: 3,
-                        height: 3,
-                        backgroundColor: "#4D4D4D",
-                        borderRadius: 3,
-                        marginRight: 2,
-                        marginTop: 2,
-                      }}
-                    ></View>
-                    <Text
-                      style={{
-                        fontSize: 8,
-                        color: `#4D4D4D`,
-                        fontWeight: 500,
-                        alignItems: "center",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      {datanew.details
-                        ? renderDetailDailyActivity(datanew.details)
-                        : datanew.activity}
-                    </Text>
-                  </View>
-                ))
-              ) : Array.isArray(data["daily activity"]) &&
-                data["daily activity"] == [] ? (
-                <Text
-                  style={{
-                    fontSize: 8,
-                    color: `#4D4D4D`,
-                    fontWeight: 500,
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  -
-                </Text>
-              ) : (
-                <Text
-                  style={{
-                    fontSize: 8,
-                    color: `#4D4D4D`,
-                    fontWeight: 500,
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {data["daily activity"]}
-                </Text>
-              )}
-            </View>
-            <View
-              style={{
-                backgroundColor: "white",
-                borderRightColor: "#FAFAFA",
-                borderLeftColor: "#FAFAFA",
-                borderTopColor: "white",
-                borderBottomColor:
-                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
-                borderWidth: 1,
-                paddingVertical: 4,
-                width: 63,
-                minHeight: 24,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 10,
-                  color: `#4D4D4D`,
-                  fontWeight: 500,
-                  textAlign: "center",
-                  flexWrap: "wrap",
+                  width: "10%",
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
                   flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRightColor: "#CCCCCC",
+                  borderRightWidth: 1,
                 }}
               >
-                {idx == parseInt(dataResume.length / 2) ? supervisor : ""}
-              </Text>
-            </View>
-            <View
-              style={{
-                backgroundColor: "#E5FFFE",
-                borderRightColor: "#FAFAFA",
-                borderLeftColor: "#FAFAFA",
-                borderTopColor: "white",
-                borderBottomColor:
-                  idx == dataResume.length - 1 ? "#FAFAFA" : "white",
-                borderWidth: 1,
-                paddingVertical: 4,
-                width: 63,
-                minHeight: 24,
-              }}
-            >
-              <Text
+                <Text>{moment(data.date).format("DD MMM YYYY")}</Text>
+              </View>
+              <View
                 style={{
-                  fontSize: 10,
-                  color: `#4D4D4D`,
-                  fontWeight: 500,
-                  textAlign: "center",
+                  width: "10%",
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRightColor: "#CCCCCC",
+                  borderRightWidth: 1,
                 }}
-              ></Text>
+              >
+                <Text>
+                  {data.from == null ? "-" : moment(data.from).format("HH:mm")}
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: "10%",
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRightColor: "#CCCCCC",
+                  borderRightWidth: 1,
+                }}
+              >
+                <Text>
+                  {data.to == null ? "-" : moment(data.to).format("HH:mm")}
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: "10%",
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRightColor: "#CCCCCC",
+                  borderRightWidth: 1,
+                }}
+              >
+                <Text>
+                  {data.work == 0 ? "WFH" : data.work == 1 ? "WFO" : "-"}
+                </Text>
+              </View>
+              <View
+                style={
+                  Array.isArray(data["daily activity"]) &&
+                  data["daily activity"].length > 1
+                    ? {
+                        width: "30%",
+                        minHeight: 24,
+                        paddingHorizontal: 5,
+                        borderRightColor: "#CCCCCC",
+                        borderRightWidth: 1,
+                      }
+                    : {
+                        width: "30%",
+                        minHeight: 24,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        paddingHorizontal: 5,
+                        borderRightColor: "#CCCCCC",
+                        borderRightWidth: 1,
+                      }
+                }
+              >
+                {data["daily activity"] == null ? (
+                  <Text></Text>
+                ) : data["daily activity"] == "Empty" ? (
+                  <Text></Text>
+                ) : data["daily activity"] == "Other" ? (
+                  <Text></Text>
+                ) : data["daily activity"] == [] ? (
+                  <Text></Text>
+                ) : data["daily activity"].length == 1 ? (
+                  <Text
+                    style={{
+                      fontSize: 8,
+                      color: `#4D4D4D`,
+                      fontWeight: 500,
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {data["daily activity"][0].details
+                      ? renderDetailDailyActivity(
+                          data["daily activity"][0].details
+                        )
+                      : data["daily activity"][0].activity}
+                  </Text>
+                ) : Array.isArray(data["daily activity"]) &&
+                  data["daily activity"].length > 1 ? (
+                  data["daily activity"].map((datanew, idxnew) => (
+                    <View style={{ flexDirection: "row" }}>
+                      <View
+                        style={{
+                          width: 3,
+                          height: 3,
+                          backgroundColor: "#4D4D4D",
+                          borderRadius: 3,
+                          marginRight: 2,
+                          marginTop: 2,
+                        }}
+                      ></View>
+                      <Text
+                        style={{
+                          fontSize: 8,
+                          color: `#4D4D4D`,
+                          fontWeight: 500,
+                          alignItems: "center",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        {datanew.details
+                          ? renderDetailDailyActivity(datanew.details)
+                          : datanew.activity}
+                      </Text>
+                    </View>
+                  ))
+                ) : Array.isArray(data["daily activity"]) &&
+                  data["daily activity"] == [] ? (
+                  <Text
+                    style={{
+                      fontSize: 8,
+                      color: `#4D4D4D`,
+                      fontWeight: 500,
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    -
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: 8,
+                      color: `#4D4D4D`,
+                      fontWeight: 500,
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {data["daily activity"]}
+                  </Text>
+                )}
+              </View>
+              <View
+                style={{
+                  width: "15%",
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
+                  flexDirection: "row",
+                  backgroundColor: "white",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRightColor: "#CCCCCC",
+                  borderRightWidth: 1,
+                }}
+              >
+                <Text>
+                  {idx == parseInt(dataResume.length / 2) ? supervisor : ""}
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: "15%",
+                  minHeight:
+                    Array.isArray(data["daily activity"]) &&
+                    data["daily activity"].length > 1
+                      ? 6 + data["daily activity"].length * 8
+                      : 24,
+                  backgroundColor: "white",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text></Text>
+              </View>
             </View>
-          </View>
-        ))}
+          ))}
+        </View>
+
         {/* Footer */}
         <View fixed style={styles.footer}>
           <View style={{ flexDirection: "row" }}>

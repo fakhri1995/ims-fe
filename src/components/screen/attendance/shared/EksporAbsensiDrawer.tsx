@@ -89,6 +89,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     name: null,
     position: null,
     placement: null,
+    form_activity_name: null,
   });
   const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState<
     Array<number> | undefined
@@ -172,55 +173,105 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   const handleOnFormSubmitted = useCallback(
     async (fieldValues: {
       rentang_waktu?: [Moment, Moment];
+      rentang_waktu_pdf?: [Moment, Moment];
+      supervisor: string;
       form_aktivitas?: number;
       selected_staff?: string[];
     }) => {
-      const from = fieldValues.rentang_waktu[0].toDate();
-      const to = fieldValues.rentang_waktu[1].toDate();
-      let staffIds: number[] = [];
-      /**
-       * 1. Form Aktivitas is required
-       * 2. Transform array of selected staff (string) into their respective ID (number)
-       */
-      if (exportAsAdmin) {
-        fieldValues.selected_staff.map((staffName) => {
-          const staff = dataFormAktifitas.find(
-            (staff) => staff.name === staffName
-          );
-
-          if (staff) {
-            staffIds.push(staff.id);
-          }
-        });
-      }
-
-      try {
-        const payload = {
-          from,
-          to,
-          attendance_form_id: fieldValues.form_aktivitas,
-        };
-
+      if (fieldValues.rentang_waktu?.length > 0) {
+        const from = fieldValues.rentang_waktu[0].toDate();
+        const to = fieldValues.rentang_waktu[1].toDate();
+        let staffIds: number[] = [];
+        /**
+         * 1. Form Aktivitas is required
+         * 2. Transform array of selected staff (string) into their respective ID (number)
+         */
         if (exportAsAdmin) {
-          payload["user_ids"] = staffIds;
+          fieldValues.selected_staff.map((staffName) => {
+            const staff = dataFormAktifitas.find(
+              (staff) => staff.name === staffName
+            );
+
+            if (staff) {
+              staffIds.push(staff.id);
+            }
+          });
         }
 
-        const { file, fileName } = (await AttendanceService.exportExcelData(
-          axiosClient,
-          payload
-        )) as AttendanceExportExcelDataResult;
-        downloadFile(file, fileName);
+        try {
+          const payload = {
+            from,
+            to,
+            attendance_form_id: fieldValues.form_aktivitas,
+          };
 
-        notification.success({
-          message: `Berhasil mengunduh file ${fileName}`,
+          if (exportAsAdmin) {
+            payload["user_ids"] = staffIds;
+          }
+
+          const { file, fileName } = (await AttendanceService.exportExcelData(
+            axiosClient,
+            payload
+          )) as AttendanceExportExcelDataResult;
+          downloadFile(file, fileName);
+
+          notification.success({
+            message: `Berhasil mengunduh file ${fileName}`,
+          });
+          onClose();
+        } catch (error) {
+          notification.error({
+            message: `Terdapat kesalahan saat mengunduh file. ${
+              (error as AxiosError).message
+            }`,
+          });
+        }
+      }
+      if (fieldValues.rentang_waktu_pdf?.length > 0) {
+        const from = fieldValues.rentang_waktu_pdf[0].toDate();
+        const to = fieldValues.rentang_waktu_pdf[1].toDate();
+        const nama_supervisor = fieldValues.supervisor;
+        setDataFormat({
+          from: from,
+          to: to,
+          supervisor: nama_supervisor,
         });
-        onClose();
-      } catch (error) {
-        notification.error({
-          message: `Terdapat kesalahan saat mengunduh file. ${
-            (error as AxiosError).message
-          }`,
-        });
+        const from_format = moment(from).format("YYYY-MM-DD");
+        const to_format = moment(to).format("YYYY-MM-DD");
+        /**
+         * 1. Form Aktivitas is required
+         * 2. Transform array of selected staff (string) into their respective ID (number)
+         */
+        setModalConfirmExportPdf(true);
+        fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTimeSheet?from=${from_format}&to=${to_format}`,
+          {
+            method: `GET`,
+            headers: {
+              Authorization: JSON.parse(token),
+            },
+          }
+        )
+          .then((response) => response.json())
+          .then((response2) => {
+            if (response2.success) {
+              setDataPdf(response2.data);
+              setLoadingData(false);
+            } else {
+              notification.error({
+                message: `${response2.message}`,
+                duration: 3,
+              });
+              setLoadingData(false);
+            }
+          })
+          .catch((err) => {
+            notification.error({
+              message: `${err.response}`,
+              duration: 3,
+            });
+            setLoadingData(false);
+          });
       }
     },
     [exportAsAdmin, dataFormAktifitas]
@@ -241,6 +292,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
               name: response2.data.name,
               position: response2.data.position,
               placement: response2.data.employee.contract.placement,
+              form_activity_name: response2.data.attendance_forms[0].name,
             });
           } else {
             notification.error({
@@ -530,6 +582,10 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     setNamaSupervisor(e.target.value);
   };
 
+  const handleCancelModalPdf = () => {
+    setModalConfirmExportPdf(false);
+  };
+
   return (
     <DrawerCore
       visible={visible}
@@ -545,7 +601,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     >
       <div className="">
         <Tabs
-          defaultActiveKey="1"
+          defaultActiveKey={activeTabKey}
           className="w-full"
           onChange={setActiveTabKey}
         >
@@ -726,8 +782,8 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           <div className={"space-y-6 mt-6"}>
             <Form
               layout="vertical"
-              form={formPdf}
-              onFinish={handleOnFormTerpaduSubmitted}
+              form={form}
+              onFinish={handleOnFormSubmitted}
               validateMessages={{
                 required: "Field ini harus diisi!",
               }}
@@ -774,7 +830,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       <ModalCore
         title={"Unduh PDF"}
         visible={modalConfirmExportPdf}
-        onCancel={() => setModalConfirmExportPdf(false)}
+        onCancel={() => handleCancelModalPdf()}
         footer={<></>}
       >
         <Spin spinning={loadingData}>
@@ -796,9 +852,9 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                 }
                 fileName={`${moment(dataFormat.from).format(
                   "YYYY-MM"
-                )} - Timesheet TKTI - ${dataProfile.placement} ${
-                  dataProfile.position
-                } - ${dataProfile.name} .pdf`}
+                )} Timesheet TKTI ${dataProfile.form_activity_name} ${
+                  dataProfile.name
+                }.pdf`}
                 // fileName={`my-attendance_data-${moment().format(
                 //   "DD_MM_YYYY"
                 // )}.pdf`}
