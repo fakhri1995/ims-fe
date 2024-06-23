@@ -147,7 +147,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
    * Class names
    */
   const menuSectionLabelClassName = clsx(
-    "mb-2 font-sans text-gray-400 pl-4 md:pl-0 uppercase text-sm",
+    "mb-2 font-sans text-gray-400 uppercase text-sm px-[10px]",
     {
       hidden: coll,
     }
@@ -172,7 +172,6 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           key="1"
           icon={<DashboardIconSvg />}
           className="text-mono50"
-          // style={{ paddingInline: 0 }}
           title="Dashboard"
         >
           <Link href="/dashboard/home">
@@ -186,7 +185,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             key="1"
             icon={<DashboardCompanyIconSvg />}
             className="text-mono50"
-            title="Dashboard"
+            title={`Dashboard ${dataPerusahaan}`}
           >
             <Link href="/dashboard/home">
               <p>Dashboard {dataPerusahaan}</p>
@@ -198,8 +197,8 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           <Menu.Item
             key="kehadirancompany"
             icon={<KehadiranCompanyIconSvg />}
-            className="text-mono50"
-            title="Dashboard"
+            className="text-mono50 "
+            title={`Kehadiran ${dataPerusahaan}`}
           >
             <Link href="/kehadiran/">
               <p>Kehadiran {dataPerusahaan}</p>
@@ -211,7 +210,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           key="projectscompany"
           icon={<ProyekCompanyIconSvg />}
           className="text-mono50"
-          title="projectscompany"
+          title={`Proyek ${dataPerusahaan}`}
         >
           <Link href="/projectCompany/">
             <p>Proyek {dataPerusahaan}</p>
@@ -754,8 +753,6 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           triggerSubMenuAction="hover"
           style={{
             borderRight: 0,
-            paddingInline: "10px",
-            // paddingLeft: "0px",
           }}
         >
           {menuSitusContent}
@@ -784,7 +781,12 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         <div className="my-5">
           <MigsysLogo isUseText={!coll || !collsmall} />
         </div>
-        <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
+        <Menu
+          theme="light"
+          mode="inline"
+          defaultSelectedKeys={[sidemenu]}
+          style={{ paddingInline: "14px" }}
+        >
           {menuSitusContent}
           <hr className="my-3 invisible" />
           {manajemenContent}
