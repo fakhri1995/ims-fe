@@ -39,7 +39,7 @@ export default function Home({ initProps }) {
       .then((res2) => {
         if (res2.data) {
           notification["success"]({
-            message: "Selamat datang di MIGSYS",
+            message: "Selamat datang di MIGhty",
             duration: 3,
           });
           // console.log("token: " + res2.data.token)
