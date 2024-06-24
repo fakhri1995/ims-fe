@@ -1,6 +1,6 @@
 import React from "react";
 
-const MigsysLogo = ({ isUseText = true }) => {
+const BrandLogo = ({ isUseText = true }) => {
   return (
     <div className="logo flex items-center justify-center">
       <img
@@ -17,4 +17,4 @@ const MigsysLogo = ({ isUseText = true }) => {
   );
 };
 
-export default MigsysLogo;
+export default BrandLogo;

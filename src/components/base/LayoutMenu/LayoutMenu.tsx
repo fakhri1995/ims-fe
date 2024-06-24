@@ -3,7 +3,7 @@ import { Layout, Menu } from "antd";
 import Link from "next/link";
 import type { FC } from "react";
 
-import MigsysLogo from "components/MigsysLogo";
+import BrandLogo from "components/BrandLogo";
 import {
   AsetIconSvg,
   CompanyIconSvg,
@@ -743,7 +743,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       >
         {/* Sider Header (image) */}
         <div className="my-5">
-          <MigsysLogo isUseText={!coll || !collsmall} />
+          <BrandLogo isUseText={!coll || !collsmall} />
         </div>
 
         <Menu
@@ -779,7 +779,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         }}
       >
         <div className="my-5">
-          <MigsysLogo isUseText={!coll || !collsmall} />
+          <BrandLogo isUseText={!coll || !collsmall} />
         </div>
         <Menu
           theme="light"
