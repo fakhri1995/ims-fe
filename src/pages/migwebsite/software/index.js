@@ -1885,7 +1885,7 @@ function Software({}) {
                       <img
                         className={"w-[480px] h-[283px]"}
                         // style={{ width: "284.29px", height: "159px" }}
-                        src="/image/landingpage/migsys_browser.png"
+                        src="/image/software/mighty.png"
                       />
                       <div className={"ml-11 mt-2"}>
                         <p
@@ -1901,7 +1901,7 @@ function Software({}) {
                             "font-gilroybold text-blackmig text-2xl mt-4"
                           }
                         >
-                          MIGSys
+                          MIGhty
                         </h4>
                         <div className={"mt-4"}>
                           <p
@@ -2041,11 +2041,11 @@ function Software({}) {
                   <img
                     className={"w-full h-[159px]"}
                     // style={{ width: "284.29px", height: "159px" }}
-                    src="/image/software/migsys.png"
+                    src="/image/software/mighty.png"
                   />
                   <div className={"mt-3 flex flex-row justify-between"}>
                     <p className={"font-gilroysemibold text-blackmig text-sm"}>
-                      MIGSys
+                      MIGhty
                     </p>
                     <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
                       <p
