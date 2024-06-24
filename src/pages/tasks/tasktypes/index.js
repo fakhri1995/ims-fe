@@ -145,7 +145,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
             <div className="flex items-center">
               <div className="mx-1">
                 <Buttonsys
-                  type={canUpdateTaskType ? "default" : "primary"}
+                  type={"default"}
                   disabled={!canUpdateTaskType}
                   onClick={() => {
                     // settempidtasktypeupdate(record.id)
@@ -154,12 +154,12 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
                     setdrawertasktypupdate(true);
                   }}
                 >
-                  <EditIconSvg size={15} color={`#35763B`} />
+                  <EditIconSvg size={15} />
                 </Buttonsys>
               </div>
               <div className="mx-1">
                 <Buttonsys
-                  type={isAllowedToDeletTaskType ? "default" : "primary"}
+                  type={"default"}
                   color="danger"
                   disabled={!isAllowedToDeletTaskType}
                   onClick={() => {
@@ -167,7 +167,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
                     setmodaltipetaskdelete(true);
                   }}
                 >
-                  <TrashIconSvg size={15} color={`#BF4A40`} />
+                  <TrashIconSvg size={15} />
                 </Buttonsys>
               </div>
             </div>
