@@ -75,7 +75,7 @@ function MyApp({ Component, pageProps }) {
           rel="stylesheet"
           href="https://unpkg.com/flickity@2/dist/flickity.min.css"
         ></link>
-        <title>MIGSys</title>
+        <title>MIGhty</title>
       </Head>
       <QueryClientProvider client={queryClient}>
         <NextQueryParamProvider>

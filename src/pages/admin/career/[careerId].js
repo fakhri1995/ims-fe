@@ -1437,8 +1437,8 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       />
                       <p className={"ml-4 text-mono30 text-xs self-center"}>
                         {showLogoStatus
-                          ? "Menampilkan Logo Migsys"
-                          : "Tidak Menampilkan Logo Migsys"}
+                          ? "Menampilkan Logo MIG"
+                          : "Tidak Menampilkan Logo MIG"}
                       </p>
                     </div>
                     <div className={"flex self-end"}>

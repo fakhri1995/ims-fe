@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-import MigsysLogo from "../../components/MigsysLogo";
+import BrandLogo from "../../components/BrandLogo";
 import { CopyrightIconSvg } from "../../components/icon";
 import AuthScreen from "../../components/screen/login/AuthScreen";
 import httpcookie from "cookie";
@@ -39,7 +39,7 @@ export default function Home({ initProps }) {
       .then((res2) => {
         if (res2.data) {
           notification["success"]({
-            message: "Selamat datang di MIGSYS",
+            message: "Selamat datang di MIGhty",
             duration: 3,
           });
           // console.log("token: " + res2.data.token)
@@ -81,7 +81,7 @@ export default function Home({ initProps }) {
   return (
     <AuthScreen>
       <div className="pb-8">
-        <MigsysLogo />
+        <BrandLogo />
       </div>
       <Form
         name="email"
