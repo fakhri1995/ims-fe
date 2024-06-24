@@ -14,7 +14,7 @@ function DashboardCompany({ initProps, dataProfile, sidemenu }) {
   const pageBreadcrumbValue = useMemo(
     () => [
       {
-        name: "Dashboar Kehadiran " + dataProfile.data.company.name,
+        name: "Dashboard Kehadiran " + dataProfile.data.company.name,
         hrefValue: "/projectsCompany",
       },
     ],

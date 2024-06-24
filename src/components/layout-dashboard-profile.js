@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+/** Currently not in use */
 function LayoutDashboardProfile({
   children,
   tok,

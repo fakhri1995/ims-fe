@@ -7,6 +7,7 @@ import Layout from "../../components/layout-dashboard-profile";
 import st from "../../components/layout-dashboard-profile.module.css";
 import httpcookie from "cookie";
 
+/** Currently not in use */
 function ProfileTabs({ dataProfile, editable2 }) {
   return (
     <div className="p-4 flex flex-col w-full">

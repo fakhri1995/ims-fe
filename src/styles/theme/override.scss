@@ -146,18 +146,17 @@ ol {
 .ant-menu-item:not(.ant-menu-item-selected.ant-menu-item-active):hover,
 .ant-menu-light
   .ant-menu-item:not(.ant-menu-item-selected.ant-menu-item-active)
-  a:hover,
-.ant-menu-item:not(.ant-menu-item-selected.ant-menu-item-active):hover
-  .ant-menu-title-content,
-.ant-menu-item:not(.ant-menu-item-selected.ant-menu-item-active):hover
-  .ant-menu-item-icon {
+  a:hover {
   background-color: #fafafa;
   color: #808080;
 }
 
 /* after menu */
 .ant-menu-inline .ant-menu-item::after {
-  // border-right: 3px solid #35763b;
+  border-right: 0px;
+}
+
+.ant-menu-sub > .ant-menu-item::after {
   border-right: 0px;
   width: 8px;
   height: 8px;
@@ -186,8 +185,8 @@ ol {
   background-color: #fafafa;
 }
 
-.ant-menu-submenu-selected,
-.ant-menu-submenu.ant-menu-submenu-active.ant-menu-submenu-selected:hover {
+.ant-menu-submenu-selected > .ant-menu-submenu-title,
+.ant-menu-submenu-selected > .ant-menu-submenu-title:hover {
   color: #ffffff;
   background-color: #35763b;
   border-radius: 5px;
@@ -199,7 +198,7 @@ ol {
 }
 
 /* submenu title hover */
-.ant-menu-light .ant-menu-submenu-title:hover {
+.ant-menu-light .ant-menu-submenu .ant-menu-submenu-title:hover {
   color: #808080;
 }
 
@@ -220,12 +219,15 @@ ol {
 }
 
 /* arrow selected */
-.ant-menu-submenu-selected .ant-menu-submenu-arrow {
+.ant-menu-submenu-selected .ant-menu-submenu-arrow,
+.ant-menu-submenu:hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
   color: #ffffff;
 }
 
 /* arrow hover */
-.ant-menu-submenu:hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
+.ant-menu-submenu:not(.ant-menu-submenu-selected):hover
+  > .ant-menu-submenu-title
+  > .ant-menu-submenu-arrow {
   color: #65976a;
 }
 

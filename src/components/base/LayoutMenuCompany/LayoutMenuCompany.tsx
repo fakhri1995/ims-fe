@@ -108,7 +108,7 @@ export const LayoutMenuCompany: FC<ILayoutMenuCompany> = ({
    * Class names
    */
   const menuSectionLabelClassName = clsx(
-    "mb-2 font-sans text-gray-400 md:pl-6 uppercase text-sm",
+    "mb-2 font-sans text-gray-400 uppercase text-sm px-[10px]",
     {
       hidden: coll,
     }
@@ -130,7 +130,9 @@ export const LayoutMenuCompany: FC<ILayoutMenuCompany> = ({
       {/* Dashboard */}
       {hasPermission(SIDEBAR_DASHBOARD) && (
         <Menu.Item key="1" icon={<KehadiranCompanyIconSvg />} title="Dashboard">
-          <Link href="/dashboard/company">Kehadiran AQRO</Link>
+          <Link href="/dashboard/company">
+            <p>Kehadiran AQRO</p>
+          </Link>
         </Menu.Item>
       )}
       {hasPermission(SIDEBAR_DASHBOARD) && (
@@ -139,7 +141,9 @@ export const LayoutMenuCompany: FC<ILayoutMenuCompany> = ({
           icon={<ProyekCompanyIconSvg />}
           title="projectscompany"
         >
-          <Link href="/projectCompany/">Proyek AQRO</Link>
+          <Link href="/projectCompany/">
+            <p>Proyek AQRO</p>
+          </Link>
         </Menu.Item>
       )}
     </>
@@ -179,7 +183,11 @@ export const LayoutMenuCompany: FC<ILayoutMenuCompany> = ({
         width={230}
         theme="light"
         className={`${commonLayoutStyle.siderLayout} sider`}
-        style={{ borderRight: `1px solid #f0f0f0`, height: "100%" }}
+        style={{
+          borderRight: `1px solid #f0f0f0`,
+          height: "100%",
+          paddingInline: "14px",
+        }}
       >
         {/* Sider Header (image) */}
         {siderHeader}
@@ -225,7 +233,12 @@ export const LayoutMenuCompany: FC<ILayoutMenuCompany> = ({
             )}
           </div>
         }
-        <Menu theme="light" mode="inline" defaultSelectedKeys={[sidemenu]}>
+        <Menu
+          theme="light"
+          mode="inline"
+          defaultSelectedKeys={[sidemenu]}
+          style={{ paddingInline: "14px" }}
+        >
           {menuSitusContent}
         </Menu>
       </Sider>
