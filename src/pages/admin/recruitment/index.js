@@ -1355,10 +1355,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   }
                   tooltipColor={record.owner_id ? "#DDB44A" : "#00589F"}
                 >
-                  <FileExportIconSvg
-                    size={16}
-                    color={record.owner_id ? "#DDB44A" : "#00589F"}
-                  />
+                  <FileExportIconSvg size={16} />
                 </ButtonTooltip>
               )}
             </div>

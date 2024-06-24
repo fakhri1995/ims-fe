@@ -1613,16 +1613,16 @@ const TableImportIconSvg = ({ size, color }) => {
   return <Icon rev={""} component={tableImportIconSvg}></Icon>;
 };
 
-const FileExportIconSvg = ({ size, color }) => {
+const FileExportIconSvg = (props) => {
   const fileExportIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-file-export"
-      width={size}
-      height={size}
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1632,7 +1632,7 @@ const FileExportIconSvg = ({ size, color }) => {
       <path d="M11.5 21h-4.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v5m-5 6h7m-3 -3l3 3l-3 3" />
     </svg>
   );
-  return <Icon rev={""} component={fileExportIconSvg}></Icon>;
+  return <Icon rev={""} component={fileExportIconSvg} {...props}></Icon>;
 };
 const DotsIconSvg = ({ size, color }) => {
   const dotsIconSvg = () => (
