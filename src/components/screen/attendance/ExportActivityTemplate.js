@@ -636,7 +636,7 @@ const ExportActivityTemplate = ({
             </View>
             <View
               style={{
-                backgroundColor: "#E5FFFE",
+                backgroundColor: "white",
                 borderRightColor: "#CCCCCC",
                 borderRightWidth: 1,
                 borderBottomColor: idx == dataResume.length - 1 && "#CCCCCC",
