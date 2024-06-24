@@ -957,7 +957,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       seteditable(true);
                     }}
                   >
-                    <div className="mr-1 mb-1">
+                    <div className="mr-1">
                       <EditIconSvg size={20} color={`#35763B`} />
                     </div>
                     <Label color="green">Sunting Profil</Label>

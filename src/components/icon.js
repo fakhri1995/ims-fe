@@ -340,16 +340,16 @@ const Aset2IconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={aset2IconSvg}></Icon>;
 };
-const EditIconSvg = ({ size, color }) => {
+const EditIconSvg = (props) => {
   const editIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-pencil"
-      width={size}
-      height={size}
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -359,7 +359,7 @@ const EditIconSvg = ({ size, color }) => {
       <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
     </svg>
   );
-  return <Icon rev={""} component={editIconSvg}></Icon>;
+  return <Icon rev={""} component={editIconSvg} {...props}></Icon>;
 };
 const EmailIconSvg = (props) => {
   const emailIconSvg = () => (
@@ -501,16 +501,16 @@ const ShareIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={shareIconSvg}></Icon>;
 };
-const TrashIconSvg = ({ size, color }) => {
+const TrashIconSvg = (props) => {
   const trashIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-trash"
-      width={size}
-      height={size}
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -523,7 +523,7 @@ const TrashIconSvg = ({ size, color }) => {
       <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
     </svg>
   );
-  return <Icon rev={""} component={trashIconSvg}></Icon>;
+  return <Icon rev={""} component={trashIconSvg} {...props}></Icon>;
 };
 const CheckIconSvg = ({ size, color }) => {
   const checkIconSvg = () => (
