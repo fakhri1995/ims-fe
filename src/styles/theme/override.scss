@@ -149,22 +149,12 @@ ol {
   a:hover {
   background-color: #fafafa;
   color: #808080;
+  border-radius: 5px;
 }
 
 /* after menu */
 .ant-menu-inline .ant-menu-item::after {
   border-right: 0px;
-}
-
-.ant-menu-sub > .ant-menu-item::after {
-  border-right: 0px;
-  width: 8px;
-  height: 8px;
-  background-color: #35763b;
-  border-radius: 50%;
-  display: inline-block;
-  align-items: center;
-  position: initial;
 }
 
 /* SUBMENU */
@@ -183,6 +173,7 @@ ol {
 /* submenu bg dan submenu title */
 .ant-menu-submenu:not(.ant-menu-submenu-selected):hover {
   background-color: #fafafa;
+  border-radius: 5px;
 }
 
 .ant-menu-submenu-selected > .ant-menu-submenu-title,
@@ -210,7 +201,19 @@ ol {
 .ant-menu-sub > .ant-menu-item-selected.ant-menu-item-active,
 .ant-menu-sub > .ant-menu-item-selected.ant-menu-item-active:hover {
   background-color: white !important;
-  color: #808080 !important;
+  color: #35763b !important;
+}
+
+/* after submenu */
+.ant-menu-sub > .ant-menu-item::after {
+  border-right: 0px;
+  width: 8px;
+  height: 8px;
+  background-color: #35763b;
+  border-radius: 50%;
+  display: inline-block;
+  align-items: center;
+  position: initial;
 }
 
 /* arrow */
