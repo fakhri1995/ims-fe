@@ -2811,6 +2811,7 @@ const BellRingingIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={bellRingingIconSvg}></Icon>;
 };
+
 const FileImportIconSvg = (props) => {
   const fileImportIconSvg = () => (
     <svg
