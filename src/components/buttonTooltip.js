@@ -25,9 +25,9 @@ const ButtonTooltip = ({
 
   const buttonOutlineColorsClassName = clsx(
     {
-      "border-state2 hover:border-state2 hover:bg-state2":
+      "text-state2 border-state2 hover:border-state2 hover:bg-state2":
         color == "state2" && !disabled,
-      "border-secondary100 hover:border-secondary100 hover:bg-secondary100":
+      "text-secondary100 border-secondary100 hover:border-secondary100 hover:bg-secondary100":
         color == "secondary100" && !disabled,
     },
     "hover:bg-opacity-75 hover:text-white"

@@ -38,50 +38,65 @@ const SetupMenu = ({ menu }) => {
       {hasPermission(RECRUITMENT_SETUP_ROLE) && (
         <Menu.Item
           key="1"
-          icon={<BriefcaseIconSvg color={"#808080"} />}
+          icon={<BriefcaseIconSvg />}
+          className="text-mono50"
           title="Role"
         >
-          <Link href="/admin/recruitment/role">Role</Link>
+          <Link href="/admin/recruitment/role">
+            <p>Role</p>
+          </Link>
         </Menu.Item>
       )}
 
       {hasPermission(RECRUITMENT_SETUP_REGISTRATION) && (
         <Menu.Item
           key="2"
-          icon={<ClickIconSvg color={"#808080"} />}
+          icon={<ClickIconSvg />}
+          className="text-mono50"
           title="Registration"
         >
-          <Link href="/admin/recruitment/registration">Jalur Daftar</Link>
+          <Link href="/admin/recruitment/registration">
+            <p>Jalur Daftar</p>
+          </Link>
         </Menu.Item>
       )}
 
       {hasPermission(RECRUITMENT_SETUP_STAGE) && (
         <Menu.Item
           key="3"
-          icon={<TrendingUpIconSvg color={"#808080"} />}
+          icon={<TrendingUpIconSvg />}
+          className="text-mono50"
           title="Stage"
         >
-          <Link href="/admin/recruitment/stage">Stage</Link>
+          <Link href="/admin/recruitment/stage">
+            <p>Stage</p>
+          </Link>
         </Menu.Item>
       )}
 
       {hasPermission(RECRUITMENT_SETUP_STATUS) && (
         <Menu.Item
           key="4"
-          icon={<InfoSquareIconSvg color={"#808080"} />}
+          icon={<InfoSquareIconSvg />}
+          className="text-mono50"
           title="Status"
         >
-          <Link href="/admin/recruitment/status">Status</Link>
+          <Link href="/admin/recruitment/status">
+            <p>Status</p>
+          </Link>
         </Menu.Item>
       )}
 
       {hasPermission(RECRUITMENT_SETUP_TEMPLATE) && (
         <Menu.Item
           key="5"
-          icon={<EmailIconSvg color={"#808080"} />}
+          icon={<EmailIconSvg />}
+          className="text-mono50"
           title="Template"
         >
-          <Link href="/admin/recruitment/email-template">Template Email</Link>
+          <Link href="/admin/recruitment/email-template">
+            <p>Template Email</p>
+          </Link>
         </Menu.Item>
       )}
     </Menu>

@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 
 import { LayoutMenu } from "components/base/LayoutMenu";
 
-// import LayoutMenu from "../components/layout-menu";
 import LayoutMenuHeader from "./layout-menu-header";
 
 function LayoutDashboard2({

@@ -42,6 +42,7 @@ import {
   UserIconSvg,
 } from "./icon";
 
+/** Currently not in use */
 const LayoutMenu = ({
   dataProfile,
   sidemenu,

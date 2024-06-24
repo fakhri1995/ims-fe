@@ -1,7 +1,7 @@
 const H1 = ({ children, color }) => {
   return (
     <p
-      className={`font-bold text-xl mb-1 ${color === "white" && `text-white`} ${
+      className={`font-bold text-xl my-1 ${color === "white" && `text-white`} ${
         color === "primary" && "text-primary100 hover:text-primary75"
       }`}
     >
