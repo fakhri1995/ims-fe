@@ -782,19 +782,35 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       description: "New Description",
       details: datacreate.question,
     };
-    let dataTemp = {
-      name: datacreate.name,
-      description: datacreate.description,
-      qualification: datacreate.qualification,
-      overview: datacreate.overview,
-      salary_min: datacreate.salary_min,
-      salary_max: datacreate.salary_max,
-      career_role_type_id: datacreate.career_role_type_id,
-      career_experience_id: datacreate.career_experience_id,
-      recruitment_role_id: datacreate.recruitment_role_id,
-      is_posted: datacreate.is_posted,
-      question: dataQuestions,
-    };
+    let dataTemp = null;
+    if (datacreate.question.length == 0) {
+      dataTemp = {
+        name: datacreate.name,
+        description: datacreate.description,
+        qualification: datacreate.qualification,
+        overview: datacreate.overview,
+        salary_min: datacreate.salary_min,
+        salary_max: datacreate.salary_max,
+        career_role_type_id: datacreate.career_role_type_id,
+        career_experience_id: datacreate.career_experience_id,
+        recruitment_role_id: datacreate.recruitment_role_id,
+        is_posted: datacreate.is_posted,
+      };
+    } else {
+      dataTemp = {
+        name: datacreate.name,
+        description: datacreate.description,
+        qualification: datacreate.qualification,
+        overview: datacreate.overview,
+        salary_min: datacreate.salary_min,
+        salary_max: datacreate.salary_max,
+        career_role_type_id: datacreate.career_role_type_id,
+        career_experience_id: datacreate.career_experience_id,
+        recruitment_role_id: datacreate.recruitment_role_id,
+        is_posted: datacreate.is_posted,
+        question: dataQuestions,
+      };
+    }
 
     setloadingcreate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/addCareer`, {
@@ -815,6 +831,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
           setdatacreate({
             name: "",
             description: "",
+            is_posted: 0,
             qualification: "",
             overview: "",
             salary_min: 0,
