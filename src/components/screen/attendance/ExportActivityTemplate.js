@@ -87,7 +87,7 @@ const ExportActivityTemplate = ({
                 color: `#4D4D4D`,
               }}
             >
-              TIME SHEET {bulanpdf ? bulanpdf : "-"}
+              TIMESHEET {bulanpdf ? bulanpdf : "-"}
             </Text>
             <View
               style={{
