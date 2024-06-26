@@ -215,7 +215,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     salary_max: 0,
     career_role_type_id: null,
     career_experience_id: null,
-    recruitment_role_id: null,
     is_posted: 0,
     question: [],
   });
@@ -233,7 +232,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     salary_max: 0,
     career_role_type_id: null,
     career_experience_id: null,
-    recruitment_role_id: null,
     is_posted: 0,
     question: [],
   });
@@ -737,6 +735,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                     permissionWarningNotification("Memperbarui", "Career");
                     return;
                   }
+                  console.log("isi record ", record);
 
                   setdrawedit(true);
                   setdataedit({
@@ -795,8 +794,8 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
         salary_min: datacreate.salary_min,
         salary_max: datacreate.salary_max,
         career_role_type_id: datacreate.career_role_type_id,
+        recruitment_role_id: datacreate.career_role_type_id,
         career_experience_id: datacreate.career_experience_id,
-        recruitment_role_id: datacreate.recruitment_role_id,
         is_posted: datacreate.is_posted,
       };
     } else {
@@ -808,8 +807,8 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
         salary_min: datacreate.salary_min,
         salary_max: datacreate.salary_max,
         career_role_type_id: datacreate.career_role_type_id,
+        recruitment_role_id: datacreate.career_role_type_id,
         career_experience_id: datacreate.career_experience_id,
-        recruitment_role_id: datacreate.recruitment_role_id,
         is_posted: datacreate.is_posted,
         question: dataQuestions,
       };
@@ -889,7 +888,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
             salary_max: 0,
             career_role_type_id: null,
             career_experience_id: null,
-            recruitment_role_id: null,
             question: [],
           });
           setloadingedit(false);
@@ -1386,7 +1384,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                     </Form.Item>
                     <Form.Item
                       label="ID Role"
-                      name="recruitment_role_id"
+                      name="career_role_type_id"
                       rules={[
                         {
                           required: true,
@@ -1397,13 +1395,13 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                       <Select
                         showSearch={true}
                         value={
-                          datacreate?.recruitment_role_id &&
-                          Number(datacreate?.recruitment_role_id)
+                          datacreate?.career_role_type_id &&
+                          Number(datacreate?.career_role_type_id)
                         }
                         onChange={(e) => {
                           setdatacreate({
                             ...datacreate,
-                            recruitment_role_id: e,
+                            career_role_type_id: e,
                           });
                         }}
                         filterOption={(input, option) =>

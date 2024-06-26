@@ -105,6 +105,7 @@ const DrawerCareerEdit = ({
       //   disabled={disabledcreate}
     >
       <Spin spinning={loadingEdit}>
+        {console.log("isi data ", dataedit)}
         <div className={"flex flex-row mb-6"}>
           <div className={"w-[200px]"}>
             <div
@@ -223,9 +224,10 @@ const DrawerCareerEdit = ({
                   </>
                 </Select>
               </Form.Item>
+              {console.log("data roles ", dataRoles)}
               <Form.Item
                 label="ID Role"
-                name="recruitment_role_id"
+                name="career_role_type_id"
                 rules={[
                   {
                     required: true,
@@ -241,13 +243,13 @@ const DrawerCareerEdit = ({
                       .indexOf(input.toLowerCase()) >= 0
                   }
                   value={
-                    dataedit?.recruitment_role_id &&
-                    Number(dataedit?.recruitment_role_id)
+                    dataedit?.career_role_type_id &&
+                    Number(dataedit?.career_role_type_id)
                   }
                   onChange={(e) => {
                     setdataedit({
                       ...dataedit,
-                      recruitment_role_id: e,
+                      career_role_type_id: e,
                     });
                   }}
                   placeholder="Pilih ID Role"
