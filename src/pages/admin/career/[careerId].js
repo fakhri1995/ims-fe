@@ -40,6 +40,7 @@ import {
   CAREER_V2_APPLY_EXPORT,
   CAREER_V2_APPLY_UPDATE,
   CAREER_V2_GET,
+  CAREER_V2_UPDATE,
   RECRUITMENT_ROLE_TYPES_LIST_GET,
   RESUME_GET,
 } from "lib/features";
@@ -1544,7 +1545,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               </div>
             </ModalEkspor>
           </AccessControl>
-          <AccessControl hasPermission={CAREER_UPDATE}>
+          <AccessControl hasPermission={CAREER_V2_UPDATE}>
             {/* drawer edit pertanyaan */}
             <DrawerQuestionEdit
               title={"Edit Pertanyaan"}
@@ -1558,7 +1559,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               loadingEdit={loadingedit}
             />
           </AccessControl>
-          <AccessControl hasPermission={CAREER_UPDATE}>
+          <AccessControl hasPermission={CAREER_V2_UPDATE}>
             {/* drawer edit informasi */}
             <DrawerInformationEdit
               title={"Edit Informasi Umum"}

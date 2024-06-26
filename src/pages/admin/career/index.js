@@ -56,6 +56,9 @@ import {
   CAREER_ADD,
   CAREER_DELETE,
   CAREER_UPDATE,
+  CAREER_V2_ADD,
+  CAREER_V2_DELETE,
+  CAREER_V2_UPDATE,
   RECRUITMENT_ROLE_TYPES_LIST_GET,
   SIDEBAR_RECRUITMENT_SETUP,
 } from "lib/features";
@@ -127,9 +130,9 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   }
   const isAllowedToSetupRecruitment = hasPermission(SIDEBAR_RECRUITMENT_SETUP);
   const isAllowedToGetCareer = hasPermission(CAREERS_V2_GET);
-  const isAllowedToUpdateCareer = hasPermission(CAREER_UPDATE);
-  const isAllowedToDeleteCareer = hasPermission(CAREER_DELETE);
-  const isAllowedToAddCareer = hasPermission(CAREER_ADD);
+  const isAllowedToUpdateCareer = hasPermission(CAREER_V2_UPDATE);
+  const isAllowedToDeleteCareer = hasPermission(CAREER_V2_DELETE);
+  const isAllowedToAddCareer = hasPermission(CAREER_V2_ADD);
   const isAllowedToGetStatusCareer = hasPermission(CAREERS_V2_APPLY_STATUSES);
   const isAllowedToGetTopFiveCareer = hasPermission(CAREERS_V2_TOP_FIVE_GET);
   const [dataIkhtisar, setDataIkhtisar] = useState([]);
