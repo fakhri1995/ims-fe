@@ -736,7 +736,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         theme="light"
         className={`${commonLayoutStyle.siderLayout} sider`}
         style={{
-          // borderRight: `1px solid #f0f0f0`,
+          borderRight: `1px solid #E6E6E6`,
           height: "100%",
           paddingInline: "14px",
         }}

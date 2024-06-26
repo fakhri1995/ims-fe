@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import type { FC, MouseEventHandler } from "react";
 
-import { MessageIconSvg } from "components/icon";
+import { MessageIconSvg, NotifIconSvg } from "components/icon";
 import { H2 } from "components/typography";
 
 import { formatDateToLocale } from "lib/date-utils";
@@ -39,15 +39,12 @@ export const Notification: FC = () => {
       className="cursor-pointer flex items-center"
       overlay={<NotificationOverlayContainer />}
     >
-      <div className="relative">
-        <button className="bg-white/0">
-          <BellIcon className="text-mono30 w-8 h-8 stroke-2" />
-
-          {hasUnreadNotifications && (
-            <span className="w-3 h-3 bg-state1 absolute rounded-full top-[2px] right-[2px]" />
-          )}
-        </button>
-      </div>
+      <button className="relative bg-white/0 ">
+        <NotifIconSvg className="text-mono30" size={24} />
+        {hasUnreadNotifications && (
+          <span className="w-2 h-2 bg-state1 absolute rounded-full top-[0px] right-[6px]" />
+        )}
+      </button>
     </Dropdown>
   );
 };
@@ -295,9 +292,9 @@ const NotificationItem: FC<INotificationItem> = ({
     {
       "text-primary100": colorType === "green",
       "text-state1": colorType === "red",
-      "bg-secondary": colorType === "blue",
+      "text-secondary100": colorType === "blue",
     },
-    "stroke-2 w-8 h-8"
+    "stroke-2 h-8"
   );
 
   // Selasa, 12 Apr 2022 - 08:00
@@ -346,7 +343,7 @@ const NotificationItem: FC<INotificationItem> = ({
             )}
             {imageType === "ticket" && <TicketIcon className={iconClassName} />}
             {imageType === "announcement" && (
-              <MessageIconSvg className={iconClassName} color="#00589F" />
+              <MessageIconSvg className={iconClassName} />
             )}
           </div>
         </div>
