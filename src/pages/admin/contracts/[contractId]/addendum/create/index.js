@@ -32,8 +32,8 @@ import {
   ArrowNarrowRightIconSvg,
   PlusIconSvg,
 } from "../../../../../../components/icon";
-import LayoutDashboard from "../../../../../../components/layout-dashboard";
-import st from "../../../../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../../../../components/layout-dashboard-management";
+import st from "../../../../../../components/layout-dashboard-management.module.css";
 import ContractExtrasForm from "../../../../../../components/screen/contract/create/ContractExtrasForm";
 import ContractServiceForm from "../../../../../../components/screen/contract/create/ContractServiceForm";
 import {

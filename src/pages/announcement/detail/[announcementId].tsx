@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import DrawerAnnouncementEmail from "components/drawer/announcement/drawerAnnouncementEmail";
 import { AccessControl } from "components/features/AccessControl";
-import LayoutDashboard from "components/layout-dashboardNew";
+import LayoutDashboard from "components/layout-dashboard";
 import { ModalHapus2 } from "components/modal/modalCustom";
 import { AnnouncementEmailHistory } from "components/screen/announcement/AnnouncementEmailHistory";
 import { AnnouncementMessageSection } from "components/screen/announcement/AnnouncementMessageSection";

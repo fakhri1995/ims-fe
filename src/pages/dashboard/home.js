@@ -8,7 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 
-import LayoutDashboard from "components/layout-dashboardNew";
+import LayoutDashboard from "components/layout-dashboard";
 import {
   AttendanceCompanyLeafletMapNoSSR,
   AttendanceCompanyListSection,

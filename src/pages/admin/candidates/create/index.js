@@ -14,8 +14,8 @@ import {
 
 import ButtonSys from "../../../../components/button";
 import BasicInfoCard from "../../../../components/cards/resume/BasicInfoCard";
-import LayoutDashboard from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../../components/layout-dashboard-management";
+import st from "../../../../components/layout-dashboard-management.module.css";
 import { H1, H2 } from "../../../../components/typography";
 import {
   objectToFormData,

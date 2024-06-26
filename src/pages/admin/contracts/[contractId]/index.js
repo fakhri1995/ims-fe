@@ -5,8 +5,8 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
 
-import Layout from "components/layout-dashboard";
-import st from "components/layout-dashboard.module.css";
+import Layout from "components/layout-dashboard-management";
+import st from "components/layout-dashboard-management.module.css";
 import ContractActionSection from "components/screen/contract/detail/ContractActionSection";
 import ContractActivitySection from "components/screen/contract/detail/ContractActivitySection";
 import ContractInfoSection from "components/screen/contract/detail/ContractInfoSection";

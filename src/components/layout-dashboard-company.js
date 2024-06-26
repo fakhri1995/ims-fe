@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 
 import { LayoutMenuCompany } from "components/base/LayoutMenuCompany";
-import st from "components/layout-dashboard.module.css";
+import st from "components/layout-dashboard-management.module.css";
 
 import LayoutMenuHeader from "./layout-menu-header";
 

@@ -37,8 +37,8 @@ import { ContractService } from "apis/contract";
 
 import ButtonSys from "../../../components/button";
 import { SearchIconSvg } from "../../../components/icon";
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
+import Layout from "../../../components/layout-dashboard-management";
+import st from "../../../components/layout-dashboard-management.module.css";
 import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { TableCustomContractList } from "../../../components/table/tableCustom";
 import {

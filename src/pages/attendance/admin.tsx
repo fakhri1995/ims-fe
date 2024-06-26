@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useEffect } from "react";
 
-import LayoutDashboard from "components/layout-dashboardNew";
+import LayoutDashboard from "components/layout-dashboard";
 import {
   AttendanceAdminListSection,
   AttendanceAdminTodayStatCard,

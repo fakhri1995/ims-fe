@@ -20,9 +20,9 @@ import AcademicCard from "../../../components/cards/resume/academic/AcademicCard
 import ExperienceCard from "../../../components/cards/resume/experience/ExperienceCard";
 import GeneralCard from "../../../components/cards/resume/general/GeneralCard";
 import ProjectCard from "../../../components/cards/resume/project/ProjectCard";
-import LayoutDashboard from "../../../components/layout-dashboard";
 import LayoutDashboard2 from "../../../components/layout-dashboard2";
-import st from "../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../components/layout-dashboard-management";
+import st from "../../../components/layout-dashboard-management.module.css";
 import { permissionWarningNotification } from "../../../lib/helper";
 import httpcookie from "cookie";
 

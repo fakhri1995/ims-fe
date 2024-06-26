@@ -11,7 +11,7 @@ import Menu from "antd/lib/menu";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import st from "components/layout-dashboard.module.css";
+import st from "components/layout-dashboard-management.module.css";
 
 import {
   IconAgents,

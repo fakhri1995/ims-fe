@@ -13,8 +13,8 @@ import { EMPLOYEE_GET, EMPLOYEE_UPDATE } from "lib/features";
 import { EmployeeService } from "../../../../apis/employee";
 import ButtonSys from "../../../../components/button";
 import { CheckIconSvg } from "../../../../components/icon";
-import LayoutDashboard from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../../components/layout-dashboard-management";
+import st from "../../../../components/layout-dashboard-management.module.css";
 import EmployeeProfileForm from "../../../../components/screen/employee/create/profile";
 import {
   objectToFormData,

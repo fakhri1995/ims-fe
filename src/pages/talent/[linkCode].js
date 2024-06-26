@@ -8,8 +8,8 @@ import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import { PlusIconSvg, UsersIconSvg, XIconSvg } from "components/icon";
-import st from "components/layout-dashboard.module.css";
-import LayoutDashboard from "components/layout-dashboardNew";
+import LayoutDashboard from "components/layout-dashboard";
+import st from "components/layout-dashboard-management.module.css";
 
 import { TalentPoolPublicService } from "../../apis/talent-pool";
 import { TableOffIconSvg } from "../../components/icon";

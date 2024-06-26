@@ -38,8 +38,8 @@ import {
   EditTablerIconSvg,
   PlusIconSvg,
 } from "../../../components/icon";
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
+import Layout from "../../../components/layout-dashboard-management";
+import st from "../../../components/layout-dashboard-management.module.css";
 import { createKeyPressHandler, currency } from "../../../lib/helper";
 import httpcookie from "cookie";
 

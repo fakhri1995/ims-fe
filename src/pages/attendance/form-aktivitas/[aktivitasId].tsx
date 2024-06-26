@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
-import LayoutDashboard from "components/layout-dashboardNew";
+import LayoutDashboard from "components/layout-dashboard";
 import { FormAktivitasDrawer } from "components/screen/form-aktivitas";
 import {
   AktivitasTableInfoCard,

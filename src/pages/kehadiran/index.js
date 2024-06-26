@@ -35,8 +35,8 @@ import {
 
 import { useAccessControl } from "contexts/access-control";
 
-import st from "../../components/layout-dashboard.module.css";
-import LayoutDashboard from "../../components/layout-dashboardNew";
+import LayoutDashboard from "../../components/layout-dashboard";
+import st from "../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 const KehadiranIndex = ({ dataProfile, sidemenu, initProps }) => {

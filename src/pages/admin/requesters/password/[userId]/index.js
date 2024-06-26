@@ -8,8 +8,8 @@ import { useAccessControl } from "contexts/access-control";
 
 import { REQUESTER_PASSWORD_UPDATE } from "lib/features";
 
-import Layout from "../../../../../components/layout-dashboard";
-import st from "../../../../../components/layout-dashboard.module.css";
+import Layout from "../../../../../components/layout-dashboard-management";
+import st from "../../../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {

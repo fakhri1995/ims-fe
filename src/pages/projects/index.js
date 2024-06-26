@@ -70,8 +70,8 @@ import {
   PlusIconSvg,
   SearchIconSvg,
 } from "../../components/icon";
-import st from "../../components/layout-dashboard.module.css";
-import LayoutDashboard from "../../components/layout-dashboardNew";
+import LayoutDashboard from "../../components/layout-dashboard";
+import st from "../../components/layout-dashboard-management.module.css";
 import ModalProjectCreate from "../../components/modal/projects/modalProjectCreate";
 import ModalProjectTaskCreate from "../../components/modal/projects/modalProjectTaskCreate";
 import ModalProjectTaskDetailUpdate from "../../components/modal/projects/modalProjectTaskDetailUpdate";

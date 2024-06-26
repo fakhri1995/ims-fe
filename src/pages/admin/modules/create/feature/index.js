@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
-import Layout from "../../../../../components/layout-dashboard";
-import st from "../../../../../components/layout-dashboard.module.css";
+import Layout from "../../../../../components/layout-dashboard-management";
+import st from "../../../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 const FeatureCreate = ({ sidemenu, initProps, dataProfile }) => {

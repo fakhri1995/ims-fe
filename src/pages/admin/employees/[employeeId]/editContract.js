@@ -12,8 +12,8 @@ import { EMPLOYEE_CONTRACT_GET, EMPLOYEE_CONTRACT_UPDATE } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
 import { CheckIconSvg } from "../../../../components/icon";
-import LayoutDashboard from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../../components/layout-dashboard-management";
+import st from "../../../../components/layout-dashboard-management.module.css";
 import EmployeeContractForm from "../../../../components/screen/employee/create/contract";
 import {
   objectToFormData,

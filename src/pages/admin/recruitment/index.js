@@ -86,8 +86,8 @@ import {
   TrendingUpIconSvg,
   UserPlusIconSvg,
 } from "../../../components/icon";
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
+import Layout from "../../../components/layout-dashboard-management";
+import st from "../../../components/layout-dashboard-management.module.css";
 import ModalCore from "../../../components/modal/modalCore";
 import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
 import { TableCustomRecruitmentCandidate } from "../../../components/table/tableCustom";

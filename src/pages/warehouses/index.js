@@ -3,8 +3,8 @@ import React from "react";
 import { useEffect, useState } from "react";
 
 import { ArmChairlIconSvg } from "../../components/icon";
-import st from "../../components/layout-dashboard.module.css";
-import Layout from "../../components/layout-dashboardNew";
+import Layout from "../../components/layout-dashboard";
+import st from "../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 const WareHouses = ({ initProps, dataProfile, sidemenu }) => {

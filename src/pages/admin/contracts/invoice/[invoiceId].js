@@ -9,8 +9,8 @@ import { useCallback } from "react";
 import { useQuery } from "react-query";
 
 import { AccessControl } from "components/features/AccessControl";
-import Layout from "components/layout-dashboard";
-import st from "components/layout-dashboard.module.css";
+import Layout from "components/layout-dashboard-management";
+import st from "components/layout-dashboard-management.module.css";
 
 import { useAccessControl } from "contexts/access-control";
 

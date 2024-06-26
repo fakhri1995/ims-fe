@@ -19,8 +19,8 @@ import {
   PhoneIconSvg,
   SchoolIconSvg,
 } from "../../../../components/icon";
-import st from "../../../../components/layout-dashboard.module.css";
-import LayoutDashboard from "../../../../components/layout-dashboardNew";
+import LayoutDashboard from "../../../../components/layout-dashboard";
+import st from "../../../../components/layout-dashboard-management.module.css";
 import { RESUME_GET, TALENT_POOL_GET } from "../../../../lib/features";
 import {
   generateStaticAssetUrl,

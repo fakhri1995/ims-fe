@@ -19,8 +19,8 @@ import { useAccessControl } from "contexts/access-control";
 import { AGENT_GROUP_ADD, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import Layout from "../../../../../components/layout-dashboard";
-import st from "../../../../../components/layout-dashboard.module.css";
+import Layout from "../../../../../components/layout-dashboard-management";
+import st from "../../../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 function GroupsAgentsCreate({

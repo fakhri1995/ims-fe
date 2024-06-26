@@ -21,8 +21,8 @@ import { MESSAGES_GET } from "lib/features";
 
 import { MessageData, MessageService } from "apis/message";
 
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
+import Layout from "../../../components/layout-dashboard-management";
+import st from "../../../components/layout-dashboard-management.module.css";
 import { momentFormatDate } from "../../../lib/helper";
 import httpcookie from "cookie";
 

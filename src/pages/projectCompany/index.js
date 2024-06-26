@@ -61,8 +61,8 @@ import {
   PlusIconSvg,
   SearchIconSvg,
 } from "../../components/icon";
-import st from "../../components/layout-dashboard.module.css";
-import LayoutDashboard from "../../components/layout-dashboardNew";
+import LayoutDashboard from "../../components/layout-dashboard";
+import st from "../../components/layout-dashboard-management.module.css";
 import { TableCustomProjectCompanyList } from "../../components/table/tableCustom";
 import {
   createKeyPressHandler,

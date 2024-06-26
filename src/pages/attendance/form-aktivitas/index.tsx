@@ -8,7 +8,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
-import LayoutDashboard from "components/layout-dashboardNew";
+import LayoutDashboard from "components/layout-dashboard";
 import {
   AddNewAktivitasButton,
   FormAktivitasDrawer,
