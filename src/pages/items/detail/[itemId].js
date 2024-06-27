@@ -52,7 +52,7 @@ import { permissionWarningNotification } from "lib/helper";
 
 import { ClockIconSvg, ClockXIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard2";
-import st from "../../../components/layout-dashboard.module.css";
+import st from "../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 const Overview = ({

@@ -13,7 +13,7 @@ import { RECRUITMENT_GET, RESUME_GET, RESUME_UPDATE } from "lib/features";
 
 import ButtonSys from "../../components/button";
 import LayoutDashboard2 from "../../components/layout-dashboard2";
-import st from "../../components/layout-dashboard.module.css";
+import st from "../../components/layout-dashboard-management.module.css";
 import { permissionWarningNotification } from "../../lib/helper";
 import httpcookie from "cookie";
 

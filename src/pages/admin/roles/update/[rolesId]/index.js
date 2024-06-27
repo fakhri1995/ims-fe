@@ -12,8 +12,8 @@ import { useAccessControl } from "contexts/access-control";
 import { MODULES_GET, ROLE_GET, ROLE_UPDATE } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import Layout from "../../../../../components/layout-dashboard";
-import st from "../../../../../components/layout-dashboard.module.css";
+import Layout from "../../../../../components/layout-dashboard-management";
+import st from "../../../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 function RolesUpdate({

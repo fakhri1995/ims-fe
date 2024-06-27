@@ -15,8 +15,8 @@ import { useAccessControl } from "contexts/access-control";
 import { ATTENDANCE_USER_ADMIN_GET, ATTENDANCE_USER_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import st from "../../../components/layout-dashboard.module.css";
-import LayoutDashboard from "../../../components/layout-dashboardNew";
+import LayoutDashboard from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";

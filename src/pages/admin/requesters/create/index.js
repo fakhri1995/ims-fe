@@ -23,8 +23,8 @@ import { getBase64 } from "lib/helper";
 
 import { RequesterService } from "apis/user";
 
-import Layout from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
+import Layout from "../../../../components/layout-dashboard-management";
+import st from "../../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 // function modifData(dataa) {

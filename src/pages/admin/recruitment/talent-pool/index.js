@@ -37,8 +37,8 @@ import {
   UsersIconSvg,
   XIconSvg,
 } from "../../../../components/icon";
-import st from "../../../../components/layout-dashboard.module.css";
-import LayoutDashboard from "../../../../components/layout-dashboardNew";
+import LayoutDashboard from "../../../../components/layout-dashboard";
+import st from "../../../../components/layout-dashboard-management.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
 import ModalLinkList from "../../../../components/modal/talent-pool/modalLinkList";

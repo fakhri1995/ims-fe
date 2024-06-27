@@ -27,8 +27,8 @@ import {
 import ButtonSys from "../../../components/button";
 import { ChartDoughnut } from "../../../components/chart/chartCustom";
 import { DownloadIcon2Svg, DownloadIconSvg } from "../../../components/icon";
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
+import Layout from "../../../components/layout-dashboard-management";
+import st from "../../../components/layout-dashboard-management.module.css";
 import ModalCore from "../../../components/modal/modalCore";
 import ResumePDFTemplate from "../../../components/screen/resume/ResumePDFTemplate";
 import { TableCustomCandidate } from "../../../components/table/tableCustom";

@@ -15,8 +15,8 @@ import {
 
 import ButtonSys from "../../../../components/button";
 import { CheckIconSvg } from "../../../../components/icon";
-import LayoutDashboard from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../../components/layout-dashboard-management";
+import st from "../../../../components/layout-dashboard-management.module.css";
 import InventoryForm from "../../../../components/screen/employee/create/inventory/inventoryForm";
 import {
   objectToFormData,

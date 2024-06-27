@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { FC } from "react";
 
 import { KehadiranCompanyIconSvg, ProyekCompanyIconSvg } from "components/icon";
-import commonLayoutStyle from "components/layout-dashboard.module.css";
+import commonLayoutStyle from "components/layout-dashboard-management.module.css";
 
 import { useAccessControl } from "contexts/access-control";
 

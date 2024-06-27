@@ -35,8 +35,8 @@ import {
   TableExportIconSvg,
   TicketIconSvg,
 } from "../../components/icon";
-import st from "../../components/layout-dashboard.module.css";
-import Layout from "../../components/layout-dashboardNew";
+import Layout from "../../components/layout-dashboard";
+import st from "../../components/layout-dashboard-management.module.css";
 import { TableCustomTickets } from "../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../components/typography";
 import { createKeyPressHandler } from "../../lib/helper";
@@ -466,11 +466,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-2 md:grid-cols-8 lg:grid-cols-10 px-6 md:px-0">
+        <div className="grid grid-cols-2 md:grid-cols-8 lg:grid-cols-10">
           {dataProfile.data.role === 1 ? (
             <>
               {/* PENYELESAIAN TIKET */}
-              <div className="col-span-2 md:col-span-4 lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mr-3">
+              <div className="col-span-2 md:col-span-4 lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 md:mr-3">
                 <div className="flex items-center justify-between mb-4">
                   <H1>Penyelesaian Tiket</H1>
                 </div>

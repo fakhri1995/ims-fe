@@ -15,8 +15,8 @@ import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../components/button";
 import { BackIconSvg } from "../../../components/icon";
-import st from "../../../components/layout-dashboard.module.css";
-import Layout from "../../../components/layout-dashboardNew";
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard-management.module.css";
 import { TableCustomTicketHistories } from "../../../components/table/tableCustom";
 import { H1 } from "../../../components/typography";
 import httpcookie from "cookie";

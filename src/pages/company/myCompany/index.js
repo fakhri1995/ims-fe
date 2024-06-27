@@ -63,8 +63,8 @@ import {
   XIconSvg,
 } from "../../../components/icon";
 import { InputRequired, RadioRequired } from "../../../components/input";
-import st from "../../../components/layout-dashboard.module.css";
-import Layout from "../../../components/layout-dashboardNew";
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard-management.module.css";
 import ModalCore from "../../../components/modal/modalCore";
 import { ModalEdit, ModalHapus } from "../../../components/modal/modalCustom";
 import {

@@ -63,8 +63,8 @@ import {
   ReplacementIconSvg,
   TersediaIconSvg,
 } from "../../../../components/icon";
-import LayoutDashboard from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../../components/layout-dashboard-management";
+import st from "../../../../components/layout-dashboard-management.module.css";
 import {
   createKeyPressHandler,
   currency,

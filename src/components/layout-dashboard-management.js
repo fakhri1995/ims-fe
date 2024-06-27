@@ -1,10 +1,20 @@
+import MenuFoldOutlined from "@ant-design/icons/MenuFoldOutlined";
+import MenuUnfoldOutlined from "@ant-design/icons/MenuUnfoldOutlined";
 import { Layout } from "antd";
 import { Breadcrumb, Spin } from "antd";
+import jscookie from "js-cookie";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+
+import { LayoutMenu } from "components/base/LayoutMenu";
 
 import LayoutDashboardParent from "./layout-dashboard-parent";
+import LayoutMenuHeader from "./layout-menu-header";
 
-function LayoutDashboard2({
+const { Header } = Layout;
+
+function LayoutDashboard({
   children,
   tok,
   dataProfile,
@@ -13,7 +23,7 @@ function LayoutDashboard2({
   sidemenu,
   st,
 }) {
-  const rt = useRouter();
+  var rootBreadcrumb = "";
   var childBreacrumb = [];
   let breadcrumbTitleArr = [];
 
@@ -23,7 +33,10 @@ function LayoutDashboard2({
     breadcrumbTitleArr = pathArr;
   }
 
-  if (breadcrumbTitleArr) {
+  if (breadcrumbTitleArr[0] === "dashboard") {
+    rootBreadcrumb = breadcrumbTitleArr[1];
+    rootBreadcrumb = rootBreadcrumb[0].toUpperCase() + rootBreadcrumb.slice(1);
+  } else {
     for (var i = 0; i < breadcrumbTitleArr.length; i++) {
       childBreacrumb.push(breadcrumbTitleArr[i]);
     }
@@ -33,6 +46,7 @@ function LayoutDashboard2({
     return doc[0].toUpperCase() + doc.slice(1);
   });
   const childBreacrumbDD = childBreacrumbCC;
+
   var pathBuilder = "";
   return (
     <LayoutDashboardParent
@@ -43,36 +57,43 @@ function LayoutDashboard2({
       bgColor="#ffffff"
       breadcrumbComponent={
         <Breadcrumb separator=">" className={st.breadcrumbClients}>
+          {/* {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${pathArr[0]}`}><strong>{pathArr[0]}</strong></Breadcrumb.Item>} */}
           {childBreacrumbDD.length !== 0
             ? childBreacrumbDD.map((doc, idx) => {
                 pathBuilder = pathBuilder + `/${pathArr[idx]}`;
                 if (idx === 0) {
-                  if (pathArr[idx] === "incidents") {
+                  return (
+                    <Breadcrumb.Item
+                      key={idx}
+                      href={`/dashboard/${pathArr[idx]}`}
+                    >
+                      <span className="text-sm font-semibold">{doc}</span>{" "}
+                    </Breadcrumb.Item>
+                  );
+                } else if (idx === childBreacrumbDD.length - 1 && idx > 0) {
+                  if (doc === "Assets") {
                     return (
                       <Breadcrumb.Item key={idx}>
                         {" "}
-                        <strong>{doc}</strong>{" "}
+                        <span className="text-sm font-semibold">
+                          {"Assets Types & Fields"}
+                        </span>{" "}
                       </Breadcrumb.Item>
                     );
                   } else {
                     return (
-                      <Breadcrumb.Item key={idx} href={`/${pathArr[idx]}`}>
+                      <Breadcrumb.Item key={idx}>
                         {" "}
-                        <strong>{doc}</strong>{" "}
+                        <span className="text-sm font-semibold">
+                          {doc}
+                        </span>{" "}
                       </Breadcrumb.Item>
                     );
                   }
-                } else if (idx === childBreacrumbDD.length - 1 && idx > 0) {
-                  return (
-                    <Breadcrumb.Item key={idx}>
-                      {" "}
-                      <strong>{doc}</strong>{" "}
-                    </Breadcrumb.Item>
-                  );
                 } else {
                   return (
                     <Breadcrumb.Item key={idx} href={pathBuilder}>
-                      <strong>{doc}</strong>
+                      <span className="text-sm font-semibold">{doc}</span>
                     </Breadcrumb.Item>
                   );
                 }
@@ -86,4 +107,4 @@ function LayoutDashboard2({
   );
 }
 
-export default LayoutDashboard2;
+export default LayoutDashboard;

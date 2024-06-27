@@ -29,8 +29,8 @@ import {
   PhoneIconSvg,
   SortingIconSvg,
 } from "../../../../components/icon";
-import st from "../../../../components/layout-dashboard.module.css";
-import Layout from "../../../../components/layout-dashboardNew";
+import Layout from "../../../../components/layout-dashboard";
+import st from "../../../../components/layout-dashboard-management.module.css";
 import { H1, H2, Label } from "../../../../components/typography";
 import { ArcElement, Chart, Tooltip } from "chart.js";
 import httpcookie from "cookie";

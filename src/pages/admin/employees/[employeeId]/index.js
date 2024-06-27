@@ -30,8 +30,8 @@ import {
 import { EmployeeService } from "../../../../apis/employee";
 import ButtonSys from "../../../../components/button";
 import { OneUserIconSvg, TrashIconSvg } from "../../../../components/icon";
-import LayoutDashboard from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../../components/layout-dashboard-management";
+import st from "../../../../components/layout-dashboard-management.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
 import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";

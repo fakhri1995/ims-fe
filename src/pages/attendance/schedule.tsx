@@ -38,7 +38,7 @@ import {
   SearchIconSvg,
   TrashIconSvg,
 } from "components/icon";
-import LayoutDashboard from "components/layout-dashboardNew";
+import LayoutDashboard from "components/layout-dashboard";
 import ModalScheduleUpdate from "components/modal/attendance/modalScheduleUpdate";
 import { ModalHapus2 } from "components/modal/modalCustom";
 
