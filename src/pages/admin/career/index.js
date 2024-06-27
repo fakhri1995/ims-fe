@@ -56,6 +56,9 @@ import {
   CAREER_ADD,
   CAREER_DELETE,
   CAREER_UPDATE,
+  CAREER_V2_ADD,
+  CAREER_V2_DELETE,
+  CAREER_V2_UPDATE,
   RECRUITMENT_ROLE_TYPES_LIST_GET,
   SIDEBAR_RECRUITMENT_SETUP,
 } from "lib/features";
@@ -127,9 +130,9 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   }
   const isAllowedToSetupRecruitment = hasPermission(SIDEBAR_RECRUITMENT_SETUP);
   const isAllowedToGetCareer = hasPermission(CAREERS_V2_GET);
-  const isAllowedToUpdateCareer = hasPermission(CAREER_UPDATE);
-  const isAllowedToDeleteCareer = hasPermission(CAREER_DELETE);
-  const isAllowedToAddCareer = hasPermission(CAREER_ADD);
+  const isAllowedToUpdateCareer = hasPermission(CAREER_V2_UPDATE);
+  const isAllowedToDeleteCareer = hasPermission(CAREER_V2_DELETE);
+  const isAllowedToAddCareer = hasPermission(CAREER_V2_ADD);
   const isAllowedToGetStatusCareer = hasPermission(CAREERS_V2_APPLY_STATUSES);
   const isAllowedToGetTopFiveCareer = hasPermission(CAREERS_V2_TOP_FIVE_GET);
   const [dataIkhtisar, setDataIkhtisar] = useState([]);
@@ -212,7 +215,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     salary_max: 0,
     career_role_type_id: null,
     career_experience_id: null,
-    recruitment_role_id: null,
     is_posted: 0,
     question: [],
   });
@@ -230,7 +232,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     salary_max: 0,
     career_role_type_id: null,
     career_experience_id: null,
-    recruitment_role_id: null,
     is_posted: 0,
     question: [],
   });
@@ -734,7 +735,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                     permissionWarningNotification("Memperbarui", "Career");
                     return;
                   }
-
                   setdrawedit(true);
                   setdataedit({
                     id: record.id,
@@ -782,19 +782,35 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       description: "New Description",
       details: datacreate.question,
     };
-    let dataTemp = {
-      name: datacreate.name,
-      description: datacreate.description,
-      qualification: datacreate.qualification,
-      overview: datacreate.overview,
-      salary_min: datacreate.salary_min,
-      salary_max: datacreate.salary_max,
-      career_role_type_id: datacreate.career_role_type_id,
-      career_experience_id: datacreate.career_experience_id,
-      recruitment_role_id: datacreate.recruitment_role_id,
-      is_posted: datacreate.is_posted,
-      question: dataQuestions,
-    };
+    let dataTemp = null;
+    if (datacreate.question.length == 0) {
+      dataTemp = {
+        name: datacreate.name,
+        description: datacreate.description,
+        qualification: datacreate.qualification,
+        overview: datacreate.overview,
+        salary_min: datacreate.salary_min,
+        salary_max: datacreate.salary_max,
+        career_role_type_id: datacreate.career_role_type_id,
+        recruitment_role_id: datacreate.career_role_type_id,
+        career_experience_id: datacreate.career_experience_id,
+        is_posted: datacreate.is_posted,
+      };
+    } else {
+      dataTemp = {
+        name: datacreate.name,
+        description: datacreate.description,
+        qualification: datacreate.qualification,
+        overview: datacreate.overview,
+        salary_min: datacreate.salary_min,
+        salary_max: datacreate.salary_max,
+        career_role_type_id: datacreate.career_role_type_id,
+        recruitment_role_id: datacreate.career_role_type_id,
+        career_experience_id: datacreate.career_experience_id,
+        is_posted: datacreate.is_posted,
+        question: dataQuestions,
+      };
+    }
 
     setloadingcreate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/addCareer`, {
@@ -815,6 +831,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
           setdatacreate({
             name: "",
             description: "",
+            is_posted: 0,
             qualification: "",
             overview: "",
             salary_min: 0,
@@ -869,7 +886,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
             salary_max: 0,
             career_role_type_id: null,
             career_experience_id: null,
-            recruitment_role_id: null,
             question: [],
           });
           setloadingedit(false);
@@ -1366,7 +1382,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                     </Form.Item>
                     <Form.Item
                       label="ID Role"
-                      name="recruitment_role_id"
+                      name="career_role_type_id"
                       rules={[
                         {
                           required: true,
@@ -1377,13 +1393,13 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                       <Select
                         showSearch={true}
                         value={
-                          datacreate?.recruitment_role_id &&
-                          Number(datacreate?.recruitment_role_id)
+                          datacreate?.career_role_type_id &&
+                          Number(datacreate?.career_role_type_id)
                         }
                         onChange={(e) => {
                           setdatacreate({
                             ...datacreate,
-                            recruitment_role_id: e,
+                            career_role_type_id: e,
                           });
                         }}
                         filterOption={(input, option) =>
@@ -2007,7 +2023,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
         </Drawer>
       </AccessControl>
       {/* drawer update careers  */}
-      <AccessControl hasPermission={CAREER_UPDATE}>
+      <AccessControl hasPermission={CAREER_V2_UPDATE}>
         <DrawerCareerEdit
           title={"Edit Lowongan"}
           visible={drawedit}
@@ -2025,7 +2041,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       {/* drawer delete careers */}
-      <AccessControl hasPermission={CAREER_DELETE}>
+      <AccessControl hasPermission={CAREER_V2_DELETE}>
         <Modal
           title={`Konfirmasi hapus career`}
           visible={modaldelete}
