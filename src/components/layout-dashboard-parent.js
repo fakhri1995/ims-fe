@@ -89,8 +89,8 @@ function LayoutDashboardParent({
               <div className="block md:hidden">
                 <BrandLogo />
               </div>
-              <div className="md:w-full flex flex-wrap justify-end md:justify-between items-center ">
-                <div className="flex z-50 items-center px-5 py-3 gap-5">
+              <div className="md:w-full flex flex-wrap justify-end md:justify-between items-center">
+                <div className="hidden md:flex z-50 items-center px-5 py-3 gap-5">
                   <div className="hover:bg-neutrals50 p-1 rounded-full">
                     {/* Desktop menu button */}
                     <Menu2IconSvg
@@ -115,6 +115,7 @@ function LayoutDashboardParent({
                 <Menu2IconSvg
                   onClick={handleCollSmall}
                   className={st.triggerSmall}
+                  size={32}
                 ></Menu2IconSvg>
               </div>
             </div>

@@ -88,7 +88,7 @@ function LayoutMenuHeader({
                 dataProfile.data?.profile_image?.link
               )}
               alt={dataProfile.data?.profile_image?.description}
-              className="w-6 h-6 md:w-8 md:h-8 rounded-full object-cover cursor-pointer"
+              className="w-8 h-8 rounded-full object-cover cursor-pointer"
             />
           ) : (
             <UsercircleIconSvg size={32} color={"black"} />

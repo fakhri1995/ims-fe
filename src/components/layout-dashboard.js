@@ -62,13 +62,7 @@ function LayoutDashboard({
       fixedBreadcrumbValues={fixedBreadcrumbValues}
       isPublic={isPublic}
       breadcrumbComponent={
-        <Breadcrumb
-          separator=">"
-          style={{
-            backgroundColor: `#FFFFFF`,
-          }}
-          className={st.breadcrumbClients}
-        >
+        <Breadcrumb separator=">" className={st.breadcrumbClients}>
           {/* <div className="flex items-center"> */}
           {isUseNewBreadcrumbStrategy &&
             fixedBreadcrumbValues.map((breadcrumbItem, idx) => {
