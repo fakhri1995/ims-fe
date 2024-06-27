@@ -735,8 +735,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                     permissionWarningNotification("Memperbarui", "Career");
                     return;
                   }
-                  console.log("isi record ", record);
-
                   setdrawedit(true);
                   setdataedit({
                     id: record.id,
@@ -2025,7 +2023,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
         </Drawer>
       </AccessControl>
       {/* drawer update careers  */}
-      <AccessControl hasPermission={CAREER_UPDATE}>
+      <AccessControl hasPermission={CAREER_V2_UPDATE}>
         <DrawerCareerEdit
           title={"Edit Lowongan"}
           visible={drawedit}
@@ -2043,7 +2041,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       {/* drawer delete careers */}
-      <AccessControl hasPermission={CAREER_DELETE}>
+      <AccessControl hasPermission={CAREER_V2_DELETE}>
         <Modal
           title={`Konfirmasi hapus career`}
           visible={modaldelete}
