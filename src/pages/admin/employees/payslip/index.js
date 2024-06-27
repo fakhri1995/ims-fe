@@ -48,8 +48,8 @@ import {
   CirclePlusIconSvg,
   SearchIconSvg,
 } from "../../../../components/icon";
-import Layout from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
+import Layout from "../../../../components/layout-dashboard-management";
+import st from "../../../../components/layout-dashboard-management.module.css";
 import { ModalUbah } from "../../../../components/modal/modalCustom";
 import ModalSalaryVarManage from "../../../../components/modal/payslips/modalSalaryVarManage";
 import { TableCustomPayslipList } from "../../../../components/table/tableCustom";

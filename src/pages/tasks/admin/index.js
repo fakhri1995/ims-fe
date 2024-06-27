@@ -56,8 +56,8 @@ import {
   SortAscendingIconSvg,
   UserIconSvg,
 } from "../../../components/icon";
-import st from "../../../components/layout-dashboard.module.css";
-import Layout from "../../../components/layout-dashboardNew";
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard-management.module.css";
 import {
   TableCustomAdminTask,
   TableCustomStaffTask,

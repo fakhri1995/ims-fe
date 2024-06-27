@@ -63,8 +63,8 @@ import {
   OneUserIconSvg,
   PlusIconSvg,
 } from "../../../components/icon";
-import LayoutDashboard from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../components/layout-dashboard-management";
+import st from "../../../components/layout-dashboard-management.module.css";
 import ModalCore from "../../../components/modal/modalCore";
 import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
 import ResumePDFTemplate from "../../../components/screen/resume/ResumePDFTemplate";

@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 
-import LayoutDashboard from "components/layout-dashboardNew";
+import LayoutDashboard from "components/layout-dashboard";
 import { AnnouncementTable } from "components/screen/announcement";
 
 import httpcookie from "cookie";

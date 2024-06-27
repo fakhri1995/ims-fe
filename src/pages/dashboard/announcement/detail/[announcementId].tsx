@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 
 import { NewsIconSvg } from "components/icon";
-import LayoutDashboard from "components/layout-dashboardNew";
+import LayoutDashboard from "components/layout-dashboard";
 import { AnnouncementCardVertical } from "components/screen/announcement/AnnouncementCardVertical";
 import { AnnouncementMessageSection } from "components/screen/announcement/AnnouncementMessageSection";
 

@@ -19,7 +19,7 @@ import {
   PlusIconSvg,
   TrashIconSvg,
 } from "components/icon";
-import LayoutDashboard from "components/layout-dashboardNew";
+import LayoutDashboard from "components/layout-dashboard";
 import ModalCore from "components/modal/modalCore";
 import { ModalHapus2 } from "components/modal/modalCustom";
 import { ModalUbah } from "components/modal/modalCustom";

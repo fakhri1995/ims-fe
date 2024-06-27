@@ -19,8 +19,8 @@ import {
 } from "../..//lib/helper";
 import ButtonSys from "../../components/button";
 import { OneUserIconSvg } from "../../components/icon";
-import LayoutDashboard2 from "../../components/layout-dashboard2";
-import st from "../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../components/layout-dashboard";
+import st from "../../components/layout-dashboard-management.module.css";
 import { ModalDownloadPayslip } from "../../components/modal/modalCustom";
 import EmployeeContractDetail from "../../components/screen/employee/detail/contract";
 import EmployeeInventoryDetail from "../../components/screen/employee/detail/inventory";
@@ -48,11 +48,12 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   const rt = useRouter();
   const { tab: tabId } = rt.query;
 
-  const pathArr = rt.pathname.split("/").slice(1);
-
   // Breadcrumb title
-  const pathTitleArr = [...pathArr];
-  pathTitleArr.splice(0, 1, "Karyawan");
+  const pageBreadcrumb = [
+    {
+      name: "Karyawan",
+    },
+  ];
 
   // Array of 12 month names
   const monthNames = moment.months();
@@ -198,12 +199,11 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
 
   // console.log({ dataProfile });
   return (
-    <LayoutDashboard2
+    <LayoutDashboard
       dataProfile={dataProfile}
       tok={initProps}
       st={st}
-      pathArr={pathArr}
-      pathTitleArr={pathTitleArr}
+      fixedBreadcrumbValues={pageBreadcrumb}
     >
       <div className="grid grid-cols-1">
         <div className="flex flex-col md:flex-row gap-3 md:gap-5 w-full">
@@ -326,7 +326,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
           } ${dataEmployee?.last_month_payslip?.year}`}
         />
       </AccessControl>
-    </LayoutDashboard2>
+    </LayoutDashboard>
   );
 };
 

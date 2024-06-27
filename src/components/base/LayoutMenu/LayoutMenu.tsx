@@ -24,7 +24,7 @@ import {
   UserPlusIconSvg,
   UsersIconSvg,
 } from "components/icon";
-import commonLayoutStyle from "components/layout-dashboard.module.css";
+import commonLayoutStyle from "components/layout-dashboard-management.module.css";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -736,7 +736,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         theme="light"
         className={`${commonLayoutStyle.siderLayout} sider`}
         style={{
-          // borderRight: `1px solid #f0f0f0`,
+          borderRight: `1px solid #E6E6E6`,
           height: "100%",
           paddingInline: "14px",
         }}

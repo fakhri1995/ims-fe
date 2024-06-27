@@ -42,8 +42,8 @@ import {
   OneUserIconSvg,
   SearchIconSvg,
 } from "../../../../../components/icon";
-import LayoutDashboard from "../../../../../components/layout-dashboard";
-import st from "../../../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../../../components/layout-dashboard-management";
+import st from "../../../../../components/layout-dashboard-management.module.css";
 import EmployeeProfileSummary from "../../../../../components/screen/employee/detail/summary";
 import { TableCustomPayslipEmployeeList } from "../../../../../components/table/tableCustom";
 import {

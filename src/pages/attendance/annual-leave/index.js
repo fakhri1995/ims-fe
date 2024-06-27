@@ -42,8 +42,8 @@ import {
   EyeIconSvg,
   SettingsIconSvg,
 } from "../../../components/icon";
-import Layout from "../../../components/layout-dashboard";
-import st from "../../../components/layout-dashboard.module.css";
+import Layout from "../../../components/layout-dashboard-management";
+import st from "../../../components/layout-dashboard-management.module.css";
 import ModalPengajuanCuti from "../../../components/modal/attendance/modalPengajuanCuti";
 import ModalSetujuiCuti from "../../../components/modal/attendance/modalSetujuiCuti";
 import ModalTipeCuti from "../../../components/modal/attendance/modalTipeCuti";
