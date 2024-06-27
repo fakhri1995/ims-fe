@@ -40,9 +40,12 @@ export const Notification: FC = () => {
       overlay={<NotificationOverlayContainer />}
     >
       <button className="relative bg-white/0 ">
-        <NotifIconSvg className="text-mono30" size={24} />
+        <NotifIconSvg
+          className="text-mono30 relative top-[1px] left-0.5"
+          size={24}
+        />
         {hasUnreadNotifications && (
-          <span className="w-2 h-2 bg-state1 absolute rounded-full top-[0px] right-[6px]" />
+          <span className="w-2 h-2 bg-state1 absolute rounded-full top-[1px] right-[4px]" />
         )}
       </button>
     </Dropdown>
