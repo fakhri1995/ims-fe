@@ -545,13 +545,6 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
       .then((res2) => {
         // if (res2.success) {
         setDataStatusApply(res2);
-        // } else {
-        //     console.log('error apa ',res2)
-        //     notification.error({
-        //         message: `${res2.message}`,
-        //         duration: 3,
-        //     });
-        // }
       })
       .catch((err) => {
         // notification.error({
@@ -1390,14 +1383,6 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                 total: dataRawRCareers?.total,
                 showSizeChanger: true,
               }}
-              // onRow={(record, rowIndex) => {
-              //   console.log('row index ',rowIndex)
-              //   return {
-
-              //     onClick: () => {handleClickDetailPelamar(record)
-              //     },
-              //   };
-              // }}
               onChange={(pagination, filters, sorter, extra) => {
                 const sortTypePayload =
                   sorter.order === "ascend"
