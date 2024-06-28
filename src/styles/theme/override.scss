@@ -115,9 +115,18 @@ ol {
 
 /* MENU */
 /* menu item padding */
-.ant-menu-root > .ant-menu-item {
+.ant-menu-root:not(.ant-menu.ant-menu-inline-collapsed) > .ant-menu-item {
   padding-left: 10px !important;
   text-align: left;
+}
+
+.ant-menu.ant-menu-inline-collapsed > .ant-menu-item,
+.ant-menu.ant-menu-inline-collapsed
+  > .ant-menu-submenu
+  > .ant-menu-submenu-title {
+  padding: 0 15px;
+  left: 0;
+  text-overflow: clip;
 }
 
 /* selected menu bg */
@@ -157,9 +166,15 @@ ol {
   border-right: 0px;
 }
 
+.ant-menu.ant-menu-inline-collapsed .ant-menu-item-icon,
+.ant-menu.ant-menu-inline-collapsed .anticon {
+  display: inline-flex;
+}
+
 /* SUBMENU */
 /* submenu title padding */
-.ant-menu-submenu-title {
+.ant-menu-root:not(.ant-menu.ant-menu-inline-collapsed)
+  .ant-menu-submenu-title {
   padding-left: 10px !important;
   text-align: left;
 }
