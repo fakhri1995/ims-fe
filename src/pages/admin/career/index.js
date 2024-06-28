@@ -1386,7 +1386,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                     </Form.Item>
                     <Form.Item
                       label="ID Role"
-                      name="career_role_type_id"
+                      name="recruitment_role_id"
                       rules={[
                         {
                           required: true,
@@ -1397,13 +1397,13 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                       <Select
                         showSearch={true}
                         value={
-                          datacreate?.career_role_type_id &&
-                          Number(datacreate?.career_role_type_id)
+                          datacreate?.recruitment_role_id &&
+                          Number(datacreate?.recruitment_role_id)
                         }
                         onChange={(e) => {
                           setdatacreate({
                             ...datacreate,
-                            career_role_type_id: e,
+                            recruitment_role_id: e,
                           });
                         }}
                         filterOption={(input, option) =>
