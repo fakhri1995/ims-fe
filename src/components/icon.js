@@ -2478,7 +2478,7 @@ const RightIconSvg = (props) => {
       width={props?.size ?? 20}
       height={props?.size ?? 20}
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
+      strokeWidth="2"
       stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
