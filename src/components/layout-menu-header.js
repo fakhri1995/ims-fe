@@ -19,7 +19,7 @@ function LayoutMenuHeader({
     return (
       <div className="w-auto h-auto flex flex-col shadow-md rounded-xl bg-white space-y-4 p-4">
         <button
-          className="bg-transparent hover:bg-neutrals50 rounded-md shadow-md"
+          className="bg-transparent hover:bg-neutrals50 rounded-md shadow-md w-72"
           onClick={() => rt.push("/employeeProfile?tab=2")}
         >
           <div className="flex items-center justify-between space-x-3 p-3 ">
@@ -37,10 +37,10 @@ function LayoutMenuHeader({
                   <UsercircleIconSvg size={32} color={"black"} />
                 )}
               </div>
-              <div className="flex flex-col text-neutrals100">
-                <h2 className="text-sm font-medium mb-1">
+              <div className="flex flex-col text-neutrals100 text-left">
+                <h1 className="text-sm font-medium ">
                   {dataProfile.data.name}
-                </h2>
+                </h1>
                 <h2 className="text-xs font-normal text-mono50">
                   {dataProfile.data.email}
                 </h2>
@@ -82,25 +82,25 @@ function LayoutMenuHeader({
         </div>
       )}
 
-      <div className="md:mr-6 mr-4 flex items-center md:p-1">
-        <Dropdown overlay={menuProfile2} trigger={["click"]}>
+      <Dropdown overlay={menuProfile2} trigger={["click"]}>
+        <div className="md:mr-6 mr-4 flex items-center md:p-1 cursor-pointer">
           {dataProfile.data?.profile_image?.link ? (
             <img
               src={generateStaticAssetUrl(
                 dataProfile.data?.profile_image?.link
               )}
               alt={dataProfile.data?.profile_image?.description}
-              className="w-8 h-8 rounded-full object-cover cursor-pointer"
+              className="w-8 h-8 rounded-full object-cover "
             />
           ) : (
             <UsercircleIconSvg size={32} color={"black"} />
           )}
-        </Dropdown>
-        <div className="hidden md:flex flex-col ml-2">
-          <h1 className="font-bold text-xs mb-0">{dataProfile.data.name}</h1>
-          <p className="mb-0 text-xs text-mono50">{dataProfile.data.nip}</p>
+          <div className="hidden md:flex flex-col ml-2">
+            <h1 className="font-bold text-xs mb-0">{dataProfile.data.name}</h1>
+            <p className="mb-0 text-xs text-mono50">{dataProfile.data.nip}</p>
+          </div>
         </div>
-      </div>
+      </Dropdown>
     </div>
   );
 }
