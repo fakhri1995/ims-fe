@@ -380,7 +380,10 @@ const NotificationItem: FC<INotificationItem> = ({
 
         {/* Content and Date */}
         <div className="flex flex-col">
-          <p className="text-mono30 mig-caption--medium text-ellipsis w-[270px]">
+          <p
+            className="text-mono30 mig-caption--medium w-[270px] truncate"
+            title={content}
+          >
             {content} {notificationContent}
           </p>
           <span className="mig-caption text-mono80">{formattedCreatedAt}</span>
