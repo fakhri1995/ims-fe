@@ -7,13 +7,13 @@ import type { FC, MouseEventHandler } from "react";
 import {
   ArrowRightIconSvg,
   CalendarFilIconSvg,
-  ClipboardcheckIconSvg,
   MessageFilledIconSvg,
   MessageIconSvg,
   NotifIconSvg,
   PartyIconSvg,
   SolarStarsIconSvg,
-  TicketIconSvg,
+  TaskFilledIconSvg,
+  TicketFilledIconSvg,
 } from "components/icon";
 
 import { formatDateToLocale } from "lib/date-utils";
@@ -121,7 +121,7 @@ const NotificationOverlayContainer: FC = () => {
 
   return (
     <div
-      className="mig-platform--p-0 relative w-96 flex flex-col space-y-4 overflow-hidden
+      className="mig-platform--p-0 relative w-96 flex flex-col overflow-hidden
      shadow-desktopBubble rounded-[15px] border border-mono70"
     >
       {/* Header */}
@@ -137,9 +137,9 @@ const NotificationOverlayContainer: FC = () => {
       </div>
 
       {/* List container */}
-      <div className="max-h-224 overflow-y-auto scrollbar-hide pb-16">
+      <div className="max-h-224 overflow-y-auto scrollbar-hide">
         {isNotificationListEmpty && (
-          <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="flex flex-col items-center justify-center space-y-4 my-4">
             <img src="/404-illustration.png" alt="Not Found" />
             <span className="mig-caption text-mono50">
               Tidak ada Notifikasi
@@ -165,17 +165,19 @@ const NotificationOverlayContainer: FC = () => {
       </div>
 
       {/* Footer */}
-      <div className="w-full absolute bottom-0 left-0 p-4 bg-white flex justify-center">
-        <Link href="/notifications" className="">
-          <div
-            className="cursor-pointer flex items-center gap-[6px] 
+      {!isNotificationListEmpty && (
+        <div className="w-full p-4 bg-white flex justify-center">
+          <Link href="/notifications" className="">
+            <div
+              className="cursor-pointer flex items-center gap-[6px] 
           text-primary100 hover:text-primary100/75 mig-caption--medium"
-          >
-            <p>Lihat Semua</p>
-            <ArrowRightIconSvg />
-          </div>
-        </Link>
-      </div>
+            >
+              <p>Lihat Semua</p>
+              <ArrowRightIconSvg />
+            </div>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
@@ -203,7 +205,7 @@ const NotificationList: FC<INotificationList> = ({
 
   return (
     <>
-      <p className="px-4 mig-caption text-mono50 mb-2">{label}</p>
+      <p className="px-4 mig-caption text-mono50 my-[10px]">{label}</p>
       <List
         loading={loading}
         dataSource={items}
@@ -354,23 +356,23 @@ const NotificationItem: FC<INotificationItem> = ({
         <div>
           <div className={iconBackgroundClassName}>
             {imageType === "exclamation" && (
-              <ExclamationIcon className={"text-white"} />
+              <ExclamationIcon className={"text-white"} size={24} />
             )}
             {imageType === "task" && (
-              <ClipboardcheckIconSvg className={"text-white"} />
+              <TaskFilledIconSvg className={"text-white"} size={24} />
             )}
             {imageType === "ticket" && (
-              <TicketIconSvg className={"text-white"} />
+              <TicketFilledIconSvg className={"text-white"} size={20} />
             )}
             {imageType === "announcement" &&
               (content.toLowerCase().includes("birthday") ? (
-                <PartyIconSvg className={"text-white"} />
+                <PartyIconSvg className={"text-white ml-1"} size={24} />
               ) : content.toLowerCase().includes("notice") ? (
-                <CalendarFilIconSvg className={"text-white"} />
+                <CalendarFilIconSvg className={"text-white"} size={24} />
               ) : content.toLowerCase().includes("mighty year") ? (
-                <SolarStarsIconSvg className={"text-white"} />
+                <SolarStarsIconSvg className={"text-white"} size={24} />
               ) : (
-                <MessageFilledIconSvg className={"text-white"} />
+                <MessageFilledIconSvg className={"text-white"} size={24} />
               ))}
 
             {/* : content.toLowerCase().includes("onboard") ? (
@@ -389,7 +391,9 @@ const NotificationItem: FC<INotificationItem> = ({
           >
             {content} {notificationContent}
           </p>
-          <span className="mig-caption text-mono80">{formattedCreatedAt}</span>
+          <span className="mig-caption text-neutrals90">
+            {formattedCreatedAt}
+          </span>
         </div>
       </div>
 
