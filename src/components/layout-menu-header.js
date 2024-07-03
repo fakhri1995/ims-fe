@@ -17,7 +17,10 @@ function LayoutMenuHeader({
   const rt = useRouter();
   const menuProfile2 = () => {
     return (
-      <div className="w-auto h-auto flex flex-col shadow-md rounded-xl bg-white space-y-4 p-4">
+      <div
+        className="w-auto h-auto flex flex-col shadow-desktopBubble 
+      rounded-[10px] border bg-white space-y-4 p-4"
+      >
         <button
           className="bg-transparent hover:bg-neutrals50 rounded-md shadow-md w-72"
           onClick={() => rt.push("/employeeProfile?tab=2")}
