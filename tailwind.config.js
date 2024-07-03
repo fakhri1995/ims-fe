@@ -16,6 +16,7 @@ module.exports = {
       },
       boxShadow: {
         migcard: "0 0 20px rgba(0, 0, 0, 0.15)",
+        desktopBubble: "2px 4px 20px 5px rgba(51, 51, 51, 0.15)"
       },
       backgroundImage: theme => ({
         'form_modal': "url('/public/bg-apply-form.svg)",

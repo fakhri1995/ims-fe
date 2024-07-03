@@ -120,7 +120,10 @@ const NotificationOverlayContainer: FC = () => {
     pastNotificationItems.length === 0 && todayNotificationItems.length === 0;
 
   return (
-    <div className="mig-platform--p-0 relative w-96 flex flex-col space-y-4 overflow-hidden">
+    <div
+      className="mig-platform--p-0 relative w-96 flex flex-col space-y-4 overflow-hidden
+     shadow-desktopBubble rounded-[15px] border border-mono70"
+    >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <h5 className="mig-heading--5">Notifikasi</h5>
