@@ -1,4 +1,8 @@
-import { CameraOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  CameraOutlined,
+  LoadingOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -10,6 +14,7 @@ import {
   Modal,
   Select,
   Skeleton,
+  Spin,
   Tag,
   Upload,
   UploadProps,
@@ -43,6 +48,7 @@ import {
   ATTENDANCE_ACTIVITY_ADD,
   ATTENDANCE_ACTIVITY_DELETE,
   ATTENDANCE_ACTIVITY_UPDATE,
+  LEAVE_DELETE,
 } from "lib/features";
 import {
   generateStaticAssetUrl,
@@ -87,6 +93,7 @@ export interface IAttendanceStaffLeaveDetailDrawer {
   dataToken: string;
   visible: boolean;
   onClose: () => void;
+  fetchData: () => void;
   dataDefault: objType;
 }
 
@@ -96,26 +103,74 @@ export interface IAttendanceStaffLeaveDetailDrawer {
 
 export const AttendanceStaffLeaveDetailDrawer: FC<
   IAttendanceStaffLeaveDetailDrawer
-> = ({ visible, onClose, dataDefault, dataToken }) => {
+> = ({ visible, onClose, fetchData, dataDefault, dataToken }) => {
+  const { hasPermission } = useAccessControl();
+  const [loading, setLoading] = useState(false);
+  const isAllowedToDeleteLeave = hasPermission(LEAVE_DELETE);
+
+  const batalCuti = () => {
+    setLoading(true);
+    let dataSend = {
+      id: dataDefault.id,
+    };
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteLeave`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: JSON.parse(dataToken),
+      },
+      body: JSON.stringify(dataSend),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setLoading(false);
+
+          notification["success"]({
+            message: "Batalkan Cuti Sukses",
+            duration: 3,
+          });
+          onClose();
+          fetchData();
+        } else {
+          notification["error"]({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      });
+  };
+
   return (
     <Modal
       title={<p className={"text-center"}>Detail Pengajuan Cuti</p>}
       open={visible}
       width={487}
+      className={"rounded-[10px]"}
       footer={
-        dataDefault?.status == "1" ? null : (
-          <div
-            className={
-              "bg-[#BF4A40] py-2 rounded-[5px] flex justify-center hover:cursor-pointer"
-            }
-          >
-            <p className={"text-white text-xs leading-5 font-bold"}>Batalkan</p>
-          </div>
-        )
+        dataDefault?.status != "1"
+          ? null
+          : isAllowedToDeleteLeave && (
+              <div
+                onClick={() => batalCuti()}
+                className={
+                  "bg-[#BF4A40] py-2 rounded-[5px] flex justify-center hover:cursor-pointer"
+                }
+              >
+                <div className={"flex items-center gap-2"}>
+                  {loading && (
+                    <Spin indicator={<LoadingOutlined />} size="small" />
+                  )}
+                  <p className={"text-white text-xs leading-5 font-bold"}>
+                    Batalkan
+                  </p>
+                </div>
+              </div>
+            )
       }
       onCancel={onClose}
     >
-      <div className={"flex flex-col gap-4"}>
+      <div className={"flex flex-col gap-4 "}>
         <div className={"flex flex-col gap-2"}>
           <p className={"text-xs text-[#808080] leading-4 font-normal"}>
             Status Pengajuan Cuti
