@@ -4,8 +4,17 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import type { FC, MouseEventHandler } from "react";
 
-import { MessageIconSvg, NotifIconSvg } from "components/icon";
-import { H2 } from "components/typography";
+import {
+  ArrowRightIconSvg,
+  CalendarFilIconSvg,
+  MessageFilledIconSvg,
+  MessageIconSvg,
+  NotifIconSvg,
+  PartyIconSvg,
+  SolarStarsIconSvg,
+  TaskFilledIconSvg,
+  TicketFilledIconSvg,
+} from "components/icon";
 
 import { formatDateToLocale } from "lib/date-utils";
 import { generateNotificationRedirectUrl } from "lib/helper";
@@ -17,10 +26,7 @@ import {
   useReadNotification,
 } from "apis/notification";
 
-import BellIcon from "assets/vectors/icon-bell.svg";
-import ClipboardCheckedIcon from "assets/vectors/icon-clipboard-checked.svg";
 import ExclamationIcon from "assets/vectors/icon-exclamation.svg";
-import TicketIcon from "assets/vectors/icon-ticket.svg";
 
 import clsx from "clsx";
 
@@ -114,23 +120,26 @@ const NotificationOverlayContainer: FC = () => {
     pastNotificationItems.length === 0 && todayNotificationItems.length === 0;
 
   return (
-    <div className="mig-platform--p-0 relative w-96 flex flex-col space-y-4 overflow-hidden">
+    <div
+      className="mig-platform--p-0 relative w-96 flex flex-col overflow-hidden
+     shadow-desktopBubble rounded-[15px] border border-mono70"
+    >
       {/* Header */}
-      <div className="flex items-center justify-between p-4">
-        <H2>Notifikasi</H2>
+      <div className="flex items-center justify-between p-4 border-b">
+        <h5 className="mig-heading--5">Notifikasi</h5>
 
         <span
-          className="cursor-pointer text-primary100 hover:opacity-75"
+          className="mig-caption--medium cursor-pointer text-primary100 hover:opacity-75"
           onClick={onReadAllNotificationClicked}
         >
-          Tandai semua telah dibaca
+          Tandai telah dibaca
         </span>
       </div>
 
       {/* List container */}
-      <div className="max-h-224 overflow-y-auto scrollbar-hide pb-16 px-4">
+      <div className="max-h-224 overflow-y-auto scrollbar-hide">
         {isNotificationListEmpty && (
-          <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="flex flex-col items-center justify-center space-y-4 my-4">
             <img src="/404-illustration.png" alt="Not Found" />
             <span className="mig-caption text-mono50">
               Tidak ada Notifikasi
@@ -141,13 +150,13 @@ const NotificationOverlayContainer: FC = () => {
         {!isNotificationListEmpty && (
           <>
             <NotificationList
-              label="Hari ini"
+              label="Terbaru"
               items={todayNotificationItems}
               loading={isFetching}
             />
 
             <NotificationList
-              label="Lebih lama"
+              label="Terdahulu"
               items={pastNotificationItems}
               loading={isFetching}
             />
@@ -156,13 +165,19 @@ const NotificationOverlayContainer: FC = () => {
       </div>
 
       {/* Footer */}
-      <div className="w-full absolute bottom-0 left-0 p-4 bg-white">
-        <Link href="/notifications">
-          <a className="cursor-pointer text-primary100 hover:text-primary100/75">
-            Lihat Semua
-          </a>
-        </Link>
-      </div>
+      {!isNotificationListEmpty && (
+        <div className="w-full p-4 bg-white flex justify-center">
+          <Link href="/notifications" className="">
+            <div
+              className="cursor-pointer flex items-center gap-[6px] 
+          text-primary100 hover:text-primary100/75 mig-caption--medium"
+            >
+              <p>Lihat Semua</p>
+              <ArrowRightIconSvg />
+            </div>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
@@ -190,7 +205,7 @@ const NotificationList: FC<INotificationList> = ({
 
   return (
     <>
-      <span className="mig-caption text-mono50">{label}</span>
+      <p className="px-4 mig-caption text-mono50 my-[10px]">{label}</p>
       <List
         loading={loading}
         dataSource={items}
@@ -204,7 +219,7 @@ const NotificationList: FC<INotificationList> = ({
           notificationable_type,
           is_read,
         }) => (
-          <List.Item key={id} className="p-0">
+          <List.Item key={id} className="p-0" style={{ borderBottom: 0 }}>
             <NotificationItem
               notificationId={id}
               content={description}
@@ -230,7 +245,7 @@ interface INotificationItem {
 
   content: string;
 
-  colorType: "red" | "green" | "blue";
+  colorType: "red" | "green" | "blue" | "yellow";
   imageType: "task" | "ticket" | "exclamation" | "announcement";
   createdAt: Date | string;
 
@@ -284,11 +299,12 @@ const NotificationItem: FC<INotificationItem> = ({
 
   const iconBackgroundClassName = clsx(
     {
-      "bg-primary100/25": colorType === "green",
-      "bg-state1/25": colorType === "red",
-      "bg-secondary/10": colorType === "blue",
+      "bg-primary100": colorType === "green",
+      "bg-state1": colorType === "red",
+      "bg-secondary100": colorType === "blue",
+      "bg-onprogress": colorType === "yellow",
     },
-    "h-12 w-12 rounded-full flex items-center justify-center"
+    "h-8 w-8 rounded flex items-center justify-center"
   );
 
   const iconClassName = clsx(
@@ -296,6 +312,7 @@ const NotificationItem: FC<INotificationItem> = ({
       "text-primary100": colorType === "green",
       "text-state1": colorType === "red",
       "text-secondary100": colorType === "blue",
+      "text-onprogress": colorType === "yellow",
     },
     "stroke-2 h-8"
   );
@@ -303,7 +320,7 @@ const NotificationItem: FC<INotificationItem> = ({
   // Selasa, 12 Apr 2022 - 08:00
   const formattedCreatedAt = formatDateToLocale(
     createdAt as unknown as Date,
-    "dd MMM yyyy - HH:mm"
+    "dd MMM yyyy, HH:mm"
   );
 
   // Transform 'App\\Task' -> 'Task' (or 'Ticket')
@@ -331,38 +348,58 @@ const NotificationItem: FC<INotificationItem> = ({
   return (
     <a
       href={hrefValue}
-      className="mig-platform--p-0 p-2 my-4 cursor-pointer flex items-start justify-between space-x-4 hover:bg-primary100/10 transition-colors duration-300 w-full"
+      className="py-[6px] px-4 cursor-pointer flex space-x-4 hover:bg-neutrals50 transition-colors duration-300 w-full"
       onClick={onItemClicked}
     >
       {/* Icon */}
-      <div className="flex space-x-4">
+      <div className="flex space-x-3 items-center">
         <div>
           <div className={iconBackgroundClassName}>
             {imageType === "exclamation" && (
-              <ExclamationIcon className={iconClassName} />
+              <ExclamationIcon className={"text-white"} size={24} />
             )}
             {imageType === "task" && (
-              <ClipboardCheckedIcon className={iconClassName} />
+              <TaskFilledIconSvg className={"text-white"} size={24} />
             )}
-            {imageType === "ticket" && <TicketIcon className={iconClassName} />}
-            {imageType === "announcement" && (
-              <MessageIconSvg className={iconClassName} />
+            {imageType === "ticket" && (
+              <TicketFilledIconSvg className={"text-white"} size={20} />
             )}
+            {imageType === "announcement" &&
+              (content.toLowerCase().includes("birthday") ? (
+                <PartyIconSvg className={"text-white ml-1"} size={24} />
+              ) : content.toLowerCase().includes("notice") ? (
+                <CalendarFilIconSvg className={"text-white"} size={24} />
+              ) : content.toLowerCase().includes("mighty year") ? (
+                <SolarStarsIconSvg className={"text-white"} size={24} />
+              ) : (
+                <MessageFilledIconSvg className={"text-white"} size={24} />
+              ))}
+
+            {/* : content.toLowerCase().includes("onboard") ? (
+                <MessageFilledIconSvg className={"text-white"} />
+              ) : content.toLowerCase().includes("last day") ? (
+                <MessageFilledIconSvg className={"text-white"} />
+               )  */}
           </div>
         </div>
 
         {/* Content and Date */}
-        <div className="flex flex-col space-y-2">
-          <p className="text-mono30">
+        <div className="flex flex-col">
+          <p
+            className="text-mono30 mig-caption--medium w-[270px] truncate"
+            title={content}
+          >
             {content} {notificationContent}
           </p>
-          <span className="mig-caption text-mono80">{formattedCreatedAt}</span>
+          <span className="mig-caption text-neutrals90">
+            {formattedCreatedAt}
+          </span>
         </div>
       </div>
 
       {!Boolean(isRead) && (
-        <div className="h-4 self-center flex justify-end">
-          <span className="block w-3 h-3 rounded-full bg-state1" />
+        <div className="flex self-center">
+          <p className="block w-2 h-2 rounded-full bg-state1" />
         </div>
       )}
     </a>

@@ -5,7 +5,7 @@ import { Notification } from "components/features/Notification";
 
 import { generateStaticAssetUrl } from "lib/helper";
 
-import { LogoutIconSvg, UsercircleIconSvg } from "./icon";
+import { LogoutIconSvg, RightIconSvg, UsercircleIconSvg } from "./icon";
 
 function LayoutMenuHeader({
   dataProfile,
@@ -15,50 +15,55 @@ function LayoutMenuHeader({
   isPublic,
 }) {
   const rt = useRouter();
-
   const menuProfile2 = () => {
     return (
-      <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5">
-        <div className="flex items-center justify-center space-x-3">
-          <div className="w-10 h-10 rounded-full bg-blue-500 flex text-white text-center justify-center items-center">
-            {dataProfile.data?.profile_image?.link ? (
-              <img
-                src={generateStaticAssetUrl(
-                  dataProfile.data.profile_image.link
+      <div
+        className="w-auto h-auto flex flex-col shadow-desktopBubble 
+      rounded-[10px] border bg-white space-y-4 p-4"
+      >
+        <button
+          className="bg-transparent hover:bg-neutrals50 rounded-md shadow-md w-72"
+          onClick={() => rt.push("/employeeProfile?tab=2")}
+        >
+          <div className="flex items-center justify-between space-x-3 p-3 ">
+            <div className="flex items-center justify-center space-x-2">
+              <div className="w-8 h-8 rounded-full flex text-white items-center">
+                {dataProfile.data?.profile_image?.link ? (
+                  <img
+                    src={generateStaticAssetUrl(
+                      dataProfile.data.profile_image.link
+                    )}
+                    alt={dataProfile.data?.profile_image?.description}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <UsercircleIconSvg size={32} color={"black"} />
                 )}
-                alt={dataProfile.data?.profile_image?.description}
-                className="w-full h-full rounded-full object-cover"
-              />
-            ) : (
-              <UsercircleIconSvg size={20} color={"black"} />
-            )}
+              </div>
+              <div className="flex flex-col text-neutrals100 text-left">
+                <h1 className="text-sm font-medium ">
+                  {dataProfile.data.name}
+                </h1>
+                <h2 className="text-xs font-normal text-mono50">
+                  {dataProfile.data.email}
+                </h2>
+              </div>
+            </div>
+            <div className="text-neutrals90">
+              <RightIconSvg />
+            </div>
           </div>
-          <div className="flex flex-col">
-            <h2 className="text-sm font-bold mb-1">{dataProfile.data.name}</h2>
-            <h2 className="text-xs font-normal text-mono50">
-              {dataProfile.data.email}
-            </h2>
-            {/* <Linkheader href={`/profile`} ref="noreferrer">
-              Profile Settings
-            </Linkheader> */}
-          </div>
-        </div>
+        </button>
         <div className="space-y-2">
-          <button
-            onClick={() => rt.push("/employeeProfile?tab=2")}
-            className="flex flex-row items-center space-x-2 bg-transparent hover:opacity-70"
-          >
-            <UsercircleIconSvg size={20} color={"black"} />
-            <p>Profil</p>
-          </button>
           <a
             target="_blank"
             rel="noopener noreferrer"
             onClick={handleLogout}
-            className="flex flex-row items-center space-x-2 hover:opacity-70"
+            className="flex flex-row items-center space-x-2 hover:opacity-70 
+            py-2 px-3 bg-warning bg-opacity-5 hover:bg-opacity-20 rounded-md"
           >
             <LogoutIconSvg size={20} color={"#BF4A40"} />
-            <p className="text-warning">Logout</p>
+            <p className="text-warning font-medium">Logout</p>
           </a>
         </div>
       </div>
@@ -80,25 +85,25 @@ function LayoutMenuHeader({
         </div>
       )}
 
-      <div className="md:mr-6 mr-4 flex items-center md:p-1">
-        <Dropdown overlay={menuProfile2} trigger={["click"]}>
+      <Dropdown overlay={menuProfile2} trigger={["click"]}>
+        <div className="md:mr-6 mr-4 flex items-center md:p-1 cursor-pointer">
           {dataProfile.data?.profile_image?.link ? (
             <img
               src={generateStaticAssetUrl(
                 dataProfile.data?.profile_image?.link
               )}
               alt={dataProfile.data?.profile_image?.description}
-              className="w-8 h-8 rounded-full object-cover cursor-pointer"
+              className="w-8 h-8 rounded-full object-cover "
             />
           ) : (
             <UsercircleIconSvg size={32} color={"black"} />
           )}
-        </Dropdown>
-        <div className="hidden md:flex flex-col ml-2">
-          <h1 className="font-bold text-xs mb-0">{dataProfile.data.name}</h1>
-          <p className="mb-0 text-xs text-mono50">{dataProfile.data.nip}</p>
+          <div className="hidden md:flex flex-col ml-2">
+            <h1 className="font-bold text-xs mb-0">{dataProfile.data.name}</h1>
+            <p className="mb-0 text-xs text-mono50">{dataProfile.data.nip}</p>
+          </div>
         </div>
-      </div>
+      </Dropdown>
     </div>
   );
 }
