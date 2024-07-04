@@ -92,7 +92,9 @@ module.exports = {
         bgprimary25persen: "rgba(53, 118, 59, 0.25)",
         bgstatuscareer: "rgba(77, 77, 77, 0.10)",
         bgstatuscareer2: '#4D4D4D1A',
-        bgikhtisar1: "#E6E6E6"
+        bgikhtisar1: "#E6E6E6",
+        yellow: "#FFD52C",
+        purple: "#800080"
       },
       borderColor: {
         primary: "#1890ff",
@@ -141,6 +143,9 @@ module.exports = {
         advantage: "#C3FDC0",
         pageActive: "#eaeaea",
         inputkategori: "#E6E6E6",
+        yellow: "#FFD52C",
+        purple: "#800080"
+
       },
       textColor: {
         primary: "#1890ff",
@@ -189,6 +194,8 @@ module.exports = {
         accentpink: "#BE658A",
         bluemig: "#304FFE",
         bgadvantagecard: "#E9FFE8",
+        yellow: "#FFD52C",
+        purple: "#800080"
       },
       gradientColorStops: {
         state1: `#799F0C`,
