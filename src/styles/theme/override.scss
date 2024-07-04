@@ -186,7 +186,8 @@ ol {
 }
 
 /* submenu bg dan submenu title */
-.ant-menu-submenu:not(.ant-menu-submenu-selected):hover {
+.ant-menu-submenu:not(.ant-menu-submenu-selected)
+  .ant-menu-submenu-title:hover {
   background-color: #fafafa;
   border-radius: 5px;
 }

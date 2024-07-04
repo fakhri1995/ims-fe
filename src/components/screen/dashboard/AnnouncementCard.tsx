@@ -146,7 +146,7 @@ export const AnnouncementCard: FC<IAnnouncementCard> = ({
               </div>
 
               {/* Content */}
-              <div className="flex flex-col justify-between h-52 md:h-48 xl:h-60">
+              <div className="flex flex-col justify-between min-h-max md:min-h-fit md:h-48 xl:h-60">
                 <div className="flex flex-col justify-between gap-2">
                   <h1 className="font-bold text-lg text-mono30">
                     {dataAnnouncements[0]?.title}
@@ -222,7 +222,7 @@ export const AnnouncementCard: FC<IAnnouncementCard> = ({
                 </div>
 
                 {/* Content */}
-                <div className=" flex flex-col justify-between max-h-24 ">
+                <div className=" flex flex-col justify-between max-h-24 min-h-max md:min-h-fit">
                   <h1 className="mb-2 font-bold text-md text-mono30 max-h-20 text-ellipsis ">
                     {item?.title}
                   </h1>

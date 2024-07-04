@@ -386,7 +386,7 @@ const NotificationItem: FC<INotificationItem> = ({
         {/* Content and Date */}
         <div className="flex flex-col">
           <p
-            className="text-mono30 mig-caption--medium w-[270px] truncate"
+            className="text-mono30 mig-body--medium w-[270px] truncate"
             title={content}
           >
             {content} {notificationContent}
