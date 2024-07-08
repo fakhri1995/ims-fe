@@ -115,6 +115,9 @@ export const AttendanceStaffCheckInDrawer: FC<
 
   const onFormSubmitted = useCallback(
     (value: { work_from?: "WFO" | "WFH"; evidence_image?: string }) => {
+      // notification.warning({
+      //   message: `Lokasi belum sesuai, pastikan lokasi anda sesuai dengan tempat anda bekerja`,
+      // });
       toggleCheckInCheckOut(
         {
           evidence: uploadedEvidencePicture,
@@ -319,7 +322,6 @@ export const AttendanceStaffCheckInDrawer: FC<
           )}
         </div>
       </DrawerCore>
-
       <Modal
         title="Foto Bukti Kehadiran"
         visible={isPreviewEvidencePicture}
