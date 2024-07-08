@@ -1,5 +1,5 @@
 import moment from "moment";
-import "moment/locale/id";
+// import "moment/locale/id";
 import { NextQueryParamProvider } from "next-query-params";
 import Head from "next/head";
 import Router from "next/router";
@@ -18,7 +18,7 @@ import { AccessControlProvider } from "contexts/access-control";
 import * as gtag from "../components/migwebsite/gtag";
 import "../styles/globals.scss";
 
-moment.locale("id");
+// moment.locale("id");
 
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());

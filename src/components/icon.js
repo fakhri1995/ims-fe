@@ -633,16 +633,16 @@ const SortingIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={sortingIconSvg}></Icon>;
 };
-const DownIconSvg = ({ size, color }) => {
+const DownIconSvg = (props) => {
   const downIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-chevron-down"
-      width={size}
-      height={size}
+      width={props?.size ?? "20"}
+      height={props?.size ?? "20"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -651,7 +651,7 @@ const DownIconSvg = ({ size, color }) => {
       <polyline points="6 9 12 15 18 9" />
     </svg>
   );
-  return <Icon rev={""} component={downIconSvg}></Icon>;
+  return <Icon rev={""} component={downIconSvg} {...props}></Icon>;
 };
 const UpIconSvg = ({ size, color }) => {
   const upIconSvg = () => (

@@ -71,6 +71,7 @@ import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 import {
   AddNoteSvg,
   CirclePlusIconSvg,
+  DownIconSvg,
   DownloadIconSvg,
   HistoryIconSvg,
   TrashIconSvg,
@@ -1007,14 +1008,14 @@ export const AttendanceStaffAktivitasSection: FC<
               }
             >
               <a onClick={(e) => e.preventDefault()} className="mig-body--bold">
-                <Space>
+                <div className="flex items-center gap-2">
                   {activeSubmenu == "aktivitas"
                     ? "Activity"
                     : activeSubmenu == "cuti"
                     ? "Paid Leave"
                     : "Overtime"}
-                  <DownOutlined />
-                </Space>
+                  <DownIconSvg />
+                </div>
               </a>
             </Dropdown>
           ) : (
