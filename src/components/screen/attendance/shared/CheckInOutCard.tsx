@@ -63,18 +63,18 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
         !isOverAttendTime && attendeeStatus === "checkin",
     },
     isOverAttendTime && !hasCheckedInToday && !onlyShowTime
-      ? "mig-button--solid-notice"
+      ? "mig-button--outlined-notice"
       : {
-          "mig-button--solid-primary": attendeeStatus === "checkout",
-          "mig-button--solid-danger": attendeeStatus === "checkin",
+          "mig-button--outlined-primary": attendeeStatus === "checkout",
+          "mig-button--outlined-danger": attendeeStatus === "checkin",
         }
   );
 
   const timeTextClassName = clsx(
-    "text-center space-y-1 relative z-10",
-    isOverAttendTime && !hasCheckedInToday && !onlyShowTime
-      ? "text-notice"
-      : "text-gray-600"
+    "text-center space-y-1 relative z-10 text-white"
+    // isOverAttendTime && !hasCheckedInToday && !onlyShowTime
+    //   ? "text-notice"
+    //   : "text-white"
   );
 
   const blobClassName = clsx(
@@ -96,14 +96,23 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
     : "Anda tidak memiliki fitur untuk Check In atau Check Out";
 
   return (
-    <div className="mig-platform flex flex-col items-center justify-center space-y-6 py-8 relative overflow-hidden min-h-[12rem]">
+    <div
+      className="bg-cover mig-platform flex flex-col items-center 
+      justify-center space-y-3 overflow-hidden min-h-fit"
+      style={{
+        backgroundImage:
+          isOverAttendTime && !hasCheckedInToday && !onlyShowTime
+            ? `url('/image/mesh-gradient-warning.svg')`
+            : `url('/image/mesh-gradient-default.svg')`,
+      }}
+    >
       {shouldRenderSpinner ? (
         <Spin size="large" />
       ) : (
         <>
           <div className={timeTextClassName}>
-            <span className="text-5xl block">{currentTime}</span>
-            <span className="font-bold text-xs">{currentDate}</span>
+            <h2 className="mig-heading--2 text-white block">{currentTime}</h2>
+            <span className="mig-caption--medium">{currentDate}</span>
           </div>
 
           {!onlyShowTime && (
@@ -123,7 +132,7 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
                     placement="right"
                     className="relative z-10"
                   >
-                    <InfoCircleOutlined className="p-2 hover:cursor-help" />
+                    <InfoCircleOutlined className="p-2 hover:cursor-help text-white" />
                   </Tooltip>
                 </div>
               )}
@@ -136,8 +145,8 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
             </>
           )}
 
-          <BlobLeft className={`${blobClassName} -top-20 -left-48`} />
-          <BlobRight className={`${blobClassName} -top-44 -right-56`} />
+          {/* <BlobLeft className={`${blobClassName} -top-20 -left-48`} />
+          <BlobRight className={`${blobClassName} -top-44 -right-56`} /> */}
         </>
       )}
     </div>

@@ -16,7 +16,8 @@ module.exports = {
       },
       boxShadow: {
         migcard: "0 0 20px rgba(0, 0, 0, 0.15)",
-        desktopBubble: "2px 4px 20px 5px rgba(51, 51, 51, 0.15)"
+        desktopBubble: "2px 4px 20px 5px rgba(51, 51, 51, 0.15)",
+        desktopCard: "0px 0px 3px 1px rgba(51, 51, 51, 0.05)"
       },
       backgroundImage: theme => ({
         'form_modal': "url('/public/bg-apply-form.svg)",
@@ -40,6 +41,8 @@ module.exports = {
         mono100: `#F3F3F3`,
         mono120: `#FAFAFA`,
         neutrals50: `#FAFAFA`,
+        neutrals60: `#F3F3F3`,
+        neutrals70: `#E6E6E6`,
         neutrals90: `#808080`,
         neutrals100: `#4D4D4D`,
         state1: `#BF4A40`,
@@ -114,6 +117,8 @@ module.exports = {
         mono100: `#F3F3F3`,
         mono120: `#FAFAFA`,
         neutrals50: `#FAFAFA`,
+        neutrals60: `#F3F3F3`,
+        neutrals70: `#E6E6E6`,
         neutrals90: `#808080`,
         neutrals100: `#4D4D4D`,
         state1: `#BF4A40`,
@@ -165,6 +170,8 @@ module.exports = {
         mono100: `#F3F3F3`,
         mono120: `#FAFAFA`,
         neutrals50: `#FAFAFA`,
+        neutrals60: `#F3F3F3`,
+        neutrals70: `#E6E6E6`,
         neutrals90: `#808080`,
         neutrals100: `#4D4D4D`,
         state1: `#BF4A40`,

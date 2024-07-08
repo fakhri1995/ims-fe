@@ -64,17 +64,18 @@ export const AttendanceStaffDetailCard: FC<IAttendanceStaffDetailCard> = memo(
         estimatedContentLength={5}
         header={
           !isLoading && (
-            <div className="flex flex-col items-center space-y-6">
+            <div className="flex flex-col space-y-3">
+              <h4 className="mig-body--bold">Profil Karyawan</h4>
               {/* Avatar */}
-              <span
-                className="w-32 h-32 bg-mono80 rounded-full bg-cover bg-center block"
+              <div
+                className="w-12 h-12 bg-mono80 rounded-full bg-cover bg-center block"
                 style={{ backgroundImage: `url(${data.profile_image})` }}
               />
 
-              {/* Name and NIP? */}
-              <div className="text-center space-y-2">
-                <h3 className="mig-heading--4">{data?.name}</h3>
-                <p className="mig-caption mig-caption--medium text-mono80">
+              {/* Name and NIP */}
+              <div className="">
+                <h3 className="mig-body--medium">{data?.name}</h3>
+                <p className="mig-caption--medium text-neutrals90">
                   {data?.nip}
                 </p>
               </div>

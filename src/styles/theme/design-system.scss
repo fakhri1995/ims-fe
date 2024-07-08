@@ -1,12 +1,12 @@
 /** Platforms */
 .mig-platform {
   /** Class name ini untuk setiap komponen yang terlihat seperti "card". Hampir semua widget pada dashboard memiliki tampilan seperti ini. */
-  @apply bg-white rounded-md shadow-md p-6;
+  @apply bg-white rounded-[10px] border border-neutrals70 shadow-desktopCard p-4;
 }
 
 .mig-platform--p-0 {
   /** Sama seperti .mig-platform akan tetapi tanpa extra padding */
-  @apply bg-white rounded-md shadow-md;
+  @apply bg-white rounded-[10px] border border-neutrals70 shadow-desktopCard;
 }
 
 /** Buttons */
@@ -15,15 +15,15 @@
 
   &--outlined {
     &-primary {
-      @apply text-primary100 border-primary100 hover:text-primary100 hover:border-primary100 focus:text-primary100 focus:border-primary100;
+      @apply text-primary100 hover:text-primary100 hover:border-primary100 focus:text-primary100 focus:border-primary100;
     }
 
     &-danger {
-      @apply text-state1 border-state1 hover:text-state1 hover:border-state1 focus:text-state1 focus:border-state1;
+      @apply text-state1 hover:text-state1 hover:border-state1 focus:text-state1 focus:border-state1;
     }
 
     &-notice {
-      @apply text-notice border-notice hover:text-notice hover:border-notice focus:text-notice focus:border-notice;
+      @apply text-notice hover:text-notice hover:border-notice focus:text-notice focus:border-notice;
     }
   }
 
@@ -83,14 +83,14 @@
 }
 
 .mig-body {
-  @apply text-sm/6;
+  @apply text-sm/6 text-neutrals100;
 
   &--medium {
-    @apply text-sm/6 font-medium;
+    @apply text-sm/6 text-neutrals100 font-medium;
   }
 
   &--bold {
-    @apply text-sm/6 font-bold;
+    @apply text-sm/6 text-neutrals100 font-bold;
   }
 }
 
