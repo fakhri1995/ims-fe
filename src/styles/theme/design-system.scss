@@ -48,22 +48,22 @@
 
   /** H1 */
   &--1 {
-    @apply text-5xl/[64px] text-mono30 font-bold;
+    @apply text-5xl leading-[64px] text-mono30 font-bold;
   }
 
   /** H2 */
   &--2 {
-    @apply text-[32px]/[48px] text-mono30 font-bold;
+    @apply text-[32px] leading-[48px] text-mono30 font-bold;
   }
 
   /** H3 */
   &--3 {
-    @apply text-2xl/8 text-mono30 font-bold;
+    @apply text-2xl leading-8 text-mono30 font-bold;
   }
 
   /** H4 */
   &--4 {
-    @apply text-lg/6 text-mono30 font-bold;
+    @apply text-lg leading-6 text-mono30 font-bold;
   }
 
   /** H5 */
@@ -73,60 +73,60 @@
 
   /** H6 */
   &--6 {
-    @apply text-sm/6 text-mono30 font-bold;
+    @apply text-sm leading-6 text-mono30 font-bold;
   }
 
   /** H7 */
   &--7 {
-    @apply text-xs/6 text-mono30 font-bold;
+    @apply text-xs leading-6 text-mono30 font-bold;
   }
 }
 
 .mig-body {
-  @apply text-sm/6 text-neutrals100;
+  @apply text-sm leading-6 text-neutrals100;
 
   &--medium {
-    @apply text-sm/6 text-neutrals100 font-medium;
+    @apply text-sm leading-6 text-neutrals100 font-medium;
   }
 
   &--bold {
-    @apply text-sm/6 text-neutrals100 font-bold;
+    @apply text-sm leading-6 text-neutrals100 font-bold;
   }
 }
 
 .mig-caption {
-  @apply text-xs/5;
+  @apply text-xs leading-5;
 
   &--medium {
-    @apply text-xs/5 font-medium;
+    @apply text-xs leading-5 font-medium;
   }
 
   &--bold {
-    @apply text-xs/5 font-bold;
+    @apply text-xs leading-5 font-bold;
   }
 }
 
 .mig-small {
-  @apply text-[10px]/4;
+  @apply text-[10px] leading-4;
 
   &--medium {
-    @apply text-[10px]/4 font-medium;
+    @apply text-[10px] leading-4 font-medium;
   }
 
   &--bold {
-    @apply text-[10px]/4 font-bold;
+    @apply text-[10px] leading-4 font-bold;
   }
 }
 
 .mig-buttons {
-  @apply text-sm/4;
+  @apply text-sm leading-4;
 
   &--medium {
-    @apply text-sm/4 font-medium;
+    @apply text-sm leading-4 font-medium;
   }
 
   &--bold {
-    @apply text-sm/4 font-bold;
+    @apply text-sm leading-4 font-bold;
   }
 }
 
