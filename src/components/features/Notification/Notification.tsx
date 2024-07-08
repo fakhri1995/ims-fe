@@ -218,20 +218,40 @@ const NotificationList: FC<INotificationList> = ({
           notificationable_id,
           notificationable_type,
           is_read,
-        }) => (
-          <List.Item key={id} className="p-0" style={{ borderBottom: 0 }}>
-            <NotificationItem
-              notificationId={id}
-              content={description}
-              colorType={color_type as any}
-              imageType={image_type as any}
-              createdAt={created_at}
-              notificationableId={notificationable_id}
-              notificationableType={notificationable_type}
-              isRead={is_read as 0 | 1}
-            />
-          </List.Item>
-        )}
+        }) => {
+          let colorTypeFixed = color_type;
+          let imageTypeFixed = image_type;
+          const lowerDesc = description.toLowerCase();
+
+          // Special case for announcement notif
+          if (lowerDesc.includes("birthday")) {
+            colorTypeFixed = "purple";
+            imageTypeFixed = "announcement-birthday";
+          } else if (lowerDesc.includes("notice")) {
+            colorTypeFixed = "red";
+            imageTypeFixed = "announcement-notice";
+          } else if (lowerDesc.includes("mighty year")) {
+            colorTypeFixed = "yellow";
+            imageTypeFixed = "announcement-anniv";
+          }
+
+          // onboard & last day included in announcement
+
+          return (
+            <List.Item key={id} className="p-0" style={{ borderBottom: 0 }}>
+              <NotificationItem
+                notificationId={id}
+                content={description}
+                colorType={colorTypeFixed as any}
+                imageType={imageTypeFixed as any}
+                createdAt={created_at}
+                notificationableId={notificationable_id}
+                notificationableType={notificationable_type}
+                isRead={is_read as 0 | 1}
+              />
+            </List.Item>
+          );
+        }}
       ></List>
     </>
   );
@@ -245,8 +265,15 @@ interface INotificationItem {
 
   content: string;
 
-  colorType: "red" | "green" | "blue" | "yellow";
-  imageType: "task" | "ticket" | "exclamation" | "announcement";
+  colorType: "red" | "green" | "blue" | "yellow" | "purple";
+  imageType:
+    | "task"
+    | "ticket"
+    | "exclamation"
+    | "announcement"
+    | "announcement-birthday"
+    | "announcement-notice"
+    | "announcement-anniv";
   createdAt: Date | string;
 
   notificationableId?: number;
@@ -302,7 +329,8 @@ const NotificationItem: FC<INotificationItem> = ({
       "bg-primary100": colorType === "green",
       "bg-state1": colorType === "red",
       "bg-secondary100": colorType === "blue",
-      "bg-onprogress": colorType === "yellow",
+      "bg-yellow": colorType === "yellow",
+      "bg-purple": colorType === "purple",
     },
     "h-8 w-8 rounded flex items-center justify-center"
   );
@@ -364,29 +392,25 @@ const NotificationItem: FC<INotificationItem> = ({
             {imageType === "ticket" && (
               <TicketFilledIconSvg className={"text-white"} size={20} />
             )}
-            {imageType === "announcement" &&
-              (content.toLowerCase().includes("birthday") ? (
-                <PartyIconSvg className={"text-white ml-1"} size={24} />
-              ) : content.toLowerCase().includes("notice") ? (
-                <CalendarFilIconSvg className={"text-white"} size={24} />
-              ) : content.toLowerCase().includes("mighty year") ? (
-                <SolarStarsIconSvg className={"text-white"} size={24} />
-              ) : (
-                <MessageFilledIconSvg className={"text-white"} size={24} />
-              ))}
-
-            {/* : content.toLowerCase().includes("onboard") ? (
-                <MessageFilledIconSvg className={"text-white"} />
-              ) : content.toLowerCase().includes("last day") ? (
-                <MessageFilledIconSvg className={"text-white"} />
-               )  */}
+            {imageType === "announcement" && (
+              <MessageFilledIconSvg className={"text-white"} size={24} />
+            )}
+            {imageType === "announcement-notice" && (
+              <CalendarFilIconSvg className={"text-white"} size={24} />
+            )}
+            {imageType === "announcement-anniv" && (
+              <SolarStarsIconSvg className={"text-white"} size={24} />
+            )}
+            {imageType === "announcement-birthday" && (
+              <PartyIconSvg className={"text-white ml-1"} size={24} />
+            )}
           </div>
         </div>
 
         {/* Content and Date */}
         <div className="flex flex-col">
           <p
-            className="text-mono30 mig-caption--medium w-[270px] truncate"
+            className="text-mono30 mig-body--medium w-[270px] truncate"
             title={content}
           >
             {content} {notificationContent}

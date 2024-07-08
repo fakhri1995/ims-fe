@@ -49,7 +49,7 @@ export const DetailCard: FC<IDetailCard> = ({
   const hasHeader = React.isValidElement(header);
   const hasFooter = React.isValidElement(footer);
 
-  const contentClassName = clsx("space-y-5", {
+  const contentClassName = clsx("space-y-3", {
     "mt-4": hasHeader,
     "mb-4": hasFooter,
   });
@@ -112,10 +112,13 @@ const CardContent: FC<CardContentType> = memo(
     }
 
     const mLabelClassName = clsx(
-      "mig-caption text-gray-400 block mb-2",
+      "mig-caption text-neutrals90 block",
       labelClassName
     );
-    const mContentClassName = clsx("text-gray-500 block", contentClassName);
+    const mContentClassName = clsx(
+      "mig-caption--medium text-neutrals100 block",
+      contentClassName
+    );
 
     /** True => ReactNode, False => string */
     const isContentReactNode = React.isValidElement(content);

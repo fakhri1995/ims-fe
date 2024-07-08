@@ -1,12 +1,12 @@
 /** Platforms */
 .mig-platform {
   /** Class name ini untuk setiap komponen yang terlihat seperti "card". Hampir semua widget pada dashboard memiliki tampilan seperti ini. */
-  @apply bg-white rounded-md shadow-md p-6;
+  @apply bg-white rounded-[10px] border border-neutrals70 shadow-desktopCard p-4;
 }
 
 .mig-platform--p-0 {
   /** Sama seperti .mig-platform akan tetapi tanpa extra padding */
-  @apply bg-white rounded-md shadow-md;
+  @apply bg-white rounded-[10px] border border-neutrals70 shadow-desktopCard;
 }
 
 /** Buttons */
@@ -15,15 +15,15 @@
 
   &--outlined {
     &-primary {
-      @apply text-primary100 border-primary100 hover:text-primary100 hover:border-primary100 focus:text-primary100 focus:border-primary100;
+      @apply text-primary100 hover:text-primary100 hover:border-primary100 focus:text-primary100 focus:border-primary100;
     }
 
     &-danger {
-      @apply text-state1 border-state1 hover:text-state1 hover:border-state1 focus:text-state1 focus:border-state1;
+      @apply text-state1 hover:text-state1 hover:border-state1 focus:text-state1 focus:border-state1;
     }
 
     &-notice {
-      @apply text-notice border-notice hover:text-notice hover:border-notice focus:text-notice focus:border-notice;
+      @apply text-notice hover:text-notice hover:border-notice focus:text-notice focus:border-notice;
     }
   }
 
@@ -44,35 +44,89 @@
 
 /** Typography: Refer to Figma design */
 .mig-heading {
+  @apply text-mono30 font-bold;
+
+  /** H1 */
+  &--1 {
+    @apply text-5xl/[64px] text-mono30 font-bold;
+  }
+
   /** H2 */
   &--2 {
-    @apply text-mono30 font-bold text-3xl;
+    @apply text-[32px]/[48px] text-mono30 font-bold;
   }
 
   /** H3 */
   &--3 {
-    @apply text-mono30 font-bold text-2xl;
+    @apply text-2xl/8 text-mono30 font-bold;
   }
 
   /** H4 */
   &--4 {
-    @apply text-mono30 font-bold text-lg;
+    @apply text-lg/6 text-mono30 font-bold;
   }
 
   /** H5 */
   &--5 {
-    @apply text-mono30 font-bold text-base;
+    @apply text-base text-mono30 font-bold;
+  }
+
+  /** H6 */
+  &--6 {
+    @apply text-sm/6 text-mono30 font-bold;
+  }
+
+  /** H7 */
+  &--7 {
+    @apply text-xs/6 text-mono30 font-bold;
   }
 }
-.mig-caption {
-  @apply text-xs;
+
+.mig-body {
+  @apply text-sm/6 text-neutrals100;
 
   &--medium {
-    @apply font-medium;
+    @apply text-sm/6 text-neutrals100 font-medium;
   }
 
   &--bold {
-    @apply font-bold;
+    @apply text-sm/6 text-neutrals100 font-bold;
+  }
+}
+
+.mig-caption {
+  @apply text-xs/5;
+
+  &--medium {
+    @apply text-xs/5 font-medium;
+  }
+
+  &--bold {
+    @apply text-xs/5 font-bold;
+  }
+}
+
+.mig-small {
+  @apply text-[10px]/4;
+
+  &--medium {
+    @apply text-[10px]/4 font-medium;
+  }
+
+  &--bold {
+    @apply text-[10px]/4 font-bold;
+  }
+}
+
+.mig-buttons {
+  @apply text-sm/4;
+
+  &--medium {
+    @apply text-sm/4 font-medium;
+  }
+
+  &--bold {
+    @apply text-sm/4 font-bold;
   }
 }
 

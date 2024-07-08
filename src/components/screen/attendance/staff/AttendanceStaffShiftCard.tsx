@@ -69,24 +69,24 @@ export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
     );
 
     return (
-      <div className="mig-platform flex flex-col gap-4 ">
-        <h4 className="text-base font-bold">Jadwal Kerja</h4>
+      <div className="mig-platform flex flex-col">
+        <h4 className="mig-body--bold mb-3">Jadwal Kerja</h4>
 
         {currentScheduleQueries?.map((schedule, idx) => {
           return (
             <React.Fragment key={idx}>
               {idx === 0 ? (
-                <div className="flex flex-col justify-center items-center p-2 bg-mono120 rounded-md">
-                  <p className="mig-caption--bold text-base text-mono30">
+                <div className="flex flex-col justify-center items-center p-2 bg-mono120 rounded-md mb-3">
+                  <p className="mig-caption--medium text-neutrals90">
                     Hari Ini
                   </p>
                   {/* <p className="mig-caption--medium text-xs text-mono50">
                     {schedule?.data?.data?.shift?.title}
                   </p> */}
-                  <h5 className="mig-heading--5 text-lg font-bold text-mono30">
+                  <h4 className="mig-heading--4">
                     {schedule?.data?.data?.shift?.start_at?.slice(0, 5)} -{" "}
                     {schedule?.data?.data?.shift?.end_at?.slice(0, 5)}
-                  </h5>
+                  </h4>
                 </div>
               ) : (
                 <div className="flex justify-between gap-2 items-center mb-2">

@@ -118,6 +118,7 @@ ol {
 .ant-menu-root:not(.ant-menu.ant-menu-inline-collapsed) > .ant-menu-item {
   padding-left: 10px !important;
   text-align: left;
+  margin-block: 0px;
 }
 
 .ant-menu.ant-menu-inline-collapsed > .ant-menu-item,
@@ -127,6 +128,7 @@ ol {
   padding: 2px 15px 0px;
   left: 0;
   text-overflow: clip;
+  margin-bottom: 4px;
 }
 
 /* selected menu bg */
@@ -177,16 +179,19 @@ ol {
   .ant-menu-submenu-title {
   padding-left: 10px !important;
   text-align: left;
+  margin-block: 0px;
 }
 
 /* sub submenu padding */
 .ant-menu-submenu > .ant-menu.ant-menu-sub.ant-menu-inline > .ant-menu-item {
   padding-left: 38px !important;
   text-align: left;
+  margin-block: 0px;
 }
 
 /* submenu bg dan submenu title */
-.ant-menu-submenu:not(.ant-menu-submenu-selected):hover {
+.ant-menu-submenu:not(.ant-menu-submenu-selected)
+  .ant-menu-submenu-title:hover {
   background-color: #fafafa;
   border-radius: 5px;
 }
@@ -196,6 +201,7 @@ ol {
   color: #ffffff;
   background-color: #35763b;
   border-radius: 5px;
+  margin-block: 0px;
 }
 
 .ant-menu-submenu.ant-menu-submenu-active.ant-menu-submenu-selected

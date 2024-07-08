@@ -16,7 +16,8 @@ module.exports = {
       },
       boxShadow: {
         migcard: "0 0 20px rgba(0, 0, 0, 0.15)",
-        desktopBubble: "2px 4px 20px 5px rgba(51, 51, 51, 0.15)"
+        desktopBubble: "2px 4px 20px 5px rgba(51, 51, 51, 0.15)",
+        desktopCard: "0px 0px 3px 1px rgba(51, 51, 51, 0.05)"
       },
       backgroundImage: theme => ({
         'form_modal': "url('/public/bg-apply-form.svg)",
@@ -40,6 +41,8 @@ module.exports = {
         mono100: `#F3F3F3`,
         mono120: `#FAFAFA`,
         neutrals50: `#FAFAFA`,
+        neutrals60: `#F3F3F3`,
+        neutrals70: `#E6E6E6`,
         neutrals90: `#808080`,
         neutrals100: `#4D4D4D`,
         state1: `#BF4A40`,
@@ -92,7 +95,9 @@ module.exports = {
         bgprimary25persen: "rgba(53, 118, 59, 0.25)",
         bgstatuscareer: "rgba(77, 77, 77, 0.10)",
         bgstatuscareer2: '#4D4D4D1A',
-        bgikhtisar1: "#E6E6E6"
+        bgikhtisar1: "#E6E6E6",
+        yellow: "#FFD52C",
+        purple: "#800080"
       },
       borderColor: {
         primary: "#1890ff",
@@ -112,6 +117,8 @@ module.exports = {
         mono100: `#F3F3F3`,
         mono120: `#FAFAFA`,
         neutrals50: `#FAFAFA`,
+        neutrals60: `#F3F3F3`,
+        neutrals70: `#E6E6E6`,
         neutrals90: `#808080`,
         neutrals100: `#4D4D4D`,
         state1: `#BF4A40`,
@@ -141,6 +148,9 @@ module.exports = {
         advantage: "#C3FDC0",
         pageActive: "#eaeaea",
         inputkategori: "#E6E6E6",
+        yellow: "#FFD52C",
+        purple: "#800080"
+
       },
       textColor: {
         primary: "#1890ff",
@@ -160,6 +170,8 @@ module.exports = {
         mono100: `#F3F3F3`,
         mono120: `#FAFAFA`,
         neutrals50: `#FAFAFA`,
+        neutrals60: `#F3F3F3`,
+        neutrals70: `#E6E6E6`,
         neutrals90: `#808080`,
         neutrals100: `#4D4D4D`,
         state1: `#BF4A40`,
@@ -189,6 +201,8 @@ module.exports = {
         accentpink: "#BE658A",
         bluemig: "#304FFE",
         bgadvantagecard: "#E9FFE8",
+        yellow: "#FFD52C",
+        purple: "#800080"
       },
       gradientColorStops: {
         state1: `#799F0C`,

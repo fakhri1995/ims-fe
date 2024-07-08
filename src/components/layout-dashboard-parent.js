@@ -23,7 +23,7 @@ function LayoutDashboardParent({
   dataProfile,
   pathArr = [],
   sidemenu,
-  bgColor = "#f4faf5",
+  bgColor = "#FAFAFA",
   breadcrumbComponent,
   isPublic, // use for public talent pool
 }) {
@@ -234,7 +234,7 @@ function LayoutDashboardParent({
           </Header>
 
           <main
-            className="h-full p-6"
+            className="h-full p-5"
             style={{
               backgroundColor: bgColor,
             }}
