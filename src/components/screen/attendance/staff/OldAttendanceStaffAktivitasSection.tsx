@@ -1,18 +1,19 @@
-import { DownOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import {
+  AppstoreAddOutlined,
+  EyeOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
   Checkbox,
   ConfigProvider,
-  Dropdown,
   Input,
-  Menu,
   Modal,
-  Space,
   Table,
   Tabs,
   notification,
 } from "antd";
 import type { ColumnsType } from "antd/lib/table";
-import { AxiosError, AxiosResponse } from "axios";
 import { isBefore } from "date-fns";
 import moment from "moment";
 import {
@@ -54,6 +55,7 @@ import {
   LEAVE_USER_ADD,
 } from "lib/features";
 import {
+  createKeyPressHandler,
   generateStaticAssetUrl,
   getFileName,
   permissionWarningNotification,
@@ -63,24 +65,22 @@ import { getAntdTablePaginationConfig } from "lib/standard-config";
 import {
   useGetAttendeeInfo,
   useGetUserAttendanceActivities,
-  useMutateAttendanceActivity,
 } from "apis/attendance";
 import { AttendanceTaskActivityService } from "apis/attendance/attendance-task-activity.service";
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
 import {
   AddNoteSvg,
-  CirclePlusIconSvg,
-  DownloadIconSvg,
-  HistoryIconSvg,
-  TrashIconSvg,
+  FileImportIconSvg,
   XIconSvg,
 } from "../../../../components/icon";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
 
-/**
+const { TabPane } = Tabs;
+
+/**../../../icon
  * Component AttendanceStaffAktivitasSection's props.
  */
 export interface IAttendanceStaffAktivitasSection {
@@ -295,7 +295,7 @@ export const AttendanceStaffAktivitasSection: FC<
       },
       {
         key: "id",
-        title: "Input Time",
+        title: "Waktu Pengisian",
         dataIndex: "updated_at",
         sorter: (a: string, b: string) => {
           const lhsDate = new Date(a);
@@ -343,27 +343,6 @@ export const AttendanceStaffAktivitasSection: FC<
         render: renderCell,
       });
     });
-
-    if (tabActiveKey == "1") {
-      columns.push({
-        key: "delete",
-        title: "Actions",
-        align: "center",
-        render: (_, record: (typeof dataSource)[0]) => {
-          return (
-            <button
-              className="bg-transparent text-warning hover:opacity-75"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleOnDeleteAktivitas(record?.key);
-              }}
-            >
-              <TrashIconSvg />
-            </button>
-          );
-        },
-      });
-    }
 
     return columns;
   }, [pageSize, currentPage, tabActiveKey, dynamicNameFieldPairs]);
@@ -754,7 +733,7 @@ export const AttendanceStaffAktivitasSection: FC<
     },
     {
       key: "id",
-      title: "Input Time",
+      title: "Waktu Pengisian",
       dataIndex: "updated_at",
       sorter: (a: string, b: string) => {
         const lhsDate = new Date(a);
@@ -773,7 +752,7 @@ export const AttendanceStaffAktivitasSection: FC<
     },
     {
       key: "id",
-      title: "Task Name",
+      title: "Nama Task",
       dataIndex: "activity",
     },
   ];
@@ -785,6 +764,7 @@ export const AttendanceStaffAktivitasSection: FC<
       return task.task.name;
     }
   }
+
   function checkFormOrTask() {
     if (tabActiveKey2 == "3" && activeSubmenu == "aktivitas") {
       return (
@@ -893,46 +873,6 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   }
 
-  const {
-    deleteMutation: {
-      mutate: deleteAttendanceActivity,
-      isLoading: deleteMutationLoading,
-    },
-  } = useMutateAttendanceActivity();
-
-  const onMutationSucceed = useCallback((response: AxiosResponse<any, any>) => {
-    notification.success({ message: response.data.message });
-  }, []);
-
-  const onMutationFailed = useCallback((error: AxiosError) => {
-    notification.error({ message: error.response.data.message });
-  }, []);
-
-  const handleOnDeleteAktivitas = useCallback(
-    (activityFormId) => {
-      if (!isAllowedToDeleteActivity) {
-        permissionWarningNotification("Menghapus", "Aktivitas");
-        return;
-      }
-
-      Modal.confirm({
-        centered: true,
-        title: "Perhatian!",
-        content: "Apakah Anda yakin untuk menghapus aktivitas ini?",
-        okText: "Hapus Aktivitas",
-        cancelText: "Kembali",
-        onOk: () => {
-          deleteAttendanceActivity(activityFormId, {
-            onSuccess: onMutationSucceed,
-            onError: onMutationFailed,
-          });
-        },
-        // onCancel: () => onClose(),
-      });
-    },
-    [tabActiveKey, isAllowedToDeleteActivity, attendeeStatus]
-  );
-
   const handleDeleteTaskActivity = useCallback(
     (taskActivityId) => {
       if (!isAllowedToDeleteTaskActivity) {
@@ -982,185 +922,44 @@ export const AttendanceStaffAktivitasSection: FC<
 
   return (
     <>
-      <section className="mig-platform--p-0">
-        {/* Header */}
-        <div className={"flex justify-between items-center border-b py-3 px-4"}>
-          {tabActiveKey == "1" ? (
-            <Dropdown
-              trigger={["click"]}
-              overlay={
-                <Menu selectedKeys={[activeSubmenu]}>
-                  <Menu.Item
-                    key={"aktivitas"}
-                    onClick={() => setActiveSubmenu("aktivitas")}
-                  >
-                    Activity
-                  </Menu.Item>
-                  <Menu.Item
-                    key={"cuti"}
-                    onClick={() => setActiveSubmenu("cuti")}
-                  >
-                    Paid Leave
-                  </Menu.Item>
-                  {/* <Menu.Item>Overtime</Menu.Item> */}
-                </Menu>
-              }
+      <section className="mig-platform">
+        <div className={"flex justify-between"}>
+          <div className={"flex gap-4"}>
+            <div
+              onClick={() => setActiveSubmenu("aktivitas")}
+              className={`${
+                activeSubmenu == "aktivitas" ? "bg-[#35763B]" : "bg-white"
+              } rounded-[48px] py-2 px-4 hover:cursor-pointer`}
             >
-              <a onClick={(e) => e.preventDefault()} className="mig-body--bold">
-                <Space>
-                  {activeSubmenu == "aktivitas"
-                    ? "Activity"
-                    : activeSubmenu == "cuti"
-                    ? "Paid Leave"
-                    : "Overtime"}
-                  <DownOutlined />
-                </Space>
-              </a>
-            </Dropdown>
-          ) : (
-            <h1 className="mig-body--bold text-neutrals100">
-              History of Activities
-            </h1>
-          )}
-
-          {activeSubmenu == "aktivitas" && (
-            <div className="flex gap-3">
-              <ButtonSys
-                type="primary"
-                color={tabActiveKey == "1" ? "mono100" : false}
-                iconOnly
-                onClick={() => setTabActiveKey(tabActiveKey == "1" ? "2" : "1")}
+              <p
+                className={`${
+                  activeSubmenu == "aktivitas"
+                    ? "text-white font-medium"
+                    : "text-[#CCCCCC] font-bold"
+                }text-xs leading-5 `}
               >
-                <HistoryIconSvg />
-              </ButtonSys>
-
-              {tabActiveKey == "1" && (
-                <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
-                  <ButtonSys
-                    type="primary"
-                    color={"mono100"}
-                    iconOnly
-                    onClick={onImportTask}
-                    disabled={!isAllowedToAddTaskActivities}
-                  >
-                    <DownloadIconSvg />
-                  </ButtonSys>
-                </AccessControl>
-              )}
-
-              <Modal
-                title="Import Task to Activity"
-                visible={showModalTask}
-                width={502}
-                footer={null}
-                onCancel={handleCloseModalImportTask}
-                maskClosable={false}
-              >
-                <div className="col-span-4">
-                  <Input
-                    style={{ width: `100%` }}
-                    suffix={<SearchOutlined />}
-                    defaultValue={queryParams2.keyword}
-                    placeholder="Cari Task.."
-                    onChange={onChangeProductSearch}
-                    allowClear
-                  />
-                </div>
-                <div className={"mt-7 flex justify-between mb-4"}>
-                  <p
-                    className={"text-mono30 text-base font-bold "}
-                    style={{ lineHeight: "24px" }}
-                  >
-                    Task List
-                  </p>
-                  {displayDataImport.length > 0 && (
-                    <button
-                      className={"bg-transparent"}
-                      onClick={() => handleSelectTask()}
-                    >
-                      <p
-                        className={"text-primary100 text-sm font-bold"}
-                        style={{ lineHeight: "24px" }}
-                      >
-                        {dataTaskSelected.length == displayDataImport.length
-                          ? "Deselect All"
-                          : "Select All"}
-                      </p>
-                    </button>
-                  )}
-                </div>
-
-                {displayDataImport.length > 0 ? (
-                  displayDataImport.map((task, index) => (
-                    <div key={task.id} className="flex-none rounded-md ">
-                      <div
-                        className={"flex px-4 py-2 border border-inputkategori"}
-                      >
-                        <div className={"w-11/12"}>
-                          <p
-                            className={"text-xs font-bold text-mono30"}
-                            style={{ lineHeight: "20px" }}
-                          >
-                            {task.name} T-{task.id}
-                          </p>
-                          <p
-                            className={"text-xs text-mono50"}
-                            style={{ lineHeight: "16px" }}
-                          >
-                            [{task.project_name ? task.project_name : " - "}]
-                          </p>
-                        </div>
-                        <div className={"w-1/12 self-center items-end"}>
-                          <Checkbox
-                            key={task.id}
-                            value={task.id}
-                            checked={task.is_selected}
-                            onChange={(e) => {
-                              handleOnSelectTask(e);
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className={"mt-4 text-center"}>No Data</p>
-                )}
-
-                <div
-                  onClick={handleCloseModalImportTask}
-                  className={"mt-6 flex justify-end hover:cursor-pointer "}
-                >
-                  <p
-                    className={"mr-12 self-center text-sm"}
-                    style={{ lineHeight: "16px" }}
-                  >
-                    Cancel
-                  </p>
-                  <div
-                    onClick={() => importMultipleTask()}
-                    className={
-                      dataTaskSelected.length > 0
-                        ? "px-6 py-2 bg-primary100 rounded-[5px] hover:cursor-pointer"
-                        : "px-6 py-2 bg-mono80 rounded-[5px]"
-                    }
-                  >
-                    <p
-                      className={
-                        dataTaskSelected.length > 0
-                          ? "text-sm text-white"
-                          : "text-sm text-mono30"
-                      }
-                      style={{ lineHeight: "16px" }}
-                    >
-                      Import Task
-                    </p>
-                  </div>
-                </div>
-              </Modal>
+                Aktivitas
+              </p>
             </div>
-          )}
-
+            {isAllowedToLeavesUser && (
+              <div
+                onClick={() => setActiveSubmenu("cuti")}
+                className={`${
+                  activeSubmenu == "cuti" ? "bg-[#35763B]" : "bg-white"
+                } rounded-[48px] py-2 px-4 hover:cursor-pointer`}
+              >
+                <p
+                  className={`${
+                    activeSubmenu == "cuti"
+                      ? "text-white font-medium"
+                      : "text-[#CCCCCC] font-bold"
+                  }text-xs leading-5 `}
+                >
+                  Cuti Saya
+                </p>
+              </div>
+            )}
+          </div>
           {activeSubmenu == "cuti" && isAllowedToAddLeaveUser && (
             <div
               onClick={() => setShowModalLeave(true)}
@@ -1176,75 +975,183 @@ export const AttendanceStaffAktivitasSection: FC<
           )}
         </div>
 
-        {/* Tabs */}
         {activeSubmenu == "aktivitas" && (
-          <div className="flex justify-between gap-3 py-3 px-4">
-            <div className={"flex gap-3 "}>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <Tabs
+              defaultActiveKey="1"
+              className="w-1/2"
+              onChange={setTabActiveKey}
+            >
+              <TabPane tab="Hari Ini" key="1" />
+              <TabPane tab="Riwayat" key="2" />
+            </Tabs>
+
+            <Modal
+              title="Import Task ke Aktivitas"
+              visible={showModalTask}
+              width={502}
+              footer={null}
+              onCancel={handleCloseModalImportTask}
+              maskClosable={false}
+            >
+              <div className="col-span-4">
+                <Input
+                  style={{ width: `100%` }}
+                  suffix={<SearchOutlined />}
+                  defaultValue={queryParams2.keyword}
+                  placeholder="Cari Task.."
+                  onChange={onChangeProductSearch}
+                  allowClear
+                />
+              </div>
+              <div className={"mt-7 flex justify-between mb-4"}>
+                <p
+                  className={"text-mono30 text-base font-bold "}
+                  style={{ lineHeight: "24px" }}
+                >
+                  List Task
+                </p>
+                {displayDataImport.length > 0 && (
+                  <button
+                    className={"bg-transparent"}
+                    onClick={() => handleSelectTask()}
+                  >
+                    <p
+                      className={"text-primary100 text-sm font-bold"}
+                      style={{ lineHeight: "24px" }}
+                    >
+                      {dataTaskSelected.length == displayDataImport.length
+                        ? "Hapus Semua"
+                        : "Pilih semua"}
+                    </p>
+                  </button>
+                )}
+              </div>
+              {displayDataImport.length > 0 ? (
+                displayDataImport.map((task, index) => (
+                  <div key={task.id} className="flex-none rounded-md ">
+                    <div
+                      className={"flex px-4 py-2 border border-inputkategori"}
+                    >
+                      <div className={"w-11/12"}>
+                        <p
+                          className={"text-xs font-bold text-mono30"}
+                          style={{ lineHeight: "20px" }}
+                        >
+                          {task.name} T-{task.id}
+                        </p>
+                        <p
+                          className={"text-xs text-mono50"}
+                          style={{ lineHeight: "16px" }}
+                        >
+                          [{task.project_name ? task.project_name : " - "}]
+                        </p>
+                      </div>
+                      <div className={"w-1/12 self-center items-end"}>
+                        <Checkbox
+                          key={task.id}
+                          value={task.id}
+                          checked={task.is_selected}
+                          onChange={(e) => {
+                            handleOnSelectTask(e);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className={"mt-4 text-center"}>Tidak Ada Data</p>
+              )}
+
               <div
-                onClick={() => setTabActiveKey2("3")}
-                className={`${
-                  tabActiveKey2 == "3" ? "bg-[#35763B]" : "bg-white border"
-                } rounded-[48px] py-1 px-4 hover:cursor-pointer`}
+                onClick={handleCloseModalImportTask}
+                className={"mt-6 flex justify-end hover:cursor-pointer "}
               >
                 <p
-                  className={`${
-                    tabActiveKey2 == "3"
-                      ? "mig-body--medium text-white "
-                      : "mig-body text-[#CCCCCC] "
-                  } `}
+                  className={"mr-12 self-center text-sm"}
+                  style={{ lineHeight: "16px" }}
                 >
-                  Form
+                  Batal
                 </p>
-              </div>
-              {isAllowedToLeavesUser && (
                 <div
-                  onClick={() => setTabActiveKey2("4")}
-                  className={`${
-                    tabActiveKey2 == "4" ? "bg-[#35763B]" : "bg-white border"
-                  } rounded-[48px] py-1 px-4 hover:cursor-pointer`}
+                  onClick={() => importMultipleTask()}
+                  className={
+                    dataTaskSelected.length > 0
+                      ? "px-6 py-2 bg-primary100 rounded-[5px] hover:cursor-pointer"
+                      : "px-6 py-2 bg-mono80 rounded-[5px]"
+                  }
                 >
                   <p
-                    className={`${
-                      tabActiveKey2 == "4"
-                        ? "mig-body--medium text-white"
-                        : "mig-body text-[#CCCCCC]"
-                    } `}
+                    className={
+                      dataTaskSelected.length > 0
+                        ? "text-sm text-white"
+                        : "text-sm text-mono30"
+                    }
+                    style={{ lineHeight: "16px" }}
                   >
-                    Task
+                    Import Task
                   </p>
+                </div>
+              </div>
+            </Modal>
+
+            <div className="flex flex-col xl:flex-row gap-2 w-full md:w-5/12 xl:w-4/12 md:justify-end items-center">
+              <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
+                <div className="w-full">
+                  <ButtonSys
+                    type="default"
+                    onClick={onImportTask}
+                    disabled={!isAllowedToAddTaskActivities}
+                    fullWidth
+                  >
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      <FileImportIconSvg />
+                      <p>Import Task</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+              </AccessControl>
+              {isAllowedToAddActivity && (
+                <div className="w-full">
+                  <ButtonSys
+                    type="primary"
+                    onClick={mOnAddActivityButtonClicked}
+                    disabled={!isAllowedToAddActivity}
+                    fullWidth
+                  >
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      <AppstoreAddOutlined />
+                      <p>Masukkan Aktivitas</p>
+                    </div>
+                  </ButtonSys>
                 </div>
               )}
             </div>
-            {isAllowedToAddActivity && tabActiveKey == "1" && (
-              <div>
-                <ButtonSys
-                  type="primary"
-                  onClick={mOnAddActivityButtonClicked}
-                  disabled={!isAllowedToAddActivity}
-                  fullWidth
-                >
-                  <div className="flex items-center gap-2 whitespace-nowrap">
-                    <CirclePlusIconSvg />
-                    <p>Add Activity</p>
-                  </div>
-                </ButtonSys>
-              </div>
-            )}
           </div>
         )}
 
-        {/* Table "Activites" */}
         {activeSubmenu == "aktivitas" && (
-          <div className="px-4">{checkFormOrTask()}</div>
+          <Tabs
+            defaultActiveKey="3"
+            className="md:w-1/2"
+            onChange={setTabActiveKey2}
+          >
+            {isAllowedToGetActivity && activeSubmenu == "aktivitas" && (
+              <TabPane tab="Form" key="3" />
+            )}
+            {isAllowedToGetTaskActivities && activeSubmenu == "aktivitas" && (
+              <TabPane tab="Task" key="4" />
+            )}
+          </Tabs>
         )}
-
-        {/* Table "Paid Leave" */}
+        {activeSubmenu == "aktivitas" && checkFormOrTask()}
         {activeSubmenu == "cuti" && (
           <div
             className={
-              "bg-white rounded-[5px] mt-3 first-letter:border border-solid px-6"
+              "bg-white rounded-[5px] mt-8 first-letter:border border-solid  p-6"
             }
-            // style={{ boxShadow: "0px 0px 12px 2px #000E3312" }}
+            style={{ boxShadow: "0px 0px 12px 2px #000E3312" }}
           >
             <p className={"text-base font-bold leading-6 text-[#4D4D4D  ]"}>
               Daftar Pengajuan Cuti

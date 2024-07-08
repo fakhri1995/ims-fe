@@ -15,6 +15,7 @@ const ButtonSys = ({
   onChangeGambar,
   disabled,
   fullWidth,
+  iconOnly,
 
   inputAccept, // only accept certain files type (`accept` <input>'s attribute)
   inputMultiple = false,
@@ -58,8 +59,9 @@ const ButtonSys = ({
       "btn-sm": size !== "large",
       "w-full": fullWidth,
       "bg-disabled text-white border-disabled": disabled,
+      "px-6": !iconOnly,
     },
-    "btn font-semibold px-6 border"
+    "btn font-semibold border"
   );
 
   const buttonSolidColorsClassName = clsx({
@@ -67,7 +69,7 @@ const ButtonSys = ({
       color === "danger" && !disabled,
     "bg-white hover:bg-gray-100 border-white hover:border-gray-100":
       color === "white" && !disabled,
-    "bg-mono100 text-mono50 border-mono100 hover:opacity-75":
+    "bg-mono100 text-neutrals100 border-mono100 hover:opacity-75":
       color === "mono100" && !disabled,
     "bg-mono50 text-white border-mono50 hover:opacity-75":
       color === "mono50" && !disabled,
