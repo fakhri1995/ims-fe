@@ -255,7 +255,7 @@ export const JobListTable: FC = () => {
                     Posted on{" "}
                     {moment(newdata.created_at).format("DD MMMM YYYY")}
                   </p>
-                  <div className={"flex flex-row gap-3 mt-[26px]"}>
+                  {/* <div className={"flex flex-row gap-3 mt-[26px]"}>
                     <WorkIconSvg />
                     <p
                       className={
@@ -265,7 +265,7 @@ export const JobListTable: FC = () => {
                       {currencyI18n.format(newdata.salary_min)} -{" "}
                       {currencyI18n.format(newdata.salary_max)}
                     </p>
-                  </div>
+                  </div> */}
                   <div className={"flex flex-row gap-3 mt-4"}>
                     <ArchivedIconSvg size={20} color={"#585858"} />
                     <p
