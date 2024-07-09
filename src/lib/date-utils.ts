@@ -17,9 +17,14 @@ export const formatDateToLocale = (
   let result = "";
 
   try {
-    result = formatInTimeZone(date, "Asia/Jakarta", dateFormat, {
-      locale: idLocale,
-    });
+    result = formatInTimeZone(
+      date,
+      "Asia/Jakarta",
+      dateFormat
+      // {
+      //   locale: idLocale,
+      // }
+    );
   } catch {
     result = fallbackValue || "";
   } finally {

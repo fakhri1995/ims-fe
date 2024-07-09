@@ -30,6 +30,10 @@ ol {
   margin-left: 20px;
 }
 
+a:hover {
+  color: #35763b;
+}
+
 /* Button */
 .btn {
   text-transform: none !important;
@@ -258,6 +262,16 @@ ol {
 /* checked switch */
 .ant-switch-checked {
   background-color: #35763b;
+}
+
+/* DROPDOWN MENU */
+.ant-dropdown-menu-item-selected {
+  background-color: #fafafa;
+  color: #35763b;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
 }
 
 /* INPUT */

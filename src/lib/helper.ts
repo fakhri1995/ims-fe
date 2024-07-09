@@ -6,7 +6,7 @@ import moment from "moment";
 import { ReactNode } from "react";
 import { QueryClient, useQueryClient } from "react-query";
 
-moment.locale("id");
+// moment.locale("id");
 
 /**
  * A high order helper function to create `KeyboardEvent` handler.

@@ -57,7 +57,7 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
   const isAllowedToToggleCheckInCheckOut = hasPermission(ATTENDANCE_TOGGLE_SET);
 
   const buttonClassName = clsx(
-    "mig-button relative z-10",
+    "mig-button relative z-10 border-none",
     {
       "mig-button--solid-danger":
         !isOverAttendTime && attendeeStatus === "checkin",

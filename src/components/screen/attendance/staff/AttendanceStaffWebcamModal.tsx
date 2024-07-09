@@ -29,7 +29,7 @@ export interface IAttendanceStaffWebcamModal {
  */
 export const AttendanceStaffWebcamModal: FC<IAttendanceStaffWebcamModal> = ({
   visible = true /** TODO */,
-  title = "Ambil foto bukti kehadiran",
+  title = "Take Attendance Photo",
 
   onOk,
   onCancel,
@@ -127,7 +127,7 @@ export const AttendanceStaffWebcamModal: FC<IAttendanceStaffWebcamModal> = ({
   const footerContent = (
     <div className="flex w-full items-center justify-between">
       <ButtonSys type="default" onClick={onBackButtonClicked}>
-        Kembali
+        Back
       </ButtonSys>
 
       <div className="space-x-3">
@@ -135,13 +135,13 @@ export const AttendanceStaffWebcamModal: FC<IAttendanceStaffWebcamModal> = ({
           type={webcamPhase === "preview" ? "default" : "primary"}
           onClick={onCaptureButtonClicked}
         >
-          {webcamPhase !== "preview" && "Ambil foto"}
-          {webcamPhase === "preview" && "Ambil ulang foto"}
+          {webcamPhase !== "preview" && "Take Photo"}
+          {webcamPhase === "preview" && "Retake Photo"}
         </ButtonSys>
 
         {webcamPhase === "preview" && (
           <ButtonSys type="primary" onClick={onUsePictureButtonClicked}>
-            Gunakan foto
+            Use Photo
           </ButtonSys>
         )}
       </div>
@@ -182,14 +182,14 @@ export const AttendanceStaffWebcamModal: FC<IAttendanceStaffWebcamModal> = ({
         >
           {webcamAvailabilityStatus === "cameraDeviceNotFound" && (
             <h3 className="text-mono30">
-              Perangkat Anda tidak terhubung dengan kamera.
+              Your device is not connected to the camera.
             </h3>
           )}
 
           {webcamAvailabilityStatus === "permissionDenied" && (
             <h3 className="text-mono30 text-center max-w-lg">
-              Mohon izinkan hak akses kamera untuk menggunakan fitur ini.
-              <br /> Dan refresh web browser untuk mengaktifkan fitur.
+              Please allow camera permissions to use this feature.
+              <br /> and refresh the web browser to activate the feature.
             </h3>
           )}
 

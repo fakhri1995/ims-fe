@@ -266,7 +266,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
     <Drawer
       title={`Pengajuan Cuti`}
       open={visible}
-      width={550}
+      width={400}
       onClose={onClose}
       footer={
         <div className={"flex gap-4 justify-end p-2"}>
