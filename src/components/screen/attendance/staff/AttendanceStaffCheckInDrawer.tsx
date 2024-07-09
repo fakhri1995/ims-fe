@@ -91,7 +91,7 @@ export const AttendanceStaffCheckInDrawer: FC<
     );
     if (fileSizeInMb > 5) {
       notification.error({
-        message: "Ukuran file melebih batas persyaratan!",
+        message: "File size exceeds the requirement limit!",
       });
       return Upload.LIST_IGNORE;
     }
@@ -191,15 +191,14 @@ export const AttendanceStaffCheckInDrawer: FC<
     if (visible && isPermissionBlocked) {
       Modal.error({
         centered: true,
-        title: "Perhatian!",
+        title: "Attention!",
         content: (
           <p>
-            Mohon izinkan browser untuk dapat mengakses lokasi Anda saat ini
-            dengan cara klik <strong>Allow</strong> pada Popup yang muncul di
-            sebelah kiri atas.
+            Please allow the browser to access your current location by clicking{" "}
+            <strong>Allow</strong> on the Popup that appears top left.
           </p>
         ),
-        okText: "Kembali",
+        okText: "Back",
         onOk: () => onClose(),
         onCancel: () => onClose(),
         closable: true,
@@ -211,7 +210,9 @@ export const AttendanceStaffCheckInDrawer: FC<
   const drawerTitleAndButtonContent =
     attendeeStatus === "checkout" ? "Check In" : "Check Out";
   const evidencePictureLabel =
-    attendeeStatus === "checkout" ? "Bukti Kehadiran" : "Bukti Check Out";
+    attendeeStatus === "checkout"
+      ? "Proof of Attendance"
+      : "Proof of Check Out";
 
   return (
     <>
@@ -231,27 +232,37 @@ export const AttendanceStaffCheckInDrawer: FC<
           {!isPermissionBlocked && (
             <>
               {/* Required field information */}
-              <em className="text-state1">* Informasi ini harus diisi</em>
-
               <Form form={form} onFinish={onFormSubmitted} layout="vertical">
                 {/* Location */}
-                <Form.Item name="current_location" label="Lokasi saat ini">
+                <div className="p-3 bg-neutrals50 rounded-[10px] mb-4">
+                  <h4 className="mig-body mb-1">My Current Location</h4>
                   {!locationDisplayNameLoading ? (
-                    <Input
-                      disabled
-                      placeholder={locationDisplayName || ""}
-                      className="text-mono30 placeholder-gray-900 disabled:bg-transparent font-bold border-none p-0"
-                    />
+                    <p className="text-mono30 placeholder-gray-900 disabled:bg-transparent font-bold border-none p-0">
+                      {locationDisplayName || ""}
+                    </p>
                   ) : (
                     <Spin />
                   )}
-                </Form.Item>
+                  {/* <Form.Item
+                    name="current_location"
+                    label="My Current Location">
+                    {!locationDisplayNameLoading ? (
+                      <Input
+                        disabled
+                        placeholder={locationDisplayName || ""}
+                        className="text-mono30 placeholder-gray-900 disabled:bg-transparent font-bold border-none p-0"
+                      />
+                    ) : (
+                      <Spin />
+                    )}
+                  </Form.Item> */}
+                </div>
 
                 {/* Kerja Dari: hanya tampilkan ketika Check In */}
                 {attendeeStatus === "checkout" && (
                   <Form.Item
                     name="work_from"
-                    label="Kerja Dari"
+                    label="Work From"
                     required
                     initialValue="WFO"
                   >
@@ -272,7 +283,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                   label={evidencePictureLabel}
                   required
                 >
-                  <div className="flex flex-col space-y-6">
+                  <div className="flex flex-col">
                     <div className="relative">
                       {/* Gunakan camera */}
                       <div className="flex items-center space-x-5">
@@ -283,11 +294,11 @@ export const AttendanceStaffCheckInDrawer: FC<
                           }}
                         >
                           <CameraOutlined />
-                          Ambil Foto
+                          Take Photo
                         </Button>
 
                         <span className="mig-caption--medium text-mono50">
-                          Atau
+                          or
                         </span>
                       </div>
 
@@ -307,13 +318,13 @@ export const AttendanceStaffCheckInDrawer: FC<
                       >
                         <Button className="mig-button mig-button--outlined-primary absolute top-0 right-0">
                           <UploadOutlined />
-                          Unggah File
+                          Upload File
                         </Button>
                       </Upload>
                     </div>
 
                     <em className="text-mono50">
-                      Unggah File JPEG (Maksimal 5 MB)
+                      Upload JPEG File (Max. 5 MB)
                     </em>
                   </div>
                 </Form.Item>
@@ -323,7 +334,11 @@ export const AttendanceStaffCheckInDrawer: FC<
         </div>
       </DrawerCore>
       <Modal
-        title="Foto Bukti Kehadiran"
+        title={
+          attendeeStatus === "checkout"
+            ? "Proof of Attendance"
+            : "Proof of Check Out"
+        }
         visible={isPreviewEvidencePicture}
         footer={null}
         onCancel={() => setIsPreviewEvidencePicutre(false)}

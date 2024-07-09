@@ -43,7 +43,7 @@ const DrawerCore = ({
               // disabled={disabled}
               // type={disabled ? "primary" : "default"}
               type={"default"}
-              color="danger"
+              color="mono50"
               onClick={onButtonCancelClicked}
             >
               {buttonCancelText}

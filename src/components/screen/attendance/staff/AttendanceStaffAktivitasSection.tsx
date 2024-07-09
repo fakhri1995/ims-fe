@@ -1,4 +1,9 @@
-import { DownOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  DownOutlined,
+  ExclamationCircleOutlined,
+  EyeOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import {
   Checkbox,
   ConfigProvider,
@@ -172,7 +177,7 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     },
     {
-      title: "Tanggal Cuti",
+      title: "Leave Date",
       dataIndex: "start_date",
       render: (text, record, index) => {
         return {
@@ -181,7 +186,7 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     },
     {
-      title: "Durasi",
+      title: "Duration",
       dataIndex: "start_date",
       render: (text, record, index) => {
         return {
@@ -195,7 +200,7 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     },
     {
-      title: "Tanggal Pengajuan",
+      title: "Submission Date",
       dataIndex: "issued_date",
       render: (text, record, index) => {
         return {
@@ -230,8 +235,8 @@ export const AttendanceStaffAktivitasSection: FC<
                 {record.status == 1
                   ? "Pending"
                   : record.status == 2
-                  ? "Diterima"
-                  : "Ditolak"}
+                  ? "Accepted"
+                  : "Rejected"}
               </p>
             </div>
           ),
@@ -239,7 +244,7 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     },
     {
-      title: "Aksi",
+      title: "Action",
       dataIndex: "button_action",
       render: (text, record, index) => {
         return {
@@ -409,7 +414,7 @@ export const AttendanceStaffAktivitasSection: FC<
         title: "Terjadi kesalahan!",
         content:
           "Anda belum memiliki form aktivitas. Mohon hubungi Admin untuk segera menambahkan Anda ke dalam form aktivitas.",
-        okText: "Kembali",
+        okText: "Back",
         closable: true,
       });
 
@@ -420,10 +425,9 @@ export const AttendanceStaffAktivitasSection: FC<
     if (attendeeStatus !== "checkin") {
       Modal.error({
         centered: true,
-        title: "Perhatian!",
-        content:
-          "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
-        okText: "Kembali",
+        title: "Attention!",
+        content: "You need to Check In first to add or update activity!",
+        okText: "Back",
         closable: true,
       });
 
@@ -437,10 +441,9 @@ export const AttendanceStaffAktivitasSection: FC<
     if (attendeeStatus !== "checkin") {
       Modal.error({
         centered: true,
-        title: "Perhatian!",
-        content:
-          "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
-        okText: "Kembali",
+        title: "Attention!",
+        content: "You need to Check In first to add or update activity!",
+        okText: "Back",
         closable: true,
       });
     } else {
@@ -453,10 +456,9 @@ export const AttendanceStaffAktivitasSection: FC<
       if (attendeeStatus !== "checkin") {
         Modal.error({
           centered: true,
-          title: "Perhatian!",
-          content:
-            "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
-          okText: "Kembali",
+          title: "Attention!",
+          content: "You need to Check In first to add or update activity!",
+          okText: "Back",
           closable: true,
         });
       } else {
@@ -918,16 +920,20 @@ export const AttendanceStaffAktivitasSection: FC<
 
       Modal.confirm({
         centered: true,
-        title: "Perhatian!",
-        content: "Apakah Anda yakin untuk menghapus aktivitas ini?",
-        okText: "Hapus Aktivitas",
-        cancelText: "Kembali",
+        title: "Confirm Remove Activity",
+        content:
+          "Are you sure you want to remove this activity? This action can’t be undone.",
+        okText: "Remove Activity",
+        cancelText: "Cancel",
         onOk: () => {
           deleteAttendanceActivity(activityFormId, {
             onSuccess: onMutationSucceed,
             onError: onMutationFailed,
           });
         },
+        icon: <ExclamationCircleOutlined className="text-warning" />,
+        className: "",
+
         // onCancel: () => onClose(),
       });
     },
@@ -943,16 +949,16 @@ export const AttendanceStaffAktivitasSection: FC<
 
       Modal.confirm({
         centered: true,
-        title: "Perhatian!",
-        content: "Apakah Anda yakin ingin menghapus task ini dari aktivitas?",
-        okText: "Hapus Task",
-        cancelText: "Kembali",
+        title: "Attention!",
+        content: "Are you sure you want to remove this task from activity?",
+        okText: "Remove Task",
+        cancelText: "Back",
         onOk: () => {
           AttendanceTaskActivityService.remove(axiosClient, taskActivityId)
             .then((res) => {
               if (res.data.success) {
                 notification.success({
-                  message: "Task berhasil dihapus dari aktivitas",
+                  message: "Successfully removed task from activity",
                   duration: 3,
                 });
                 getDataTaskActivities();
@@ -966,7 +972,7 @@ export const AttendanceStaffAktivitasSection: FC<
             })
             .catch((err) => {
               notification.error({
-                message: "Task gagal dihapus dari aktivitas",
+                message: "Failed to delete task from activity",
                 duration: 3,
               });
             });
@@ -1062,7 +1068,7 @@ export const AttendanceStaffAktivitasSection: FC<
                     style={{ width: `100%` }}
                     suffix={<SearchOutlined />}
                     defaultValue={queryParams2.keyword}
-                    placeholder="Cari Task.."
+                    placeholder="Search Task.."
                     onChange={onChangeProductSearch}
                     allowClear
                   />
@@ -1163,17 +1169,17 @@ export const AttendanceStaffAktivitasSection: FC<
           )}
 
           {activeSubmenu == "cuti" && isAllowedToAddLeaveUser && (
-            <div
-              onClick={() => setShowModalLeave(true)}
-              className={
-                "hover:cursor-pointer bg-[#35763B] flex items-center rounded-[5px] gap-2 w-[133px] h-[36px] px-5"
-              }
-            >
-              <AddNoteSvg />
-              <p className="text-white text-xs leading-5 font-bold">
-                Ajukan Cuti
-              </p>
-            </div>
+            <ButtonSys type={"primary"}>
+              <div
+                onClick={() => setShowModalLeave(true)}
+                className={"flex items-center gap-2 "}
+              >
+                <AddNoteSvg />
+                <p className="text-xs leading-5 font-bold whitespace-nowrap">
+                  Apply for Leave
+                </p>
+              </div>
+            </ButtonSys>
           )}
         </div>
 
@@ -1184,35 +1190,23 @@ export const AttendanceStaffAktivitasSection: FC<
               <div
                 onClick={() => setTabActiveKey2("3")}
                 className={`${
-                  tabActiveKey2 == "3" ? "bg-[#35763B]" : "bg-white border"
-                } rounded-[48px] py-1 px-4 hover:cursor-pointer`}
+                  tabActiveKey2 == "3"
+                    ? "bg-primary100 mig-body--medium text-white"
+                    : "bg-white border hover:bg-primary75 mig-body text-mono80 hover:text-white"
+                } rounded-[48px] py-1 px-4 hover:cursor-pointer `}
               >
-                <p
-                  className={`${
-                    tabActiveKey2 == "3"
-                      ? "mig-body--medium text-white "
-                      : "mig-body text-[#CCCCCC] "
-                  } `}
-                >
-                  Form
-                </p>
+                <p>Form</p>
               </div>
               {isAllowedToLeavesUser && (
                 <div
                   onClick={() => setTabActiveKey2("4")}
                   className={`${
-                    tabActiveKey2 == "4" ? "bg-[#35763B]" : "bg-white border"
+                    tabActiveKey2 == "4"
+                      ? "bg-primary100 mig-body--medium text-white"
+                      : "bg-white border hover:bg-primary75 mig-body text-mono80 hover:text-white "
                   } rounded-[48px] py-1 px-4 hover:cursor-pointer`}
                 >
-                  <p
-                    className={`${
-                      tabActiveKey2 == "4"
-                        ? "mig-body--medium text-white"
-                        : "mig-body text-[#CCCCCC]"
-                    } `}
-                  >
-                    Task
-                  </p>
+                  <p>Task</p>
                 </div>
               )}
             </div>
@@ -1248,7 +1242,7 @@ export const AttendanceStaffAktivitasSection: FC<
             // style={{ boxShadow: "0px 0px 12px 2px #000E3312" }}
           >
             <p className={"text-base font-bold leading-6 text-[#4D4D4D  ]"}>
-              Daftar Pengajuan Cuti
+              Leave Applications
             </p>
             {isAllowedToLeaveCount && (
               <div
@@ -1256,8 +1250,8 @@ export const AttendanceStaffAktivitasSection: FC<
                   "my-4 bg-[#00589F] rounded-[5px] h-8 flex justify-between px-3 py-1 text-white text-[14px] leading-6 font-bold"
                 }
               >
-                <p className={""}>Jumlah Cuti Tahunan :</p>
-                <p>{leaveCount} Hari Tersisa</p>
+                <p className={""}>Amount of Annual Leave :</p>
+                <p>{leaveCount} Days Remaining</p>
               </div>
             )}
             <Table

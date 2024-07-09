@@ -271,21 +271,19 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
         {!isLoading && !!userAttendanceForm && (
           <>
-            <em className="text-state1">*This information must be filled in</em>
+            {/* <em className="text-state1">*This information must be filled in</em> */}
 
             <Form
               form={form}
               initialValues={formInitialValue}
               layout="vertical"
               onFinish={handleOnFormSubmitted}
-              validateMessages={{
-                required: "This field is required!",
-              }}
             >
               {userAttendanceForm.details.map(
                 ({ name, description, type, key, list, required }) => {
                   return (
                     <Form.Item
+                      name={name}
                       label={
                         <label className="font-bold text-mono30">{name}</label>
                       }
@@ -295,7 +293,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
                       <p className="mb-4 mt-2">{description}</p>
 
                       {type === 6 ? (
-                        <Form.Item name={key} rules={[{ required }]}>
+                        <Form.Item name={name} rules={[{ required }]}>
                           {_renderDynamicUpload(
                             key,
                             form,
@@ -305,7 +303,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
                           )}
                         </Form.Item>
                       ) : (
-                        <Form.Item name={key} rules={[{ required }]}>
+                        <Form.Item name={name} rules={[{ required }]}>
                           {_renderDynamicInput(type, list)}
                         </Form.Item>
                       )}

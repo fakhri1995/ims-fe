@@ -169,43 +169,45 @@ export const AttendanceStaffKehadiranSection: FC<
 
   return (
     <>
-      <section className="mig-platform space-y-6">
+      <section className="mig-platform--p-0 space-y-6">
         {/* Header: Title and Unduh Table button */}
-        <div className="flex items-center justify-between">
-          <h3 className="mig-heading--4">Kehadiran</h3>
+        <div className="flex items-center justify-between p-4 border-b">
+          <h4 className="mig-body--medium">Attendance History</h4>
           <ButtonSys
             type={!isAllowedToExportTable ? "primary" : "default"}
             onClick={() => setIsExportDrawerShown(true)}
             disabled={!isAllowedToExportTable}
           >
             <DownloadOutlined className="mr-2" />
-            Unduh Aktivitas
+            Download Activity
           </ButtonSys>
         </div>
-        <ConfigProvider
-          renderEmpty={() => (
-            <DataEmptyState caption="Data kehadiran kosong." />
-          )}
-        >
-          <Table<IModifiedDataKehadiran>
-            columns={tableColumns}
-            dataSource={kehadiranData}
-            pagination={tablePaginationConf}
-            loading={isLoading || isRefetching}
-            scroll={{ x: 640 }}
-            className="tableTypeTask"
-            onRow={(datum) => {
-              const rowClassName = clsx("hover:cursor-pointer", {
-                "bg-state1/10": datum.is_late,
-              });
+        <div className="px-4">
+          <ConfigProvider
+            renderEmpty={() => (
+              <DataEmptyState caption="Data kehadiran kosong." />
+            )}
+          >
+            <Table<IModifiedDataKehadiran>
+              columns={tableColumns}
+              dataSource={kehadiranData}
+              pagination={tablePaginationConf}
+              loading={isLoading || isRefetching}
+              scroll={{ x: 640 }}
+              className="tableTypeTask"
+              onRow={(datum) => {
+                const rowClassName = clsx("hover:cursor-pointer", {
+                  "bg-state1/10": datum.is_late,
+                });
 
-              return {
-                className: rowClassName,
-                onClick: () => onRowItemClicked(datum),
-              };
-            }}
-          />
-        </ConfigProvider>
+                return {
+                  className: rowClassName,
+                  onClick: () => onRowItemClicked(datum),
+                };
+              }}
+            />
+          </ConfigProvider>
+        </div>
       </section>
 
       <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
