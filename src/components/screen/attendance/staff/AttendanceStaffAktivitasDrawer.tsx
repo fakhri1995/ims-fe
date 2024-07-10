@@ -278,6 +278,9 @@ export const AttendanceStaffAktivitasDrawer: FC<
               initialValues={formInitialValue}
               layout="vertical"
               onFinish={handleOnFormSubmitted}
+              validateMessages={{
+                required: "This field is required!",
+              }}
             >
               {userAttendanceForm.details.map(
                 ({ name, description, type, key, list, required }) => {
@@ -293,7 +296,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
                       <p className="mb-4 mt-2">{description}</p>
 
                       {type === 6 ? (
-                        <Form.Item name={name} rules={[{ required }]}>
+                        <Form.Item name={key} rules={[{ required }]}>
                           {_renderDynamicUpload(
                             key,
                             form,
@@ -303,7 +306,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
                           )}
                         </Form.Item>
                       ) : (
-                        <Form.Item name={name} rules={[{ required }]}>
+                        <Form.Item name={key} rules={[{ required }]}>
                           {_renderDynamicInput(type, list)}
                         </Form.Item>
                       )}
