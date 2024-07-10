@@ -265,6 +265,10 @@ a:hover {
 }
 
 /* DROPDOWN MENU */
+.ant-dropdown-menu {
+  border-radius: 10px;
+  border: 1px 0px;
+}
 .ant-dropdown-menu-item-selected {
   background-color: #fafafa;
   color: #35763b;
@@ -599,6 +603,21 @@ a:hover {
   height: initial;
 }
 
+/* MODAL */
+.ant-modal-content {
+  border-radius: 10px;
+}
+
+.modalRounded > .ant-modal-content {
+  border-radius: 24px;
+}
+
+.ant-modal-body,
+.ant-modal-header {
+  padding: 16px;
+  border-radius: 10px 10px 0 0;
+}
+
 /**
  * NOTE: this is a little bit tricky. We can not customize ant's Modal.confirm footer programmatically.
  *
@@ -631,8 +650,10 @@ a:hover {
   }
 }
 
-.modalRounded > .ant-modal-content {
-  border-radius: 24px;
+/* DRAWER */
+
+.ant-drawer-content {
+  border-radius: 10px 0 0 10px;
 }
 
 /* BUTTON */

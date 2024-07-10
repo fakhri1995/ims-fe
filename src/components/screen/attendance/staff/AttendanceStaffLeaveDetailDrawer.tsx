@@ -143,7 +143,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
 
   return (
     <Modal
-      title={<p className={"text-center"}>Detail Pengajuan Cuti</p>}
+      title={<p className={"text-center"}>Detail of Leave Application</p>}
       open={visible}
       width={487}
       className={"rounded-[10px]"}
@@ -162,7 +162,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
                     <Spin indicator={<LoadingOutlined />} size="small" />
                   )}
                   <p className={"text-white text-xs leading-5 font-bold"}>
-                    Batalkan
+                    Cancel
                   </p>
                 </div>
               </div>
@@ -173,7 +173,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
       <div className={"flex flex-col gap-4 "}>
         <div className={"flex flex-col gap-2"}>
           <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Status Pengajuan Cuti
+            Status
           </p>
           <div
             className={`${
@@ -196,14 +196,14 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
               {dataDefault?.status == "1"
                 ? "Pending"
                 : dataDefault?.status == "2"
-                ? "Diterima"
-                : "Ditolak"}
+                ? "Accepted"
+                : "Rejected"}
             </p>
           </div>
         </div>
         <div className={"flex flex-col gap-1"}>
           <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Tanggal Pengajuan
+            Issued Date
           </p>
           <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
             {moment(dataDefault?.issued_date).format("DD MMMM YYYY")}
@@ -211,7 +211,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
         </div>
         <div className={"flex flex-col gap-1"}>
           <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Tanggal Cuti
+            Leave Date
           </p>
           <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
             {moment(dataDefault?.start_date).format("DD MMMM YYYY")} -{" "}
@@ -220,7 +220,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
         </div>
         <div className={"flex flex-col gap-1"}>
           <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Durasi Hari
+            Duration
           </p>
           <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
             {moment(dataDefault?.end_date).diff(
@@ -232,7 +232,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
         </div>
         <div className={"flex flex-col gap-1"}>
           <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Delegasi Tugas
+            Task Delegate
           </p>
           <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
             {dataDefault?.delegate?.name}
@@ -240,7 +240,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
         </div>
         <div className={"flex flex-col gap-1"}>
           <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Tipe Cuti
+            Leave Type
           </p>
           <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
             {dataDefault?.type?.name}
@@ -248,7 +248,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
         </div>
         <div className={"flex flex-col gap-1"}>
           <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Catatan
+            Notes
           </p>
           <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
             {dataDefault?.notes}
@@ -256,7 +256,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
         </div>
         <div className={"flex flex-col gap-1"}>
           <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Link File
+            File Link
           </p>
           <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
             {dataDefault?.document == null ? (
@@ -267,7 +267,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Lihat File
+                View File
               </a>
             )}
           </p>

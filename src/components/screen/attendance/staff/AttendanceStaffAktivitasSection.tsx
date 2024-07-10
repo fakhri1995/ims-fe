@@ -75,9 +75,13 @@ import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
 import {
   AddNoteSvg,
+  CalendarFilIconSvg,
+  CircleCheckFilledIconSvg,
   CirclePlusIconSvg,
+  ClockIconFilledSvg,
   DownIconSvg,
   DownloadIconSvg,
+  FileImportIconSvg,
   HistoryIconSvg,
   TrashIconSvg,
   XIconSvg,
@@ -200,7 +204,7 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     },
     {
-      title: "Submission Date",
+      title: "Issued Date",
       dataIndex: "issued_date",
       render: (text, record, index) => {
         return {
@@ -251,7 +255,7 @@ export const AttendanceStaffAktivitasSection: FC<
           children: (
             <div
               onClick={() => detailCuti(record)}
-              className={"hover:cursor-pointer"}
+              className={"hover:cursor-pointer text-center"}
             >
               <EyeOutlined />
             </div>
@@ -1000,12 +1004,16 @@ export const AttendanceStaffAktivitasSection: FC<
                   <Menu.Item
                     key={"aktivitas"}
                     onClick={() => setActiveSubmenu("aktivitas")}
+                    disabled={
+                      !isAllowedToGetActivity || !isAllowedToGetTaskActivities
+                    }
                   >
                     Activity
                   </Menu.Item>
                   <Menu.Item
                     key={"cuti"}
                     onClick={() => setActiveSubmenu("cuti")}
+                    disabled={!isAllowedToLeavesUser}
                   >
                     Paid Leave
                   </Menu.Item>
@@ -1056,12 +1064,13 @@ export const AttendanceStaffAktivitasSection: FC<
               )}
 
               <Modal
-                title="Import Task to Activity"
+                title="Import Tasks to Activity"
                 visible={showModalTask}
                 width={502}
                 footer={null}
                 onCancel={handleCloseModalImportTask}
                 maskClosable={false}
+                className="p-0"
               >
                 <div className="col-span-4">
                   <Input
@@ -1099,34 +1108,35 @@ export const AttendanceStaffAktivitasSection: FC<
 
                 {displayDataImport.length > 0 ? (
                   displayDataImport.map((task, index) => (
-                    <div key={task.id} className="flex-none rounded-md ">
-                      <div
-                        className={"flex px-4 py-2 border border-inputkategori"}
-                      >
-                        <div className={"w-11/12"}>
-                          <p
-                            className={"text-xs font-bold text-mono30"}
-                            style={{ lineHeight: "20px" }}
-                          >
-                            {task.name} T-{task.id}
-                          </p>
-                          <p
-                            className={"text-xs text-mono50"}
-                            style={{ lineHeight: "16px" }}
-                          >
-                            [{task.project_name ? task.project_name : " - "}]
-                          </p>
-                        </div>
-                        <div className={"w-1/12 self-center items-end"}>
-                          <Checkbox
-                            key={task.id}
-                            value={task.id}
-                            checked={task.is_selected}
-                            onChange={(e) => {
-                              handleOnSelectTask(e);
-                            }}
-                          />
-                        </div>
+                    <div
+                      key={task.id}
+                      className={
+                        "flex px-4 py-2 border rounded-md border-inputkategori mb-4"
+                      }
+                    >
+                      <div className={"w-11/12"}>
+                        <p
+                          className={"text-xs font-bold text-mono30"}
+                          style={{ lineHeight: "20px" }}
+                        >
+                          {task.name} T-{task.id}
+                        </p>
+                        <p
+                          className={"text-xs text-mono50"}
+                          style={{ lineHeight: "16px" }}
+                        >
+                          [{task.project_name ? task.project_name : " - "}]
+                        </p>
+                      </div>
+                      <div className={"w-1/12 self-center items-end"}>
+                        <Checkbox
+                          key={task.id}
+                          value={task.id}
+                          checked={task.is_selected}
+                          onChange={(e) => {
+                            handleOnSelectTask(e);
+                          }}
+                        />
                       </div>
                     </div>
                   ))
@@ -1134,35 +1144,23 @@ export const AttendanceStaffAktivitasSection: FC<
                   <p className={"mt-4 text-center"}>No Data</p>
                 )}
 
-                <div
-                  onClick={handleCloseModalImportTask}
-                  className={"mt-6 flex justify-end hover:cursor-pointer "}
-                >
-                  <p
-                    className={"mr-12 self-center text-sm"}
-                    style={{ lineHeight: "16px" }}
+                <div className={"pt-3 flex gap-4 justify-end border-t"}>
+                  <ButtonSys
+                    // type={"default"}
+                    onClick={handleCloseModalImportTask}
                   >
                     Cancel
-                  </p>
-                  <div
+                  </ButtonSys>
+                  <ButtonSys
+                    type={"primary"}
                     onClick={() => importMultipleTask()}
-                    className={
-                      dataTaskSelected.length > 0
-                        ? "px-6 py-2 bg-primary100 rounded-[5px] hover:cursor-pointer"
-                        : "px-6 py-2 bg-mono80 rounded-[5px]"
-                    }
+                    disabled={dataTaskSelected.length < 1}
                   >
-                    <p
-                      className={
-                        dataTaskSelected.length > 0
-                          ? "text-sm text-white"
-                          : "text-sm text-mono30"
-                      }
-                      style={{ lineHeight: "16px" }}
-                    >
-                      Import Task
-                    </p>
-                  </div>
+                    <div className="flex gap-2 items-center">
+                      <FileImportIconSvg />
+                      <p className="mig-buttons">Import Selected Task</p>
+                    </div>
+                  </ButtonSys>
                 </div>
               </Modal>
             </div>
@@ -1239,19 +1237,62 @@ export const AttendanceStaffAktivitasSection: FC<
             className={
               "bg-white rounded-[5px] mt-3 first-letter:border border-solid px-6"
             }
-            // style={{ boxShadow: "0px 0px 12px 2px #000E3312" }}
           >
-            <p className={"text-base font-bold leading-6 text-[#4D4D4D  ]"}>
-              Leave Applications
-            </p>
             {isAllowedToLeaveCount && (
-              <div
-                className={
-                  "my-4 bg-[#00589F] rounded-[5px] h-8 flex justify-between px-3 py-1 text-white text-[14px] leading-6 font-bold"
-                }
-              >
-                <p className={""}>Amount of Annual Leave :</p>
-                <p>{leaveCount} Days Remaining</p>
+              // <div
+              //   className={
+              //     "my-4 bg-[#00589F] rounded-[5px] h-8 flex justify-between px-3 py-1 text-white text-[14px] leading-6 font-bold"
+              //   }>
+              //   <p className={""}>Amount of Annual Leave :</p>
+              //   <p>{leaveCount} Days Remaining</p>
+              // </div>
+
+              <div className="w-full flex justify-between gap-3 my-4">
+                {/* Card Days Available */}
+                <div className="mig-card w-1/3 flex justify-between items-start">
+                  <div className="flex flex-col gap-4 justify-between">
+                    <h4 className="mig-heading--4">
+                      {12 + Number(leaveCount)}
+                    </h4>
+                    <div>
+                      <p className="mig-caption--bold">Days available</p>
+                      <p className="mig-small">to book paid leave</p>
+                    </div>
+                  </div>
+
+                  <CircleCheckFilledIconSvg
+                    size={24}
+                    className={"text-primary100"}
+                  />
+                </div>
+
+                {/* Card Days Available */}
+                <div className="mig-card w-1/3 flex justify-between items-start">
+                  <div className="flex flex-col gap-4 justify-between">
+                    <h4 className="mig-heading--4">0</h4>
+                    <div>
+                      <p className="mig-caption--bold">Pending Requests</p>
+                      <p className="mig-small">awaiting approval</p>
+                    </div>
+                  </div>
+
+                  <ClockIconFilledSvg size={28} className={"text-warning"} />
+                </div>
+
+                {/* Card Days Used */}
+                <div className="mig-card w-1/3 flex justify-between items-start">
+                  <div className="flex flex-col gap-4 justify-between">
+                    <h4 className="mig-heading--4">{Math.abs(leaveCount)}</h4>
+                    <div>
+                      <p className="mig-caption--bold">Days Used</p>
+                      <p className="mig-small">
+                        {Math.abs(leaveCount)} days paid leave taken
+                      </p>
+                    </div>
+                  </div>
+
+                  <CalendarFilIconSvg size={24} className={"text-accentblue"} />
+                </div>
               </div>
             )}
             <Table
