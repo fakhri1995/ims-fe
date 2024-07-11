@@ -1,4 +1,3 @@
-import { DownloadOutlined } from "@ant-design/icons";
 import { ConfigProvider, Table } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
@@ -6,8 +5,6 @@ import { useRouter } from "next/router";
 import { FC, useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
-import ButtonSys from "components/button";
-import { AccessControl } from "components/features/AccessControl";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
@@ -15,10 +12,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
-import {
-  ATTENDANCES_USER_GET,
-  ATTENDANCE_ACTIVITY_USER_EXPORT,
-} from "lib/features";
+import { ATTENDANCES_USER_GET } from "lib/features";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
@@ -27,7 +21,6 @@ import {
   UserAttendance,
 } from "apis/attendance";
 
-import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 import clsx from "clsx";
 
 /**
@@ -47,9 +40,7 @@ export const AttendanceStaffKehadiranSection: FC<
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
   const isAllowedToGetKehadiranData = hasPermission(ATTENDANCES_USER_GET);
-  const isAllowedToExportTable = hasPermission(ATTENDANCE_ACTIVITY_USER_EXPORT);
 
-  const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -172,15 +163,7 @@ export const AttendanceStaffKehadiranSection: FC<
       <section className="mig-platform--p-0 space-y-6">
         {/* Header: Title and Unduh Table button */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h4 className="mig-body--medium">Attendance History</h4>
-          <ButtonSys
-            type={!isAllowedToExportTable ? "primary" : "default"}
-            onClick={() => setIsExportDrawerShown(true)}
-            disabled={!isAllowedToExportTable}
-          >
-            <DownloadOutlined className="mr-2" />
-            Download Activity
-          </ButtonSys>
+          <h4 className="mig-body--bold">Attendance History</h4>
         </div>
         <div className="px-4">
           <ConfigProvider
@@ -209,15 +192,6 @@ export const AttendanceStaffKehadiranSection: FC<
           </ConfigProvider>
         </div>
       </section>
-
-      <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
-        <EksporAbsensiDrawer
-          visible={isExportDrawerShown}
-          token={initProps.initProps}
-          exportActivity
-          onClose={() => setIsExportDrawerShown(false)}
-        />
-      </AccessControl>
     </>
   );
 };

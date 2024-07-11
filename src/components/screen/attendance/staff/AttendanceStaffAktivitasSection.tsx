@@ -38,6 +38,7 @@ import {
 import { useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
+import ButtonTooltip from "components/buttonTooltip";
 import { AccessControl } from "components/features/AccessControl";
 import ModalImportTasksToActivity from "components/modal/attendance/modalImportTasksToActivity";
 import { DataEmptyState } from "components/states/DataEmptyState";
@@ -52,6 +53,7 @@ import {
   ATTENDANCE_ACTIVITY_ADD,
   ATTENDANCE_ACTIVITY_DELETE,
   ATTENDANCE_ACTIVITY_UPDATE,
+  ATTENDANCE_ACTIVITY_USER_EXPORT,
   ATTENDANCE_TASK_ACTIVITIES_GET,
   ATTENDANCE_TASK_ACTIVITY_ADD,
   ATTENDANCE_TASK_ACTIVITY_DELETE,
@@ -79,10 +81,12 @@ import {
   CirclePlusIconSvg,
   DownIconSvg,
   DownloadIconSvg,
+  FileExportIconSvg,
   HistoryIconSvg,
   TrashIconSvg,
   XIconSvg,
 } from "../../../../components/icon";
+import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
@@ -120,6 +124,7 @@ export const AttendanceStaffAktivitasSection: FC<
   const isAllowedToDeleteTaskActivity = hasPermission(
     ATTENDANCE_TASK_ACTIVITY_DELETE
   );
+  const isAllowedToExportTable = hasPermission(ATTENDANCE_ACTIVITY_USER_EXPORT);
 
   const isAllowedToLeavesUser = hasPermission(LEAVES_USER_GET);
   const isAllowedToLeaveCount = hasPermission(LEAVES_COUNT_GET);
@@ -140,6 +145,8 @@ export const AttendanceStaffAktivitasSection: FC<
   const [displayDataLeaves, setDisplayDataLeaves] = useState([]);
   const [displayDataTaskToday, setDisplayDataTaskToday] = useState([]);
   const [displayDataTaskHistory, setDisplayDataTaskHistory] = useState([]);
+  const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
+
   const [activeSubmenu, setActiveSubmenu] = useState("aktivitas");
   const [rowstate, setrowstate] = useState(0);
   const [dataDefault, setDataDefault] = useState(null);
@@ -823,39 +830,31 @@ export const AttendanceStaffAktivitasSection: FC<
 
           {activeSubmenu == "aktivitas" && (
             <div className="flex gap-3">
-              <ButtonSys
+              <ButtonTooltip
+                square
                 type="primary"
-                color={tabActiveKey == "1" ? "mono100" : false}
-                iconOnly
+                color={tabActiveKey == "1" ? "mono100" : ""}
                 onClick={() => setTabActiveKey(tabActiveKey == "1" ? "2" : "1")}
+                disabled={!isAllowedToGetActivity}
+                tooltipTitle="History of Activities"
               >
-                <HistoryIconSvg />
-              </ButtonSys>
+                <HistoryIconSvg size={16} />
+              </ButtonTooltip>
 
               {tabActiveKey == "1" && (
-                <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
-                  <ButtonSys
+                <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
+                  <ButtonTooltip
+                    square
                     type="primary"
                     color={"mono100"}
-                    iconOnly
-                    onClick={onImportTask}
-                    disabled={!isAllowedToAddTaskActivities}
+                    onClick={() => setIsExportDrawerShown(true)}
+                    disabled={!isAllowedToExportTable}
+                    tooltipTitle="Download Activity"
                   >
-                    <DownloadIconSvg />
-                  </ButtonSys>
+                    <DownloadIconSvg size={16} />
+                  </ButtonTooltip>
                 </AccessControl>
               )}
-
-              <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITY_ADD}>
-                <ModalImportTasksToActivity
-                  visible={showModalTask}
-                  onvisible={setShowModalTask}
-                  dataToken={dataToken}
-                  queryParams={queryParams2}
-                  displayDataTaskToday={displayDataTaskToday}
-                  onChangeSearch={onChangeProductSearch}
-                />
-              </AccessControl>
             </div>
           )}
 
@@ -901,21 +900,48 @@ export const AttendanceStaffAktivitasSection: FC<
                 </div>
               )}
             </div>
-            {isAllowedToAddActivity && tabActiveKey == "1" && (
-              <div>
-                <ButtonSys
-                  type="primary"
-                  onClick={mOnAddActivityButtonClicked}
-                  disabled={!isAllowedToAddActivity}
-                  fullWidth
-                >
-                  <div className="flex items-center gap-2 whitespace-nowrap">
-                    <CirclePlusIconSvg />
-                    <p>Add Activity</p>
-                  </div>
-                </ButtonSys>
-              </div>
-            )}
+
+            {tabActiveKey == "1" &&
+              (isAllowedToAddActivity && tabActiveKey2 == "3" ? (
+                <div>
+                  <ButtonSys
+                    type="primary"
+                    onClick={mOnAddActivityButtonClicked}
+                    disabled={!isAllowedToAddActivity}
+                    fullWidth
+                  >
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      <CirclePlusIconSvg />
+                      <p>Add Activity</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+              ) : isAllowedToAddTaskActivities && tabActiveKey2 == "4" ? (
+                <div>
+                  <ButtonSys
+                    type="primary"
+                    onClick={onImportTask}
+                    disabled={!isAllowedToAddTaskActivities}
+                    fullWidth
+                  >
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      <FileExportIconSvg />
+                      <p>Import Task</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+              ) : null)}
+
+            <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITY_ADD}>
+              <ModalImportTasksToActivity
+                visible={showModalTask}
+                onvisible={setShowModalTask}
+                dataToken={dataToken}
+                queryParams={queryParams2}
+                displayDataTaskToday={displayDataTaskToday}
+                onChangeSearch={onChangeProductSearch}
+              />
+            </AccessControl>
           </div>
         )}
 
@@ -989,6 +1015,15 @@ export const AttendanceStaffAktivitasSection: FC<
           onClose={() => dispatch({ type: "create", visible: false })}
         />
       )}
+
+      <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
+        <EksporAbsensiDrawer
+          visible={isExportDrawerShown}
+          token={dataToken}
+          exportActivity
+          onClose={() => setIsExportDrawerShown(false)}
+        />
+      </AccessControl>
     </>
   );
 };
