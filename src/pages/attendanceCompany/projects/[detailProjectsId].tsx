@@ -535,7 +535,7 @@ const DetailProjectCompanyPage: NextPage<ProtectedPageProps> = ({
                             ? "bg-secondary100 flex justify-center  py-1 rounded-[2px] w-[62px]"
                             : task.status == 2
                             ? "bg-primary100 flex justify-center  py-1 rounded-[2px] w-[62px]"
-                            : "bg-warning flex justify-center rounded-[2px] py-1 w-[62px]"
+                            : "bg-danger flex justify-center rounded-[2px] py-1 w-[62px]"
                         }
                       >
                         <p className={"text-white text-[10px] font-bold leading-4"}>

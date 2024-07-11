@@ -544,7 +544,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             <p
               className={
                 record?.contract?.contract_end_countdown <= 60
-                  ? "text-warning"
+                  ? "text-danger"
                   : "text-black"
               }
             >
@@ -605,7 +605,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                       setModalDelete(true);
                     }}
                     icon={<DeleteOutlined />}
-                    className="bg-warning border-warning hover:bg-warning hover:opacity-75 hover:border-warning focus:bg-warning focus:border-warning focus:opacity-75"
+                    className="bg-danger border-danger hover:bg-danger hover:opacity-75 hover:border-danger focus:bg-danger focus:border-danger focus:opacity-75"
                   />
                 </div>
               )}

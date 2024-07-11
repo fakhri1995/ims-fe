@@ -119,9 +119,9 @@ const TaskCard = ({
         className="grid grid-cols-1 space-y-4 px-4 py-6 md:p-3 hover:cursor-pointer"
       >
         {isPastDeadline && (
-          <div className="bg-warning bg-opacity-20 rounded-md p-1 flex space-x-2 items-center">
+          <div className="bg-danger bg-opacity-20 rounded-md p-1 flex space-x-2 items-center">
             <InfoCircleIconSvg color={"#BF4A40"} size={16} />
-            <p className="text-warning text-[10px]">
+            <p className="text-danger text-[10px]">
               <strong>Task</strong> ini sudah melewati batas waktu yang telah
               ditentukan.{" "}
             </p>
@@ -131,13 +131,13 @@ const TaskCard = ({
           <div className="col-span-4 flex flex-col justify-between space-y-4">
             <div className="space-y-1">
               <h4
-                className={`mig-heading--4 ${isPastDeadline && "text-warning"}`}
+                className={`mig-heading--4 ${isPastDeadline && "text-danger"}`}
               >
                 {title} ({taskId})
               </h4>
               <h5
                 className={`mig-heading--5 ${
-                  isPastDeadline ? "text-warning" : "text-mono50"
+                  isPastDeadline ? "text-danger" : "text-mono50"
                 } `}
               >
                 {projectName}
@@ -159,7 +159,7 @@ const TaskCard = ({
             {moment(toDate).isValid() ? (
               <div
                 className={`flex flex-col space-y-1 text-right ${
-                  isPastDeadline ? "text-warning" : "text-mono50"
+                  isPastDeadline ? "text-danger" : "text-mono50"
                 }`}
               >
                 <p className="mig-caption--bold">Task Deadline:</p>
@@ -199,7 +199,7 @@ const TaskCard = ({
               <div className="flex gap-2 items-center justify-end">
                 <p
                   className={`mig-caption--bold ${
-                    isPastDeadline ? "text-warning" : "text-mono30"
+                    isPastDeadline ? "text-danger" : "text-mono30"
                   }`}
                 >
                   {taskStaffs?.[0]?.name}
@@ -215,7 +215,7 @@ const TaskCard = ({
                   />
                 ) : isPastDeadline ? (
                   <div
-                    className={`bg-warning rounded-full w-6 h-6 flex items-center justify-center`}
+                    className={`bg-danger rounded-full w-6 h-6 flex items-center justify-center`}
                   >
                     <OneUserIconSvg size={12} color={"#ffffff"} />
                   </div>

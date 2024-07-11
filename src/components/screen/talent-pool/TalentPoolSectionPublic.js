@@ -524,7 +524,7 @@ const TalentPoolSectionPublic = ({ shareId, setModalEliminatedTalent }) => {
         title={
           <div className="flex gap-2 items-center">
             <AlertCircleIconSvg size={32} color="#BF4A40" />
-            <h3 className="mig-heading--3 text-warning">
+            <h3 className="mig-heading--3 text-danger">
               Konfirmasi Eliminasi Talent
             </h3>
           </div>

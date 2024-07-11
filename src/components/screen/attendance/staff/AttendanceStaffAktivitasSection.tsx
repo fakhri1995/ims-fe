@@ -723,7 +723,7 @@ export const AttendanceStaffAktivitasSection: FC<
             onError: onMutationFailed,
           });
         },
-        icon: <ExclamationCircleOutlined className="text-warning" />,
+        icon: <ExclamationCircleOutlined className="text-danger" />,
         className: "",
 
         // onCancel: () => onClose(),

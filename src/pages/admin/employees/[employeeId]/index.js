@@ -336,7 +336,7 @@ const EmployeeDetailIndex = ({
                   </div>
                 ) : (
                   <div className="flex flex-row space-x-2 items-center">
-                    <div className="rounded-full w-4 h-4 bg-warning"></div>
+                    <div className="rounded-full w-4 h-4 bg-danger"></div>
                     <h4 className="mig-heading--4">Tidak Aktif</h4>
                   </div>
                 )}

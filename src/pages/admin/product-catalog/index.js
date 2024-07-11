@@ -122,9 +122,9 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       render: (text, row) =>
         row["model_inventory"].inventories_count == 0 ? (
           <div className={"flex"}>
-            <p className={"text-[14px] text-warning"}>{row["name"]}</p>
+            <p className={"text-[14px] text-danger"}>{row["name"]}</p>
             <div className="py-1 px-4 bg-outofstock ml-[10px] rounded-[5px]">
-              <p className={"text-warning text-[10px]"}>Out of stock</p>
+              <p className={"text-danger text-[10px]"}>Out of stock</p>
             </div>
           </div>
         ) : (
@@ -234,18 +234,18 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       render: (text, row) => (
         // row["products_count"] == 0 ? (
         //   <div className={"flex"}>
-        //     <p className={"text-[14px] text-warning"}>{row["name"]}</p>
+        //     <p className={"text-[14px] text-danger"}>{row["name"]}</p>
         //     <div className="py-1 px-4 bg-outofstock ml-[10px] rounded-[5px]">
-        //       <p className={"text-warning text-[10px]"}>Out of stock</p>
+        //       <p className={"text-danger text-[10px]"}>Out of stock</p>
         //     </div>
         //   </div>
         // ) : (
         //   <div>
-        //     <p className={"text-[14px] text-warning"}>{row["name"]}</p>
+        //     <p className={"text-[14px] text-danger"}>{row["name"]}</p>
         //   </div>
         // ),
         <div>
-          <p className={"text-[14px] text-warning"}>{row["name"]}</p>
+          <p className={"text-[14px] text-danger"}>{row["name"]}</p>
         </div>
       ),
     },
@@ -270,7 +270,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
           <div
             onClick={() => deleteKategori(row["id"], row["name"])}
             className={
-              "bg-warning rounded-[5px] px-2 py-1 flex justify-center items-center"
+              "bg-danger rounded-[5px] px-2 py-1 flex justify-center items-center"
             }
           >
             <DeleteTablerIconSvg size={16} color="white" />
@@ -722,7 +722,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
               <div className={"mt-6 flex justify-end"}>
                 <div
                   className={
-                    "bg-warning py-2 px-4 rounded-[5px] mr-2.5 cursor-pointer"
+                    "bg-danger py-2 px-4 rounded-[5px] mr-2.5 cursor-pointer"
                   }
                   onClick={() => setShowFormKategori(false)}
                 >
