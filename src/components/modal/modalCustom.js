@@ -1064,7 +1064,7 @@ const ModalAddRole = ({
       title={
         <div className="flex flex-col space-y-2 ">
           <p>Tambah Role</p>
-          <p className="text-warning text-[12px] italic">
+          <p className="text-danger text-[12px] italic">
             * Informasi ini harus diisi
           </p>
         </div>
@@ -1287,7 +1287,7 @@ const ModalAddCompany = ({
       title={
         <div className="flex flex-col space-y-2 ">
           <p>Tambah Penempatan</p>
-          <p className="text-warning text-[12px] italic">
+          <p className="text-danger text-[12px] italic">
             * Informasi ini harus diisi
           </p>
         </div>

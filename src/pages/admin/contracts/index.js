@@ -385,7 +385,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                 text == "segeraberakhir" ? (
                   <div
                     className="rounded-md py-1 px-4 hover:cursor-pointer text-center
-                   text-white bg-warning whitespace-nowrap"
+                   text-white bg-danger whitespace-nowrap"
                   >
                     Segera Berakhir
                   </div>

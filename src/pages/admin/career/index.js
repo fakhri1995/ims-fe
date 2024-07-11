@@ -1096,7 +1096,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                               ? "text-mono30"
                               : dataIkhtisar1.name == "Shortlisted"
                               ? "text-primary100"
-                              : "text-warning"
+                              : "text-danger"
                           }`}
                         >
                           {dataIkhtisar1.applicants_count}
@@ -1107,7 +1107,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                               ? "text-mono30"
                               : dataIkhtisar1.name == "Shortlisted"
                               ? "text-primary100"
-                              : "text-warning"
+                              : "text-danger"
                           }  `}
                         >
                           {dataIkhtisar1.name}
@@ -1294,7 +1294,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <div>
                   <p
                     className={
-                      "text-warning text-xs italic font-normal leading-4 mb-6"
+                      "text-danger text-xs italic font-normal leading-4 mb-6"
                     }
                   >
                     * Informasi ini harus diisi

@@ -200,7 +200,7 @@ const ProductCatalogDetail = ({
       sorter: (a, b) => a.name.length - b.name.length,
       render: (name) => (
         <div>
-          <p className={"text-[14px] text-warning"}>{name}</p>
+          <p className={"text-[14px] text-danger"}>{name}</p>
         </div>
       ),
     },
@@ -476,7 +476,7 @@ const ProductCatalogDetail = ({
               >
                 <div className={"flex"}>
                   <div
-                    className={"w-2 h-2 bg-warning rounded-full self-center"}
+                    className={"w-2 h-2 bg-danger rounded-full self-center"}
                   />
                   <div className={"ml-[14px]"}>
                     <p className={"text-xs text-mono30 font-semibold"}>Buruk</p>
@@ -491,7 +491,7 @@ const ProductCatalogDetail = ({
           >
             <div
               className={
-                "border-state1 bg-warning flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
+                "border-state1 bg-danger flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
               }
             >
               <div className={"w-2 h-2 bg-white rounded-full"} />
@@ -567,7 +567,7 @@ const ProductCatalogDetail = ({
           >
             <div
               className={
-                "border-state2 bg-warning flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
+                "border-state2 bg-danger flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
               }
             >
               <LuarPeriodeIconSvg />

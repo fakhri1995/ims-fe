@@ -399,7 +399,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                         </div>
                       ) : (
                         <div
-                          className="flex items-center gap-2 bg-warning bg-opacity-[0.15] text-warning 
+                          className="flex items-center gap-2 bg-danger bg-opacity-[0.15] text-danger 
                           px-3 py-1 rounded-full text-[10px] font-bold"
                         >
                           <AlerttriangleIconSvg size={18} color={"#BF4A40"} />
@@ -783,7 +783,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
 
                   {isRepetition &&
                     dataSchedule?.start_date < dataSchedule?.date && (
-                      <div className="flex items-center gap-2 bg-warning px-4 py-3 rounded-md mb-6">
+                      <div className="flex items-center gap-2 bg-danger px-4 py-3 rounded-md mb-6">
                         <AlerttriangleIconSvg color={"#FFF"} size={20} />
                         <p className="text-white">
                           <b>Tanggal Mulai Repetisi</b> harus melebihi{" "}
