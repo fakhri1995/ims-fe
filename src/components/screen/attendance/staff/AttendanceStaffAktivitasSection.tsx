@@ -39,6 +39,7 @@ import { useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
+import ModalImportTasksToActivity from "components/modal/attendance/modalImportTasksToActivity";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
@@ -75,13 +76,9 @@ import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
 import {
   AddNoteSvg,
-  CalendarFilIconSvg,
-  CircleCheckFilledIconSvg,
   CirclePlusIconSvg,
-  ClockIconFilledSvg,
   DownIconSvg,
   DownloadIconSvg,
-  FileImportIconSvg,
   HistoryIconSvg,
   TrashIconSvg,
   XIconSvg,
@@ -89,6 +86,7 @@ import {
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
+import { AttendanceStaffLeaveStatisticCards } from "./AttendanceStaffLeaveStatisticCards";
 
 /**
  * Component AttendanceStaffAktivitasSection's props.
@@ -139,8 +137,6 @@ export const AttendanceStaffAktivitasSection: FC<
   const [pageSize, setPageSize] = useState(10);
   const [showModalTask, setShowModalTask] = useState(false);
   const [showModalLeave, setShowModalLeave] = useState(false);
-  const [dataTaskSelected, setDataTaskSelected] = useState([]);
-  const [displayDataImport, setDisplayDataImport] = useState([]);
   const [displayDataLeaves, setDisplayDataLeaves] = useState([]);
   const [displayDataTaskToday, setDisplayDataTaskToday] = useState([]);
   const [displayDataTaskHistory, setDisplayDataTaskHistory] = useState([]);
@@ -362,7 +358,7 @@ export const AttendanceStaffAktivitasSection: FC<
         render: (_, record: (typeof dataSource)[0]) => {
           return (
             <button
-              className="bg-transparent text-warning hover:opacity-75"
+              className="bg-transparent text-danger hover:opacity-75"
               onClick={(e) => {
                 e.stopPropagation();
                 handleOnDeleteAktivitas(record?.key);
@@ -455,93 +451,31 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   };
 
-  const importMultipleTask = () => {
-    if (dataTaskSelected.length > 0) {
-      if (attendeeStatus !== "checkin") {
-        Modal.error({
-          centered: true,
-          title: "Attention!",
-          content: "You need to Check In first to add or update activity!",
-          okText: "Back",
-          closable: true,
-        });
-      } else {
-        let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addAttendanceTaskActivities`;
-        let method = "POST";
-        let payload = {
-          task_ids: dataTaskSelected,
-        };
-
-        fetch(url, {
-          method: method,
-          headers: {
-            Authorization: JSON.parse(dataToken),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        })
-          .then((response) => response.json())
-          .then((response2) => {
-            if (response2.success) {
-              notification.success({
-                message: (
-                  <>
-                    {" "}
-                    <p>Task berhasil ditambahkan ke aktivitas</p>
-                  </>
-                ),
-
-                duration: 3,
-              });
-              getDataTaskActivities();
-              queryClient.invalidateQueries(ATTENDANCE_TASK_ACTIVITIES_GET);
-              handleCloseModalImportTask();
-            } else {
-              notification.error({
-                message: response2.message,
-                duration: 3,
-              });
-            }
-          })
-          .catch((err) => {
-            notification.error({
-              message: `Task Gagal ditambahkan ke aktivitas`,
-              duration: 3,
-            });
-            // setLoadingAdd(false);
-          });
-      }
-    }
-  };
-
-  const getDataTaskActivities = () => {
-    if (!isAllowedToGetTaskActivities) {
-      permissionWarningNotification("Mendapatkan", "Daftar Task");
-    } else {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivities`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(dataToken),
-          },
+  const {
+    data: dataTaskActivities,
+    isLoading: loadingTaskActivities,
+    refetch: refetchTaskActivities,
+  } = useQuery(
+    [ATTENDANCE_TASK_ACTIVITIES_GET],
+    () => AttendanceTaskActivityService.find(axiosClient),
+    {
+      enabled: isAllowedToGetTaskActivities,
+      select: (response) => response.data.data,
+      onSuccess: (data) => {
+        if (data.today_activities) {
+          setDisplayDataTaskToday(data.today_activities);
         }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            if (res2.data) {
-              if (res2.data.today_activities) {
-                setDisplayDataTaskToday(res2.data.today_activities);
-              }
-              if (res2.data.last_two_month_activities) {
-                setDisplayDataTaskHistory(res2.data.last_two_month_activities);
-              }
-            }
-          }
+        if (data.last_two_month_activities) {
+          setDisplayDataTaskHistory(data.last_two_month_activities);
+        }
+      },
+      onError: (error) => {
+        notification.error({
+          message: "Failed to get task activities data",
         });
+      },
     }
-  };
+  );
 
   const onChangeProductSearch = (e) => {
     setQueryParams2({
@@ -551,7 +485,6 @@ export const AttendanceStaffAktivitasSection: FC<
 
   useEffect(() => {
     setLoadingTasks(false);
-    getDataTaskActivities();
     checkActivityTask();
     fetchDataCount();
   }, []);
@@ -604,151 +537,6 @@ export const AttendanceStaffAktivitasSection: FC<
       setTabActiveKey2("3");
     } else if (isAllowedToGetTaskActivities) {
       setTabActiveKey2("4");
-    }
-  };
-
-  useEffect(() => {
-    getDataModal();
-  }, [
-    queryParams2.page,
-    queryParams2.rows,
-    queryParams2.keyword,
-    isAllowedToGetTaskActivities,
-    displayDataTaskToday,
-  ]);
-
-  const getDataModal = () => {
-    if (!isAllowedToGetTaskActivities) {
-      permissionWarningNotification("Mendapatkan", "Daftar Task");
-    } else {
-      const payload = QueryString.stringify(queryParams2, {
-        addQueryPrefix: true,
-      });
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(dataToken),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            let datafromapi = res2.data.data;
-            let dataTemp = [];
-
-            const importedTaskIds = displayDataTaskToday.map(
-              (item) => item.task_id
-            );
-
-            for (let a = 0; a < datafromapi.length; a++) {
-              // Filter task which has not been added to activity
-              if (!importedTaskIds.includes(datafromapi[a].id)) {
-                dataTemp.push({
-                  id: datafromapi[a].id,
-                  ticket_number: datafromapi[a].ticket_number,
-                  name: datafromapi[a].name,
-                  start_date: datafromapi[a].start_date,
-                  project_name: datafromapi[a].project
-                    ? datafromapi[a].project.name
-                    : null,
-                  end_date: datafromapi[a].end_date,
-                  is_selected: false,
-                });
-              }
-            }
-            setDisplayDataImport(dataTemp);
-          }
-        });
-    }
-  };
-
-  const handleSelectAllTask = () => {
-    let dataTemp = [];
-    let dataTemp2 = [];
-    for (let a = 0; a < displayDataImport.length; a++) {
-      dataTemp.push(displayDataImport[a].id);
-      dataTemp2.push({
-        id: displayDataImport[a].id,
-        ticket_number: displayDataImport[a].ticket_number,
-        name: displayDataImport[a].name,
-        project_name: displayDataImport[a].project_name,
-        start_date: displayDataImport[a].start_date,
-        end_date: displayDataImport[a].end_date,
-        is_selected: true,
-      });
-    }
-    setDataTaskSelected(dataTemp);
-    setDisplayDataImport(dataTemp2);
-  };
-
-  const handleUnSelectAllTask = () => {
-    let dataTaskTemp = [];
-    for (let a = 0; a < displayDataImport.length; a++) {
-      dataTaskTemp.push({
-        id: displayDataImport[a].id,
-        ticket_number: displayDataImport[a].ticket_number,
-        name: displayDataImport[a].name,
-        project_name: displayDataImport[a].project_name,
-        start_date: displayDataImport[a].start_date,
-        end_date: displayDataImport[a].end_date,
-        is_selected: false,
-      });
-    }
-    setDataTaskSelected([]);
-    setDisplayDataImport(dataTaskTemp);
-  };
-
-  const handleOnSelectTask = (value) => {
-    let dataTaskTemp = [];
-    for (let a = 0; a < displayDataImport.length; a++) {
-      if (value.target.value == displayDataImport[a].id) {
-        dataTaskTemp.push({
-          id: displayDataImport[a].id,
-          ticket_number: displayDataImport[a].ticket_number,
-          name: displayDataImport[a].name,
-          project_name: displayDataImport[a].project_name,
-          start_date: displayDataImport[a].start_date,
-          end_date: displayDataImport[a].end_date,
-          is_selected: value.target.checked,
-        });
-      } else {
-        dataTaskTemp.push({
-          id: displayDataImport[a].id,
-          ticket_number: displayDataImport[a].ticket_number,
-          name: displayDataImport[a].name,
-          project_name: displayDataImport[a].project_name,
-          start_date: displayDataImport[a].start_date,
-          end_date: displayDataImport[a].end_date,
-          is_selected: displayDataImport[a].is_selected,
-        });
-      }
-
-      //check selected
-    }
-    let dataTemp = dataTaskSelected;
-    if (dataTemp.length == 0) {
-      dataTemp.push(value.target.value);
-    } else if (displayDataImport.length >= 1) {
-      if (value.target.checked == false) {
-        dataTemp = dataTemp.filter(function (item) {
-          return item !== value.target.value;
-        });
-      } else {
-        dataTemp.push(value.target.value);
-      }
-      setDataTaskSelected(dataTemp);
-    }
-    setDisplayDataImport([...dataTaskTemp]);
-  };
-
-  const handleSelectTask = () => {
-    if (dataTaskSelected.length == displayDataImport.length) {
-      handleUnSelectAllTask();
-    } else {
-      handleSelectAllTask();
     }
   };
 
@@ -965,7 +753,7 @@ export const AttendanceStaffAktivitasSection: FC<
                   message: "Successfully removed task from activity",
                   duration: 3,
                 });
-                getDataTaskActivities();
+                // getDataTaskActivities();
                 queryClient.invalidateQueries(ATTENDANCE_TASK_ACTIVITIES_GET);
               } else {
                 notification.error({
@@ -985,11 +773,6 @@ export const AttendanceStaffAktivitasSection: FC<
     },
     [isAllowedToDeleteTaskActivity]
   );
-
-  const handleCloseModalImportTask = () => {
-    setShowModalTask(false);
-    handleUnSelectAllTask();
-  };
 
   return (
     <>
@@ -1063,106 +846,16 @@ export const AttendanceStaffAktivitasSection: FC<
                 </AccessControl>
               )}
 
-              <Modal
-                title="Import Tasks to Activity"
-                visible={showModalTask}
-                width={502}
-                footer={null}
-                onCancel={handleCloseModalImportTask}
-                maskClosable={false}
-                className="p-0"
-              >
-                <div className="col-span-4">
-                  <Input
-                    style={{ width: `100%` }}
-                    suffix={<SearchOutlined />}
-                    defaultValue={queryParams2.keyword}
-                    placeholder="Search Task.."
-                    onChange={onChangeProductSearch}
-                    allowClear
-                  />
-                </div>
-                <div className={"mt-7 flex justify-between mb-4"}>
-                  <p
-                    className={"text-mono30 text-base font-bold "}
-                    style={{ lineHeight: "24px" }}
-                  >
-                    Task List
-                  </p>
-                  {displayDataImport.length > 0 && (
-                    <button
-                      className={"bg-transparent"}
-                      onClick={() => handleSelectTask()}
-                    >
-                      <p
-                        className={"text-primary100 text-sm font-bold"}
-                        style={{ lineHeight: "24px" }}
-                      >
-                        {dataTaskSelected.length == displayDataImport.length
-                          ? "Deselect All"
-                          : "Select All"}
-                      </p>
-                    </button>
-                  )}
-                </div>
-
-                {displayDataImport.length > 0 ? (
-                  displayDataImport.map((task, index) => (
-                    <div
-                      key={task.id}
-                      className={
-                        "flex px-4 py-2 border rounded-md border-inputkategori mb-4"
-                      }
-                    >
-                      <div className={"w-11/12"}>
-                        <p
-                          className={"text-xs font-bold text-mono30"}
-                          style={{ lineHeight: "20px" }}
-                        >
-                          {task.name} T-{task.id}
-                        </p>
-                        <p
-                          className={"text-xs text-mono50"}
-                          style={{ lineHeight: "16px" }}
-                        >
-                          [{task.project_name ? task.project_name : " - "}]
-                        </p>
-                      </div>
-                      <div className={"w-1/12 self-center items-end"}>
-                        <Checkbox
-                          key={task.id}
-                          value={task.id}
-                          checked={task.is_selected}
-                          onChange={(e) => {
-                            handleOnSelectTask(e);
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className={"mt-4 text-center"}>No Data</p>
-                )}
-
-                <div className={"pt-3 flex gap-4 justify-end border-t"}>
-                  <ButtonSys
-                    // type={"default"}
-                    onClick={handleCloseModalImportTask}
-                  >
-                    Cancel
-                  </ButtonSys>
-                  <ButtonSys
-                    type={"primary"}
-                    onClick={() => importMultipleTask()}
-                    disabled={dataTaskSelected.length < 1}
-                  >
-                    <div className="flex gap-2 items-center">
-                      <FileImportIconSvg />
-                      <p className="mig-buttons">Import Selected Task</p>
-                    </div>
-                  </ButtonSys>
-                </div>
-              </Modal>
+              <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITY_ADD}>
+                <ModalImportTasksToActivity
+                  visible={showModalTask}
+                  onvisible={setShowModalTask}
+                  dataToken={dataToken}
+                  queryParams={queryParams2}
+                  displayDataTaskToday={displayDataTaskToday}
+                  onChangeSearch={onChangeProductSearch}
+                />
+              </AccessControl>
             </div>
           )}
 
@@ -1238,63 +931,10 @@ export const AttendanceStaffAktivitasSection: FC<
               "bg-white rounded-[5px] mt-3 first-letter:border border-solid px-6"
             }
           >
-            {isAllowedToLeaveCount && (
-              // <div
-              //   className={
-              //     "my-4 bg-[#00589F] rounded-[5px] h-8 flex justify-between px-3 py-1 text-white text-[14px] leading-6 font-bold"
-              //   }>
-              //   <p className={""}>Amount of Annual Leave :</p>
-              //   <p>{leaveCount} Days Remaining</p>
-              // </div>
+            <AccessControl hasPermission={LEAVES_COUNT_GET}>
+              <AttendanceStaffLeaveStatisticCards leaveCount={leaveCount} />
+            </AccessControl>
 
-              <div className="w-full flex justify-between gap-3 my-4">
-                {/* Card Days Available */}
-                <div className="mig-card w-1/3 flex justify-between items-start">
-                  <div className="flex flex-col gap-4 justify-between">
-                    <h4 className="mig-heading--4">
-                      {12 + Number(leaveCount)}
-                    </h4>
-                    <div>
-                      <p className="mig-caption--bold">Days available</p>
-                      <p className="mig-small">to book paid leave</p>
-                    </div>
-                  </div>
-
-                  <CircleCheckFilledIconSvg
-                    size={24}
-                    className={"text-primary100"}
-                  />
-                </div>
-
-                {/* Card Days Available */}
-                <div className="mig-card w-1/3 flex justify-between items-start">
-                  <div className="flex flex-col gap-4 justify-between">
-                    <h4 className="mig-heading--4">0</h4>
-                    <div>
-                      <p className="mig-caption--bold">Pending Requests</p>
-                      <p className="mig-small">awaiting approval</p>
-                    </div>
-                  </div>
-
-                  <ClockIconFilledSvg size={28} className={"text-warning"} />
-                </div>
-
-                {/* Card Days Used */}
-                <div className="mig-card w-1/3 flex justify-between items-start">
-                  <div className="flex flex-col gap-4 justify-between">
-                    <h4 className="mig-heading--4">{Math.abs(leaveCount)}</h4>
-                    <div>
-                      <p className="mig-caption--bold">Days Used</p>
-                      <p className="mig-small">
-                        {Math.abs(leaveCount)} days paid leave taken
-                      </p>
-                    </div>
-                  </div>
-
-                  <CalendarFilIconSvg size={24} className={"text-accentblue"} />
-                </div>
-              </div>
-            )}
             <Table
               className="tableTask"
               dataSource={displayDataLeaves}
