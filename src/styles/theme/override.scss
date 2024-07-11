@@ -39,6 +39,11 @@ a:hover {
   text-transform: none !important;
 }
 
+.btn-square {
+  width: 32px;
+  height: 32px;
+}
+
 // tailwind classname for gradient color in production env is not working, so it had to use plain css
 .btn-gradient {
   background-image: linear-gradient(to bottom right, #35763b, #2193b0);
