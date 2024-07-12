@@ -1810,16 +1810,16 @@ const XIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={xIconSvg}></Icon>;
 };
-const HistoryIconSvg = ({ size, color, strokeWidth }) => {
+const HistoryIconSvg = (props) => {
   const historyIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-history"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
       viewBox="0 0 24 24"
-      strokeWidth={strokeWidth ? strokeWidth : "1.5"}
-      stroke={color}
+      strokeWidth={props?.strokeWidth ?? "1.5"}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1829,7 +1829,7 @@ const HistoryIconSvg = ({ size, color, strokeWidth }) => {
       <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
     </svg>
   );
-  return <Icon rev={""} component={historyIconSvg}></Icon>;
+  return <Icon rev={""} component={historyIconSvg} {...props}></Icon>;
 };
 const AdjusmentsHorizontalIconSvg = ({ size, color }) => {
   const adjusmentsHorizontalIconSvg = () => (

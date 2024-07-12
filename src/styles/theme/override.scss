@@ -272,9 +272,8 @@ a:hover {
 
 /* DROPDOWN MENU */
 .ant-dropdown-menu {
-  width: 208px;
+  width: 150px;
   border-radius: 10px;
-  border: 1px 0px;
   padding: 6px;
 }
 .ant-dropdown-menu-item {
@@ -345,6 +344,10 @@ a:hover {
 //   box-shadow: 0 0 0 1px #35763b;
 // }
 
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-radius: 5px;
+}
+
 .themedSelector.ant-select:not(.ant-select-disabled):hover
   .ant-select-selector {
   border-color: #65976a;
@@ -362,7 +365,9 @@ a:hover {
   color: #35763b;
 }
 
-.themedSelector.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
+.themedSelector.ant-select-focused:not(.ant-select-disabled).ant-select:not(
+    .ant-select-customize-input
+  )
   .ant-select-selector {
   border-color: #65976a;
   outline: 0;

@@ -66,6 +66,7 @@ export const AttendanceDetailFormAttendanceSection: FC<
 
           return <>{formattedDate}</>;
         },
+        width: 120,
         align: "center",
       },
     ];
@@ -158,7 +159,7 @@ export const AttendanceDetailFormAttendanceSection: FC<
 
       <div className="px-4">
         {tabActiveKey == "1" ? (
-          <Table<typeof dataSource[0]>
+          <Table<(typeof dataSource)[0]>
             columns={tableColums}
             dataSource={dataSource}
             pagination={tablePaginationConf}
