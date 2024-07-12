@@ -5,8 +5,6 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import {
-  Checkbox,
-  ConfigProvider,
   Dropdown,
   Input,
   Menu,
@@ -41,7 +39,6 @@ import ButtonSys from "components/button";
 import ButtonTooltip from "components/buttonTooltip";
 import { AccessControl } from "components/features/AccessControl";
 import ModalImportTasksToActivity from "components/modal/attendance/modalImportTasksToActivity";
-import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -304,7 +301,8 @@ export const AttendanceStaffAktivitasSection: FC<
         title: "No.",
         render: (_, __, index) =>
           `${(currentPage - 1) * pageSize + index + 1}.`,
-        width: 64,
+        width: 51,
+        align: "center",
       },
       {
         key: "id",
@@ -322,8 +320,10 @@ export const AttendanceStaffAktivitasSection: FC<
             tabActiveKey === "1" ? "HH:mm" : "dd MMM yyyy, HH:mm"
           );
 
-          return <>{formattedDate}</>;
+          return <p className="whitespace-nowrap">{formattedDate}</p>;
         },
+        width: 121,
+        align: "center",
       },
     ];
 
@@ -338,14 +338,13 @@ export const AttendanceStaffAktivitasSection: FC<
             href={generateStaticAssetUrl(text)}
             target="_blank"
             rel="external"
-            className="truncate max-w-[200px]"
           >
-            {getFileName(text)}
+            <p className="truncate max-w-[180px]">{getFileName(text)}</p>
           </a>
         );
       }
 
-      return text;
+      return <p className={"truncate max-w-[252px]"}>{text}</p>;
     };
 
     dynamicNameFieldPairs.columnNames.forEach((column, index) => {
@@ -354,6 +353,7 @@ export const AttendanceStaffAktivitasSection: FC<
         title: column,
         dataIndex: dynamicNameFieldPairs.fieldKeys[index],
         render: renderCell,
+        width: 252,
       });
     });
 
@@ -361,7 +361,6 @@ export const AttendanceStaffAktivitasSection: FC<
       columns.push({
         key: "delete",
         title: "Actions",
-        align: "center",
         render: (_, record: (typeof dataSource)[0]) => {
           return (
             <button
@@ -375,6 +374,8 @@ export const AttendanceStaffAktivitasSection: FC<
             </button>
           );
         },
+        align: "center",
+        width: 84,
       });
     }
 
@@ -552,7 +553,8 @@ export const AttendanceStaffAktivitasSection: FC<
       key: "id",
       title: "No.",
       render: (_, __, index) => `${(currentPage - 1) * pageSize + index + 1}.`,
-      width: 64,
+      width: 51,
+      align: "center",
     },
     {
       key: "id",
@@ -570,13 +572,15 @@ export const AttendanceStaffAktivitasSection: FC<
           tabActiveKey === "1" ? "HH:mm" : "dd MMM yyyy, HH:mm"
         );
 
-        return <>{formattedDate}</>;
+        return <p className="whitespace-nowrap">{formattedDate}</p>;
       },
     },
     {
       key: "id",
       title: "Task Name",
       dataIndex: "activity",
+      render: (value) => <p className="truncate max-w-120">{value}</p>,
+      width: 480,
     },
   ];
 
@@ -590,27 +594,21 @@ export const AttendanceStaffAktivitasSection: FC<
   function checkFormOrTask() {
     if (tabActiveKey2 == "3" && activeSubmenu == "aktivitas") {
       return (
-        <ConfigProvider
-          renderEmpty={() => (
-            <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
-          )}
-        >
-          <Table<(typeof dataSource)[0]>
-            columns={tableColums}
-            rowKey={(record) => record.id}
-            dataSource={dataSource}
-            pagination={tablePaginationConf}
-            loading={isDataSourceLoading}
-            scroll={{ x: "max-content" }}
-            className="tableTypeTask"
-            onRow={(datum) => {
-              return {
-                className: "hover:cursor-pointer",
-                onClick: () => mOnRowItemClicked(datum),
-              };
-            }}
-          />
-        </ConfigProvider>
+        <Table<(typeof dataSource)[0]>
+          columns={tableColums}
+          rowKey={(record) => record.id}
+          dataSource={dataSource}
+          pagination={tablePaginationConf}
+          loading={isDataSourceLoading}
+          scroll={{ x: "max-content" }}
+          className="tableTypeTask"
+          onRow={(datum) => {
+            return {
+              className: "hover:cursor-pointer",
+              onClick: () => mOnRowItemClicked(datum),
+            };
+          }}
+        />
       );
     } else if (
       tabActiveKey == "1" &&
@@ -657,12 +655,12 @@ export const AttendanceStaffAktivitasSection: FC<
                       </div>
                       <button
                         className={`bg-transparent hover:opacity-75 ${
-                          !isAllowedToDeleteActivity
+                          !isAllowedToDeleteTaskActivity
                             ? "cursor-not-allowed"
                             : undefined
                         }`}
                         onClick={() => handleDeleteTaskActivity(task.id)}
-                        disabled={!isAllowedToDeleteActivity}
+                        disabled={!isAllowedToDeleteTaskActivity}
                       >
                         <XIconSvg size={24} color="#BF4A40" />
                       </button>
@@ -887,7 +885,7 @@ export const AttendanceStaffAktivitasSection: FC<
               >
                 <p>Form</p>
               </div>
-              {isAllowedToLeavesUser && (
+              {isAllowedToGetTaskActivities && (
                 <div
                   onClick={() => setTabActiveKey2("4")}
                   className={`${

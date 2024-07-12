@@ -5,8 +5,6 @@ import { useRouter } from "next/router";
 import { FC, useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
-import { DataEmptyState } from "components/states/DataEmptyState";
-
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -80,10 +78,11 @@ export const AttendanceStaffKehadiranSection: FC<
             </span>
           );
         },
-        width: 64,
+        width: 51,
+        align: "center",
       },
       {
-        title: "Waktu Check In",
+        title: "Check In",
         dataIndex: "check_in",
         render: (_, datum) => {
           const spanClassName = datum.is_late ? "text-state1" : "";
@@ -93,7 +92,11 @@ export const AttendanceStaffKehadiranSection: FC<
             "-"
           );
 
-          return <span className={spanClassName}>{formattedDate}</span>;
+          return (
+            <span className={`${spanClassName} whitespace-nowrap`}>
+              {formattedDate}
+            </span>
+          );
         },
         sorter: (a, b) => {
           const lhsDate = new Date(a.check_in);
@@ -101,9 +104,16 @@ export const AttendanceStaffKehadiranSection: FC<
 
           return isBefore(rhsDate, lhsDate) ? -1 : 1;
         },
+        width: 160,
       },
       {
-        title: "Waktu Check Out",
+        key: "id",
+        title: "Check In Location",
+        dataIndex: ["geo_loc_check_in", "display_name"],
+        render: (value) => <p className="max-w-40 truncate">{value}</p>,
+      },
+      {
+        title: "Check Out",
         dataIndex: "check_out",
         render: (_, datum) => {
           const spanClassName = datum.is_late ? "text-state1" : "";
@@ -113,7 +123,11 @@ export const AttendanceStaffKehadiranSection: FC<
             "-"
           );
 
-          return <span className={spanClassName}>{formattedDate}</span>;
+          return (
+            <span className={`${spanClassName} whitespace-nowrap`}>
+              {formattedDate}
+            </span>
+          );
         },
         sorter: (a, b) => {
           const lhsDate = new Date(a.check_out);
@@ -121,21 +135,20 @@ export const AttendanceStaffKehadiranSection: FC<
 
           return isBefore(rhsDate, lhsDate) ? -1 : 1;
         },
+        width: 160,
       },
       {
-        title: "Kerja",
+        key: "id",
+        title: "Check Out Location",
+        dataIndex: ["geo_loc_check_out", "display_name"],
+        render: (value) => <p className="max-w-40 truncate">{value}</p>,
+      },
+
+      {
+        title: "Work",
         dataIndex: "is_wfo",
         sorter: (a, b) => (b.is_wfo < a.is_wfo ? -1 : 1),
-      },
-      {
-        key: "id",
-        title: "Lokasi Check In",
-        dataIndex: ["geo_loc_check_in", "display_name"],
-      },
-      {
-        key: "id",
-        title: "Lokasi Check Out",
-        dataIndex: ["geo_loc_check_out", "display_name"],
+        align: "center",
       },
     ];
   }, [pageSize, currentPage]);
@@ -166,30 +179,24 @@ export const AttendanceStaffKehadiranSection: FC<
           <h4 className="mig-body--bold">Attendance History</h4>
         </div>
         <div className="px-4">
-          <ConfigProvider
-            renderEmpty={() => (
-              <DataEmptyState caption="Data kehadiran kosong." />
-            )}
-          >
-            <Table<IModifiedDataKehadiran>
-              columns={tableColumns}
-              dataSource={kehadiranData}
-              pagination={tablePaginationConf}
-              loading={isLoading || isRefetching}
-              scroll={{ x: 640 }}
-              className="tableTypeTask"
-              onRow={(datum) => {
-                const rowClassName = clsx("hover:cursor-pointer", {
-                  "bg-state1/10": datum.is_late,
-                });
+          <Table<IModifiedDataKehadiran>
+            columns={tableColumns}
+            dataSource={kehadiranData}
+            pagination={tablePaginationConf}
+            loading={isLoading || isRefetching}
+            scroll={{ x: 640 }}
+            className="tableTypeTask"
+            onRow={(datum) => {
+              const rowClassName = clsx("hover:cursor-pointer", {
+                "bg-state1/10": datum.is_late,
+              });
 
-                return {
-                  className: rowClassName,
-                  onClick: () => onRowItemClicked(datum),
-                };
-              }}
-            />
-          </ConfigProvider>
+              return {
+                className: rowClassName,
+                onClick: () => onRowItemClicked(datum),
+              };
+            }}
+          />
         </div>
       </section>
     </>
