@@ -826,7 +826,7 @@ const EditTablerIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={edittablerIconSvg}></Icon>;
 };
-const DeleteTablerIconSvg = ({ size, color }) => {
+const DeleteTablerIconSvg = ({ size, color, strokeWidth }) => {
   const deletetablerIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -834,7 +834,7 @@ const DeleteTablerIconSvg = ({ size, color }) => {
       width="16"
       height="16"
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
+      strokeWidth={strokeWidth ? strokeWidth : "1.5"}
       stroke={color ? color : "#FFFFFF"}
       fill="none"
       strokeLinecap="round"
@@ -1810,7 +1810,7 @@ const XIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={xIconSvg}></Icon>;
 };
-const HistoryIconSvg = (props) => {
+const HistoryIconSvg = ({ size, color, strokeWidth }) => {
   const historyIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -1818,8 +1818,8 @@ const HistoryIconSvg = (props) => {
       width={props?.size ?? 20}
       height={props?.size ?? 20}
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
-      stroke={props?.color ?? "currentColor"}
+      strokeWidth={strokeWidth ? strokeWidth : "1.5"}
+      stroke={color}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"

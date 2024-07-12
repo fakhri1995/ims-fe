@@ -1,4 +1,4 @@
-import { UnorderedListOutlined } from "@ant-design/icons";
+import { DeleteFilled, UnorderedListOutlined } from "@ant-design/icons";
 import { Spin, Tabs, notification } from "antd";
 import {
   NumberParam,
@@ -33,6 +33,8 @@ import {
 import { TalentPoolService } from "../../../../apis/talent-pool/talent-pool.service";
 import ButtonSys from "../../../../components/button";
 import {
+  CirclePlusIconSvg,
+  DeleteTablerIconSvg,
   PlusIconSvg,
   UsersIconSvg,
   XIconSvg,
@@ -42,6 +44,7 @@ import st from "../../../../components/layout-dashboard-management.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
 import ModalLinkList from "../../../../components/modal/talent-pool/modalLinkList";
+import ModalTalentRemoved from "../../../../components/modal/talent-pool/modalTalentRemoved";
 import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
 import { TALENT_POOL_SHARE_ADD } from "../../../../lib/features";
 import { permissionWarningNotification } from "../../../../lib/helper";
@@ -101,6 +104,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [currentCategory, setCurrentCategory] = useState({ id: 0, name: "" });
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [modalLinks, setModalLinks] = useState(false);
+  const [showModalTalentRemoved, setShowModalTalentRemoved] = useState(false);
   const [modalCategoryCreate, setModalCategoryCreate] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [dataDelete, setDataDelete] = useState({ id: 0, name: "" });
@@ -202,6 +206,9 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="flex flex-col md:flex-row gap-2 justify-between md:items-center">
             <h4 className="mig-heading--4 w-full md:w-2/12">Daftar Talent</h4>
             <div className="flex flex-col lg:flex-row gap-2 md:justify-end">
+              {/* <div onClick={()=> setShowModalTalentRemoved(true)} className={'bg-[#F3F3F3] p-2 hover:cursor-pointer w-8 h-8 rounded-[5px] flex justify-center items-center  '}>
+              <DeleteTablerIconSvg size={16} color={'#808080'}/>
+              </div> */}
               <ButtonSys type={"default"} onClick={() => setModalLinks(true)}>
                 <div className="flex gap-2 items-center">
                   <UnorderedListOutlined rev={""} />
@@ -218,12 +225,13 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
               </ButtonSys> */}
               <ButtonSys
                 type={"primary"}
+                className={"bg-[35763B]"}
                 onClick={() => setModalCategoryCreate(true)}
                 disabled={!isAllowedToAddTalentPoolCategory}
               >
                 <div className="flex gap-2 items-center">
-                  <PlusIconSvg size={16} />
-                  <p className="mig-caption">Tambah Kategori</p>
+                  <CirclePlusIconSvg size={16} color={"white"} />
+                  <p className="mig-caption">Add Category</p>
                 </div>
               </ButtonSys>
             </div>
@@ -305,6 +313,10 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           category={currentCategory}
         />
       </AccessControl>
+      <ModalTalentRemoved
+        visible={showModalTalentRemoved}
+        onvisible={() => setShowModalTalentRemoved(false)}
+      />
 
       <AccessControl hasPermission={TALENT_POOL_CATEGORY_ADD}>
         <ModalCategoryCreate
