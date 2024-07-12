@@ -1,3 +1,4 @@
+import { Empty } from "antd";
 import { FC, memo } from "react";
 
 import clsx from "clsx";
@@ -6,7 +7,7 @@ import clsx from "clsx";
  * Component DataEmptyState's props.
  */
 export interface IDataEmptyState {
-  caption: string;
+  caption?: string;
 
   illustrationImageUrl?: string;
 
@@ -40,17 +41,18 @@ export const DataEmptyState: FC<IDataEmptyState> = memo(
     );
 
     return (
-      <div className="flex items-center justify-center">
-        {/* Illustration and Text */}
-        <div className="flex flex-col items-center space-y-4 py-10">
-          <img
-            src={illustrationImageUrl || "/404-illustration.png"}
-            alt="Empty state data"
-            className={mIllustrationImageClassName}
-          />
-          <span className={mCaptionClassName}>{caption}</span>
-        </div>
-      </div>
+      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={caption} />
+      // <div className="flex items-center justify-center">
+      //   {/* Illustration and Text */}
+      //   <div className="flex flex-col items-center space-y-4 py-10">
+      //     <img
+      //       src={illustrationImageUrl || "/404-illustration.png"}
+      //       alt="Empty state data"
+      //       className={mIllustrationImageClassName}
+      //     />
+      //     <span className={mCaptionClassName}>{caption}</span>
+      //   </div>
+      // </div>
     );
   }
 );
