@@ -128,14 +128,21 @@ export const AttendanceStaffCheckInDrawer: FC<
         },
         {
           onSuccess: (response) => {
-            setUploadedEvidencePicture(null);
-            setPreviewEvidencePictureData("");
-            setFileList([]);
+            if (response.data.success) {
+              setUploadedEvidencePicture(null);
+              setPreviewEvidencePictureData("");
+              setFileList([]);
 
-            form.resetFields();
-            onClose();
+              form.resetFields();
+              onClose();
 
-            notification.success({ message: response.data.message });
+              notification.success({ message: response.data.message });
+            } else {
+              notification.warning({
+                message: response.data.message,
+                duration: 2,
+              });
+            }
           },
           onError: (error: AxiosError) => {
             const errorMessage = error.response.data.message;
