@@ -1,4 +1,8 @@
-import { LoadingOutlined, SortAscendingOutlined } from "@ant-design/icons";
+import {
+  DownloadOutlined,
+  LoadingOutlined,
+  SortAscendingOutlined,
+} from "@ant-design/icons";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   Button,
@@ -589,13 +593,11 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   return (
     <DrawerCore
       visible={visible}
-      title="Ekspor Absensi"
-      buttonOkText={activeTabKey == "1" ? "Ekspor Absensi" : "Unduh"}
-      iconButtonText={
-        activeTabKey == "2" && <DownloadIconSvg size={16} color={"#ffffff"} />
-      }
+      title="Download Activity"
+      buttonOkText={activeTabKey == "1" ? "Download Excel" : "Download PDF"}
+      iconButtonText={<DownloadOutlined />}
       onClick={() => form.submit()}
-      buttonCancelText={"Batalkan"}
+      buttonCancelText={"Cancel"}
       onButtonCancelClicked={onClose}
       onClose={onClose}
     >
@@ -605,27 +607,26 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           className="w-full"
           onChange={setActiveTabKey}
         >
-          <TabPane tab="Sheet Absensi" key="1" />
+          <TabPane tab="Attendance Sheet" key="1" />
           {exportActivity && isAllowedToExportActivity && (
-            <TabPane tab="Format Terpadu" key="2" />
+            <TabPane tab="Integrated Format" key="2" />
           )}
         </Tabs>
-        <div className={"space-y-6"}>
-          <em className="text-state1">* Informasi ini harus diisi</em>
+        {/* <div className={"space-y-6"}>
           <h4 className="mig-heading--4">Pilih Filter:</h4>
-        </div>
+        </div> */}
         {activeTabKey == "1" ? (
-          <div className={"space-y-6 mt-6"}>
+          <div className={"space-y-6"}>
             <Form
               layout="vertical"
               form={form}
               onFinish={handleOnFormSubmitted}
               validateMessages={{
-                required: "Field ini harus diisi!",
+                required: "This field is required!",
               }}
             >
               {/* Pick export date range */}
-              <Form.Item name="rentang_waktu" label="Rentang Waktu">
+              <Form.Item name="rentang_waktu" label="Time Range" required>
                 <RangePicker
                   format="DD MMM YYYY"
                   allowClear={false}
@@ -652,7 +653,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                   <div className="flex flex-row space-x-2 items-center">
                     <Form.Item
                       name="form_aktivitas"
-                      label="Form Aktivitas"
+                      label="Activity Form"
                       className="w-full"
                       rules={[{ required: true }]}
                     >
@@ -660,7 +661,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                         showSearch
                         mode={"multiple"}
                         allowClear
-                        placeholder="Pilih form aktivitas"
+                        placeholder="Select activity form"
                         optionFilterProp="children"
                         filterSort={(optionA, optionB) => {
                           if (isSortAsc) {
@@ -704,7 +705,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                           onClick={handleOnUnSelectAllStaff}
                           className="absolute -top-8 right-0 p-0 m-0 border text-primary100 hover:text-primary75 active:text-primary75 focus:text-primary75"
                         >
-                          Hapus Semua
+                          Deselect All
                         </Button>
                       )}
                     {Array.isArray(formAktivitasStaffList) &&
@@ -715,22 +716,21 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                           onClick={handleOnSelectAllStaff}
                           className="absolute -top-8 right-0 p-0 m-0 border text-primary100 hover:text-primary75 active:text-primary75 focus:text-primary75"
                         >
-                          Pilih Semua
+                          Select All
                         </Button>
                       )}
 
                     {!formAktivitasStaffList &&
                       !formAktivitasStaffListLoading && (
                         <span className="text-mono50">
-                          Mohon pilih Form Aktivitas terlebih dahulu untuk
-                          memilih staff.
+                          Please select Activity Form before selecting staff.
                         </span>
                       )}
 
                     {Array.isArray(formAktivitasStaffList) &&
                       formAktivitasStaffList.length === 0 && (
                         <span className="text-mono50">
-                          Form Aktivitas ini belum memiliki staff.
+                          Activity Form has no staff yet.
                         </span>
                       )}
                     {dataFormAktifitas && (
@@ -779,21 +779,20 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
             </Form>
           </div>
         ) : (
-          <div className={"space-y-6 mt-6"}>
+          <div className={"space-y-6"}>
             <Form
               layout="vertical"
               form={form}
               onFinish={handleOnFormSubmitted}
               validateMessages={{
-                required: "Field ini harus diisi!",
+                required: "This field is required!",
               }}
             >
               {/* Pick export date range */}
-              <Form.Item name="rentang_waktu_pdf" label="Rentang Waktu">
+              <Form.Item name="rentang_waktu_pdf" label="Time Range">
                 <RangePicker
                   format="DD MMM YYYY"
                   allowClear={false}
-                  className={"h-[52px]"}
                   value={[
                     selectedDateRangePdf.start_date,
                     selectedDateRangePdf.end_date,
@@ -812,12 +811,11 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
               </Form.Item>
               <Form.Item
                 name="supervisor"
-                label="Nama Supervisor"
+                label="Supervisor's Name"
                 className="w-full"
                 rules={[{ required: true }]}
               >
                 <Input
-                  className={"h-[52px]"}
                   type="text"
                   value={namaSupervisor}
                   onChange={(e) => handleChangeSupervisor(e)}
@@ -828,14 +826,14 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
         )}
       </div>
       <ModalCore
-        title={"Unduh PDF"}
+        title={"Download PDF"}
         visible={modalConfirmExportPdf}
         onCancel={() => handleCancelModalPdf()}
         footer={<></>}
       >
         <Spin spinning={loadingData}>
           <p className={"text-base text-black font-semibold mb-4"}>
-            Apakah kamu akan mengunduh data aktivitas?
+            Are you sure you want to download activity?
           </p>
           {dataPdf ? (
             <div className="flex justify-center">
@@ -865,7 +863,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                 >
                   <div className={"flex flex-row"}>
                     <DownloadIcon2Svg size={16} color={"#fffffff"} />
-                    <p className={"ml-2 text-xs text-white"}>Unduh PDF</p>
+                    <p className={"ml-2 text-xs text-white"}>Download PDF</p>
                   </div>
                 </ButtonSys>
               </PDFDownloadLink>

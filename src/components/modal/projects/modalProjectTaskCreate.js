@@ -475,7 +475,7 @@ const ModalProjectTaskCreate = ({
       title={
         <div className="flex flex-col space-y-2 ">
           <p>Tambah Task Baru ({taskId})</p>
-          <p className="text-warning text-[12px] italic">
+          <p className="text-danger text-[12px] italic">
             * Field ini harus diisi
           </p>
         </div>

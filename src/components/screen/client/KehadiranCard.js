@@ -219,7 +219,7 @@ function KehadiranCard({ initProps }) {
             </p>
           </div>
           <div className={"mt-1 flex flex-row items-center gap-1"}>
-            <div className={"h-4 w-4 rounded bg-warning"}></div>
+            <div className={"h-4 w-4 rounded bg-danger"}></div>
             <p>
               <p className={"text-[10px] font-normal leading-4 text-mono50"}>
                 {buttonActive == "Kehadiran"

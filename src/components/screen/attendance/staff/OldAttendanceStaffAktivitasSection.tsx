@@ -1,21 +1,19 @@
 import {
-  DownOutlined,
-  ExclamationCircleOutlined,
+  AppstoreAddOutlined,
   EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import {
-  Dropdown,
+  Button,
+  Checkbox,
+  ConfigProvider,
   Input,
-  Menu,
   Modal,
-  Space,
   Table,
   Tabs,
   notification,
 } from "antd";
 import type { ColumnsType } from "antd/lib/table";
-import { AxiosError, AxiosResponse } from "axios";
 import { isBefore } from "date-fns";
 import moment from "moment";
 import {
@@ -36,9 +34,8 @@ import {
 import { useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
-import ButtonTooltip from "components/buttonTooltip";
 import { AccessControl } from "components/features/AccessControl";
-import ModalImportTasksToActivity from "components/modal/attendance/modalImportTasksToActivity";
+import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -50,7 +47,6 @@ import {
   ATTENDANCE_ACTIVITY_ADD,
   ATTENDANCE_ACTIVITY_DELETE,
   ATTENDANCE_ACTIVITY_UPDATE,
-  ATTENDANCE_ACTIVITY_USER_EXPORT,
   ATTENDANCE_TASK_ACTIVITIES_GET,
   ATTENDANCE_TASK_ACTIVITY_ADD,
   ATTENDANCE_TASK_ACTIVITY_DELETE,
@@ -59,6 +55,7 @@ import {
   LEAVE_USER_ADD,
 } from "lib/features";
 import {
+  createKeyPressHandler,
   generateStaticAssetUrl,
   getFileName,
   permissionWarningNotification,
@@ -68,28 +65,22 @@ import { getAntdTablePaginationConfig } from "lib/standard-config";
 import {
   useGetAttendeeInfo,
   useGetUserAttendanceActivities,
-  useMutateAttendanceActivity,
 } from "apis/attendance";
 import { AttendanceTaskActivityService } from "apis/attendance/attendance-task-activity.service";
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
 import {
   AddNoteSvg,
-  CirclePlusIconSvg,
-  DownIconSvg,
-  DownloadIconSvg,
-  FileExportIconSvg,
-  HistoryIconSvg,
-  TrashIconSvg,
+  FileImportIconSvg,
   XIconSvg,
 } from "../../../../components/icon";
-import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
-import { AttendanceStaffLeaveStatisticCards } from "./AttendanceStaffLeaveStatisticCards";
 
-/**
+const { TabPane } = Tabs;
+
+/**../../../icon
  * Component AttendanceStaffAktivitasSection's props.
  */
 export interface IAttendanceStaffAktivitasSection {
@@ -121,7 +112,6 @@ export const AttendanceStaffAktivitasSection: FC<
   const isAllowedToDeleteTaskActivity = hasPermission(
     ATTENDANCE_TASK_ACTIVITY_DELETE
   );
-  const isAllowedToExportTable = hasPermission(ATTENDANCE_ACTIVITY_USER_EXPORT);
 
   const isAllowedToLeavesUser = hasPermission(LEAVES_USER_GET);
   const isAllowedToLeaveCount = hasPermission(LEAVES_COUNT_GET);
@@ -139,11 +129,11 @@ export const AttendanceStaffAktivitasSection: FC<
   const [pageSize, setPageSize] = useState(10);
   const [showModalTask, setShowModalTask] = useState(false);
   const [showModalLeave, setShowModalLeave] = useState(false);
+  const [dataTaskSelected, setDataTaskSelected] = useState([]);
+  const [displayDataImport, setDisplayDataImport] = useState([]);
   const [displayDataLeaves, setDisplayDataLeaves] = useState([]);
   const [displayDataTaskToday, setDisplayDataTaskToday] = useState([]);
   const [displayDataTaskHistory, setDisplayDataTaskHistory] = useState([]);
-  const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
-
   const [activeSubmenu, setActiveSubmenu] = useState("aktivitas");
   const [rowstate, setrowstate] = useState(0);
   const [dataDefault, setDataDefault] = useState(null);
@@ -181,7 +171,7 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     },
     {
-      title: "Leave Date",
+      title: "Tanggal Cuti",
       dataIndex: "start_date",
       render: (text, record, index) => {
         return {
@@ -190,7 +180,7 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     },
     {
-      title: "Duration",
+      title: "Durasi",
       dataIndex: "start_date",
       render: (text, record, index) => {
         return {
@@ -204,7 +194,7 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     },
     {
-      title: "Issued Date",
+      title: "Tanggal Pengajuan",
       dataIndex: "issued_date",
       render: (text, record, index) => {
         return {
@@ -239,8 +229,8 @@ export const AttendanceStaffAktivitasSection: FC<
                 {record.status == 1
                   ? "Pending"
                   : record.status == 2
-                  ? "Accepted"
-                  : "Rejected"}
+                  ? "Diterima"
+                  : "Ditolak"}
               </p>
             </div>
           ),
@@ -248,14 +238,14 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     },
     {
-      title: "Action",
+      title: "Aksi",
       dataIndex: "button_action",
       render: (text, record, index) => {
         return {
           children: (
             <div
               onClick={() => detailCuti(record)}
-              className={"hover:cursor-pointer text-center"}
+              className={"hover:cursor-pointer"}
             >
               <EyeOutlined />
             </div>
@@ -301,12 +291,11 @@ export const AttendanceStaffAktivitasSection: FC<
         title: "No.",
         render: (_, __, index) =>
           `${(currentPage - 1) * pageSize + index + 1}.`,
-        width: 51,
-        align: "center",
+        width: 64,
       },
       {
         key: "id",
-        title: "Input Time",
+        title: "Waktu Pengisian",
         dataIndex: "updated_at",
         sorter: (a: string, b: string) => {
           const lhsDate = new Date(a);
@@ -320,10 +309,8 @@ export const AttendanceStaffAktivitasSection: FC<
             tabActiveKey === "1" ? "HH:mm" : "dd MMM yyyy, HH:mm"
           );
 
-          return <p className="whitespace-nowrap">{formattedDate}</p>;
+          return <>{formattedDate}</>;
         },
-        width: 121,
-        align: "center",
       },
     ];
 
@@ -338,13 +325,14 @@ export const AttendanceStaffAktivitasSection: FC<
             href={generateStaticAssetUrl(text)}
             target="_blank"
             rel="external"
+            className="truncate max-w-[200px]"
           >
-            <p className="truncate max-w-[180px]">{getFileName(text)}</p>
+            {getFileName(text)}
           </a>
         );
       }
 
-      return <p className={"truncate max-w-[252px]"}>{text}</p>;
+      return text;
     };
 
     dynamicNameFieldPairs.columnNames.forEach((column, index) => {
@@ -353,31 +341,8 @@ export const AttendanceStaffAktivitasSection: FC<
         title: column,
         dataIndex: dynamicNameFieldPairs.fieldKeys[index],
         render: renderCell,
-        width: 252,
       });
     });
-
-    if (tabActiveKey == "1") {
-      columns.push({
-        key: "delete",
-        title: "Actions",
-        render: (_, record: typeof dataSource[0]) => {
-          return (
-            <button
-              className="bg-transparent text-danger hover:opacity-75"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleOnDeleteAktivitas(record?.key);
-              }}
-            >
-              <TrashIconSvg />
-            </button>
-          );
-        },
-        align: "center",
-        width: 84,
-      });
-    }
 
     return columns;
   }, [pageSize, currentPage, tabActiveKey, dynamicNameFieldPairs]);
@@ -422,7 +387,7 @@ export const AttendanceStaffAktivitasSection: FC<
         title: "Terjadi kesalahan!",
         content:
           "Anda belum memiliki form aktivitas. Mohon hubungi Admin untuk segera menambahkan Anda ke dalam form aktivitas.",
-        okText: "Back",
+        okText: "Kembali",
         closable: true,
       });
 
@@ -433,9 +398,10 @@ export const AttendanceStaffAktivitasSection: FC<
     if (attendeeStatus !== "checkin") {
       Modal.error({
         centered: true,
-        title: "Attention!",
-        content: "You need to Check In first to add or update activity!",
-        okText: "Back",
+        title: "Perhatian!",
+        content:
+          "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
+        okText: "Kembali",
         closable: true,
       });
 
@@ -449,9 +415,10 @@ export const AttendanceStaffAktivitasSection: FC<
     if (attendeeStatus !== "checkin") {
       Modal.error({
         centered: true,
-        title: "Attention!",
-        content: "You need to Check In first to add or update activity!",
-        okText: "Back",
+        title: "Perhatian!",
+        content:
+          "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
+        okText: "Kembali",
         closable: true,
       });
     } else {
@@ -459,31 +426,94 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   };
 
-  const {
-    data: dataTaskActivities,
-    isLoading: loadingTaskActivities,
-    refetch: refetchTaskActivities,
-  } = useQuery(
-    [ATTENDANCE_TASK_ACTIVITIES_GET],
-    () => AttendanceTaskActivityService.find(axiosClient),
-    {
-      enabled: isAllowedToGetTaskActivities,
-      select: (response) => response.data.data,
-      onSuccess: (data) => {
-        if (data.today_activities) {
-          setDisplayDataTaskToday(data.today_activities);
-        }
-        if (data.last_two_month_activities) {
-          setDisplayDataTaskHistory(data.last_two_month_activities);
-        }
-      },
-      onError: (error) => {
-        notification.error({
-          message: "Failed to get task activities data",
+  const importMultipleTask = () => {
+    if (dataTaskSelected.length > 0) {
+      if (attendeeStatus !== "checkin") {
+        Modal.error({
+          centered: true,
+          title: "Perhatian!",
+          content:
+            "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
+          okText: "Kembali",
+          closable: true,
         });
-      },
+      } else {
+        let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addAttendanceTaskActivities`;
+        let method = "POST";
+        let payload = {
+          task_ids: dataTaskSelected,
+        };
+
+        fetch(url, {
+          method: method,
+          headers: {
+            Authorization: JSON.parse(dataToken),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        })
+          .then((response) => response.json())
+          .then((response2) => {
+            if (response2.success) {
+              notification.success({
+                message: (
+                  <>
+                    {" "}
+                    <p>Task berhasil ditambahkan ke aktivitas</p>
+                  </>
+                ),
+
+                duration: 3,
+              });
+              getDataTaskActivities();
+              queryClient.invalidateQueries(ATTENDANCE_TASK_ACTIVITIES_GET);
+              handleCloseModalImportTask();
+            } else {
+              notification.error({
+                message: response2.message,
+                duration: 3,
+              });
+            }
+          })
+          .catch((err) => {
+            notification.error({
+              message: `Task Gagal ditambahkan ke aktivitas`,
+              duration: 3,
+            });
+            // setLoadingAdd(false);
+          });
+      }
     }
-  );
+  };
+
+  const getDataTaskActivities = () => {
+    if (!isAllowedToGetTaskActivities) {
+      permissionWarningNotification("Mendapatkan", "Daftar Task");
+    } else {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivities`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(dataToken),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            if (res2.data) {
+              if (res2.data.today_activities) {
+                setDisplayDataTaskToday(res2.data.today_activities);
+              }
+              if (res2.data.last_two_month_activities) {
+                setDisplayDataTaskHistory(res2.data.last_two_month_activities);
+              }
+            }
+          }
+        });
+    }
+  };
 
   const onChangeProductSearch = (e) => {
     setQueryParams2({
@@ -493,6 +523,7 @@ export const AttendanceStaffAktivitasSection: FC<
 
   useEffect(() => {
     setLoadingTasks(false);
+    getDataTaskActivities();
     checkActivityTask();
     fetchDataCount();
   }, []);
@@ -548,17 +579,161 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   };
 
+  useEffect(() => {
+    getDataModal();
+  }, [
+    queryParams2.page,
+    queryParams2.rows,
+    queryParams2.keyword,
+    isAllowedToGetTaskActivities,
+    displayDataTaskToday,
+  ]);
+
+  const getDataModal = () => {
+    if (!isAllowedToGetTaskActivities) {
+      permissionWarningNotification("Mendapatkan", "Daftar Task");
+    } else {
+      const payload = QueryString.stringify(queryParams2, {
+        addQueryPrefix: true,
+      });
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(dataToken),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            let datafromapi = res2.data.data;
+            let dataTemp = [];
+
+            const importedTaskIds = displayDataTaskToday.map(
+              (item) => item.task_id
+            );
+
+            for (let a = 0; a < datafromapi.length; a++) {
+              // Filter task which has not been added to activity
+              if (!importedTaskIds.includes(datafromapi[a].id)) {
+                dataTemp.push({
+                  id: datafromapi[a].id,
+                  ticket_number: datafromapi[a].ticket_number,
+                  name: datafromapi[a].name,
+                  start_date: datafromapi[a].start_date,
+                  project_name: datafromapi[a].project
+                    ? datafromapi[a].project.name
+                    : null,
+                  end_date: datafromapi[a].end_date,
+                  is_selected: false,
+                });
+              }
+            }
+            setDisplayDataImport(dataTemp);
+          }
+        });
+    }
+  };
+
+  const handleSelectAllTask = () => {
+    let dataTemp = [];
+    let dataTemp2 = [];
+    for (let a = 0; a < displayDataImport.length; a++) {
+      dataTemp.push(displayDataImport[a].id);
+      dataTemp2.push({
+        id: displayDataImport[a].id,
+        ticket_number: displayDataImport[a].ticket_number,
+        name: displayDataImport[a].name,
+        project_name: displayDataImport[a].project_name,
+        start_date: displayDataImport[a].start_date,
+        end_date: displayDataImport[a].end_date,
+        is_selected: true,
+      });
+    }
+    setDataTaskSelected(dataTemp);
+    setDisplayDataImport(dataTemp2);
+  };
+
+  const handleUnSelectAllTask = () => {
+    let dataTaskTemp = [];
+    for (let a = 0; a < displayDataImport.length; a++) {
+      dataTaskTemp.push({
+        id: displayDataImport[a].id,
+        ticket_number: displayDataImport[a].ticket_number,
+        name: displayDataImport[a].name,
+        project_name: displayDataImport[a].project_name,
+        start_date: displayDataImport[a].start_date,
+        end_date: displayDataImport[a].end_date,
+        is_selected: false,
+      });
+    }
+    setDataTaskSelected([]);
+    setDisplayDataImport(dataTaskTemp);
+  };
+
+  const handleOnSelectTask = (value) => {
+    let dataTaskTemp = [];
+    for (let a = 0; a < displayDataImport.length; a++) {
+      if (value.target.value == displayDataImport[a].id) {
+        dataTaskTemp.push({
+          id: displayDataImport[a].id,
+          ticket_number: displayDataImport[a].ticket_number,
+          name: displayDataImport[a].name,
+          project_name: displayDataImport[a].project_name,
+          start_date: displayDataImport[a].start_date,
+          end_date: displayDataImport[a].end_date,
+          is_selected: value.target.checked,
+        });
+      } else {
+        dataTaskTemp.push({
+          id: displayDataImport[a].id,
+          ticket_number: displayDataImport[a].ticket_number,
+          name: displayDataImport[a].name,
+          project_name: displayDataImport[a].project_name,
+          start_date: displayDataImport[a].start_date,
+          end_date: displayDataImport[a].end_date,
+          is_selected: displayDataImport[a].is_selected,
+        });
+      }
+
+      //check selected
+    }
+    let dataTemp = dataTaskSelected;
+    if (dataTemp.length == 0) {
+      dataTemp.push(value.target.value);
+    } else if (displayDataImport.length >= 1) {
+      if (value.target.checked == false) {
+        dataTemp = dataTemp.filter(function (item) {
+          return item !== value.target.value;
+        });
+      } else {
+        dataTemp.push(value.target.value);
+      }
+      setDataTaskSelected(dataTemp);
+    }
+    setDisplayDataImport([...dataTaskTemp]);
+  };
+
+  const handleSelectTask = () => {
+    if (dataTaskSelected.length == displayDataImport.length) {
+      handleUnSelectAllTask();
+    } else {
+      handleSelectAllTask();
+    }
+  };
+
   const TableTaskColumns: ColumnsType = [
     {
       key: "id",
       title: "No.",
       render: (_, __, index) => `${(currentPage - 1) * pageSize + index + 1}.`,
-      width: 51,
-      align: "center",
+      width: 64,
     },
     {
       key: "id",
-      title: "Input Time",
+      title: "Waktu Pengisian",
       dataIndex: "updated_at",
       sorter: (a: string, b: string) => {
         const lhsDate = new Date(a);
@@ -572,15 +747,13 @@ export const AttendanceStaffAktivitasSection: FC<
           tabActiveKey === "1" ? "HH:mm" : "dd MMM yyyy, HH:mm"
         );
 
-        return <p className="whitespace-nowrap">{formattedDate}</p>;
+        return <>{formattedDate}</>;
       },
     },
     {
       key: "id",
-      title: "Task Name",
+      title: "Nama Task",
       dataIndex: "activity",
-      render: (value) => <p className="truncate max-w-120">{value}</p>,
-      width: 480,
     },
   ];
 
@@ -591,24 +764,31 @@ export const AttendanceStaffAktivitasSection: FC<
       return task.task.name;
     }
   }
+
   function checkFormOrTask() {
     if (tabActiveKey2 == "3" && activeSubmenu == "aktivitas") {
       return (
-        <Table<typeof dataSource[0]>
-          columns={tableColums}
-          rowKey={(record) => record.id}
-          dataSource={dataSource}
-          pagination={tablePaginationConf}
-          loading={isDataSourceLoading}
-          scroll={{ x: "max-content" }}
-          className="tableTypeTask"
-          onRow={(datum) => {
-            return {
-              className: "hover:cursor-pointer",
-              onClick: () => mOnRowItemClicked(datum),
-            };
-          }}
-        />
+        <ConfigProvider
+          renderEmpty={() => (
+            <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
+          )}
+        >
+          <Table<typeof dataSource[0]>
+            columns={tableColums}
+            rowKey={(record) => record.id}
+            dataSource={dataSource}
+            pagination={tablePaginationConf}
+            loading={isDataSourceLoading}
+            scroll={{ x: "max-content" }}
+            className="tableTypeTask"
+            onRow={(datum) => {
+              return {
+                className: "hover:cursor-pointer",
+                onClick: () => mOnRowItemClicked(datum),
+              };
+            }}
+          />
+        </ConfigProvider>
       );
     } else if (
       tabActiveKey == "1" &&
@@ -655,12 +835,12 @@ export const AttendanceStaffAktivitasSection: FC<
                       </div>
                       <button
                         className={`bg-transparent hover:opacity-75 ${
-                          !isAllowedToDeleteTaskActivity
+                          !isAllowedToDeleteActivity
                             ? "cursor-not-allowed"
                             : undefined
                         }`}
                         onClick={() => handleDeleteTaskActivity(task.id)}
-                        disabled={!isAllowedToDeleteTaskActivity}
+                        disabled={!isAllowedToDeleteActivity}
                       >
                         <XIconSvg size={24} color="#BF4A40" />
                       </button>
@@ -693,50 +873,6 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   }
 
-  const {
-    deleteMutation: {
-      mutate: deleteAttendanceActivity,
-      isLoading: deleteMutationLoading,
-    },
-  } = useMutateAttendanceActivity();
-
-  const onMutationSucceed = useCallback((response: AxiosResponse<any, any>) => {
-    notification.success({ message: response.data.message });
-  }, []);
-
-  const onMutationFailed = useCallback((error: AxiosError) => {
-    notification.error({ message: error.response.data.message });
-  }, []);
-
-  const handleOnDeleteAktivitas = useCallback(
-    (activityFormId) => {
-      if (!isAllowedToDeleteActivity) {
-        permissionWarningNotification("Menghapus", "Aktivitas");
-        return;
-      }
-
-      Modal.confirm({
-        centered: true,
-        title: "Confirm Remove Activity",
-        content:
-          "Are you sure you want to remove this activity? This action can’t be undone.",
-        okText: "Remove Activity",
-        cancelText: "Cancel",
-        onOk: () => {
-          deleteAttendanceActivity(activityFormId, {
-            onSuccess: onMutationSucceed,
-            onError: onMutationFailed,
-          });
-        },
-        icon: <ExclamationCircleOutlined className="text-danger" />,
-        className: "",
-
-        // onCancel: () => onClose(),
-      });
-    },
-    [tabActiveKey, isAllowedToDeleteActivity, attendeeStatus]
-  );
-
   const handleDeleteTaskActivity = useCallback(
     (taskActivityId) => {
       if (!isAllowedToDeleteTaskActivity) {
@@ -746,19 +882,19 @@ export const AttendanceStaffAktivitasSection: FC<
 
       Modal.confirm({
         centered: true,
-        title: "Attention!",
-        content: "Are you sure you want to remove this task from activity?",
-        okText: "Remove Task",
-        cancelText: "Back",
+        title: "Perhatian!",
+        content: "Apakah Anda yakin ingin menghapus task ini dari aktivitas?",
+        okText: "Hapus Task",
+        cancelText: "Kembali",
         onOk: () => {
           AttendanceTaskActivityService.remove(axiosClient, taskActivityId)
             .then((res) => {
               if (res.data.success) {
                 notification.success({
-                  message: "Successfully removed task from activity",
+                  message: "Task berhasil dihapus dari aktivitas",
                   duration: 3,
                 });
-                // getDataTaskActivities();
+                getDataTaskActivities();
                 queryClient.invalidateQueries(ATTENDANCE_TASK_ACTIVITIES_GET);
               } else {
                 notification.error({
@@ -769,7 +905,7 @@ export const AttendanceStaffAktivitasSection: FC<
             })
             .catch((err) => {
               notification.error({
-                message: "Failed to delete task from activity",
+                message: "Task gagal dihapus dari aktivitas",
                 duration: 3,
               });
             });
@@ -779,129 +915,205 @@ export const AttendanceStaffAktivitasSection: FC<
     [isAllowedToDeleteTaskActivity]
   );
 
+  const handleCloseModalImportTask = () => {
+    setShowModalTask(false);
+    handleUnSelectAllTask();
+  };
+
   return (
     <>
-      <section className="mig-platform--p-0">
-        {/* Header */}
-        <div className={"flex justify-between items-center border-b py-3 px-4"}>
-          {tabActiveKey == "1" ? (
-            <Dropdown
-              trigger={["click"]}
-              overlay={
-                <Menu selectedKeys={[activeSubmenu]}>
-                  <Menu.Item
-                    key={"aktivitas"}
-                    onClick={() => setActiveSubmenu("aktivitas")}
-                    disabled={
-                      !isAllowedToGetActivity || !isAllowedToGetTaskActivities
-                    }
-                  >
-                    Activity
-                  </Menu.Item>
-                  <Menu.Item
-                    key={"cuti"}
-                    onClick={() => setActiveSubmenu("cuti")}
-                    disabled={!isAllowedToLeavesUser}
-                  >
-                    Paid Leave
-                  </Menu.Item>
-                  {/* <Menu.Item>Overtime</Menu.Item> */}
-                </Menu>
-              }
+      <section className="mig-platform">
+        <div className={"flex justify-between"}>
+          <div className={"flex gap-4"}>
+            <div
+              onClick={() => setActiveSubmenu("aktivitas")}
+              className={`${
+                activeSubmenu == "aktivitas" ? "bg-[#35763B]" : "bg-white"
+              } rounded-[48px] py-2 px-4 hover:cursor-pointer`}
             >
-              <a onClick={(e) => e.preventDefault()} className="mig-body--bold">
-                <div className="flex items-center gap-2">
-                  {activeSubmenu == "aktivitas"
-                    ? "Activity"
-                    : activeSubmenu == "cuti"
-                    ? "Paid Leave"
-                    : "Overtime"}
-                  <DownIconSvg />
-                </div>
-              </a>
-            </Dropdown>
-          ) : (
-            <h1 className="mig-body--bold text-neutrals100">
-              History of Activities
-            </h1>
-          )}
-
-          {activeSubmenu == "aktivitas" && (
-            <div className="flex gap-3">
-              <ButtonTooltip
-                square
-                type="primary"
-                color={tabActiveKey == "1" ? "mono100" : ""}
-                onClick={() => setTabActiveKey(tabActiveKey == "1" ? "2" : "1")}
-                disabled={!isAllowedToGetActivity}
-                tooltipTitle="History of Activities"
+              <p
+                className={`${
+                  activeSubmenu == "aktivitas"
+                    ? "text-white font-medium"
+                    : "text-[#CCCCCC] font-bold"
+                }text-xs leading-5 `}
               >
-                <HistoryIconSvg size={16} />
-              </ButtonTooltip>
-
-              {tabActiveKey == "1" && (
-                <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
-                  <ButtonTooltip
-                    square
-                    type="primary"
-                    color={"mono100"}
-                    onClick={() => setIsExportDrawerShown(true)}
-                    disabled={!isAllowedToExportTable}
-                    tooltipTitle="Download Activity"
-                  >
-                    <DownloadIconSvg size={16} />
-                  </ButtonTooltip>
-                </AccessControl>
-              )}
+                Aktivitas
+              </p>
             </div>
-          )}
-
-          {activeSubmenu == "cuti" && isAllowedToAddLeaveUser && (
-            <ButtonSys type={"primary"}>
+            {isAllowedToLeavesUser && (
               <div
-                onClick={() => setShowModalLeave(true)}
-                className={"flex items-center gap-2 "}
+                onClick={() => setActiveSubmenu("cuti")}
+                className={`${
+                  activeSubmenu == "cuti" ? "bg-[#35763B]" : "bg-white"
+                } rounded-[48px] py-2 px-4 hover:cursor-pointer`}
               >
-                <AddNoteSvg />
-                <p className="text-xs leading-5 font-bold whitespace-nowrap">
-                  Apply for Leave
+                <p
+                  className={`${
+                    activeSubmenu == "cuti"
+                      ? "text-white font-medium"
+                      : "text-[#CCCCCC] font-bold"
+                  }text-xs leading-5 `}
+                >
+                  Cuti Saya
                 </p>
               </div>
-            </ButtonSys>
+            )}
+          </div>
+          {activeSubmenu == "cuti" && isAllowedToAddLeaveUser && (
+            <div
+              onClick={() => setShowModalLeave(true)}
+              className={
+                "hover:cursor-pointer bg-[#35763B] flex items-center rounded-[5px] gap-2 w-[133px] h-[36px] px-5"
+              }
+            >
+              <AddNoteSvg />
+              <p className="text-white text-xs leading-5 font-bold">
+                Ajukan Cuti
+              </p>
+            </div>
           )}
         </div>
 
-        {/* Tabs */}
         {activeSubmenu == "aktivitas" && (
-          <div className="flex justify-between gap-3 py-3 px-4">
-            <div className={"flex gap-3 "}>
-              <div
-                onClick={() => setTabActiveKey2("3")}
-                className={`${
-                  tabActiveKey2 == "3"
-                    ? "bg-primary100 mig-body--medium text-white"
-                    : "bg-white border hover:bg-primary75 mig-body text-mono80 hover:text-white"
-                } rounded-[48px] py-1 px-4 hover:cursor-pointer `}
-              >
-                <p>Form</p>
-              </div>
-              {isAllowedToGetTaskActivities && (
-                <div
-                  onClick={() => setTabActiveKey2("4")}
-                  className={`${
-                    tabActiveKey2 == "4"
-                      ? "bg-primary100 mig-body--medium text-white"
-                      : "bg-white border hover:bg-primary75 mig-body text-mono80 hover:text-white "
-                  } rounded-[48px] py-1 px-4 hover:cursor-pointer`}
-                >
-                  <p>Task</p>
-                </div>
-              )}
-            </div>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <Tabs
+              defaultActiveKey="1"
+              className="w-1/2"
+              onChange={setTabActiveKey}
+            >
+              <TabPane tab="Hari Ini" key="1" />
+              <TabPane tab="Riwayat" key="2" />
+            </Tabs>
 
-            {tabActiveKey == "1" &&
-              (isAllowedToAddActivity && tabActiveKey2 == "3" ? (
-                <div>
+            <Modal
+              title="Import Task ke Aktivitas"
+              visible={showModalTask}
+              width={502}
+              footer={null}
+              onCancel={handleCloseModalImportTask}
+              maskClosable={false}
+            >
+              <div className="col-span-4">
+                <Input
+                  style={{ width: `100%` }}
+                  suffix={<SearchOutlined />}
+                  defaultValue={queryParams2.keyword}
+                  placeholder="Cari Task.."
+                  onChange={onChangeProductSearch}
+                  allowClear
+                />
+              </div>
+              <div className={"mt-7 flex justify-between mb-4"}>
+                <p
+                  className={"text-mono30 text-base font-bold "}
+                  style={{ lineHeight: "24px" }}
+                >
+                  List Task
+                </p>
+                {displayDataImport.length > 0 && (
+                  <button
+                    className={"bg-transparent"}
+                    onClick={() => handleSelectTask()}
+                  >
+                    <p
+                      className={"text-primary100 text-sm font-bold"}
+                      style={{ lineHeight: "24px" }}
+                    >
+                      {dataTaskSelected.length == displayDataImport.length
+                        ? "Hapus Semua"
+                        : "Pilih semua"}
+                    </p>
+                  </button>
+                )}
+              </div>
+              {displayDataImport.length > 0 ? (
+                displayDataImport.map((task, index) => (
+                  <div key={task.id} className="flex-none rounded-md ">
+                    <div
+                      className={"flex px-4 py-2 border border-inputkategori"}
+                    >
+                      <div className={"w-11/12"}>
+                        <p
+                          className={"text-xs font-bold text-mono30"}
+                          style={{ lineHeight: "20px" }}
+                        >
+                          {task.name} T-{task.id}
+                        </p>
+                        <p
+                          className={"text-xs text-mono50"}
+                          style={{ lineHeight: "16px" }}
+                        >
+                          [{task.project_name ? task.project_name : " - "}]
+                        </p>
+                      </div>
+                      <div className={"w-1/12 self-center items-end"}>
+                        <Checkbox
+                          key={task.id}
+                          value={task.id}
+                          checked={task.is_selected}
+                          onChange={(e) => {
+                            handleOnSelectTask(e);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className={"mt-4 text-center"}>Tidak Ada Data</p>
+              )}
+
+              <div
+                onClick={handleCloseModalImportTask}
+                className={"mt-6 flex justify-end hover:cursor-pointer "}
+              >
+                <p
+                  className={"mr-12 self-center text-sm"}
+                  style={{ lineHeight: "16px" }}
+                >
+                  Batal
+                </p>
+                <div
+                  onClick={() => importMultipleTask()}
+                  className={
+                    dataTaskSelected.length > 0
+                      ? "px-6 py-2 bg-primary100 rounded-[5px] hover:cursor-pointer"
+                      : "px-6 py-2 bg-mono80 rounded-[5px]"
+                  }
+                >
+                  <p
+                    className={
+                      dataTaskSelected.length > 0
+                        ? "text-sm text-white"
+                        : "text-sm text-mono30"
+                    }
+                    style={{ lineHeight: "16px" }}
+                  >
+                    Import Task
+                  </p>
+                </div>
+              </div>
+            </Modal>
+
+            <div className="flex flex-col xl:flex-row gap-2 w-full md:w-5/12 xl:w-4/12 md:justify-end items-center">
+              <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
+                <div className="w-full">
+                  <ButtonSys
+                    type="default"
+                    onClick={onImportTask}
+                    disabled={!isAllowedToAddTaskActivities}
+                    fullWidth
+                  >
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      <FileImportIconSvg />
+                      <p>Import Task</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+              </AccessControl>
+              {isAllowedToAddActivity && (
+                <div className="w-full">
                   <ButtonSys
                     type="primary"
                     onClick={mOnAddActivityButtonClicked}
@@ -909,56 +1121,51 @@ export const AttendanceStaffAktivitasSection: FC<
                     fullWidth
                   >
                     <div className="flex items-center gap-2 whitespace-nowrap">
-                      <CirclePlusIconSvg />
-                      <p>Add Activity</p>
+                      <AppstoreAddOutlined />
+                      <p>Masukkan Aktivitas</p>
                     </div>
                   </ButtonSys>
                 </div>
-              ) : isAllowedToAddTaskActivities && tabActiveKey2 == "4" ? (
-                <div>
-                  <ButtonSys
-                    type="primary"
-                    onClick={onImportTask}
-                    disabled={!isAllowedToAddTaskActivities}
-                    fullWidth
-                  >
-                    <div className="flex items-center gap-2 whitespace-nowrap">
-                      <FileExportIconSvg />
-                      <p>Import Task</p>
-                    </div>
-                  </ButtonSys>
-                </div>
-              ) : null)}
-
-            <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITY_ADD}>
-              <ModalImportTasksToActivity
-                visible={showModalTask}
-                onvisible={setShowModalTask}
-                dataToken={dataToken}
-                queryParams={queryParams2}
-                displayDataTaskToday={displayDataTaskToday}
-                onChangeSearch={onChangeProductSearch}
-              />
-            </AccessControl>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Table "Activites" */}
         {activeSubmenu == "aktivitas" && (
-          <div className="px-4">{checkFormOrTask()}</div>
+          <Tabs
+            defaultActiveKey="3"
+            className="md:w-1/2"
+            onChange={setTabActiveKey2}
+          >
+            {isAllowedToGetActivity && activeSubmenu == "aktivitas" && (
+              <TabPane tab="Form" key="3" />
+            )}
+            {isAllowedToGetTaskActivities && activeSubmenu == "aktivitas" && (
+              <TabPane tab="Task" key="4" />
+            )}
+          </Tabs>
         )}
-
-        {/* Table "Paid Leave" */}
+        {activeSubmenu == "aktivitas" && checkFormOrTask()}
         {activeSubmenu == "cuti" && (
           <div
             className={
-              "bg-white rounded-[5px] mt-3 first-letter:border border-solid px-6"
+              "bg-white rounded-[5px] mt-8 first-letter:border border-solid  p-6"
             }
+            style={{ boxShadow: "0px 0px 12px 2px #000E3312" }}
           >
-            <AccessControl hasPermission={LEAVES_COUNT_GET}>
-              <AttendanceStaffLeaveStatisticCards leaveCount={leaveCount} />
-            </AccessControl>
-
+            <p className={"text-base font-bold leading-6 text-[#4D4D4D  ]"}>
+              Daftar Pengajuan Cuti
+            </p>
+            {isAllowedToLeaveCount && (
+              <div
+                className={
+                  "my-4 bg-[#00589F] rounded-[5px] h-8 flex justify-between px-3 py-1 text-white text-[14px] leading-6 font-bold"
+                }
+              >
+                <p className={""}>Jumlah Cuti Tahunan :</p>
+                <p>{leaveCount} Hari Tersisa</p>
+              </div>
+            )}
             <Table
               className="tableTask"
               dataSource={displayDataLeaves}
@@ -1013,15 +1220,6 @@ export const AttendanceStaffAktivitasSection: FC<
           onClose={() => dispatch({ type: "create", visible: false })}
         />
       )}
-
-      <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
-        <EksporAbsensiDrawer
-          visible={isExportDrawerShown}
-          token={dataToken}
-          exportActivity
-          onClose={() => setIsExportDrawerShown(false)}
-        />
-      </AccessControl>
     </>
   );
 };

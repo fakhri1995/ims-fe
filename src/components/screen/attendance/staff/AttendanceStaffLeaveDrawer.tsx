@@ -37,6 +37,7 @@ import {
 } from "react";
 import { useQuery } from "react-query";
 
+import ButtonSys from "components/button";
 import DrawerCore from "components/drawer/drawerCore";
 import { CalendartimeIconSvg } from "components/icon";
 
@@ -250,12 +251,13 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
           onClose();
           getDataNew();
           notification["success"]({
-            message: "Pengajuan Cuti Berhasil",
+            message: "Succesfully applied for leave",
             duration: 3,
           });
         } else {
           notification["error"]({
-            message: "Pengajuan Cuti gagal karena ada kesalahan dalam server",
+            message:
+              "Failed to apply for leave because of an error in the server",
             duration: 3,
           });
         }
@@ -264,9 +266,9 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
 
   return (
     <Drawer
-      title={`Pengajuan Cuti`}
+      title={<h1 className="mig-body--bold">Apply for Leave</h1>}
       open={visible}
-      width={550}
+      width={400}
       onClose={onClose}
       footer={
         <div className={"flex gap-4 justify-end p-2"}>
@@ -277,7 +279,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
             }
           >
             <p className={"text-xs leading-5 text-[#808080] font-bold"}>
-              Batalkan
+              Cancel
             </p>
           </div>
           <div
@@ -289,19 +291,16 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
             {loading && (
               <Spin indicator={<LoadingOutlined style={{ fontSize: 12 }} />} />
             )}
-            <p className="text-white text-xs leading-5 font-bold">Simpan</p>
+            <p className="text-white text-xs leading-5 font-bold">Submit</p>
           </div>
         </div>
       }
     >
       <div className="space-y-6">
-        <p className={"text-[#BF4A40] text-xs leading-4 font-normal"}>
-          *Informasi ini harus diisi
-        </p>
         <Form layout="vertical" form={instanceForm} onFinish={handleSubmit}>
           <div className={"mt-4 flex flex-col gap-2"}>
             <p className={"text-mono30 text-xs font-medium leading-5"}>
-              Nama Karyawan
+              Employee Name
             </p>
             <Input
               value={username}
@@ -312,13 +311,12 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
           <div className={"mt-2 flex items-center"}>
             <div className={"w-[47%] calendar-cuti"}>
               <Form.Item
-                label="Mulai Cuti"
+                label="Start Date"
                 name={"start_date"}
                 className="col-span-2"
                 rules={[
                   {
                     required: true,
-                    message: "Mulai Cuti wajib diisi",
                   },
                 ]}
               >
@@ -326,7 +324,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                   disabledDate={(current) =>
                     current.isBefore(moment().subtract(1, "day"))
                   }
-                  placeholder="Pilih Mulai Cuti"
+                  placeholder="Select Start Date"
                   style={{ height: 52, width: "100%", borderColor: "#E6E6E6" }}
                   suffixIcon={
                     <CalendartimeIconSvg size={20} color={"#808080"} />
@@ -339,13 +337,12 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
             </div>
             <div className={"w-[47%] calendar-cuti"}>
               <Form.Item
-                label="Selesai Cuti"
+                label="End Date"
                 name={"end_date"}
                 className="col-span-2"
                 rules={[
                   {
                     required: true,
-                    message: "Selesai Cuti wajib diisi",
                   },
                 ]}
               >
@@ -353,7 +350,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                   disabledDate={(current) =>
                     current.isBefore(moment().subtract(1, "day"))
                   }
-                  placeholder="Pilih Selesai Cuti"
+                  placeholder="Select End Date"
                   style={{ height: 52, width: "100%", borderColor: "#E6E6E6" }}
                   suffixIcon={
                     <CalendartimeIconSvg size={20} color={"#808080"} />
@@ -364,13 +361,13 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
           </div>
           <div className={"mt-4 flex flex-col gap-2"}>
             <Form.Item
-              label="Delegasi Tugas"
+              label="Task Delegate"
               name={"delegate_id"}
               className="col-span-2"
               rules={[
                 {
                   required: true,
-                  message: "Delegasi Tugas wajib diisi",
+                  message: "Task Delegate is required",
                 },
               ]}
             >
@@ -378,7 +375,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                 showSearch
                 className="dontShow"
                 value={dataCuti?.delegasi}
-                placeholder={"Cari Nama"}
+                placeholder={"Search Name"}
                 style={{ width: `100%` }}
                 onSearch={(value) => onSearchUsers(value, setDataEmployees)}
                 optionFilterProp="children"
@@ -435,18 +432,17 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
           </div>
           <div className={"mt-4 flex flex-col gap-2"}>
             <Form.Item
-              label="Tipe Cuti"
+              label="Leave Type"
               name={"type"}
               className="col-span-2"
               rules={[
                 {
                   required: true,
-                  message: "Tipe Cuti wajib diisi",
                 },
               ]}
             >
               <Select
-                placeholder="Pilih Tipe Cuti"
+                placeholder="Select Leave Type"
                 size="large"
                 onChange={(value, option) => {
                   setDataCuti((prev) => ({
@@ -471,17 +467,17 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
             </Form.Item>
           </div>
           <div className={"mt-4 flex flex-col gap-2"}>
-            <Form.Item label="Catatan" name={"notes"} className="col-span-2">
+            <Form.Item label="Notes" name={"notes"} className="col-span-2">
               <Input.TextArea
                 rows={4}
                 className={"h-[164px] border border-solid border-[#E6E6E6]"}
-                placeholder="Masukan alasan mengambil Cuti"
+                placeholder="Insert reason for taking leave"
               />
             </Form.Item>
           </div>
           <div className={"mt-4 flex flex-col gap-2"}>
             <Form.Item
-              label="Unggah Dokumen Pendukung"
+              label="Upload Supporting Document"
               name={"dokumen"}
               className="col-span-2"
               rules={[
@@ -492,28 +488,29 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                       : dataCuti?.tipe_cuti?.is_document_required
                       ? true
                       : false,
-                  message: "Dokumen Pendukung wajib diisi",
+                  message: "Supporting Document is required",
                 },
               ]}
             >
-              <div className={"flex justify-between items-center"}>
-                <p
-                  className={
-                    "text-[#808080] text-xs leading-4 font-normal italic"
-                  }
-                >
-                  Unggah File (Maksimal 5 MB).
-                </p>
-                <Upload accept=".pdf" multiple={false} onChange={onChangeFile}>
-                  <div
-                    className={
-                      "flex justify-center items-center gap-2 hover:cursor-pointer py-2 px-4 border border-[#35763B] rounded-[5px]"
-                    }
+              <div className={"flex flex-col"}>
+                <div className="mb-4">
+                  <Upload
+                    accept=".pdf"
+                    multiple={false}
+                    onChange={onChangeFile}
                   >
-                    <UploadOutlined size={16} />
-                    <p>Unggah File</p>
-                  </div>
-                </Upload>
+                    <ButtonSys>
+                      <div className="flex justify-center items-center gap-2 ">
+                        <UploadOutlined size={16} />
+                        <p>Upload File</p>
+                      </div>
+                    </ButtonSys>
+                  </Upload>
+                </div>
+
+                <em className={"text-[#808080] text-xs leading-4 font-normal "}>
+                  Upload File (Max. 5 MB), multiple files are allowed.
+                </em>
               </div>
             </Form.Item>
           </div>

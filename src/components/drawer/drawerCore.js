@@ -20,7 +20,7 @@ const DrawerCore = ({
   iconButtonText,
   form,
   submit = false,
-  width = 420,
+  width = 400,
 }) => {
   return (
     <Drawer
@@ -43,7 +43,7 @@ const DrawerCore = ({
               // disabled={disabled}
               // type={disabled ? "primary" : "default"}
               type={"default"}
-              color="danger"
+              color="mono50"
               onClick={onButtonCancelClicked}
             >
               {buttonCancelText}

@@ -633,16 +633,16 @@ const SortingIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={sortingIconSvg}></Icon>;
 };
-const DownIconSvg = ({ size, color }) => {
+const DownIconSvg = (props) => {
   const downIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-chevron-down"
-      width={size}
-      height={size}
+      width={props?.size ?? "20"}
+      height={props?.size ?? "20"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -651,7 +651,7 @@ const DownIconSvg = ({ size, color }) => {
       <polyline points="6 9 12 15 18 9" />
     </svg>
   );
-  return <Icon rev={""} component={downIconSvg}></Icon>;
+  return <Icon rev={""} component={downIconSvg} {...props}></Icon>;
 };
 const UpIconSvg = ({ size, color }) => {
   const upIconSvg = () => (
@@ -1004,6 +1004,28 @@ const ClockIconSvg = ({ size, color }) => {
     </svg>
   );
   return <Icon rev={""} component={clockIconSvg}></Icon>;
+};
+
+const ClockIconFilledSvg = (props) => {
+  const clockIconFIlledSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-clock"
+      width={props?.size ?? "20"}
+      height={props?.size ?? "20"}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={"white"}
+      fill={props?.color ?? "currentColor"}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <circle cx={12} cy={12} r={9} />
+      <polyline points="12 7 12 12 15 15" />
+    </svg>
+  );
+  return <Icon rev={""} component={clockIconFIlledSvg} {...props}></Icon>;
 };
 
 const ClockXIconSvg = ({ size, color }) => {
@@ -1793,8 +1815,8 @@ const HistoryIconSvg = ({ size, color, strokeWidth }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-history"
-      width={size}
-      height={size}
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth={strokeWidth ? strokeWidth : "1.5"}
       stroke={color}
@@ -1807,7 +1829,7 @@ const HistoryIconSvg = ({ size, color, strokeWidth }) => {
       <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
     </svg>
   );
-  return <Icon rev={""} component={historyIconSvg}></Icon>;
+  return <Icon rev={""} component={historyIconSvg} {...props}></Icon>;
 };
 const AdjusmentsHorizontalIconSvg = ({ size, color }) => {
   const adjusmentsHorizontalIconSvg = () => (
@@ -2241,16 +2263,16 @@ const UsersIconSvg = (props) => {
   return <Icon rev={""} component={usersIconSvg} {...props}></Icon>;
 };
 
-const DownloadIconSvg = ({ size, color }) => {
+const DownloadIconSvg = (props) => {
   const downloadIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-download"
-      width={size}
-      height={size}
+      width={props?.size ?? "20"}
+      height={props?.size ?? "20"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -2259,7 +2281,7 @@ const DownloadIconSvg = ({ size, color }) => {
       <line x1="12" y1="4" x2="12" y2="16" />
     </svg>
   );
-  return <Icon rev={""} component={downloadIconSvg}></Icon>;
+  return <Icon rev={""} component={downloadIconSvg} {...props}></Icon>;
 };
 
 const DownloadIcon2Svg = ({ size, color }) => {
@@ -2473,16 +2495,16 @@ const UserCheckIconSvg = (props) => {
   return <Icon rev={""} component={userCheckIconSvg} {...props}></Icon>;
 };
 
-const CirclePlusIconSvg = ({ size, color }) => {
+const CirclePlusIconSvg = (props) => {
   const circlePlusIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-circle-plus"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2493,7 +2515,7 @@ const CirclePlusIconSvg = ({ size, color }) => {
       <line x1="12" y1="9" x2="12" y2="15" />
     </svg>
   );
-  return <Icon rev={""} component={circlePlusIconSvg}></Icon>;
+  return <Icon rev={""} component={circlePlusIconSvg} {...props}></Icon>;
 };
 
 const UploadIconSvg = ({ size, color }) => {
@@ -2561,16 +2583,16 @@ const LeftIconSvg = ({ size, color }) => {
   return <Icon rev={""} component={leftIconSvg}></Icon>;
 };
 
-const CircleCheckIconSvg = ({ size, color }) => {
+const CircleCheckIconSvg = (props) => {
   const circleCheckIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-circle-check"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2580,7 +2602,24 @@ const CircleCheckIconSvg = ({ size, color }) => {
       <path d="M9 12l2 2l4 -4" />
     </svg>
   );
-  return <Icon rev={""} component={circleCheckIconSvg}></Icon>;
+  return <Icon rev={""} component={circleCheckIconSvg} {...props}></Icon>;
+};
+
+const CircleCheckFilledIconSvg = (props) => {
+  const circleCheckFilledIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
+      viewBox="0 0 24 24"
+      fill={props?.color ?? "currentColor"}
+      className="icon icon-tabler icons-tabler-filled icon-tabler-circle-check"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" />
+    </svg>
+  );
+  return <Icon rev={""} component={circleCheckFilledIconSvg} {...props}></Icon>;
 };
 
 const LogoutIconSvg = ({ size, color }) => {
@@ -3873,6 +3912,7 @@ export {
   MoveIconSvg,
   AlertIconSvg,
   ClockIconSvg,
+  ClockIconFilledSvg,
   ClockXIconSvg,
   ClipboardcheckIconSvg,
   MappinIconSvg,
@@ -3930,6 +3970,7 @@ export {
   RightIconSvg,
   LeftIconSvg,
   CircleCheckIconSvg,
+  CircleCheckFilledIconSvg,
   LogoutIconSvg,
   ClipboardListIconSvg,
   SettingsIconSvg,

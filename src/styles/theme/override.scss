@@ -30,9 +30,19 @@ ol {
   margin-left: 20px;
 }
 
+a:hover {
+  color: #35763b;
+}
+
 /* Button */
 .btn {
   text-transform: none !important;
+  border-radius: 5px;
+}
+
+.btn-square {
+  width: 32px;
+  height: 32px;
 }
 
 // tailwind classname for gradient color in production env is not working, so it had to use plain css
@@ -260,6 +270,28 @@ ol {
   background-color: #35763b;
 }
 
+/* DROPDOWN MENU */
+.ant-dropdown-menu {
+  width: 208px;
+  border-radius: 10px;
+  border: 1px 0px;
+  padding: 6px;
+}
+.ant-dropdown-menu-item {
+  padding: 6px 10px;
+  line-height: 24px;
+  color: #808080;
+}
+
+.ant-dropdown-menu-item-selected {
+  background-color: #fafafa;
+  color: #35763b;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
 /* INPUT */
 .ant-input,
 .ant-input-number,
@@ -330,9 +362,7 @@ ol {
   color: #35763b;
 }
 
-.themedSelector.ant-select-focused:not(.ant-select-disabled).ant-select:not(
-    .ant-select-customize-input
-  )
+.themedSelector.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
   .ant-select-selector {
   border-color: #65976a;
   outline: 0;
@@ -403,10 +433,18 @@ ol {
 
 /* PAGINATION */
 .ant-pagination-item-active {
+  background-color: #35763b;
   border-color: #35763b;
 }
+
 .ant-pagination-item-active a {
-  color: #35763b;
+  color: white;
+}
+
+.ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination-next .ant-pagination-item-link,
+.ant-pagination-item {
+  border-radius: 5px;
 }
 
 /* CHECKBOX */
@@ -439,6 +477,14 @@ ol {
 }
 
 /* TABLE */
+.ant-table-thead > tr > th {
+  padding: 9px 16px;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 11px 16px;
+}
+
 .tableTypeTask .ant-table-column-sorter-up.active,
 .tableTypeTask .ant-table-column-sorter-down.active {
   color: #35763b;
@@ -585,6 +631,27 @@ ol {
   height: initial;
 }
 
+/* MODAL */
+.ant-modal-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+.ant-modal-content {
+  border-radius: 10px;
+}
+
+.modalRounded > .ant-modal-content {
+  border-radius: 24px;
+}
+
+.ant-modal-body,
+.ant-modal-header {
+  padding: 16px;
+  border-radius: 10px 10px 0 0;
+}
+
 /**
  * NOTE: this is a little bit tricky. We can not customize ant's Modal.confirm footer programmatically.
  *
@@ -617,8 +684,16 @@ ol {
   }
 }
 
-.modalRounded > .ant-modal-content {
-  border-radius: 24px;
+/* DRAWER */
+
+.ant-drawer-content {
+  border-radius: 10px 0 0 10px;
+}
+
+.ant-drawer-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
 }
 
 /* BUTTON */

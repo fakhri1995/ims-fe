@@ -566,8 +566,8 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
                     setModalDelete(true);
                   }}
                   icon={<TrashIconSvg size={20} color={"#FFFFFF"} />}
-                  className="bg-warning border-warning hover:bg-warning hover:opacity-75
-                  hover:border-warning focus:bg-warning focus:border-warning"
+                  className="bg-danger border-danger hover:bg-danger hover:opacity-75
+                  hover:border-danger focus:bg-danger focus:border-danger"
                 />
               )}
             </div>
@@ -866,7 +866,7 @@ const ContractInvoiceIndex = ({ dataProfile, sidemenu, initProps }) => {
           title={
             <div className="flex gap-2 items-center">
               <AlertCircleIconSvg size={28} color={"#BF4A40"} />
-              <h3 className="mig-heading--3 text-warning">
+              <h3 className="mig-heading--3 text-danger">
                 Konfirmasi Hapus Invoice
               </h3>
             </div>

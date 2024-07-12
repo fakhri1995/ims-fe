@@ -47,9 +47,9 @@ export const AttendanceStaffDetailCard: FC<IAttendanceStaffDetailCard> = memo(
       }
 
       return [
-        { label: "Jabatan", content: data.position },
+        { label: "Role", content: data.position },
         { label: "Email", content: data.email },
-        { label: "No. Telp", content: data.phone_number },
+        { label: "Phone Number", content: data.phone_number },
       ];
     }, [data]);
 
@@ -65,7 +65,7 @@ export const AttendanceStaffDetailCard: FC<IAttendanceStaffDetailCard> = memo(
         header={
           !isLoading && (
             <div className="flex flex-col space-y-3">
-              <h4 className="mig-body--bold">Profil Karyawan</h4>
+              <h4 className="mig-body--bold">Employee Profile</h4>
               {/* Avatar */}
               <div
                 className="w-12 h-12 bg-mono80 rounded-full bg-cover bg-center block"

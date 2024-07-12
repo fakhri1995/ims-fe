@@ -40,33 +40,35 @@ export const AttendanceStaffStatisticCard: FC<
 
   return (
     <div className="mig-platform space-y-3">
-      <h3 className="mig-body--bold">Ringkasan Kehadiran</h3>
+      <h3 className="mig-body--bold">Attendance Summary</h3>
 
       {isLoading && <Skeleton active round paragraph={{ rows: 1 }} />}
       {!isLoading && (
         <div className="space-y-3">
           <div className="text-center bg-neutrals60 p-2 rounded-md">
-            <p className="mig-caption--medium text-neutrals100">Total Hadir</p>
             <h4 className="mig-heading--4">
-              {Number(data?.on_time_count) + Number(data?.late_count) || 0} hari
+              {Number(data?.on_time_count) + Number(data?.late_count) || 0} days
             </h4>
+            <p className="mig-caption--medium text-neutrals100">
+              Total Attendance
+            </p>
           </div>
 
           <div className="flex w-full justify-between gap-3">
             {/* Hadir */}
             <div className="w-full bg-backdrop p-2 rounded-md text-center ">
-              <p className="mig-caption--medium text-mono50">Hadir</p>
               <h4 className="mig-heading--4 text-primary100">
-                {data?.on_time_count || 0} hari
+                {data?.on_time_count || 0} days
               </h4>
+              <p className="mig-caption--medium text-mono50">On Time</p>
             </div>
 
             {/* Terlambat */}
             <div className="w-full bg-state1 bg-opacity-5 p-2 rounded-md text-center">
-              <p className="mig-caption--medium text-mono50">Terlambat</p>
               <h4 className="mig-heading--4 text-state1">
-                {data?.late_count || 0} hari
+                {data?.late_count || 0} days
               </h4>
+              <p className="mig-caption--medium text-mono50">Late</p>
             </div>
           </div>
         </div>

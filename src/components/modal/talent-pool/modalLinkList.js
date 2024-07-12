@@ -92,7 +92,7 @@ const ModalLinkList = ({ initProps, visible, onvisible, category }) => {
   ) : (
     <div className="flex items-center gap-2 ">
       <InfoCircleIconSvg size={32} color="#BF4A40" />
-      <p className="mig-heading--3 text-warning">
+      <p className="mig-heading--3 text-danger">
         Konfirmasi Pemberhentian Tautan
       </p>
     </div>
@@ -158,8 +158,8 @@ const ModalLinkList = ({ initProps, visible, onvisible, category }) => {
                     setCurrentModalData(item);
                     setModalDelete(true);
                   }}
-                  className="mig-caption--medium text-warning px-3 py-1 
-                bg-warning bg-opacity-20 rounded-full hover:opacity-70"
+                  className="mig-caption--medium text-danger px-3 py-1 
+                bg-danger bg-opacity-20 rounded-full hover:opacity-70"
                 >
                   Stop
                 </button>

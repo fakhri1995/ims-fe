@@ -504,7 +504,7 @@ const ContractInvoiceFormIndex = ({
           <Spin spinning={loadingContractInvoice}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {!isReadOnly && (
-                <p className="md:col-span-2 text-warning">
+                <p className="md:col-span-2 text-danger">
                   <em>*Informasi ini harus diisi</em>
                 </p>
               )}

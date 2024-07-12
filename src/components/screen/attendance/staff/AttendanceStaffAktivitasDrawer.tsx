@@ -220,32 +220,6 @@ export const AttendanceStaffAktivitasDrawer: FC<
     ]
   );
 
-  const handleOnDeleteAktivitas = useCallback(() => {
-    if (action !== "update") {
-      return;
-    }
-
-    if (!isAllowedToDeleteActivity) {
-      permissionWarningNotification("Menghapus", "Aktivitas");
-      return;
-    }
-
-    Modal.confirm({
-      centered: true,
-      title: "Perhatian!",
-      content: "Apakah Anda yakin untuk menghapus aktivitas ini?",
-      okText: "Hapus Aktivitas",
-      cancelText: "Kembali",
-      onOk: () => {
-        deleteAttendanceActivity(activityFormId, {
-          onSuccess: onMutationSucceed,
-          onError: onMutationFailed,
-        });
-      },
-      onCancel: () => onClose(),
-    });
-  }, [action, activityFormId, isAllowedToDeleteActivity]);
-
   useEffect(() => {
     /** Always clean up the form fields on close */
     if (!visible) {
@@ -279,13 +253,11 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
   return (
     <DrawerCore
-      title={`${action === "create" ? "Masukkan" : "Mengubah"} Aktivitas`}
-      buttonOkText="Simpan Aktivitas"
+      title={`${action === "create" ? "Add" : "Edit"} Activity`}
+      buttonOkText="Save Changes"
       visible={visible}
       onClose={onClose}
       onClick={() => form.submit()}
-      buttonCancelText={action === "update" ? "Hapus Aktivitas" : undefined}
-      onButtonCancelClicked={handleOnDeleteAktivitas}
       disabled={isOnMutationLoading}
     >
       <div className="space-y-6">
@@ -299,7 +271,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
         {!isLoading && !!userAttendanceForm && (
           <>
-            <em className="text-state1">* Informasi ini harus diisi</em>
+            {/* <em className="text-state1">*This information must be filled in</em> */}
 
             <Form
               form={form}
@@ -307,13 +279,14 @@ export const AttendanceStaffAktivitasDrawer: FC<
               layout="vertical"
               onFinish={handleOnFormSubmitted}
               validateMessages={{
-                required: "Field ini harus diisi!",
+                required: "This field is required!",
               }}
             >
               {userAttendanceForm.details.map(
                 ({ name, description, type, key, list, required }) => {
                   return (
                     <Form.Item
+                      name={name}
                       label={
                         <label className="font-bold text-mono30">{name}</label>
                       }
@@ -490,7 +463,7 @@ const _renderDynamicUpload = (
     );
     if (fileSizeInMb > 5) {
       notification.error({
-        message: "Ukuran file melebih batas persyaratan!",
+        message: "File size exceeds the requirement limit!",
       });
       return Upload.LIST_IGNORE;
     }
@@ -565,10 +538,10 @@ const _renderDynamicUpload = (
             }}
           >
             <CameraOutlined />
-            Ambil Foto
+            Take Photo
           </Button>
 
-          <span className="mig-caption--medium text-mono50">Atau</span>
+          <span className="mig-caption--medium text-mono50">or</span>
         </div>
 
         {/* Upload from file */}
@@ -591,14 +564,14 @@ const _renderDynamicUpload = (
         >
           <Button className="mig-button mig-button--outlined-primary absolute top-0 right-0">
             <UploadOutlined />
-            Unggah File
+            Upload Photo
           </Button>
         </Upload>
       </div>
 
-      <em className="text-mono50">Unggah File JPEG (Maksimal 5 MB)</em>
+      <em className="text-mono50">Upload JPEG file (Max. 5 MB)</em>
       <Modal
-        title="Foto Aktivitas"
+        title="Activity Photo"
         visible={isPreviewActivityPicture}
         footer={null}
         onCancel={() => setIsPreviewActivityPicture(false)}
@@ -609,7 +582,7 @@ const _renderDynamicUpload = (
 
       <AttendanceStaffWebcamModal
         visible={isWebcamModalShown}
-        title="Ambil foto aktivitas"
+        title="Take Activity Photo"
         onCancel={() => setIsWebcamModalShown(false)}
         onOk={onWebcamModalFinished}
       />

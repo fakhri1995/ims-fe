@@ -70,16 +70,14 @@ export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
 
     return (
       <div className="mig-platform flex flex-col">
-        <h4 className="mig-body--bold mb-3">Jadwal Kerja</h4>
+        <h4 className="mig-body--bold mb-3">Work Schedule</h4>
 
         {currentScheduleQueries?.map((schedule, idx) => {
           return (
             <React.Fragment key={idx}>
               {idx === 0 ? (
                 <div className="flex flex-col justify-center items-center p-2 bg-mono120 rounded-md mb-3">
-                  <p className="mig-caption--medium text-neutrals90">
-                    Hari Ini
-                  </p>
+                  <p className="mig-caption--medium text-neutrals90">Today</p>
                   {/* <p className="mig-caption--medium text-xs text-mono50">
                     {schedule?.data?.data?.shift?.title}
                   </p> */}
@@ -90,13 +88,13 @@ export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
                 </div>
               ) : (
                 <div className="flex justify-between gap-2 items-center mb-2">
-                  <p className="w-1/3 mig-caption--medium text-xs text-mono50">
+                  <p className="w-1/2 mig-caption--medium text-xs text-mono50 whitespace-nowrap">
                     {moment(dateParams[idx]).format("dddd, D MMM")}
                   </p>
                   {/* <p className="w-1/3 mig-caption--medium text-xs text-mono50">
                     {schedule?.data?.data?.shift?.title ?? "-"}
                   </p> */}
-                  <p className="w-1/3 mig-caption--bold text-xs text-mono30 text-right">
+                  <p className="w-1/2 mig-caption--bold text-xs text-mono30 text-right">
                     {schedule?.data?.data?.shift?.start_at?.slice(0, 5)} -{" "}
                     {schedule?.data?.data?.shift?.end_at?.slice(0, 5)}
                   </p>
