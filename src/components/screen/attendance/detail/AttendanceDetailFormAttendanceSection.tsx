@@ -66,6 +66,7 @@ export const AttendanceDetailFormAttendanceSection: FC<
 
           return <>{formattedDate}</>;
         },
+        width: 120,
         align: "center",
       },
     ];

@@ -127,12 +127,19 @@ export const AttendanceStaffAktivitasSection: FC<
   const isAllowedToLeaveCount = hasPermission(LEAVES_COUNT_GET);
   const isAllowedToAddLeaveUser = hasPermission(LEAVE_USER_ADD);
 
+  // Constant for Activity State
+  const [TODAY, HISTORY, FORM, TASK] = ["TODAY", "HISTORY", "FORM", "TASK"];
+
   /** 1 => Hari Ini, 2 => Riwayat */
-  const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
+  const [tabActiveKey, setTabActiveKey] = useState<
+    "TODAY" | "HISTORY" | string
+  >(TODAY);
   /** 3 => Form, 4 => Task */
-  const [tabActiveKey2, setTabActiveKey2] = useState<"3" | "4" | string>("");
+  const [tabActiveKey2, setTabActiveKey2] = useState<"FORM" | "TASK" | string>(
+    FORM
+  );
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
-    useGetUserAttendanceActivities(tabActiveKey === "1" ? "today" : "past");
+    useGetUserAttendanceActivities(tabActiveKey === TODAY ? "today" : "past");
   const { attendeeStatus } = useGetAttendeeInfo();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -317,12 +324,11 @@ export const AttendanceStaffAktivitasSection: FC<
         render: (value) => {
           const formattedDate = formatDateToLocale(
             new Date(value),
-            tabActiveKey === "1" ? "HH:mm" : "dd MMM yyyy, HH:mm"
+            tabActiveKey === TODAY ? "HH:mm" : "dd MMM yyyy, HH:mm"
           );
-
           return <p className="whitespace-nowrap">{formattedDate}</p>;
         },
-        width: 121,
+        width: 120,
         align: "center",
       },
     ];
@@ -332,19 +338,25 @@ export const AttendanceStaffAktivitasSection: FC<
 
       // use for displaying url of uploaded file
       if (regex.test(text)) {
+        const fileName = getFileName(text);
         return (
           <a
+            title={fileName}
             onClick={(e) => e.stopPropagation()}
             href={generateStaticAssetUrl(text)}
             target="_blank"
             rel="external"
           >
-            <p className="truncate max-w-[180px]">{getFileName(text)}</p>
+            <p className="truncate max-w-[180px]">{fileName}</p>
           </a>
         );
       }
 
-      return <p className={"truncate max-w-[252px]"}>{text}</p>;
+      return (
+        <p title={text} className={"truncate max-w-[252px]"}>
+          {text}
+        </p>
+      );
     };
 
     dynamicNameFieldPairs.columnNames.forEach((column, index) => {
@@ -357,7 +369,7 @@ export const AttendanceStaffAktivitasSection: FC<
       });
     });
 
-    if (tabActiveKey == "1") {
+    if (tabActiveKey == TODAY) {
       columns.push({
         key: "delete",
         title: "Actions",
@@ -375,7 +387,7 @@ export const AttendanceStaffAktivitasSection: FC<
           );
         },
         align: "center",
-        width: 84,
+        width: 60,
       });
     }
 
@@ -395,7 +407,7 @@ export const AttendanceStaffAktivitasSection: FC<
 
   const mOnRowItemClicked = useCallback(
     (datum: (typeof dataSource)[0]) => {
-      if (tabActiveKey === "2") {
+      if (tabActiveKey === HISTORY) {
         /** Only allow this click callback when user is on "Hari Ini" tab */
         return;
       }
@@ -542,9 +554,9 @@ export const AttendanceStaffAktivitasSection: FC<
 
   const checkActivityTask = () => {
     if (isAllowedToGetActivity) {
-      setTabActiveKey2("3");
+      setTabActiveKey2(FORM);
     } else if (isAllowedToGetTaskActivities) {
-      setTabActiveKey2("4");
+      setTabActiveKey2(TASK);
     }
   };
 
@@ -569,7 +581,7 @@ export const AttendanceStaffAktivitasSection: FC<
       render: (value) => {
         const formattedDate = formatDateToLocale(
           new Date(value),
-          tabActiveKey === "1" ? "HH:mm" : "dd MMM yyyy, HH:mm"
+          tabActiveKey === TODAY ? "HH:mm" : "dd MMM yyyy, HH:mm"
         );
 
         return <p className="whitespace-nowrap">{formattedDate}</p>;
@@ -592,7 +604,7 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   }
   function checkFormOrTask() {
-    if (tabActiveKey2 == "3" && activeSubmenu == "aktivitas") {
+    if (tabActiveKey2 == FORM && activeSubmenu == "aktivitas") {
       return (
         <Table<(typeof dataSource)[0]>
           columns={tableColums}
@@ -611,8 +623,8 @@ export const AttendanceStaffAktivitasSection: FC<
         />
       );
     } else if (
-      tabActiveKey == "1" &&
-      tabActiveKey2 == "4" &&
+      tabActiveKey == TODAY &&
+      tabActiveKey2 == TASK &&
       activeSubmenu == "aktivitas"
     ) {
       return (
@@ -784,7 +796,7 @@ export const AttendanceStaffAktivitasSection: FC<
       <section className="mig-platform--p-0">
         {/* Header */}
         <div className={"flex justify-between items-center border-b py-3 px-4"}>
-          {tabActiveKey == "1" ? (
+          {tabActiveKey == TODAY ? (
             <Dropdown
               trigger={["click"]}
               overlay={
@@ -831,15 +843,17 @@ export const AttendanceStaffAktivitasSection: FC<
               <ButtonTooltip
                 square
                 type="primary"
-                color={tabActiveKey == "1" ? "mono100" : ""}
-                onClick={() => setTabActiveKey(tabActiveKey == "1" ? "2" : "1")}
+                color={tabActiveKey == TODAY ? "mono100" : ""}
+                onClick={() =>
+                  setTabActiveKey(tabActiveKey == TODAY ? HISTORY : TODAY)
+                }
                 disabled={!isAllowedToGetActivity}
                 tooltipTitle="History of Activities"
               >
                 <HistoryIconSvg size={16} />
               </ButtonTooltip>
 
-              {tabActiveKey == "1" && (
+              {tabActiveKey == TODAY && (
                 <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
                   <ButtonTooltip
                     square
@@ -876,9 +890,9 @@ export const AttendanceStaffAktivitasSection: FC<
           <div className="flex justify-between gap-3 py-3 px-4">
             <div className={"flex gap-3 "}>
               <div
-                onClick={() => setTabActiveKey2("3")}
+                onClick={() => setTabActiveKey2(FORM)}
                 className={`${
-                  tabActiveKey2 == "3"
+                  tabActiveKey2 == FORM
                     ? "bg-primary100 mig-body--medium text-white"
                     : "bg-white border hover:bg-primary75 mig-body text-mono80 hover:text-white"
                 } rounded-[48px] py-1 px-4 hover:cursor-pointer `}
@@ -887,9 +901,9 @@ export const AttendanceStaffAktivitasSection: FC<
               </div>
               {isAllowedToGetTaskActivities && (
                 <div
-                  onClick={() => setTabActiveKey2("4")}
+                  onClick={() => setTabActiveKey2(TASK)}
                   className={`${
-                    tabActiveKey2 == "4"
+                    tabActiveKey2 == TASK
                       ? "bg-primary100 mig-body--medium text-white"
                       : "bg-white border hover:bg-primary75 mig-body text-mono80 hover:text-white "
                   } rounded-[48px] py-1 px-4 hover:cursor-pointer`}
@@ -899,8 +913,8 @@ export const AttendanceStaffAktivitasSection: FC<
               )}
             </div>
 
-            {tabActiveKey == "1" &&
-              (isAllowedToAddActivity && tabActiveKey2 == "3" ? (
+            {tabActiveKey == TODAY &&
+              (isAllowedToAddActivity && tabActiveKey2 == FORM ? (
                 <div>
                   <ButtonSys
                     type="primary"
@@ -914,7 +928,7 @@ export const AttendanceStaffAktivitasSection: FC<
                     </div>
                   </ButtonSys>
                 </div>
-              ) : isAllowedToAddTaskActivities && tabActiveKey2 == "4" ? (
+              ) : isAllowedToAddTaskActivities && tabActiveKey2 == TASK ? (
                 <div>
                   <ButtonSys
                     type="primary"

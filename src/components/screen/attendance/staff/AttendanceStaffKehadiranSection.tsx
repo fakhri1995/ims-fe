@@ -78,7 +78,7 @@ export const AttendanceStaffKehadiranSection: FC<
             </span>
           );
         },
-        width: 51,
+        width: 45,
         align: "center",
       },
       {
@@ -93,7 +93,7 @@ export const AttendanceStaffKehadiranSection: FC<
           );
 
           return (
-            <span className={`${spanClassName} whitespace-nowrap`}>
+            <span className={`${spanClassName} mig-caption whitespace-nowrap`}>
               {formattedDate}
             </span>
           );
@@ -104,13 +104,17 @@ export const AttendanceStaffKehadiranSection: FC<
 
           return isBefore(rhsDate, lhsDate) ? -1 : 1;
         },
-        width: 160,
+        width: 120,
       },
       {
         key: "id",
         title: "Check In Location",
         dataIndex: ["geo_loc_check_in", "display_name"],
-        render: (value) => <p className="max-w-40 truncate">{value}</p>,
+        render: (value) => (
+          <p title={value} className="max-w-32 mig-caption truncate">
+            {value}
+          </p>
+        ),
       },
       {
         title: "Check Out",
@@ -124,7 +128,7 @@ export const AttendanceStaffKehadiranSection: FC<
           );
 
           return (
-            <span className={`${spanClassName} whitespace-nowrap`}>
+            <span className={`${spanClassName} mig-caption whitespace-nowrap`}>
               {formattedDate}
             </span>
           );
@@ -135,13 +139,17 @@ export const AttendanceStaffKehadiranSection: FC<
 
           return isBefore(rhsDate, lhsDate) ? -1 : 1;
         },
-        width: 160,
+        width: 120,
       },
       {
         key: "id",
         title: "Check Out Location",
         dataIndex: ["geo_loc_check_out", "display_name"],
-        render: (value) => <p className="max-w-40 truncate">{value}</p>,
+        render: (value) => (
+          <p title={value} className="max-w-32 mig-caption truncate">
+            {value}
+          </p>
+        ),
       },
 
       {
