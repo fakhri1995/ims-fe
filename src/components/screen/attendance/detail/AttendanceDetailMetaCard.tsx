@@ -48,40 +48,26 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
         enabled: !isAllowedToGet ? false : !!attendanceId,
         select: (response) => {
           const attendanceMeta = response.data.data.user_attendance;
-          console.log("response data ", response.data.data);
           const attendanceCheckInDate = new Date(attendanceMeta.check_in);
 
-          /** Commented code below currently isn't used anymore */
-          // const attendanceComparableTime = new Date(
-          //   attendanceCheckInDate.getFullYear(),
-          //   attendanceCheckInDate.getMonth(),
-          //   attendanceCheckInDate.getDate(),
-          //   ATTENDANCE_SAFE_TIME.HOUR,
-          //   ATTENDANCE_SAFE_TIME.MINUTE,
-          //   0
-          // );
-          // const isLate = isAfter(
-          //   attendanceCheckInDate,
-          //   attendanceComparableTime
-          // )
-          //   ? "Terlambat"
-          //   : "Tepat Waktu";
-
-          const isLate = attendanceMeta.is_late ? "Terlambat" : "Tepat Waktu";
-
-          const headerData = formatDateToLocale(
-            attendanceCheckInDate,
-            "dd MMMM yyyy"
-          );
+          const isLate = attendanceMeta.is_late ? "Late" : "On Time";
 
           const contentData = [
             {
-              label: "Nama",
+              label: "Date",
+              content: formatDateToLocale(
+                attendanceCheckInDate,
+                "dd MMMM yyyy"
+              ),
+            },
+
+            {
+              label: "Name",
               content: attendanceMeta?.name || "-",
             },
 
             {
-              label: "Waktu Check In",
+              label: "Check In",
               content: formatDateToLocale(
                 attendanceCheckInDate,
                 "HH:mm:ss",
@@ -89,11 +75,11 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
               ),
             },
             {
-              label: "Lokasi Check In",
+              label: "Check In Location",
               content: attendanceMeta.geo_loc_check_in?.display_name || "-",
             },
             {
-              label: "Waktu Check Out",
+              label: "Check Out",
               content: formatDateToLocale(
                 attendanceMeta.check_out,
                 "HH:mm:ss",
@@ -101,13 +87,13 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
               ),
             },
             {
-              label: "Lokasi Check Out",
+              label: "Check Out Location",
               content: attendanceMeta.geo_loc_check_out?.display_name || "-",
             },
-            { label: "Keterangan", content: isLate },
+            { label: "Present", content: isLate },
           ];
 
-          return { headerData, contentData };
+          return { contentData };
         },
       }
     );
@@ -116,9 +102,7 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
       <DetailCard
         isLoading={isLoading || !attendanceId}
         estimatedContentLength={6}
-        header={
-          <h4 className="mig-heading--4 text-center">{data?.headerData}</h4>
-        }
+        header={<h4 className="mig-body--bold ">Details</h4>}
         content={data?.contentData || []}
       />
     ) : null;

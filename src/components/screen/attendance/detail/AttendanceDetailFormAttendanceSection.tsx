@@ -6,7 +6,6 @@ import { FC, useEffect, useMemo, useState } from "react";
 import React from "react";
 
 import { AccessControl } from "components/features/AccessControl";
-import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -49,11 +48,12 @@ export const AttendanceDetailFormAttendanceSection: FC<
         title: "No.",
         render: (_, __, index) =>
           `${(currentPage - 1) * pageSize + index + 1}.`,
-        width: 64,
+        width: 51,
+        align: "center",
       },
       {
         key: "id",
-        title: "Waktu Pengisian",
+        title: "Input Time",
         dataIndex: "updated_at",
         sorter: (a: string, b: string) => {
           const lhsDate = new Date(a);
@@ -66,6 +66,7 @@ export const AttendanceDetailFormAttendanceSection: FC<
 
           return <>{formattedDate}</>;
         },
+        align: "center",
       },
     ];
 
@@ -74,6 +75,8 @@ export const AttendanceDetailFormAttendanceSection: FC<
         key: dynamicNameFieldPairs.fieldKeys[index],
         title: column,
         dataIndex: dynamicNameFieldPairs.fieldKeys[index],
+        render: (value) => <p className="truncate max-w-80">{value}</p>,
+        width: 320,
       });
     });
 
@@ -126,25 +129,36 @@ export const AttendanceDetailFormAttendanceSection: FC<
   }
 
   return (
-    <section className="mig-platform space-y-6 text-gray-500">
-      <div className="flex items-center justify-between">
-        <Tabs
-          defaultActiveKey="1"
-          className="md:w-1/2"
-          onChange={setTabActiveKey}
+    <section className="mig-platform--p-0 text-gray-500 pb-3">
+      <h1 className="mig-body--bold border-b py-3 px-4">Activity</h1>
+      <div className="flex items-center gap-3 py-3 px-4">
+        <div
+          onClick={() => setTabActiveKey("1")}
+          className={`${
+            tabActiveKey == "1"
+              ? "bg-primary100 mig-body--medium text-white"
+              : "bg-white border hover:bg-primary75 mig-body text-mono80 hover:text-white"
+          } rounded-[48px] py-1 px-4 hover:cursor-pointer `}
         >
-          <TabPane tab="Form" key="1" />
-          {isAllowedToGetTaskActivities && <TabPane tab="Task" key="2" />}
-        </Tabs>
+          <p>Form</p>
+        </div>
+        {isAllowedToGetTaskActivities && (
+          <div
+            onClick={() => setTabActiveKey("2")}
+            className={`${
+              tabActiveKey == "2"
+                ? "bg-primary100 mig-body--medium text-white"
+                : "bg-white border hover:bg-primary75 mig-body text-mono80 hover:text-white "
+            } rounded-[48px] py-1 px-4 hover:cursor-pointer`}
+          >
+            <p>Task</p>
+          </div>
+        )}
       </div>
 
-      {tabActiveKey == "1" ? (
-        <ConfigProvider
-          renderEmpty={() => (
-            <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
-          )}
-        >
-          <Table<typeof dataSource[0]>
+      <div className="px-4">
+        {tabActiveKey == "1" ? (
+          <Table<(typeof dataSource)[0]>
             columns={tableColums}
             dataSource={dataSource}
             pagination={tablePaginationConf}
@@ -152,34 +166,34 @@ export const AttendanceDetailFormAttendanceSection: FC<
             scroll={{ x: "max-content" }}
             className="tableTypeTask"
           />
-        </ConfigProvider>
-      ) : (
-        dataTasks.length > 0 &&
-        dataTasks.map((task, index) => (
-          <div key={task.id} className="flex-none rounded-md ">
-            <div className={"flex px-4 py-2 border border-inputkategori"}>
-              <div className={"w-11/12"}>
-                <p
-                  className={"text-xs font-bold text-mono30"}
-                  style={{ lineHeight: "20px" }}
-                >
-                  {task.activity} (T-
-                  {task.task_id ? task.task_id : task.task_export_id})
-                </p>
-                <p
-                  className={"text-xs text-mono50"}
-                  style={{ lineHeight: "16px" }}
-                >
-                  [{renderTaskName(task)}]
-                </p>
-              </div>
-              <div className={"w-1/12 self-center flex justify-end"}>
-                <p>{moment(task.updated_at).format("HH:mm")}</p>
+        ) : (
+          dataTasks.length > 0 &&
+          dataTasks.map((task, index) => (
+            <div key={task.id} className="flex-none rounded-md ">
+              <div className={"flex px-4 py-2 border border-inputkategori"}>
+                <div className={"w-11/12"}>
+                  <p
+                    className={"text-xs font-bold text-mono30"}
+                    style={{ lineHeight: "20px" }}
+                  >
+                    {task.activity} (T-
+                    {task.task_id ? task.task_id : task.task_export_id})
+                  </p>
+                  <p
+                    className={"text-xs text-mono50"}
+                    style={{ lineHeight: "16px" }}
+                  >
+                    [{renderTaskName(task)}]
+                  </p>
+                </div>
+                <div className={"w-1/12 self-center flex justify-end"}>
+                  <p>{moment(task.updated_at).format("HH:mm")}</p>
+                </div>
               </div>
             </div>
-          </div>
-        ))
-      )}
+          ))
+        )}
+      </div>
     </section>
   );
 };

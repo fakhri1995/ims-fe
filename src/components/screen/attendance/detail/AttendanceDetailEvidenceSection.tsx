@@ -77,7 +77,7 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
       <>
         {Empty.PRESENTED_IMAGE_SIMPLE}
         <span className="mig-caption mig-caption--medium text-center text-mono50 block">
-          Belum memiliki bukti.
+          There’s no check out proof yet.
         </span>
       </>
     );
@@ -121,50 +121,53 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
       : "";
 
     return isAllowedToGet ? (
-      <section className="mig-platform flex justify-between space-x-6">
+      <section className="mig-platform--p-0 pb-4">
         {/* Evidence: checkin */}
-        <div className="flex flex-col space-y-4 w-1/2">
-          <span className="mig-caption text-gray-400">Bukti Check In</span>
-          <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
-            {shouldShowSpinner && <Spin size="large" />}
+        <h1 className="mig-body--bold p-4 border-b">Attendance Proof</h1>
+        <div className="flex flex-col md:flex-row justify-between gap-6 p-4">
+          <div className="flex flex-col space-y-4 md:w-1/2">
+            <span className="mig-caption text-gray-400">Check In</span>
+            <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
+              {shouldShowSpinner && <Spin size="large" />}
 
-            {!shouldShowSpinner && data.check_in_evidence !== null && (
-              <>
-                <img
-                  src={data.check_in_evidence}
-                  alt="Evidence Check In Image"
-                  className="w-full h-full bg-cover"
-                />
-                <span className="mig-caption mig-caption--medium text-center text-mono50 block">
-                  {checkInEvidenceFileName}
-                </span>
-              </>
-            )}
+              {!shouldShowSpinner && data.check_in_evidence !== null && (
+                <>
+                  <img
+                    src={data.check_in_evidence}
+                    alt="Evidence Check In Image"
+                    className="w-full h-full bg-cover rounded-[5px]"
+                  />
+                  <span className="mig-caption mig-caption--medium text-center break-all max-w-48 text-mono50 block">
+                    {checkInEvidenceFileName}
+                  </span>
+                </>
+              )}
 
-            {shouldShowNotFoundCheckIn && imageErrorContent}
+              {shouldShowNotFoundCheckIn && imageErrorContent}
+            </div>
           </div>
-        </div>
 
-        {/* Evidence: checkout */}
-        <div className="flex flex-col space-y-4 w-1/2">
-          <span className="mig-caption text-gray-400">Bukti Check Out</span>
-          <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
-            {shouldShowSpinner && <Spin size="large" />}
+          {/* Evidence: checkout */}
+          <div className="flex flex-col space-y-4 md:w-1/2">
+            <span className="mig-caption text-gray-400">Check Out</span>
+            <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
+              {shouldShowSpinner && <Spin size="large" />}
 
-            {!shouldShowSpinner && data.check_out_evidence !== null && (
-              <>
-                <img
-                  src={data.check_out_evidence}
-                  alt="Evidence Check Out Image"
-                  className="w-full h-full bg-cover"
-                />
-                <span className="mig-caption mig-caption--medium text-center text-mono50 block">
-                  {checkOutEvidenceFileName}
-                </span>
-              </>
-            )}
+              {!shouldShowSpinner && data.check_out_evidence !== null && (
+                <>
+                  <img
+                    src={data.check_out_evidence}
+                    alt="Evidence Check Out Image"
+                    className="w-full h-full bg-cover rounded-[5px]"
+                  />
+                  <span className="mig-caption mig-caption--medium text-center break-all max-w-48 text-mono50 block">
+                    {checkOutEvidenceFileName}
+                  </span>
+                </>
+              )}
 
-            {shouldShowNotFoundCheckOut && imageErrorContent}
+              {shouldShowNotFoundCheckOut && imageErrorContent}
+            </div>
           </div>
         </div>
       </section>

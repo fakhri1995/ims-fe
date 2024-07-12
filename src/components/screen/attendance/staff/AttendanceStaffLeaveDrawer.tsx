@@ -266,7 +266,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
 
   return (
     <Drawer
-      title={`Apply for Leave`}
+      title={<h1 className="mig-body--bold">Apply for Leave</h1>}
       open={visible}
       width={400}
       onClose={onClose}

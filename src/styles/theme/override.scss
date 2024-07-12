@@ -37,6 +37,12 @@ a:hover {
 /* Button */
 .btn {
   text-transform: none !important;
+  border-radius: 5px;
+}
+
+.btn-square {
+  width: 32px;
+  height: 32px;
 }
 
 // tailwind classname for gradient color in production env is not working, so it had to use plain css
@@ -266,9 +272,17 @@ a:hover {
 
 /* DROPDOWN MENU */
 .ant-dropdown-menu {
+  width: 208px;
   border-radius: 10px;
   border: 1px 0px;
+  padding: 6px;
 }
+.ant-dropdown-menu-item {
+  padding: 6px 10px;
+  line-height: 24px;
+  color: #808080;
+}
+
 .ant-dropdown-menu-item-selected {
   background-color: #fafafa;
   color: #35763b;
@@ -421,10 +435,18 @@ a:hover {
 
 /* PAGINATION */
 .ant-pagination-item-active {
+  background-color: #35763b;
   border-color: #35763b;
 }
+
 .ant-pagination-item-active a {
-  color: #35763b;
+  color: white;
+}
+
+.ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination-next .ant-pagination-item-link,
+.ant-pagination-item {
+  border-radius: 5px;
 }
 
 /* CHECKBOX */
@@ -457,6 +479,14 @@ a:hover {
 }
 
 /* TABLE */
+.ant-table-thead > tr > th {
+  padding: 9px 16px;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 11px 16px;
+}
+
 .tableTypeTask .ant-table-column-sorter-up.active,
 .tableTypeTask .ant-table-column-sorter-down.active {
   color: #35763b;
@@ -604,6 +634,12 @@ a:hover {
 }
 
 /* MODAL */
+.ant-modal-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
 .ant-modal-content {
   border-radius: 10px;
 }
@@ -654,6 +690,12 @@ a:hover {
 
 .ant-drawer-content {
   border-radius: 10px 0 0 10px;
+}
+
+.ant-drawer-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
 }
 
 /* BUTTON */

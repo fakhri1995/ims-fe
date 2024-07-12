@@ -1,5 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Checkbox, Input, Modal, notification } from "antd";
+import { Checkbox, Empty, Input, Modal, notification } from "antd";
 import QueryString from "qs";
 import React, { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
@@ -322,7 +322,7 @@ const ModalImportTasksToActivity = ({
           </div>
         ))
       ) : (
-        <DataEmptyState caption="No data yet" />
+        <DataEmptyState />
       )}
 
       <div className={"pt-3 flex gap-4 justify-end border-t"}>

@@ -5,8 +5,6 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import {
-  Checkbox,
-  ConfigProvider,
   Dropdown,
   Input,
   Menu,
@@ -38,9 +36,9 @@ import {
 import { useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
+import ButtonTooltip from "components/buttonTooltip";
 import { AccessControl } from "components/features/AccessControl";
 import ModalImportTasksToActivity from "components/modal/attendance/modalImportTasksToActivity";
-import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -52,6 +50,7 @@ import {
   ATTENDANCE_ACTIVITY_ADD,
   ATTENDANCE_ACTIVITY_DELETE,
   ATTENDANCE_ACTIVITY_UPDATE,
+  ATTENDANCE_ACTIVITY_USER_EXPORT,
   ATTENDANCE_TASK_ACTIVITIES_GET,
   ATTENDANCE_TASK_ACTIVITY_ADD,
   ATTENDANCE_TASK_ACTIVITY_DELETE,
@@ -79,10 +78,12 @@ import {
   CirclePlusIconSvg,
   DownIconSvg,
   DownloadIconSvg,
+  FileExportIconSvg,
   HistoryIconSvg,
   TrashIconSvg,
   XIconSvg,
 } from "../../../../components/icon";
+import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
@@ -120,6 +121,7 @@ export const AttendanceStaffAktivitasSection: FC<
   const isAllowedToDeleteTaskActivity = hasPermission(
     ATTENDANCE_TASK_ACTIVITY_DELETE
   );
+  const isAllowedToExportTable = hasPermission(ATTENDANCE_ACTIVITY_USER_EXPORT);
 
   const isAllowedToLeavesUser = hasPermission(LEAVES_USER_GET);
   const isAllowedToLeaveCount = hasPermission(LEAVES_COUNT_GET);
@@ -140,6 +142,8 @@ export const AttendanceStaffAktivitasSection: FC<
   const [displayDataLeaves, setDisplayDataLeaves] = useState([]);
   const [displayDataTaskToday, setDisplayDataTaskToday] = useState([]);
   const [displayDataTaskHistory, setDisplayDataTaskHistory] = useState([]);
+  const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
+
   const [activeSubmenu, setActiveSubmenu] = useState("aktivitas");
   const [rowstate, setrowstate] = useState(0);
   const [dataDefault, setDataDefault] = useState(null);
@@ -297,7 +301,8 @@ export const AttendanceStaffAktivitasSection: FC<
         title: "No.",
         render: (_, __, index) =>
           `${(currentPage - 1) * pageSize + index + 1}.`,
-        width: 64,
+        width: 51,
+        align: "center",
       },
       {
         key: "id",
@@ -315,8 +320,10 @@ export const AttendanceStaffAktivitasSection: FC<
             tabActiveKey === "1" ? "HH:mm" : "dd MMM yyyy, HH:mm"
           );
 
-          return <>{formattedDate}</>;
+          return <p className="whitespace-nowrap">{formattedDate}</p>;
         },
+        width: 121,
+        align: "center",
       },
     ];
 
@@ -331,14 +338,13 @@ export const AttendanceStaffAktivitasSection: FC<
             href={generateStaticAssetUrl(text)}
             target="_blank"
             rel="external"
-            className="truncate max-w-[200px]"
           >
-            {getFileName(text)}
+            <p className="truncate max-w-[180px]">{getFileName(text)}</p>
           </a>
         );
       }
 
-      return text;
+      return <p className={"truncate max-w-[252px]"}>{text}</p>;
     };
 
     dynamicNameFieldPairs.columnNames.forEach((column, index) => {
@@ -347,6 +353,7 @@ export const AttendanceStaffAktivitasSection: FC<
         title: column,
         dataIndex: dynamicNameFieldPairs.fieldKeys[index],
         render: renderCell,
+        width: 252,
       });
     });
 
@@ -354,7 +361,6 @@ export const AttendanceStaffAktivitasSection: FC<
       columns.push({
         key: "delete",
         title: "Actions",
-        align: "center",
         render: (_, record: (typeof dataSource)[0]) => {
           return (
             <button
@@ -368,6 +374,8 @@ export const AttendanceStaffAktivitasSection: FC<
             </button>
           );
         },
+        align: "center",
+        width: 84,
       });
     }
 
@@ -545,7 +553,8 @@ export const AttendanceStaffAktivitasSection: FC<
       key: "id",
       title: "No.",
       render: (_, __, index) => `${(currentPage - 1) * pageSize + index + 1}.`,
-      width: 64,
+      width: 51,
+      align: "center",
     },
     {
       key: "id",
@@ -563,13 +572,15 @@ export const AttendanceStaffAktivitasSection: FC<
           tabActiveKey === "1" ? "HH:mm" : "dd MMM yyyy, HH:mm"
         );
 
-        return <>{formattedDate}</>;
+        return <p className="whitespace-nowrap">{formattedDate}</p>;
       },
     },
     {
       key: "id",
       title: "Task Name",
       dataIndex: "activity",
+      render: (value) => <p className="truncate max-w-120">{value}</p>,
+      width: 480,
     },
   ];
 
@@ -583,27 +594,21 @@ export const AttendanceStaffAktivitasSection: FC<
   function checkFormOrTask() {
     if (tabActiveKey2 == "3" && activeSubmenu == "aktivitas") {
       return (
-        <ConfigProvider
-          renderEmpty={() => (
-            <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
-          )}
-        >
-          <Table<(typeof dataSource)[0]>
-            columns={tableColums}
-            rowKey={(record) => record.id}
-            dataSource={dataSource}
-            pagination={tablePaginationConf}
-            loading={isDataSourceLoading}
-            scroll={{ x: "max-content" }}
-            className="tableTypeTask"
-            onRow={(datum) => {
-              return {
-                className: "hover:cursor-pointer",
-                onClick: () => mOnRowItemClicked(datum),
-              };
-            }}
-          />
-        </ConfigProvider>
+        <Table<(typeof dataSource)[0]>
+          columns={tableColums}
+          rowKey={(record) => record.id}
+          dataSource={dataSource}
+          pagination={tablePaginationConf}
+          loading={isDataSourceLoading}
+          scroll={{ x: "max-content" }}
+          className="tableTypeTask"
+          onRow={(datum) => {
+            return {
+              className: "hover:cursor-pointer",
+              onClick: () => mOnRowItemClicked(datum),
+            };
+          }}
+        />
       );
     } else if (
       tabActiveKey == "1" &&
@@ -650,12 +655,12 @@ export const AttendanceStaffAktivitasSection: FC<
                       </div>
                       <button
                         className={`bg-transparent hover:opacity-75 ${
-                          !isAllowedToDeleteActivity
+                          !isAllowedToDeleteTaskActivity
                             ? "cursor-not-allowed"
                             : undefined
                         }`}
                         onClick={() => handleDeleteTaskActivity(task.id)}
-                        disabled={!isAllowedToDeleteActivity}
+                        disabled={!isAllowedToDeleteTaskActivity}
                       >
                         <XIconSvg size={24} color="#BF4A40" />
                       </button>
@@ -823,39 +828,31 @@ export const AttendanceStaffAktivitasSection: FC<
 
           {activeSubmenu == "aktivitas" && (
             <div className="flex gap-3">
-              <ButtonSys
+              <ButtonTooltip
+                square
                 type="primary"
-                color={tabActiveKey == "1" ? "mono100" : false}
-                iconOnly
+                color={tabActiveKey == "1" ? "mono100" : ""}
                 onClick={() => setTabActiveKey(tabActiveKey == "1" ? "2" : "1")}
+                disabled={!isAllowedToGetActivity}
+                tooltipTitle="History of Activities"
               >
-                <HistoryIconSvg />
-              </ButtonSys>
+                <HistoryIconSvg size={16} />
+              </ButtonTooltip>
 
               {tabActiveKey == "1" && (
-                <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
-                  <ButtonSys
+                <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
+                  <ButtonTooltip
+                    square
                     type="primary"
                     color={"mono100"}
-                    iconOnly
-                    onClick={onImportTask}
-                    disabled={!isAllowedToAddTaskActivities}
+                    onClick={() => setIsExportDrawerShown(true)}
+                    disabled={!isAllowedToExportTable}
+                    tooltipTitle="Download Activity"
                   >
-                    <DownloadIconSvg />
-                  </ButtonSys>
+                    <DownloadIconSvg size={16} />
+                  </ButtonTooltip>
                 </AccessControl>
               )}
-
-              <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITY_ADD}>
-                <ModalImportTasksToActivity
-                  visible={showModalTask}
-                  onvisible={setShowModalTask}
-                  dataToken={dataToken}
-                  queryParams={queryParams2}
-                  displayDataTaskToday={displayDataTaskToday}
-                  onChangeSearch={onChangeProductSearch}
-                />
-              </AccessControl>
             </div>
           )}
 
@@ -888,7 +885,7 @@ export const AttendanceStaffAktivitasSection: FC<
               >
                 <p>Form</p>
               </div>
-              {isAllowedToLeavesUser && (
+              {isAllowedToGetTaskActivities && (
                 <div
                   onClick={() => setTabActiveKey2("4")}
                   className={`${
@@ -901,21 +898,48 @@ export const AttendanceStaffAktivitasSection: FC<
                 </div>
               )}
             </div>
-            {isAllowedToAddActivity && tabActiveKey == "1" && (
-              <div>
-                <ButtonSys
-                  type="primary"
-                  onClick={mOnAddActivityButtonClicked}
-                  disabled={!isAllowedToAddActivity}
-                  fullWidth
-                >
-                  <div className="flex items-center gap-2 whitespace-nowrap">
-                    <CirclePlusIconSvg />
-                    <p>Add Activity</p>
-                  </div>
-                </ButtonSys>
-              </div>
-            )}
+
+            {tabActiveKey == "1" &&
+              (isAllowedToAddActivity && tabActiveKey2 == "3" ? (
+                <div>
+                  <ButtonSys
+                    type="primary"
+                    onClick={mOnAddActivityButtonClicked}
+                    disabled={!isAllowedToAddActivity}
+                    fullWidth
+                  >
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      <CirclePlusIconSvg />
+                      <p>Add Activity</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+              ) : isAllowedToAddTaskActivities && tabActiveKey2 == "4" ? (
+                <div>
+                  <ButtonSys
+                    type="primary"
+                    onClick={onImportTask}
+                    disabled={!isAllowedToAddTaskActivities}
+                    fullWidth
+                  >
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      <FileExportIconSvg />
+                      <p>Import Task</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+              ) : null)}
+
+            <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITY_ADD}>
+              <ModalImportTasksToActivity
+                visible={showModalTask}
+                onvisible={setShowModalTask}
+                dataToken={dataToken}
+                queryParams={queryParams2}
+                displayDataTaskToday={displayDataTaskToday}
+                onChangeSearch={onChangeProductSearch}
+              />
+            </AccessControl>
           </div>
         )}
 
@@ -989,6 +1013,15 @@ export const AttendanceStaffAktivitasSection: FC<
           onClose={() => dispatch({ type: "create", visible: false })}
         />
       )}
+
+      <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
+        <EksporAbsensiDrawer
+          visible={isExportDrawerShown}
+          token={dataToken}
+          exportActivity
+          onClose={() => setIsExportDrawerShown(false)}
+        />
+      </AccessControl>
     </>
   );
 };

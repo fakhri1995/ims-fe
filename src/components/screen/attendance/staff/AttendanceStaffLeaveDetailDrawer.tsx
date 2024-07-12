@@ -143,7 +143,11 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
 
   return (
     <Modal
-      title={<p className={"text-center"}>Detail of Leave Application</p>}
+      title={
+        <p className={"text-center mig-body--bold"}>
+          Detail of Leave Application
+        </p>
+      }
       open={visible}
       width={487}
       className={"rounded-[10px]"}
@@ -227,7 +231,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
               moment(dataDefault?.start_date),
               "days"
             )}{" "}
-            Hari
+            Days
           </p>
         </div>
         <div className={"flex flex-col gap-1"}>

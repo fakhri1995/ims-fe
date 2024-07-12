@@ -15,7 +15,6 @@ const ButtonSys = ({
   onChangeGambar,
   disabled,
   fullWidth,
-  iconOnly,
 
   inputAccept, // only accept certain files type (`accept` <input>'s attribute)
   inputMultiple = false,
@@ -59,7 +58,6 @@ const ButtonSys = ({
       "btn-sm": size !== "large",
       "w-full": fullWidth,
       "bg-disabled text-white border-disabled": disabled,
-      "px-6": !iconOnly,
     },
     "btn font-semibold border"
   );
