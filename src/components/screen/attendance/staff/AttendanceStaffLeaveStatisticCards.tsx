@@ -65,7 +65,7 @@ export const AttendanceStaffLeaveStatisticCards: FC<
           </div>
         </div>
 
-        <ClockIconFilledSvg size={28} className={"text-danger"} />
+        <ClockIconFilledSvg size={28} className={"text-warning"} />
       </div>
 
       {/* Card Days Used */}

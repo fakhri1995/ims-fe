@@ -56,15 +56,18 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
       tok={token}
       fixedBreadcrumbValues={pageBreadcrumb}
     >
-      <div className="px-6 md:px-0 flex space-y-6 lg:space-y-0 lg:space-x-6 flex-col lg:flex-row">
+      <div
+        className="flex flex-col lg:flex-row w-full 
+          space-y-6 lg:space-y-0 lg:space-x-6"
+      >
         {/* First column */}
-        <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5 space-y-6">
+        <div className="w-full lg:w-[258px] space-y-6">
           {/* Detail attendance meta */}
           <AttendanceDetailMetaCard attendanceId={attendanceId} />
         </div>
 
         {/* Second column */}
-        <div className="w-full lg:w-3/5 xl:w-2/3 2xl:w-4/5">
+        <div className="flex-1">
           <div className="grid grid-cols-12 space-y-6">
             <div className="col-span-full">
               {/* Form attendances detail */}
