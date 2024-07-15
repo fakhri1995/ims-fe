@@ -1,4 +1,9 @@
-import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  AlertFilled,
+  DeleteOutlined,
+  UploadOutlined,
+  WarningFilled,
+} from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -25,6 +30,7 @@ import {
 } from "../../lib/helper";
 import ButtonSys from "../button";
 import {
+  AlertCircleFilledIconSvg,
   AlertIconSvg,
   CheckIconSvg,
   CircleCheckIconSvg,
@@ -961,7 +967,6 @@ const ModalDownloadPayslip = ({
           </div>
         </Spin>
       }
-      loading={loading}
     >
       <Form layout="vertical">
         <p className="mb-4">
@@ -1093,7 +1098,6 @@ const ModalAddRole = ({
           </ButtonSys>
         </Spin>
       }
-      loading={loading}
     >
       <Form layout="vertical">
         <Form.Item
@@ -1247,7 +1251,7 @@ const ModalAddCompany = ({
   const beforeUploadImage = useCallback((uploadedFile) => {
     const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
     const isReachedMaxFileSize =
-      checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
+      checkMaxFileSizeFilter(uploadedFile, []) === Upload.LIST_IGNORE;
     const allowedFileTypes = [`image/png`, `image/jpg`, `image/jpeg`];
 
     if (!allowedFileTypes.includes(uploadedFile.type)) {
@@ -1318,7 +1322,6 @@ const ModalAddCompany = ({
           </ButtonSys>
         </Spin>
       }
-      loading={loading}
     >
       <Form layout="vertical">
         <Form.Item
@@ -1515,6 +1518,84 @@ const ModalEkspor = ({
   );
 };
 
+const ModalWarning = ({
+  visible,
+  okText,
+  onOk,
+  loading,
+  disabled,
+  children,
+}) => {
+  return (
+    <Modal
+      title={
+        <div className="text-warning flex items-center gap-3">
+          <AlertCircleFilledIconSvg size={24} />
+          <p>Attention</p>
+        </div>
+      }
+      visible={visible}
+      onOk={onOk}
+      okText={okText}
+      okButtonProps={{ loading: loading, disabled: disabled }}
+      cancelButtonProps={{ hidden: true }}
+      maskClosable={true}
+      closable={true}
+      className="mig-body--medium"
+    >
+      {children}
+    </Modal>
+  );
+};
+
+const ModalDelete = ({
+  visible,
+  itemName,
+  onOk,
+  onCancel,
+  loading,
+  disabled,
+  children,
+}) => {
+  return (
+    <Modal
+      title={
+        <div className="text-danger flex items-center gap-3">
+          <AlertCircleFilledIconSvg size={24} />
+          <p>Delete {itemName}</p>
+        </div>
+      }
+      visible={visible}
+      onCancel={onCancel}
+      className="mig-body--medium"
+      footer={
+        <Spin spinning={loading}>
+          <div className="flex gap-4 items-center justify-end">
+            <ButtonSys type={"default"} color={"mono50"} onClick={onCancel}>
+              Cancel
+            </ButtonSys>
+            <div className="col-span-2 hover:opacity-75">
+              <ButtonSys
+                type={"primary"}
+                color={"danger"}
+                onClick={onOk}
+                disabled={disabled}
+              >
+                <div className="flex items-center gap-2">
+                  <TrashIconSvg />
+                  <p>Delete {itemName}</p>
+                </div>
+              </ButtonSys>
+            </div>
+          </div>
+        </Spin>
+      }
+    >
+      {children}
+    </Modal>
+  );
+};
+
 export {
   ModalEdit,
   ModalEditTag,
@@ -1538,4 +1619,6 @@ export {
   ModalAddRole,
   ModalAddCompany,
   ModalEkspor,
+  ModalWarning,
+  ModalDelete,
 };
