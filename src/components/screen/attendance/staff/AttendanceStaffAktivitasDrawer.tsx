@@ -527,7 +527,7 @@ const _renderDynamicUpload = (
   // END: Upload field
 
   return (
-    <div className="flex flex-col space-y-6">
+    <div className="flex flex-col ">
       <div className="relative">
         {/* Gunakan camera */}
         <div className="flex items-center space-x-5">

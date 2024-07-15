@@ -604,8 +604,9 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       <div className="">
         <Tabs
           defaultActiveKey={activeTabKey}
-          className="w-full"
           onChange={setActiveTabKey}
+          // tabBarGutter={120}
+          // tabBarStyle={{ textAlign: "center" }}
         >
           <TabPane tab="Attendance Sheet" key="1" />
           {exportActivity && isAllowedToExportActivity && (
@@ -629,6 +630,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
               <Form.Item name="rentang_waktu" label="Time Range" required>
                 <RangePicker
                   format="DD MMM YYYY"
+                  className="w-full"
                   allowClear={false}
                   value={[
                     selectedDateRange.start_date,
@@ -792,6 +794,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
               <Form.Item name="rentang_waktu_pdf" label="Time Range">
                 <RangePicker
                   format="DD MMM YYYY"
+                  className="w-full"
                   allowClear={false}
                   value={[
                     selectedDateRangePdf.start_date,

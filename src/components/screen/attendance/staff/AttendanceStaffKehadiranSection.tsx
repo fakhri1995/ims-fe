@@ -93,7 +93,7 @@ export const AttendanceStaffKehadiranSection: FC<
           );
 
           return (
-            <span className={`${spanClassName} mig-caption whitespace-nowrap`}>
+            <span className={`${spanClassName} whitespace-nowrap`}>
               {formattedDate}
             </span>
           );
@@ -111,7 +111,7 @@ export const AttendanceStaffKehadiranSection: FC<
         title: "Check In Location",
         dataIndex: ["geo_loc_check_in", "display_name"],
         render: (value) => (
-          <p title={value} className="max-w-32 mig-caption truncate">
+          <p title={value} className="max-w-28 truncate">
             {value}
           </p>
         ),
@@ -128,7 +128,7 @@ export const AttendanceStaffKehadiranSection: FC<
           );
 
           return (
-            <span className={`${spanClassName} mig-caption whitespace-nowrap`}>
+            <span className={`${spanClassName} whitespace-nowrap`}>
               {formattedDate}
             </span>
           );
@@ -146,7 +146,7 @@ export const AttendanceStaffKehadiranSection: FC<
         title: "Check Out Location",
         dataIndex: ["geo_loc_check_out", "display_name"],
         render: (value) => (
-          <p title={value} className="max-w-32 mig-caption truncate">
+          <p title={value} className="max-w-28 truncate">
             {value}
           </p>
         ),
@@ -193,7 +193,6 @@ export const AttendanceStaffKehadiranSection: FC<
             pagination={tablePaginationConf}
             loading={isLoading || isRefetching}
             scroll={{ x: 640 }}
-            className="tableTypeTask"
             onRow={(datum) => {
               const rowClassName = clsx("hover:cursor-pointer", {
                 "bg-state1/10": datum.is_late,
