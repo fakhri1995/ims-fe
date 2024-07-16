@@ -20,7 +20,7 @@ const DrawerCore = ({
   iconButtonText,
   form,
   submit = false,
-  width = 400,
+  width = 360,
 }) => {
   return (
     <Drawer
