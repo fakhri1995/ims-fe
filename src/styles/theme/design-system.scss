@@ -20,15 +20,15 @@
 
   &--outlined {
     &-primary {
-      @apply text-primary100 hover:text-white hover:bg-primary100 hover:border-primary100 focus:text-white focus:bg-primary100;
+      @apply text-primary100 border-primary100 hover:text-white hover:bg-primary100 hover:border-primary100 focus:text-white focus:bg-primary100;
     }
 
     &-danger {
-      @apply text-state1 hover:text-white hover:bg-state1 hover:border-state1 focus:text-white focus:bg-state1;
+      @apply text-state1 border-state1 hover:text-white  hover:bg-state1 hover:border-state1 focus:text-white focus:bg-state1;
     }
 
     &-notice {
-      @apply text-notice hover:text-white hover:bg-notice hover:border-notice focus:text-white focus:bg-notice;
+      @apply text-notice border-notice hover:text-white hover:bg-notice hover:border-notice focus:text-white focus:bg-notice;
     }
   }
 
