@@ -342,7 +342,7 @@ export const AttendanceStaffAktivitasSection: FC<
           );
           return <p className="whitespace-nowrap">{formattedDate}</p>;
         },
-        // width: 120,
+        width: 120,
         align: "center",
       },
     ];
@@ -592,6 +592,8 @@ export const AttendanceStaffAktivitasSection: FC<
 
         return <p className="whitespace-nowrap">{formattedDate}</p>;
       },
+      width: 120,
+      align: "center",
     },
     {
       key: "id",
