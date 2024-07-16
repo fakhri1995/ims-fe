@@ -168,31 +168,34 @@ export const AttendanceDetailFormAttendanceSection: FC<
             className="tableTypeTask"
           />
         ) : (
-          dataTasks.length > 0 &&
-          dataTasks.map((task, index) => (
-            <div key={task.id} className="flex-none rounded-md ">
-              <div className={"flex px-4 py-2 border border-inputkategori"}>
-                <div className={"w-11/12"}>
-                  <p
-                    className={"text-xs font-bold text-mono30"}
-                    style={{ lineHeight: "20px" }}
-                  >
-                    {task.activity} (T-
-                    {task.task_id ? task.task_id : task.task_export_id})
-                  </p>
-                  <p
-                    className={"text-xs text-mono50"}
-                    style={{ lineHeight: "16px" }}
-                  >
-                    [{renderTaskName(task)}]
-                  </p>
+          dataTasks.length > 0 && (
+            <div className="flex flex-col gap-4">
+              {dataTasks.map((task, index) => (
+                <div key={task.id} className="flex-none rounded-md ">
+                  <div className={"flex px-4 py-2 border border-inputkategori"}>
+                    <div className={"w-11/12"}>
+                      <p
+                        className={"text-xs font-bold text-mono30"}
+                        style={{ lineHeight: "20px" }}
+                      >
+                        {task.activity} (T-
+                        {task.task_id ? task.task_id : task.task_export_id})
+                      </p>
+                      <p
+                        className={"text-xs text-mono50"}
+                        style={{ lineHeight: "16px" }}
+                      >
+                        [{renderTaskName(task)}]
+                      </p>
+                    </div>
+                    <div className={"w-1/12 self-center flex justify-end"}>
+                      <p>{moment(task.updated_at).format("HH:mm")}</p>
+                    </div>
+                  </div>
                 </div>
-                <div className={"w-1/12 self-center flex justify-end"}>
-                  <p>{moment(task.updated_at).format("HH:mm")}</p>
-                </div>
-              </div>
+              ))}
             </div>
-          ))
+          )
         )}
       </div>
     </section>

@@ -32,7 +32,12 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
 import { TIME_SHEET_GET } from "lib/features";
-import { downloadFile, generateStaticAssetUrl } from "lib/helper";
+import {
+  downloadFile,
+  generateStaticAssetUrl,
+  notificationError,
+  notificationSuccess,
+} from "lib/helper";
 
 import {
   AttendanceExportExcelDataResult,
@@ -219,12 +224,12 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           )) as AttendanceExportExcelDataResult;
           downloadFile(file, fileName);
 
-          notification.success({
+          notificationSuccess({
             message: `Berhasil mengunduh file ${fileName}`,
           });
           onClose();
         } catch (error) {
-          notification.error({
+          notificationError({
             message: `Terdapat kesalahan saat mengunduh file. ${
               (error as AxiosError).message
             }`,
@@ -262,7 +267,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
               setDataPdf(response2.data);
               setLoadingData(false);
             } else {
-              notification.error({
+              notificationError({
                 message: `${response2.message}`,
                 duration: 3,
               });
@@ -270,7 +275,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
             }
           })
           .catch((err) => {
-            notification.error({
+            notificationError({
               message: `${err.response}`,
               duration: 3,
             });
@@ -299,7 +304,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
               form_activity_name: response2.data.attendance_forms[0].name,
             });
           } else {
-            notification.error({
+            notificationError({
               message: `${response2.message}`,
               duration: 3,
             });
@@ -307,7 +312,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           }
         })
         .catch((err) => {
-          notification.error({
+          notificationError({
             message: `${err.response}`,
             duration: 3,
           });
@@ -358,7 +363,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
             setDataPdf(response2.data);
             setLoadingData(false);
           } else {
-            notification.error({
+            notificationError({
               message: `${response2.message}`,
               duration: 3,
             });
@@ -366,7 +371,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           }
         })
         .catch((err) => {
-          notification.error({
+          notificationError({
             message: `${err.response}`,
             duration: 3,
           });

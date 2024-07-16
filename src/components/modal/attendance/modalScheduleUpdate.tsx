@@ -12,6 +12,8 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
+import { notificationError, notificationSuccess } from "lib/helper";
+
 import {
   AttendanceScheduleService,
   IGetScheduleSucceedResponse,
@@ -124,7 +126,7 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
 
   const onMutationSucceed = (queryKey: string, message: string) => {
     queryClient.invalidateQueries(queryKey);
-    notification.success({
+    notificationSuccess({
       message,
     });
   };
@@ -143,7 +145,7 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
           handleClose();
         },
         onError: (error) => {
-          notification.error({ message: "Gagal mengubah jadwal." });
+          notificationError({ message: "Gagal mengubah jadwal." });
         },
       }
     );
@@ -162,7 +164,7 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
           handleClose();
         },
         onError: (error) => {
-          notification.error({ message: "Gagal menghapus jadwal." });
+          notificationError({ message: "Gagal menghapus jadwal." });
         },
       }
     );

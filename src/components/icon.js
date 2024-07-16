@@ -1298,16 +1298,16 @@ const UsercircleIconSvg = (props) => {
   );
   return <Icon rev={""} component={usercircleIconSvg} {...props}></Icon>;
 };
-const CircleXIconSvg = ({ size, color }) => {
+const CircleXIconSvg = (props) => {
   const circlexIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-circle-x"
-      width={size}
-      height={size}
+      width={props?.size ?? 24}
+      height={props?.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1317,8 +1317,26 @@ const CircleXIconSvg = ({ size, color }) => {
       <path d="M10 10l4 4m0 -4l-4 4" />
     </svg>
   );
-  return <Icon rev={""} component={circlexIconSvg}></Icon>;
+  return <Icon rev={""} component={circlexIconSvg} {...props}></Icon>;
 };
+
+const CircleXFilledIconSvg = (props) => {
+  const circleXFilledIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={props?.size ?? 24}
+      height={props?.size ?? 24}
+      viewBox="0 0 24 24"
+      fill={props?.color ?? "currentColor"}
+      className="icon icon-tabler icons-tabler-filled icon-tabler-circle-x"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-6.489 5.8a1 1 0 0 0 -1.218 1.567l1.292 1.293l-1.292 1.293l-.083 .094a1 1 0 0 0 1.497 1.32l1.293 -1.292l1.293 1.292l.094 .083a1 1 0 0 0 1.32 -1.497l-1.292 -1.293l1.292 -1.293l.083 -.094a1 1 0 0 0 -1.497 -1.32l-1.293 1.292l-1.293 -1.292l-.094 -.083z" />
+    </svg>
+  );
+  return <Icon rev={""} component={circleXFilledIconSvg} {...props}></Icon>;
+};
+
 const RulerIconSvg = ({ size, color }) => {
   const rulerIconSvg = () => (
     <svg
@@ -1746,16 +1764,16 @@ const UserSearchIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={userSearchIconSvg}></Icon>;
 };
-const InfoCircleIconSvg = ({ size, color }) => {
+const InfoCircleIconSvg = (props) => {
   const infoCircleIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-info-circle"
-      width={size}
-      height={size}
+      width={props?.size ?? 24}
+      height={props?.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1766,8 +1784,26 @@ const InfoCircleIconSvg = ({ size, color }) => {
       <polyline points="11 12 12 12 12 16 13 16" />
     </svg>
   );
-  return <Icon rev={""} component={infoCircleIconSvg}></Icon>;
+  return <Icon rev={""} component={infoCircleIconSvg} {...props}></Icon>;
 };
+
+const InfoCircleFilledIconSvg = (props) => {
+  const infoCircleFilledIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={props?.size ?? 24}
+      height={props?.size ?? 24}
+      viewBox="0 0 24 24"
+      fill={props?.color ?? "currentColor"}
+      className="icon icon-tabler icons-tabler-filled icon-tabler-info-circle"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 2c5.523 0 10 4.477 10 10a10 10 0 0 1 -19.995 .324l-.005 -.324l.004 -.28c.148 -5.393 4.566 -9.72 9.996 -9.72zm0 9h-1l-.117 .007a1 1 0 0 0 0 1.986l.117 .007v3l.007 .117a1 1 0 0 0 .876 .876l.117 .007h1l.117 -.007a1 1 0 0 0 .876 -.876l.007 -.117l-.007 -.117a1 1 0 0 0 -.764 -.857l-.112 -.02l-.117 -.006v-3l-.007 -.117a1 1 0 0 0 -.876 -.876l-.117 -.007zm.01 -3l-.127 .007a1 1 0 0 0 0 1.986l.117 .007l.127 -.007a1 1 0 0 0 0 -1.986l-.117 -.007z" />
+    </svg>
+  );
+  return <Icon rev={""} component={infoCircleFilledIconSvg} {...props}></Icon>;
+};
+
 const PlusIconSvg = ({ size, color }) => {
   const plusIconSvg = () => (
     <svg
@@ -3943,6 +3979,7 @@ export {
   ListNumbersSvg,
   CopyIconSvg,
   CircleXIconSvg,
+  CircleXFilledIconSvg,
   RulerIconSvg,
   AssetIconSvg,
   ArrowsSortIconSvg,
@@ -3966,6 +4003,7 @@ export {
   DotsIconSvg,
   UserSearchIconSvg,
   InfoCircleIconSvg,
+  InfoCircleFilledIconSvg,
   PlusIconSvg,
   XIconSvg,
   ArmChairlIconSvg,

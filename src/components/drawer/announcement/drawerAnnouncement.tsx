@@ -30,7 +30,11 @@ import {
   ANNOUNCEMENT_GET,
   ANNOUNCEMENT_UPDATE,
 } from "lib/features";
-import { beforeUploadFileMaxSize } from "lib/helper";
+import {
+  beforeUploadFileMaxSize,
+  notificationError,
+  notificationSuccess,
+} from "lib/helper";
 
 import { AnnouncementService, IAnnouncementPayload } from "apis/announcement";
 
@@ -122,7 +126,7 @@ const DrawerAnnouncement = ({
 
   const onMutationSucceed = (queryKey: string, message: string) => {
     queryClient.invalidateQueries(queryKey);
-    notification.success({
+    notificationSuccess({
       message,
     });
   };
@@ -141,7 +145,7 @@ const DrawerAnnouncement = ({
           handleClose();
         },
         onError: (error) => {
-          notification.error({ message: "Gagal menambah pesan pengumuman." });
+          notificationError({ message: "Gagal menambah pesan pengumuman." });
         },
       }
     );
@@ -160,7 +164,7 @@ const DrawerAnnouncement = ({
           handleClose();
         },
         onError: (error) => {
-          notification.error({ message: "Gagal mengubah pesan pengumuman." });
+          notificationError({ message: "Gagal mengubah pesan pengumuman." });
         },
       }
     );
@@ -178,7 +182,7 @@ const DrawerAnnouncement = ({
     ];
 
     if (!allowedFileTypes.includes(uploadedFile.type)) {
-      notification.error({
+      notificationError({
         message: "File harus berupa gambar",
       });
       return Upload.LIST_IGNORE;

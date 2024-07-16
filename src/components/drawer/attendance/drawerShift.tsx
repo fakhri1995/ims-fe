@@ -26,6 +26,7 @@ import {
   ATTENDANCE_SHIFT_ADD,
   ATTENDANCE_SHIFT_UPDATE,
 } from "lib/features";
+import { notificationError, notificationSuccess } from "lib/helper";
 
 import { AttendanceShiftService } from "apis/attendance/attendance-shift.service";
 import {
@@ -128,7 +129,7 @@ const DrawerShift: FC<IDrawerShift> = ({ visible, onvisible, data = null }) => {
 
   const onMutationSucceed = (queryKey: string, message: string) => {
     queryClient.invalidateQueries(queryKey);
-    notification.success({
+    notificationSuccess({
       message,
     });
   };
@@ -146,7 +147,7 @@ const DrawerShift: FC<IDrawerShift> = ({ visible, onvisible, data = null }) => {
         handleClose();
       },
       onError: (error) => {
-        notification.error({ message: "Gagal menambah shift." });
+        notificationError({ message: "Gagal menambah shift." });
       },
     }
   );
@@ -164,7 +165,7 @@ const DrawerShift: FC<IDrawerShift> = ({ visible, onvisible, data = null }) => {
         handleClose();
       },
       onError: (error) => {
-        notification.error({ message: "Gagal mengubah shift." });
+        notificationError({ message: "Gagal mengubah shift." });
       },
     }
   );

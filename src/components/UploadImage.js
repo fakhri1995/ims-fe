@@ -13,7 +13,7 @@ import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
 
 import canvasPreview from "lib/canvasPreview";
 
-import { beforeUploadFileMaxSize } from "../lib/helper";
+import { beforeUploadFileMaxSize, notificationError } from "../lib/helper";
 import ButtonSys from "./button";
 import { CheckIconSvg } from "./icon";
 import ModalCore from "./modal/modalCore";
@@ -76,7 +76,7 @@ const UploadImage = ({ useCrop = false, dataDisplay, setDataUpdate }) => {
     const allowedFileTypes = [`image/png`, `image/jpg`, `image/jpeg`];
 
     if (!allowedFileTypes.includes(uploadedFile.type)) {
-      notification.error({
+      notificationError({
         message: "File harus berupa gambar",
       });
       return Upload.LIST_IGNORE;
@@ -118,7 +118,7 @@ const UploadImage = ({ useCrop = false, dataDisplay, setDataUpdate }) => {
 
     const previewCanvas = previewCanvasRef.current;
     if (!image || !previewCanvas || !completedCrop) {
-      notification.error({
+      notificationError({
         message: "Crop canvas does not exist",
       });
       throw new Error("Crop canvas does not exist");
@@ -136,7 +136,7 @@ const UploadImage = ({ useCrop = false, dataDisplay, setDataUpdate }) => {
     );
     const ctx = offscreen.getContext("2d");
     if (!ctx) {
-      notification.error({
+      notificationError({
         message: "No 2d context",
       });
       throw new Error("No 2d context");

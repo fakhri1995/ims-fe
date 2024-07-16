@@ -28,7 +28,11 @@ import {
   ANNOUNCEMENT_ADD,
   ANNOUNCEMENT_GET,
 } from "lib/features";
-import { generateStaticAssetUrl, stripTags } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  notificationError,
+  stripTags,
+} from "lib/helper";
 
 import {
   AnnouncementData,
@@ -104,7 +108,7 @@ export const AnnouncementTable: FC<IAnnouncementTable> = ({
         response.data.data,
       onSuccess: (data) => setDataAnnouncements(data.data),
       onError: (error) => {
-        notification.error({
+        notificationError({
           message: "Gagal mendapatkan daftar announcement.",
         });
       },
