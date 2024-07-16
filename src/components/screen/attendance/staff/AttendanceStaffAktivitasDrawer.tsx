@@ -532,7 +532,7 @@ const _renderDynamicUpload = (
     <div className="flex flex-col ">
       <div className="relative">
         {/* Gunakan camera */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2">
           <Button
             className="mig-button mig-button--outlined-primary self-start"
             onClick={() => {

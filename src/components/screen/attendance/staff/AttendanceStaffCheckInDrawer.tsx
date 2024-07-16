@@ -294,7 +294,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                   <div className="flex flex-col">
                     <div className="relative">
                       {/* Gunakan camera */}
-                      <div className="flex items-center gap-9">
+                      <div className="flex items-center gap-2">
                         <Button
                           className="mig-button mig-button--outlined-primary self-start"
                           onClick={() => {
@@ -326,7 +326,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                       >
                         <Button className="mig-button mig-button--outlined-primary absolute top-0 right-0">
                           <UploadOutlined />
-                          Upload File
+                          Upload Photo
                         </Button>
                       </Upload>
                     </div>
