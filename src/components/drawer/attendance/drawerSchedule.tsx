@@ -47,7 +47,11 @@ import {
   ATTENDANCE_SHIFTS_GET,
   COMPANY_CLIENTS_GET,
 } from "lib/features";
-import { getNameInitial } from "lib/helper";
+import {
+  getNameInitial,
+  notificationError,
+  notificationSuccess,
+} from "lib/helper";
 
 import { AttendanceScheduleService } from "apis/attendance";
 import { IAddSchedulePayload } from "apis/attendance/attendance-schedule.types";
@@ -147,7 +151,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
       },
       onSuccess: (data) => setDataAgents(data.data),
       onError: (error) => {
-        notification.error({
+        notificationError({
           message: "Gagal mendapatkan daftar karyawan (agent).",
         });
       },
@@ -183,7 +187,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
         }
       },
       onError: (error) => {
-        notification.error({
+        notificationError({
           message: "Gagal mendapatkan daftar shift.",
         });
       },
@@ -217,7 +221,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
 
   const onMutationSucceed = (queryKey: string, message: string) => {
     queryClient.invalidateQueries(queryKey);
-    notification.success({
+    notificationSuccess({
       message,
     });
   };
@@ -235,7 +239,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
         handleClose();
       },
       onError: (error: any, variables) => {
-        notification.error({ message: error?.response?.data?.message });
+        notificationError({ message: error?.response?.data?.message });
       },
     }
   );

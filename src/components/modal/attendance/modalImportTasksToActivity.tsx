@@ -14,7 +14,11 @@ import {
   ATTENDANCE_TASK_ACTIVITIES_GET,
   ATTENDANCE_TASK_ACTIVITY_ADD,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  notificationError,
+  notificationSuccess,
+  permissionWarningNotification,
+} from "lib/helper";
 
 const ModalImportTasksToActivity = ({
   visible,
@@ -214,7 +218,7 @@ const ModalImportTasksToActivity = ({
         .then((response) => response.json())
         .then((response2) => {
           if (response2.success) {
-            notification.success({
+            notificationSuccess({
               message: (
                 <>
                   {" "}
@@ -227,14 +231,14 @@ const ModalImportTasksToActivity = ({
             queryClient.invalidateQueries(ATTENDANCE_TASK_ACTIVITIES_GET);
             handleCloseModalImportTask();
           } else {
-            notification.error({
+            notificationError({
               message: response2.message,
               duration: 3,
             });
           }
         })
         .catch((err) => {
-          notification.error({
+          notificationError({
             message: `Failed to add task to activity`,
             duration: 3,
           });

@@ -62,6 +62,8 @@ import {
 import {
   generateStaticAssetUrl,
   getFileName,
+  notificationError,
+  notificationSuccess,
   permissionWarningNotification,
 } from "lib/helper";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
@@ -340,7 +342,7 @@ export const AttendanceStaffAktivitasSection: FC<
           );
           return <p className="whitespace-nowrap">{formattedDate}</p>;
         },
-        width: 120,
+        // width: 120,
         align: "center",
       },
     ];
@@ -494,7 +496,7 @@ export const AttendanceStaffAktivitasSection: FC<
         }
       },
       onError: (error) => {
-        notification.error({
+        notificationError({
           message: "Failed to get task activities data",
         });
       },
@@ -722,11 +724,11 @@ export const AttendanceStaffAktivitasSection: FC<
   } = useMutateAttendanceActivity();
 
   const onMutationSucceed = useCallback((response: AxiosResponse<any, any>) => {
-    notification.success({ message: response.data.message });
+    notificationSuccess({ message: response.data.message });
   }, []);
 
   const onMutationFailed = useCallback((error: AxiosError) => {
-    notification.error({ message: error.response.data.message });
+    notificationError({ message: error.response.data.message });
   }, []);
 
   const handleOnDeleteAktivitas = useCallback(
@@ -776,21 +778,21 @@ export const AttendanceStaffAktivitasSection: FC<
           if (res.data.success) {
             setShowModalRemoveTask({ display: false, data: null });
 
-            notification.success({
+            notificationSuccess({
               message: "Successfully removed task from activity",
               duration: 3,
             });
             // getDataTaskActivities();
             queryClient.invalidateQueries(ATTENDANCE_TASK_ACTIVITIES_GET);
           } else {
-            notification.error({
+            notificationError({
               message: res.data.message,
               duration: 3,
             });
           }
         })
         .catch((err) => {
-          notification.error({
+          notificationError({
             message: "Failed to delete task from activity",
             duration: 3,
           });

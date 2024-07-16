@@ -1,6 +1,7 @@
 import { Button, Tooltip, notification } from "antd";
 import { useCallback, useRef } from "react";
 
+import { notificationError } from "../lib/helper";
 import clsx from "clsx";
 
 const ButtonSys = ({
@@ -41,7 +42,7 @@ const ButtonSys = ({
       );
 
       if (fileSizeInMb > inputFileMaxSize) {
-        notification.error({
+        notificationError({
           message: `Ukuran File ${fileSizeInMb} MiB melebih batas persyaratan maksimum sebesar ${inputFileMaxSize} MiB`,
         });
 

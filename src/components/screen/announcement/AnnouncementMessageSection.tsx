@@ -22,7 +22,7 @@ import {
   ANNOUNCEMENT_GET,
   ANNOUNCEMENT_UPDATE,
 } from "lib/features";
-import { generateStaticAssetUrl } from "lib/helper";
+import { generateStaticAssetUrl, notificationError } from "lib/helper";
 
 import { AnnouncementService, IAnnouncementPayload } from "apis/announcement";
 
@@ -80,7 +80,7 @@ export const AnnouncementMessageSection: FC<IAnnouncementMessageSection> = ({
       select: (response) => response.data.data,
       // onSuccess: (data) => setDataAnnouncements(data.data),
       onError: (error) => {
-        notification.error({
+        notificationError({
           message: "Gagal mendapatkan detail announcement.",
         });
       },

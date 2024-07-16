@@ -56,6 +56,7 @@ import {
   generateStaticAssetUrl,
   getBase64,
   getFileName,
+  notificationError,
   objectToFormData,
   objectToFormDataNew,
   permissionWarningNotification,
@@ -197,7 +198,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
             setData(res2.data);
           })
           .catch((err) =>
-            notification.error({
+            notificationError({
               message: "Gagal mendapatkan daftar user",
               duration: 3,
             })

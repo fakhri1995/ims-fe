@@ -10,7 +10,12 @@ import DrawerCore from "components/drawer/drawerCore";
 
 import { useGeolocationAPI } from "hooks/use-geolocation-api";
 
-import { getBase64 } from "lib/helper";
+import {
+  getBase64,
+  notificationError,
+  notificationSuccess,
+  notificationWarning,
+} from "lib/helper";
 
 import { useGetAttendeeInfo, useToggleCheckInCheckOut } from "apis/attendance";
 import { useNominatimReverseGeocode } from "apis/nominatim";
@@ -90,7 +95,7 @@ export const AttendanceStaffCheckInDrawer: FC<
       (uploadedFile.size / 1024 / 1024).toFixed(4)
     );
     if (fileSizeInMb > 5) {
-      notification.error({
+      notificationError({
         message: "File size exceeds the requirement limit!",
       });
       return Upload.LIST_IGNORE;
@@ -115,7 +120,7 @@ export const AttendanceStaffCheckInDrawer: FC<
 
   const onFormSubmitted = useCallback(
     (value: { work_from?: "WFO" | "WFH"; evidence_image?: string }) => {
-      // notification.warning({
+      // notificationWarning({
       //   message: `Lokasi belum sesuai, pastikan lokasi anda sesuai dengan tempat anda bekerja`,
       // });
       toggleCheckInCheckOut(
@@ -136,9 +141,9 @@ export const AttendanceStaffCheckInDrawer: FC<
               form.resetFields();
               onClose();
 
-              notification.success({ message: response.data.message });
+              notificationSuccess({ message: response.data.message });
             } else {
-              notification.warning({
+              notificationWarning({
                 message: response.data.message,
                 duration: 2,
               });
@@ -151,7 +156,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                 ? errorMessage["errorInfo"].pop()
                 : errorMessage;
 
-            notification.error({ message: actualErrorMessage });
+            notificationError({ message: actualErrorMessage });
           },
         }
       );
@@ -274,12 +279,8 @@ export const AttendanceStaffCheckInDrawer: FC<
                     initialValue="WFO"
                   >
                     <Radio.Group disabled={uploadPictureLoading}>
-                      <Radio value="WFO" className="block">
-                        WFO
-                      </Radio>
-                      <Radio value="WFH" className="block">
-                        WFH
-                      </Radio>
+                      <Radio value="WFO">WFO</Radio>
+                      <Radio value="WFH">WFH</Radio>
                     </Radio.Group>
                   </Form.Item>
                 )}
@@ -293,7 +294,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                   <div className="flex flex-col">
                     <div className="relative">
                       {/* Gunakan camera */}
-                      <div className="flex items-center space-x-5">
+                      <div className="flex items-center gap-9">
                         <Button
                           className="mig-button mig-button--outlined-primary self-start"
                           onClick={() => {
@@ -330,7 +331,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                       </Upload>
                     </div>
 
-                    <em className="text-mono50">
+                    <em className="text-mono50 mt-2">
                       Upload JPEG File (Max. 5 MB)
                     </em>
                   </div>

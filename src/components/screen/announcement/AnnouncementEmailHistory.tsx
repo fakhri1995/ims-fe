@@ -21,7 +21,11 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { ANNOUNCEMENT_MAIL_GET, ANNOUNCEMENT_MAIL_SEND } from "lib/features";
-import { generateStaticAssetUrl, momentFormatDate } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  momentFormatDate,
+  notificationError,
+} from "lib/helper";
 
 import { AnnouncementData, AnnouncementService } from "apis/announcement";
 
@@ -84,7 +88,7 @@ export const AnnouncementEmailHistory: FC<IAnnouncementEmailHistory> = ({
         setDataHistory(data.data);
       },
       onError: (error) => {
-        notification.error({
+        notificationError({
           message: "Gagal mendapatkan daftar riwayat email announcement.",
         });
       },

@@ -8,6 +8,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { ATTENDANCE_CURRENT_SCHEDULE_GET } from "lib/features";
+import { notificationError } from "lib/helper";
 
 import { AttendanceScheduleService } from "apis/attendance";
 
@@ -59,7 +60,7 @@ export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
           retry: 1,
           onError: (error: any) => {
             if (error?.response?.status !== 404) {
-              notification.error({
+              notificationError({
                 message: "Gagal mendapatkan jadwal kerja karyawan saat ini.",
               });
             }

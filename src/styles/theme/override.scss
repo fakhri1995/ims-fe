@@ -645,6 +645,20 @@ a:hover {
   height: initial;
 }
 
+.ant-upload-list-item {
+  margin-top: 0px;
+}
+
+.ant-upload-list-item-info:hover {
+  pointer-events: none;
+}
+.ant-upload-span:hover {
+  pointer-events: none;
+}
+.ant-upload-list-item-name:hover {
+  pointer-events: none;
+}
+
 /* MODAL */
 .ant-modal-title {
   font-size: 14px;
@@ -704,7 +718,6 @@ a:hover {
 }
 
 /* DRAWER */
-
 .ant-drawer-header {
   padding: 16px;
 }
@@ -777,6 +790,12 @@ a:hover {
 .ant-btn-primary[disabled]:active {
   border-color: transparent;
   background: #80808050;
+}
+
+/* NOTIFICATION */
+.ant-notification-notice {
+  padding: 14px;
+  border-radius: 10px;
 }
 
 .ant-input {
@@ -980,18 +999,6 @@ a:hover {
   }
 }
 
-// .ant-upload-list:hover {
-//   pointer-events: none;
-// }
-.ant-upload-list-item-info:hover {
-  pointer-events: none;
-}
-.ant-upload-span:hover {
-  pointer-events: none;
-}
-.ant-upload-list-item-name:hover {
-  pointer-events: none;
-}
 .customer-stories > p {
   // color: red;
   font-size: 14px;

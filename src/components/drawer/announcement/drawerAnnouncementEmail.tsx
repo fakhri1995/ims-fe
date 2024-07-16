@@ -30,6 +30,7 @@ import { ANNOUNCEMENT_MAIL_GET, ANNOUNCEMENT_MAIL_SEND } from "lib/features";
 import {
   beforeUploadFileMaxSize,
   generateStaticAssetUrl,
+  notificationError,
   onMutationSucceed,
 } from "lib/helper";
 
@@ -124,7 +125,7 @@ const DrawerAnnouncementEmail = ({
       handleClose();
     },
     onError: (error) => {
-      notification.error({
+      notificationError({
         message: "Gagal mengirim email pesan pengumuman.",
       });
     },

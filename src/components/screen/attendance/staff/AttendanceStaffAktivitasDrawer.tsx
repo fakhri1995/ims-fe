@@ -41,6 +41,8 @@ import {
 import {
   getBase64,
   getFileName,
+  notificationError,
+  notificationSuccess,
   objectToFormData,
   permissionWarningNotification,
 } from "lib/helper";
@@ -147,11 +149,11 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
     onClose();
 
-    notification.success({ message: response.data.message });
+    notificationSuccess({ message: response.data.message });
   }, []);
 
   const onMutationFailed = useCallback((error: AxiosError) => {
-    notification.error({ message: error.response.data.message });
+    notificationError({ message: error.response.data.message });
   }, []);
 
   const handleOnFormSubmitted = useCallback(
@@ -462,7 +464,7 @@ const _renderDynamicUpload = (
       (uploadedFile.size / 1024 / 1024).toFixed(4)
     );
     if (fileSizeInMb > 5) {
-      notification.error({
+      notificationError({
         message: "File size exceeds the requirement limit!",
       });
       return Upload.LIST_IGNORE;
@@ -530,7 +532,7 @@ const _renderDynamicUpload = (
     <div className="flex flex-col ">
       <div className="relative">
         {/* Gunakan camera */}
-        <div className="flex items-center space-x-5">
+        <div className="flex items-center gap-6">
           <Button
             className="mig-button mig-button--outlined-primary self-start"
             onClick={() => {

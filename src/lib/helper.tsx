@@ -1,10 +1,19 @@
+import { InfoCircleFilled, XFilled } from "@ant-design/icons";
 import { Upload, notification } from "antd";
 import type { UploadProps } from "antd/es/upload/interface";
+import { ArgsProps } from "antd/lib/notification";
 import type { RcFile } from "antd/lib/upload";
 import { format } from "date-fns";
 import moment from "moment";
 import { ReactNode } from "react";
 import { QueryClient, useQueryClient } from "react-query";
+
+import {
+  AlertCircleFilledIconSvg,
+  CircleCheckFilledIconSvg,
+  CircleXFilledIconSvg,
+  InfoCircleFilledIconSvg,
+} from "components/icon";
 
 // moment.locale("id");
 
@@ -107,6 +116,47 @@ export const permissionWarningNotification = (
 ) => {
   notification.warning({
     message: `Anda tidak memiliki fitur untuk ${action} ${object}`,
+    icon: <AlertCircleFilledIconSvg size={28} className={"text-warning"} />,
+  });
+};
+
+/**
+ * Helper function untuk render toaster / notification success
+ */
+export const notificationSuccess = (props: ArgsProps) => {
+  notification.success({
+    icon: <CircleCheckFilledIconSvg size={28} className={"text-primary100"} />,
+    ...props,
+  });
+};
+
+/**
+ * Helper function untuk render toaster / notification error
+ */
+export const notificationError = (props: ArgsProps) => {
+  notification.error({
+    icon: <CircleXFilledIconSvg size={28} className={"text-danger"} />,
+    ...props,
+  });
+};
+
+/**
+ * Helper function untuk render toaster / notification info
+ */
+export const notificationInfo = (props: ArgsProps) => {
+  notification.info({
+    icon: <InfoCircleFilledIconSvg size={28} className={"text-accentblue"} />,
+    ...props,
+  });
+};
+
+/**
+ * Helper function untuk render toaster / notification warning
+ */
+export const notificationWarning = (props: ArgsProps) => {
+  notification.warning({
+    icon: <AlertCircleFilledIconSvg size={28} className={"text-warning"} />,
+    ...props,
   });
 };
 
