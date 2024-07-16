@@ -39,6 +39,7 @@ import ButtonSys from "components/button";
 import ButtonTooltip from "components/buttonTooltip";
 import { AccessControl } from "components/features/AccessControl";
 import ModalImportTasksToActivity from "components/modal/attendance/modalImportTasksToActivity";
+import { ModalDelete, ModalWarning } from "components/modal/modalCustom";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -146,6 +147,15 @@ export const AttendanceStaffAktivitasSection: FC<
   const [pageSize, setPageSize] = useState(10);
   const [showModalTask, setShowModalTask] = useState(false);
   const [showModalLeave, setShowModalLeave] = useState(false);
+  const [showModalCheckinWarning, setShowModalCheckinWarning] = useState(false);
+  const [showModalRemoveActivity, setShowModalRemoveActivity] = useState({
+    display: false,
+    data: null,
+  });
+  const [showModalRemoveTask, setShowModalRemoveTask] = useState({
+    display: false,
+    data: null,
+  });
   const [displayDataLeaves, setDisplayDataLeaves] = useState([]);
   const [displayDataTaskToday, setDisplayDataTaskToday] = useState([]);
   const [displayDataTaskHistory, setDisplayDataTaskHistory] = useState([]);
@@ -156,6 +166,8 @@ export const AttendanceStaffAktivitasSection: FC<
   const [dataDefault, setDataDefault] = useState(null);
   const [showDetailCuti, setShowDetailCuti] = useState(false);
   const [loadingTasks, setLoadingTasks] = useState(true);
+  const [loadingDeleteTaskActivity, setLoadingDeleteTaskActivity] =
+    useState(false);
   const [leaveCount, setLeaveCount] = useState(null);
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -379,7 +391,11 @@ export const AttendanceStaffAktivitasSection: FC<
               className="bg-transparent text-danger hover:opacity-75"
               onClick={(e) => {
                 e.stopPropagation();
-                handleOnDeleteAktivitas(record?.key);
+                setShowModalRemoveActivity({
+                  display: true,
+                  data: record?.key,
+                });
+                // handleOnDeleteAktivitas(record?.key);
               }}
             >
               <TrashIconSvg />
@@ -443,13 +459,7 @@ export const AttendanceStaffAktivitasSection: FC<
 
     /** Prevent user membuka drawer ketika mereka belum check in */
     if (attendeeStatus !== "checkin") {
-      Modal.error({
-        centered: true,
-        title: "Attention!",
-        content: "You need to Check In first to add or update activity!",
-        okText: "Back",
-        closable: true,
-      });
+      setShowModalCheckinWarning(true);
 
       return;
     }
@@ -459,13 +469,7 @@ export const AttendanceStaffAktivitasSection: FC<
 
   const onImportTask = () => {
     if (attendeeStatus !== "checkin") {
-      Modal.error({
-        centered: true,
-        title: "Attention!",
-        content: "You need to Check In first to add or update activity!",
-        okText: "Back",
-        closable: true,
-      });
+      setShowModalCheckinWarning(true);
     } else {
       setShowModalTask(!showModalTask);
     }
@@ -671,7 +675,12 @@ export const AttendanceStaffAktivitasSection: FC<
                             ? "cursor-not-allowed"
                             : undefined
                         }`}
-                        onClick={() => handleDeleteTaskActivity(task.id)}
+                        onClick={() =>
+                          setShowModalRemoveTask({
+                            display: true,
+                            data: task.id,
+                          })
+                        }
                         disabled={!isAllowedToDeleteTaskActivity}
                       >
                         <XIconSvg size={24} color="#BF4A40" />
@@ -708,7 +717,7 @@ export const AttendanceStaffAktivitasSection: FC<
   const {
     deleteMutation: {
       mutate: deleteAttendanceActivity,
-      isLoading: deleteMutationLoading,
+      isLoading: loadingDeleteActivity,
     },
   } = useMutateAttendanceActivity();
 
@@ -726,25 +735,30 @@ export const AttendanceStaffAktivitasSection: FC<
         permissionWarningNotification("Menghapus", "Aktivitas");
         return;
       }
-
-      Modal.confirm({
-        centered: true,
-        title: "Confirm Remove Activity",
-        content:
-          "Are you sure you want to remove this activity? This action can’t be undone.",
-        okText: "Remove Activity",
-        cancelText: "Cancel",
-        onOk: () => {
-          deleteAttendanceActivity(activityFormId, {
-            onSuccess: onMutationSucceed,
-            onError: onMutationFailed,
-          });
-        },
-        icon: <ExclamationCircleOutlined className="text-danger" />,
-        className: "",
-
-        // onCancel: () => onClose(),
+      deleteAttendanceActivity(activityFormId, {
+        onSuccess: onMutationSucceed,
+        onError: onMutationFailed,
       });
+      setShowModalRemoveActivity({ display: false, data: null });
+
+      // Modal.confirm({
+      //   centered: true,
+      //   title: "Confirm Remove Activity",
+      //   content:
+      //     "Are you sure you want to remove this activity? This action can’t be undone.",
+      //   okText: "Remove Activity",
+      //   cancelText: "Cancel",
+      //   onOk: () => {
+      //     deleteAttendanceActivity(activityFormId, {
+      //       onSuccess: onMutationSucceed,
+      //       onError: onMutationFailed,
+      //     });
+      //   },
+      //   icon: <ExclamationCircleOutlined className="text-danger" />,
+      //   className: "",
+
+      //   // onCancel: () => onClose(),
+      // });
     },
     [tabActiveKey, isAllowedToDeleteActivity, attendeeStatus]
   );
@@ -756,37 +770,64 @@ export const AttendanceStaffAktivitasSection: FC<
         return;
       }
 
-      Modal.confirm({
-        centered: true,
-        title: "Attention!",
-        content: "Are you sure you want to remove this task from activity?",
-        okText: "Remove Task",
-        cancelText: "Back",
-        onOk: () => {
-          AttendanceTaskActivityService.remove(axiosClient, taskActivityId)
-            .then((res) => {
-              if (res.data.success) {
-                notification.success({
-                  message: "Successfully removed task from activity",
-                  duration: 3,
-                });
-                // getDataTaskActivities();
-                queryClient.invalidateQueries(ATTENDANCE_TASK_ACTIVITIES_GET);
-              } else {
-                notification.error({
-                  message: res.data.message,
-                  duration: 3,
-                });
-              }
-            })
-            .catch((err) => {
-              notification.error({
-                message: "Failed to delete task from activity",
-                duration: 3,
-              });
+      setLoadingDeleteTaskActivity(true);
+      AttendanceTaskActivityService.remove(axiosClient, taskActivityId)
+        .then((res) => {
+          if (res.data.success) {
+            setShowModalRemoveTask({ display: false, data: null });
+
+            notification.success({
+              message: "Successfully removed task from activity",
+              duration: 3,
             });
-        },
-      });
+            // getDataTaskActivities();
+            queryClient.invalidateQueries(ATTENDANCE_TASK_ACTIVITIES_GET);
+          } else {
+            notification.error({
+              message: res.data.message,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: "Failed to delete task from activity",
+            duration: 3,
+          });
+        })
+        .finally(() => setLoadingDeleteTaskActivity(false));
+
+      // Modal.confirm({
+      //   centered: true,
+      //   title: "Attention!",
+      //   content: "Are you sure you want to remove this task from activity?",
+      //   okText: "Remove Task",
+      //   cancelText: "Back",
+      //   onOk: () => {
+      //     AttendanceTaskActivityService.remove(axiosClient, taskActivityId)
+      //       .then((res) => {
+      //         if (res.data.success) {
+      //           notification.success({
+      //             message: "Successfully removed task from activity",
+      //             duration: 3,
+      //           });
+      //           // getDataTaskActivities();
+      //           queryClient.invalidateQueries(ATTENDANCE_TASK_ACTIVITIES_GET);
+      //         } else {
+      //           notification.error({
+      //             message: res.data.message,
+      //             duration: 3,
+      //           });
+      //         }
+      //       })
+      //       .catch((err) => {
+      //         notification.error({
+      //           message: "Failed to delete task from activity",
+      //           duration: 3,
+      //         });
+      //       });
+      //   },
+      // });
     },
     [isAllowedToDeleteTaskActivity]
   );
@@ -1035,6 +1076,50 @@ export const AttendanceStaffAktivitasSection: FC<
           exportActivity
           onClose={() => setIsExportDrawerShown(false)}
         />
+      </AccessControl>
+
+      <ModalWarning
+        visible={showModalCheckinWarning}
+        okText={"I Got It"}
+        onOk={() => setShowModalCheckinWarning(false)}
+      >
+        <p>You need to Check In first to add or update activity!</p>
+      </ModalWarning>
+
+      <AccessControl hasPermission={ATTENDANCE_ACTIVITY_DELETE}>
+        <ModalDelete
+          visible={showModalRemoveActivity?.display}
+          itemName={"Activity"}
+          onOk={() => handleOnDeleteAktivitas(showModalRemoveActivity?.data)}
+          onCancel={() =>
+            setShowModalRemoveActivity({ display: false, data: null })
+          }
+          loading={loadingDeleteActivity}
+          disabled={!isAllowedToDeleteActivity}
+        >
+          <p>
+            Are you sure you want to remove this activity? This action can’t be
+            undone.
+          </p>
+        </ModalDelete>
+      </AccessControl>
+
+      <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITY_DELETE}>
+        <ModalDelete
+          visible={showModalRemoveTask?.display}
+          itemName={"Task"}
+          onOk={() => handleDeleteTaskActivity(showModalRemoveTask?.data)}
+          onCancel={() =>
+            setShowModalRemoveTask({ display: false, data: null })
+          }
+          loading={loadingDeleteTaskActivity}
+          disabled={!isAllowedToDeleteTaskActivity}
+        >
+          <p>
+            Are you sure you want to remove this task? This action can’t be
+            undone.
+          </p>
+        </ModalDelete>
       </AccessControl>
     </>
   );

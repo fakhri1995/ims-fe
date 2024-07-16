@@ -941,16 +941,16 @@ const PkpIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={pkpIconSvg}></Icon>;
 };
-const AlertIconSvg = ({ size, color }) => {
+const AlertIconSvg = (props) => {
   const alertIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-alert-circle"
-      width={size}
-      height={size}
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -961,7 +961,7 @@ const AlertIconSvg = ({ size, color }) => {
       <line x1={12} y1={16} x2="12.01" y2={16} />
     </svg>
   );
-  return <Icon rev={""} component={alertIconSvg}></Icon>;
+  return <Icon rev={""} component={alertIconSvg} {...props}></Icon>;
 };
 const AlerttriangleIconSvg = ({ size, color }) => {
   const alerttriangleIconSvg = () => (
@@ -3875,6 +3875,23 @@ const MessageFilledIconSvg = (props) => {
   return <Icon rev={""} component={messageFilledIconSvg} {...props}></Icon>;
 };
 
+const AlertCircleFilledIconSvg = (props) => {
+  const alertCircleFilledIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="icon icon-tabler icons-tabler-filled icon-tabler-alert-circle"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 2c5.523 0 10 4.477 10 10a10 10 0 0 1 -19.995 .324l-.005 -.324l.004 -.28c.148 -5.393 4.566 -9.72 9.996 -9.72zm.01 13l-.127 .007a1 1 0 0 0 0 1.986l.117 .007l.127 -.007a1 1 0 0 0 0 -1.986l-.117 -.007zm-.01 -8a1 1 0 0 0 -.993 .883l-.007 .117v4l.007 .117a1 1 0 0 0 1.986 0l.007 -.117v-4l-.007 -.117a1 1 0 0 0 -.993 -.883z" />
+    </svg>
+  );
+  return <Icon rev={""} component={alertCircleFilledIconSvg} {...props}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -4036,4 +4053,5 @@ export {
   MessageFilledIconSvg,
   TaskFilledIconSvg,
   TicketFilledIconSvg,
+  AlertCircleFilledIconSvg,
 };

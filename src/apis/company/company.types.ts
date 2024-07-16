@@ -73,10 +73,10 @@ export interface AddCompanyPayload {
   company_logo: File | null;
   parent_id: number;
   singkatan: string;
-  tanggal_pkp: Date | string;
+  tanggal_pkp?: Date | string;
   penanggung_jawab: string;
-  npwp: string;
-  fax: string;
-  email: string;
-  website: string;
+  npwp?: string;
+  fax?: string;
+  email?: string;
+  website?: string;
 }

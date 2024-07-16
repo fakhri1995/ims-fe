@@ -1,8 +1,10 @@
 import { isAfter } from "date-fns";
+import { useRouter } from "next/router";
 import { FC, memo } from "react";
 import { useQuery } from "react-query";
 
 import { DetailCard } from "components/cards/DetailCard";
+import { ArrowLeftIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -26,6 +28,7 @@ export interface IAttendanceDetailMetaCard {
  */
 export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
   ({ attendanceId }) => {
+    const router = useRouter();
     const axiosClient = useAxiosClient();
     const { hasPermission } = useAccessControl();
     const isAllowedToGetAsAdmin = hasPermission(ATTENDANCE_USER_ADMIN_GET);
@@ -102,7 +105,15 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
       <DetailCard
         isLoading={isLoading || !attendanceId}
         estimatedContentLength={6}
-        header={<h4 className="mig-body--bold ">Details</h4>}
+        header={
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-3 bg-transparent"
+          >
+            <ArrowLeftIconSvg size={20} />
+            <h4 className="mig-body--bold ">Details</h4>
+          </button>
+        }
         content={data?.contentData || []}
       />
     ) : null;
