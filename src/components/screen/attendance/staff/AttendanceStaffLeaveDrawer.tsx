@@ -39,7 +39,7 @@ import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import DrawerCore from "components/drawer/drawerCore";
-import { CalendartimeIconSvg } from "components/icon";
+import { CalendartimeIconSvg, CheckIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -51,6 +51,7 @@ import {
   ATTENDANCE_ACTIVITY_UPDATE,
   FILTER_EMPLOYEES_GET,
   LEAVE_TYPES_GET,
+  LEAVE_USER_ADD,
 } from "lib/features";
 import {
   generateStaticAssetUrl,
@@ -113,6 +114,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
   const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
   const isAllowedToGetLeaveTypes = hasPermission(LEAVE_TYPES_GET);
   const isAllowedToGetEmployees = hasPermission(FILTER_EMPLOYEES_GET);
+  const isAllowedToAddLeave = hasPermission(LEAVE_USER_ADD);
   const [resumeFileBlob, setResumeFileBlob] = useState<RcFile | Blob | File>(
     null
   );
@@ -273,44 +275,42 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
       onClose={onClose}
       footer={
         <div className={"flex gap-4 justify-end p-2"}>
-          <div
-            onClick={onClose}
-            className={
-              "bg-[#F3F3F3] py-2.5 px-8 rounded-[5px] hover:cursor-pointer"
-            }
-          >
-            <p className={"text-xs leading-5 text-[#808080] font-bold"}>
-              Cancel
-            </p>
-          </div>
-          <div
+          <ButtonSys type={"default"} color="mono50" onClick={onClose}>
+            Cancel
+          </ButtonSys>
+          <ButtonSys
+            disabled={!isAllowedToAddLeave}
+            type="primary"
             onClick={() => instanceForm.submit()}
-            className={
-              "bg-[#35763B] py-2.5 px-8 flex items-center gap-2 rounded-[5px] hover:cursor-pointer"
-            }
+            loading={loading}
           >
-            {loading && (
-              <Spin indicator={<LoadingOutlined style={{ fontSize: 12 }} />} />
-            )}
-            <p className="text-white text-xs leading-5 font-bold">Submit</p>
-          </div>
+            <div className={"flex items-center gap-2"}>
+              <CheckIconSvg size={16} color="#FFFFFF" />
+              <p>Add Request</p>
+            </div>
+          </ButtonSys>
         </div>
       }
     >
       <div className="space-y-6">
         <Form layout="vertical" form={instanceForm} onFinish={handleSubmit}>
-          <div className={"mt-4 flex flex-col gap-2"}>
-            <p className={"text-mono30 text-xs font-medium leading-5"}>
-              Employee Name
-            </p>
-            <Input
-              value={username}
-              className={"h-[52px] border border-solid border-[#E6E6E6]"}
-              disabled
-            />
-          </div>
-          <div className={"mt-2 flex items-center"}>
-            <div className={"w-[47%] calendar-cuti"}>
+          <Form.Item
+            label="Employee Name"
+            name={"username"}
+            className="col-span-2 "
+            initialValue={username}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <div>
+              <Input value={username} disabled />
+            </div>
+          </Form.Item>
+          <div className={"mt-2 flex items-center justify-between "}>
+            <div className={"calendar-cuti"}>
               <Form.Item
                 label="Start Date"
                 name={"start_date"}
@@ -326,17 +326,15 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                     current.isBefore(moment().subtract(1, "day"))
                   }
                   placeholder="Select Start Date"
-                  style={{ height: 52, width: "100%", borderColor: "#E6E6E6" }}
+                  style={{ width: "100%", borderColor: "#E6E6E6" }}
                   suffixIcon={
                     <CalendartimeIconSvg size={20} color={"#808080"} />
                   }
                 />
               </Form.Item>
             </div>
-            <div className={"w-[6%] flex justify-center items-center"}>
-              <p>-</p>
-            </div>
-            <div className={"w-[47%] calendar-cuti"}>
+            <p className="mt-2">-</p>
+            <div className={"calendar-cuti "}>
               <Form.Item
                 label="End Date"
                 name={"end_date"}
@@ -352,7 +350,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                     current.isBefore(moment().subtract(1, "day"))
                   }
                   placeholder="Select End Date"
-                  style={{ height: 52, width: "100%", borderColor: "#E6E6E6" }}
+                  style={{ width: "100%", borderColor: "#E6E6E6" }}
                   suffixIcon={
                     <CalendartimeIconSvg size={20} color={"#808080"} />
                   }
@@ -360,11 +358,11 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               </Form.Item>
             </div>
           </div>
-          <div className={"mt-4 flex flex-col gap-2"}>
+          <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
               label="Task Delegate"
               name={"delegate_id"}
-              className="col-span-2"
+              className="col-span-2 "
               rules={[
                 {
                   required: true,
@@ -402,7 +400,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               </Select>
             </Form.Item>
           </div>
-          <div className="flex flex-wrap mb-4">
+          <div className="flex flex-wrap">
             {dataCuti?.delegasi && (
               <Tag
                 closable
@@ -431,7 +429,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               </Tag>
             )}
           </div>
-          <div className={"mt-4 flex flex-col gap-2"}>
+          <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
               label="Leave Type"
               name={"type"}
@@ -444,7 +442,6 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
             >
               <Select
                 placeholder="Select Leave Type"
-                size="large"
                 onChange={(value, option) => {
                   setDataCuti((prev) => ({
                     ...prev,
@@ -467,7 +464,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               </Select>
             </Form.Item>
           </div>
-          <div className={"mt-4 flex flex-col gap-2"}>
+          <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item label="Notes" name={"notes"} className="col-span-2">
               <Input.TextArea
                 rows={4}
@@ -476,9 +473,9 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               />
             </Form.Item>
           </div>
-          <div className={"mt-4 flex flex-col gap-2"}>
+          <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
-              label="Upload Supporting Document"
+              label="Supporting File"
               name={"dokumen"}
               className="col-span-2"
               rules={[
@@ -494,7 +491,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               ]}
             >
               <div className={"flex flex-col"}>
-                <div className="mb-4">
+                <div className="mb-4 ">
                   <Upload
                     accept=".pdf"
                     multiple={false}

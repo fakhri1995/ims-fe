@@ -37,8 +37,10 @@ import {
 } from "react";
 import { useQuery } from "react-query";
 
+import ButtonSys from "components/button";
 import DrawerCore from "components/drawer/drawerCore";
-import { CalendartimeIconSvg } from "components/icon";
+import { CalendartimeIconSvg, UsercircleIconSvg } from "components/icon";
+import { OneUserIconSvg, PdfIconSvg } from "components/icon.js";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -68,6 +70,8 @@ import {
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 import { Detail } from "apis/auth";
 
+import { BadgeLeaveStatus } from "../leave/BadgeLeaveStatus";
+
 /**
  * Component AttendanceStaffAktivitasDrawer's props.
  */
@@ -88,7 +92,18 @@ type objType = {
     name: string;
     link: string;
   };
+  employee: {
+    name: string;
+    nip: string;
+    email: string;
+    contract: {
+      role: {
+        name: string;
+      };
+    };
+  };
 };
+
 export interface IAttendanceStaffLeaveDetailDrawer {
   dataToken: string;
   visible: boolean;
@@ -141,142 +156,122 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
       });
   };
 
-  return (
-    <Modal
-      title={
-        <p className={"text-center mig-body--bold"}>
-          Detail of Leave Application
+  const employeeProfile = (employee) => (
+    <div className="flex items-center gap-4">
+      {/* TODO: Add profile image from detailProfile */}
+      <div className="w-12 h-12 rounded-full flex justify-center items-center bg-backdrop">
+        <OneUserIconSvg size={20} color={"#35763B"} strokeWidth={2} />
+      </div>
+
+      <div>
+        <h1 className="mig-body--medium">{employee?.name}</h1>
+        <p className="mig-caption text-mono50">
+          {employee?.contract?.role?.name}
         </p>
-      }
-      open={visible}
-      width={487}
-      className={"rounded-[10px]"}
+        <p className="mig-caption text-mono50">{employee?.nip}</p>
+      </div>
+    </div>
+  );
+
+  return (
+    <Drawer
+      title={"Leave Issued Details"}
+      visible={visible}
       footer={
         dataDefault?.status != "1"
           ? null
           : isAllowedToDeleteLeave && (
-              <div
+              <ButtonSys
+                fullWidth
+                color={"mono30"}
+                loading={loading}
                 onClick={() => batalCuti()}
-                className={
-                  "bg-[#BF4A40] py-2 rounded-[5px] flex justify-center hover:cursor-pointer"
-                }
+                disabled={!isAllowedToDeleteLeave}
               >
-                <div className={"flex items-center gap-2"}>
-                  {loading && (
-                    <Spin indicator={<LoadingOutlined />} size="small" />
-                  )}
-                  <p className={"text-white text-xs leading-5 font-bold"}>
-                    Cancel
-                  </p>
-                </div>
-              </div>
+                Cancel Leave Submission
+              </ButtonSys>
             )
       }
-      onCancel={onClose}
+      onClose={onClose}
     >
       <div className={"flex flex-col gap-4 "}>
-        <div className={"flex flex-col gap-2"}>
-          <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Status
-          </p>
-          <div
-            className={`${
-              dataDefault?.status == "1"
-                ? "bg-[#E6E6E6]"
-                : dataDefault?.status == "2"
-                ? "bg-[#35763B]"
-                : "bg-[#BF4A40]"
-            } py-1 px-4 max-w-max rounded-[5px]`}
-          >
-            <p
-              className={`${
-                dataDefault?.status == "1"
-                  ? "text-[#4D4D4D]"
-                  : dataDefault?.status == "2"
-                  ? "text-[#F3F3F3]"
-                  : "text-white"
-              } leading-4 text-[10px] font-medium`}
-            >
-              {dataDefault?.status == "1"
-                ? "Pending"
-                : dataDefault?.status == "2"
-                ? "Accepted"
-                : "Rejected"}
-            </p>
+        <h3 className="mig-caption--medium">Request by</h3>
+        <div className="border rounded-[5px] ">
+          {/* Requester Detail */}
+          <div className="border-b p-4">
+            {employeeProfile(dataDefault?.employee)}
+          </div>
+
+          {/* Leave Detail */}
+          <div className="p-4 flex flex-col gap-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className={"mig-caption text-neutrals90"}>Issued Date</p>
+                <p className={"mig-body"}>
+                  {moment(dataDefault?.issued_date).format("DD MMMM YYYY")}
+                </p>
+              </div>
+
+              <BadgeLeaveStatus status={dataDefault?.status} />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <div>
+                <p className={"mig-caption text-neutrals90"}>Leave Date</p>
+                <p className={"mig-body"}>
+                  {moment(dataDefault?.start_date).format("DD MMMM YYYY")} -{" "}
+                  {moment(dataDefault?.end_date).format("DD MMMM YYYY")}
+                </p>
+              </div>
+
+              <p
+                className={`mig-caption--medium bg-neutrals60 rounded-[5px] px-2 py-[2px] `}
+              >
+                {moment(dataDefault?.end_date).diff(
+                  moment(dataDefault?.start_date),
+                  "days"
+                )}{" "}
+                Days
+              </p>
+            </div>
+
+            <div>
+              <p className={"mig-caption text-neutrals90"}>Leave Type</p>
+              <p className={"mig-body"}>{dataDefault?.type?.name}</p>
+            </div>
+            <div>
+              <p className={"mig-caption text-neutrals90"}>Notes</p>
+              <p className={"mig-body"}>{dataDefault?.notes || "-"}</p>
+            </div>
+            <div className={"flex flex-col gap-4"}>
+              <p className={"mig-caption text-neutrals90"}>Supporting File</p>
+              {dataDefault?.document == null ? (
+                "-"
+              ) : (
+                <p className={"mig-body border p-4 rounded-[5px]"}>
+                  <a
+                    href={generateStaticAssetUrl(dataDefault?.document.link)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <PdfIconSvg size={28} />
+                      <p>{getFileName(dataDefault.document.link)}</p>
+                    </div>
+                  </a>
+                </p>
+              )}
+            </div>
           </div>
         </div>
-        <div className={"flex flex-col gap-1"}>
-          <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Issued Date
-          </p>
-          <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
-            {moment(dataDefault?.issued_date).format("DD MMMM YYYY")}
-          </p>
-        </div>
-        <div className={"flex flex-col gap-1"}>
-          <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Leave Date
-          </p>
-          <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
-            {moment(dataDefault?.start_date).format("DD MMMM YYYY")} -{" "}
-            {moment(dataDefault?.end_date).format("DD MMMM YYYY")}
-          </p>
-        </div>
-        <div className={"flex flex-col gap-1"}>
-          <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Duration
-          </p>
-          <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
-            {moment(dataDefault?.end_date).diff(
-              moment(dataDefault?.start_date),
-              "days"
-            )}{" "}
-            Days
-          </p>
-        </div>
-        <div className={"flex flex-col gap-1"}>
-          <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Task Delegate
-          </p>
-          <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
-            {dataDefault?.delegate?.name}
-          </p>
-        </div>
-        <div className={"flex flex-col gap-1"}>
-          <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Leave Type
-          </p>
-          <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
-            {dataDefault?.type?.name}
-          </p>
-        </div>
-        <div className={"flex flex-col gap-1"}>
-          <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            Notes
-          </p>
-          <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
-            {dataDefault?.notes}
-          </p>
-        </div>
-        <div className={"flex flex-col gap-1"}>
-          <p className={"text-xs text-[#808080] leading-4 font-normal"}>
-            File Link
-          </p>
-          <p className={"text-sm text-[#4D4D4D] leading-6 font-medium"}>
-            {dataDefault?.document == null ? (
-              "-"
-            ) : (
-              <a
-                href={"https://cdn.mig.id/" + dataDefault?.document.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View File
-              </a>
-            )}
-          </p>
+
+        <div>
+          <p className={"mig-caption--medium mb-4"}>Task Delegate</p>
+          <div className="border p-4 rounded-[5px]">
+            {employeeProfile(dataDefault?.delegate)}
+          </div>
         </div>
       </div>
-    </Modal>
+    </Drawer>
   );
 };
