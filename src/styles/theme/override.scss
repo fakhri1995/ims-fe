@@ -1188,3 +1188,14 @@ a:hover {
   margin-right: 10px;
   order: -1;
 }
+
+/* Mobile (sm breakpoint) */
+@media (max-width: 640px) {
+  .ant-drawer .ant-drawer-content-wrapper {
+    width: 100% !important;
+  }
+
+  .ant-drawer-content {
+    border-radius: 0px;
+  }
+}
