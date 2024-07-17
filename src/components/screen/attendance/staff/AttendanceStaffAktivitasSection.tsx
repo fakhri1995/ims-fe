@@ -449,9 +449,9 @@ export const AttendanceStaffAktivitasSection: FC<
     if (!userAttendanceForm) {
       Modal.error({
         centered: true,
-        title: "Terjadi kesalahan!",
+        title: "Error Occurred!",
         content:
-          "Anda belum memiliki form aktivitas. Mohon hubungi Admin untuk segera menambahkan Anda ke dalam form aktivitas.",
+          "You don't have an activity form yet. Please contact Admin to immediately add your activity form.",
         okText: "Back",
         closable: true,
       });
@@ -537,6 +537,9 @@ export const AttendanceStaffAktivitasSection: FC<
           setRawDataLeaves(res2.data);
           setDisplayDataLeaves(res2.data.data); // table-related data source
           // setDataTipeCutis(res2.data);
+        })
+        .catch((err) => {
+          notificationError({ message: "Failed to get user leaves" });
         });
     }
   };
@@ -544,18 +547,22 @@ export const AttendanceStaffAktivitasSection: FC<
   const fetchDataCount = async () => {
     if (!isAllowedToLeaveCount) {
       permissionWarningNotification("Mendapatkan", "Jumlah Cuti");
-    } else {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeavesCount`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(dataToken),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setLeaveCount(res2.data);
-        });
+      return;
     }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeavesCount`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(dataToken),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setLeaveCount(res2?.data);
+      })
+      .catch((err) => {
+        notificationError({ message: "Failed to get leaves count" });
+      });
   };
 
   const checkActivityTask = () => {
@@ -1027,7 +1034,7 @@ export const AttendanceStaffAktivitasSection: FC<
               pagination={{
                 current: queryParams.page,
                 pageSize: queryParams.rows,
-                total: rawDataLeaves.total,
+                total: rawDataLeaves?.total,
               }}
               onChange={(pagination, _, sorter) => {
                 setQueryParams({
