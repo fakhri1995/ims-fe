@@ -1,74 +1,16 @@
-import {
-  CameraOutlined,
-  LoadingOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Drawer,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-  Skeleton,
-  Spin,
-  Tag,
-  Upload,
-  UploadProps,
-  notification,
-} from "antd";
-import { FormInstance } from "antd/es/form/Form";
-import { UploadChangeParam } from "antd/lib/upload";
-import { RcFile, UploadFile } from "antd/lib/upload/interface";
-import type { AxiosError, AxiosResponse } from "axios";
+import { Drawer, notification } from "antd";
 import moment from "moment";
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { useQuery } from "react-query";
+import { FC, useState } from "react";
 
 import ButtonSys from "components/button";
-import DrawerCore from "components/drawer/drawerCore";
-import { CalendartimeIconSvg, UsercircleIconSvg } from "components/icon";
+import { AccessControl } from "components/features/AccessControl";
 import { OneUserIconSvg, PdfIconSvg } from "components/icon.js";
+import { ModalDelete } from "components/modal/modalCustomNew";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { useAxiosClient } from "hooks/use-axios-client";
-
-import {
-  ATTENDANCE_ACTIVITY_ADD,
-  ATTENDANCE_ACTIVITY_DELETE,
-  ATTENDANCE_ACTIVITY_UPDATE,
-  LEAVE_DELETE,
-} from "lib/features";
-import {
-  generateStaticAssetUrl,
-  getBase64,
-  getFileName,
-  objectToFormData,
-  permissionWarningNotification,
-} from "lib/helper";
-
-import {
-  FormAktivitasTypes,
-  IAddAttendanceActivityPayload,
-  IUpdateAttendanceActivityPayload,
-  useGetUserAttendanceTodayActivities,
-  useMutateAttendanceActivity,
-} from "apis/attendance";
-import { AuthService, AuthServiceQueryKeys } from "apis/auth";
-import { Detail } from "apis/auth";
+import { LEAVE_DELETE } from "lib/features";
+import { generateStaticAssetUrl, getFileName } from "lib/helper";
 
 import { BadgeLeaveStatus } from "../leave/BadgeLeaveStatus";
 
@@ -120,8 +62,13 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
   IAttendanceStaffLeaveDetailDrawer
 > = ({ visible, onClose, fetchData, dataDefault, dataToken }) => {
   const { hasPermission } = useAccessControl();
-  const [loading, setLoading] = useState(false);
   const isAllowedToDeleteLeave = hasPermission(LEAVE_DELETE);
+
+  const [loading, setLoading] = useState(false);
+  const [modalConfirm, setModalConfirm] = useState({
+    show: false,
+    data: dataDefault?.issued_date,
+  });
 
   const batalCuti = () => {
     setLoading(true);
@@ -140,9 +87,10 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
       .then((res2) => {
         if (res2.success) {
           setLoading(false);
+          handleCloseModalConfirm();
 
           notification["success"]({
-            message: "Batalkan Cuti Sukses",
+            message: "Leave request successfully canceled",
             duration: 3,
           });
           onClose();
@@ -154,6 +102,10 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
           });
         }
       });
+  };
+
+  const handleCloseModalConfirm = () => {
+    setModalConfirm({ show: false, data: null });
   };
 
   const employeeProfile = (employee) => (
@@ -185,7 +137,12 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
                 fullWidth
                 color={"mono30"}
                 loading={loading}
-                onClick={() => batalCuti()}
+                onClick={() =>
+                  setModalConfirm({
+                    show: true,
+                    data: dataDefault?.issued_date,
+                  })
+                }
                 disabled={!isAllowedToDeleteLeave}
               >
                 Cancel Leave Submission
@@ -272,6 +229,24 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
           </div>
         </div>
       </div>
+
+      <AccessControl hasPermission={LEAVE_DELETE}>
+        <ModalDelete
+          visible={modalConfirm?.show}
+          title="Cancel Leave Request"
+          itemName="Leave Request"
+          loading={loading}
+          disabled={!isAllowedToDeleteLeave}
+          onOk={() => batalCuti()}
+          onCancel={() => setModalConfirm({ show: false, data: null })}
+        >
+          <p>
+            Are you sure you want to cancel your leave request on{" "}
+            <strong>{moment(modalConfirm?.data).format("DD MMMM YYYY")}</strong>
+            ?
+          </p>
+        </ModalDelete>
+      </AccessControl>
     </Drawer>
   );
 };
