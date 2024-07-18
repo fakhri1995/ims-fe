@@ -20,6 +20,8 @@ import {
   permissionWarningNotification,
 } from "lib/helper";
 
+import ModalCore from "../modalCore";
+
 const ModalImportTasksToActivity = ({
   visible,
   onvisible,
@@ -248,101 +250,85 @@ const ModalImportTasksToActivity = ({
   };
 
   return (
-    <Modal
+    <ModalCore
       title="Import Tasks to Activity"
       visible={visible}
-      width={502}
-      footer={null}
+      onOk={() => importMultipleTask()}
+      loading={false}
+      buttonOkText="Import Selected Task"
       onCancel={handleCloseModalImportTask}
-      maskClosable={false}
-      className="p-0"
+      buttonCancelText="Cancel"
+      disabled={dataTaskSelected.length < 1}
+      width={502}
     >
-      <div className="col-span-4">
-        <Input
-          style={{ width: `100%` }}
-          suffix={<SearchOutlined />}
-          defaultValue={queryParams.keyword}
-          placeholder="Search Task.."
-          onChange={onChangeSearch}
-          allowClear
-        />
-      </div>
-      <div className={"mt-7 flex justify-between mb-4"}>
-        <p
-          className={"text-mono30 text-base font-bold "}
-          style={{ lineHeight: "24px" }}
-        >
-          Task List
-        </p>
-        {displayDataImport.length > 0 && (
-          <button
-            className={"bg-transparent"}
-            onClick={() => handleSelectTask()}
-          >
-            <p
-              className={"text-primary100 text-sm font-bold"}
-              style={{ lineHeight: "24px" }}
+      <div>
+        <div className="col-span-4">
+          <Input
+            style={{ width: `100%` }}
+            suffix={<SearchOutlined />}
+            defaultValue={queryParams.keyword}
+            placeholder="Search Task.."
+            onChange={onChangeSearch}
+            allowClear
+          />
+        </div>
+        <div className={"my-4 flex justify-between"}>
+          <p className={"mig-body--bold"}>Task List</p>
+          {displayDataImport.length > 0 && (
+            <button
+              className={"bg-transparent"}
+              onClick={() => handleSelectTask()}
             >
-              {dataTaskSelected.length == displayDataImport.length
-                ? "Deselect All"
-                : "Select All"}
-            </p>
-          </button>
+              <p className={"text-primary100 mig-body--bold"}>
+                {dataTaskSelected.length == displayDataImport.length
+                  ? "Deselect All"
+                  : "Select All"}
+              </p>
+            </button>
+          )}
+        </div>
+
+        {displayDataImport.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            {displayDataImport.map((task, index) => (
+              <div
+                key={task.id}
+                className={
+                  "flex px-4 py-2 border rounded-md border-inputkategori"
+                }
+              >
+                <div className={"w-11/12"}>
+                  <p
+                    className={"text-xs font-bold text-mono30"}
+                    style={{ lineHeight: "20px" }}
+                  >
+                    {task.name} T-{task.id}
+                  </p>
+                  <p
+                    className={"text-xs text-mono50"}
+                    style={{ lineHeight: "16px" }}
+                  >
+                    [{task.project_name ? task.project_name : " - "}]
+                  </p>
+                </div>
+                <div className={"w-1/12 self-center items-end"}>
+                  <Checkbox
+                    key={task.id}
+                    value={task.id}
+                    checked={task.is_selected}
+                    onChange={(e) => {
+                      handleOnSelectTask(e);
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <DataEmptyState />
         )}
       </div>
-
-      {displayDataImport.length > 0 ? (
-        displayDataImport.map((task, index) => (
-          <div
-            key={task.id}
-            className={
-              "flex px-4 py-2 border rounded-md border-inputkategori mb-4"
-            }
-          >
-            <div className={"w-11/12"}>
-              <p
-                className={"text-xs font-bold text-mono30"}
-                style={{ lineHeight: "20px" }}
-              >
-                {task.name} T-{task.id}
-              </p>
-              <p
-                className={"text-xs text-mono50"}
-                style={{ lineHeight: "16px" }}
-              >
-                [{task.project_name ? task.project_name : " - "}]
-              </p>
-            </div>
-            <div className={"w-1/12 self-center items-end"}>
-              <Checkbox
-                key={task.id}
-                value={task.id}
-                checked={task.is_selected}
-                onChange={(e) => {
-                  handleOnSelectTask(e);
-                }}
-              />
-            </div>
-          </div>
-        ))
-      ) : (
-        <DataEmptyState />
-      )}
-
-      <div className={"pt-3 flex gap-4 justify-end border-t"}>
-        <ButtonSys onClick={handleCloseModalImportTask}>Cancel</ButtonSys>
-        <ButtonSys
-          type={"primary"}
-          onClick={() => importMultipleTask()}
-          disabled={dataTaskSelected.length < 1}
-        >
-          <div className="flex gap-2 items-center">
-            <FileImportIconSvg />
-            <p className="mig-buttons">Import Selected Task</p>
-          </div>
-        </ButtonSys>
-      </div>
-    </Modal>
+    </ModalCore>
   );
 };
 
