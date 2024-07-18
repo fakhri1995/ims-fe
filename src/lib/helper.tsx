@@ -127,6 +127,7 @@ export const notificationSuccess = (props: ArgsProps) => {
   notification.success({
     icon: <CircleCheckFilledIconSvg size={28} className={"text-primary100"} />,
     ...props,
+    // duration: 0,
   });
 };
 
