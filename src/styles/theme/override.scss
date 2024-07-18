@@ -6,7 +6,7 @@
 
 /**  Element level */
 body {
-  @apply font-sans;
+  @apply font-inter;
 }
 
 ul {
@@ -38,6 +38,7 @@ a:hover {
 .btn {
   text-transform: none !important;
   border-radius: 5px;
+  @apply font-roboto;
 }
 
 .btn-square {

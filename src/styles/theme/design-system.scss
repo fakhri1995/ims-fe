@@ -16,7 +16,7 @@
 
 /** Buttons */
 .mig-button {
-  @apply rounded-md text-sm font-medium py-2 px-6 flex items-center;
+  @apply rounded-md text-sm font-medium py-2 px-6 flex items-center font-roboto;
 
   &--outlined {
     &-primary {
