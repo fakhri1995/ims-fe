@@ -35,7 +35,10 @@ import ButtonSys from "../../../../components/button";
 import {
   CirclePlusIconSvg,
   DeleteTablerIconSvg,
+  LinkIconSvg,
   PlusIconSvg,
+  ShareIconSvg,
+  UserPlusIconSvg,
   UsersIconSvg,
   XIconSvg,
 } from "../../../../components/icon";
@@ -205,10 +208,41 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
         <div className="flex flex-col shadow-md rounded-md bg-white px-5 py-6 gap-6 mb-6">
           <div className="flex flex-col md:flex-row gap-2 justify-between md:items-center">
             <h4 className="mig-heading--4 w-full md:w-2/12">Daftar Talent</h4>
-            <div className="flex flex-col lg:flex-row gap-2 md:justify-end">
-              {/* <div onClick={()=> setShowModalTalentRemoved(true)} className={'bg-[#F3F3F3] p-2 hover:cursor-pointer w-8 h-8 rounded-[5px] flex justify-center items-center  '}>
-              <DeleteTablerIconSvg size={16} color={'#808080'}/>
-              </div> */}
+            <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 md:justify-end">
+              <div
+                onClick={() => setShowModalTalentRemoved(true)}
+                className={
+                  "bg-[#F3F3F3] p-2 hover:cursor-pointer w-8 h-8 rounded-[5px] flex justify-center items-center  "
+                }
+              >
+                <DeleteTablerIconSvg size={16} color={"#808080"} />
+              </div>
+              <div
+                onClick={() => setModalLinks(true)}
+                className={
+                  "bg-[#F3F3F3] p-2 hover:cursor-pointer w-8 h-8 rounded-[5px] flex justify-center items-center  "
+                }
+              >
+                <LinkIconSvg size={16} color={"#808080"} />
+              </div>
+              <div
+                onClick={() => setShowModalTalentRemoved(true)}
+                className={
+                  "bg-[#F3F3F3] p-2 hover:cursor-pointer w-8 h-8 rounded-[5px] flex justify-center items-center  "
+                }
+              >
+                <ShareIconSvg size={16} color={"#808080"} />
+              </div>
+              <div className={"bg-[#000000] h-7 w-[0.5px] opacity-5"} />
+              <div
+                className={
+                  "border flex flex-row gap-2 items-center justify-center border-[#35763B] rounded-[5px] w-[123px] h-8 hover:cursor-pointer"
+                }
+              >
+                <UserPlusIconSvg size={16} className={"text-[#35763B]"} />
+                <p className={"leading-4 text-sm text-[#35763B]"}>Add Talent</p>
+              </div>
+
               <ButtonSys type={"default"} onClick={() => setModalLinks(true)}>
                 <div className="flex gap-2 items-center">
                   <UnorderedListOutlined rev={""} />
