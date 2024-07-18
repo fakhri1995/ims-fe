@@ -1,4 +1,3 @@
-import { notification } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
 
@@ -45,7 +44,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
-      name: "Absensi Saya",
+      name: "My Attendance",
     },
   ];
 

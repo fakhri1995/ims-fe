@@ -1,4 +1,5 @@
-import { Button, Tooltip, notification } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
 import { useCallback, useRef } from "react";
 
 import { notificationError } from "../lib/helper";
@@ -15,8 +16,8 @@ const ButtonSys = ({
   selected,
   onChangeGambar,
   disabled,
+  loading = false,
   fullWidth,
-
   inputAccept, // only accept certain files type (`accept` <input>'s attribute)
   inputMultiple = false,
   inputFileMaxSize = 5, // in MiB
@@ -86,7 +87,7 @@ const ButtonSys = ({
         color === "notice" && !disabled,
       "text-warning border-warning bg-warning bg-opacity-10 hover:bg-warning hover:opacity-75":
         color === "warning" && !disabled,
-      "text-mono30 border-mono30 hover:bg-mono30 hover:opacity-75":
+      "text-mono30 border-mono30 bg-transparent hover:bg-mono30 hover:opacity-75":
         color === "mono30" && !disabled,
       "text-mono50 border-mono50 hover:bg-mono50 bg-transparent hover:opacity-75":
         color === "mono50" && !disabled,
@@ -129,13 +130,24 @@ const ButtonSys = ({
     case "primary":
       buttonElement = (
         <button
-          disabled={disabled}
+          disabled={disabled || loading}
           form={form}
           onClick={onClick}
           type={buttonType}
           className={primaryButtonClassName}
         >
-          {children}
+          {loading ? (
+            <Spin
+              indicator={
+                <LoadingOutlined
+                  style={{ fontSize: 20, color: "white" }}
+                  spin
+                />
+              }
+            />
+          ) : (
+            children
+          )}
         </button>
       );
       break;
@@ -143,13 +155,25 @@ const ButtonSys = ({
     case "default":
       buttonElement = (
         <button
-          disabled={disabled}
+          disabled={disabled || loading}
           form={form}
           onClick={onClick}
           type={buttonType}
           className={defaultButtonClassName}
         >
-          {children}
+          {loading ? (
+            <Spin
+              indicator={
+                <LoadingOutlined
+                  className={`text-${color}`}
+                  style={{ fontSize: 20 }}
+                  spin
+                />
+              }
+            />
+          ) : (
+            children
+          )}
         </button>
       );
       break;

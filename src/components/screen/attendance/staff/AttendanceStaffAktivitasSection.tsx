@@ -39,7 +39,7 @@ import ButtonSys from "components/button";
 import ButtonTooltip from "components/buttonTooltip";
 import { AccessControl } from "components/features/AccessControl";
 import ModalImportTasksToActivity from "components/modal/attendance/modalImportTasksToActivity";
-import { ModalDelete, ModalWarning } from "components/modal/modalCustom";
+import { ModalDelete, ModalWarning } from "components/modal/modalCustomNew";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -86,11 +86,22 @@ import {
   TrashIconSvg,
   XIconSvg,
 } from "../../../../components/icon";
+import { BadgeLeaveStatus } from "../leave/BadgeLeaveStatus";
 import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
 import { AttendanceStaffLeaveStatisticCards } from "./AttendanceStaffLeaveStatisticCards";
+
+export interface IGetLeaveUser {
+  start_date: string;
+  end_date: string;
+  issued_date: string;
+  type: {
+    name: string;
+  };
+  status: string;
+}
 
 /**
  * Component AttendanceStaffAktivitasSection's props.
@@ -168,6 +179,7 @@ export const AttendanceStaffAktivitasSection: FC<
   const [dataDefault, setDataDefault] = useState(null);
   const [showDetailCuti, setShowDetailCuti] = useState(false);
   const [loadingTasks, setLoadingTasks] = useState(true);
+  const [loadingLeaves, setLoadingLeaves] = useState(true);
   const [loadingDeleteTaskActivity, setLoadingDeleteTaskActivity] =
     useState(false);
   const [leaveCount, setLeaveCount] = useState(null);
@@ -191,7 +203,7 @@ export const AttendanceStaffAktivitasSection: FC<
     total: null,
   });
 
-  const columnLeaves = [
+  const columnLeaves: ColumnsType<IGetLeaveUser> = [
     {
       title: "No",
       dataIndex: "num",
@@ -218,7 +230,7 @@ export const AttendanceStaffAktivitasSection: FC<
           children: (
             <>
               {moment(record.end_date).diff(moment(record.start_date), "days")}{" "}
-              Hari
+              days
             </>
           ),
         };
@@ -234,35 +246,23 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     },
     {
+      title: "Leave Type",
+      dataIndex: ["type", "name"],
+      render: (text, record, index) => {
+        return {
+          children: <>{text}</>,
+        };
+      },
+    },
+    {
       title: "Status",
       dataIndex: "status",
+      align: "center",
       render: (text, record, index) => {
         return {
           children: (
-            <div
-              className={`${
-                record.status == 1
-                  ? "bg-[#E6E6E6]"
-                  : record.status == 2
-                  ? "bg-[#35763B]"
-                  : "bg-[#BF4A40]"
-              } py-1 px-4 max-w-max rounded-[5px]`}
-            >
-              <p
-                className={`${
-                  record.status == 1
-                    ? "text-[#4D4D4D]"
-                    : record.status == 2
-                    ? "text-[#F3F3F3]"
-                    : "text-white"
-                } leading-4 text-[10px] font-medium`}
-              >
-                {record.status == 1
-                  ? "Pending"
-                  : record.status == 2
-                  ? "Accepted"
-                  : "Rejected"}
-              </p>
+            <div className="flex justify-center">
+              <BadgeLeaveStatus status={record?.status} />
             </div>
           ),
         };
@@ -271,6 +271,7 @@ export const AttendanceStaffAktivitasSection: FC<
     {
       title: "Action",
       dataIndex: "button_action",
+      align: "center",
       render: (text, record, index) => {
         return {
           children: (
@@ -526,6 +527,7 @@ export const AttendanceStaffAktivitasSection: FC<
       const params = QueryString.stringify(queryParams, {
         addQueryPrefix: true,
       });
+      setLoadingLeaves(true);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeavesUser${params}`, {
         method: `GET`,
         headers: {
@@ -540,7 +542,8 @@ export const AttendanceStaffAktivitasSection: FC<
         })
         .catch((err) => {
           notificationError({ message: "Failed to get user leaves" });
-        });
+        })
+        .finally(() => setLoadingLeaves(false));
     }
   };
 
@@ -1029,7 +1032,7 @@ export const AttendanceStaffAktivitasSection: FC<
               className="tableTask"
               dataSource={displayDataLeaves}
               columns={columnLeaves}
-              loading={loadingTasks}
+              loading={loadingLeaves}
               scroll={{ x: "max-content" }}
               pagination={{
                 current: queryParams.page,

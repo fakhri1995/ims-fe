@@ -1,45 +1,12 @@
-import {
-  CameraOutlined,
-  LoadingOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Drawer,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-  Skeleton,
-  Spin,
-  Tag,
-  Upload,
-  UploadProps,
-  notification,
-} from "antd";
-import { FormInstance } from "antd/es/form/Form";
-import { UploadChangeParam } from "antd/lib/upload";
-import { RcFile, UploadFile } from "antd/lib/upload/interface";
-import type { AxiosError, AxiosResponse } from "axios";
+import { UploadOutlined } from "@ant-design/icons";
+import { DatePicker, Drawer, Form, Input, Select, Upload } from "antd";
+import { RcFile } from "antd/lib/upload/interface";
 import moment from "moment";
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
-import DrawerCore from "components/drawer/drawerCore";
-import { CalendartimeIconSvg } from "components/icon";
+import { CalendartimeIconSvg, CheckIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -51,26 +18,16 @@ import {
   ATTENDANCE_ACTIVITY_UPDATE,
   FILTER_EMPLOYEES_GET,
   LEAVE_TYPES_GET,
+  LEAVE_USER_ADD,
 } from "lib/features";
 import {
-  generateStaticAssetUrl,
   getBase64,
-  getFileName,
   notificationError,
-  objectToFormData,
-  objectToFormDataNew,
+  notificationSuccess,
   permissionWarningNotification,
 } from "lib/helper";
 
-import {
-  FormAktivitasTypes,
-  IAddAttendanceActivityPayload,
-  IUpdateAttendanceActivityPayload,
-  useGetUserAttendanceTodayActivities,
-  useMutateAttendanceActivity,
-} from "apis/attendance";
-import { AuthService, AuthServiceQueryKeys } from "apis/auth";
-import { Detail } from "apis/auth";
+import { useGetUserAttendanceTodayActivities } from "apis/attendance";
 
 /**
  * Component AttendanceStaffAktivitasDrawer's props.
@@ -104,15 +61,11 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
   activityFormId,
 }) => {
   const [instanceForm] = Form.useForm();
-  const axiosClient = useAxiosClient();
-  const { todayActivities, findTodayActivity } =
-    useGetUserAttendanceTodayActivities();
+
   const { hasPermission } = useAccessControl();
-  const isAllowedToAddActivity = hasPermission(ATTENDANCE_ACTIVITY_ADD);
-  const isAllowedToUpdateActivity = hasPermission(ATTENDANCE_ACTIVITY_UPDATE);
-  const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
   const isAllowedToGetLeaveTypes = hasPermission(LEAVE_TYPES_GET);
   const isAllowedToGetEmployees = hasPermission(FILTER_EMPLOYEES_GET);
+  const isAllowedToAddLeave = hasPermission(LEAVE_USER_ADD);
   const [resumeFileBlob, setResumeFileBlob] = useState<RcFile | Blob | File>(
     null
   );
@@ -251,14 +204,14 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
           setLoading(false);
           onClose();
           getDataNew();
-          notification["success"]({
-            message: "Succesfully applied for leave",
+          notificationSuccess({
+            message: "Leave request successfully sent",
             duration: 3,
           });
         } else {
-          notification["error"]({
+          notificationError({
             message:
-              "Failed to apply for leave because of an error in the server",
+              "Failed to sent leave request because of an error in the server",
             duration: 3,
           });
         }
@@ -273,44 +226,42 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
       onClose={onClose}
       footer={
         <div className={"flex gap-4 justify-end p-2"}>
-          <div
-            onClick={onClose}
-            className={
-              "bg-[#F3F3F3] py-2.5 px-8 rounded-[5px] hover:cursor-pointer"
-            }
-          >
-            <p className={"text-xs leading-5 text-[#808080] font-bold"}>
-              Cancel
-            </p>
-          </div>
-          <div
+          <ButtonSys type={"default"} color="mono50" onClick={onClose}>
+            Cancel
+          </ButtonSys>
+          <ButtonSys
+            disabled={!isAllowedToAddLeave}
+            type="primary"
             onClick={() => instanceForm.submit()}
-            className={
-              "bg-[#35763B] py-2.5 px-8 flex items-center gap-2 rounded-[5px] hover:cursor-pointer"
-            }
+            loading={loading}
           >
-            {loading && (
-              <Spin indicator={<LoadingOutlined style={{ fontSize: 12 }} />} />
-            )}
-            <p className="text-white text-xs leading-5 font-bold">Submit</p>
-          </div>
+            <div className={"flex items-center gap-2"}>
+              <CheckIconSvg size={16} color="#FFFFFF" />
+              <p>Add Request</p>
+            </div>
+          </ButtonSys>
         </div>
       }
     >
       <div className="space-y-6">
         <Form layout="vertical" form={instanceForm} onFinish={handleSubmit}>
-          <div className={"mt-4 flex flex-col gap-2"}>
-            <p className={"text-mono30 text-xs font-medium leading-5"}>
-              Employee Name
-            </p>
-            <Input
-              value={username}
-              className={"h-[52px] border border-solid border-[#E6E6E6]"}
-              disabled
-            />
-          </div>
-          <div className={"mt-2 flex items-center"}>
-            <div className={"w-[47%] calendar-cuti"}>
+          <Form.Item
+            label="Employee Name"
+            name={"username"}
+            className="col-span-2 "
+            initialValue={username}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <div>
+              <Input value={username} disabled />
+            </div>
+          </Form.Item>
+          <div className={"mt-2 flex items-center justify-between "}>
+            <div className={"calendar-cuti"}>
               <Form.Item
                 label="Start Date"
                 name={"start_date"}
@@ -326,17 +277,15 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                     current.isBefore(moment().subtract(1, "day"))
                   }
                   placeholder="Select Start Date"
-                  style={{ height: 52, width: "100%", borderColor: "#E6E6E6" }}
+                  style={{ width: "100%", borderColor: "#E6E6E6" }}
                   suffixIcon={
                     <CalendartimeIconSvg size={20} color={"#808080"} />
                   }
                 />
               </Form.Item>
             </div>
-            <div className={"w-[6%] flex justify-center items-center"}>
-              <p>-</p>
-            </div>
-            <div className={"w-[47%] calendar-cuti"}>
+            <p className="mt-2">-</p>
+            <div className={"calendar-cuti "}>
               <Form.Item
                 label="End Date"
                 name={"end_date"}
@@ -352,7 +301,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                     current.isBefore(moment().subtract(1, "day"))
                   }
                   placeholder="Select End Date"
-                  style={{ height: 52, width: "100%", borderColor: "#E6E6E6" }}
+                  style={{ width: "100%", borderColor: "#E6E6E6" }}
                   suffixIcon={
                     <CalendartimeIconSvg size={20} color={"#808080"} />
                   }
@@ -360,11 +309,11 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               </Form.Item>
             </div>
           </div>
-          <div className={"mt-4 flex flex-col gap-2"}>
+          <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
               label="Task Delegate"
               name={"delegate_id"}
-              className="col-span-2"
+              className="col-span-2 "
               rules={[
                 {
                   required: true,
@@ -374,7 +323,6 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
             >
               <Select
                 showSearch
-                className="dontShow"
                 value={dataCuti?.delegasi}
                 placeholder={"Search Name"}
                 style={{ width: `100%` }}
@@ -402,36 +350,8 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               </Select>
             </Form.Item>
           </div>
-          <div className="flex flex-wrap mb-4">
-            {dataCuti?.delegasi && (
-              <Tag
-                closable
-                onClose={() => {
-                  setDataCuti((prev) => ({
-                    ...prev,
-                    delegasi: null,
-                  }));
-                }}
-                className="flex items-center p-2 w-max mb-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={generateStaticAssetUrl(
-                      dataCuti?.delegasi?.profile_image?.link ??
-                        "staging/Users/default_user.png"
-                    )}
-                    alt={dataCuti?.delegasi?.name}
-                    className="w-6 h-6 bg-cover object-cover rounded-full"
-                  />
-                  <p className="truncate">
-                    <strong>{dataCuti?.delegasi?.name}</strong> -{" "}
-                    {dataCuti?.delegasi?.position}
-                  </p>
-                </div>
-              </Tag>
-            )}
-          </div>
-          <div className={"mt-4 flex flex-col gap-2"}>
+
+          <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
               label="Leave Type"
               name={"type"}
@@ -444,7 +364,6 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
             >
               <Select
                 placeholder="Select Leave Type"
-                size="large"
                 onChange={(value, option) => {
                   setDataCuti((prev) => ({
                     ...prev,
@@ -467,7 +386,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               </Select>
             </Form.Item>
           </div>
-          <div className={"mt-4 flex flex-col gap-2"}>
+          <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item label="Notes" name={"notes"} className="col-span-2">
               <Input.TextArea
                 rows={4}
@@ -476,9 +395,9 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               />
             </Form.Item>
           </div>
-          <div className={"mt-4 flex flex-col gap-2"}>
+          <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
-              label="Upload Supporting Document"
+              label="Supporting File"
               name={"dokumen"}
               className="col-span-2"
               rules={[
@@ -494,7 +413,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               ]}
             >
               <div className={"flex flex-col"}>
-                <div className="mb-4">
+                <div className="mb-4 ">
                   <Upload
                     accept=".pdf"
                     multiple={false}
