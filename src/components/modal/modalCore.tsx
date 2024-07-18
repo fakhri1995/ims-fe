@@ -6,15 +6,15 @@ import { CheckIconSvg } from "components/icon";
 import ButtonSys from "../button";
 
 interface IModalCore {
-  title: string;
+  title: string | ReactElement;
   visible: boolean;
-  onOk: () => void;
-  loading: boolean;
   children: ReactElement;
+  onOk?: () => void;
   buttonOkText?: string;
   onCancel?: () => void;
   buttonCancelText?: string;
-  footer?: ReactElement;
+  footer?: ReactElement | boolean;
+  loading?: boolean;
   disabled?: boolean;
   width?: number;
   iconButtonText?: string;
@@ -30,14 +30,14 @@ interface IModalCore {
 const ModalCore = ({
   title,
   visible,
-  onOk,
-  loading,
   children,
+  onOk,
   buttonOkText,
   onCancel,
   buttonCancelText,
   footer,
   disabled,
+  loading,
   width,
   iconButtonText,
   closable = true,
