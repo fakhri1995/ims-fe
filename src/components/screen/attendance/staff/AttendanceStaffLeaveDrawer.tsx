@@ -1,44 +1,11 @@
-import {
-  CameraOutlined,
-  LoadingOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Drawer,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-  Skeleton,
-  Spin,
-  Tag,
-  Upload,
-  UploadProps,
-  notification,
-} from "antd";
-import { FormInstance } from "antd/es/form/Form";
-import { UploadChangeParam } from "antd/lib/upload";
-import { RcFile, UploadFile } from "antd/lib/upload/interface";
-import type { AxiosError, AxiosResponse } from "axios";
+import { UploadOutlined } from "@ant-design/icons";
+import { DatePicker, Drawer, Form, Input, Select, Upload } from "antd";
+import { RcFile } from "antd/lib/upload/interface";
 import moment from "moment";
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
-import DrawerCore from "components/drawer/drawerCore";
 import { CalendartimeIconSvg, CheckIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
@@ -54,24 +21,13 @@ import {
   LEAVE_USER_ADD,
 } from "lib/features";
 import {
-  generateStaticAssetUrl,
   getBase64,
-  getFileName,
   notificationError,
-  objectToFormData,
-  objectToFormDataNew,
+  notificationSuccess,
   permissionWarningNotification,
 } from "lib/helper";
 
-import {
-  FormAktivitasTypes,
-  IAddAttendanceActivityPayload,
-  IUpdateAttendanceActivityPayload,
-  useGetUserAttendanceTodayActivities,
-  useMutateAttendanceActivity,
-} from "apis/attendance";
-import { AuthService, AuthServiceQueryKeys } from "apis/auth";
-import { Detail } from "apis/auth";
+import { useGetUserAttendanceTodayActivities } from "apis/attendance";
 
 /**
  * Component AttendanceStaffAktivitasDrawer's props.
@@ -105,13 +61,8 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
   activityFormId,
 }) => {
   const [instanceForm] = Form.useForm();
-  const axiosClient = useAxiosClient();
-  const { todayActivities, findTodayActivity } =
-    useGetUserAttendanceTodayActivities();
+
   const { hasPermission } = useAccessControl();
-  const isAllowedToAddActivity = hasPermission(ATTENDANCE_ACTIVITY_ADD);
-  const isAllowedToUpdateActivity = hasPermission(ATTENDANCE_ACTIVITY_UPDATE);
-  const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
   const isAllowedToGetLeaveTypes = hasPermission(LEAVE_TYPES_GET);
   const isAllowedToGetEmployees = hasPermission(FILTER_EMPLOYEES_GET);
   const isAllowedToAddLeave = hasPermission(LEAVE_USER_ADD);
@@ -253,14 +204,14 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
           setLoading(false);
           onClose();
           getDataNew();
-          notification["success"]({
-            message: "Succesfully applied for leave",
+          notificationSuccess({
+            message: "Leave request successfully sent",
             duration: 3,
           });
         } else {
-          notification["error"]({
+          notificationError({
             message:
-              "Failed to apply for leave because of an error in the server",
+              "Failed to sent leave request because of an error in the server",
             duration: 3,
           });
         }
@@ -372,7 +323,6 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
             >
               <Select
                 showSearch
-                className="dontShow"
                 value={dataCuti?.delegasi}
                 placeholder={"Search Name"}
                 style={{ width: `100%` }}
@@ -400,35 +350,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               </Select>
             </Form.Item>
           </div>
-          <div className="flex flex-wrap">
-            {dataCuti?.delegasi && (
-              <Tag
-                closable
-                onClose={() => {
-                  setDataCuti((prev) => ({
-                    ...prev,
-                    delegasi: null,
-                  }));
-                }}
-                className="flex items-center p-2 w-max mb-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={generateStaticAssetUrl(
-                      dataCuti?.delegasi?.profile_image?.link ??
-                        "staging/Users/default_user.png"
-                    )}
-                    alt={dataCuti?.delegasi?.name}
-                    className="w-6 h-6 bg-cover object-cover rounded-full"
-                  />
-                  <p className="truncate">
-                    <strong>{dataCuti?.delegasi?.name}</strong> -{" "}
-                    {dataCuti?.delegasi?.position}
-                  </p>
-                </div>
-              </Tag>
-            )}
-          </div>
+
           <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
               label="Leave Type"

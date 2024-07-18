@@ -39,7 +39,7 @@ import ButtonSys from "components/button";
 import ButtonTooltip from "components/buttonTooltip";
 import { AccessControl } from "components/features/AccessControl";
 import ModalImportTasksToActivity from "components/modal/attendance/modalImportTasksToActivity";
-import { ModalDelete, ModalWarning } from "components/modal/modalCustom";
+import { ModalDelete, ModalWarning } from "components/modal/modalCustomNew";
 
 import { useAccessControl } from "contexts/access-control";
 
