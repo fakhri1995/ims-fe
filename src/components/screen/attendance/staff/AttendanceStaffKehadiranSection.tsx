@@ -108,8 +108,9 @@ export const AttendanceStaffKehadiranSection: FC<
       },
       {
         key: "id",
-        title: "Check In Location",
+        title: <p className="whitespace-nowrap">Check In Location</p>,
         dataIndex: ["geo_loc_check_in", "display_name"],
+        width: 120,
         render: (value) => (
           <p title={value} className="max-w-28 truncate">
             {value}
@@ -143,8 +144,9 @@ export const AttendanceStaffKehadiranSection: FC<
       },
       {
         key: "id",
-        title: "Check Out Location",
+        title: <p className="whitespace-nowrap">Check Out Location</p>,
         dataIndex: ["geo_loc_check_out", "display_name"],
+        width: 120,
         render: (value) => (
           <p title={value} className="max-w-28 truncate">
             {value}
@@ -157,6 +159,7 @@ export const AttendanceStaffKehadiranSection: FC<
         dataIndex: "is_wfo",
         sorter: (a, b) => (b.is_wfo < a.is_wfo ? -1 : 1),
         align: "center",
+        width: 120,
       },
     ];
   }, [pageSize, currentPage]);
