@@ -9,6 +9,8 @@ module.exports = {
         500: "50rem",
       },
       fontFamily: {
+        inter: ['Inter', 'sans-serif'],
+        roboto: ['Roboto', 'sans-serif'],
         mont: ["Montserrat"],
         gilroysemibold: ["Gilroy-semibold"],
         gilroybold: ["Gilroy-bold"],

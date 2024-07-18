@@ -6,7 +6,7 @@
 
 /**  Element level */
 body {
-  @apply font-sans;
+  @apply font-inter;
 }
 
 ul {
@@ -38,6 +38,7 @@ a:hover {
 .btn {
   text-transform: none !important;
   border-radius: 5px;
+  @apply font-roboto;
 }
 
 .btn-square {
@@ -365,9 +366,7 @@ a:hover {
   color: #35763b;
 }
 
-.themedSelector.ant-select-focused:not(.ant-select-disabled).ant-select:not(
-    .ant-select-customize-input
-  )
+.themedSelector.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
   .ant-select-selector {
   border-color: #65976a;
   outline: 0;
@@ -747,9 +746,7 @@ a:hover {
 }
 
 .ant-form-item-label
-  > label.ant-form-item-required:not(
-    .ant-form-item-required-mark-optional
-  )::after {
+  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::after {
   display: inline-block;
   margin-right: 4px;
   color: #ff4d4f;
@@ -760,9 +757,7 @@ a:hover {
 }
 
 .ant-form-item-label
-  > label.ant-form-item-required:not(
-    .ant-form-item-required-mark-optional
-  )::before {
+  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
   display: none;
 }
 
@@ -1187,4 +1182,15 @@ a:hover {
   margin-left: 1px;
   margin-right: 10px;
   order: -1;
+}
+
+/* Mobile (sm breakpoint) */
+@media (max-width: 640px) {
+  .ant-drawer .ant-drawer-content-wrapper {
+    width: 100% !important;
+  }
+
+  .ant-drawer-content {
+    border-radius: 0px;
+  }
 }

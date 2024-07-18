@@ -39,7 +39,7 @@ import ButtonSys from "components/button";
 import ButtonTooltip from "components/buttonTooltip";
 import { AccessControl } from "components/features/AccessControl";
 import ModalImportTasksToActivity from "components/modal/attendance/modalImportTasksToActivity";
-import { ModalDelete, ModalWarning } from "components/modal/modalCustom";
+import { ModalDelete, ModalWarning } from "components/modal/modalCustomNew";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -86,11 +86,22 @@ import {
   TrashIconSvg,
   XIconSvg,
 } from "../../../../components/icon";
+import { BadgeLeaveStatus } from "../leave/BadgeLeaveStatus";
 import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
 import { AttendanceStaffLeaveStatisticCards } from "./AttendanceStaffLeaveStatisticCards";
+
+export interface IGetLeaveUser {
+  start_date: string;
+  end_date: string;
+  issued_date: string;
+  type: {
+    name: string;
+  };
+  status: string;
+}
 
 /**
  * Component AttendanceStaffAktivitasSection's props.
@@ -168,6 +179,7 @@ export const AttendanceStaffAktivitasSection: FC<
   const [dataDefault, setDataDefault] = useState(null);
   const [showDetailCuti, setShowDetailCuti] = useState(false);
   const [loadingTasks, setLoadingTasks] = useState(true);
+  const [loadingLeaves, setLoadingLeaves] = useState(true);
   const [loadingDeleteTaskActivity, setLoadingDeleteTaskActivity] =
     useState(false);
   const [leaveCount, setLeaveCount] = useState(null);
@@ -191,7 +203,7 @@ export const AttendanceStaffAktivitasSection: FC<
     total: null,
   });
 
-  const columnLeaves = [
+  const columnLeaves: ColumnsType<IGetLeaveUser> = [
     {
       title: "No",
       dataIndex: "num",
@@ -218,7 +230,7 @@ export const AttendanceStaffAktivitasSection: FC<
           children: (
             <>
               {moment(record.end_date).diff(moment(record.start_date), "days")}{" "}
-              Hari
+              days
             </>
           ),
         };
@@ -234,35 +246,23 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     },
     {
+      title: "Leave Type",
+      dataIndex: ["type", "name"],
+      render: (text, record, index) => {
+        return {
+          children: <>{text}</>,
+        };
+      },
+    },
+    {
       title: "Status",
       dataIndex: "status",
+      align: "center",
       render: (text, record, index) => {
         return {
           children: (
-            <div
-              className={`${
-                record.status == 1
-                  ? "bg-[#E6E6E6]"
-                  : record.status == 2
-                  ? "bg-[#35763B]"
-                  : "bg-[#BF4A40]"
-              } py-1 px-4 max-w-max rounded-[5px]`}
-            >
-              <p
-                className={`${
-                  record.status == 1
-                    ? "text-[#4D4D4D]"
-                    : record.status == 2
-                    ? "text-[#F3F3F3]"
-                    : "text-white"
-                } leading-4 text-[10px] font-medium`}
-              >
-                {record.status == 1
-                  ? "Pending"
-                  : record.status == 2
-                  ? "Accepted"
-                  : "Rejected"}
-              </p>
+            <div className="flex justify-center">
+              <BadgeLeaveStatus status={record?.status} />
             </div>
           ),
         };
@@ -271,6 +271,7 @@ export const AttendanceStaffAktivitasSection: FC<
     {
       title: "Action",
       dataIndex: "button_action",
+      align: "center",
       render: (text, record, index) => {
         return {
           children: (
@@ -387,7 +388,7 @@ export const AttendanceStaffAktivitasSection: FC<
       columns.push({
         key: "delete",
         title: "Actions",
-        render: (_, record: (typeof dataSource)[0]) => {
+        render: (_, record: typeof dataSource[0]) => {
           return (
             <button
               className="bg-transparent text-danger hover:opacity-75"
@@ -424,7 +425,7 @@ export const AttendanceStaffAktivitasSection: FC<
   );
 
   const mOnRowItemClicked = useCallback(
-    (datum: (typeof dataSource)[0]) => {
+    (datum: typeof dataSource[0]) => {
       if (tabActiveKey === HISTORY) {
         /** Only allow this click callback when user is on "Hari Ini" tab */
         return;
@@ -449,9 +450,9 @@ export const AttendanceStaffAktivitasSection: FC<
     if (!userAttendanceForm) {
       Modal.error({
         centered: true,
-        title: "Terjadi kesalahan!",
+        title: "Error Occurred!",
         content:
-          "Anda belum memiliki form aktivitas. Mohon hubungi Admin untuk segera menambahkan Anda ke dalam form aktivitas.",
+          "You don't have an activity form yet. Please contact Admin to immediately add your activity form.",
         okText: "Back",
         closable: true,
       });
@@ -526,6 +527,7 @@ export const AttendanceStaffAktivitasSection: FC<
       const params = QueryString.stringify(queryParams, {
         addQueryPrefix: true,
       });
+      setLoadingLeaves(true);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeavesUser${params}`, {
         method: `GET`,
         headers: {
@@ -537,25 +539,33 @@ export const AttendanceStaffAktivitasSection: FC<
           setRawDataLeaves(res2.data);
           setDisplayDataLeaves(res2.data.data); // table-related data source
           // setDataTipeCutis(res2.data);
-        });
+        })
+        .catch((err) => {
+          notificationError({ message: "Failed to get user leaves" });
+        })
+        .finally(() => setLoadingLeaves(false));
     }
   };
 
   const fetchDataCount = async () => {
     if (!isAllowedToLeaveCount) {
       permissionWarningNotification("Mendapatkan", "Jumlah Cuti");
-    } else {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeavesCount`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(dataToken),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setLeaveCount(res2.data);
-        });
+      return;
     }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeavesCount`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(dataToken),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setLeaveCount(res2?.data);
+      })
+      .catch((err) => {
+        notificationError({ message: "Failed to get leaves count" });
+      });
   };
 
   const checkActivityTask = () => {
@@ -614,7 +624,7 @@ export const AttendanceStaffAktivitasSection: FC<
   function checkFormOrTask() {
     if (tabActiveKey2 == FORM && activeSubmenu == "aktivitas") {
       return (
-        <Table<(typeof dataSource)[0]>
+        <Table<typeof dataSource[0]>
           columns={tableColums}
           rowKey={(record) => record.id}
           dataSource={dataSource}
@@ -699,7 +709,7 @@ export const AttendanceStaffAktivitasSection: FC<
       );
     } else if (activeSubmenu == "aktivitas") {
       return (
-        <Table<(typeof dataSource)[0]>
+        <Table<typeof dataSource[0]>
           columns={TableTaskColumns}
           dataSource={displayDataTaskHistory}
           rowKey={(record) => record.id}
@@ -1022,12 +1032,12 @@ export const AttendanceStaffAktivitasSection: FC<
               className="tableTask"
               dataSource={displayDataLeaves}
               columns={columnLeaves}
-              loading={loadingTasks}
+              loading={loadingLeaves}
               scroll={{ x: "max-content" }}
               pagination={{
                 current: queryParams.page,
                 pageSize: queryParams.rows,
-                total: rawDataLeaves.total,
+                total: rawDataLeaves?.total,
               }}
               onChange={(pagination, _, sorter) => {
                 setQueryParams({
