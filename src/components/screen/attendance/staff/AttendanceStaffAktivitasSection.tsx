@@ -268,23 +268,6 @@ export const AttendanceStaffAktivitasSection: FC<
         };
       },
     },
-    {
-      title: "Action",
-      dataIndex: "button_action",
-      align: "center",
-      render: (text, record, index) => {
-        return {
-          children: (
-            <div
-              onClick={() => detailCuti(record)}
-              className={"hover:cursor-pointer text-center"}
-            >
-              <EyeOutlined />
-            </div>
-          ),
-        };
-      },
-    },
   ];
 
   const detailCuti = (record) => {
@@ -932,9 +915,7 @@ export const AttendanceStaffAktivitasSection: FC<
                 className={"flex items-center gap-2 "}
               >
                 <AddNoteSvg />
-                <p className="text-xs leading-5 font-bold whitespace-nowrap">
-                  Apply for Leave
-                </p>
+                <p className="whitespace-nowrap">Apply for Leave</p>
               </div>
             </ButtonSys>
           )}
@@ -1045,10 +1026,13 @@ export const AttendanceStaffAktivitasSection: FC<
                   rows: pagination.pageSize,
                 });
               }}
+              onRow={(record) => {
+                return {
+                  onClick: (e) => detailCuti(record),
+                };
+              }}
               rowClassName={(record, idx) => {
-                return `${record.id === rowstate && `cursor-pointer`} ${
-                  record.status === 1 && `bg-bgBackdropOverdue`
-                }`;
+                return `cursor-pointer`;
               }}
             />
             <AttendanceStaffLeaveDrawer

@@ -126,13 +126,13 @@ const NotificationOverlayContainer: FC = () => {
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
-        <h5 className="mig-heading--5">Notifikasi</h5>
+        <h5 className="mig-heading--5">Notification</h5>
 
         <span
           className="mig-caption--medium cursor-pointer text-primary100 hover:opacity-75"
           onClick={onReadAllNotificationClicked}
         >
-          Tandai telah dibaca
+          Mark all as read
         </span>
       </div>
 
@@ -141,22 +141,20 @@ const NotificationOverlayContainer: FC = () => {
         {isNotificationListEmpty && (
           <div className="flex flex-col items-center justify-center space-y-4 my-4">
             <img src="/404-illustration.png" alt="Not Found" />
-            <span className="mig-caption text-mono50">
-              Tidak ada Notifikasi
-            </span>
+            <span className="mig-caption text-mono50">No notification yet</span>
           </div>
         )}
 
         {!isNotificationListEmpty && (
           <>
             <NotificationList
-              label="Terbaru"
+              label="Latest"
               items={todayNotificationItems}
               loading={isFetching}
             />
 
             <NotificationList
-              label="Terdahulu"
+              label="Previous"
               items={pastNotificationItems}
               loading={isFetching}
             />
@@ -172,7 +170,7 @@ const NotificationOverlayContainer: FC = () => {
               className="cursor-pointer flex items-center gap-[6px] 
           text-primary100 hover:text-primary100/75 mig-caption--medium"
             >
-              <p>Lihat Semua</p>
+              <p>View All</p>
               <ArrowRightIconSvg />
             </div>
           </Link>
