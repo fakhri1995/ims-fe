@@ -93,7 +93,7 @@ export const AttendanceStaffCheckInDrawer: FC<
 
   const fetchData = async () => {
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocationsSubCompany?company_id=1`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocationsSubCompany?company_id=${idCompany}`,
       {
         method: `GET`,
         headers: {
@@ -147,10 +147,6 @@ export const AttendanceStaffCheckInDrawer: FC<
       evidence_image?: string;
       subcompany: number;
     }) => {
-      // notificationWarning({
-      //   message: `Lokasi belum sesuai, pastikan lokasi anda sesuai dengan tempat anda bekerja`,
-      // });
-      console.log("isi value ", value);
       toggleCheckInCheckOut(
         {
           evidence: uploadedEvidencePicture,
@@ -158,7 +154,7 @@ export const AttendanceStaffCheckInDrawer: FC<
           lat: position?.coords.latitude.toString(),
           long: position?.coords.longitude.toString(),
           wfo: value?.work_from === "WFO" ? 1 : 0,
-          company_id: value.subcompany,
+          company_id: value?.subcompany,
         },
         {
           onSuccess: (response) => {
@@ -315,10 +311,10 @@ export const AttendanceStaffCheckInDrawer: FC<
                 )}
                 <Form.Item
                   name="subcompany"
-                  label={"Pilih Kantor Cabang"}
+                  label={"Select Placement"}
                   required
                 >
-                  <Select>
+                  <Select placeholder={"Select Placement"}>
                     {dataListCompany?.map((data) => (
                       <Select.Option key={data.id} value={data.id}>
                         {data.name}
