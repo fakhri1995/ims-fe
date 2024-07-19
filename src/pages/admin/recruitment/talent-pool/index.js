@@ -210,7 +210,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="flex flex-col md:flex-row gap-2 justify-between md:items-center">
             <h4 className="mig-heading--4 w-full md:w-2/12">Daftar Talent</h4>
             <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 md:justify-end">
-              <div
+              {/* <div
                 onClick={() => setShowModalTalentRemoved(true)}
                 className={
                   "bg-[#F3F3F3] p-2 hover:cursor-pointer w-8 h-8 rounded-[5px] flex justify-center items-center  "
@@ -242,7 +242,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
               >
                 <UserPlusIconSvg size={16} className={"text-[#35763B]"} />
                 <p className={"leading-4 text-sm text-[#35763B]"}>Add Talent</p>
-              </div>
+              </div> */}
 
               <ButtonSys type={"default"} onClick={() => setModalLinks(true)}>
                 <div className="flex gap-2 items-center">
