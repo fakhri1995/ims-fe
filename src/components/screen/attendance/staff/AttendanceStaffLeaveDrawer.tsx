@@ -260,7 +260,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               <Input value={username} disabled />
             </div>
           </Form.Item>
-          <div className={"mt-2 flex items-center justify-between "}>
+          <div className={"mt-2 flex items-center justify-between gap-2"}>
             <div className={"calendar-cuti"}>
               <Form.Item
                 label="Start Date"
