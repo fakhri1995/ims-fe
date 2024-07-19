@@ -47,6 +47,7 @@ import st from "../../../../components/layout-dashboard-management.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import ModalCategoryCreate from "../../../../components/modal/talent-pool/modalCategoryCreate";
 import ModalLinkList from "../../../../components/modal/talent-pool/modalLinkList";
+import ModalShare from "../../../../components/modal/talent-pool/modalShare";
 import ModalTalentRemoved from "../../../../components/modal/talent-pool/modalTalentRemoved";
 import TalentPoolSection from "../../../../components/screen/talent-pool/TalentPoolSection";
 import { TALENT_POOL_SHARE_ADD } from "../../../../lib/features";
@@ -111,7 +112,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [modalCategoryCreate, setModalCategoryCreate] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [dataDelete, setDataDelete] = useState({ id: 0, name: "" });
-
+  const [modalShare, setModalShare] = useState(false);
   // 3. UseEffect & UseQuery
   // 3.1. Get Talent Pool Categories
   const {
@@ -226,7 +227,7 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <LinkIconSvg size={16} color={"#808080"} />
               </div>
               <div
-                onClick={() => setShowModalTalentRemoved(true)}
+                onClick={() => setModalShare(true)}
                 className={
                   "bg-[#F3F3F3] p-2 hover:cursor-pointer w-8 h-8 rounded-[5px] flex justify-center items-center  "
                 }
@@ -379,6 +380,14 @@ const TalentPoolIndex = ({ dataProfile, sidemenu, initProps }) => {
             <strong>{dataDelete?.name}</strong>?
           </p>
         </ModalHapus2>
+      </AccessControl>
+      <AccessControl hasPermission={TALENT_POOL_SHARE_ADD}>
+        <ModalShare
+          initProps={initProps}
+          visible={modalShare}
+          onvisible={setModalShare}
+          category={currentCategory}
+        />
       </AccessControl>
     </LayoutDashboard>
   );
