@@ -80,12 +80,6 @@ export const ClockCard: FC<IClockCard> = ({
     ? false
     : currentTime === "" || (!onlyShowTime && attendeeStatus === undefined);
 
-  const shouldDisableCheckOutButton =
-    (attendeeStatus === "checkin" && !isItSafeToCheckOut) ||
-    !isAllowedToToggleCheckInCheckOut;
-  const disabledButtonTooltipContent = isAllowedToToggleCheckInCheckOut
-    ? "Check Out bisa dilakukan setelah mengisi aktivitas"
-    : "Anda tidak memiliki fitur untuk Check In atau Check Out";
   const [scdata, setscdata] = useState({
     late_count: 0,
     on_time_count: 0,

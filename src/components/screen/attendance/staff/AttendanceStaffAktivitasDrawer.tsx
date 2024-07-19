@@ -289,13 +289,13 @@ export const AttendanceStaffAktivitasDrawer: FC<
                   return (
                     <Form.Item
                       name={name}
-                      label={
-                        <label className="font-bold text-mono30">{name}</label>
-                      }
+                      label={name}
                       required={!!required}
                       key={key}
                     >
-                      <p className="mb-4 mt-2">{description}</p>
+                      {!!description && (
+                        <p className="mb-4 mt-2">{description}</p>
+                      )}
 
                       {type === 6 ? (
                         <Form.Item name={key} rules={[{ required }]}>

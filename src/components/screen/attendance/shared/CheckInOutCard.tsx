@@ -92,8 +92,8 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
     (attendeeStatus === "checkin" && !isItSafeToCheckOut) ||
     !isAllowedToToggleCheckInCheckOut;
   const disabledButtonTooltipContent = isAllowedToToggleCheckInCheckOut
-    ? "Check Out bisa dilakukan setelah mengisi aktivitas"
-    : "Anda tidak memiliki fitur untuk Check In atau Check Out";
+    ? "Check Out can be done after you submit an activity"
+    : "You don't have an access to Check In or Check Out";
 
   return (
     <div
