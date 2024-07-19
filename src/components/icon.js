@@ -522,7 +522,7 @@ const SubLocationIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={sublocationIconSvg}></Icon>;
 };
-const ShareIconSvg = ({ size, color }) => {
+const ShareIconSvg = ({ size, color, strokeWidth }) => {
   const shareIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -530,7 +530,7 @@ const ShareIconSvg = ({ size, color }) => {
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
+      strokeWidth={strokeWidth ? strokeWidth : "1.5"}
       stroke={color}
       fill="none"
       strokeLinecap="round"
@@ -3927,6 +3927,33 @@ const AlertCircleFilledIconSvg = (props) => {
   return <Icon rev={""} component={alertCircleFilledIconSvg} {...props}></Icon>;
 };
 
+const LinkIconSvg = ({ size, color }) => {
+  const linkIconSvg = () => (
+    <svg
+      width={size ? size : "16"}
+      height={size ? size : "16"}
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M6.66797 9.33293C7.10684 9.78086 7.70754 10.0333 8.33464 10.0333C8.96173 10.0333 9.56243 9.78086 10.0013 9.33293L12.668 6.66627C13.5884 5.74579 13.5884 4.25341 12.668 3.33293C11.7475 2.41246 10.2551 2.41246 9.33464 3.33293L9.0013 3.66627"
+        stroke={color ? color : "#808080"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9.33489 6.66714C8.89601 6.21921 8.29531 5.9668 7.66822 5.9668C7.04113 5.9668 6.44043 6.21921 6.00155 6.66714L3.33489 9.3338C2.41441 10.2543 2.41441 11.7467 3.33489 12.6671C4.25536 13.5876 5.74775 13.5876 6.66822 12.6671L7.00155 12.3338"
+        stroke={color ? color : "#808080"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={linkIconSvg}></Icon>;
+};
 const PdfIconSvg = (props) => {
   const pdfIconSvg = () => (
     <svg
@@ -4117,5 +4144,6 @@ export {
   TaskFilledIconSvg,
   TicketFilledIconSvg,
   AlertCircleFilledIconSvg,
+  LinkIconSvg,
   PdfIconSvg,
 };

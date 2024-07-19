@@ -115,7 +115,10 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
       </div>
 
       <AccessControl hasPermission={ATTENDANCE_TOGGLE_SET}>
+        {console.log("data profile ", dataProfile)}
         <AttendanceStaffCheckInDrawer
+          token={token}
+          idCompany={dataProfile.data.company.id}
           visible={isCheckInDrawerShown}
           onClose={toggleCheckInDrawer}
         />

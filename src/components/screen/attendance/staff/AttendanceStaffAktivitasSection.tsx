@@ -371,7 +371,7 @@ export const AttendanceStaffAktivitasSection: FC<
       columns.push({
         key: "delete",
         title: "Actions",
-        render: (_, record: (typeof dataSource)[0]) => {
+        render: (_, record: typeof dataSource[0]) => {
           return (
             <button
               className="bg-transparent text-danger hover:opacity-75"
@@ -408,7 +408,7 @@ export const AttendanceStaffAktivitasSection: FC<
   );
 
   const mOnRowItemClicked = useCallback(
-    (datum: (typeof dataSource)[0]) => {
+    (datum: typeof dataSource[0]) => {
       if (tabActiveKey === HISTORY) {
         /** Only allow this click callback when user is on "Hari Ini" tab */
         return;
@@ -607,7 +607,7 @@ export const AttendanceStaffAktivitasSection: FC<
   function checkFormOrTask() {
     if (tabActiveKey2 == FORM && activeSubmenu == "aktivitas") {
       return (
-        <Table<(typeof dataSource)[0]>
+        <Table<typeof dataSource[0]>
           columns={tableColums}
           rowKey={(record) => record.id}
           dataSource={dataSource}
@@ -692,7 +692,7 @@ export const AttendanceStaffAktivitasSection: FC<
       );
     } else if (activeSubmenu == "aktivitas") {
       return (
-        <Table<(typeof dataSource)[0]>
+        <Table<typeof dataSource[0]>
           columns={TableTaskColumns}
           dataSource={displayDataTaskHistory}
           rowKey={(record) => record.id}

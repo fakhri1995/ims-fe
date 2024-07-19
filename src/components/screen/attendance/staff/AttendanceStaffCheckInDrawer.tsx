@@ -1,5 +1,5 @@
 import { CameraOutlined, UploadOutlined } from "@ant-design/icons";
-import { Input, Spin, UploadProps, notification } from "antd";
+import { Input, Select, Spin, UploadProps, notification } from "antd";
 import { Button, Form, Modal, Radio, Upload } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
 import type { RcFile, UploadChangeParam } from "antd/lib/upload";
@@ -28,6 +28,8 @@ import { AttendanceStaffWebcamModal } from ".";
 export interface IAttendanceStaffCheckInDrawer {
   visible: boolean;
   onClose: () => void;
+  token: string;
+  idCompany: number;
 }
 
 /**
@@ -35,7 +37,7 @@ export interface IAttendanceStaffCheckInDrawer {
  */
 export const AttendanceStaffCheckInDrawer: FC<
   IAttendanceStaffCheckInDrawer
-> = ({ visible, onClose }) => {
+> = ({ visible, onClose, token, idCompany }) => {
   const [form] = Form.useForm();
 
   const { attendeeStatus } = useGetAttendeeInfo();
@@ -43,6 +45,7 @@ export const AttendanceStaffCheckInDrawer: FC<
     useToggleCheckInCheckOut();
 
   const { position, isPermissionBlocked } = useGeolocationAPI();
+  const [dataListCompany, setDataListCompany] = useState(null);
 
   /** Field: Lokasi saat ini */
   const { data: locationDisplayName, isLoading: locationDisplayNameLoading } =
@@ -83,6 +86,26 @@ export const AttendanceStaffCheckInDrawer: FC<
    * - Size max 5 MiB
    * - File type should satisfy ["image/png", "image/jpeg"]
    */
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocationsSubCompany?company_id=1`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(token),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataListCompany(res2.data);
+      });
+  };
   const beforeUploadEvidencePicture = useCallback<
     Pick<UploadProps, "beforeUpload">["beforeUpload"]
   >((uploadedFile) => {
@@ -119,10 +142,15 @@ export const AttendanceStaffCheckInDrawer: FC<
   }, [uploadedEvidencePicture]);
 
   const onFormSubmitted = useCallback(
-    (value: { work_from?: "WFO" | "WFH"; evidence_image?: string }) => {
+    (value: {
+      work_from?: "WFO" | "WFH";
+      evidence_image?: string;
+      subcompany: number;
+    }) => {
       // notificationWarning({
       //   message: `Lokasi belum sesuai, pastikan lokasi anda sesuai dengan tempat anda bekerja`,
       // });
+      console.log("isi value ", value);
       toggleCheckInCheckOut(
         {
           evidence: uploadedEvidencePicture,
@@ -130,6 +158,7 @@ export const AttendanceStaffCheckInDrawer: FC<
           lat: position?.coords.latitude.toString(),
           long: position?.coords.longitude.toString(),
           wfo: value?.work_from === "WFO" ? 1 : 0,
+          company_id: value.subcompany,
         },
         {
           onSuccess: (response) => {
@@ -284,6 +313,19 @@ export const AttendanceStaffCheckInDrawer: FC<
                     </Radio.Group>
                   </Form.Item>
                 )}
+                <Form.Item
+                  name="subcompany"
+                  label={"Pilih Kantor Cabang"}
+                  required
+                >
+                  <Select>
+                    {dataListCompany?.map((data) => (
+                      <Select.Option key={data.id} value={data.id}>
+                        {data.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
 
                 {/* Bukti Kehadran */}
                 <Form.Item
