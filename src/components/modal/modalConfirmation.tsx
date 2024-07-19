@@ -10,6 +10,7 @@ const ModalWarning = ({
   visible,
   okText,
   onOk,
+  onCancel,
   loading = false,
   disabled = false,
   children,
@@ -17,6 +18,7 @@ const ModalWarning = ({
   visible: boolean;
   okText: string;
   onOk: any;
+  onCancel: () => void;
   loading?: boolean;
   disabled?: boolean;
   children: ReactElement;
@@ -33,6 +35,7 @@ const ModalWarning = ({
       onOk={onOk}
       okText={okText}
       okButtonProps={{ loading: loading, disabled: disabled }}
+      onCancel={onCancel}
       cancelButtonProps={{ hidden: true }}
       maskClosable={true}
       closable={true}

@@ -39,7 +39,7 @@ import ButtonSys from "components/button";
 import ButtonTooltip from "components/buttonTooltip";
 import { AccessControl } from "components/features/AccessControl";
 import ModalImportTasksToActivity from "components/modal/attendance/modalImportTasksToActivity";
-import { ModalDelete, ModalWarning } from "components/modal/modalCustomNew";
+import { ModalDelete, ModalWarning } from "components/modal/modalConfirmation";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -1080,6 +1080,7 @@ export const AttendanceStaffAktivitasSection: FC<
         visible={showModalCheckinWarning}
         okText={"I Got It"}
         onOk={() => setShowModalCheckinWarning(false)}
+        onCancel={() => setShowModalCheckinWarning(false)}
       >
         <p>You need to Check In first to add or update activity!</p>
       </ModalWarning>
