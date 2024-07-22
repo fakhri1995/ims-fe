@@ -43,7 +43,9 @@ export const AttendanceStaffCheckInDrawer: FC<
   const { attendeeStatus } = useGetAttendeeInfo();
   const { mutate: toggleCheckInCheckOut, isLoading: checkInOutLoading } =
     useToggleCheckInCheckOut();
-
+  const [workFrom, setWorkFrom] = useState("WFO");
+  const [placementDisable, setPlacementDisable] = useState(true);
+  const [placement, setPlacement] = useState(null);
   const { position, isPermissionBlocked } = useGeolocationAPI();
   const [dataListCompany, setDataListCompany] = useState(null);
 
@@ -90,6 +92,13 @@ export const AttendanceStaffCheckInDrawer: FC<
   useEffect(() => {
     fetchData();
   }, []);
+  useEffect(() => {
+    if (attendeeStatus == "checkin") {
+      setPlacementDisable(false);
+    } else {
+      setPlacementDisable(true);
+    }
+  }, [attendeeStatus]);
 
   const fetchData = async () => {
     fetch(
@@ -224,6 +233,22 @@ export const AttendanceStaffCheckInDrawer: FC<
     })();
   }, []);
 
+  const handleChangeWorkFrom = (e) => {
+    if (e.target.value == "WFH") {
+      setPlacementDisable(false);
+    } else {
+      if (placement == null) {
+        setPlacementDisable(true);
+      }
+    }
+    setWorkFrom(e.target.value);
+  };
+
+  const handleChangePlacement = (value) => {
+    setPlacement(value);
+    setPlacementDisable(false);
+  };
+
   useEffect(() => {
     if (visible && isPermissionBlocked) {
       Modal.error({
@@ -262,7 +287,8 @@ export const AttendanceStaffCheckInDrawer: FC<
         disabled={
           uploadPictureLoading ||
           uploadedEvidencePicture === null ||
-          checkInOutLoading
+          checkInOutLoading ||
+          placementDisable
         }
       >
         <div className="space-y-6">
@@ -303,25 +329,33 @@ export const AttendanceStaffCheckInDrawer: FC<
                     required
                     initialValue="WFO"
                   >
-                    <Radio.Group disabled={uploadPictureLoading}>
+                    <Radio.Group
+                      onChange={handleChangeWorkFrom}
+                      disabled={uploadPictureLoading}
+                    >
                       <Radio value="WFO">WFO</Radio>
                       <Radio value="WFH">WFH</Radio>
                     </Radio.Group>
                   </Form.Item>
                 )}
-                <Form.Item
-                  name="subcompany"
-                  label={"Select Placement"}
-                  required
-                >
-                  <Select placeholder={"Select Placement"}>
-                    {dataListCompany?.map((data) => (
-                      <Select.Option key={data.id} value={data.id}>
-                        {data.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
+                {workFrom == "WFO" && attendeeStatus === "checkout" && (
+                  <Form.Item
+                    name="subcompany"
+                    label={"Select Placement"}
+                    required
+                  >
+                    <Select
+                      onChange={handleChangePlacement}
+                      placeholder={"Select Placement"}
+                    >
+                      {dataListCompany?.map((data) => (
+                        <Select.Option key={data.id} value={data.id}>
+                          {data.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                )}
 
                 {/* Bukti Kehadran */}
                 <Form.Item

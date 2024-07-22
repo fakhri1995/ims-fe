@@ -1,4 +1,6 @@
 import {
+  ClockCircleFilled,
+  ClockCircleOutlined,
   DownOutlined,
   ExclamationCircleOutlined,
   EyeOutlined,
@@ -855,7 +857,13 @@ export const AttendanceStaffAktivitasSection: FC<
                   >
                     Paid Leave
                   </Menu.Item>
-                  {/* <Menu.Item>Overtime</Menu.Item> */}
+                  {/* <Menu.Item
+                    key={"overtime"}
+                    onClick={() => setActiveSubmenu("overtime")}
+                    disabled={!isAllowedToLeavesUser}
+                  >
+                    Overtime
+                  </Menu.Item> */}
                 </Menu>
               }
             >
@@ -916,6 +924,17 @@ export const AttendanceStaffAktivitasSection: FC<
               >
                 <AddNoteSvg />
                 <p className="whitespace-nowrap">Apply for Leave</p>
+              </div>
+            </ButtonSys>
+          )}
+          {activeSubmenu == "overtime" && isAllowedToAddLeaveUser && (
+            <ButtonSys type={"primary"}>
+              <div
+                onClick={() => setShowModalLeave(true)}
+                className={"flex items-center gap-2 "}
+              >
+                <ClockCircleOutlined />
+                <p className="whitespace-nowrap">Request Overtime</p>
               </div>
             </ButtonSys>
           )}
@@ -1009,6 +1028,59 @@ export const AttendanceStaffAktivitasSection: FC<
               <AttendanceStaffLeaveStatisticCards leaveCount={leaveCount} />
             </AccessControl>
 
+            <Table
+              className="tableTask"
+              dataSource={displayDataLeaves}
+              columns={columnLeaves}
+              loading={loadingLeaves}
+              scroll={{ x: "max-content" }}
+              pagination={{
+                current: queryParams.page,
+                pageSize: queryParams.rows,
+                total: rawDataLeaves?.total,
+              }}
+              onChange={(pagination, _, sorter) => {
+                setQueryParams({
+                  page: pagination.current,
+                  rows: pagination.pageSize,
+                });
+              }}
+              onRow={(record) => {
+                return {
+                  onClick: (e) => detailCuti(record),
+                };
+              }}
+              rowClassName={(record, idx) => {
+                return `cursor-pointer`;
+              }}
+            />
+            <AttendanceStaffLeaveDrawer
+              getDataNew={fetchData}
+              dataToken={dataToken}
+              idUser={idUser}
+              username={username}
+              visible={showModalLeave}
+              action={activityDrawerState.openDrawerAs}
+              activityFormId={activityDrawerState.selectedActivityFormId}
+              onClose={() => setShowModalLeave(false)}
+            />
+            <AttendanceStaffLeaveDetailDrawer
+              fetchData={fetchData}
+              visible={showDetailCuti}
+              dataDefault={dataDefault}
+              dataToken={dataToken}
+              onClose={cancelShowDetail}
+            />
+          </div>
+        )}
+
+        {/* table overtime */}
+        {activeSubmenu == "overtime" && (
+          <div
+            className={
+              "bg-white rounded-[5px] mt-3 first-letter:border border-solid px-6"
+            }
+          >
             <Table
               className="tableTask"
               dataSource={displayDataLeaves}
