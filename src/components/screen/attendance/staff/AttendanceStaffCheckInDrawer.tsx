@@ -92,6 +92,13 @@ export const AttendanceStaffCheckInDrawer: FC<
   useEffect(() => {
     fetchData();
   }, []);
+  useEffect(() => {
+    if (attendeeStatus == "checkin") {
+      setPlacementDisable(false);
+    } else {
+      setPlacementDisable(true);
+    }
+  }, [attendeeStatus]);
 
   const fetchData = async () => {
     fetch(
@@ -331,7 +338,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                     </Radio.Group>
                   </Form.Item>
                 )}
-                {workFrom == "WFO" && (
+                {workFrom == "WFO" && attendeeStatus === "checkout" && (
                   <Form.Item
                     name="subcompany"
                     label={"Select Placement"}
