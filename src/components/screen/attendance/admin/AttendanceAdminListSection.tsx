@@ -62,14 +62,18 @@ const { TabPane } = Tabs;
  */
 export interface IAttendanceAdminListSection {
   initProps: string;
+  role: number;
+  companyId: number;
 }
 
 /**
  * Component AttendanceAdminListSection
  */
-export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
-  initProps
-) => {
+export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
+  initProps,
+  role,
+  companyId,
+}) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
 
@@ -87,7 +91,10 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = (
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    company_ids: withDefault(StringParam, undefined),
+    company_ids:
+      role == 1
+        ? withDefault(StringParam, undefined)
+        : withDefault(StringParam, companyId.toString()),
     is_late: withDefault(NumberParam, undefined),
     is_hadir: withDefault(NumberParam, undefined),
     keyword: withDefault(StringParam, undefined),
