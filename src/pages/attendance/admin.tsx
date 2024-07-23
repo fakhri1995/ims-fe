@@ -1,5 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import LayoutDashboard from "components/layout-dashboard";
 import {
@@ -29,7 +29,7 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
   }
 
   const isAllowedToDisplayContent = hasPermission(ATTENDANCES_USERS_GET);
-
+  const [roles, setRoles] = useState(0);
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Absensi",
@@ -41,6 +41,20 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
       permissionWarningNotification("Mendapatkan", "Daftar Absensi");
     }
   }, [isAllowedToDisplayContent]);
+
+  useEffect(() => {
+    if (dataProfile) {
+      if (dataProfile.data.roles.length > 0) {
+        let dataRoles = dataProfile.data.roles;
+        for (let a = 0; a < dataRoles.length; a++) {
+          if (dataRoles[a].name == "Super Admin") {
+            setRoles(1);
+            a = dataRoles.length;
+          }
+        }
+      }
+    }
+  }, [dataProfile]);
 
   return (
     <LayoutDashboard
@@ -59,7 +73,7 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
             </div>
 
             <div className="min-h-[12rem] flex-grow h-full">
-              <AttendanceAdminTodayStatCard />
+              <AttendanceAdminTodayStatCard role={roles} />
             </div>
           </div>
 
@@ -76,7 +90,7 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
           <div className="col-span-full">
             <AttendanceAdminListSection
               initProps={token}
-              role={dataProfile.data.role}
+              role={roles}
               companyId={dataProfile.data.company.id}
             />
           </div>

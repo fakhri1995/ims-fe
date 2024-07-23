@@ -14,24 +14,30 @@ import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 /**
  * Component AttendanceAdminTodayStatCard's props.
  */
-export interface IAttendanceAdminTodayStatCard {}
+export interface IAttendanceAdminTodayStatCard {
+  role: number;
+}
 
 /**
  * Component AttendanceAdminTodayStatCard
  */
 export const AttendanceAdminTodayStatCard: FC<
   IAttendanceAdminTodayStatCard
-> = () => {
+> = ({ role }) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
   const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
 
   const { data, isLoading } = useQuery(
     [AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET],
-    () => AttendanceService.findAsAdmin(axiosClient),
+    () =>
+      role == 1
+        ? AttendanceService.findAsAdmin(axiosClient)
+        : AttendanceService.findAsAdminCompany(axiosClient),
     {
       enabled: isAllowedToGetAttendancesUsers,
       select: (response) => {
+        console.log("response ", response);
         return {
           jumlah_hadir: response.data.data.users_attendances_count,
           jumlah_absen: response.data.data.absent_users_count,
