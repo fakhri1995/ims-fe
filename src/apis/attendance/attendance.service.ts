@@ -50,6 +50,12 @@ export class AttendanceService {
     );
   }
 
+  static async findAsAdminCompany(axiosClient: AxiosInstance) {
+    return await axiosClient.get<IGetAttendanceUsersSucceedResponse>(
+      "/getAttendancesUsersCompany"
+    );
+  }
+
   static async findAsClient(axiosClient: AxiosInstance) {
     return await axiosClient.get<IGetAttendanceUsersSucceedResponse>(
       "/getAttendancesClient"
@@ -217,7 +223,6 @@ export class AttendanceService {
       const response = await axiosClient.get(endpoint + querySearch, {
         responseType: "json",
       });
-      console.log("hasil query api ", response);
       result.data = response.data;
     } catch (error) {
       return error;
