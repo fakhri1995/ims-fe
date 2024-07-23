@@ -1,4 +1,4 @@
-export const BadgeLeaveStatus = ({ status }: { status: string }) => (
+export const BadgeLeaveStatus = ({ status }: { status: string | number }) => (
   <div
     className={`${
       status == "1"

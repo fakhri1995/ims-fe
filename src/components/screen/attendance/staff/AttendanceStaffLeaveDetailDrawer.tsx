@@ -160,7 +160,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
       }
       onClose={onClose}
     >
-      <div className={"flex flex-col gap-4 "}>
+      <div className={"flex flex-col gap-4"}>
         <h3 className="mig-caption--medium">Request by</h3>
         <div className="border rounded-[5px] ">
           {/* Requester Detail */}
