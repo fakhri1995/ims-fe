@@ -417,7 +417,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
-              label="Approved File by Manager"
+              label="Leave Form Approved by Manager"
               name={"approved_file"}
               className="col-span-2"
             >
@@ -426,6 +426,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                   <Upload
                     accept=".pdf"
                     multiple={false}
+                    maxCount={1}
                     onChange={onChangeApprovedFile}
                   >
                     <ButtonSys>
@@ -438,14 +439,14 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                 </div>
 
                 <em className={"text-[#808080] text-xs leading-4 font-normal "}>
-                  Upload File (Max. 5 MB), multiple files are allowed.
+                  Upload File (Max. 5 MB).
                 </em>
               </div>
             </Form.Item>
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
-              label="Personal Reason File"
+              label="MIG Leave Form"
               name={"personal_file"}
               className="col-span-2"
               rules={[
@@ -465,6 +466,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                   <Upload
                     accept=".pdf"
                     multiple={false}
+                    maxCount={1}
                     onChange={onChangePersonalFile}
                   >
                     <ButtonSys>
@@ -477,7 +479,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                 </div>
 
                 <em className={"text-[#808080] text-xs leading-4 font-normal "}>
-                  Upload File (Max. 5 MB), multiple files are allowed.
+                  Upload File (Max. 5 MB).
                 </em>
               </div>
             </Form.Item>

@@ -211,7 +211,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
             </div>
             <div className={"flex flex-col gap-4"}>
               <p className={"mig-caption text-neutrals90"}>
-                Approved File by Manager
+                Leave Form Approved by Manager
               </p>
               {dataDefault?.approved_document == null ? (
                 "-"
@@ -237,9 +237,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
               )}
             </div>
             <div className={"flex flex-col gap-4"}>
-              <p className={"mig-caption text-neutrals90"}>
-                Personal Reason File
-              </p>
+              <p className={"mig-caption text-neutrals90"}>MIG Leave Form</p>
               {dataDefault?.document == null ? (
                 "-"
               ) : (
