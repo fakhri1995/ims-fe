@@ -148,16 +148,18 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
               <TabPane tab="Hadir" key="1" />
               <TabPane tab="Absen" key="2" />
             </Tabs>
-            <div className="xl:justify-end">
-              <ButtonSys
-                type={canExportTableData ? "default" : "primary"}
-                onClick={() => setIsExportDrawerShown(true)}
-                disabled={!canExportTableData}
-              >
-                <DownloadOutlined className="mr-2" />
-                Unduh Tabel
-              </ButtonSys>
-            </div>
+            {role == 1 && (
+              <div className="xl:justify-end">
+                <ButtonSys
+                  type={canExportTableData ? "default" : "primary"}
+                  onClick={() => setIsExportDrawerShown(true)}
+                  disabled={!canExportTableData}
+                >
+                  <DownloadOutlined className="mr-2" />
+                  Unduh Tabel
+                </ButtonSys>
+              </div>
+            )}
           </div>
 
           {/* Table's filter */}
@@ -207,7 +209,7 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
               />
             </Form.Item>
 
-            {activeTab === "1" && (
+            {activeTab === "1" && role == 1 && (
               <Form.Item noStyle>
                 <Select
                   allowClear
@@ -271,7 +273,9 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
               onTriggerChangeParams={onTriggerChangeParams}
             />
           )}
-          {activeTab === "2" && <AbsenTable keyword={queryParams.keyword} />}
+          {activeTab === "2" && (
+            <AbsenTable keyword={queryParams.keyword} role={role} />
+          )}
         </ConfigProvider>
       </div>
 
@@ -496,19 +500,23 @@ const HadirTable: FC<ITable> = memo(
  */
 interface IAbsenTable {
   keyword: string;
+  role: number;
 }
 
 /**
  * @private
  */
-const AbsenTable: FC<IAbsenTable> = ({ keyword }) => {
+const AbsenTable: FC<IAbsenTable> = ({ keyword, role }) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
   const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
 
   const { data, isLoading } = useQuery(
     [AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET],
-    () => AttendanceService.findAsAdmin(axiosClient),
+    () =>
+      role == 1
+        ? AttendanceService.findAsAdmin(axiosClient)
+        : AttendanceService.findAsAdminCompany(axiosClient),
     {
       enabled: isAllowedToGetAttendancesUsers,
       refetchOnMount: false,
