@@ -15,7 +15,7 @@ import { generateStaticAssetUrl, getFileName } from "lib/helper";
 
 import PdfIcon from "assets/vectors/pdf-icon.svg";
 
-import { BadgeLeaveStatus } from "../leave/BadgeLeaveStatus";
+import BadgeLeaveStatus from "../leave/BadgeLeaveStatus";
 
 /**
  * Component AttendanceStaffAktivitasDrawer's props.

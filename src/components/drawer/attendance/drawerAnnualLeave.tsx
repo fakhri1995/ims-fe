@@ -12,7 +12,7 @@ import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
 import { OneUserIconSvg, PdfIconSvg } from "components/icon.js";
 import { ModalAccept, ModalDelete } from "components/modal/modalConfirmation";
-import { BadgeLeaveStatus } from "components/screen/attendance/leave/BadgeLeaveStatus";
+import BadgeLeaveStatus from "components/screen/attendance/leave/BadgeLeaveStatus";
 
 import { useAccessControl } from "contexts/access-control";
 
