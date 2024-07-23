@@ -89,32 +89,32 @@ export const AttendanceStaffCheckInDrawer: FC<
    * - File type should satisfy ["image/png", "image/jpeg"]
    */
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-  useEffect(() => {
-    if (attendeeStatus == "checkin") {
-      setPlacementDisable(false);
-    } else {
-      setPlacementDisable(true);
-    }
-  }, [attendeeStatus]);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+  // useEffect(() => {
+  //   if (attendeeStatus == "checkin") {
+  //     setPlacementDisable(false);
+  //   } else {
+  //     setPlacementDisable(true);
+  //   }
+  // }, [attendeeStatus]);
 
-  const fetchData = async () => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocationsSubCompany?company_id=${idCompany}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(token),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setDataListCompany(res2.data);
-      });
-  };
+  // const fetchData = async () => {
+  //   fetch(
+  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocationsSubCompany?company_id=${idCompany}`,
+  //     {
+  //       method: `GET`,
+  //       headers: {
+  //         Authorization: JSON.parse(token),
+  //       },
+  //     }
+  //   )
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setDataListCompany(res2.data);
+  //     });
+  // };
   const beforeUploadEvidencePicture = useCallback<
     Pick<UploadProps, "beforeUpload">["beforeUpload"]
   >((uploadedFile) => {
@@ -287,8 +287,8 @@ export const AttendanceStaffCheckInDrawer: FC<
         disabled={
           uploadPictureLoading ||
           uploadedEvidencePicture === null ||
-          checkInOutLoading ||
-          placementDisable
+          checkInOutLoading
+          // placementDisable
         }
       >
         <div className="space-y-6">
@@ -338,7 +338,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                     </Radio.Group>
                   </Form.Item>
                 )}
-                {workFrom == "WFO" && attendeeStatus === "checkout" && (
+                {/* {workFrom == "WFO" && attendeeStatus === "checkout" && (
                   <Form.Item
                     name="subcompany"
                     label={"Select Placement"}
@@ -355,7 +355,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                       ))}
                     </Select>
                   </Form.Item>
-                )}
+                )} */}
 
                 {/* Bukti Kehadran */}
                 <Form.Item
