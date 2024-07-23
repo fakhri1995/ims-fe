@@ -1,4 +1,5 @@
 import { FormAktivitasTypes } from "apis/attendance";
+import { IEmployeeData } from "apis/employee/employee.types";
 
 import type {
   HttpRequestWithDataSucceedResponse,
@@ -30,6 +31,7 @@ export interface DetailProfileData {
   groups: Group[];
   attendance_forms: AttendanceForm[];
   roles: Group[];
+  employee?: IEmployeeData;
 }
 
 export interface AttendanceForm {
