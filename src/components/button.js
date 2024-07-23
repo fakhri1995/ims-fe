@@ -140,7 +140,7 @@ const ButtonSys = ({
             <Spin
               indicator={
                 <LoadingOutlined
-                  style={{ fontSize: 20, color: "white" }}
+                  style={{ fontSize: 12, fontWeight: "bold", color: "white" }}
                   spin
                 />
               }
@@ -166,7 +166,7 @@ const ButtonSys = ({
               indicator={
                 <LoadingOutlined
                   className={`text-${color}`}
-                  style={{ fontSize: 20 }}
+                  style={{ fontSize: 12, fontWeight: "bold" }}
                   spin
                 />
               }
