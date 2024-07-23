@@ -7,6 +7,7 @@ import clsx from "clsx";
 
 const ButtonSys = ({
   size,
+  square,
   type = "default",
   children,
   color,
@@ -58,6 +59,7 @@ const ButtonSys = ({
   const commonButtonClassName = clsx(
     {
       "btn-sm": size !== "large",
+      "btn-square ": square,
       "w-full": fullWidth,
       "bg-disabled text-white border-disabled": disabled,
     },

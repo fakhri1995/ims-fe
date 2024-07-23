@@ -1,39 +1,15 @@
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
-  CheckOutlined,
   CloseOutlined,
-  LoadingOutlined,
-  XOutlined,
 } from "@ant-design/icons";
-import {
-  Checkbox,
-  Collapse,
-  DatePicker,
-  Drawer,
-  Form,
-  Input,
-  Select,
-  Spin,
-  Switch,
-  Table,
-  Tag,
-  message,
-  notification,
-} from "antd";
+import { Drawer } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import React, {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import React, { Dispatch, FC, SetStateAction, useState } from "react";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
-import { EditIconSvg } from "components/icon";
 import { OneUserIconSvg, PdfIconSvg } from "components/icon.js";
 import { ModalAccept, ModalDelete } from "components/modal/modalConfirmation";
 import { BadgeLeaveStatus } from "components/screen/attendance/leave/BadgeLeaveStatus";
@@ -42,10 +18,9 @@ import { useAccessControl } from "contexts/access-control";
 
 import { LEAVE_APPROVE, LEAVE_DELETE } from "lib/features";
 import {
-  getBase64,
+  downloadFileFromPath,
   notificationError,
   notificationSuccess,
-  permissionWarningNotification,
 } from "lib/helper";
 import { generateStaticAssetUrl, getFileName } from "lib/helper";
 
@@ -53,12 +28,7 @@ import { IEmployeeData } from "apis/employee/employee.types";
 
 import PdfIcon from "assets/vectors/pdf-icon.svg";
 
-import {
-  CheckIconSvg,
-  CloseIconSvg,
-  UserIconSvg,
-  UsercircleIconSvg,
-} from "../../icon";
+import { CloseIconSvg, DownloadIconSvg } from "../../icon";
 
 import { IFileAttribute } from "types/common";
 
@@ -177,12 +147,14 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
               ...dataLoading,
               loadingReject: false,
             });
+            setModalConfirmReject(false);
           }
           if (aksi == "setuju") {
             setDataLoading({
               ...dataLoading,
               loadingApprove: false,
             });
+            setModalConfirmApprove(false);
           }
 
           notificationSuccess({
@@ -247,7 +219,7 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
       footer={
         showData == "1" &&
         dataDefault?.status == 1 && (
-          <div className={"flex p-4 justify-between gap-4 w-full"}>
+          <div className={"flex justify-between gap-4 w-full"}>
             <div className="w-1/2">
               <ButtonSys
                 fullWidth
@@ -373,53 +345,81 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
               </div>
               <div className={"flex flex-col gap-4"}>
                 <p className={"mig-caption text-neutrals90"}>
-                  Approved File by Manager
+                  Leave Form Approved by Manager
                 </p>
                 {dataDefault?.approved_document == null ? (
                   "-"
                 ) : (
                   <div
                     className={
-                      "mig-body border p-4 rounded-[5px] flex items-center gap-4"
+                      "mig-body border p-4 rounded-[5px] flex items-center gap-4 justify-between"
                     }
                   >
-                    <div>
-                      <PdfIcon />
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <PdfIcon />
+                      </div>
+                      <a
+                        href={generateStaticAssetUrl(
+                          dataDefault?.approved_document?.link
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <p>
+                          {getFileName(dataDefault?.approved_document?.link)}
+                        </p>
+                      </a>
                     </div>
-                    <a
-                      href={generateStaticAssetUrl(
-                        dataDefault?.approved_document.link
-                      )}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <ButtonSys
+                      type="primary"
+                      color="mono100"
+                      square
+                      onClick={() =>
+                        downloadFileFromPath(
+                          dataDefault?.approved_document?.link
+                        )
+                      }
                     >
-                      <p>{getFileName(dataDefault.approved_document.link)}</p>
-                    </a>
+                      <DownloadIconSvg />
+                    </ButtonSys>
                   </div>
                 )}
               </div>
               <div className={"flex flex-col gap-4"}>
-                <p className={"mig-caption text-neutrals90"}>
-                  Personal Reason File
-                </p>
+                <p className={"mig-caption text-neutrals90"}>MIG Leave Form</p>
                 {dataDefault?.document == null ? (
                   "-"
                 ) : (
                   <div
                     className={
-                      "mig-body border p-4 rounded-[5px] flex items-center gap-4"
+                      "mig-body border p-4 rounded-[5px] flex items-center gap-4 justify-between"
                     }
                   >
-                    <div>
-                      <PdfIcon />
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <PdfIcon />
+                      </div>
+                      <a
+                        href={generateStaticAssetUrl(
+                          dataDefault?.document.link
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <p>{getFileName(dataDefault?.document?.link)}</p>
+                      </a>
                     </div>
-                    <a
-                      href={generateStaticAssetUrl(dataDefault?.document.link)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <ButtonSys
+                      type="primary"
+                      color="mono100"
+                      square
+                      onClick={() =>
+                        downloadFileFromPath(dataDefault?.document?.link)
+                      }
                     >
-                      <p>{getFileName(dataDefault.document.link)}</p>
-                    </a>
+                      <DownloadIconSvg />
+                    </ButtonSys>
                   </div>
                 )}
               </div>
