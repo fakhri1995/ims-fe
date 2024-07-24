@@ -72,12 +72,12 @@ function LayoutMenuHeader({
 
   return (
     <div
-      className={`flex md:w-auto items-center ${st.menu} justify-end md:py-2`}
+      className={`flex sm:w-auto items-center ${st.menu} justify-end sm:py-2`}
     >
       {!isPublic && (
-        <div className="md:mr-5 pr-4 md:flex items-center md:border-r ">
+        <div className="sm:mr-5 pr-4 sm:flex items-center sm:border-r ">
           <div
-            className="hover:bg-neutrals50 bg-neutrals50 md:bg-transparent
+            className="hover:bg-neutrals50 bg-neutrals50 sm:bg-transparent
            p-1 rounded-full"
           >
             <Notification />
@@ -86,7 +86,7 @@ function LayoutMenuHeader({
       )}
 
       <Dropdown overlay={menuProfile2} trigger={["click"]}>
-        <div className="md:mr-6 mr-4 flex items-center md:p-1 cursor-pointer">
+        <div className="sm:mr-6 mr-4 flex items-center sm:p-1 cursor-pointer">
           {dataProfile.data?.profile_image?.link ? (
             <img
               src={generateStaticAssetUrl(
@@ -98,7 +98,7 @@ function LayoutMenuHeader({
           ) : (
             <UsercircleIconSvg size={32} color={"black"} />
           )}
-          <div className="hidden md:flex flex-col ml-2">
+          <div className="hidden sm:flex flex-col ml-2">
             <h1 className="font-bold text-xs mb-0">{dataProfile.data.name}</h1>
             <p className="mb-0 text-xs text-mono50">{dataProfile.data.nip}</p>
           </div>
