@@ -98,7 +98,7 @@ export const CheckInOutCard: FC<ICheckInOutCard> = ({
   return (
     <div
       className="bg-cover mig-platform flex flex-col items-center 
-      justify-center space-y-3 overflow-hidden min-h-fit"
+      justify-center space-y-3 overflow-hidden h-full"
       style={{
         backgroundImage:
           isOverAttendTime && !hasCheckedInToday && !onlyShowTime

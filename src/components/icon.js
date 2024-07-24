@@ -1825,16 +1825,16 @@ const PlusIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={plusIconSvg}></Icon>;
 };
-const XIconSvg = ({ size, color }) => {
+const XIconSvg = (props) => {
   const xIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-x"
-      width={size}
-      height={size}
+      width={props?.size ?? 24}
+      height={props?.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1844,7 +1844,7 @@ const XIconSvg = ({ size, color }) => {
       <line x1={6} y1={6} x2={18} y2={18} />
     </svg>
   );
-  return <Icon rev={""} component={xIconSvg}></Icon>;
+  return <Icon rev={""} component={xIconSvg} {...props}></Icon>;
 };
 const HistoryIconSvg = (props) => {
   const historyIconSvg = () => (
@@ -2297,6 +2297,28 @@ const UsersIconSvg = (props) => {
     </svg>
   );
   return <Icon rev={""} component={usersIconSvg} {...props}></Icon>;
+};
+
+const UsersFilledIconSvg = (props) => {
+  const usersFilledIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-users"
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={props?.color ?? "currentColor"}
+      fill={props?.color ?? "currentColor"}
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+    </svg>
+  );
+  return <Icon rev={""} component={usersFilledIconSvg} {...props}></Icon>;
 };
 
 const DownloadIconSvg = (props) => {
@@ -4062,6 +4084,7 @@ export {
   ResumeIconSvg,
   ClipboardIconSvg,
   UsersIconSvg,
+  UsersFilledIconSvg,
   DownloadIconSvg,
   DownloadIcon2Svg,
   OneUserIconSvg,

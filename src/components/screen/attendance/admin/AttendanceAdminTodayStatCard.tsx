@@ -3,6 +3,8 @@ import { Spin } from "antd";
 import type { FC } from "react";
 import { useQuery } from "react-query";
 
+import { UsersFilledIconSvg } from "components/icon";
+
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -37,7 +39,6 @@ export const AttendanceAdminTodayStatCard: FC<
     {
       enabled: isAllowedToGetAttendancesUsers,
       select: (response) => {
-        console.log("response ", response);
         return {
           jumlah_hadir: response.data.data.users_attendances_count,
           jumlah_absen: response.data.data.absent_users_count,
@@ -48,7 +49,7 @@ export const AttendanceAdminTodayStatCard: FC<
 
   return (
     <div className="mig-platform h-full">
-      <h3 className="mig-heading--4">Hari ini</h3>
+      <h3 className="mig-body--bold mb-3">Employee Attendance</h3>
 
       <div
         className={"flex items-center justify-around".concat(
@@ -58,35 +59,33 @@ export const AttendanceAdminTodayStatCard: FC<
       >
         {isLoading && <Spin size="large" />}
         {!isLoading && (
-          <>
+          <div className="flex items-center w-full space-x-3">
             {/* Hadir */}
-            <div className="flex flex-col text-center">
-              <h4 className="text-5xl py-4 mb-2 text-primary100">
-                {data?.jumlah_hadir || 0}
+            <div className="w-1/2 flex flex-col py-[10px] justify-center bg-backdrop rounded-md space-y-1">
+              <h4 className="mig-caption--medium text-primary100 text-center">
+                On Time
               </h4>
-
-              <div>
-                <span className="font-bold text-mono30 text-sm flex items-center">
-                  <TeamOutlined className="mr-1" /> Orang
-                </span>
-                <span className="mig-caption text-gray-400">Hadir</span>
+              <div className="flex items-center gap-1 text-primary100 justify-center">
+                <UsersFilledIconSvg className="" />
+                <h4 className="mig-heading--4 text-primary100">
+                  {data?.jumlah_hadir || 0}
+                </h4>
               </div>
             </div>
 
             {/* Absen */}
-            <div className="flex flex-col text-center">
-              <h4 className="text-5xl py-4 mb-2 text-mono80">
-                {data?.jumlah_absen || 0}
+            <div className="w-1/2 flex flex-col py-[10px] justify-center bg-danger bg-opacity-5 rounded-md space-y-1">
+              <h4 className="mig-caption--medium text-danger text-center">
+                Late
               </h4>
-
-              <div>
-                <span className="font-bold text-mono30 text-s flex items-center">
-                  <TeamOutlined className="mr-1" /> Orang
-                </span>
-                <span className="mig-caption text-gray-400">Absen</span>
+              <div className="flex items-center gap-1 text-danger justify-center">
+                <UsersFilledIconSvg className="" />
+                <h4 className="mig-heading--4 text-danger">
+                  {data?.jumlah_absen || 0}
+                </h4>
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
