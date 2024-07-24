@@ -104,6 +104,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
                 dataToken={token}
                 idUser={dataProfile.data.id}
                 username={dataProfile.data.name}
+                isEmployee={!!dataProfile?.data?.employee?.id}
               />
             </div>
             <div className="col-span-full">

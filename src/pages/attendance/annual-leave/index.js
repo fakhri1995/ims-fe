@@ -25,6 +25,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 
 import DrawerCutiSatuan from "components/drawer/attendance/drawerCutiSatuan";
+import BadgeLeaveStatus from "components/screen/attendance/leave/BadgeLeaveStatus";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -249,31 +250,30 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
         return {
           children: (
             <div className={"flex gap-8 justify-center"}>
-              <div
-                className={`${
-                  record.status == 1
-                    ? "bg-[#E6E6E6]"
-                    : record.status == 2
+              <BadgeLeaveStatus status={record.status} />
+              {/* <div
+                className={`${record.status == 1
+                  ? "bg-[#E6E6E6]"
+                  : record.status == 2
                     ? "bg-[#35763B]"
                     : "bg-[#BF4A40]"
-                } py-1 px-4 max-w-max rounded-[5px]`}
+                  } py-1 px-4 max-w-max rounded-[5px]`}
               >
                 <p
-                  className={`${
-                    record.status == 2
-                      ? "text-[#F3F3F3]"
-                      : record.status == 1
+                  className={`${record.status == 2
+                    ? "text-[#F3F3F3]"
+                    : record.status == 1
                       ? "text-[#4D4D4D]"
                       : "text-white"
-                  } leading-4 text-[10px] font-medium`}
+                    } leading-4 text-[10px] font-medium`}
                 >
                   {record.status == 1
                     ? "Pending"
                     : record.status == 2
-                    ? "Diterima"
-                    : "Ditolak"}
+                      ? "Diterima"
+                      : "Ditolak"}
                 </p>
-              </div>
+              </div> */}
               <div
                 onClick={() => detailCuti(record)}
                 className={"hover:cursor-pointer"}

@@ -408,6 +408,21 @@ const DrawerAnnualLeave = ({
               <p>-</p>
             )}
           </div>
+          <div className={"mt-2 flex flex-col gap-2"}>
+            {/* <Form.Item label="Notes" name={"notes"} className="col-span-2"> */}
+            <p className="text-[#808080] font-medium text-xs leading-5">
+              Catatan Tambahan{" "}
+              <span className="text-[12px] font-medium text-neutrals80">
+                (optional)
+              </span>
+            </p>
+            <textarea
+              rows={4}
+              className={"h-[164px] border border-solid border-[#E6E6E6] p-4"}
+              placeholder=""
+            />
+            {/* </Form.Item> */}
+          </div>
         </div>
       )}
       {showData == "2" && (

@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
+import { EditIconSvg } from "components/icon";
 import { OneUserIconSvg, PdfIconSvg } from "components/icon.js";
 import { ModalDelete } from "components/modal/modalConfirmation";
 
@@ -12,7 +13,9 @@ import { useAccessControl } from "contexts/access-control";
 import { LEAVE_DELETE } from "lib/features";
 import { generateStaticAssetUrl, getFileName } from "lib/helper";
 
-import { BadgeLeaveStatus } from "../leave/BadgeLeaveStatus";
+import PdfIcon from "assets/vectors/pdf-icon.svg";
+
+import BadgeLeaveStatus from "../leave/BadgeLeaveStatus";
 
 /**
  * Component AttendanceStaffAktivitasDrawer's props.
@@ -30,7 +33,13 @@ type objType = {
   type: {
     name: string;
   };
+  admin_notes: string; // TODO: adjust if BE done
   document: {
+    name: string;
+    link: string;
+  };
+  approved_document: {
+    // TODO: adjust if BE done
     name: string;
     link: string;
   };
@@ -151,7 +160,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
       }
       onClose={onClose}
     >
-      <div className={"flex flex-col gap-4 "}>
+      <div className={"flex flex-col gap-4"}>
         <h3 className="mig-caption--medium">Request by</h3>
         <div className="border rounded-[5px] ">
           {/* Requester Detail */}
@@ -201,24 +210,64 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
               <p className={"mig-body"}>{dataDefault?.notes || "-"}</p>
             </div>
             <div className={"flex flex-col gap-4"}>
-              <p className={"mig-caption text-neutrals90"}>Supporting File</p>
+              <p className={"mig-caption text-neutrals90"}>
+                Leave Form Approved by Manager
+              </p>
+              {dataDefault?.approved_document == null ? (
+                "-"
+              ) : (
+                <div
+                  className={
+                    "mig-body border p-4 rounded-[5px] flex items-center gap-4"
+                  }
+                >
+                  <div>
+                    <PdfIcon />
+                  </div>
+                  <a
+                    href={generateStaticAssetUrl(
+                      dataDefault?.approved_document.link
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <p>{getFileName(dataDefault.approved_document.link)}</p>
+                  </a>
+                </div>
+              )}
+            </div>
+            <div className={"flex flex-col gap-4"}>
+              <p className={"mig-caption text-neutrals90"}>MIG Leave Form</p>
               {dataDefault?.document == null ? (
                 "-"
               ) : (
-                <p className={"mig-body border p-4 rounded-[5px]"}>
+                <div
+                  className={
+                    "mig-body border p-4 rounded-[5px] flex items-center gap-4"
+                  }
+                >
+                  <div>
+                    <PdfIcon />
+                  </div>
                   <a
                     href={generateStaticAssetUrl(dataDefault?.document.link)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <div className="flex items-center gap-2">
-                      <PdfIconSvg size={28} />
-                      <p>{getFileName(dataDefault.document.link)}</p>
-                    </div>
+                    <p>{getFileName(dataDefault.document.link)}</p>
                   </a>
-                </p>
+                </div>
               )}
             </div>
+            {!!dataDefault?.admin_notes && (
+              <div
+                className="py-2 px-3 rounded bg-secondary100 bg-opacity-10 
+              text-secondary100 flex items-center gap-2"
+              >
+                <EditIconSvg />
+                <p className="mig-caption">{dataDefault.admin_notes}</p>
+              </div>
+            )}
           </div>
         </div>
 

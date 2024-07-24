@@ -570,16 +570,16 @@ const TrashIconSvg = (props) => {
   );
   return <Icon rev={""} component={trashIconSvg} {...props}></Icon>;
 };
-const CheckIconSvg = ({ size, color }) => {
+const CheckIconSvg = (props) => {
   const checkIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-check"
-      width={size}
-      height={size}
+      width={props?.size ?? 24}
+      height={props?.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -588,7 +588,7 @@ const CheckIconSvg = ({ size, color }) => {
       <path d="M5 12l5 5l10 -10" />
     </svg>
   );
-  return <Icon rev={""} component={checkIconSvg}></Icon>;
+  return <Icon rev={""} component={checkIconSvg} {...props}></Icon>;
 };
 const BackIconSvg = ({ size, color }) => {
   const backIconSvg = () => (

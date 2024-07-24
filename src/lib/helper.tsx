@@ -98,6 +98,41 @@ export const downloadFile = (fileBinary: Blob, fileName: string) => {
 };
 
 /**
+ * A helper function to auto download file from MIG's CDN link .
+ *
+ * @param filePath File path to be downloaded.
+ */
+export const downloadFileFromPath = async (filePath: string) => {
+  const fileUrl = generateStaticAssetUrl(filePath);
+
+  await fetch(fileUrl)
+    .then((response) => response.blob())
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+
+      const anchorElement = document.createElement("a");
+      anchorElement.href = url;
+
+      anchorElement.download = getFileName(filePath);
+
+      document.body.appendChild(anchorElement);
+
+      anchorElement.dispatchEvent(
+        new MouseEvent("click", {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+        })
+      );
+
+      // Remove the anchor element from the DOM and revoke the Blob URL
+      document.body.removeChild(anchorElement);
+      window.URL.revokeObjectURL(url);
+    })
+    .catch((err) => console.error("Error fetching or downloading file:", err));
+};
+
+/**
  * Helper function untuk render toaster / notification ketika User tidak memiliki fitur
  *  tertenu.
  *

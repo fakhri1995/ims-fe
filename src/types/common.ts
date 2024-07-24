@@ -93,3 +93,9 @@ export interface ProfileImageAttribute {
   link: string;
   description: string;
 }
+
+export interface IFileAttribute {
+  id: number;
+  link: string;
+  description: string;
+}

@@ -2,7 +2,11 @@ import { Modal, Spin } from "antd";
 import { ReactElement } from "react";
 
 import ButtonSys from "components/button";
-import { AlertCircleFilledIconSvg, TrashIconSvg } from "components/icon";
+import {
+  AlertCircleFilledIconSvg,
+  CheckIconSvg,
+  TrashIconSvg,
+} from "components/icon";
 
 /** New modal components used for revamped design in July 2024 */
 
@@ -55,6 +59,7 @@ const ModalDelete = ({
   children,
   onCancel,
   title,
+  iconDelete,
 }: {
   visible: boolean;
   itemName: string;
@@ -64,6 +69,7 @@ const ModalDelete = ({
   children: ReactElement;
   onCancel?: any;
   title?: string;
+  iconDelete?: ReactElement;
 }) => {
   return (
     <Modal
@@ -77,26 +83,25 @@ const ModalDelete = ({
       onCancel={onCancel}
       className="mig-body--medium"
       footer={
-        <Spin spinning={loading}>
-          <div className="flex gap-4 items-center justify-end">
-            <ButtonSys type={"default"} color={"mono50"} onClick={onCancel}>
-              Cancel
+        <div className="flex gap-4 items-center justify-end">
+          <ButtonSys type={"default"} color={"mono50"} onClick={onCancel}>
+            Cancel
+          </ButtonSys>
+          <div className="col-span-2 hover:opacity-75">
+            <ButtonSys
+              type={"primary"}
+              color={"danger"}
+              onClick={onOk}
+              loading={loading}
+              disabled={disabled}
+            >
+              <div className="flex items-center gap-2">
+                {iconDelete ? iconDelete : <TrashIconSvg />}
+                <p> {title ?? `Delete ${itemName}`}</p>
+              </div>
             </ButtonSys>
-            <div className="col-span-2 hover:opacity-75">
-              <ButtonSys
-                type={"primary"}
-                color={"danger"}
-                onClick={onOk}
-                disabled={disabled}
-              >
-                <div className="flex items-center gap-2">
-                  <TrashIconSvg />
-                  <p>Delete {itemName}</p>
-                </div>
-              </ButtonSys>
-            </div>
           </div>
-        </Spin>
+        </div>
       }
     >
       {children}
@@ -104,4 +109,60 @@ const ModalDelete = ({
   );
 };
 
-export { ModalWarning, ModalDelete };
+const ModalAccept = ({
+  visible,
+  loading = false,
+  disabled = false,
+  onOk,
+  children,
+  onCancel,
+  title,
+  icon,
+}: {
+  visible: boolean;
+  loading: boolean;
+  disabled: boolean;
+  onOk: any;
+  children: ReactElement;
+  onCancel?: any;
+  title?: string;
+  icon?: ReactElement;
+}) => {
+  return (
+    <Modal
+      title={
+        <div className="text-primary100 flex items-center gap-3">
+          <AlertCircleFilledIconSvg size={24} />
+          <p> {title}</p>
+        </div>
+      }
+      visible={visible}
+      onCancel={onCancel}
+      className="mig-body--medium"
+      footer={
+        <div className="flex gap-4 items-center justify-end">
+          <ButtonSys type={"default"} color={"mono50"} onClick={onCancel}>
+            Cancel
+          </ButtonSys>
+          <div className="col-span-2 hover:opacity-75">
+            <ButtonSys
+              type={"primary"}
+              onClick={onOk}
+              loading={loading}
+              disabled={disabled}
+            >
+              <div className="flex items-center gap-2">
+                {icon ? icon : <CheckIconSvg />}
+                <p> {title}</p>
+              </div>
+            </ButtonSys>
+          </div>
+        </div>
+      }
+    >
+      {children}
+    </Modal>
+  );
+};
+
+export { ModalWarning, ModalDelete, ModalAccept };
