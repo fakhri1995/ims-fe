@@ -13,7 +13,7 @@ import {
   Select,
   Spin,
   Tabs,
-  notification,
+  Tag,
 } from "antd";
 import type { AxiosError } from "axios";
 import moment from "moment";
@@ -47,7 +47,7 @@ import {
   AttendanceService,
 } from "apis/attendance";
 
-import { DownloadIcon2Svg, DownloadIconSvg } from "../../../icon";
+import { DownloadIcon2Svg, InfoCircleIconSvg, XIconSvg } from "../../../icon";
 import ExportActivityTemplate from "../ExportActivityTemplate";
 
 const { RangePicker } = DatePicker;
@@ -225,12 +225,12 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           downloadFile(file, fileName);
 
           notificationSuccess({
-            message: `Berhasil mengunduh file ${fileName}`,
+            message: `Successfully downloaded file ${fileName}`,
           });
           onClose();
         } catch (error) {
           notificationError({
-            message: `Terdapat kesalahan saat mengunduh file. ${
+            message: `Failed to download file. ${
               (error as AxiosError).message
             }`,
           });
@@ -607,20 +607,20 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       onClose={onClose}
     >
       <div className="">
-        <Tabs
-          defaultActiveKey={activeTabKey}
-          onChange={setActiveTabKey}
-          // tabBarGutter={120}
-          // tabBarStyle={{ textAlign: "center" }}
-        >
-          <TabPane tab="Attendance Sheet" key="1" />
-          {exportActivity && isAllowedToExportActivity && (
-            <TabPane tab="Integrated Format" key="2" />
-          )}
-        </Tabs>
-        {/* <div className={"space-y-6"}>
-          <h4 className="mig-heading--4">Pilih Filter:</h4>
-        </div> */}
+        {exportActivity && (
+          <Tabs
+            defaultActiveKey={activeTabKey}
+            onChange={setActiveTabKey}
+            // tabBarGutter={120}
+            // tabBarStyle={{ textAlign: "center" }}
+          >
+            <TabPane tab="Attendance Sheet" key="1" />
+            {exportActivity && isAllowedToExportActivity && (
+              <TabPane tab="Integrated Format" key="2" />
+            )}
+          </Tabs>
+        )}
+
         {activeTabKey == "1" ? (
           <div className={"space-y-6"}>
             <Form
@@ -661,15 +661,18 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                     <Form.Item
                       name="form_aktivitas"
                       label="Activity Form"
-                      className="w-full"
+                      className="w-full "
                       rules={[{ required: true }]}
                     >
+                      {/* <> */}
                       <Select
                         showSearch
                         mode={"multiple"}
                         allowClear
+                        // className="dontShow"
                         placeholder="Select activity form"
                         optionFilterProp="children"
+                        // value={selectedFormAktivitasId}
                         filterSort={(optionA, optionB) => {
                           if (isSortAsc) {
                             return String(optionA.children ?? "")
@@ -690,8 +693,10 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                           </Option>
                         ))}
                       </Select>
+                      {/* </> */}
                     </Form.Item>
-                    <div className="mt-2">
+
+                    <div className="mt-3">
                       <ButtonSys
                         type={isSortAsc ? "primary" : "default"}
                         icon={<SortAscendingOutlined />}
@@ -701,8 +706,43 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                       </ButtonSys>
                     </div>
                   </div>
+
+                  {/* Selected form tags - commented because still causes bugs */}
+                  {/* <div className="flex flex-wrap">
+                    {selectedFormAktivitasId?.map((id, idx) => {
+                      return (
+                        <Tag
+                          key={id}
+                          closable
+                          closeIcon={
+                            <XIconSvg
+                              color="white"
+                              size={16}
+                              className="flex items-center"
+                            />
+                          }
+                          onClose={() => {
+                            const newTags =
+                              selectedFormAktivitasId?.filter(
+                                (tag) => tag !== id
+                              ) ?? undefined;
+                            handleOnChangeFormAktivitas(newTags);
+                          }}
+                          className="flex items-center py-1 px-3 w-max mb-2 gap-2 rounded-full bg-primary100 text-white">
+                          <p className="text-white">
+                            {
+                              formAktivitasData?.find(
+                                (value) => value.id === id
+                              )?.name
+                            }
+                          </p>
+                        </Tag>
+                      );
+                    })}
+                  </div> */}
+
                   {/* Selectable staff */}
-                  <Form.Item label="Staff" required className="relative">
+                  <Form.Item label="Select Staff" required className="relative">
                     {Array.isArray(formAktivitasStaffList) &&
                       formAktivitasStaffList.length > 0 &&
                       namaSelected.length == namaTempSelected.length &&
@@ -717,6 +757,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                       )}
                     {Array.isArray(formAktivitasStaffList) &&
                       formAktivitasStaffList.length > 0 &&
+                      dataFormAktifitas.length > 0 &&
                       namaSelected.length > namaTempSelected.length && (
                         <Button
                           type="link"
@@ -729,33 +770,46 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
 
                     {!formAktivitasStaffList &&
                       !formAktivitasStaffListLoading && (
-                        <span className="text-mono50">
-                          Please select Activity Form before selecting staff.
-                        </span>
+                        <div
+                          className="flex gap-2 items-center bg-secondary100 bg-opacity-10
+                        text-secondary100 py-2 px-3 rounded "
+                        >
+                          <InfoCircleIconSvg size={18} />
+                          <p className="mig-caption">
+                            Please select the Activity Form first to select
+                            staff.
+                          </p>
+                        </div>
                       )}
 
                     {Array.isArray(formAktivitasStaffList) &&
-                      formAktivitasStaffList.length === 0 && (
-                        <span className="text-mono50">
-                          Activity Form has no staff yet.
-                        </span>
+                      dataFormAktifitas.length < 1 && (
+                        <div
+                          className="flex gap-2 items-center bg-secondary100 bg-opacity-10
+                      text-secondary100 py-2 px-3 rounded "
+                        >
+                          <InfoCircleIconSvg size={18} />
+                          <p className="mig-caption">
+                            Activity Form has no staff yet.
+                          </p>
+                        </div>
                       )}
-                    {dataFormAktifitas && (
+                    {dataFormAktifitas?.length > 0 && (
                       <Form.Item
                         name="selected_staff"
                         rules={[{ required: true }]}
                         shouldUpdate
                       >
-                        <Checkbox.Group>
+                        <Checkbox.Group className="w-full">
                           <div className="flex flex-col space-x-0 space-y-4">
                             {dataFormAktifitas.map((user) => (
-                              <Checkbox
+                              <div
                                 key={user.id}
-                                value={user.name}
-                                onChange={(e) => {
-                                  handleOnSelectStaff(e);
-                                }}
-                                className="flex items-center"
+                                className={`flex w-full justify-between items-center border py-1 px-3 rounded-[5px] ${
+                                  namaTempSelected.includes(user.name)
+                                    ? "bg-backdrop border-primary100"
+                                    : ""
+                                }`}
                               >
                                 <div className="flex items-center space-x-4">
                                   {/* Profile Picture */}
@@ -770,11 +824,22 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                                   </div>
 
                                   {/* Staff name */}
-                                  <span className="text-mono30">
-                                    {user.name}
-                                  </span>
+                                  <div>
+                                    <p className="text-mono30 mig-body">
+                                      {user.name}
+                                    </p>
+                                    <p className="text-neutrals90 mig-caption">
+                                      {user.position}
+                                    </p>
+                                  </div>
                                 </div>
-                              </Checkbox>
+                                <Checkbox
+                                  value={user.name}
+                                  onChange={(e) => {
+                                    handleOnSelectStaff(e);
+                                  }}
+                                />
+                              </div>
                             ))}
                           </div>
                         </Checkbox.Group>
