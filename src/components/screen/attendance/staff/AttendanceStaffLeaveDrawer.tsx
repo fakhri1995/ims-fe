@@ -33,11 +33,6 @@ import { useGetUserAttendanceTodayActivities } from "apis/attendance";
  * Component AttendanceStaffAktivitasDrawer's props.
  */
 export interface IAttendanceStaffLeaveDrawer {
-  action: "create" | "update";
-
-  /**
-   * Arg ini diperlukan untuk `action === "update"`.
-   */
   activityFormId?: number;
   username: string;
   idUser: number;
@@ -51,7 +46,6 @@ export interface IAttendanceStaffLeaveDrawer {
  * Component AttendanceStaffAktivitasDrawer
  */
 export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
-  action = "create",
   getDataNew,
   visible,
   onClose,
