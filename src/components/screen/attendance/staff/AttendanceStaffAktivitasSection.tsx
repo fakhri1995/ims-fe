@@ -94,6 +94,7 @@ import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
 import { AttendanceStaffLeaveStatisticCards } from "./AttendanceStaffLeaveStatisticCards";
+import { AttendanceStaffOvertimeDrawer } from "./AttendanceStaffOvertimeDrawer";
 
 export interface IGetLeaveUser {
   start_date: string;
@@ -162,6 +163,7 @@ export const AttendanceStaffAktivitasSection: FC<
   const [pageSize, setPageSize] = useState(10);
   const [showModalTask, setShowModalTask] = useState(false);
   const [showModalLeave, setShowModalLeave] = useState(false);
+  const [showModalOvertime, setShowModalOvertime] = useState(false);
   const [showModalCheckinWarning, setShowModalCheckinWarning] = useState(false);
   const [showModalRemoveActivity, setShowModalRemoveActivity] = useState({
     display: false,
@@ -857,13 +859,13 @@ export const AttendanceStaffAktivitasSection: FC<
                   >
                     Paid Leave
                   </Menu.Item>
-                  {/* <Menu.Item
+                  <Menu.Item
                     key={"overtime"}
                     onClick={() => setActiveSubmenu("overtime")}
                     disabled={!isAllowedToLeavesUser}
                   >
                     Overtime
-                  </Menu.Item> */}
+                  </Menu.Item>
                 </Menu>
               }
             >
@@ -930,7 +932,7 @@ export const AttendanceStaffAktivitasSection: FC<
           {activeSubmenu == "overtime" && isAllowedToAddLeaveUser && (
             <ButtonSys type={"primary"}>
               <div
-                onClick={() => setShowModalLeave(true)}
+                onClick={() => setShowModalOvertime(true)}
                 className={"flex items-center gap-2 "}
               >
                 <ClockCircleOutlined />
@@ -1107,15 +1109,15 @@ export const AttendanceStaffAktivitasSection: FC<
                 return `cursor-pointer`;
               }}
             />
-            <AttendanceStaffLeaveDrawer
+            <AttendanceStaffOvertimeDrawer
               getDataNew={fetchData}
               dataToken={dataToken}
               idUser={idUser}
               username={username}
-              visible={showModalLeave}
+              visible={showModalOvertime}
               action={activityDrawerState.openDrawerAs}
               activityFormId={activityDrawerState.selectedActivityFormId}
-              onClose={() => setShowModalLeave(false)}
+              onClose={() => setShowModalOvertime(false)}
             />
             <AttendanceStaffLeaveDetailDrawer
               fetchData={fetchData}

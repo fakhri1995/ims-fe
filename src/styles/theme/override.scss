@@ -366,9 +366,7 @@ a:hover {
   color: #35763b;
 }
 
-.themedSelector.ant-select-focused:not(.ant-select-disabled).ant-select:not(
-    .ant-select-customize-input
-  )
+.themedSelector.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
   .ant-select-selector {
   border-color: #65976a;
   outline: 0;
@@ -451,6 +449,9 @@ a:hover {
 .ant-pagination-next .ant-pagination-item-link,
 .ant-pagination-item {
   border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* CHECKBOX */
@@ -762,9 +763,7 @@ a:hover {
 }
 
 .ant-form-item-label
-  > label.ant-form-item-required:not(
-    .ant-form-item-required-mark-optional
-  )::after {
+  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::after {
   display: inline-block;
   margin-right: 4px;
   color: #ff4d4f;
@@ -775,17 +774,13 @@ a:hover {
 }
 
 .ant-form-item-label
-  > label.ant-form-item-required:not(
-    .ant-form-item-required-mark-optional
-  )::before {
+  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
   display: none;
 }
 
 .loginForm
   .ant-form-item-label
-  > label.ant-form-item-required:not(
-    .ant-form-item-required-mark-optional
-  )::after {
+  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::after {
   display: none;
 }
 
