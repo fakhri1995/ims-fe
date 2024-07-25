@@ -1,4 +1,14 @@
-export const BadgeLeaveStatus = ({ status }: { status: string }) => (
+/**
+ * Badge Component for Leave Status
+ *
+ * Status Description:
+ * - 1: Pending
+ * - 2: Accepted
+ * - 3: Rejected
+ *
+ */
+
+const BadgeLeaveStatus = ({ status }: { status: string | number }) => (
   <div
     className={`${
       status == "1"
@@ -30,3 +40,5 @@ export const BadgeLeaveStatus = ({ status }: { status: string }) => (
     </p>
   </div>
 );
+
+export default BadgeLeaveStatus;

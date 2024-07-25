@@ -78,10 +78,12 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
         {/* Column 1: Check In/Out Button, Staff detail card, Statistic Card */}
         <div className="w-full lg:w-[258px] space-y-5">
           {/* Card Check In/Out */}
-          <CheckInOutCard
-            onButtonClicked={handleAttendanceButtonClicked}
-            checkInTime={dataProfile.data.company.check_in_time}
-          />
+          <div>
+            <CheckInOutCard
+              onButtonClicked={handleAttendanceButtonClicked}
+              checkInTime={dataProfile.data.company.check_in_time}
+            />
+          </div>
 
           {/* Staff Shift Card */}
           <AccessControl hasPermission={ATTENDANCE_CURRENT_SCHEDULE_GET}>
@@ -104,6 +106,7 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
                 dataToken={token}
                 idUser={dataProfile.data.id}
                 username={dataProfile.data.name}
+                isEmployee={!!dataProfile?.data?.employee?.id}
               />
             </div>
             <div className="col-span-full">

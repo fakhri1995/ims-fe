@@ -63,25 +63,23 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
       sidemenu="attendance/admin"
       fixedBreadcrumbValues={pageBreadcrumb}
     >
-      <div className="px-6 md:px-0 space-y-6">
+      <div className="space-y-5">
         {/* First row: real time clock, today attendance stat, maps */}
-        <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
+        <div className="flex flex-col sm:flex-row space-y-5 sm:space-y-0 sm:space-x-5">
           {/* First column: real time clock, today attendance stat */}
-          <div className="flex flex-col w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5 space-y-6 justify-around">
-            <div className="min-h-[12rem] flex-grow">
+          <div className="flex flex-col w-full sm:w-[258px] space-y-5 justify-around">
+            <div className="h-1/2">
               <CheckInOutCard onlyShowTime />
             </div>
 
-            <div className="min-h-[12rem] flex-grow h-full">
+            <div className="h-1/2">
               <AttendanceAdminTodayStatCard role={roles} />
             </div>
           </div>
 
           {/* Second column: maps */}
-          <div className="flex w-full lg:w-3/5 xl:w-2/3 2xl:w-4/5">
-            <div className="mig-platform w-full">
-              <AttendanceAdminLeafletMapNoSSR />
-            </div>
+          <div className="mig-platform flex-1 h-[292px]">
+            <AttendanceAdminLeafletMapNoSSR />
           </div>
         </div>
 

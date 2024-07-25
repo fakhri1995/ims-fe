@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 import {
   CalendarFilIconSvg,
@@ -8,13 +8,14 @@ import {
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ATTENDANCES_USER_GET } from "lib/features";
+import { LEAVES_COUNT_GET } from "lib/features";
+import { notificationError, permissionWarningNotification } from "lib/helper";
 
 /**
  * Component AttendanceStaffLeaveStatisticCards' props.
  */
 export interface IAttendanceStaffLeaveStatisticCards {
-  leaveCount: number;
+  dataToken: string;
 }
 
 /**
@@ -22,9 +23,35 @@ export interface IAttendanceStaffLeaveStatisticCards {
  */
 export const AttendanceStaffLeaveStatisticCards: FC<
   IAttendanceStaffLeaveStatisticCards
-> = ({ leaveCount }) => {
+> = ({ dataToken }) => {
   const { hasPermission } = useAccessControl();
-  const isAllowedToGetAttendanceStatistic = hasPermission(ATTENDANCES_USER_GET);
+  const isAllowedToGetLeavesCount = hasPermission(LEAVES_COUNT_GET);
+
+  const [leaveCount, setLeaveCount] = useState(null);
+
+  useEffect(() => {
+    fetchDataCount();
+  }, []);
+  const fetchDataCount = async () => {
+    if (!isAllowedToGetLeavesCount) {
+      permissionWarningNotification("Mendapatkan", "Jumlah Cuti");
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeavesCount`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(dataToken),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setLeaveCount(res2?.data);
+      })
+      .catch((err) => {
+        notificationError({ message: "Failed to get leaves count" });
+      });
+  };
 
   return (
     <div className="w-full flex flex-col md:flex-row justify-between gap-3 my-4">

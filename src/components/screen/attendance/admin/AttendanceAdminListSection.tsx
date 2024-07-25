@@ -1,6 +1,4 @@
-import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
 import {
-  Button,
   ConfigProvider,
   Form,
   Input,
@@ -24,6 +22,7 @@ import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
+import { DownloadIconSvg } from "components/icon";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
@@ -94,7 +93,7 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
     company_ids:
       role == 1
         ? withDefault(StringParam, undefined)
-        : withDefault(StringParam, companyId.toString()),
+        : withDefault(NumberParam, companyId),
     is_late: withDefault(NumberParam, undefined),
     is_hadir: withDefault(NumberParam, undefined),
     keyword: withDefault(StringParam, undefined),
@@ -134,149 +133,160 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
 
   return (
     <>
-      <div className="mig-platform space-y-6">
+      <div className="mig-platform--p-0">
         {/* Header: tabs, buttons, filter, and search box */}
-        <div className="flex flex-col xl:flex-row xl:items-center space-y-2 xl:space-y-0">
-          <div className="flex flex-row w-full xl:w-3/6 items-center space-x-2 justify-between xl:justify-start">
+        <div className="flex flex-col">
+          <div className="flex items-center justify-between pt-3 px-4">
+            <h4 className="mig-body--bold">Employee Attendance List</h4>
+            {role == 1 && (
+              <ButtonSys
+                square
+                type={"primary"}
+                color="mono100"
+                onClick={() => setIsExportDrawerShown(true)}
+                disabled={!canExportTableData}
+              >
+                <DownloadIconSvg />
+              </ButtonSys>
+            )}
+          </div>
+          <div className="border-b space-y-3 px-4">
             <Tabs
               defaultActiveKey="1"
-              className="w-2/5 xl:w-3/5"
+              className="headerTab"
               onChange={(value) => {
                 setActiveTab(value as "1" | "2");
               }}
             >
-              <TabPane tab="Hadir" key="1" />
-              <TabPane tab="Absen" key="2" />
+              <TabPane tab="Present" key="1" />
+              <TabPane tab="Absent" key="2" />
             </Tabs>
-            {role == 1 && (
-              <div className="xl:justify-end">
-                <ButtonSys
-                  type={canExportTableData ? "default" : "primary"}
-                  onClick={() => setIsExportDrawerShown(true)}
-                  disabled={!canExportTableData}
-                >
-                  <DownloadOutlined className="mr-2" />
-                  Unduh Tabel
-                </ButtonSys>
-              </div>
-            )}
           </div>
 
           {/* Table's filter */}
-          <Form
-            className="flex w-full xl:w-3/6 justify-between xl:justify-end items-center space-x-2"
-            onFinish={(values) => {
-              setQueryParams({ keyword: values.search, page: 1 });
-            }}
-          >
-            {activeTab === "1" && (
-              <Form.Item noStyle>
-                {queryParams.is_late ? (
-                  <p className="text-overdue">Terlambat</p>
-                ) : (
-                  <p className="text-primary100 lg:whitespace-nowrap">
-                    Tepat Waktu
-                  </p>
-                )}
-
-                <Switch
-                  checked={!queryParams.is_late}
-                  onChange={(checked) =>
-                    setQueryParams({ is_late: !checked ? 1 : 0, page: 1 })
-                  }
+          <div className="px-4 py-3">
+            <Form
+              className="flex w-full justify-between xl:justify-end items-center space-x-2"
+              onFinish={(values) => {
+                setQueryParams({ keyword: values.search, page: 1 });
+              }}
+            >
+              <Form.Item noStyle name="search">
+                <Input
+                  placeholder="Search employee's name..."
+                  disabled={!isAllowedToSearchData}
+                  allowClear
+                  className="w-full"
+                  onChange={(event) => {
+                    if (
+                      event.target.value.length === 0 ||
+                      event.target.value === ""
+                    ) {
+                      setQueryParams({ keyword: "" });
+                    } else {
+                      clearTimeout(timer);
+                      timer = setTimeout(() => {
+                        setQueryParams({ keyword: event.target.value });
+                      }, 500);
+                    }
+                  }}
                 />
               </Form.Item>
-            )}
-            <Form.Item noStyle name="search">
-              <Input
-                placeholder="Cari..."
-                disabled={!isAllowedToSearchData}
-                allowClear
-                className="w-full"
-                onChange={(event) => {
-                  if (
-                    event.target.value.length === 0 ||
-                    event.target.value === ""
-                  ) {
-                    setQueryParams({ keyword: "" });
-                  } else {
-                    clearTimeout(timer);
-                    timer = setTimeout(() => {
-                      setQueryParams({ keyword: event.target.value });
-                    }, 500);
-                  }
-                }}
-              />
-            </Form.Item>
+              {activeTab === "1" && role == 1 && (
+                <>
+                  <Form.Item noStyle>
+                    <Select
+                      allowClear
+                      showSearch
+                      mode="multiple"
+                      className="w-full"
+                      defaultValue={queryParams.company_ids}
+                      disabled={
+                        !isAllowedToGetCompanyClients || loadingCompanyClients
+                      }
+                      placeholder="Select Placement"
+                      onChange={(value) => {
+                        setQueryParams({ company_ids: value, page: 1 });
+                      }}
+                      filterOption={(input, option) =>
+                        (String(option?.children) ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      loading={loadingCompanyClients}
+                      optionFilterProp="children"
+                    >
+                      {dataCompanyList?.map((company) => (
+                        <Select.Option key={company.id} value={company.id}>
+                          {company.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
 
-            {activeTab === "1" && role == 1 && (
-              <Form.Item noStyle>
-                <Select
-                  allowClear
-                  showSearch
-                  mode="multiple"
-                  className="w-full"
-                  defaultValue={queryParams.company_ids}
-                  disabled={
-                    !isAllowedToGetCompanyClients || loadingCompanyClients
-                  }
-                  placeholder="Semua Penempatan"
-                  onChange={(value) => {
-                    setQueryParams({ company_ids: value, page: 1 });
-                  }}
-                  filterOption={(input, option) =>
-                    (String(option?.children) ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  loading={loadingCompanyClients}
-                  optionFilterProp="children"
-                >
-                  {dataCompanyList?.map((company) => (
-                    <Select.Option key={company.id} value={company.id}>
-                      {company.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            )}
+                  {/* TODO: uncomment & adjust if BE is done */}
+                  {/* <Form.Item noStyle>
+                    <DatePicker
+                      allowClear
+                      className="w-full"
+                      defaultValue={queryParams.date}
+                      disabled={
+                        !isAllowedToGetCompanyClients || loadingCompanyClients
+                      }
+                      placeholder="Select Date"
+                      onChange={(value) => {
+                        setQueryParams({ date: value, page: 1 });
+                      }}
+                    />
+                  </Form.Item> */}
+                </>
+              )}
 
-            <Form.Item noStyle>
-              <Button
-                htmlType="submit"
-                disabled={!isAllowedToSearchData}
-                className="mig-button mig-button--solid-primary"
-                icon={<SearchOutlined />}
-              >
-                Cari
-              </Button>
-            </Form.Item>
-          </Form>
+              {activeTab === "1" && (
+                <Form.Item noStyle>
+                  {queryParams.is_late ? (
+                    <p className="text-overdue">Late</p>
+                  ) : (
+                    <p className="text-primary100 whitespace-nowrap">On Time</p>
+                  )}
+
+                  <Switch
+                    checked={!queryParams.is_late}
+                    onChange={(checked) =>
+                      setQueryParams({ is_late: !checked ? 1 : 0, page: 1 })
+                    }
+                  />
+                </Form.Item>
+              )}
+            </Form>
+          </div>
         </div>
 
         {/* Actual table */}
-        <ConfigProvider
-          renderEmpty={() => (
-            <DataEmptyState caption="Data kehadiran kosong." />
-          )}
-        >
-          {activeTab === "1" && (
-            <HadirTable
-              page={queryParams.page}
-              rows={queryParams.rows}
-              sort_by={queryParams.sort_by}
-              sort_type={queryParams.sort_type}
-              keyword={queryParams.keyword}
-              is_late={queryParams.is_late}
-              is_hadir={queryParams.is_hadir}
-              company_ids={queryParams.company_ids}
-              onTriggerChangeParams={onTriggerChangeParams}
-            />
-          )}
-          {activeTab === "2" && (
-            <AbsenTable keyword={queryParams.keyword} role={role} />
-          )}
-        </ConfigProvider>
+        <div className="px-4 pb-3">
+          <ConfigProvider
+            renderEmpty={() => (
+              <DataEmptyState caption="Data kehadiran kosong." />
+            )}
+          >
+            {activeTab === "1" && (
+              <HadirTable
+                page={queryParams.page}
+                rows={queryParams.rows}
+                sort_by={queryParams.sort_by}
+                sort_type={queryParams.sort_type}
+                keyword={queryParams.keyword}
+                is_late={queryParams.is_late}
+                is_hadir={queryParams.is_hadir}
+                company_ids={queryParams.company_ids}
+                onTriggerChangeParams={onTriggerChangeParams}
+              />
+            )}
+            {activeTab === "2" && (
+              <AbsenTable keyword={queryParams.keyword} role={role} />
+            )}
+          </ConfigProvider>
+        </div>
       </div>
 
       <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USERS_EXPORT}>

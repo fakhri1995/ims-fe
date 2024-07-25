@@ -83,14 +83,14 @@ function LayoutDashboardParent({
         <div className="w-full">
           <Header
             className="site-layout-background border-b border-mono70 bg-white
-            p-4 md:p-0 h-auto"
+            p-4 sm:p-0 h-auto"
           >
             <div className="flex justify-between">
-              <div className="block md:hidden">
+              <div className="block sm:hidden">
                 <BrandLogo />
               </div>
-              <div className="md:w-full flex flex-wrap justify-end md:justify-between items-center">
-                <div className="hidden md:flex z-50 items-center px-5 py-3 gap-5">
+              <div className="sm:w-full flex flex-wrap justify-end sm:justify-between items-center">
+                <div className="hidden sm:flex z-50 items-center px-5 py-3 gap-5">
                   <div className="hover:bg-neutrals50 p-1 rounded-full">
                     {/* Desktop menu button */}
                     <Menu2IconSvg

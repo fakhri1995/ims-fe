@@ -297,12 +297,15 @@ a:hover {
 .ant-input-number,
 .ant-input-affix-wrapper,
 .ant-picker {
-  border-color: #35763b;
+  // border-color: #35763b;
   border-radius: 5px;
 }
 
 .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
   border-color: #35763b;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 1px #35763b;
+  box-shadow: 0 0 0 1px #35763b;
 }
 
 .ant-input:hover,
@@ -329,21 +332,26 @@ a:hover {
 }
 
 /* SELECT */
-// .ant-select:not(.ant-select-disabled):hover .ant-select-selector {
-//   border-color: #B8B8B8;
-//   border-radius: 5px;
-// }
+.ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+  border-color: #35763b;
+  border-radius: 5px;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 1px #35763b;
+  box-shadow: 0 0 0 1px #35763b;
+}
+
 // .ant-select:not(.ant-select-customize-input) .ant-select-selector {
 //   border-color: #B8B8B8;
 //   border-radius: 5px;
 // }
-// .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
-//   .ant-select-selector {
-//   border-color: #65976a;
-//   outline: 0;
-//   -webkit-box-shadow: 0 0 0 1px #35763b;
-//   box-shadow: 0 0 0 1px #35763b;
-// }
+
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
+  .ant-select-selector {
+  border-color: #35763b;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 1px #35763b;
+  box-shadow: 0 0 0 1px #35763b;
+}
 
 .ant-select:not(.ant-select-customize-input) .ant-select-selector {
   border-radius: 5px;
@@ -641,6 +649,11 @@ a:hover {
 .talentPoolTab .ant-tabs-tab {
   margin: 0;
   padding: 0;
+}
+
+.headerTab.ant-tabs-top > .ant-tabs-nav {
+  margin: 0px;
+  position: static;
 }
 
 /** UPLOAD */

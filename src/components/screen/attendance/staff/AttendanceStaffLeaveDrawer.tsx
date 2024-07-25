@@ -66,9 +66,12 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
   const isAllowedToGetLeaveTypes = hasPermission(LEAVE_TYPES_GET);
   const isAllowedToGetEmployees = hasPermission(FILTER_EMPLOYEES_GET);
   const isAllowedToAddLeave = hasPermission(LEAVE_USER_ADD);
-  const [resumeFileBlob, setResumeFileBlob] = useState<RcFile | Blob | File>(
-    null
-  );
+  const [personalFileBlob, setPersonalFileBlob] = useState<
+    RcFile | Blob | File
+  >(null);
+  const [approvedFileBlob, setApprovedFileBlob] = useState<
+    RcFile | Blob | File
+  >(null);
   const [dataTipeCutis, setDataTipeCutis] = useState([]);
   const [dataEmployees, setDataEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -161,7 +164,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
     }
   };
 
-  const onChangeFile = async (info) => {
+  const onChangePersonalFile = async (info) => {
     if (info.file.status === "uploading") {
       // setLoadingupload(true);
       return;
@@ -169,7 +172,19 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
     if (info.file.status === "done") {
       const blobFile = info.file.originFileObj;
       const base64Data = await getBase64(blobFile);
-      setResumeFileBlob(blobFile);
+      setPersonalFileBlob(blobFile);
+    }
+  };
+
+  const onChangeApprovedFile = async (info) => {
+    if (info.file.status === "uploading") {
+      // setLoadingupload(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      const blobFile = info.file.originFileObj;
+      const base64Data = await getBase64(blobFile);
+      setApprovedFileBlob(blobFile);
     }
   };
 
@@ -187,8 +202,13 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
     if (values.delegate_id) {
       formData.append("delegate_id", values.delegate_id);
     }
-    if (resumeFileBlob) {
-      formData.append("document", resumeFileBlob);
+    if (personalFileBlob) {
+      formData.append("document", personalFileBlob);
+    }
+
+    // TODO: adjust if BE done
+    if (approvedFileBlob) {
+      formData.append("approved_document", approvedFileBlob);
     }
     setLoading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addLeaveUser`, {
@@ -397,27 +417,17 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
-              label="Supporting File"
-              name={"dokumen"}
+              label="Leave Form Approved by Manager"
+              name={"approved_file"}
               className="col-span-2"
-              rules={[
-                {
-                  required:
-                    dataCuti.tipe_cuti == null
-                      ? true
-                      : dataCuti?.tipe_cuti?.is_document_required
-                      ? true
-                      : false,
-                  message: "Supporting Document is required",
-                },
-              ]}
             >
               <div className={"flex flex-col"}>
                 <div className="mb-4 ">
                   <Upload
                     accept=".pdf"
                     multiple={false}
-                    onChange={onChangeFile}
+                    maxCount={1}
+                    onChange={onChangeApprovedFile}
                   >
                     <ButtonSys>
                       <div className="flex justify-center items-center gap-2 ">
@@ -429,7 +439,47 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                 </div>
 
                 <em className={"text-[#808080] text-xs leading-4 font-normal "}>
-                  Upload File (Max. 5 MB), multiple files are allowed.
+                  Upload File (Max. 5 MB).
+                </em>
+              </div>
+            </Form.Item>
+          </div>
+          <div className={"mt-2 flex flex-col gap-2"}>
+            <Form.Item
+              label="MIG Leave Form"
+              name={"personal_file"}
+              className="col-span-2"
+              rules={[
+                {
+                  required:
+                    dataCuti.tipe_cuti == null
+                      ? true
+                      : dataCuti?.tipe_cuti?.is_document_required
+                      ? true
+                      : false,
+                  message: "Personal Reason File is required",
+                },
+              ]}
+            >
+              <div className={"flex flex-col"}>
+                <div className="mb-4 ">
+                  <Upload
+                    accept=".pdf"
+                    multiple={false}
+                    maxCount={1}
+                    onChange={onChangePersonalFile}
+                  >
+                    <ButtonSys>
+                      <div className="flex justify-center items-center gap-2 ">
+                        <UploadOutlined size={16} />
+                        <p>Upload File</p>
+                      </div>
+                    </ButtonSys>
+                  </Upload>
+                </div>
+
+                <em className={"text-[#808080] text-xs leading-4 font-normal "}>
+                  Upload File (Max. 5 MB).
                 </em>
               </div>
             </Form.Item>

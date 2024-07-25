@@ -88,7 +88,7 @@ import {
   TrashIconSvg,
   XIconSvg,
 } from "../../../../components/icon";
-import { BadgeLeaveStatus } from "../leave/BadgeLeaveStatus";
+import BadgeLeaveStatus from "../leave/BadgeLeaveStatus";
 import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
@@ -113,6 +113,7 @@ export interface IAttendanceStaffAktivitasSection {
   dataToken: string;
   idUser: number;
   username: string;
+  isEmployee: boolean;
 }
 
 /**
@@ -120,7 +121,7 @@ export interface IAttendanceStaffAktivitasSection {
  */
 export const AttendanceStaffAktivitasSection: FC<
   IAttendanceStaffAktivitasSection
-> = ({ dataToken, idUser, username }) => {
+> = ({ dataToken, idUser, username, isEmployee }) => {
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
 
@@ -140,9 +141,8 @@ export const AttendanceStaffAktivitasSection: FC<
   );
   const isAllowedToExportTable = hasPermission(ATTENDANCE_ACTIVITY_USER_EXPORT);
 
-  const isAllowedToLeavesUser = hasPermission(LEAVES_USER_GET);
-  const isAllowedToLeaveCount = hasPermission(LEAVES_COUNT_GET);
-  const isAllowedToAddLeaveUser = hasPermission(LEAVE_USER_ADD);
+  const isAllowedToGetLeavesUser = hasPermission(LEAVES_USER_GET) && isEmployee;
+  const isAllowedToAddLeaveUser = hasPermission(LEAVE_USER_ADD) && isEmployee;
 
   // Constant for Activity State
   const [TODAY, HISTORY, FORM, TASK] = ["TODAY", "HISTORY", "FORM", "TASK"];
@@ -186,7 +186,6 @@ export const AttendanceStaffAktivitasSection: FC<
   const [loadingLeaves, setLoadingLeaves] = useState(true);
   const [loadingDeleteTaskActivity, setLoadingDeleteTaskActivity] =
     useState(false);
-  const [leaveCount, setLeaveCount] = useState(null);
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
@@ -500,15 +499,16 @@ export const AttendanceStaffAktivitasSection: FC<
   useEffect(() => {
     setLoadingTasks(false);
     checkActivityTask();
-    fetchDataCount();
   }, []);
 
   useEffect(() => {
-    fetchData();
-  }, [queryParams.page, queryParams.rows]);
+    if (isAllowedToGetLeavesUser) {
+      fetchDataLeaves();
+    }
+  }, [isAllowedToGetLeavesUser, queryParams.page, queryParams.rows]);
 
-  const fetchData = async () => {
-    if (!isAllowedToLeavesUser) {
+  const fetchDataLeaves = async () => {
+    if (!isAllowedToGetLeavesUser) {
       permissionWarningNotification("Mendapatkan", "Data Cuti");
     } else {
       const params = QueryString.stringify(queryParams, {
@@ -523,36 +523,19 @@ export const AttendanceStaffAktivitasSection: FC<
       })
         .then((res) => res.json())
         .then((res2) => {
-          setRawDataLeaves(res2.data);
-          setDisplayDataLeaves(res2.data.data); // table-related data source
-          // setDataTipeCutis(res2.data);
+          if (res2.success) {
+            setRawDataLeaves(res2.data);
+            setDisplayDataLeaves(res2.data.data); // table-related data source
+            // setDataTipeCutis(res2.data);
+          } else {
+            notificationError({ message: res2?.message });
+          }
         })
         .catch((err) => {
           notificationError({ message: "Failed to get user leaves" });
         })
         .finally(() => setLoadingLeaves(false));
     }
-  };
-
-  const fetchDataCount = async () => {
-    if (!isAllowedToLeaveCount) {
-      permissionWarningNotification("Mendapatkan", "Jumlah Cuti");
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeavesCount`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(dataToken),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setLeaveCount(res2?.data);
-      })
-      .catch((err) => {
-        notificationError({ message: "Failed to get leaves count" });
-      });
   };
 
   const checkActivityTask = () => {
@@ -855,14 +838,14 @@ export const AttendanceStaffAktivitasSection: FC<
                   <Menu.Item
                     key={"cuti"}
                     onClick={() => setActiveSubmenu("cuti")}
-                    disabled={!isAllowedToLeavesUser}
+                    disabled={!isAllowedToGetLeavesUser}
                   >
                     Paid Leave
                   </Menu.Item>
                   <Menu.Item
                     key={"overtime"}
                     onClick={() => setActiveSubmenu("overtime")}
-                    disabled={!isAllowedToLeavesUser}
+                    disabled={!isAllowedToGetLeavesUser}
                   >
                     Overtime
                   </Menu.Item>
@@ -1021,59 +1004,60 @@ export const AttendanceStaffAktivitasSection: FC<
 
         {/* Table "Paid Leave" */}
         {activeSubmenu == "cuti" && (
-          <div
-            className={
-              "bg-white rounded-[5px] mt-3 first-letter:border border-solid px-6"
-            }
-          >
-            <AccessControl hasPermission={LEAVES_COUNT_GET}>
-              <AttendanceStaffLeaveStatisticCards leaveCount={leaveCount} />
-            </AccessControl>
+          <AccessControl hasPermission={[LEAVES_USER_GET, LEAVES_COUNT_GET]}>
+            <div
+              className={
+                "bg-white rounded-[5px] mt-3 first-letter:border border-solid px-6"
+              }
+            >
+              <AttendanceStaffLeaveStatisticCards dataToken={dataToken} />
 
-            <Table
-              className="tableTask"
-              dataSource={displayDataLeaves}
-              columns={columnLeaves}
-              loading={loadingLeaves}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                current: queryParams.page,
-                pageSize: queryParams.rows,
-                total: rawDataLeaves?.total,
-              }}
-              onChange={(pagination, _, sorter) => {
-                setQueryParams({
-                  page: pagination.current,
-                  rows: pagination.pageSize,
-                });
-              }}
-              onRow={(record) => {
-                return {
-                  onClick: (e) => detailCuti(record),
-                };
-              }}
-              rowClassName={(record, idx) => {
-                return `cursor-pointer`;
-              }}
-            />
-            <AttendanceStaffLeaveDrawer
-              getDataNew={fetchData}
-              dataToken={dataToken}
-              idUser={idUser}
-              username={username}
-              visible={showModalLeave}
-              action={activityDrawerState.openDrawerAs}
-              activityFormId={activityDrawerState.selectedActivityFormId}
-              onClose={() => setShowModalLeave(false)}
-            />
-            <AttendanceStaffLeaveDetailDrawer
-              fetchData={fetchData}
-              visible={showDetailCuti}
-              dataDefault={dataDefault}
-              dataToken={dataToken}
-              onClose={cancelShowDetail}
-            />
-          </div>
+              <Table
+                className="tableTask"
+                dataSource={displayDataLeaves}
+                columns={columnLeaves}
+                loading={loadingLeaves}
+                scroll={{ x: "max-content" }}
+                pagination={{
+                  current: queryParams.page,
+                  pageSize: queryParams.rows,
+                  total: rawDataLeaves?.total,
+                }}
+                onChange={(pagination, _, sorter) => {
+                  setQueryParams({
+                    page: pagination.current,
+                    rows: pagination.pageSize,
+                  });
+                }}
+                onRow={(record) => {
+                  return {
+                    onClick: (e) => detailCuti(record),
+                  };
+                }}
+                rowClassName={(record, idx) => {
+                  return `cursor-pointer`;
+                }}
+              />
+
+              <AttendanceStaffLeaveDrawer
+                getDataNew={fetchDataLeaves}
+                dataToken={dataToken}
+                idUser={idUser}
+                username={username}
+                visible={showModalLeave}
+                action={activityDrawerState.openDrawerAs}
+                activityFormId={activityDrawerState.selectedActivityFormId}
+                onClose={() => setShowModalLeave(false)}
+              />
+              <AttendanceStaffLeaveDetailDrawer
+                fetchData={fetchDataLeaves}
+                visible={showDetailCuti}
+                dataDefault={dataDefault}
+                dataToken={dataToken}
+                onClose={cancelShowDetail}
+              />
+            </div>
+          </AccessControl>
         )}
 
         {/* table overtime */}
@@ -1110,7 +1094,7 @@ export const AttendanceStaffAktivitasSection: FC<
               }}
             />
             <AttendanceStaffOvertimeDrawer
-              getDataNew={fetchData}
+              getDataNew={fetchDataLeaves}
               dataToken={dataToken}
               idUser={idUser}
               username={username}
@@ -1120,7 +1104,7 @@ export const AttendanceStaffAktivitasSection: FC<
               onClose={() => setShowModalOvertime(false)}
             />
             <AttendanceStaffLeaveDetailDrawer
-              fetchData={fetchData}
+              fetchData={fetchDataLeaves}
               visible={showDetailCuti}
               dataDefault={dataDefault}
               dataToken={dataToken}

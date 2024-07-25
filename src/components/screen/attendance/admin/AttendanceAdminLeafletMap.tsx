@@ -29,7 +29,7 @@ export interface IAttendanceAdminLeafletMap {}
  */
 export const AttendanceAdminLeafletMap: FC<IAttendanceAdminLeafletMap> = () => {
   return (
-    <div className="w-full h-full bg-slate-50 rounded-xl border border-mono80 overflow-hidden min-h-[24rem]">
+    <div className="w-full h-[260px] bg-slate-50 rounded-xl border border-mono80 overflow-hidden ">
       <MapContainer
         center={[-1.62, 113.23]}
         maxZoom={18}
