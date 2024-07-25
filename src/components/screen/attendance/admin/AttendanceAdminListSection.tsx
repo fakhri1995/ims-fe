@@ -93,7 +93,7 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
     company_ids:
       role == 1
         ? withDefault(StringParam, undefined)
-        : withDefault(StringParam, companyId.toString()),
+        : withDefault(NumberParam, companyId),
     is_late: withDefault(NumberParam, undefined),
     is_hadir: withDefault(NumberParam, undefined),
     keyword: withDefault(StringParam, undefined),
@@ -192,7 +192,6 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
                   }}
                 />
               </Form.Item>
-
               {activeTab === "1" && role == 1 && (
                 <>
                   <Form.Item noStyle>
