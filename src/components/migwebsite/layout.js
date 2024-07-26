@@ -640,7 +640,7 @@ function layout({ children }) {
                 title={t.navbarsolutions}
                 className="text-base font-gilroyregular text-blackmig "
               >
-                <Menu.Item key="1">
+                <Menu.Item key="sub2-1">
                   <img
                     className={"relative"}
                     style={{ display: "inline-block" }}
@@ -656,7 +656,7 @@ function layout({ children }) {
                     </a>
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="2">
+                <Menu.Item key="sub2-2">
                   <img
                     className={"relative"}
                     style={{ display: "inline-block" }}
@@ -717,7 +717,7 @@ function layout({ children }) {
                   className="text-base font-gilroyregular text-blackmig "
                 >
                   {countStories > 0 && (
-                    <Menu.Item key="1">
+                    <Menu.Item key="sub6-1">
                       <Link href="/migwebsite/customerstories">
                         <a
                           style={{ textDecoration: "none" }}
@@ -729,7 +729,7 @@ function layout({ children }) {
                     </Menu.Item>
                   )}
                   {countArticle > 0 && (
-                    <Menu.Item key="2">
+                    <Menu.Item key="sub6-2">
                       <Link href="/migwebsite/blog">
                         <a
                           style={{ textDecoration: "none" }}
