@@ -417,7 +417,11 @@ export const AttendanceStaffAktivitasSection: FC<
 
   const mOnRowItemClicked = useCallback(
     (datum: (typeof dataSource)[0], dataIndex?: number) => {
-      if (tabActiveKey === HISTORY) {
+      if (tabActiveKey === HISTORY && tabActiveKey2 == TASK) {
+        return;
+      }
+
+      if (tabActiveKey === HISTORY && tabActiveKey2 == FORM) {
         setShowDrawerAktivitasDetail({
           visible: true,
           data: datum,
@@ -699,12 +703,6 @@ export const AttendanceStaffAktivitasSection: FC<
           loading={isDataSourceLoading}
           scroll={{ x: "max-content" }}
           className="tableTypeTask"
-          onRow={(datum) => {
-            return {
-              className: "hover:cursor-pointer",
-              onClick: () => mOnRowItemClicked(datum),
-            };
-          }}
         />
       );
     }
