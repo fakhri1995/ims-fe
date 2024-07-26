@@ -166,7 +166,7 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
           {/* Table's filter */}
           <div className="px-4 py-3">
             <Form
-              className="flex w-full justify-between xl:justify-end items-center space-x-2"
+              className="flex flex-col sm:flex-row w-full sm:justify-between sm:items-center gap-2"
               onFinish={(values) => {
                 setQueryParams({ keyword: values.search, page: 1 });
               }}
@@ -243,20 +243,24 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
               )}
 
               {activeTab === "1" && (
-                <Form.Item noStyle>
-                  {queryParams.is_late ? (
-                    <p className="text-overdue">Late</p>
-                  ) : (
-                    <p className="text-primary100 whitespace-nowrap">On Time</p>
-                  )}
+                <div className="flex justify-end gap-2">
+                  <Form.Item noStyle>
+                    {queryParams.is_late ? (
+                      <p className="text-overdue">Late</p>
+                    ) : (
+                      <p className="text-primary100 whitespace-nowrap">
+                        On Time
+                      </p>
+                    )}
 
-                  <Switch
-                    checked={!queryParams.is_late}
-                    onChange={(checked) =>
-                      setQueryParams({ is_late: !checked ? 1 : 0, page: 1 })
-                    }
-                  />
-                </Form.Item>
+                    <Switch
+                      checked={!queryParams.is_late}
+                      onChange={(checked) =>
+                        setQueryParams({ is_late: !checked ? 1 : 0, page: 1 })
+                      }
+                    />
+                  </Form.Item>
+                </div>
               )}
             </Form>
           </div>

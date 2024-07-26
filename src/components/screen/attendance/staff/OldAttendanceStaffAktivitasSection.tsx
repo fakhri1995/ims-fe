@@ -1195,7 +1195,6 @@ export const AttendanceStaffAktivitasSection: FC<
               idUser={idUser}
               username={username}
               visible={showModalLeave}
-              action={activityDrawerState.openDrawerAs}
               activityFormId={activityDrawerState.selectedActivityFormId}
               onClose={() => setShowModalLeave(false)}
             />
