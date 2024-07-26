@@ -165,4 +165,59 @@ const ModalAccept = ({
   );
 };
 
-export { ModalWarning, ModalDelete, ModalAccept };
+const ModalApply = ({
+  visible,
+  loading = false,
+  disabled = false,
+  onOk,
+  children,
+  onCancel,
+  title,
+  buttonOkText,
+}: {
+  visible: boolean;
+  loading: boolean;
+  disabled: boolean;
+  onOk: any;
+  children: ReactElement;
+  onCancel?: any;
+  title?: string;
+  buttonOkText?: string;
+}) => {
+  return (
+    <Modal
+      title={
+        <div className="text-danger flex items-center gap-3">
+          <AlertCircleFilledIconSvg size={24} />
+          <p> {title}</p>
+        </div>
+      }
+      visible={visible}
+      onCancel={onCancel}
+      className="mig-body--medium"
+      footer={
+        <div className="flex gap-4 items-center justify-end">
+          <ButtonSys type={"default"} color={"mono50"} onClick={onCancel}>
+            Cancel
+          </ButtonSys>
+          <div className="col-span-2 hover:opacity-75">
+            <ButtonSys
+              type={"primary"}
+              onClick={onOk}
+              loading={loading}
+              disabled={disabled}
+            >
+              <div className="flex items-center gap-2">
+                <p> {buttonOkText}</p>
+              </div>
+            </ButtonSys>
+          </div>
+        </div>
+      }
+    >
+      {children}
+    </Modal>
+  );
+};
+
+export { ModalWarning, ModalDelete, ModalAccept, ModalApply };

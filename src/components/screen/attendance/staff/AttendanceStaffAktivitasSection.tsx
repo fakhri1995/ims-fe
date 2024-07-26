@@ -94,6 +94,7 @@ import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
 import { AttendanceStaffLeaveStatisticCards } from "./AttendanceStaffLeaveStatisticCards";
+import { AttendanceStaffOvertimeDetailDrawer } from "./AttendanceStaffOvertimeDetailDrawer";
 import { AttendanceStaffOvertimeDrawer } from "./AttendanceStaffOvertimeDrawer";
 
 export interface IGetLeaveUser {
@@ -1103,9 +1104,9 @@ export const AttendanceStaffAktivitasSection: FC<
               activityFormId={activityDrawerState.selectedActivityFormId}
               onClose={() => setShowModalOvertime(false)}
             />
-            <AttendanceStaffLeaveDetailDrawer
+            <AttendanceStaffOvertimeDetailDrawer
               fetchData={fetchDataLeaves}
-              visible={showDetailCuti}
+              visible={true}
               dataDefault={dataDefault}
               dataToken={dataToken}
               onClose={cancelShowDetail}
