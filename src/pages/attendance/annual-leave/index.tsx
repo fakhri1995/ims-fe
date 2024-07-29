@@ -1,4 +1,5 @@
 import { DatePicker, Form, Input, Select, Table } from "antd";
+import { SorterResult } from "antd/lib/table/interface";
 import moment from "moment";
 import {
   DateParam,
@@ -12,7 +13,17 @@ import QueryString from "qs";
 import { useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 
+import ButtonSys from "components/button";
 import DrawerCutiSatuan from "components/drawer/attendance/drawerCutiSatuan";
+import {
+  AddNoteSvg,
+  AdjusmentsHorizontalIconSvg,
+  CirclePlusIconSvg,
+  EyeIconSvg,
+  SettingsIconSvg,
+} from "components/icon";
+import ModalPengajuanCuti from "components/modal/attendance/modalPengajuanCuti";
+import { AttendanceAdminLeaveStatisticCards } from "components/screen/attendance/leave/AttendanceAdminLeaveStatisticCards";
 import BadgeLeaveStatus from "components/screen/attendance/leave/BadgeLeaveStatus";
 
 import { useAccessControl } from "contexts/access-control";
@@ -28,14 +39,8 @@ import {
 import { LeaveStatus } from "apis/attendance";
 
 import DrawerAnnualLeave from "../../../components/drawer/attendance/drawerAnnualLeave";
-import {
-  AddNoteSvg,
-  EyeIconSvg,
-  SettingsIconSvg,
-} from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard-management";
 import st from "../../../components/layout-dashboard-management.module.css";
-import ModalPengajuanCuti from "../../../components/modal/attendance/modalPengajuanCuti";
 import ModalSetujuiCuti from "../../../components/modal/attendance/modalSetujuiCuti";
 import ModalTipeCuti from "../../../components/modal/attendance/modalTipeCuti";
 import { permissionWarningNotification } from "../../../lib/helper";
@@ -84,7 +89,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_by: withDefault(StringParam, /** @type {"status"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     keyword: withDefault(StringParam, ""),
     date: withDefault(DateParam, undefined),
@@ -131,16 +136,10 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToAddLeave = hasPermission(LEAVE_ADD);
   const isAllowedToGetLeave = hasPermission(LEAVES_GET);
   const isAllowedToGetLeaveStatus = hasPermission(LEAVE_STATUSES_GET);
-  const isAllowedToGetLeaveStatics = hasPermission(LEAVE_STATISTICS_GET);
   const [dataDefault, setDataDefault] = useState(null);
   useEffect(() => {
     fetchData();
   }, [queryParams.page, queryParams.rows]);
-
-  useEffect(() => {
-    fetchDataStatus();
-    fetchDataStatusPengajuan();
-  }, []);
 
   const fetchData = async () => {
     if (!isAllowedToGetLeave) {
@@ -158,59 +157,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((res) => res.json())
         .then((res2) => {
           setDisplayDataLeaves(res2.data); // table-related data source
-          setDataAnnualLeave(res2.data.data);
-        });
-    }
-  };
-
-  const fetchDataStatus = async () => {
-    if (!isAllowedToGetLeaveStatus) {
-      permissionWarningNotification("Mendapatkan", "Data Status Cuti");
-    } else {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaveStatuses`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          let dataTemp = [];
-          for (let a = 0; a < res2.data.length; a++) {
-            if (res2.data[a].status == 2) {
-              dataTemp[0] = res2.data[a].total;
-            }
-            if (res2.data[a].status == 1) {
-              dataTemp[1] = res2.data[a].total;
-            }
-            if (res2.data[a].status == 3) {
-              dataTemp[2] = res2.data[a].total;
-            }
-          }
-          setDataStatusCuti(dataTemp);
-        });
-    }
-  };
-
-  const fetchDataStatusPengajuan = async () => {
-    if (!isAllowedToGetLeaveStatics) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Status Pengajuan Cuti"
-      );
-    } else {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaveStatistics`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          let dataTemp = [];
-          dataTemp.push(res2.data.has_leave);
-          dataTemp.push(res2.data.no_leave);
-          setDataStatusPengajuan(dataTemp);
+          setDataAnnualLeave(res2?.data?.data);
         });
     }
   };
@@ -220,81 +167,101 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
     setDataDefault(record);
   };
 
-  const columns = [
+  const columns: typeof dataAnnualLeave = [
     {
-      title: "Nama Karyawan",
-      dataIndex: "nama",
-      key: "nama",
-      render: (text, record, index) => <p>{record.employee?.name}</p>,
+      title: "No.",
+      dataIndex: "num",
+      align: "center",
+      render: (text, record, index) => {
+        return {
+          children: <>{Number(displayDataLeaves?.from + index)}</>,
+        };
+      },
     },
     {
-      title: "Tanggal Awal Cuti",
+      title: "Employee Name",
+      dataIndex: ["employee", "name"],
+      key: "employee_name",
+      width: 100,
+      render: (text, record, index) => (
+        <p className="whitespace-nowrap truncate w-32" title={text}>
+          {text}
+        </p>
+      ),
+    },
+    {
+      title: "Role",
+      dataIndex: ["employee", "contract", "role", "alias"],
+      key: "role",
+      align: "center",
+      render: (text, record, index) => (
+        <p className="whitespace-nowrap truncate">{text}</p>
+      ),
+    },
+    {
+      title: "Leave Date",
       dataIndex: "start_date",
       key: "start_date",
       render: (text, record, index) => (
-        <p>{moment(record.start_date).format("DD MMMM YYYY")}</p>
+        <p className="whitespace-nowrap truncate">
+          {moment(text).format("D MMMM YYYY")}
+        </p>
       ),
+      sorter: isAllowedToGetLeave
+        ? (a, b) => a?.start_date?.localeCompare(b?.start_date)
+        : false,
     },
     {
-      title: "Tanggal Pengajuan Cuti",
+      title: "Issued Date",
       dataIndex: "issued_date",
       key: "issued_date",
       render: (text, record, index) => (
-        <p>{moment(record.issued_date).format("DD MMMM YYYY")}</p>
+        <p className="whitespace-nowrap truncate">
+          {moment(text).format("D MMMM YYYY")}
+        </p>
       ),
+      sorter: isAllowedToGetLeave
+        ? (a, b) => a?.issued_date?.localeCompare(b?.issued_date)
+        : false,
     },
     {
-      title: "Durasi Cuti",
-      dataIndex: "durasi_cuti",
-      key: "durasi_cuti",
+      title: "Duration",
+      dataIndex: "duration",
+      key: "duration",
+      render: (text, record, index) => <p>{text} days</p>,
+    },
+    {
+      title: "Leave Type",
+      dataIndex: ["type", "name"],
+      key: "type",
       render: (text, record, index) => (
-        <p>
-          {moment(record.end_date).diff(moment(record.start_date), "days")} Hari
-        </p>
+        <p className="whitespace-nowrap truncate">{text}</p>
       ),
     },
     {
       title: "Status",
       dataIndex: "status",
+      key: "status",
       align: `center`,
       render: (text, record, index) => {
         return {
           children: (
-            <div className={"flex gap-8 justify-center"}>
+            <div className={"flex justify-center"}>
               <BadgeLeaveStatus status={record.status} />
-              {/* <div
-                className={`${record.status == 1
-                  ? "bg-[#E6E6E6]"
-                  : record.status == 2
-                    ? "bg-[#35763B]"
-                    : "bg-[#BF4A40]"
-                  } py-1 px-4 max-w-max rounded-[5px]`}
-              >
-                <p
-                  className={`${record.status == 2
-                    ? "text-[#F3F3F3]"
-                    : record.status == 1
-                      ? "text-[#4D4D4D]"
-                      : "text-white"
-                    } leading-4 text-[10px] font-medium`}
-                >
-                  {record.status == 1
-                    ? "Pending"
-                    : record.status == 2
-                      ? "Diterima"
-                      : "Ditolak"}
-                </p>
-              </div> */}
-              <div
-                onClick={() => detailCuti(record)}
-                className={"hover:cursor-pointer"}
-              >
-                <EyeIconSvg size={16} />
-              </div>
             </div>
           ),
         };
       },
+      sorter: isAllowedToGetLeave
+        ? (a, b) => {
+            const dataStatusListIds = leaveStatuses?.map(
+              (status) => status.value
+            );
+            const indexA = dataStatusListIds?.indexOf(Number(a?.status));
+            const indexB = dataStatusListIds?.indexOf(Number(b?.status));
+            return indexA - indexB;
+          }
+        : false,
     },
   ];
 
@@ -310,7 +277,6 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
     setShowDrawer(false);
   };
 
-  console.log({ dataStatusCuti });
   return (
     <Layout
       tok={initProps}
@@ -320,195 +286,10 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
       pathTitleArr={pathTitleArr}
       st={st}
     >
-      <div className="flex flex-col" id="mainWrapper">
-        <div className={"flex flex-row gap-8"}>
-          <div
-            className={"h-[232px] w-1/2 p-6 rounded-[5px] bg-white"}
-            style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
-          >
-            <h4 className={"text-lg leading-[18px] font-bold text-[#4D4D4D]"}>
-              Status Cuti
-            </h4>
-            <div className={"mt-4 flex items-center"}>
-              <div className={"w-1/2"}>
-                <Bar
-                  data={{
-                    labels: ["Disetujui", "Dipending", "Ditolak"],
-                    datasets: [
-                      {
-                        data: dataStatusCuti,
-                        backgroundColor: ["#35763B", "#E6E6E6", "#BF4A40"],
-                        borderColor: ["#35763B", "#E6E6E6", "#BF4A40"],
-                        barPercentage: 1.0,
-                        barThickness: 18,
-                        maxBarThickness: 15,
-                        minBarLength: 2,
-                        borderRadius: 3,
-                      },
-                    ],
-                  }}
-                  options={{
-                    title: {
-                      display: false,
-                    },
-                    legend: {
-                      display: false,
-                    },
-                    maintainAspectRatio: false,
-                    scales: {
-                      x: {
-                        grid: {
-                          display: false,
-                          drawBorder: false,
-                        },
-                      },
-                      y: {
-                        beginAtZero: true,
-                        ticks: {
-                          display: false,
-                        },
-                        grid: {
-                          display: false,
-                          drawBorder: false,
-                        },
-                        border: {
-                          display: false,
-                        },
-                      },
-                    },
-                  }}
-                />
-              </div>
-              <div className={"w-1/2"}>
-                <div className={"flex flex-col gap-4"}>
-                  <div className={"flex gap-4"}>
-                    <div className="w-1 h-6 bg-[#35763B]" />
-                    <div className={"flex justify-between w-full"}>
-                      <p
-                        className={
-                          "text-[#4D4D4D] text-xs leading-5 font-medium"
-                        }
-                      >
-                        Disetujui
-                      </p>
-                      <p
-                        className={"text-[#4D4D4D] text-sm leading-6 font-bold"}
-                      >
-                        {dataStatusCuti.length > 0 ? dataStatusCuti[0] : "-"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className={"flex gap-4"}>
-                    <div className="w-1 h-6 bg-[#E6E6E6]" />
-                    <div className={"flex justify-between w-full"}>
-                      <p
-                        className={
-                          "text-[#4D4D4D] text-xs leading-5 font-medium"
-                        }
-                      >
-                        Pending
-                      </p>
-                      <p
-                        className={"text-[#4D4D4D] text-sm leading-6 font-bold"}
-                      >
-                        {dataStatusCuti.length > 0 ? dataStatusCuti[1] : "-"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className={"flex gap-4"}>
-                    <div className="w-1 h-6 bg-[#BF4A40]" />
-                    <div className={"flex justify-between w-full"}>
-                      <p
-                        className={
-                          "text-[#4D4D4D] text-xs leading-5 font-medium"
-                        }
-                      >
-                        Ditolak
-                      </p>
-                      <p
-                        className={"text-[#4D4D4D] text-sm leading-6 font-bold"}
-                      >
-                        {dataStatusCuti.length > 0 ? dataStatusCuti[2] : "-"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className={"h-[232px] w-1/2 p-6 rounded-[5px] bg-white"}
-            style={{ boxShadow: "0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
-          >
-            <h4 className={"text-lg leading-[18px] font-bold text-[#4D4D4D]"}>
-              Status Pengajuan
-            </h4>
-            <div className={"mt-4 flex items-center gap-4"}>
-              <div className={"w-1/2 flex"}>
-                <Doughnut
-                  data={{
-                    labels: [
-                      "Karyawan Mengajukan",
-                      "Karyawan Tidak Mengajukan",
-                    ],
-                    datasets: [
-                      {
-                        data: dataStatusPengajuan,
-                        backgroundColor: ["#35763B", "#BF4A40"],
-                        borderColor: ["#35763B", "#BF4A40"],
-                        borderWidth: 1,
-                      },
-                    ],
-                  }}
-                  options={{
-                    title: {
-                      display: false,
-                    },
-                    legend: {
-                      display: false,
-                    },
-                    maintainAspectRatio: false,
-                    cutout: 55,
-                    spacing: 5,
-                  }}
-                />
-              </div>
-              <div className={"w-1/2"}>
-                <div className={"flex gap-4"}>
-                  <div className="w-1 h-6 bg-[#35763B]" />
-                  <div className={"flex justify-between w-full"}>
-                    <p
-                      className={"text-[#4D4D4D] text-xs leading-5 font-medium"}
-                    >
-                      Karyawan Mengajukan
-                    </p>
-                    <p className={"text-[#4D4D4D] text-sm leading-6 font-bold"}>
-                      {dataStatusPengajuan.length > 0
-                        ? dataStatusPengajuan[0]
-                        : "-"}
-                    </p>
-                  </div>
-                </div>
-                <div className={"flex gap-4 mt-4"}>
-                  <div className="w-1 h-6 bg-[#BF4A40]" />
-                  <div className={"flex justify-between w-full"}>
-                    <p
-                      className={"text-[#4D4D4D] text-xs leading-5 font-medium"}
-                    >
-                      Karyawan Tidak Mengajukan
-                    </p>
-                    <p className={"text-[#4D4D4D] text-sm leading-6 font-bold"}>
-                      {dataStatusPengajuan.length > 0
-                        ? dataStatusPengajuan[1]
-                        : "-"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className={"mig-platform--p-0 flex flex-col mt-8"}>
+      <div className="grid grid-cols-1 gap-5" id="mainWrapper">
+        <AttendanceAdminLeaveStatisticCards dataToken={initProps} />
+
+        <div className={"mig-platform--p-0 flex flex-col"}>
           <div
             className={
               "flex w-full justify-between items-center py-3 px-4 border-b"
@@ -516,38 +297,29 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
           >
             <p className="mig-body--bold ">List of Leave Requests</p>
             <div className={"flex gap-4"}>
-              {isAllowedToManageLeaveTypes && (
-                <div
-                  onClick={() => setModalTipeCuti(true)}
-                  className={
-                    "flex hover:cursor-pointer gap-2 justify-center items-center px-5 h-9 rounded-[5px] bg-[#00589F]"
-                  }
-                  style={{
-                    boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)",
-                  }}
-                >
-                  <SettingsIconSvg size={16} color={"white"} />
-                  <p className={"text-white text-xs leading-5 font-bold"}>
-                    Kelola Cuti
-                  </p>
+              <ButtonSys
+                square
+                type="primary"
+                color="mono100"
+                onClick={() => setModalTipeCuti(true)}
+                disabled={!isAllowedToManageLeaveTypes}
+              >
+                <AdjusmentsHorizontalIconSvg
+                  className="text-neutrals100"
+                  size={20}
+                />
+              </ButtonSys>
+
+              <ButtonSys
+                type="primary"
+                onClick={() => setModalAdd(true)}
+                disabled={!isAllowedToAddLeave}
+              >
+                <div className="flex items-center gap-2 text-white">
+                  <CirclePlusIconSvg size={20} />
+                  <p>Apply Leave Request</p>
                 </div>
-              )}
-              {isAllowedToAddLeave && (
-                <div
-                  onClick={() => setModalAdd(true)}
-                  className={
-                    "flex hover:cursor-pointer gap-2 justify-center items-center px-5 h-9 rounded-[5px] bg-[#35763B]"
-                  }
-                  style={{
-                    boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)",
-                  }}
-                >
-                  <AddNoteSvg />
-                  <p className={"text-white text-xs leading-5 font-bold"}>
-                    Tambah Pengajuan
-                  </p>
-                </div>
-              )}
+              </ButtonSys>
             </div>
           </div>
           {/* Table's filter */}
@@ -558,79 +330,97 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setQueryParams({ keyword: values.search, page: 1 });
               }}
             >
-              <Form.Item noStyle name="search">
-                <Input
-                  placeholder="Search employee's name..."
-                  disabled={!isAllowedToGetLeave}
-                  allowClear
-                  className="w-full"
-                  onChange={(event) => {
-                    if (
-                      event.target.value.length === 0 ||
-                      event.target.value === ""
-                    ) {
-                      setQueryParams({ keyword: "" });
-                    } else {
-                      clearTimeout(timer);
-                      timer = setTimeout(() => {
-                        setQueryParams({ keyword: event.target.value });
-                      }, 500);
-                    }
-                  }}
-                />
-              </Form.Item>
-              {/* TODO: uncomment & adjust if BE is done */}
-              <Form.Item noStyle>
-                <DatePicker
-                  allowClear
-                  className="w-full"
-                  defaultValue={queryParams.date}
-                  disabled={!isAllowedToGetLeave}
-                  placeholder="Select Date"
-                  onChange={(value) => {
-                    setQueryParams({ date: value, page: 1 });
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item noStyle>
-                <Select
-                  allowClear
-                  // showSearch
-                  // mode="multiple"
-                  className="w-full"
-                  defaultValue={queryParams.status}
-                  disabled={!isAllowedToGetLeaveStatus}
-                  placeholder="Status"
-                  onChange={(value) => {
-                    setQueryParams({ status: value, page: 1 });
-                  }}
-
-                  // loading={loadingCompanyClients}
-                >
-                  {leaveStatuses?.map((item) => (
-                    <Select.Option key={item.label} value={item.value}>
-                      <BadgeLeaveStatus status={item.value} />
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
+              <div className="w-2/4">
+                <Form.Item noStyle name="search">
+                  <Input
+                    placeholder="Search employee's name..."
+                    disabled={!isAllowedToGetLeave}
+                    allowClear
+                    className="w-full"
+                    onChange={(event) => {
+                      if (
+                        event.target.value.length === 0 ||
+                        event.target.value === ""
+                      ) {
+                        setQueryParams({ keyword: "" });
+                      } else {
+                        clearTimeout(timer);
+                        timer = setTimeout(() => {
+                          setQueryParams({ keyword: event.target.value });
+                        }, 500);
+                      }
+                    }}
+                  />
+                </Form.Item>
+              </div>
+              <div className="w-1/4">
+                <Form.Item noStyle>
+                  <DatePicker
+                    allowClear
+                    className="w-full"
+                    defaultValue={queryParams.date}
+                    disabled={!isAllowedToGetLeave}
+                    placeholder="Select Date"
+                    onChange={(value) => {
+                      setQueryParams({ date: value, page: 1 });
+                    }}
+                  />
+                </Form.Item>
+              </div>
+              <div className="w-1/4">
+                <Form.Item noStyle>
+                  <Select
+                    allowClear
+                    className="w-full"
+                    defaultValue={queryParams.status}
+                    disabled={!isAllowedToGetLeaveStatus}
+                    placeholder="Status"
+                    onChange={(value) => {
+                      setQueryParams({ status: value, page: 1 });
+                    }}
+                  >
+                    {leaveStatuses?.map((item) => (
+                      <Select.Option key={item.label} value={item.value}>
+                        <BadgeLeaveStatus status={item.value} />
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </div>
             </Form>
           </div>
-          <div className={"mt-6 px-4"}>
+          <div className={"mt-6 px-4 "}>
             <Table
               columns={columns}
               dataSource={dataAnnualLeave}
               pagination={{
                 current: queryParams.page,
                 pageSize: queryParams.rows,
-                total: displayDataLeaves.total,
+                total: displayDataLeaves?.total,
+                showSizeChanger: true,
               }}
-              onChange={(pagination, _, sorter) => {
+              scroll={{ x: "max-content" }}
+              onChange={(pagination, _, sorter: SorterResult<any>) => {
+                const sortTypePayload =
+                  sorter.order === "ascend"
+                    ? "asc"
+                    : sorter.order === "descend"
+                    ? "desc"
+                    : undefined;
+
                 setQueryParams({
                   page: pagination.current,
                   rows: pagination.pageSize,
+                  sort_type: sortTypePayload,
+                  sort_by:
+                    sortTypePayload === undefined ? undefined : sorter.field,
                 });
+              }}
+              onRow={(datum, rowIndex) => {
+                return {
+                  className: "hover:cursor-pointer",
+                  onClick: () => detailCuti(datum),
+                };
               }}
             />
           </div>
@@ -649,7 +439,10 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
           <DrawerCutiSatuan
             dataToken={initProps}
             visible={showDrawerCutiSatuan}
-            onCancel={() => setShowDrawerCutiSatuan(false)}
+            onCancel={() => {
+              setShowDrawerCutiSatuan(false);
+              closeModalAdd();
+            }}
           />
           <ModalSetujuiCuti />
           <ModalTipeCuti

@@ -63,7 +63,7 @@ const ButtonSys = ({
       "w-full": fullWidth,
       "bg-disabled text-white border-disabled": disabled,
     },
-    "btn font-semibold border"
+    "btn font-medium border"
   );
 
   const buttonSolidColorsClassName = clsx({

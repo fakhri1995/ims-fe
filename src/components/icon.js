@@ -27,8 +27,8 @@ const TicketIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-ticket"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -49,8 +49,8 @@ const TicketIconSvg = (props) => {
 const TicketFilledIconSvg = (props) => {
   const ticketFilledIconSvg = () => (
     <svg
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 20 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -92,8 +92,8 @@ const TaskIconSvg = (props) => {
 const TaskFilledIconSvg = (props) => {
   const taskFilledIconSvg = () => (
     <svg
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -143,8 +143,8 @@ const CompanyIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-building-skyscraper"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -169,8 +169,8 @@ const UserIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-users"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -192,8 +192,8 @@ const FiturIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-stack"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -214,8 +214,8 @@ const AsetIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-box"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -237,8 +237,8 @@ const KatalogIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-tag"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -348,8 +348,8 @@ const SearchIconSvg = ({ size, color }) => {
 const NotifIconSvg = (props) => {
   const notifIconSvg = () => (
     <svg
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill={props?.color ?? "currentColor"}
       xmlns="http://www.w3.org/2000/svg"
@@ -390,8 +390,8 @@ const EditIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-pencil"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -411,8 +411,8 @@ const EmailIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-mail"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -551,8 +551,8 @@ const TrashIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-trash"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -575,10 +575,10 @@ const CheckIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-check"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
+      strokeWidth="2"
       stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
@@ -638,8 +638,8 @@ const DownIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-chevron-down"
-      width={props?.size ?? "20"}
-      height={props?.size ?? "20"}
+      width={props.size ?? "20"}
+      height={props.size ?? "20"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -946,8 +946,8 @@ const AlertIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-alert-circle"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1011,8 +1011,8 @@ const ClockIconFilledSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-clock"
-      width={props?.size ?? "20"}
-      height={props?.size ?? "20"}
+      width={props.size ?? "20"}
+      height={props.size ?? "20"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={"white"}
@@ -1057,8 +1057,8 @@ const ClipboardcheckIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-clipboard-check"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1239,8 +1239,8 @@ const CopyIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-copy"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1281,8 +1281,8 @@ const UsercircleIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-user-circle"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1303,8 +1303,8 @@ const CircleXIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-circle-x"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1324,8 +1324,8 @@ const CircleXFilledIconSvg = (props) => {
   const circleXFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       fill={props?.color ?? "currentColor"}
       className="icon icon-tabler icons-tabler-filled icon-tabler-circle-x"
@@ -1368,8 +1368,8 @@ const UserPlusIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-user-plus"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1703,8 +1703,8 @@ const FileExportIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-file-export"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1769,8 +1769,8 @@ const InfoCircleIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-info-circle"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1791,8 +1791,8 @@ const InfoCircleFilledIconSvg = (props) => {
   const infoCircleFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       fill={props?.color ?? "currentColor"}
       className="icon icon-tabler icons-tabler-filled icon-tabler-info-circle"
@@ -1830,8 +1830,8 @@ const XIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-x"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1851,8 +1851,8 @@ const HistoryIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-history"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth={props?.strokeWidth ?? "1.5"}
       stroke={props?.color ?? "currentColor"}
@@ -1867,16 +1867,16 @@ const HistoryIconSvg = (props) => {
   );
   return <Icon rev={""} component={historyIconSvg} {...props}></Icon>;
 };
-const AdjusmentsHorizontalIconSvg = ({ size, color }) => {
+const AdjusmentsHorizontalIconSvg = (props) => {
   const adjusmentsHorizontalIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-adjustments-horizontal"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1893,7 +1893,9 @@ const AdjusmentsHorizontalIconSvg = ({ size, color }) => {
       <line x1={19} y1={18} x2={20} y2={18} />
     </svg>
   );
-  return <Icon rev={""} component={adjusmentsHorizontalIconSvg}></Icon>;
+  return (
+    <Icon rev={""} component={adjusmentsHorizontalIconSvg} {...props}></Icon>
+  );
 };
 const ArmChairlIconSvg = ({ size, color }) => {
   const armChairlIconSvg = () => (
@@ -2239,8 +2241,8 @@ const ResumeIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-file-text"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2282,8 +2284,8 @@ const UsersIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-users"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2304,8 +2306,8 @@ const UsersFilledIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-users"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2326,8 +2328,8 @@ const DownloadIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-download"
-      width={props?.size ?? "20"}
-      height={props?.size ?? "20"}
+      width={props.size ?? "20"}
+      height={props.size ?? "20"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2440,8 +2442,8 @@ const TrendingUpIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-trending-up"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2462,8 +2464,8 @@ const InfoSquareIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-info-square"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2485,8 +2487,8 @@ const BriefcaseIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-briefcase"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2509,8 +2511,8 @@ const ClickIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-click"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2535,8 +2537,8 @@ const UserCheckIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-user-check"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2558,8 +2560,8 @@ const CirclePlusIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-circle-plus"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2604,8 +2606,8 @@ const RightIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-chevron-right"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="2"
       stroke={props?.color ?? "currentColor"}
@@ -2625,8 +2627,8 @@ const LeftIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-chevron-left"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="2"
       stroke={props?.color ?? "currentColor"}
@@ -2646,8 +2648,8 @@ const CircleCheckIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-circle-check"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2667,8 +2669,8 @@ const CircleCheckFilledIconSvg = (props) => {
   const circleCheckFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill={props?.color ?? "currentColor"}
       className="icon icon-tabler icons-tabler-filled icon-tabler-circle-check"
@@ -2800,8 +2802,8 @@ const FoldersIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-folders"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2958,8 +2960,8 @@ const FileImportIconSvg = (props) => {
   const fileImportIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 16}
-      height={props?.size ?? 16}
+      width={props.size ?? 16}
+      height={props.size ?? 16}
       viewBox="0 0 16 16"
       fill="none"
     >
@@ -3050,8 +3052,8 @@ const ArrowRightIconSvg = (props) => {
   const arrowRightIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -3694,8 +3696,8 @@ const MessageIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-message"
-      width={props?.size ?? "24"}
-      height={props?.size ?? "24"}
+      width={props.size ?? "24"}
+      height={props.size ?? "24"}
       viewBox="0 0 24 24"
       strokeWidth="2"
       stroke={props?.color ?? "currentColor"}
@@ -3827,8 +3829,8 @@ const Menu2IconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-menu-2"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -3848,8 +3850,8 @@ const Menu2IconSvg = (props) => {
 const PartyIconSvg = (props) => {
   const partyIconSvg = () => (
     <svg
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -3866,8 +3868,8 @@ const PartyIconSvg = (props) => {
 const CalendarFilIconSvg = (props) => {
   const calendarFilIconSvg = () => (
     <svg
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -3896,8 +3898,8 @@ const CalendarFilIconSvg = (props) => {
 const SolarStarsIconSvg = (props) => {
   const solarStarsIconSvg = () => (
     <svg
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
@@ -3919,8 +3921,8 @@ const MessageFilledIconSvg = (props) => {
   const messageFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="currentColor"
       className="icon icon-tabler icons-tabler-filled icon-tabler-message"
@@ -3936,8 +3938,8 @@ const AlertCircleFilledIconSvg = (props) => {
   const alertCircleFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="currentColor"
       className="icon icon-tabler icons-tabler-filled icon-tabler-alert-circle"
@@ -3980,8 +3982,8 @@ const PdfIconSvg = (props) => {
   const pdfIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
