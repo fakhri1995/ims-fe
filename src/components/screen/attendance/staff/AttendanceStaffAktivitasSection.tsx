@@ -90,6 +90,7 @@ import {
 } from "../../../../components/icon";
 import BadgeLeaveStatus from "../leave/BadgeLeaveStatus";
 import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
+import { AttendanceStaffAktivitasDetailDrawer } from "./AttendanceStaffAktivitasDetailDrawer";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
@@ -158,6 +159,7 @@ export const AttendanceStaffAktivitasSection: FC<
   );
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
     useGetUserAttendanceActivities(tabActiveKey === TODAY ? "today" : "past");
+
   const { attendeeStatus } = useGetAttendeeInfo();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -167,12 +169,17 @@ export const AttendanceStaffAktivitasSection: FC<
   const [showModalOvertime, setShowModalOvertime] = useState(false);
   const [showModalCheckinWarning, setShowModalCheckinWarning] = useState(false);
   const [showModalRemoveActivity, setShowModalRemoveActivity] = useState({
-    display: false,
+    visible: false,
     data: null,
   });
   const [showModalRemoveTask, setShowModalRemoveTask] = useState({
-    display: false,
+    visible: false,
     data: null,
+  });
+  const [showDrawerAktivitasDetail, setShowDrawerAktivitasDetail] = useState({
+    visible: false,
+    data: null,
+    idx: null,
   });
   const [displayDataLeaves, setDisplayDataLeaves] = useState([]);
   const [displayDataTaskToday, setDisplayDataTaskToday] = useState([]);
@@ -382,7 +389,7 @@ export const AttendanceStaffAktivitasSection: FC<
               onClick={(e) => {
                 e.stopPropagation();
                 setShowModalRemoveActivity({
-                  display: true,
+                  visible: true,
                   data: record?.key,
                 });
                 // handleOnDeleteAktivitas(record?.key);
@@ -592,6 +599,7 @@ export const AttendanceStaffAktivitasSection: FC<
       return task.task.name;
     }
   }
+
   function checkFormOrTask() {
     if (tabActiveKey2 == FORM && activeSubmenu == "aktivitas") {
       return (
@@ -603,7 +611,9 @@ export const AttendanceStaffAktivitasSection: FC<
           loading={isDataSourceLoading}
           scroll={{ x: "max-content" }}
           className="tableTypeTask"
-          onRow={(datum) => {
+          onRow={(datum, rowIndex) => {
+            const currentDataIdx =
+              currentPage * pageSize - (pageSize - rowIndex);
             return {
               className: "hover:cursor-pointer",
               onClick: () => mOnRowItemClicked(datum),
@@ -662,7 +672,7 @@ export const AttendanceStaffAktivitasSection: FC<
                         }`}
                         onClick={() =>
                           setShowModalRemoveTask({
-                            display: true,
+                            visible: true,
                             data: task.id,
                           })
                         }
@@ -688,12 +698,6 @@ export const AttendanceStaffAktivitasSection: FC<
           loading={isDataSourceLoading}
           scroll={{ x: "max-content" }}
           className="tableTypeTask"
-          onRow={(datum) => {
-            return {
-              className: "hover:cursor-pointer",
-              onClick: () => mOnRowItemClicked(datum),
-            };
-          }}
         />
       );
     }
@@ -724,26 +728,7 @@ export const AttendanceStaffAktivitasSection: FC<
         onSuccess: onMutationSucceed,
         onError: onMutationFailed,
       });
-      setShowModalRemoveActivity({ display: false, data: null });
-
-      // Modal.confirm({
-      //   centered: true,
-      //   title: "Confirm Remove Activity",
-      //   content:
-      //     "Are you sure you want to remove this activity? This action can’t be undone.",
-      //   okText: "Remove Activity",
-      //   cancelText: "Cancel",
-      //   onOk: () => {
-      //     deleteAttendanceActivity(activityFormId, {
-      //       onSuccess: onMutationSucceed,
-      //       onError: onMutationFailed,
-      //     });
-      //   },
-      //   icon: <ExclamationCircleOutlined className="text-danger" />,
-      //   className: "",
-
-      //   // onCancel: () => onClose(),
-      // });
+      setShowModalRemoveActivity({ visible: false, data: null });
     },
     [tabActiveKey, isAllowedToDeleteActivity, attendeeStatus]
   );
@@ -759,7 +744,7 @@ export const AttendanceStaffAktivitasSection: FC<
       AttendanceTaskActivityService.remove(axiosClient, taskActivityId)
         .then((res) => {
           if (res.data.success) {
-            setShowModalRemoveTask({ display: false, data: null });
+            setShowModalRemoveTask({ visible: false, data: null });
 
             notificationSuccess({
               message: "Successfully removed task from activity",
@@ -781,41 +766,28 @@ export const AttendanceStaffAktivitasSection: FC<
           });
         })
         .finally(() => setLoadingDeleteTaskActivity(false));
-
-      // Modal.confirm({
-      //   centered: true,
-      //   title: "Attention!",
-      //   content: "Are you sure you want to remove this task from activity?",
-      //   okText: "Remove Task",
-      //   cancelText: "Back",
-      //   onOk: () => {
-      //     AttendanceTaskActivityService.remove(axiosClient, taskActivityId)
-      //       .then((res) => {
-      //         if (res.data.success) {
-      //           notification.success({
-      //             message: "Successfully removed task from activity",
-      //             duration: 3,
-      //           });
-      //           // getDataTaskActivities();
-      //           queryClient.invalidateQueries(ATTENDANCE_TASK_ACTIVITIES_GET);
-      //         } else {
-      //           notification.error({
-      //             message: res.data.message,
-      //             duration: 3,
-      //           });
-      //         }
-      //       })
-      //       .catch((err) => {
-      //         notification.error({
-      //           message: "Failed to delete task from activity",
-      //           duration: 3,
-      //         });
-      //       });
-      //   },
-      // });
     },
     [isAllowedToDeleteTaskActivity]
   );
+
+  function onClickPrevNextData(type: "next" | "prev") {
+    const nextIdx = showDrawerAktivitasDetail.idx + 1;
+    const prevIdx = showDrawerAktivitasDetail.idx - 1;
+
+    if (type == "next" && nextIdx < dataSource.length) {
+      setShowDrawerAktivitasDetail((prev) => ({
+        ...prev,
+        data: dataSource[nextIdx],
+        idx: nextIdx,
+      }));
+    } else if (type == "prev" && prevIdx > -1) {
+      setShowDrawerAktivitasDetail((prev) => ({
+        ...prev,
+        data: dataSource[prevIdx],
+        idx: prevIdx,
+      }));
+    }
+  }
 
   return (
     <>
@@ -1046,7 +1018,7 @@ export const AttendanceStaffAktivitasSection: FC<
                 idUser={idUser}
                 username={username}
                 visible={showModalLeave}
-                action={activityDrawerState.openDrawerAs}
+                // action={activityDrawerState.openDrawerAs}
                 activityFormId={activityDrawerState.selectedActivityFormId}
                 onClose={() => setShowModalLeave(false)}
               />
@@ -1106,7 +1078,7 @@ export const AttendanceStaffAktivitasSection: FC<
             />
             <AttendanceStaffOvertimeDetailDrawer
               fetchData={fetchDataLeaves}
-              visible={true}
+              visible={false}
               dataDefault={dataDefault}
               dataToken={dataToken}
               onClose={cancelShowDetail}
@@ -1125,6 +1097,21 @@ export const AttendanceStaffAktivitasSection: FC<
           onClose={() => dispatch({ type: "create", visible: false })}
         />
       )}
+
+      <AccessControl hasPermission={ATTENDANCE_ACTIVITIES_GET}>
+        <AttendanceStaffAktivitasDetailDrawer
+          visible={showDrawerAktivitasDetail.visible}
+          activityData={showDrawerAktivitasDetail.data}
+          onClickPrevNext={onClickPrevNextData}
+          onClose={() =>
+            setShowDrawerAktivitasDetail({
+              visible: false,
+              data: null,
+              idx: null,
+            })
+          }
+        />
+      </AccessControl>
 
       <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USER_EXPORT}>
         <EksporAbsensiDrawer
@@ -1146,11 +1133,11 @@ export const AttendanceStaffAktivitasSection: FC<
 
       <AccessControl hasPermission={ATTENDANCE_ACTIVITY_DELETE}>
         <ModalDelete
-          visible={showModalRemoveActivity?.display}
+          visible={showModalRemoveActivity?.visible}
           itemName={"Activity"}
           onOk={() => handleOnDeleteAktivitas(showModalRemoveActivity?.data)}
           onCancel={() =>
-            setShowModalRemoveActivity({ display: false, data: null })
+            setShowModalRemoveActivity({ visible: false, data: null })
           }
           loading={loadingDeleteActivity}
           disabled={!isAllowedToDeleteActivity}
@@ -1164,11 +1151,11 @@ export const AttendanceStaffAktivitasSection: FC<
 
       <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITY_DELETE}>
         <ModalDelete
-          visible={showModalRemoveTask?.display}
+          visible={showModalRemoveTask?.visible}
           itemName={"Task"}
           onOk={() => handleDeleteTaskActivity(showModalRemoveTask?.data)}
           onCancel={() =>
-            setShowModalRemoveTask({ display: false, data: null })
+            setShowModalRemoveTask({ visible: false, data: null })
           }
           loading={loadingDeleteTaskActivity}
           disabled={!isAllowedToDeleteTaskActivity}

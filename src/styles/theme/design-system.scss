@@ -47,6 +47,10 @@
   }
 }
 
+.mig-buttons {
+  @apply text-sm leading-4 font-medium font-roboto;
+}
+
 /** Typography: Refer to Figma design */
 .mig-heading {
   @apply text-mono30 font-bold;

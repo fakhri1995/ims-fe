@@ -1234,16 +1234,16 @@ const ListcheckIconSvg = ({ size, color }) => {
   );
   return <Icon rev={""} component={listcheckIconSvg}></Icon>;
 };
-const CopyIconSvg = ({ size, color }) => {
+const CopyIconSvg = (props) => {
   const copyIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-copy"
-      width={size}
-      height={size}
+      width={props?.size ?? 24}
+      height={props?.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1253,7 +1253,7 @@ const CopyIconSvg = ({ size, color }) => {
       <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
     </svg>
   );
-  return <Icon rev={""} component={copyIconSvg}></Icon>;
+  return <Icon rev={""} component={copyIconSvg} {...props}></Icon>;
 };
 const ArrowsSortIconSvg = ({ size, color }) => {
   const arrowsSortIconSvg = () => (
@@ -2620,16 +2620,16 @@ const RightIconSvg = (props) => {
   return <Icon rev={""} component={rightIconSvg} {...props}></Icon>;
 };
 
-const LeftIconSvg = ({ size, color }) => {
+const LeftIconSvg = (props) => {
   const leftIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-chevron-left"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props?.size ?? 20}
+      height={props?.size ?? 20}
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      strokeWidth="2"
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2638,7 +2638,7 @@ const LeftIconSvg = ({ size, color }) => {
       <polyline points="15 6 9 12 15 18" />
     </svg>
   );
-  return <Icon rev={""} component={leftIconSvg}></Icon>;
+  return <Icon rev={""} component={leftIconSvg} {...props}></Icon>;
 };
 
 const CircleCheckIconSvg = (props) => {

@@ -1,5 +1,13 @@
-import { UploadOutlined } from "@ant-design/icons";
-import { DatePicker, Drawer, Form, Input, Select, Upload } from "antd";
+import { ClockCircleOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  DatePicker,
+  Drawer,
+  Form,
+  Input,
+  Select,
+  TimePicker,
+  Upload,
+} from "antd";
 import { RcFile } from "antd/lib/upload/interface";
 import moment from "moment";
 import { FC, useEffect, useRef, useState } from "react";
@@ -32,7 +40,12 @@ import { useGetUserAttendanceTodayActivities } from "apis/attendance";
 /**
  * Component AttendanceStaffAktivitasDrawer's props.
  */
-export interface IAttendanceStaffLeaveDrawer {
+export interface IAttendanceStaffOvertimeDrawer {
+  action: "create" | "update";
+
+  /**
+   * Arg ini diperlukan untuk `action === "update"`.
+   */
   activityFormId?: number;
   username: string;
   idUser: number;
@@ -43,9 +56,12 @@ export interface IAttendanceStaffLeaveDrawer {
 }
 
 /**
- * Component AttendanceStaffAktivitasDrawer
+ * Component AttendanceStaffOvertimeDrawer
  */
-export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
+export const AttendanceAdminOvertimeDrawer: FC<
+  IAttendanceStaffOvertimeDrawer
+> = ({
+  action = "create",
   getDataNew,
   visible,
   onClose,
@@ -60,12 +76,9 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
   const isAllowedToGetLeaveTypes = hasPermission(LEAVE_TYPES_GET);
   const isAllowedToGetEmployees = hasPermission(FILTER_EMPLOYEES_GET);
   const isAllowedToAddLeave = hasPermission(LEAVE_USER_ADD);
-  const [personalFileBlob, setPersonalFileBlob] = useState<
-    RcFile | Blob | File
-  >(null);
-  const [approvedFileBlob, setApprovedFileBlob] = useState<
-    RcFile | Blob | File
-  >(null);
+  const [resumeFileBlob, setResumeFileBlob] = useState<RcFile | Blob | File>(
+    null
+  );
   const [dataTipeCutis, setDataTipeCutis] = useState([]);
   const [dataEmployees, setDataEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -77,37 +90,18 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
     }
   }, [visible]);
 
-  const [dataCuti, setDataCuti] = useState({
+  const [dataOvertime, setDataOvertime] = useState({
     nama_karyawan: null,
     start_date: null,
     end_date: null,
-    delegasi: null,
+    manager_name: null,
     tipe_cuti: null,
     catatan: null,
   });
 
   useEffect(() => {
-    fetchData();
     fetchDataEmployees();
   }, []);
-
-  const fetchData = async () => {
-    if (!isAllowedToGetLeaveTypes) {
-      permissionWarningNotification("Mendapatkan", "Daftar Tipe Cuti");
-    } else {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaveTypes`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(dataToken),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          // setDataRawTipeCuti(res2.data); // table-related data source
-          setDataTipeCutis(res2.data);
-        });
-    }
-  };
 
   const fetchDataEmployees = async () => {
     if (!isAllowedToGetEmployees) {
@@ -158,7 +152,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
     }
   };
 
-  const onChangePersonalFile = async (info) => {
+  const onChangeFile = async (info) => {
     if (info.file.status === "uploading") {
       // setLoadingupload(true);
       return;
@@ -166,19 +160,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
     if (info.file.status === "done") {
       const blobFile = info.file.originFileObj;
       const base64Data = await getBase64(blobFile);
-      setPersonalFileBlob(blobFile);
-    }
-  };
-
-  const onChangeApprovedFile = async (info) => {
-    if (info.file.status === "uploading") {
-      // setLoadingupload(true);
-      return;
-    }
-    if (info.file.status === "done") {
-      const blobFile = info.file.originFileObj;
-      const base64Data = await getBase64(blobFile);
-      setApprovedFileBlob(blobFile);
+      setResumeFileBlob(blobFile);
     }
   };
 
@@ -196,13 +178,8 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
     if (values.delegate_id) {
       formData.append("delegate_id", values.delegate_id);
     }
-    if (personalFileBlob) {
-      formData.append("document", personalFileBlob);
-    }
-
-    // TODO: adjust if BE done
-    if (approvedFileBlob) {
-      formData.append("approved_document", approvedFileBlob);
+    if (resumeFileBlob) {
+      formData.append("document", resumeFileBlob);
     }
     setLoading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addLeaveUser`, {
@@ -234,7 +211,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
 
   return (
     <Drawer
-      title={<h1 className="mig-body--bold">Apply for Leave</h1>}
+      title={<h1 className="mig-body--bold">Request Overtime</h1>}
       open={visible}
       width={400}
       onClose={onClose}
@@ -274,11 +251,11 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               <Input value={username} disabled />
             </div>
           </Form.Item>
-          <div className={"mt-2 flex items-center justify-between gap-2"}>
-            <div className={"calendar-cuti"}>
+          <div className={"mt-2 flex items-center"}>
+            <div className={"w-[45%]"}>
               <Form.Item
-                label="Start Date"
-                name={"start_date"}
+                label="Start Overtime"
+                name={"start_overtime"}
                 className="col-span-2"
                 rules={[
                   {
@@ -286,23 +263,24 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                   },
                 ]}
               >
-                <DatePicker
-                  disabledDate={(current) =>
-                    current.isBefore(moment().subtract(1, "day"))
-                  }
-                  placeholder="Select Start Date"
-                  style={{ width: "100%", borderColor: "#E6E6E6" }}
+                <TimePicker
+                  placeholder="Select Start overtime"
                   suffixIcon={
-                    <CalendartimeIconSvg size={20} color={"#808080"} />
+                    <ClockCircleOutlined
+                      style={{ color: "#808080", fontSize: 16 }}
+                    />
                   }
+                  style={{ width: "100%", borderColor: "#CCCCCC" }}
                 />
               </Form.Item>
             </div>
-            <p className="mt-2">-</p>
-            <div className={"calendar-cuti "}>
+            <div className={"w-[10%] flex justify-center"}>
+              <p className="mt-2">-</p>
+            </div>
+            <div className={"w-[45%]"}>
               <Form.Item
-                label="End Date"
-                name={"end_date"}
+                label="Finish Overtime"
+                name={"finish_overtime"}
                 className="col-span-2"
                 rules={[
                   {
@@ -310,42 +288,53 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                   },
                 ]}
               >
-                <DatePicker
-                  disabledDate={(current) =>
-                    current.isBefore(moment().subtract(1, "day"))
-                  }
-                  placeholder="Select End Date"
-                  style={{ width: "100%", borderColor: "#E6E6E6" }}
+                <TimePicker
+                  placeholder="Select Finish Overtime"
                   suffixIcon={
-                    <CalendartimeIconSvg size={20} color={"#808080"} />
+                    <ClockCircleOutlined
+                      style={{ color: "#808080", fontSize: 16 }}
+                    />
                   }
+                  style={{ width: "100%", borderColor: "#CCCCCC" }}
                 />
               </Form.Item>
             </div>
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
-              label="Task Delegate"
-              name={"delegate_id"}
+              label="Project’s Name"
+              name={"project_name"}
+              className="col-span-2"
+            >
+              <Input
+                className={"h-[32px] border border-solid border-[#CCCCCC]"}
+                placeholder="Input project’s name here"
+              />
+            </Form.Item>
+          </div>
+          <div className={"mt-2 flex flex-col gap-2"}>
+            <Form.Item
+              label="Manager's Name"
+              name={"manager_name"}
               className="col-span-2 "
               rules={[
                 {
                   required: true,
-                  message: "Task Delegate is required",
+                  message: "Manager's Name is required",
                 },
               ]}
             >
               <Select
                 showSearch
-                value={dataCuti?.delegasi}
+                value={dataOvertime?.manager_name}
                 placeholder={"Search Name"}
-                style={{ width: `100%` }}
+                style={{ width: `100%`, borderColor: "#CCCCCC" }}
                 onSearch={(value) => onSearchUsers(value, setDataEmployees)}
                 optionFilterProp="children"
                 onChange={(value, option) => {
-                  setDataCuti((prev) => ({
+                  setDataOvertime((prev) => ({
                     ...prev,
-                    delegasi: option,
+                    manager_name: option,
                   }));
                 }}
               >
@@ -364,118 +353,13 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               </Select>
             </Form.Item>
           </div>
-
-          <div className={"mt-2 flex flex-col gap-2"}>
-            <Form.Item
-              label="Leave Type"
-              name={"type"}
-              className="col-span-2"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Select
-                placeholder="Select Leave Type"
-                onChange={(value, option) => {
-                  setDataCuti((prev) => ({
-                    ...prev,
-                    tipe_cuti: option,
-                  }));
-                }}
-              >
-                {dataTipeCutis?.map((item) => {
-                  return (
-                    <Select.Option
-                      key={item?.id}
-                      value={item.id}
-                      is_document_required={item?.is_document_required}
-                      name={item?.name}
-                    >
-                      {item?.name}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
-          </div>
           <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item label="Notes" name={"notes"} className="col-span-2">
               <Input.TextArea
                 rows={4}
-                className={"h-[164px] border border-solid border-[#E6E6E6]"}
+                className={"h-[164px] border border-solid border-[#CCCCCC]"}
                 placeholder="Insert reason for taking leave"
               />
-            </Form.Item>
-          </div>
-          <div className={"mt-2 flex flex-col gap-2"}>
-            <Form.Item
-              label="Leave Form Approved by Manager"
-              name={"approved_file"}
-              className="col-span-2"
-            >
-              <div className={"flex flex-col"}>
-                <div className="mb-4 ">
-                  <Upload
-                    accept=".pdf"
-                    multiple={false}
-                    maxCount={1}
-                    onChange={onChangeApprovedFile}
-                  >
-                    <ButtonSys>
-                      <div className="flex justify-center items-center gap-2 ">
-                        <UploadOutlined size={16} />
-                        <p>Upload File</p>
-                      </div>
-                    </ButtonSys>
-                  </Upload>
-                </div>
-
-                <em className={"text-[#808080] text-xs leading-4 font-normal "}>
-                  Upload File (Max. 5 MB).
-                </em>
-              </div>
-            </Form.Item>
-          </div>
-          <div className={"mt-2 flex flex-col gap-2"}>
-            <Form.Item
-              label="MIG Leave Form"
-              name={"personal_file"}
-              className="col-span-2"
-              rules={[
-                {
-                  required:
-                    dataCuti.tipe_cuti == null
-                      ? true
-                      : dataCuti?.tipe_cuti?.is_document_required
-                      ? true
-                      : false,
-                  message: "Personal Reason File is required",
-                },
-              ]}
-            >
-              <div className={"flex flex-col"}>
-                <div className="mb-4 ">
-                  <Upload
-                    accept=".pdf"
-                    multiple={false}
-                    maxCount={1}
-                    onChange={onChangePersonalFile}
-                  >
-                    <ButtonSys>
-                      <div className="flex justify-center items-center gap-2 ">
-                        <UploadOutlined size={16} />
-                        <p>Upload File</p>
-                      </div>
-                    </ButtonSys>
-                  </Upload>
-                </div>
-
-                <em className={"text-[#808080] text-xs leading-4 font-normal "}>
-                  Upload File (Max. 5 MB).
-                </em>
-              </div>
             </Form.Item>
           </div>
         </Form>

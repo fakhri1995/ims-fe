@@ -359,7 +359,7 @@ export const AttendanceStaffAktivitasSection: FC<
   );
 
   const mOnRowItemClicked = useCallback(
-    (datum: (typeof dataSource)[0]) => {
+    (datum: typeof dataSource[0]) => {
       if (tabActiveKey === "2") {
         /** Only allow this click callback when user is on "Hari Ini" tab */
         return;
@@ -773,7 +773,7 @@ export const AttendanceStaffAktivitasSection: FC<
             <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
           )}
         >
-          <Table<(typeof dataSource)[0]>
+          <Table<typeof dataSource[0]>
             columns={tableColums}
             rowKey={(record) => record.id}
             dataSource={dataSource}
@@ -854,7 +854,7 @@ export const AttendanceStaffAktivitasSection: FC<
       );
     } else if (activeSubmenu == "aktivitas") {
       return (
-        <Table<(typeof dataSource)[0]>
+        <Table<typeof dataSource[0]>
           columns={TableTaskColumns}
           dataSource={displayDataTaskHistory}
           rowKey={(record) => record.id}
@@ -1195,7 +1195,6 @@ export const AttendanceStaffAktivitasSection: FC<
               idUser={idUser}
               username={username}
               visible={showModalLeave}
-              action={activityDrawerState.openDrawerAs}
               activityFormId={activityDrawerState.selectedActivityFormId}
               onClose={() => setShowModalLeave(false)}
             />
