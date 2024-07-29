@@ -37,7 +37,6 @@ import { IFileAttribute } from "types/common";
  */
 export interface IDrawerAnnualLeave {
   visible: boolean;
-  onvisible: Dispatch<SetStateAction<boolean>>;
   dataDefault: {
     id: number;
     status: number; // 1 -> pending | 2 -> accepted | 3 -> rejected
@@ -64,7 +63,6 @@ export interface IDrawerAnnualLeave {
  */
 const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
   visible,
-  onvisible,
   dataDefault,
   closeDrawer,
   initProps,

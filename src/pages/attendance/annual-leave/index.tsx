@@ -1,27 +1,15 @@
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
-import {
-  DatePicker,
-  Empty,
-  Input,
-  Progress,
-  Select,
-  Space,
-  Spin,
-  Table,
-  Tag,
-  notification,
-} from "antd";
+import { DatePicker, Form, Input, Select, Table } from "antd";
 import moment from "moment";
 import {
+  DateParam,
   NumberParam,
   StringParam,
   useQueryParams,
   withDefault,
 } from "next-query-params";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import QueryString from "qs";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 
 import DrawerCutiSatuan from "components/drawer/attendance/drawerCutiSatuan";
@@ -36,6 +24,8 @@ import {
   LEAVE_STATUSES_GET,
   LEAVE_TYPES_GET,
 } from "lib/features";
+
+import { LeaveStatus } from "apis/attendance";
 
 import DrawerAnnualLeave from "../../../components/drawer/attendance/drawerAnnualLeave";
 import {
@@ -96,7 +86,28 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    keyword: withDefault(StringParam, ""),
+    date: withDefault(DateParam, undefined),
+    status: withDefault(StringParam, undefined),
   });
+
+  let timer: NodeJS.Timeout; // use for delay time in table's search
+
+  const leaveStatuses = [
+    {
+      label: "Pending",
+      value: LeaveStatus.PENDING,
+    },
+    {
+      label: "Accepted",
+      value: LeaveStatus.ACCEPTED,
+    },
+    {
+      label: "Rejected",
+      value: LeaveStatus.REJECTED,
+    },
+  ];
+
   const [loadingAnualLeave, setLoadingAnnualLeave] = useState(true);
   const [showDrawerCutiSatuan, setShowDrawerCutiSatuan] = useState(false);
   const [displayDataLeaves, setDisplayDataLeaves] = useState({
@@ -298,6 +309,8 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
   const closeDrawer = () => {
     setShowDrawer(false);
   };
+
+  console.log({ dataStatusCuti });
   return (
     <Layout
       tok={initProps}
@@ -495,14 +508,13 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
             </div>
           </div>
         </div>
-        <div
-          className={"flex flex-col p-6  mt-8"}
-          style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
-        >
-          <div className={"flex w-full justify-between items-center"}>
-            <p className="text-lg leading-6 font-bold text-[#4D4D4D]">
-              Daftar Pengajuan Cuti
-            </p>
+        <div className={"mig-platform--p-0 flex flex-col mt-8"}>
+          <div
+            className={
+              "flex w-full justify-between items-center py-3 px-4 border-b"
+            }
+          >
+            <p className="mig-body--bold ">List of Leave Requests</p>
             <div className={"flex gap-4"}>
               {isAllowedToManageLeaveTypes && (
                 <div
@@ -510,7 +522,9 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                   className={
                     "flex hover:cursor-pointer gap-2 justify-center items-center px-5 h-9 rounded-[5px] bg-[#00589F]"
                   }
-                  style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
+                  style={{
+                    boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)",
+                  }}
                 >
                   <SettingsIconSvg size={16} color={"white"} />
                   <p className={"text-white text-xs leading-5 font-bold"}>
@@ -524,7 +538,9 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                   className={
                     "flex hover:cursor-pointer gap-2 justify-center items-center px-5 h-9 rounded-[5px] bg-[#35763B]"
                   }
-                  style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
+                  style={{
+                    boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)",
+                  }}
                 >
                   <AddNoteSvg />
                   <p className={"text-white text-xs leading-5 font-bold"}>
@@ -534,7 +550,74 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
               )}
             </div>
           </div>
-          <div className={"mt-6"}>
+          {/* Table's filter */}
+          <div className="px-4 py-3">
+            <Form
+              className="flex flex-col sm:flex-row w-full sm:justify-between sm:items-center gap-2"
+              onFinish={(values) => {
+                setQueryParams({ keyword: values.search, page: 1 });
+              }}
+            >
+              <Form.Item noStyle name="search">
+                <Input
+                  placeholder="Search employee's name..."
+                  disabled={!isAllowedToGetLeave}
+                  allowClear
+                  className="w-full"
+                  onChange={(event) => {
+                    if (
+                      event.target.value.length === 0 ||
+                      event.target.value === ""
+                    ) {
+                      setQueryParams({ keyword: "" });
+                    } else {
+                      clearTimeout(timer);
+                      timer = setTimeout(() => {
+                        setQueryParams({ keyword: event.target.value });
+                      }, 500);
+                    }
+                  }}
+                />
+              </Form.Item>
+              {/* TODO: uncomment & adjust if BE is done */}
+              <Form.Item noStyle>
+                <DatePicker
+                  allowClear
+                  className="w-full"
+                  defaultValue={queryParams.date}
+                  disabled={!isAllowedToGetLeave}
+                  placeholder="Select Date"
+                  onChange={(value) => {
+                    setQueryParams({ date: value, page: 1 });
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item noStyle>
+                <Select
+                  allowClear
+                  // showSearch
+                  // mode="multiple"
+                  className="w-full"
+                  defaultValue={queryParams.status}
+                  disabled={!isAllowedToGetLeaveStatus}
+                  placeholder="Status"
+                  onChange={(value) => {
+                    setQueryParams({ status: value, page: 1 });
+                  }}
+
+                  // loading={loadingCompanyClients}
+                >
+                  {leaveStatuses?.map((item) => (
+                    <Select.Option key={item.label} value={item.value}>
+                      <BadgeLeaveStatus status={item.value} />
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Form>
+          </div>
+          <div className={"mt-6 px-4"}>
             <Table
               columns={columns}
               dataSource={dataAnnualLeave}
@@ -581,7 +664,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
 };
 
 export async function getServerSideProps({ req, res }) {
-  var initProps = {};
+  var initProps = "";
   if (!req.headers.cookie) {
     return {
       redirect: {

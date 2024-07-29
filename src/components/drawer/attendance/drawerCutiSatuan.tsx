@@ -65,13 +65,7 @@ import {
   UsercircleIconSvg,
 } from "../../icon";
 
-const DrawerCutiSatuan = ({
-  dataToken,
-  visible,
-  onvisible,
-  companyList,
-  onCancel,
-}) => {
+const DrawerCutiSatuan = ({ dataToken, visible, onCancel }) => {
   const [showData, setShowData] = useState("1");
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
