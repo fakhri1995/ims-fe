@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
 
+import StatisticCountCard from "components/cards/StatisticCountCard";
 import {
   CalendarFilIconSvg,
   CircleCheckFilledIconSvg,
@@ -56,43 +57,30 @@ export const AttendanceStaffLeaveStatisticCards: FC<
   return (
     <div className="w-full flex flex-col md:flex-row justify-between gap-3 my-4">
       {/* Card Days Available */}
-      <div className="mig-card md:w-1/3 flex justify-between items-start">
-        <div className="flex flex-col gap-4 justify-between">
-          <h4 className="mig-heading--4">{12 + Number(leaveCount)}</h4>
-          <div>
-            <p className="mig-caption--bold">Days available</p>
-            <p className="mig-small">to book paid leave</p>
-          </div>
-        </div>
-
-        <CircleCheckFilledIconSvg size={24} className={"text-primary100"} />
-      </div>
+      <StatisticCountCard
+        dataCount={12 + Number(leaveCount)}
+        icon={
+          <CircleCheckFilledIconSvg size={24} className={"text-primary100"} />
+        }
+        title="Days available"
+        description="to book paid leave"
+      />
 
       {/* Card Pending Requests */}
-      <div className="mig-card md:w-1/3 flex justify-between items-start">
-        <div className="flex flex-col gap-4 justify-between">
-          <h4 className="mig-heading--4">0</h4>
-          <div>
-            <p className="mig-caption--bold">Pending Requests</p>
-            <p className="mig-small">awaiting approval</p>
-          </div>
-        </div>
-
-        <ClockIconFilledSvg size={28} className={"text-warning"} />
-      </div>
+      <StatisticCountCard
+        dataCount={0}
+        icon={<ClockIconFilledSvg size={28} className={"text-warning"} />}
+        title="Pending Requests"
+        description="awaiting approval"
+      />
 
       {/* Card Days Used */}
-      <div className="mig-card md:w-1/3 flex justify-between items-start">
-        <div className="flex flex-col gap-4 justify-between">
-          <h4 className="mig-heading--4">{Math.abs(leaveCount)}</h4>
-          <div>
-            <p className="mig-caption--bold">Days</p>
-            <p className="mig-small">leave has been taken</p>
-          </div>
-        </div>
-
-        <CalendarFilIconSvg size={24} className={"text-accentblue"} />
-      </div>
+      <StatisticCountCard
+        dataCount={Math.abs(leaveCount)}
+        icon={<CalendarFilIconSvg size={24} className={"text-accentblue"} />}
+        title="Days"
+        description="leave has been taken"
+      />
     </div>
   );
 };
