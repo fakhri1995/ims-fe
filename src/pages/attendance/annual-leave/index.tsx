@@ -296,7 +296,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
             }
           >
             <p className="mig-body--bold ">List of Leave Requests</p>
-            <div className={"flex gap-4"}>
+            <div className={"flex flex-col sm:flex-row gap-4 items-end"}>
               <ButtonSys
                 square
                 type="primary"
@@ -315,7 +315,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                 onClick={() => setModalAdd(true)}
                 disabled={!isAllowedToAddLeave}
               >
-                <div className="flex items-center gap-2 text-white">
+                <div className="flex items-center gap-2 text-white whitespace-nowrap">
                   <CirclePlusIconSvg size={20} />
                   <p>Apply Leave Request</p>
                 </div>
@@ -330,7 +330,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setQueryParams({ keyword: values.search, page: 1 });
               }}
             >
-              <div className="w-2/4">
+              <div className="sm:w-2/4">
                 <Form.Item noStyle name="search">
                   <Input
                     placeholder="Search employee's name..."
@@ -353,7 +353,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                   />
                 </Form.Item>
               </div>
-              <div className="w-1/4">
+              <div className="sm:w-1/4">
                 <Form.Item noStyle>
                   <DatePicker
                     allowClear
@@ -367,7 +367,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                   />
                 </Form.Item>
               </div>
-              <div className="w-1/4">
+              <div className="sm:w-1/4">
                 <Form.Item noStyle>
                   <Select
                     allowClear
