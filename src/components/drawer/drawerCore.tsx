@@ -27,7 +27,7 @@ const DrawerCore = ({
   buttonOkText?: string | ReactNode;
   onClick?: () => void;
   disabled?: boolean;
-  loading: boolean;
+  loading?: boolean;
   drawerStyle?: React.CSSProperties;
   buttonCancelText?: string | ReactNode;
   onButtonCancelClicked?: () => void;
