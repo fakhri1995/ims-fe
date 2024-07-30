@@ -1,5 +1,5 @@
 import { Drawer } from "antd";
-import React from "react";
+import React, { ReactNode } from "react";
 
 import ButtonSys from "../button";
 import { CheckIconSvg } from "../icon";
@@ -12,15 +12,28 @@ const DrawerCore = ({
   buttonOkText,
   onClick,
   disabled,
+  loading,
   drawerStyle,
   buttonCancelText,
   onButtonCancelClicked,
   buttonUpdateText,
-  buttonSpace,
   iconButtonText,
-  form,
-  submit = false,
   width = 360,
+}: {
+  title: string | ReactNode;
+  visible: boolean;
+  onClose: () => void;
+  children: string | ReactNode;
+  buttonOkText?: string | ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  loading?: boolean;
+  drawerStyle?: React.CSSProperties;
+  buttonCancelText?: string | ReactNode;
+  onButtonCancelClicked?: () => void;
+  buttonUpdateText?: string | ReactNode;
+  iconButtonText?: ReactNode;
+  width?: number;
 }) => {
   return (
     <Drawer
@@ -33,15 +46,12 @@ const DrawerCore = ({
       drawerStyle={drawerStyle}
       footer={
         <div
-          className={`flex items-center justify-end ${
-            buttonSpace ? buttonSpace : `space-x-6`
-          }`}
+          className={`flex items-center justify-end space-x-3
+          `}
         >
           {/* Additional button on the LHS for Cancelling the action, etc. */}
           {buttonCancelText && onButtonCancelClicked && (
             <ButtonSys
-              // disabled={disabled}
-              // type={disabled ? "primary" : "default"}
               type={"default"}
               color="mono50"
               onClick={onButtonCancelClicked}
@@ -51,8 +61,13 @@ const DrawerCore = ({
           )}
 
           {buttonOkText && onClick && (
-            <ButtonSys disabled={disabled} type="primary" onClick={onClick}>
-              <div className={"flex items-center gap-3"}>
+            <ButtonSys
+              disabled={disabled}
+              type="primary"
+              onClick={onClick}
+              loading={loading}
+            >
+              <div className={"flex items-center gap-2"}>
                 {iconButtonText ? (
                   iconButtonText
                 ) : (
@@ -66,6 +81,7 @@ const DrawerCore = ({
           {buttonUpdateText && onClick && (
             <ButtonSys
               disabled={disabled}
+              loading={loading}
               type={disabled ? "primary" : "default"}
               onClick={onClick}
             >

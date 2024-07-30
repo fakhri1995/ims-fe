@@ -1,3 +1,7 @@
+/** New modal components
+ * used for confirmation before the real action (delete, update, etc).
+ * Currently used in revamped design July 2024.
+ * */
 import { Modal, Spin } from "antd";
 import { ReactElement } from "react";
 
@@ -7,8 +11,6 @@ import {
   CheckIconSvg,
   TrashIconSvg,
 } from "components/icon";
-
-/** New modal components used for revamped design in July 2024 */
 
 const ModalWarning = ({
   visible,

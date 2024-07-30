@@ -228,8 +228,7 @@ const DrawerAnnouncement = ({
       onClose={handleClose}
       width={400}
       buttonOkText={"Simpan"}
-      submit={true}
-      form="formPesan"
+      loading={!data ? loadingAddAnnouncement : loadingUpdateAnnouncement}
       onClick={() =>
         !data
           ? addAnnouncement(dataAnnouncement)

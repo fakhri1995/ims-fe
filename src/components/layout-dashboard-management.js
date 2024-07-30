@@ -54,7 +54,6 @@ function LayoutDashboard({
       dataProfile={dataProfile}
       pathArr={pathArr}
       sidemenu={sidemenu}
-      bgColor="#ffffff"
       breadcrumbComponent={
         <Breadcrumb separator=">" className={st.breadcrumbClients}>
           {/* {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${pathArr[0]}`}><strong>{pathArr[0]}</strong></Breadcrumb.Item>} */}

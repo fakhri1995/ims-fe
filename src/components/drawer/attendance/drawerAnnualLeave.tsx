@@ -37,7 +37,6 @@ import { IFileAttribute } from "types/common";
  */
 export interface IDrawerAnnualLeave {
   visible: boolean;
-  onvisible: Dispatch<SetStateAction<boolean>>;
   dataDefault: {
     id: number;
     status: number; // 1 -> pending | 2 -> accepted | 3 -> rejected
@@ -64,7 +63,6 @@ export interface IDrawerAnnualLeave {
  */
 const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
   visible,
-  onvisible,
   dataDefault,
   closeDrawer,
   initProps,
@@ -93,15 +91,14 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
   const [modalConfirmApprove, setModalConfirmApprove] = useState(false);
 
   const clickDetailEmployee = (record) => {
-    console.log("isinya ", record);
     setDetailEmployee({
-      nama: record.name,
-      role: record.contract.role.name,
-      company: record.contract.placement,
-      nip: record.nip,
-      no_telp: record.phone_number,
-      email: record.email_office,
-      jumlah_cuti_tahunan: record.contract.annual_leave,
+      nama: record?.name,
+      role: record?.contract?.role?.name,
+      company: record?.contract?.placement,
+      nip: record?.nip,
+      no_telp: record?.phone_number,
+      email: record?.email_office,
+      jumlah_cuti_tahunan: record?.contract.annual_leave,
     });
     setShowData("2");
   };
@@ -205,8 +202,7 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
 
   return (
     <Drawer
-      width={468}
-      title={"Leave Issued Details"}
+      title={showData == "1" ? "Leave Issued Details" : "Employee Details"}
       open={visible}
       closeIcon={
         showData == "2" ? (
@@ -242,53 +238,6 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
                 <p>Approve Leave</p>
               </ButtonSys>
             </div>
-
-            {/* <div
-              onClick={() => processCuti("tolak")}
-              className="w-1/2 bg-[#BF4A40] h-[36px] rounded-[5px] flex gap-2 justify-center items-center hover:cursor-pointer">
-              {!dataLoading.loadingReject ? (
-                <Spin
-                  indicator={
-                    <LoadingOutlined
-                      style={{
-                        fontSize: 12,
-                        color: "white",
-                        fontWeight: "bold",
-                      }}
-                    />
-                  }
-                />
-              ) : (
-                <CloseIconSvg size={16} color={"white"} />
-              )}
-              <p className={"text-white font-bold text-xs leading-5"}>
-                Tolak Pengajuan
-              </p>
-            </div> */}
-
-            {/* <div
-              onClick={() => processCuti("setuju")}
-              className="w-1/2 bg-[#35763B] flex gap-2 justify-center items-center h-[36px] rounded-[5px] hover:cursor-pointer">
-              {dataLoading.loadingApprove ? (
-                <Spin
-                  indicator={
-                    <LoadingOutlined
-                      style={{
-                        fontSize: 12,
-                        color: "white",
-                        fontWeight: "bold",
-                      }}
-                    />
-                  }
-                />
-              ) : (
-                <CheckOutlined size={16} style={{ color: "white" }} />
-              )}
-
-              <p className={"text-white font-bold text-xs leading-5"}>
-                Setujui Pengajuan
-              </p>
-            </div> */}
           </div>
         )
       }
@@ -450,60 +399,50 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
       )}
       {showData == "2" && (
         <div className={"flex flex-col gap-4"}>
-          <div className={"flex flex-col gap-2"}>
-            <p className={"text-[#808080] text-xs font-medium leading-5"}>
-              Name
-            </p>
-            <p className={"text-[#4D4D4D] text-[14px] font-medium leading-6"}>
-              {detailEmployee?.nama}
+          <div
+            className="flex flex-col justify-center items-center
+           bg-backdrop text-primary100 py-2 rounded-[5px]"
+          >
+            <h5 className="mig-heading--5 text-primary100">
+              {Number(12 + Number(detailEmployee?.jumlah_cuti_tahunan)) || "-"}{" "}
+              days quota
+            </h5>
+            <p>leave remaining</p>
+          </div>
+          <div className={"flex flex-col"}>
+            <p className={"mig-caption text-neutrals90"}>Name</p>
+            <p className={"mig-body text-neutrals100"}>
+              {detailEmployee?.nama || "-"}
             </p>
           </div>
-          <div className={"flex flex-col gap-2"}>
-            <p className={"text-[#808080] text-xs font-medium leading-5"}>
-              Role
-            </p>
-            <p className={"text-[#4D4D4D] text-[14px] font-medium leading-6"}>
-              {detailEmployee?.role}
+          <div className={"flex flex-col"}>
+            <p className={"mig-caption text-neutrals90"}>Role</p>
+            <p className={"mig-body text-neutrals100"}>
+              {detailEmployee?.role || "-"}
             </p>
           </div>
-          <div className={"flex flex-col gap-2"}>
-            <p className={"text-[#808080] text-xs font-medium leading-5"}>
-              Company
-            </p>
-            <p className={"text-[#4D4D4D] text-[14px] font-medium leading-6"}>
-              {detailEmployee?.company}
+          <div className={"flex flex-col"}>
+            <p className={"mig-caption text-neutrals90"}>Company</p>
+            <p className={"mig-body text-neutrals100"}>
+              {detailEmployee?.company || "-"}
             </p>
           </div>
-          <div className={"flex flex-col gap-2"}>
-            <p className={"text-[#808080] text-xs font-medium leading-5"}>
-              NIP
-            </p>
-            <p className={"text-[#4D4D4D] text-[14px] font-medium leading-6"}>
-              {detailEmployee?.nip}
+          <div className={"flex flex-col"}>
+            <p className={"mig-caption text-neutrals90"}>NIP</p>
+            <p className={"mig-body text-neutrals100"}>
+              {detailEmployee?.nip || "-"}
             </p>
           </div>
-          <div className={"flex flex-col gap-2"}>
-            <p className={"text-[#808080] text-xs font-medium leading-5"}>
-              Phone Number
-            </p>
-            <p className={"text-[#4D4D4D] text-[14px] font-medium leading-6"}>
-              {detailEmployee?.no_telp}
+          <div className={"flex flex-col"}>
+            <p className={"mig-caption text-neutrals90"}>Phone Number</p>
+            <p className={"mig-body text-neutrals100"}>
+              {detailEmployee?.no_telp || "-"}
             </p>
           </div>
-          <div className={"flex flex-col gap-2"}>
-            <p className={"text-[#808080] text-xs font-medium leading-5"}>
-              Email
-            </p>
-            <p className={"text-[#4D4D4D] text-[14px] font-medium leading-6"}>
-              {detailEmployee?.email}
-            </p>
-          </div>
-          <div className={"flex flex-col gap-2"}>
-            <p className={"text-[#808080] text-xs font-medium leading-5"}>
-              Amount of Annual Leave
-            </p>
-            <p className={"text-[#4D4D4D] text-[14px] font-medium leading-6"}>
-              {detailEmployee?.jumlah_cuti_tahunan} Days
+          <div className={"flex flex-col"}>
+            <p className={"mig-caption text-neutrals90"}>Email</p>
+            <p className={"mig-body text-neutrals100"}>
+              {detailEmployee?.email || "-"}
             </p>
           </div>
         </div>
