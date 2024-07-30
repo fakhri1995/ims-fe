@@ -31,6 +31,12 @@ import React, { useEffect, useState } from "react";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
+import {
+  CirclePlusIconSvg,
+  CloseOverlay,
+  DeleteTablerIconSvg,
+  EditTablerIconSvg,
+} from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -45,22 +51,7 @@ import {
   permissionWarningNotification,
 } from "lib/helper";
 
-import PengajuanCutiIcon from "assets/vectors/pengajuan-cuti.svg";
-
 import DrawerTipeCuti from "../../drawer/attendance/drawerTipeCuti";
-import {
-  AlertCircleIconSvg,
-  CheckBoldSvg,
-  CheckIconSvg,
-  CirclePlusIconSvg,
-  CloseIconSvg,
-  CloseOverlay,
-  DeleteTablerIconSvg,
-  EditIconSvg,
-  EditTablerIconSvg,
-  UserIconSvg,
-  UsercircleIconSvg,
-} from "../../icon";
 import { ModalDelete } from "../modalConfirmation";
 
 const ModalTipeCuti = ({ visible, onClose, initProps }) => {
@@ -97,10 +88,11 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
   });
   const [loadingTipeCuti, setLoadingTipeCuti] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
-  const columnsTipeCuti = [
+  const columnsTipeCuti: typeof dataDefault = [
     {
       title: "No",
       dataIndex: "num",
+      align: "center",
       render: (text, record, index) => {
         return {
           children: <>{index + 1}</>,
@@ -108,7 +100,7 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
       },
     },
     {
-      title: "Nama",
+      title: "Name",
       dataIndex: "name",
       render: (text, record, index) => {
         return {
@@ -117,25 +109,27 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
       },
     },
     {
-      title: "Cuti Tahunan",
+      title: "Annual Leave",
       dataIndex: "is_tahunan",
       render: (text, record, index) => {
         return {
-          children: <p>{record.is_tahunan ? "Mengurangi" : "Tidak"}</p>,
+          children: <p>{record.is_tahunan ? "Reduced" : "-"}</p>,
         };
       },
     },
     {
-      title: "File Pendukung",
+      title: "Supporting File",
       dataIndex: "is_document_required",
       render: (text, record, index) => {
         return {
-          children: <p>{record.is_document_required ? "Wajib" : "Opsional"}</p>,
+          children: (
+            <p>{record.is_document_required ? "Required" : "Optional"}</p>
+          ),
         };
       },
     },
     {
-      title: "Deskripsi",
+      title: "Description",
       dataIndex: "description",
       render: (text, record, index) => {
         return {
@@ -144,13 +138,14 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
       },
     },
     {
-      title: "Aksi",
+      title: "Actions",
       key: "action_button",
       dataIndex: "action_button",
+      align: "center",
       render: (text, record, index) => {
         return {
           children: (
-            <div className="flex flex-col md:flex-row gap-2 items-center">
+            <div className="flex flex-col md:flex-row gap-2 justify-center items-center">
               <div
                 className={"items-center hover:cursor-pointer"}
                 onClick={() => editData(record)}
@@ -255,7 +250,7 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
       open={visible}
       title={
         <p className={"text-[#4D4D4D] text-[14px] leading-6 font-bold"}>
-          Daftar Tipe Cuti
+          Leave Types
         </p>
       }
       closeIcon={<CloseOverlay size={24} />}

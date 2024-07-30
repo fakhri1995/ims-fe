@@ -314,8 +314,11 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
                         )}
                         target="_blank"
                         rel="noopener noreferrer"
+                        title={getFileName(
+                          dataDefault?.approved_document?.link
+                        )}
                       >
-                        <p>
+                        <p className="truncate w-40">
                           {getFileName(dataDefault?.approved_document?.link)}
                         </p>
                       </a>
@@ -342,10 +345,10 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
                 ) : (
                   <div
                     className={
-                      "mig-body border p-4 rounded-[5px] flex items-center gap-4 justify-between"
+                      "mig-body border p-4 rounded-[5px] flex w-full items-center gap-4"
                     }
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex w-2/3 items-center gap-4">
                       <div>
                         <PdfIcon />
                       </div>
@@ -355,20 +358,25 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
                         )}
                         target="_blank"
                         rel="noopener noreferrer"
+                        title={getFileName(dataDefault?.document?.link)}
                       >
-                        <p>{getFileName(dataDefault?.document?.link)}</p>
+                        <p className="truncate w-40">
+                          {getFileName(dataDefault?.document?.link)}
+                        </p>
                       </a>
                     </div>
-                    <ButtonSys
-                      type="primary"
-                      color="mono100"
-                      square
-                      onClick={() =>
-                        downloadFileFromPath(dataDefault?.document?.link)
-                      }
-                    >
-                      <DownloadIconSvg />
-                    </ButtonSys>
+                    <div className="w-1/3 text-right">
+                      <ButtonSys
+                        type="primary"
+                        color="mono100"
+                        square
+                        onClick={() =>
+                          downloadFileFromPath(dataDefault?.document?.link)
+                        }
+                      >
+                        <DownloadIconSvg />
+                      </ButtonSys>
+                    </div>
                   </div>
                 )}
               </div>
