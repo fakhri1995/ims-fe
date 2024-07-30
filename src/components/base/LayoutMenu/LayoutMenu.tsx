@@ -179,30 +179,32 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           </Link>
         </Menu.Item>
       )}
-      {hasPermission(SIDEBAR_CLIENT_DASHBOARD) && !hasRole(ROLE_SUPER_ADMIN) && (
-        <Menu.Item
-          key="1"
-          icon={<DashboardCompanyIconSvg />}
-          className="text-mono50"
-          title={`Dashboard ${dataPerusahaan}`}
-        >
-          <Link href="/dashboard/home">
-            <p>Dashboard {dataPerusahaan}</p>
-          </Link>
-        </Menu.Item>
-      )}
-      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN) && (
-        <Menu.Item
-          key="kehadirancompany"
-          icon={<KehadiranCompanyIconSvg />}
-          className="text-mono50 "
-          title={`Kehadiran ${dataPerusahaan}`}
-        >
-          <Link href="/kehadiran/">
-            <p>Kehadiran {dataPerusahaan}</p>
-          </Link>
-        </Menu.Item>
-      )}
+      {hasPermission(SIDEBAR_CLIENT_DASHBOARD) &&
+        !hasRole(ROLE_SUPER_ADMIN) && (
+          <Menu.Item
+            key="1"
+            icon={<DashboardCompanyIconSvg />}
+            className="text-mono50"
+            title={`Dashboard ${dataPerusahaan}`}
+          >
+            <Link href="/dashboard/home">
+              <p>Dashboard {dataPerusahaan}</p>
+            </Link>
+          </Menu.Item>
+        )}
+      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) &&
+        !hasRole(ROLE_SUPER_ADMIN) && (
+          <Menu.Item
+            key="kehadirancompany"
+            icon={<KehadiranCompanyIconSvg />}
+            className="text-mono50 "
+            title={`Kehadiran ${dataPerusahaan}`}
+          >
+            <Link href="/kehadiran/">
+              <p>Kehadiran {dataPerusahaan}</p>
+            </Link>
+          </Menu.Item>
+        )}
       {hasPermission(SIDEBAR_CLIENT_PROJECT) && !hasRole(ROLE_SUPER_ADMIN) && (
         <Menu.Item
           key="projectscompany"
