@@ -1,36 +1,6 @@
-import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Checkbox,
-  Collapse,
-  DatePicker,
-  Drawer,
-  Form,
-  Input,
-  Select,
-  Spin,
-  Switch,
-  Table,
-  Tag,
-  notification,
-} from "antd";
-import { useRouter } from "next/router";
+import { Checkbox, Form, Input, notification } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 
-import PdfIcon from "assets/vectors/pdf-icon.svg";
-
-import {
-  CheckIconSvg,
-  CloseIconSvg,
-  UserIconSvg,
-  UsercircleIconSvg,
-} from "../../icon";
 import DrawerCore from "../drawerCore";
 
 const DrawerTipeCuti = ({
@@ -87,8 +57,8 @@ const DrawerTipeCuti = ({
       id: dataDefault?.id,
       name: values.name,
       description: values.description,
-      is_tahunan: isTahunan ? 1 : 0,
-      is_document_required: isDocumentRequired ? 1 : 0,
+      is_tahunan: isTahunan ? 1 : "0",
+      is_document_required: isDocumentRequired ? 1 : "0",
     };
 
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateLeaveType `, {
