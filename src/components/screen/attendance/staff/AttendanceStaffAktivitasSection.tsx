@@ -95,6 +95,8 @@ import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
 import { AttendanceStaffLeaveStatisticCards } from "./AttendanceStaffLeaveStatisticCards";
+import { AttendanceStaffOvertimeDetailDrawer } from "./AttendanceStaffOvertimeDetailDrawer";
+import { AttendanceStaffOvertimeDrawer } from "./AttendanceStaffOvertimeDrawer";
 
 export interface IGetLeaveUser {
   start_date: string;
@@ -164,6 +166,7 @@ export const AttendanceStaffAktivitasSection: FC<
   const [pageSize, setPageSize] = useState(10);
   const [showModalTask, setShowModalTask] = useState(false);
   const [showModalLeave, setShowModalLeave] = useState(false);
+  const [showModalOvertime, setShowModalOvertime] = useState(false);
   const [showModalCheckinWarning, setShowModalCheckinWarning] = useState(false);
   const [showModalRemoveActivity, setShowModalRemoveActivity] = useState({
     visible: false,
@@ -379,7 +382,7 @@ export const AttendanceStaffAktivitasSection: FC<
       columns.push({
         key: "delete",
         title: "Actions",
-        render: (_, record: (typeof dataSource)[0]) => {
+        render: (_, record: typeof dataSource[0]) => {
           return (
             <button
               className="bg-transparent text-danger hover:opacity-75"
@@ -416,17 +419,9 @@ export const AttendanceStaffAktivitasSection: FC<
   );
 
   const mOnRowItemClicked = useCallback(
-    (datum: (typeof dataSource)[0], dataIndex?: number) => {
-      if (tabActiveKey === HISTORY && tabActiveKey2 == TASK) {
-        return;
-      }
-
-      if (tabActiveKey === HISTORY && tabActiveKey2 == FORM) {
-        setShowDrawerAktivitasDetail({
-          visible: true,
-          data: datum,
-          idx: dataIndex,
-        });
+    (datum: typeof dataSource[0]) => {
+      if (tabActiveKey === HISTORY) {
+        /** Only allow this click callback when user is on "Hari Ini" tab */
         return;
       }
 
@@ -608,7 +603,7 @@ export const AttendanceStaffAktivitasSection: FC<
   function checkFormOrTask() {
     if (tabActiveKey2 == FORM && activeSubmenu == "aktivitas") {
       return (
-        <Table<(typeof dataSource)[0]>
+        <Table<typeof dataSource[0]>
           columns={tableColums}
           rowKey={(record) => record.id}
           dataSource={dataSource}
@@ -621,7 +616,7 @@ export const AttendanceStaffAktivitasSection: FC<
               currentPage * pageSize - (pageSize - rowIndex);
             return {
               className: "hover:cursor-pointer",
-              onClick: () => mOnRowItemClicked(datum, currentDataIdx),
+              onClick: () => mOnRowItemClicked(datum),
             };
           }}
         />
@@ -695,7 +690,7 @@ export const AttendanceStaffAktivitasSection: FC<
       );
     } else if (activeSubmenu == "aktivitas") {
       return (
-        <Table<(typeof dataSource)[0]>
+        <Table<typeof dataSource[0]>
           columns={TableTaskColumns}
           dataSource={displayDataTaskHistory}
           rowKey={(record) => record.id}
@@ -820,13 +815,13 @@ export const AttendanceStaffAktivitasSection: FC<
                   >
                     Paid Leave
                   </Menu.Item>
-                  {/* <Menu.Item
+                  <Menu.Item
                     key={"overtime"}
                     onClick={() => setActiveSubmenu("overtime")}
                     disabled={!isAllowedToGetLeavesUser}
                   >
                     Overtime
-                  </Menu.Item> */}
+                  </Menu.Item>
                 </Menu>
               }
             >
@@ -893,7 +888,7 @@ export const AttendanceStaffAktivitasSection: FC<
           {activeSubmenu == "overtime" && isAllowedToAddLeaveUser && (
             <ButtonSys type={"primary"}>
               <div
-                onClick={() => setShowModalLeave(true)}
+                onClick={() => setShowModalOvertime(true)}
                 className={"flex items-center gap-2 "}
               >
                 <ClockCircleOutlined />
@@ -1071,18 +1066,19 @@ export const AttendanceStaffAktivitasSection: FC<
                 return `cursor-pointer`;
               }}
             />
-            <AttendanceStaffLeaveDrawer
+            <AttendanceStaffOvertimeDrawer
               getDataNew={fetchDataLeaves}
               dataToken={dataToken}
               idUser={idUser}
               username={username}
-              visible={showModalLeave}
+              visible={showModalOvertime}
+              action={activityDrawerState.openDrawerAs}
               activityFormId={activityDrawerState.selectedActivityFormId}
-              onClose={() => setShowModalLeave(false)}
+              onClose={() => setShowModalOvertime(false)}
             />
-            <AttendanceStaffLeaveDetailDrawer
+            <AttendanceStaffOvertimeDetailDrawer
               fetchData={fetchDataLeaves}
-              visible={showDetailCuti}
+              visible={false}
               dataDefault={dataDefault}
               dataToken={dataToken}
               onClose={cancelShowDetail}
