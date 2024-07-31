@@ -41,14 +41,10 @@ import { useGetUserAttendanceTodayActivities } from "apis/attendance";
  * Component AttendanceStaffAktivitasDrawer's props.
  */
 export interface IAttendanceStaffOvertimeDrawer {
-  action: "create" | "update";
-
   /**
    * Arg ini diperlukan untuk `action === "update"`.
    */
-  activityFormId?: number;
   username: string;
-  idUser: number;
   dataToken: string;
   visible: boolean;
   getDataNew: () => void;
@@ -60,16 +56,7 @@ export interface IAttendanceStaffOvertimeDrawer {
  */
 export const AttendanceAdminOvertimeDrawer: FC<
   IAttendanceStaffOvertimeDrawer
-> = ({
-  action = "create",
-  getDataNew,
-  visible,
-  onClose,
-  username,
-  dataToken,
-  idUser,
-  activityFormId,
-}) => {
+> = ({ getDataNew, visible, onClose, username, dataToken }) => {
   const [instanceForm] = Form.useForm();
 
   const { hasPermission } = useAccessControl();
@@ -211,7 +198,7 @@ export const AttendanceAdminOvertimeDrawer: FC<
 
   return (
     <Drawer
-      title={<h1 className="mig-body--bold">Request Overtime</h1>}
+      title={<h1 className="mig-body--bold">Apply Overtime</h1>}
       open={visible}
       width={400}
       onClose={onClose}
