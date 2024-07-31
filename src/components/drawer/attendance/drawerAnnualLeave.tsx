@@ -10,7 +10,7 @@ import React, { Dispatch, FC, SetStateAction, useState } from "react";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
-import { OneUserIconSvg, PdfIconSvg } from "components/icon";
+import { ArrowLeftIconSvg, OneUserIconSvg } from "components/icon";
 import { ModalAccept, ModalDelete } from "components/modal/modalConfirmation";
 import BadgeLeaveStatus from "components/screen/attendance/leave/BadgeLeaveStatus";
 
@@ -195,22 +195,29 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
         <p className="text-[#35763B] text-xs leading-4 font-medium">
           View Detail
         </p>
-        <ArrowRightOutlined size={16} color="#35763B" />
       </div>
     </div>
   );
 
   return (
     <Drawer
-      title={showData == "1" ? "Leave Issued Details" : "Employee Details"}
-      open={visible}
-      closeIcon={
-        showData == "2" ? (
-          <ArrowLeftOutlined size={24} color={"black"} />
+      title={
+        showData == "1" ? (
+          "Leave Issued Details"
         ) : (
-          <CloseOutlined size={24} color="black" />
+          <div className="flex items-center gap-3">
+            <button
+              className="hover:opacity-75 flex items-center "
+              onClick={() => setShowData("1")}
+            >
+              <ArrowLeftIconSvg size={20} color={"#808080"} />
+            </button>
+            <p>Employee Details</p>
+          </div>
         )
       }
+      open={visible}
+      closeIcon={showData == "1" && <CloseOutlined size={24} color="black" />}
       onClose={() => closeDrawerNew()}
       footer={
         showData == "1" &&
@@ -252,18 +259,18 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
             </div>
 
             {/* Leave Detail */}
-            <div className="flex justify-between items-center border-b p-4">
-              <div>
-                <p className={"mig-caption text-neutrals90"}>Issued Date</p>
-                <p className={"mig-body"}>
-                  {moment(dataDefault?.issued_date).format("DD MMMM YYYY")}
-                </p>
-              </div>
-
-              <BadgeLeaveStatus status={dataDefault?.status} />
-            </div>
 
             <div className="p-4 flex flex-col gap-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className={"mig-caption text-neutrals90"}>Issued Date</p>
+                  <p className={"mig-body"}>
+                    {moment(dataDefault?.issued_date).format("DD MMMM YYYY")}
+                  </p>
+                </div>
+
+                <BadgeLeaveStatus status={dataDefault?.status} />
+              </div>
               <div className="flex justify-between items-center">
                 <div>
                   <p className={"mig-caption text-neutrals90"}>Leave Date</p>
