@@ -35,6 +35,7 @@ import { useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
+import { AddNoteSvg, FileImportIconSvg, XIconSvg } from "components/icon";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
@@ -69,11 +70,6 @@ import {
 import { AttendanceTaskActivityService } from "apis/attendance/attendance-task-activity.service";
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
-import {
-  AddNoteSvg,
-  FileImportIconSvg,
-  XIconSvg,
-} from "../../../../components/icon";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
