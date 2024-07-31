@@ -811,8 +811,8 @@ const EditTablerIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-edit"
-      width="16"
-      height="16"
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props.color ?? "currentColor"}
@@ -833,8 +833,8 @@ const DeleteTablerIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-trash"
-      width="16"
-      height="16"
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth={props.strokeWidth ?? "1.5"}
       stroke={props.color ?? "currentColor"}
