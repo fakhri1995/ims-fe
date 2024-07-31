@@ -1,27 +1,55 @@
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
-import { useCallback, useRef } from "react";
+import { ReactNode, useCallback, useRef } from "react";
 
 import { notificationError } from "../lib/helper";
 import clsx from "clsx";
 
 const ButtonSys = ({
+  onClick,
   size,
   square,
   type = "default",
   children,
   color,
   submit,
-  onClick,
   form,
-  selected,
   onChangeGambar,
   disabled,
   loading = false,
   fullWidth,
   inputAccept, // only accept certain files type (`accept` <input>'s attribute)
-  inputMultiple = false,
   inputFileMaxSize = 5, // in MiB
+}: {
+  onClick?: () => void;
+  size?: "large";
+  square?: boolean;
+  type?:
+    | "primary"
+    | "default"
+    | "ghost"
+    | "dashed"
+    | "primaryInput"
+    | "defaultInput";
+  children?: ReactNode | string;
+  color?:
+    | "danger"
+    | "notice"
+    | "warning"
+    | "white"
+    | "mono30"
+    | "mono50"
+    | "mono100"
+    | "secondary100"
+    | string;
+  submit?: boolean;
+  form?: string;
+  onChangeGambar?: () => void;
+  disabled?: boolean;
+  loading?: boolean;
+  fullWidth?: boolean;
+  inputAccept?: string;
+  inputFileMaxSize?: number;
 }) => {
   // Reference to <input> element
   // we need to reset its value on each `onClick` event is fired up.
@@ -63,7 +91,7 @@ const ButtonSys = ({
       "w-full": fullWidth,
       "bg-disabled text-white border-disabled": disabled,
     },
-    "btn font-semibold border"
+    "btn font-medium border"
   );
 
   const buttonSolidColorsClassName = clsx({

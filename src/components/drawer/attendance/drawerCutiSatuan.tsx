@@ -31,6 +31,8 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
+import ButtonSys from "components/button";
+
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -54,23 +56,16 @@ import {
   IGetAgentsPaginateSucceedResponse,
 } from "apis/user";
 
-import PdfIcon from "assets/vectors/pdf-icon.svg";
-
-import {
-  AlerttriangleIconSvg,
-  CheckIconSvg,
-  CloseIconSvg,
-  InfoCircleIconSvg,
-  UserIconSvg,
-  UsercircleIconSvg,
-} from "../../icon";
+import DrawerCore from "../drawerCore";
 
 const DrawerCutiSatuan = ({
   dataToken,
   visible,
-  onvisible,
-  companyList,
   onCancel,
+}: {
+  dataToken: string;
+  visible: boolean;
+  onCancel: () => void;
 }) => {
   const [showData, setShowData] = useState("1");
   const axiosClient = useAxiosClient();
@@ -345,60 +340,60 @@ const DrawerCutiSatuan = ({
   };
 
   return (
-    <Drawer
-      width={550}
-      title={"Pengajuan Cuti Satuan"}
-      open={visible}
+    <DrawerCore
+      title={"Single Leave"}
+      visible={visible}
       onClose={onCancel}
-      footer={
-        <div className={"flex gap-4 justify-end p-6"}>
-          <div
-            onClick={onCancel}
-            className={
-              "bg-[#F3F3F3] py-2.5 px-8 rounded-[5px] hover:cursor-pointer"
-            }
-          >
-            <p className={"text-xs leading-5 text-[#808080] font-bold"}>
-              Batalkan
-            </p>
-          </div>
-          <div
-            onClick={() => instanceForm.submit()}
-            className={
-              "bg-[#35763B] flex gap-2 items-center py-2.5 px-8 rounded-[5px] hover:cursor-pointer"
-            }
-          >
-            {loadingSave && (
-              <Spin indicator={<LoadingOutlined style={{ fontSize: 12 }} />} />
-            )}
-            <p className="text-white text-xs leading-5 font-bold">Ajukan</p>
-          </div>
-        </div>
-      }
+      onButtonCancelClicked={onCancel}
+      buttonCancelText={"Cancel"}
+      onClick={() => instanceForm.submit()}
+      buttonOkText="Create Leave"
+      loading={loadingSave}
+
+      // footer={
+      //   <div className={"flex gap-4 justify-end p-6"}>
+      //     <div
+      //       onClick={onCancel}
+      //       className={
+      //         "bg-[#F3F3F3] py-2.5 px-8 rounded-[5px] hover:cursor-pointer"
+      //       }>
+      //       <p className={"text-xs leading-5 text-[#808080] font-bold"}>
+      //         Batalkan
+      //       </p>
+      //     </div>
+      //     <div
+      //       onClick={() => instanceForm.submit()}
+      //       className={
+      //         "bg-[#35763B] flex gap-2 items-center py-2.5 px-8 rounded-[5px] hover:cursor-pointer"
+      //       }>
+      //       {loadingSave && (
+      //         <Spin indicator={<LoadingOutlined style={{ fontSize: 12 }} />} />
+      //       )}
+      //       <p className="text-white text-xs leading-5 font-bold">Ajukan</p>
+      //     </div>
+      //   </div>
+      // }
     >
       <div className={"flex flex-col gap-8"}>
-        <p className={"text-xs leading-4 italic font-normal text-[#BF4A40]"}>
-          *Informasi ini harus diisi
-        </p>
         <Form layout="vertical" form={instanceForm} onFinish={handleSubmit}>
           <div>
-            <div className={"flex flex-col gap-2"}>
+            <div className={"flex flex-col "}>
               <Form.Item
-                label="Nama Karyawan"
+                label="Employee's Name"
                 name={"employee_id"}
                 className="col-span-2"
                 rules={[
                   {
                     required: true,
-                    message: "Nama Karyawan wajib diisi",
+                    message: "Employee Name is required",
                   },
                 ]}
               >
                 <Select
                   showSearch
-                  className="dontShow"
+                  // className="dontShow"
                   value={dataCuti?.employee_id}
-                  placeholder={"Cari Nama"}
+                  placeholder={"Search employee’s name"}
                   style={{ width: `100%` }}
                   onSearch={(value) => onSearchUsers(value, setDataEmployees)}
                   optionFilterProp="children"
@@ -424,7 +419,7 @@ const DrawerCutiSatuan = ({
                 </Select>
               </Form.Item>
             </div>
-            <div className="flex flex-wrap mb-4">
+            {/* <div className="flex flex-wrap mb-4">
               {dataCuti?.employee_id && (
                 <Tag
                   closable
@@ -434,8 +429,7 @@ const DrawerCutiSatuan = ({
                       employee_id: null,
                     }));
                   }}
-                  className="flex items-center p-2 w-max mb-2"
-                >
+                  className="flex items-center p-2 w-max mb-2">
                   <div className="flex items-center space-x-2">
                     <img
                       src={generateStaticAssetUrl(
@@ -452,26 +446,26 @@ const DrawerCutiSatuan = ({
                   </div>
                 </Tag>
               )}
-            </div>
+            </div> */}
             <Form.Item
-              label="Pilih Tanggal"
+              label="Select Leave Date"
               name={"tanggal_cuti"}
               rules={[
                 {
                   required: true,
-                  message: "Tanggal Cuti wajib diisi",
+                  message: "Leave Date is required",
                 },
 
                 { validator: validateRepetitionRange },
               ]}
-              className="col-span-2"
+              className="col-span-2 "
             >
               <DatePicker.RangePicker
                 locale={locale}
                 picker="date"
                 className="w-full"
                 format={"DD MMMM YYYY"}
-                placeholder={["Mulai", "Akhir"]}
+                placeholder={["Start", "End"]}
                 disabledDate={(current) => {
                   return (
                     moment(current).diff(moment(dataCuti.start_date), "days") >
@@ -503,39 +497,34 @@ const DrawerCutiSatuan = ({
                 }}
               />
             </Form.Item>
-            <div className={"flex flex-col gap-2"}>
-              <p
-                className={"mb-4 font-medium text-xs leading-5 text-[#4D4D4D]"}
-              >
-                Durasi Hari Cuti*
-              </p>
+            <div className={"flex flex-col gap-2 mb-4"}>
+              <p>Leave Duration</p>
               <Input
-                className={"h-[52px]"}
+                // className={"h-[52px]"}
                 disabled
                 value={
                   dataCuti.start_date && dataCuti.end_date
                     ? moment(dataCuti.end_date).diff(
                         moment(dataCuti.start_date),
                         "days"
-                      ) + " hari"
+                      ) + " days"
                     : ""
                 }
               />
             </div>
             <Form.Item
-              label="Tipe Cuti"
+              label="Leave Type"
               name={"tipe_cuti"}
-              className="col-span-2 mt-6"
+              className="col-span-2 "
               rules={[
                 {
                   required: true,
-                  message: "Tipe Cuti wajib diisi",
+                  message: "Leave Type is required",
                 },
               ]}
             >
               <Select
-                placeholder="Pilih Tipe Cuti"
-                size="large"
+                placeholder="Select Leave Type"
                 onChange={(value, option) => {
                   setDataCuti((prev) => ({
                     ...prev,
@@ -557,32 +546,47 @@ const DrawerCutiSatuan = ({
                 })}
               </Select>
             </Form.Item>
-            <div className={"mt-4 flex flex-col gap-2"}>
-              <Form.Item label="Catatan" name={"notes"} className="col-span-2">
-                <Input.TextArea
-                  rows={4}
-                  className={"h-[164px] border border-solid border-[#E6E6E6]"}
-                  placeholder="Masukan alasan Cuti"
-                />
-              </Form.Item>
-            </div>
+            {/* <div className={"mt-4 flex flex-col gap-2"}> */}
+            <Form.Item
+              label="Description"
+              name={"notes"}
+              className="col-span-2"
+              rules={[
+                {
+                  required: true,
+                  message: "Description is required",
+                },
+              ]}
+            >
+              <Input.TextArea
+                rows={4}
+                className={"h-[164px] border border-solid border-[#E6E6E6]"}
+                placeholder="Insert reason of taking leaves"
+              />
+            </Form.Item>
+            {/* </div> */}
             <div className={"mt-4 flex flex-col gap-2"}>
               <Form.Item
-                label="Delegasi Tugas"
+                label={
+                  <p>
+                    Task Delegation{" "}
+                    <span className="text-neutrals80">(Optional)</span>
+                  </p>
+                }
                 name={"delegate_id"}
                 className="col-span-2"
                 rules={[
                   {
                     required: false,
-                    message: "Delegasi Tugas wajib diisi",
+                    message: "Task Delegation is required",
                   },
                 ]}
               >
                 <Select
                   showSearch
-                  className="dontShow"
+                  // className="dontShow"
                   value={dataCuti?.delegasi}
-                  placeholder={"Cari Nama"}
+                  placeholder={"Search Name or manual input"}
                   style={{ width: `100%` }}
                   onSearch={(value) => onSearchUsers(value, setDataDelegates)}
                   optionFilterProp="children"
@@ -610,7 +614,7 @@ const DrawerCutiSatuan = ({
                 </Select>
               </Form.Item>
             </div>
-            <div className="flex flex-wrap mb-4">
+            {/* <div className="flex flex-wrap mb-4">
               {dataCuti?.delegasi && (
                 <Tag
                   closable
@@ -620,8 +624,7 @@ const DrawerCutiSatuan = ({
                       delegasi: null,
                     }));
                   }}
-                  className="flex items-center p-2 w-max mb-2"
-                >
+                  className="flex items-center p-2 w-max mb-2">
                   <div className="flex items-center space-x-2">
                     <img
                       src={generateStaticAssetUrl(
@@ -638,10 +641,10 @@ const DrawerCutiSatuan = ({
                   </div>
                 </Tag>
               )}
-            </div>
-            <div className={"mt-4 flex flex-col gap-2"}>
+            </div> */}
+            <div className={" flex flex-col gap-2"}>
               <Form.Item
-                label="Unggah Dokumen Pendukung"
+                label="Supporting File"
                 name={"dokumen"}
                 className="col-span-2"
                 rules={[
@@ -652,39 +655,40 @@ const DrawerCutiSatuan = ({
                         : dataCuti?.tipe_cuti?.is_document_required
                         ? true
                         : false,
-                    message: "Dokumen Pendukung wajib diisi",
+                    message: "Supporting File is required",
                   },
                 ]}
               >
-                <div className={"flex justify-between items-center"}>
-                  <p
-                    className={
-                      "text-[#808080] text-xs leading-4 font-normal italic"
-                    }
-                  >
-                    Unggah File (Maksimal 5 MB).
-                  </p>
+                <div className={""}>
                   <Upload
                     accept=".pdf"
                     multiple={false}
                     onChange={onChangeFile}
                   >
-                    <div
-                      className={
-                        "flex justify-center items-center gap-2 hover:cursor-pointer py-2 px-4 border border-[#35763B] rounded-[5px]"
-                      }
-                    >
-                      <UploadOutlined size={16} />
-                      <p>Unggah File</p>
-                    </div>
+                    <ButtonSys>
+                      <div
+                        className={"flex justify-center items-center gap-2 "}
+                      >
+                        <UploadOutlined size={16} />
+                        <p>Upload File</p>
+                      </div>
+                    </ButtonSys>
                   </Upload>
+
+                  <p
+                    className={
+                      "text-[#808080] text-xs leading-4 font-normal italic mt-2"
+                    }
+                  >
+                    Upload File (Max. 5 MB).
+                  </p>
                 </div>
               </Form.Item>
             </div>
           </div>
         </Form>
       </div>
-    </Drawer>
+    </DrawerCore>
   );
 };
 

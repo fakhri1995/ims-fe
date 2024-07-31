@@ -32,7 +32,15 @@ import {
   UsercircleIconSvg,
 } from "../../icon";
 
-const ModalPengajuanCuti = ({ visible, onClose, setShowDrawerCutiSatuan }) => {
+const ModalPengajuanCuti = ({
+  visible,
+  onClose,
+  setShowDrawerCutiSatuan,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  setShowDrawerCutiSatuan: () => void;
+}) => {
   const [statusActive, setStatusActive] = useState("1");
 
   const createCuti = () => {
@@ -46,43 +54,48 @@ const ModalPengajuanCuti = ({ visible, onClose, setShowDrawerCutiSatuan }) => {
     <Modal
       open={visible}
       onCancel={onClose}
+      className="modalCore"
       title={
         <div className={"flex justify-center"}>
           <p className={"text-[#4D4D4D] font-bold text-[16px] leading-6"}>
-            Pilih Pengajuan Cuti
+            Select Leave Request
           </p>
         </div>
       }
       footer={null}
     >
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 ">
         <div className={"flex justify-center gap-2"}>
           <div
             onClick={() => setStatusActive("1")}
             className={`${
-              statusActive == "1" ? "bg-[#35763B]" : "bg-white"
-            } px-4 py-2 rounded-[48px] hover:cursor-pointer`}
+              statusActive == "1" ? "bg-primary100" : "bg-transparent border"
+            } px-4 py-1 rounded-[48px] hover:cursor-pointer hover:bg-primary100 hover:text-white`}
           >
             <p
               className={`${
-                statusActive == "1" ? "text-white" : "text-[#CCCCCC]"
-              } text-xs leading-5 font-bold`}
+                statusActive == "1"
+                  ? "mig-body--medium text-white"
+                  : "mig-body text-neutrals70"
+              }`}
             >
-              Cuti Satuan
+              Single Leave
             </p>
           </div>
           <div
             onClick={() => setStatusActive("2")}
             className={`${
-              statusActive == "2" ? "bg-[#35763B]" : "bg-white"
-            } px-4 py-2 rounded-[48px] hover:cursor-pointer`}
+              statusActive == "2" ? "bg-primary100" : "bg-transparent border"
+            } px-4 py-1 rounded-[48px] hover:cursor-pointer hover:bg-primary100 hover:text-white`}
           >
             <p
               className={`${
-                statusActive == "2" ? "text-white" : "text-[#CCCCCC]"
-              } text-xs leading-5 font-bold`}
+                statusActive == "2"
+                  ? "mig-body--medium text-white"
+                  : "mig-body text-neutrals70"
+              } `}
             >
-              Cuti Bersama
+              Joint Leave
             </p>
           </div>
         </div>
@@ -91,8 +104,8 @@ const ModalPengajuanCuti = ({ visible, onClose, setShowDrawerCutiSatuan }) => {
         </div>
         <div className="flex justify-center">
           <p className={"text-[#4D4D4D] text-[14px] leading-6 font-medium "}>
-            Buat Pengajuan Cuti untuk{" "}
-            {statusActive == "1" ? "satu " : "seluruh "} karyawan
+            Create a leave request for
+            {statusActive == "1" ? " one " : " all "} employee.
           </p>
         </div>
         <div className={"flex justify-center"}>
@@ -101,7 +114,7 @@ const ModalPengajuanCuti = ({ visible, onClose, setShowDrawerCutiSatuan }) => {
             className="hover:cursor-pointer bg-[#35763B] rounded-[5px] py-2 px-6"
           >
             <p className="text-white font-bold text-xs leading-5">
-              Buat Cuti {statusActive == "1" ? "Satuan" : "Bersama"}
+              Make {statusActive == "1" ? "Single" : "Joint"} Leave Request
             </p>
           </div>
         </div>

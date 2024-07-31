@@ -34,7 +34,7 @@ import {
   UsercircleIconSvg,
 } from "../../icon";
 
-const ModalSetujuiCuti = ({ visible, onClose }) => {
+const ModalSetujuiCuti = () => {
   const [statusActive, setStatusActive] = useState("1");
 
   return (

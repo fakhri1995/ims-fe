@@ -140,8 +140,6 @@ const DrawerAnnouncementEmail = ({
       iconButtonText={<SendIconSvg size={16} color={"#FFF"} />}
       buttonOkText={"Kirim Pesan"}
       buttonCancelText={"Batalkan"}
-      submit={true}
-      form="formPesan"
       onClick={sendMailAnnouncement}
       onButtonCancelClicked={() => onvisible(false)}
       disabled={
@@ -149,6 +147,7 @@ const DrawerAnnouncementEmail = ({
         selectedStaffs?.length < 1 || // disable if "Pesan Untuk" is not yet filled
         (dataMail.publish_type == "pending" && !dataMail.publish_at) // disable if "Tanggal & Waktu Kirim" is not yet filled
       }
+      loading={loadingSendMailAnnouncement}
     >
       <Spin spinning={!dataAnnouncement ? null : loadingSendMailAnnouncement}>
         <div className="flex flex-col">

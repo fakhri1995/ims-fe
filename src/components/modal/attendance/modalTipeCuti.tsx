@@ -19,6 +19,7 @@ import {
   Tag,
   notification,
 } from "antd";
+import { SorterResult } from "antd/lib/table/interface";
 import {
   NumberParam,
   StringParam,
@@ -28,34 +29,43 @@ import {
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
-import { useAccessControl } from "contexts/access-control";
-
-import { LEAVE_TYPE_ADD } from "lib/features";
-
-import PengajuanCutiIcon from "assets/vectors/pengajuan-cuti.svg";
-
-import DrawerTipeCuti from "../../drawer/attendance/drawerTipeCuti";
+import ButtonSys from "components/button";
+import { AccessControl } from "components/features/AccessControl";
 import {
-  AlertCircleIconSvg,
-  CheckBoldSvg,
-  CheckIconSvg,
-  CloseIconSvg,
+  CirclePlusIconSvg,
   CloseOverlay,
   DeleteTablerIconSvg,
-  EditIconSvg,
   EditTablerIconSvg,
-  UserIconSvg,
-  UsercircleIconSvg,
-} from "../../icon";
+} from "components/icon";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  LEAVE_TYPE_ADD,
+  LEAVE_TYPE_DELETE,
+  LEAVE_TYPE_UPDATE,
+} from "lib/features";
+import {
+  notificationError,
+  notificationSuccess,
+  permissionWarningNotification,
+} from "lib/helper";
+
+import DrawerTipeCuti from "../../drawer/attendance/drawerTipeCuti";
+import { ModalDelete } from "../modalConfirmation";
 
 const ModalTipeCuti = ({ visible, onClose, initProps }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToAddLeaveType = hasPermission(LEAVE_TYPE_ADD);
+  const isAllowedToUpdateLeaveType = hasPermission(LEAVE_TYPE_UPDATE);
+  const isAllowedToDeleteLeaveType = hasPermission(LEAVE_TYPE_DELETE);
+
   const [statusActive, setStatusActive] = useState("1");
   const [dataTipeCutis, setDataTipeCutis] = useState([]);
   const [dataDefault, setDataDefault] = useState(null);
   const [rowstate, setrowstate] = useState(0);
   const [showDrawerCuti, setShowDrawerTipeCuti] = useState(false);
+  const [showModalConfirmDelete, setShowModalConfirmDelete] = useState(false);
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
@@ -77,10 +87,12 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
     total: null,
   });
   const [loadingTipeCuti, setLoadingTipeCuti] = useState(false);
-  const columnsTipeCuti = [
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const columnsTipeCuti: typeof dataDefault = [
     {
       title: "No",
       dataIndex: "num",
+      align: "center",
       render: (text, record, index) => {
         return {
           children: <>{index + 1}</>,
@@ -88,7 +100,7 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
       },
     },
     {
-      title: "Nama",
+      title: "Name",
       dataIndex: "name",
       render: (text, record, index) => {
         return {
@@ -97,25 +109,27 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
       },
     },
     {
-      title: "Cuti Tahunan",
+      title: "Annual Leave",
       dataIndex: "is_tahunan",
       render: (text, record, index) => {
         return {
-          children: <p>{record.is_tahunan ? "Mengurangi" : "Tidak"}</p>,
+          children: <p>{record.is_tahunan ? "Reduced" : "-"}</p>,
         };
       },
     },
     {
-      title: "File Pendukung",
+      title: "Supporting File",
       dataIndex: "is_document_required",
       render: (text, record, index) => {
         return {
-          children: <p>{record.is_document_required ? "Wajib" : "Opsional"}</p>,
+          children: (
+            <p>{record.is_document_required ? "Required" : "Optional"}</p>
+          ),
         };
       },
     },
     {
-      title: "Deskripsi",
+      title: "Description",
       dataIndex: "description",
       render: (text, record, index) => {
         return {
@@ -124,22 +138,23 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
       },
     },
     {
-      title: "Aksi",
+      title: "Actions",
       key: "action_button",
       dataIndex: "action_button",
+      align: "center",
       render: (text, record, index) => {
         return {
           children: (
-            <div className="flex flex-col md:flex-row gap-2 items-center">
+            <div className="flex flex-col md:flex-row gap-2 justify-center items-center">
               <div
                 className={"items-center hover:cursor-pointer"}
-                onClick={() => editData(record.id, record)}
+                onClick={() => editData(record)}
               >
                 <EditTablerIconSvg size={16} color={"#4D4D4D"} />
               </div>
               <div
                 className={"items-center hover:cursor-pointer"}
-                onClick={() => editData(record.id)}
+                onClick={() => handleDelete(record)}
               >
                 <DeleteTablerIconSvg size={16} color={"#BF4A40"} />
               </div>
@@ -150,9 +165,24 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
     },
   ];
 
-  const editData = (id, record) => {
+  const editData = (record) => {
     setDataDefault(record);
     setShowDrawerTipeCuti(true);
+  };
+
+  const closeDrawer = () => {
+    setDataDefault(null);
+    setShowDrawerTipeCuti(false);
+  };
+
+  const handleDelete = (record) => {
+    setDataDefault(record);
+    setShowModalConfirmDelete(true);
+  };
+
+  const closeModalDelete = () => {
+    setDataDefault(null);
+    setShowModalConfirmDelete(false);
   };
 
   useEffect(() => {
@@ -178,6 +208,40 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
       });
   };
 
+  const onDeleteType = (id) => {
+    if (!isAllowedToDeleteLeaveType) {
+      permissionWarningNotification("Menghapus", "Leave Type");
+      return;
+    }
+
+    setLoadingDelete(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteLeaveType `, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: id }),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          closeModalDelete();
+          fetchData();
+          notificationSuccess({
+            message: res2.message,
+            duration: 3,
+          });
+        } else {
+          notificationError({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      })
+      .finally(() => setLoadingDelete(false));
+  };
+
   return (
     <Modal
       width={600}
@@ -186,7 +250,7 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
       open={visible}
       title={
         <p className={"text-[#4D4D4D] text-[14px] leading-6 font-bold"}>
-          Daftar Tipe Cuti
+          Leave Types
         </p>
       }
       closeIcon={<CloseOverlay size={24} />}
@@ -209,7 +273,7 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
             record.status === 1 && `bg-bgBackdropOverdue`
           }`;
         }}
-        onChange={(pagination, filters, sorter, extra) => {
+        onChange={(pagination, filters, sorter: SorterResult<any>, extra) => {
           const sortTypePayload =
             sorter.order === "ascend"
               ? "asc"
@@ -225,27 +289,40 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
           });
         }}
       />
-      <div className={"flex justify-center mt-5"}>
-        {isAllowedToAddLeaveType && (
-          <div
-            onClick={() => setShowDrawerTipeCuti(true)}
-            className={
-              "flex justify-center px-6 py-2 bg-white border border-solid border-[#35763B] rounded-[5px] hover:cursor-pointer"
-            }
-          >
-            <p className="text-[#35763B] text-xs font-bold leading-5">
-              Tambah Tipe Cuti
-            </p>
+      <div className={"flex justify-center"}>
+        <ButtonSys
+          onClick={() => setShowDrawerTipeCuti(true)}
+          disabled={!isAllowedToAddLeaveType}
+        >
+          <div className={"flex justify-center items-center gap-2 "}>
+            <CirclePlusIconSvg />
+            <p>Add Leave Type</p>
           </div>
-        )}
+        </ButtonSys>
       </div>
       <DrawerTipeCuti
         visible={showDrawerCuti}
-        onClose={() => setShowDrawerTipeCuti(false)}
+        onClose={closeDrawer}
         fetchData={fetchData}
         initProps={initProps}
         dataDefault={dataDefault}
       />
+
+      <AccessControl hasPermission={LEAVE_TYPE_DELETE}>
+        <ModalDelete
+          visible={showModalConfirmDelete}
+          itemName="Leave Type"
+          loading={loadingDelete}
+          disabled={!isAllowedToDeleteLeaveType}
+          onOk={() => onDeleteType(dataDefault?.id)}
+          onCancel={closeModalDelete}
+        >
+          <p>
+            Are you sure you want to delete <strong>{dataDefault?.name}</strong>
+            ? This action cannot be undone.
+          </p>
+        </ModalDelete>
+      </AccessControl>
     </Modal>
   );
 };

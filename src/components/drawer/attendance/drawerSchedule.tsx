@@ -26,7 +26,7 @@ import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import AsyncSelect from "components/AsyncSelect";
-import ButtonSys from "components/button.js";
+import ButtonSys from "components/button";
 import {
   AlerttriangleIconSvg,
   CheckIconSvg,

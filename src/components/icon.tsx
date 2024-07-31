@@ -27,8 +27,8 @@ const TicketIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-ticket"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -49,8 +49,8 @@ const TicketIconSvg = (props) => {
 const TicketFilledIconSvg = (props) => {
   const ticketFilledIconSvg = () => (
     <svg
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 20 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -92,8 +92,8 @@ const TaskIconSvg = (props) => {
 const TaskFilledIconSvg = (props) => {
   const taskFilledIconSvg = () => (
     <svg
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -143,8 +143,8 @@ const CompanyIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-building-skyscraper"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -169,8 +169,8 @@ const UserIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-users"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -192,8 +192,8 @@ const FiturIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-stack"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -214,8 +214,8 @@ const AsetIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-box"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -237,8 +237,8 @@ const KatalogIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-tag"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -253,16 +253,16 @@ const KatalogIconSvg = (props) => {
   );
   return <Icon rev={""} component={katalogIconSvg} {...props}></Icon>;
 };
-const PakaiInternalIconSvg = ({ size, color }) => {
+const PakaiInternalIconSvg = (props) => {
   const pakaiinternalIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-building"
-      width={size ? size : "8"}
-      height={size ? size : "8"}
+      width={props.size ?? "8"}
+      height={props.size ?? "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#00589F"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -278,19 +278,19 @@ const PakaiInternalIconSvg = ({ size, color }) => {
       <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16" />
     </svg>
   );
-  return <Icon rev={""} component={pakaiinternalIconSvg}></Icon>;
+  return <Icon rev={""} component={pakaiinternalIconSvg} {...props}></Icon>;
 };
 
-const PakaiSewaIconSvg = ({ size, color }) => {
+const PakaiSewaIconSvg = (props) => {
   const pakaisewaIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-user-check"
-      width={size ? size : "8"}
-      height={size ? size : "8"}
+      width={props.size ?? "8"}
+      height={props.size ?? "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#00589F"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -301,18 +301,18 @@ const PakaiSewaIconSvg = ({ size, color }) => {
       <path d="M15 19l2 2l4 -4" />
     </svg>
   );
-  return <Icon rev={""} component={pakaisewaIconSvg}></Icon>;
+  return <Icon rev={""} component={pakaisewaIconSvg} {...props}></Icon>;
 };
-const TersediaIconSvg = ({ size, color }) => {
+const TersediaIconSvg = (props) => {
   const tersediaIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-check"
-      width={size ? size : "8"}
-      height={size ? size : "8"}
+      width={props.size ?? "8"}
+      height={props.size ?? "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#00589F"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -321,19 +321,19 @@ const TersediaIconSvg = ({ size, color }) => {
       <path d="M5 12l5 5l10 -10" />
     </svg>
   );
-  return <Icon rev={""} component={tersediaIconSvg}></Icon>;
+  return <Icon rev={""} component={tersediaIconSvg} {...props}></Icon>;
 };
 
-const SearchIconSvg = ({ size, color }) => {
+const SearchIconSvg = (props) => {
   const searchIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-search"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -343,13 +343,13 @@ const SearchIconSvg = ({ size, color }) => {
       <line x1={21} y1={21} x2={15} y2={15} />
     </svg>
   );
-  return <Icon rev={""} component={searchIconSvg}></Icon>;
+  return <Icon rev={""} component={searchIconSvg} {...props}></Icon>;
 };
 const NotifIconSvg = (props) => {
   const notifIconSvg = () => (
     <svg
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill={props?.color ?? "currentColor"}
       xmlns="http://www.w3.org/2000/svg"
@@ -362,16 +362,16 @@ const NotifIconSvg = (props) => {
   );
   return <Icon rev={""} component={notifIconSvg} {...props}></Icon>;
 };
-const Aset2IconSvg = ({ size, color }) => {
+const Aset2IconSvg = (props) => {
   const aset2IconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-box"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -383,15 +383,15 @@ const Aset2IconSvg = ({ size, color }) => {
       <line x1={12} y1={12} x2={4} y2="7.5" />
     </svg>
   );
-  return <Icon rev={""} component={aset2IconSvg}></Icon>;
+  return <Icon rev={""} component={aset2IconSvg} {...props}></Icon>;
 };
 const EditIconSvg = (props) => {
   const editIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-pencil"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -411,8 +411,8 @@ const EmailIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-mail"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -427,16 +427,16 @@ const EmailIconSvg = (props) => {
   );
   return <Icon rev={""} component={emailIconSvg} {...props}></Icon>;
 };
-const PhoneIconSvg = ({ size, color }) => {
+const PhoneIconSvg = (props) => {
   const phoneIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-phone"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -445,18 +445,18 @@ const PhoneIconSvg = ({ size, color }) => {
       <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" />
     </svg>
   );
-  return <Icon rev={""} component={phoneIconSvg}></Icon>;
+  return <Icon rev={""} component={phoneIconSvg} {...props}></Icon>;
 };
-const WebIconSvg = ({ size, color }) => {
+const WebIconSvg = (props) => {
   const webIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-world"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -469,18 +469,18 @@ const WebIconSvg = ({ size, color }) => {
       <path d="M12.5 3a17 17 0 0 1 0 18" />
     </svg>
   );
-  return <Icon rev={""} component={webIconSvg}></Icon>;
+  return <Icon rev={""} component={webIconSvg} {...props}></Icon>;
 };
-const LocationIconSvg = ({ size, color, id }) => {
+const LocationIconSvg = (props) => {
   const locationIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-building-community"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -493,18 +493,20 @@ const LocationIconSvg = ({ size, color, id }) => {
       <line x1={17} y1={15} x2={17} y2="15.01" />
     </svg>
   );
-  return <Icon rev={""} id={id} component={locationIconSvg}></Icon>;
+  return (
+    <Icon rev={""} id={props.id} component={locationIconSvg} {...props}></Icon>
+  );
 };
-const SubLocationIconSvg = ({ size, color }) => {
+const SubLocationIconSvg = (props) => {
   const sublocationIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-building"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -520,18 +522,18 @@ const SubLocationIconSvg = ({ size, color }) => {
       <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16" />
     </svg>
   );
-  return <Icon rev={""} component={sublocationIconSvg}></Icon>;
+  return <Icon rev={""} component={sublocationIconSvg} {...props}></Icon>;
 };
-const ShareIconSvg = ({ size, color, strokeWidth }) => {
+const ShareIconSvg = (props) => {
   const shareIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-share"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
-      strokeWidth={strokeWidth ? strokeWidth : "1.5"}
-      stroke={color}
+      strokeWidth={props.strokeWidth ?? "1.5"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -544,15 +546,15 @@ const ShareIconSvg = ({ size, color, strokeWidth }) => {
       <line x1="8.7" y1="13.3" x2="15.3" y2="16.7" />
     </svg>
   );
-  return <Icon rev={""} component={shareIconSvg}></Icon>;
+  return <Icon rev={""} component={shareIconSvg} {...props}></Icon>;
 };
 const TrashIconSvg = (props) => {
   const trashIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-trash"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -575,10 +577,10 @@ const CheckIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-check"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
+      strokeWidth="2"
       stroke={props?.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
@@ -590,16 +592,16 @@ const CheckIconSvg = (props) => {
   );
   return <Icon rev={""} component={checkIconSvg} {...props}></Icon>;
 };
-const BackIconSvg = ({ size, color }) => {
+const BackIconSvg = (props) => {
   const backIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-arrow-back-up"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -608,18 +610,18 @@ const BackIconSvg = ({ size, color }) => {
       <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1" />
     </svg>
   );
-  return <Icon rev={""} component={backIconSvg}></Icon>;
+  return <Icon rev={""} component={backIconSvg} {...props}></Icon>;
 };
-const SortingIconSvg = ({ size, color }) => {
+const SortingIconSvg = (props) => {
   const sortingIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-sort-ascending-letters"
-      width={size ? size : 24}
-      height={size ? size : 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#808080"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -631,15 +633,15 @@ const SortingIconSvg = ({ size, color }) => {
       <path d="M7 6v12" />
     </svg>
   );
-  return <Icon rev={""} component={sortingIconSvg}></Icon>;
+  return <Icon rev={""} component={sortingIconSvg} {...props}></Icon>;
 };
 const DownIconSvg = (props) => {
   const downIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-chevron-down"
-      width={props?.size ?? "20"}
-      height={props?.size ?? "20"}
+      width={props.size ?? "20"}
+      height={props.size ?? "20"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -653,16 +655,16 @@ const DownIconSvg = (props) => {
   );
   return <Icon rev={""} component={downIconSvg} {...props}></Icon>;
 };
-const UpIconSvg = ({ size, color }) => {
+const UpIconSvg = (props) => {
   const upIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-chevron-up"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -671,18 +673,18 @@ const UpIconSvg = ({ size, color }) => {
       <path d="M6 15l6 -6l6 6" />
     </svg>
   );
-  return <Icon rev={""} component={upIconSvg}></Icon>;
+  return <Icon rev={""} component={upIconSvg} {...props}></Icon>;
 };
-const ExternalLinkIconSvg = ({ size, color }) => {
+const ExternalLinkIconSvg = (props) => {
   const externallinkIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-external-link"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -693,18 +695,18 @@ const ExternalLinkIconSvg = ({ size, color }) => {
       <polyline points="15 4 20 4 20 9" />
     </svg>
   );
-  return <Icon rev={""} component={externallinkIconSvg}></Icon>;
+  return <Icon rev={""} component={externallinkIconSvg} {...props}></Icon>;
 };
-const CameraIconSvg = ({ size, color }) => {
+const CameraIconSvg = (props) => {
   const cameraIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-camera"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -714,18 +716,18 @@ const CameraIconSvg = ({ size, color }) => {
       <circle cx={12} cy={13} r={3} />
     </svg>
   );
-  return <Icon rev={""} component={cameraIconSvg}></Icon>;
+  return <Icon rev={""} component={cameraIconSvg} {...props}></Icon>;
 };
-const RefreshIconSvg = ({ size, color }) => {
+const RefreshIconSvg = (props) => {
   const refreshIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-refresh"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -735,18 +737,18 @@ const RefreshIconSvg = ({ size, color }) => {
       <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
     </svg>
   );
-  return <Icon rev={""} component={refreshIconSvg}></Icon>;
+  return <Icon rev={""} component={refreshIconSvg} {...props}></Icon>;
 };
-const ReplacementIconSvg = ({ size, color }) => {
+const ReplacementIconSvg = (props) => {
   const replacementIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-refresh"
-      width={size ? size : "8"}
-      height={size ? size : "8"}
+      width={props.size ?? "8"}
+      height={props.size ?? "8"}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#FFFFFF"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -756,16 +758,16 @@ const ReplacementIconSvg = ({ size, color }) => {
       <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
     </svg>
   );
-  return <Icon rev={""} component={replacementIconSvg}></Icon>;
+  return <Icon rev={""} component={replacementIconSvg} {...props}></Icon>;
 };
 
-const PeriodeIconSvg = ({ size, color }) => {
+const PeriodeIconSvg = (props) => {
   const periodeIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-clock"
-      width={size ? size : "8"}
-      height={size ? size : "8"}
+      width={props.size ?? "8"}
+      height={props.size ?? "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke="#FFFFFF"
@@ -778,19 +780,19 @@ const PeriodeIconSvg = ({ size, color }) => {
       <path d="M12 7v5l3 3" />
     </svg>
   );
-  return <Icon rev={""} component={periodeIconSvg}></Icon>;
+  return <Icon rev={""} component={periodeIconSvg} {...props}></Icon>;
 };
 
-const LuarPeriodeIconSvg = ({ size, color }) => {
+const LuarPeriodeIconSvg = (props) => {
   const luarperiodeIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-clock-exclamation"
-      width={size ? size : "8"}
-      height={size ? size : "8"}
+      width={props.size ?? "8"}
+      height={props.size ?? "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#FFFFFF"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -802,9 +804,9 @@ const LuarPeriodeIconSvg = ({ size, color }) => {
       <path d="M19 22v.01" />
     </svg>
   );
-  return <Icon rev={""} component={luarperiodeIconSvg}></Icon>;
+  return <Icon rev={""} component={luarperiodeIconSvg} {...props}></Icon>;
 };
-const EditTablerIconSvg = ({ size, color }) => {
+const EditTablerIconSvg = (props) => {
   const edittablerIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -813,7 +815,7 @@ const EditTablerIconSvg = ({ size, color }) => {
       height="16"
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#FFFFFF"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -824,9 +826,9 @@ const EditTablerIconSvg = ({ size, color }) => {
       <path d="M16 5l3 3" />
     </svg>
   );
-  return <Icon rev={""} component={edittablerIconSvg}></Icon>;
+  return <Icon rev={""} component={edittablerIconSvg} {...props}></Icon>;
 };
-const DeleteTablerIconSvg = ({ size, color, strokeWidth }) => {
+const DeleteTablerIconSvg = (props) => {
   const deletetablerIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -834,8 +836,8 @@ const DeleteTablerIconSvg = ({ size, color, strokeWidth }) => {
       width="16"
       height="16"
       viewBox="0 0 24 24"
-      strokeWidth={strokeWidth ? strokeWidth : "1.5"}
-      stroke={color ? color : "#FFFFFF"}
+      strokeWidth={props.strokeWidth ?? "1.5"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -848,19 +850,19 @@ const DeleteTablerIconSvg = ({ size, color, strokeWidth }) => {
       <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
     </svg>
   );
-  return <Icon rev={""} component={deletetablerIconSvg}></Icon>;
+  return <Icon rev={""} component={deletetablerIconSvg} {...props}></Icon>;
 };
 
-const SquarePlusIconSvg = ({ size, color }) => {
+const SquarePlusIconSvg = (props) => {
   const squareplusIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-square-plus"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -871,18 +873,18 @@ const SquarePlusIconSvg = ({ size, color }) => {
       <line x1={12} y1={9} x2={12} y2={15} />
     </svg>
   );
-  return <Icon rev={""} component={squareplusIconSvg}></Icon>;
+  return <Icon rev={""} component={squareplusIconSvg} {...props}></Icon>;
 };
-const NotesIconSvg = ({ size, color }) => {
+const NotesIconSvg = (props) => {
   const notesIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-notes"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -894,18 +896,18 @@ const NotesIconSvg = ({ size, color }) => {
       <line x1={9} y1={15} x2={13} y2={15} />
     </svg>
   );
-  return <Icon rev={""} component={notesIconSvg}></Icon>;
+  return <Icon rev={""} component={notesIconSvg} {...props}></Icon>;
 };
-const FaxIconSvg = ({ size, color }) => {
+const FaxIconSvg = (props) => {
   const faxIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-printer"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -916,18 +918,18 @@ const FaxIconSvg = ({ size, color }) => {
       <rect x={7} y={13} width={10} height={8} rx={2} />
     </svg>
   );
-  return <Icon rev={""} component={faxIconSvg}></Icon>;
+  return <Icon rev={""} component={faxIconSvg} {...props}></Icon>;
 };
-const PkpIconSvg = ({ size, color }) => {
+const PkpIconSvg = (props) => {
   const pkpIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-receipt-tax"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -939,15 +941,15 @@ const PkpIconSvg = ({ size, color }) => {
       <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16l-3 -2l-2 2l-2 -2l-2 2l-2 -2l-3 2" />
     </svg>
   );
-  return <Icon rev={""} component={pkpIconSvg}></Icon>;
+  return <Icon rev={""} component={pkpIconSvg} {...props}></Icon>;
 };
 const AlertIconSvg = (props) => {
   const alertIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-alert-circle"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -963,16 +965,16 @@ const AlertIconSvg = (props) => {
   );
   return <Icon rev={""} component={alertIconSvg} {...props}></Icon>;
 };
-const AlerttriangleIconSvg = ({ size, color }) => {
+const AlerttriangleIconSvg = (props) => {
   const alerttriangleIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-alert-triangle"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -982,18 +984,18 @@ const AlerttriangleIconSvg = ({ size, color }) => {
       <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
     </svg>
   );
-  return <Icon rev={""} component={alerttriangleIconSvg}></Icon>;
+  return <Icon rev={""} component={alerttriangleIconSvg} {...props}></Icon>;
 };
-const ClockIconSvg = ({ size, color }) => {
+const ClockIconSvg = (props) => {
   const clockIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-clock"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1003,7 +1005,7 @@ const ClockIconSvg = ({ size, color }) => {
       <polyline points="12 7 12 12 15 15" />
     </svg>
   );
-  return <Icon rev={""} component={clockIconSvg}></Icon>;
+  return <Icon rev={""} component={clockIconSvg} {...props}></Icon>;
 };
 
 const ClockIconFilledSvg = (props) => {
@@ -1011,8 +1013,8 @@ const ClockIconFilledSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-clock"
-      width={props?.size ?? "20"}
-      height={props?.size ?? "20"}
+      width={props.size ?? "20"}
+      height={props.size ?? "20"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={"white"}
@@ -1028,16 +1030,16 @@ const ClockIconFilledSvg = (props) => {
   return <Icon rev={""} component={clockIconFIlledSvg} {...props}></Icon>;
 };
 
-const ClockXIconSvg = ({ size, color }) => {
+const ClockXIconSvg = (props) => {
   const clockXIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-clock-x"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1049,7 +1051,7 @@ const ClockXIconSvg = ({ size, color }) => {
       <path d="M17 22l5 -5" />
     </svg>
   );
-  return <Icon rev={""} component={clockXIconSvg}></Icon>;
+  return <Icon rev={""} component={clockXIconSvg} {...props}></Icon>;
 };
 
 const ClipboardcheckIconSvg = (props) => {
@@ -1057,8 +1059,8 @@ const ClipboardcheckIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-clipboard-check"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1074,16 +1076,16 @@ const ClipboardcheckIconSvg = (props) => {
   );
   return <Icon rev={""} component={clipboardcheckIconSvg} {...props}></Icon>;
 };
-const CalendartimeIconSvg = ({ size, color }) => {
+const CalendartimeIconSvg = (props) => {
   const calendartimeIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-calendar-time"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1097,18 +1099,18 @@ const CalendartimeIconSvg = ({ size, color }) => {
       <path d="M18 16.496v1.504l1 1" />
     </svg>
   );
-  return <Icon rev={""} component={calendartimeIconSvg}></Icon>;
+  return <Icon rev={""} component={calendartimeIconSvg} {...props}></Icon>;
 };
-const MappinIconSvg = ({ size, color }) => {
+const MappinIconSvg = (props) => {
   const mappinIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-map-pin"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1118,18 +1120,18 @@ const MappinIconSvg = ({ size, color }) => {
       <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" />
     </svg>
   );
-  return <Icon rev={""} component={mappinIconSvg}></Icon>;
+  return <Icon rev={""} component={mappinIconSvg} {...props}></Icon>;
 };
-const AlignJustifiedIconSvg = ({ size, color }) => {
+const AlignJustifiedIconSvg = (props) => {
   const alignjustifiedIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-align-justified"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1140,18 +1142,18 @@ const AlignJustifiedIconSvg = ({ size, color }) => {
       <line x1={4} y1={18} x2={16} y2={18} />
     </svg>
   );
-  return <Icon rev={""} component={alignjustifiedIconSvg}></Icon>;
+  return <Icon rev={""} component={alignjustifiedIconSvg} {...props}></Icon>;
 };
-const CheckboxIconSvg = ({ size, color }) => {
+const CheckboxIconSvg = (props) => {
   const checkboxIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-checkbox"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1161,18 +1163,18 @@ const CheckboxIconSvg = ({ size, color }) => {
       <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
     </svg>
   );
-  return <Icon rev={""} component={checkboxIconSvg}></Icon>;
+  return <Icon rev={""} component={checkboxIconSvg} {...props}></Icon>;
 };
-const BorderAllSvg = ({ size, color }) => {
+const BorderAllSvg = (props) => {
   const borderallSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-border-all"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1183,18 +1185,18 @@ const BorderAllSvg = ({ size, color }) => {
       <line x1={12} y1={4} x2={12} y2={20} />
     </svg>
   );
-  return <Icon rev={""} component={borderallSvg}></Icon>;
+  return <Icon rev={""} component={borderallSvg} {...props}></Icon>;
 };
-const ListNumbersSvg = ({ size, color }) => {
+const ListNumbersSvg = (props) => {
   const listnumbersSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-list-numbers"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1207,18 +1209,18 @@ const ListNumbersSvg = ({ size, color }) => {
       <path d="M6 10v-6l-2 2" />
     </svg>
   );
-  return <Icon rev={""} component={listnumbersSvg}></Icon>;
+  return <Icon rev={""} component={listnumbersSvg} {...props}></Icon>;
 };
-const ListcheckIconSvg = ({ size, color }) => {
+const ListcheckIconSvg = (props) => {
   const listcheckIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-list-check"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1232,15 +1234,15 @@ const ListcheckIconSvg = ({ size, color }) => {
       <line x1={11} y1={18} x2={20} y2={18} />
     </svg>
   );
-  return <Icon rev={""} component={listcheckIconSvg}></Icon>;
+  return <Icon rev={""} component={listcheckIconSvg} {...props}></Icon>;
 };
 const CopyIconSvg = (props) => {
   const copyIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-copy"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1255,16 +1257,16 @@ const CopyIconSvg = (props) => {
   );
   return <Icon rev={""} component={copyIconSvg} {...props}></Icon>;
 };
-const ArrowsSortIconSvg = ({ size, color }) => {
+const ArrowsSortIconSvg = (props) => {
   const arrowsSortIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-arrows-sort"
-      width={size ? size : 24}
-      height={size ? size : 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#808080"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1274,15 +1276,15 @@ const ArrowsSortIconSvg = ({ size, color }) => {
       <path d="M21 15l-4 4l-4 -4m4 4v-14" />
     </svg>
   );
-  return <Icon rev={""} component={arrowsSortIconSvg}></Icon>;
+  return <Icon rev={""} component={arrowsSortIconSvg} {...props}></Icon>;
 };
 const UsercircleIconSvg = (props) => {
   const usercircleIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-user-circle"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1303,8 +1305,8 @@ const CircleXIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-circle-x"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1324,8 +1326,8 @@ const CircleXFilledIconSvg = (props) => {
   const circleXFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       fill={props?.color ?? "currentColor"}
       className="icon icon-tabler icons-tabler-filled icon-tabler-circle-x"
@@ -1337,16 +1339,16 @@ const CircleXFilledIconSvg = (props) => {
   return <Icon rev={""} component={circleXFilledIconSvg} {...props}></Icon>;
 };
 
-const RulerIconSvg = ({ size, color }) => {
+const RulerIconSvg = (props) => {
   const rulerIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-ruler"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1361,15 +1363,15 @@ const RulerIconSvg = ({ size, color }) => {
       <polyline points="16 4 16 6 " />
     </svg>
   );
-  return <Icon rev={""} component={rulerIconSvg}></Icon>;
+  return <Icon rev={""} component={rulerIconSvg} {...props}></Icon>;
 };
 const UserPlusIconSvg = (props) => {
   const userPlusIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-user-plus"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1385,16 +1387,16 @@ const UserPlusIconSvg = (props) => {
   );
   return <Icon rev={""} component={userPlusIconSvg} {...props}></Icon>;
 };
-const SortAscendingIconSvg = ({ size, color }) => {
+const SortAscendingIconSvg = (props) => {
   const sortAscendingIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-sort-ascending-letters"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1406,18 +1408,18 @@ const SortAscendingIconSvg = ({ size, color }) => {
       <path d="M7 6v12" />
     </svg>
   );
-  return <Icon rev={""} component={sortAscendingIconSvg}></Icon>;
+  return <Icon rev={""} component={sortAscendingIconSvg} {...props}></Icon>;
 };
-const SortDescendingIconSvg = ({ size, color }) => {
+const SortDescendingIconSvg = (props) => {
   const sortDescendingIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-sort-descending-letters"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1429,18 +1431,18 @@ const SortDescendingIconSvg = ({ size, color }) => {
       <path d="M7 6v12" />
     </svg>
   );
-  return <Icon rev={""} component={sortDescendingIconSvg}></Icon>;
+  return <Icon rev={""} component={sortDescendingIconSvg} {...props}></Icon>;
 };
-const ForbidIconSvg = ({ size, color }) => {
+const ForbidIconSvg = (props) => {
   const forbidIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-forbid"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1450,18 +1452,18 @@ const ForbidIconSvg = ({ size, color }) => {
       <line x1={9} y1={9} x2={15} y2={15} />
     </svg>
   );
-  return <Icon rev={""} component={forbidIconSvg}></Icon>;
+  return <Icon rev={""} component={forbidIconSvg} {...props}></Icon>;
 };
-const PlayerPauseIconSvg = ({ size, color }) => {
+const PlayerPauseIconSvg = (props) => {
   const playerPauseIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-player-pause"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1471,18 +1473,18 @@ const PlayerPauseIconSvg = ({ size, color }) => {
       <rect x={14} y={5} width={4} height={14} rx={1} />
     </svg>
   );
-  return <Icon rev={""} component={playerPauseIconSvg}></Icon>;
+  return <Icon rev={""} component={playerPauseIconSvg} {...props}></Icon>;
 };
-const PlayerPlayIconSvg = ({ size, color }) => {
+const PlayerPlayIconSvg = (props) => {
   const playerPlayIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-player-play"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1491,18 +1493,18 @@ const PlayerPlayIconSvg = ({ size, color }) => {
       <path d="M7 4v16l13 -8z" />
     </svg>
   );
-  return <Icon rev={""} component={playerPlayIconSvg}></Icon>;
+  return <Icon rev={""} component={playerPlayIconSvg} {...props}></Icon>;
 };
-const CloudUploadIconSvg = ({ size, color }) => {
+const CloudUploadIconSvg = (props) => {
   const cloudUploadIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-cloud-upload"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1513,18 +1515,18 @@ const CloudUploadIconSvg = ({ size, color }) => {
       <line x1={12} y1={12} x2={12} y2={21} />
     </svg>
   );
-  return <Icon rev={""} component={cloudUploadIconSvg}></Icon>;
+  return <Icon rev={""} component={cloudUploadIconSvg} {...props}></Icon>;
 };
-const PhotoIconSvg = ({ size, color }) => {
+const PhotoIconSvg = (props) => {
   const photoIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-photo"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1536,18 +1538,18 @@ const PhotoIconSvg = ({ size, color }) => {
       <path d="M14 14l1 -1a3 5 0 0 1 3 0l2 2" />
     </svg>
   );
-  return <Icon rev={""} component={photoIconSvg}></Icon>;
+  return <Icon rev={""} component={photoIconSvg} {...props}></Icon>;
 };
-const FileTextIconSvg = ({ size, color }) => {
+const FileTextIconSvg = (props) => {
   const fileTextIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-file-text"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1560,18 +1562,18 @@ const FileTextIconSvg = ({ size, color }) => {
       <line x1={9} y1={17} x2={15} y2={17} />
     </svg>
   );
-  return <Icon rev={""} component={fileTextIconSvg}></Icon>;
+  return <Icon rev={""} component={fileTextIconSvg} {...props}></Icon>;
 };
-const SendIconSvg = ({ size, color }) => {
+const SendIconSvg = (props) => {
   const sendIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-send"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1581,18 +1583,18 @@ const SendIconSvg = ({ size, color }) => {
       <path d="M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5" />
     </svg>
   );
-  return <Icon rev={""} component={sendIconSvg}></Icon>;
+  return <Icon rev={""} component={sendIconSvg} {...props}></Icon>;
 };
-const LayoutGridSvg = ({ size, color }) => {
+const LayoutGridSvg = (props) => {
   const layoutGridSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-layout-grid"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1604,18 +1606,18 @@ const LayoutGridSvg = ({ size, color }) => {
       <rect x="14" y="14" width="6" height="6" rx="1" />
     </svg>
   );
-  return <Icon rev={""} component={layoutGridSvg}></Icon>;
+  return <Icon rev={""} component={layoutGridSvg} {...props}></Icon>;
 };
-const LayoutGridAddSvg = ({ size, color }) => {
+const LayoutGridAddSvg = (props) => {
   const layoutGridAddSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-layout-grid-add"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1627,18 +1629,18 @@ const LayoutGridAddSvg = ({ size, color }) => {
       <path d="M14 17h6m-3 -3v6" />
     </svg>
   );
-  return <Icon rev={""} component={layoutGridAddSvg}></Icon>;
+  return <Icon rev={""} component={layoutGridAddSvg} {...props}></Icon>;
 };
-const FilePlusIconSvg = ({ size, color }) => {
+const FilePlusIconSvg = (props) => {
   const filePlusIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-file-plus"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1650,18 +1652,18 @@ const FilePlusIconSvg = ({ size, color }) => {
       <line x1={9} y1={14} x2={15} y2={14} />
     </svg>
   );
-  return <Icon rev={""} component={filePlusIconSvg}></Icon>;
+  return <Icon rev={""} component={filePlusIconSvg} {...props}></Icon>;
 };
-const TableExportIconSvg = ({ size, color }) => {
+const TableExportIconSvg = (props) => {
   const tableExportIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-table-export"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1670,19 +1672,19 @@ const TableExportIconSvg = ({ size, color }) => {
       <path d="M11.5 20h-5.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v7.5m-16 -3.5h16m-10 -6v16m4 -1h7m-3 -3l3 3l-3 3" />
     </svg>
   );
-  return <Icon rev={""} component={tableExportIconSvg}></Icon>;
+  return <Icon rev={""} component={tableExportIconSvg} {...props}></Icon>;
 };
 
-const TableImportIconSvg = ({ size, color }) => {
+const TableImportIconSvg = (props) => {
   const tableImportIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-table-import"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1695,7 +1697,7 @@ const TableImportIconSvg = ({ size, color }) => {
       <path d="M22 19l-3 -3l-3 3" />
     </svg>
   );
-  return <Icon rev={""} component={tableImportIconSvg}></Icon>;
+  return <Icon rev={""} component={tableImportIconSvg} {...props}></Icon>;
 };
 
 const FileExportIconSvg = (props) => {
@@ -1703,8 +1705,8 @@ const FileExportIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-file-export"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1719,16 +1721,16 @@ const FileExportIconSvg = (props) => {
   );
   return <Icon rev={""} component={fileExportIconSvg} {...props}></Icon>;
 };
-const DotsIconSvg = ({ size, color }) => {
+const DotsIconSvg = (props) => {
   const dotsIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-dots"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1739,18 +1741,18 @@ const DotsIconSvg = ({ size, color }) => {
       <circle cx={19} cy={12} r={1} />
     </svg>
   );
-  return <Icon rev={""} component={dotsIconSvg}></Icon>;
+  return <Icon rev={""} component={dotsIconSvg} {...props}></Icon>;
 };
-const UserSearchIconSvg = ({ size, color }) => {
+const UserSearchIconSvg = (props) => {
   const userSearchIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-user-search"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1762,15 +1764,15 @@ const UserSearchIconSvg = ({ size, color }) => {
       <path d="M18.5 19.5l2.5 2.5" />
     </svg>
   );
-  return <Icon rev={""} component={userSearchIconSvg}></Icon>;
+  return <Icon rev={""} component={userSearchIconSvg} {...props}></Icon>;
 };
 const InfoCircleIconSvg = (props) => {
   const infoCircleIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-info-circle"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1791,8 +1793,8 @@ const InfoCircleFilledIconSvg = (props) => {
   const infoCircleFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       fill={props?.color ?? "currentColor"}
       className="icon icon-tabler icons-tabler-filled icon-tabler-info-circle"
@@ -1804,16 +1806,16 @@ const InfoCircleFilledIconSvg = (props) => {
   return <Icon rev={""} component={infoCircleFilledIconSvg} {...props}></Icon>;
 };
 
-const PlusIconSvg = ({ size, color }) => {
+const PlusIconSvg = (props) => {
   const plusIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-plus"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#FFFFFF"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1823,15 +1825,15 @@ const PlusIconSvg = ({ size, color }) => {
       <line x1={5} y1={12} x2={19} y2={12} />
     </svg>
   );
-  return <Icon rev={""} component={plusIconSvg}></Icon>;
+  return <Icon rev={""} component={plusIconSvg} {...props}></Icon>;
 };
 const XIconSvg = (props) => {
   const xIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-x"
-      width={props?.size ?? 24}
-      height={props?.size ?? 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -1851,8 +1853,8 @@ const HistoryIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-history"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth={props?.strokeWidth ?? "1.5"}
       stroke={props?.color ?? "currentColor"}
@@ -1867,16 +1869,16 @@ const HistoryIconSvg = (props) => {
   );
   return <Icon rev={""} component={historyIconSvg} {...props}></Icon>;
 };
-const AdjusmentsHorizontalIconSvg = ({ size, color }) => {
+const AdjusmentsHorizontalIconSvg = (props) => {
   const adjusmentsHorizontalIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-adjustments-horizontal"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1893,9 +1895,11 @@ const AdjusmentsHorizontalIconSvg = ({ size, color }) => {
       <line x1={19} y1={18} x2={20} y2={18} />
     </svg>
   );
-  return <Icon rev={""} component={adjusmentsHorizontalIconSvg}></Icon>;
+  return (
+    <Icon rev={""} component={adjusmentsHorizontalIconSvg} {...props}></Icon>
+  );
 };
-const ArmChairlIconSvg = ({ size, color }) => {
+const ArmChairlIconSvg = (props) => {
   const armChairlIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -1916,13 +1920,13 @@ const ArmChairlIconSvg = ({ size, color }) => {
       <path d="M18 19v2" />
     </svg>
   );
-  return <Icon rev={""} component={armChairlIconSvg}></Icon>;
+  return <Icon rev={""} component={armChairlIconSvg} {...props}></Icon>;
 };
-const AssetIconSvg = ({ size, color }) => {
+const AssetIconSvg = (props) => {
   const assetIconSvg = () => (
     <svg
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 72 73"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -1981,13 +1985,13 @@ const AssetIconSvg = ({ size, color }) => {
       </defs>
     </svg>
   );
-  return <Icon rev={""} component={assetIconSvg}></Icon>;
+  return <Icon rev={""} component={assetIconSvg} {...props}></Icon>;
 };
-const MoveIconSvg = ({ size, color }) => {
+const MoveIconSvg = (props) => {
   const moveIconSvg = () => (
     <svg
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 16 12"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -2054,7 +2058,7 @@ const MoveIconSvg = ({ size, color }) => {
       </defs>
     </svg>
   );
-  return <Icon rev={""} component={moveIconSvg}></Icon>;
+  return <Icon rev={""} component={moveIconSvg} {...props}></Icon>;
 };
 const ContractIconSvg = () => {
   const contractIconSvg = () => (
@@ -2179,58 +2183,12 @@ const IconBroadcast = (props) => {
     </svg>
   );
   return (
-    <Icon rev={""} component={svgbroadcast} style={{ marginRight: `0.5rem` }} />
-  );
-};
-
-const Iconquestion = (props) => {
-  const svgquestion = () => (
-    <svg
-      version="1.1"
-      id="Capa_1"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
-      width={props.width ?? 40}
-      height={props.height ?? 40}
-      viewBox="0 0 356.62 356.62"
-      style={{ enableBackground: "new 0 0 356.62 356.62" }}
-      xmlSpace="preserve"
-    >
-      <g>
-        <path
-          d="M178.31,0C79.99,0,0,79.99,0,178.311S79.99,356.62,178.31,356.62s178.31-79.989,178.31-178.31S276.63,0,178.31,0z
-		 M178.31,326.62C96.532,326.62,30,260.089,30,178.311S96.532,30,178.31,30s148.31,66.532,148.31,148.311
-		S260.088,326.62,178.31,326.62z"
-          fill="#0f93ff"
-        />
-        <path
-          d="M178.31,66.949c-35.58,0-64.527,28.947-64.527,64.527c0,8.284,6.716,15,15,15s15-6.716,15-15
-		c0-19.038,15.489-34.527,34.527-34.527s34.527,15.489,34.527,34.527s-15.489,34.527-34.527,34.527c-8.284,0-15,6.716-15,15v33.915
-		c0,8.284,6.716,15,15,15s15-6.716,15-15v-20.675c28.371-6.779,49.527-32.35,49.527-62.768
-		C242.837,95.896,213.89,66.949,178.31,66.949z"
-          fill="#0f93ff"
-        />
-        <circle cx="178.31" cy="265.899" r="20.999" fill="#0f93ff" />
-      </g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-    </svg>
-  );
-  return (
-    <Icon rev={""} component={svgquestion} style={{ marginRight: `0.5rem` }} />
+    <Icon
+      rev={""}
+      component={svgbroadcast}
+      style={{ marginRight: `0.5rem` }}
+      {...props}
+    />
   );
 };
 
@@ -2239,8 +2197,8 @@ const ResumeIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-file-text"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2257,16 +2215,16 @@ const ResumeIconSvg = (props) => {
   return <Icon rev={""} component={resumeIconSvg} {...props}></Icon>;
 };
 
-const ClipboardIconSvg = ({ size, color }) => {
+const ClipboardIconSvg = (props) => {
   const clipboardIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-clipboard"
-      width={size}
-      height={size}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={props.color ?? "currentColor"}
       fill="none"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -2274,7 +2232,7 @@ const ClipboardIconSvg = ({ size, color }) => {
       <rect x="9" y="3" width="6" height="4" rx="2" />
     </svg>
   );
-  return <Icon rev={""} component={clipboardIconSvg}></Icon>;
+  return <Icon rev={""} component={clipboardIconSvg} {...props}></Icon>;
 };
 
 const UsersIconSvg = (props) => {
@@ -2282,8 +2240,8 @@ const UsersIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-users"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2304,8 +2262,8 @@ const UsersFilledIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-users"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2326,8 +2284,8 @@ const DownloadIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-download"
-      width={props?.size ?? "20"}
-      height={props?.size ?? "20"}
+      width={props.size ?? "20"}
+      height={props.size ?? "20"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2342,7 +2300,7 @@ const DownloadIconSvg = (props) => {
   return <Icon rev={""} component={downloadIconSvg} {...props}></Icon>;
 };
 
-const DownloadIcon2Svg = ({ size, color }) => {
+const DownloadIcon2Svg = (props) => {
   const downloadIcon2Svg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -2362,19 +2320,19 @@ const DownloadIcon2Svg = ({ size, color }) => {
       <path d="M12 4l0 12" />
     </svg>
   );
-  return <Icon rev={""} component={downloadIcon2Svg}></Icon>;
+  return <Icon rev={""} component={downloadIcon2Svg} {...props}></Icon>;
 };
 
-const OneUserIconSvg = ({ size, color, strokeWidth }) => {
+const OneUserIconSvg = (props) => {
   const oneUserIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-user"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
-      strokeWidth={strokeWidth ? strokeWidth : "1.5"}
-      stroke={color ? color : "#597e8d"}
+      strokeWidth={props.strokeWidth ?? "1.5"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2384,19 +2342,19 @@ const OneUserIconSvg = ({ size, color, strokeWidth }) => {
       <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
     </svg>
   );
-  return <Icon rev={""} component={oneUserIconSvg}></Icon>;
+  return <Icon rev={""} component={oneUserIconSvg} {...props}></Icon>;
 };
 
-const ListSearchIconSvg = ({ size, color }) => {
+const ListSearchIconSvg = (props) => {
   const listSearchIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-list-search"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2409,18 +2367,18 @@ const ListSearchIconSvg = ({ size, color }) => {
       <path d="M4 18h4" />
     </svg>
   );
-  return <Icon rev={""} component={listSearchIconSvg}></Icon>;
+  return <Icon rev={""} component={listSearchIconSvg} {...props}></Icon>;
 };
-const MailForwardIconSvg = ({ size, color }) => {
+const MailForwardIconSvg = (props) => {
   const mailForwardIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-mail-forward"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2432,7 +2390,7 @@ const MailForwardIconSvg = ({ size, color }) => {
       <path d="M18 15l3 3l-3 3" />
     </svg>
   );
-  return <Icon rev={""} component={mailForwardIconSvg}></Icon>;
+  return <Icon rev={""} component={mailForwardIconSvg} {...props}></Icon>;
 };
 
 const TrendingUpIconSvg = (props) => {
@@ -2440,8 +2398,8 @@ const TrendingUpIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-trending-up"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2462,8 +2420,8 @@ const InfoSquareIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-info-square"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2485,8 +2443,8 @@ const BriefcaseIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-briefcase"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2509,8 +2467,8 @@ const ClickIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-click"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2535,8 +2493,8 @@ const UserCheckIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-user-check"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2558,8 +2516,8 @@ const CirclePlusIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-circle-plus"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2576,16 +2534,16 @@ const CirclePlusIconSvg = (props) => {
   return <Icon rev={""} component={circlePlusIconSvg} {...props}></Icon>;
 };
 
-const UploadIconSvg = ({ size, color }) => {
+const UploadIconSvg = (props) => {
   const uploadIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-upload"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2596,7 +2554,7 @@ const UploadIconSvg = ({ size, color }) => {
       <line x1="12" y1="4" x2="12" y2="16" />
     </svg>
   );
-  return <Icon rev={""} component={uploadIconSvg}></Icon>;
+  return <Icon rev={""} component={uploadIconSvg} {...props}></Icon>;
 };
 
 const RightIconSvg = (props) => {
@@ -2604,8 +2562,8 @@ const RightIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-chevron-right"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="2"
       stroke={props?.color ?? "currentColor"}
@@ -2625,8 +2583,8 @@ const LeftIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-chevron-left"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="2"
       stroke={props?.color ?? "currentColor"}
@@ -2646,8 +2604,8 @@ const CircleCheckIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-circle-check"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2667,8 +2625,8 @@ const CircleCheckFilledIconSvg = (props) => {
   const circleCheckFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill={props?.color ?? "currentColor"}
       className="icon icon-tabler icons-tabler-filled icon-tabler-circle-check"
@@ -2680,16 +2638,16 @@ const CircleCheckFilledIconSvg = (props) => {
   return <Icon rev={""} component={circleCheckFilledIconSvg} {...props}></Icon>;
 };
 
-const LogoutIconSvg = ({ size, color }) => {
+const LogoutIconSvg = (props) => {
   const logoutIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-logout"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2699,19 +2657,19 @@ const LogoutIconSvg = ({ size, color }) => {
       <path d="M7 12h14l-3 -3m0 6l3 -3" />
     </svg>
   );
-  return <Icon rev={""} component={logoutIconSvg}></Icon>;
+  return <Icon rev={""} component={logoutIconSvg} {...props}></Icon>;
 };
 
-const ClipboardListIconSvg = ({ size, color }) => {
+const ClipboardListIconSvg = (props) => {
   const clipboardListIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-clipboard-list"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2725,19 +2683,19 @@ const ClipboardListIconSvg = ({ size, color }) => {
       <line x1="13" y1="16" x2="15" y2="16" />
     </svg>
   );
-  return <Icon rev={""} component={clipboardListIconSvg}></Icon>;
+  return <Icon rev={""} component={clipboardListIconSvg} {...props}></Icon>;
 };
 
-const SettingsIconSvg = ({ size, color }) => {
+const SettingsIconSvg = (props) => {
   const settingsIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-settings"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2747,19 +2705,19 @@ const SettingsIconSvg = ({ size, color }) => {
       <circle cx="12" cy="12" r="3" />
     </svg>
   );
-  return <Icon rev={""} component={settingsIconSvg}></Icon>;
+  return <Icon rev={""} component={settingsIconSvg} {...props}></Icon>;
 };
 
-const EyeCheckIconSvg = ({ size, color }) => {
+const EyeCheckIconSvg = (props) => {
   const eyeCheckIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-eye-check"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2770,19 +2728,19 @@ const EyeCheckIconSvg = ({ size, color }) => {
       <path d="M15 19l2 2l4 -4" />
     </svg>
   );
-  return <Icon rev={""} component={eyeCheckIconSvg}></Icon>;
+  return <Icon rev={""} component={eyeCheckIconSvg} {...props}></Icon>;
 };
 
-const EyeIconSvg = ({ size, color }) => {
+const EyeIconSvg = (props) => {
   const eyeIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-eye"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2792,7 +2750,7 @@ const EyeIconSvg = ({ size, color }) => {
       <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
     </svg>
   );
-  return <Icon rev={""} component={eyeIconSvg}></Icon>;
+  return <Icon rev={""} component={eyeIconSvg} {...props}></Icon>;
 };
 
 const FoldersIconSvg = (props) => {
@@ -2800,8 +2758,8 @@ const FoldersIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-folders"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -2817,16 +2775,16 @@ const FoldersIconSvg = (props) => {
   return <Icon rev={""} component={foldersIconSvg} {...props}></Icon>;
 };
 
-const EditSquareIconSvg = ({ size, color }) => {
+const EditSquareIconSvg = (props) => {
   const editSquareIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-edit"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2837,18 +2795,18 @@ const EditSquareIconSvg = ({ size, color }) => {
       <line x1="16" y1="5" x2="19" y2="8" />
     </svg>
   );
-  return <Icon rev={""} component={editSquareIconSvg}></Icon>;
+  return <Icon rev={""} component={editSquareIconSvg} {...props}></Icon>;
 };
-const AlertCircleIconSvg = ({ size, color }) => {
+const AlertCircleIconSvg = (props) => {
   const alertCircleIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-alert-circle"
-      width={size ? size : 24}
-      height={size ? size : 24}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#BF4A40"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2859,19 +2817,19 @@ const AlertCircleIconSvg = ({ size, color }) => {
       <path d="M12 16h.01" />
     </svg>
   );
-  return <Icon rev={""} component={alertCircleIconSvg}></Icon>;
+  return <Icon rev={""} component={alertCircleIconSvg} {...props}></Icon>;
 };
 
-const PaperclipIconSvg = ({ size, color }) => {
+const PaperclipIconSvg = (props) => {
   const paperclipIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-paperclip"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2880,19 +2838,19 @@ const PaperclipIconSvg = ({ size, color }) => {
       <path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5" />
     </svg>
   );
-  return <Icon rev={""} component={paperclipIconSvg}></Icon>;
+  return <Icon rev={""} component={paperclipIconSvg} {...props}></Icon>;
 };
 
-const WritingIconSvg = ({ size, color }) => {
+const WritingIconSvg = (props) => {
   const writingIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-writing"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2903,19 +2861,19 @@ const WritingIconSvg = ({ size, color }) => {
       <path d="M18 19h-13a2 2 0 1 1 0 -4h4a2 2 0 1 0 0 -4h-3" />
     </svg>
   );
-  return <Icon rev={""} component={writingIconSvg}></Icon>;
+  return <Icon rev={""} component={writingIconSvg} {...props}></Icon>;
 };
 
-const CutIconSvg = ({ size, color }) => {
+const CutIconSvg = (props) => {
   const cutIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-cut"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2927,19 +2885,19 @@ const CutIconSvg = ({ size, color }) => {
       <path d="M6 4l8.85 10.85" />
     </svg>
   );
-  return <Icon rev={""} component={cutIconSvg}></Icon>;
+  return <Icon rev={""} component={cutIconSvg} {...props}></Icon>;
 };
 
-const BellRingingIconSvg = ({ size, color }) => {
+const BellRingingIconSvg = (props) => {
   const bellRingingIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-bell-ringing"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2951,15 +2909,15 @@ const BellRingingIconSvg = ({ size, color }) => {
       <path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727" />
     </svg>
   );
-  return <Icon rev={""} component={bellRingingIconSvg}></Icon>;
+  return <Icon rev={""} component={bellRingingIconSvg} {...props}></Icon>;
 };
 
 const FileImportIconSvg = (props) => {
   const fileImportIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 16}
-      height={props?.size ?? 16}
+      width={props.size ?? 16}
+      height={props.size ?? 16}
       viewBox="0 0 16 16"
       fill="none"
     >
@@ -2978,16 +2936,16 @@ const FileImportIconSvg = (props) => {
   return <Icon rev={""} component={fileImportIconSvg} {...props}></Icon>;
 };
 
-const SquareCheckIconSvg = ({ size, color }) => {
+const SquareCheckIconSvg = (props) => {
   const squareCheckIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-square-check"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -2997,19 +2955,19 @@ const SquareCheckIconSvg = ({ size, color }) => {
       <path d="M9 12l2 2l4 -4" />
     </svg>
   );
-  return <Icon rev={""} component={squareCheckIconSvg}></Icon>;
+  return <Icon rev={""} component={squareCheckIconSvg} {...props}></Icon>;
 };
 
-const ArrowNarrowRightIconSvg = ({ size, color }) => {
+const ArrowNarrowRightIconSvg = (props) => {
   const arrowNarrowRightIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-arrow-narrow-right"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3020,19 +2978,19 @@ const ArrowNarrowRightIconSvg = ({ size, color }) => {
       <path d="M15 8l4 4" />
     </svg>
   );
-  return <Icon rev={""} component={arrowNarrowRightIconSvg}></Icon>;
+  return <Icon rev={""} component={arrowNarrowRightIconSvg} {...props}></Icon>;
 };
 
-const ArrowLeftIconSvg = ({ size, color }) => {
+const ArrowLeftIconSvg = (props) => {
   const arrowLeftIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-arrow-left"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3043,15 +3001,15 @@ const ArrowLeftIconSvg = ({ size, color }) => {
       <path d="M5 12l6 -6" />
     </svg>
   );
-  return <Icon rev={""} component={arrowLeftIconSvg}></Icon>;
+  return <Icon rev={""} component={arrowLeftIconSvg} {...props}></Icon>;
 };
 
 const ArrowRightIconSvg = (props) => {
   const arrowRightIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -3069,16 +3027,16 @@ const ArrowRightIconSvg = (props) => {
   return <Icon rev={""} component={arrowRightIconSvg} {...props}></Icon>;
 };
 
-const CalendarEventIconSvg = ({ size, color }) => {
+const CalendarEventIconSvg = (props) => {
   const calendarEventIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-calendar-event"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3091,19 +3049,19 @@ const CalendarEventIconSvg = ({ size, color }) => {
       <path d="M8 15h2v2h-2z" />
     </svg>
   );
-  return <Icon rev={""} component={calendarEventIconSvg}></Icon>;
+  return <Icon rev={""} component={calendarEventIconSvg} {...props}></Icon>;
 };
 
-const FileDownloadIconSvg = ({ size, color }) => {
+const FileDownloadIconSvg = (props) => {
   const fileDownloadIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-file-download"
-      width={size ? size : 20}
-      height={size ? size : 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color ? color : "#4D4D4D"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3115,7 +3073,7 @@ const FileDownloadIconSvg = ({ size, color }) => {
       <path d="M9.5 14.5l2.5 2.5l2.5 -2.5" />
     </svg>
   );
-  return <Icon rev={""} component={fileDownloadIconSvg}></Icon>;
+  return <Icon rev={""} component={fileDownloadIconSvg} {...props}></Icon>;
 };
 
 const KehadiranCompanyIconSvg = (props) => {
@@ -3153,7 +3111,7 @@ const ProyekCompanyIconSvg = (props) => {
   return <Icon rev={""} component={proyekCompanyIconSvg} {...props}></Icon>;
 };
 
-const TautanIconSvg = ({ size, color }) => {
+const TautanIconSvg = (props) => {
   const tautanIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -3178,7 +3136,7 @@ const TautanIconSvg = ({ size, color }) => {
       />
     </svg>
   );
-  return <Icon rev={""} component={tautanIconSvg}></Icon>;
+  return <Icon rev={""} component={tautanIconSvg} {...props}></Icon>;
 };
 
 const DashboardCompanyIconSvg = (props) => {
@@ -3235,16 +3193,16 @@ const DashboardCompanyIconSvg = (props) => {
   return <Icon rev={""} component={dashboardCompanyIconSvg} {...props}></Icon>;
 };
 
-const NewsIconSvg = ({ size, color }) => {
+const NewsIconSvg = (props) => {
   const newsIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-news"
-      width={size ? size : "8"}
-      height={size ? size : "8"}
+      width={props.size ?? "8"}
+      height={props.size ?? "8"}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#35763B"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3256,10 +3214,10 @@ const NewsIconSvg = ({ size, color }) => {
       <path d="M8 16l4 0"></path>
     </svg>
   );
-  return <Icon rev={""} component={newsIconSvg}></Icon>;
+  return <Icon rev={""} component={newsIconSvg} {...props}></Icon>;
 };
 
-const TimelineIconSvg = ({ size, color }) => {
+const TimelineIconSvg = (props) => {
   const timelineIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -3286,19 +3244,19 @@ const TimelineIconSvg = ({ size, color }) => {
       </defs>
     </svg>
   );
-  return <Icon rev={""} component={timelineIconSvg}></Icon>;
+  return <Icon rev={""} component={timelineIconSvg} {...props}></Icon>;
 };
 
-const SchoolIconSvg = ({ size, color }) => {
+const SchoolIconSvg = (props) => {
   const schoolIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-school"
-      width={size ? size : "8"}
-      height={size ? size : "8"}
+      width={props.size ?? "8"}
+      height={props.size ?? "8"}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#35763B"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3308,19 +3266,19 @@ const SchoolIconSvg = ({ size, color }) => {
       <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
     </svg>
   );
-  return <Icon rev={""} component={schoolIconSvg}></Icon>;
+  return <Icon rev={""} component={schoolIconSvg} {...props}></Icon>;
 };
 
-const ArrowUpRightIconSvg = ({ size, color }) => {
+const ArrowUpRightIconSvg = (props) => {
   const arrowUpRightlIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-arrow-up-right"
-      width={size ? size : "8"}
-      height={size ? size : "8"}
+      width={props.size ?? "8"}
+      height={props.size ?? "8"}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#35763B"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3330,19 +3288,19 @@ const ArrowUpRightIconSvg = ({ size, color }) => {
       <path d="M8 7l9 0l0 9" />
     </svg>
   );
-  return <Icon rev={""} component={arrowUpRightlIconSvg}></Icon>;
+  return <Icon rev={""} component={arrowUpRightlIconSvg} {...props}></Icon>;
 };
 
-const BulbIconSvg = ({ size, color }) => {
+const BulbIconSvg = (props) => {
   const bulbIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className={`icon icon-tabler icon-tabler-bulb`}
-      width={size ? size : "8"}
-      height={size ? size : "8"}
+      width={props.size ?? "8"}
+      height={props.size ?? "8"}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#35763B"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3353,19 +3311,19 @@ const BulbIconSvg = ({ size, color }) => {
       <path d="M9.7 17l4.6 0" />
     </svg>
   );
-  return <Icon rev={""} component={bulbIconSvg}></Icon>;
+  return <Icon rev={""} component={bulbIconSvg} {...props}></Icon>;
 };
 
-const TableOffIconSvg = ({ size, color }) => {
+const TableOffIconSvg = (props) => {
   const tableOffIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-table-off"
-      width={size ? size : "24"}
-      height={size ? size : "24"}
+      width={props.size ?? "24"}
+      height={props.size ?? "24"}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#35763B"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3377,19 +3335,19 @@ const TableOffIconSvg = ({ size, color }) => {
       <path d="M3 3l18 18" />
     </svg>
   );
-  return <Icon rev={""} component={tableOffIconSvg}></Icon>;
+  return <Icon rev={""} component={tableOffIconSvg} {...props}></Icon>;
 };
 
-const UserXIconSvg = ({ size, color }) => {
+const UserXIconSvg = (props) => {
   const userXIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-user-x"
-      width={size ? size : "24"}
-      height={size ? size : "24"}
+      width={props.size ?? "24"}
+      height={props.size ?? "24"}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#35763B"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3401,19 +3359,19 @@ const UserXIconSvg = ({ size, color }) => {
       <path d="M17 22l5 -5" />
     </svg>
   );
-  return <Icon rev={""} component={userXIconSvg}></Icon>;
+  return <Icon rev={""} component={userXIconSvg} {...props}></Icon>;
 };
 
-const AddCareerIconSvg = ({ size, color }) => {
+const AddCareerIconSvg = (props) => {
   const addCareerIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-clipboard-plus"
-      width={size ? size : "36"}
-      height={size ? size : "36"}
+      width={props.size ?? "36"}
+      height={props.size ?? "36"}
       viewBox="0 0 24 24"
       stroke-width="1.5"
-      stroke={color ? color : "#FFFFFF"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       stroke-linecap="round"
       stroke-linejoin="round"
@@ -3425,14 +3383,14 @@ const AddCareerIconSvg = ({ size, color }) => {
       <path d="M12 12v4" />
     </svg>
   );
-  return <Icon rev={""} component={addCareerIconSvg}></Icon>;
+  return <Icon rev={""} component={addCareerIconSvg} {...props}></Icon>;
 };
 
-const ShowCareerIconSvg = ({ size, color }) => {
+const ShowCareerIconSvg = (props) => {
   const showCareerIconSvg = () => (
     <svg
-      width={size ? size : "36"}
-      height={size ? size : "36"}
+      width={props.size ?? "36"}
+      height={props.size ?? "36"}
       viewBox="0 0 36 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -3450,7 +3408,7 @@ const ShowCareerIconSvg = ({ size, color }) => {
         width="9"
         height="6"
         rx="2"
-        stroke={color ? color : "#FFFFFF"}
+        stroke={props.color ?? "currentColor"}
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -3466,33 +3424,33 @@ const ShowCareerIconSvg = ({ size, color }) => {
       />
       <path
         d="M20 13.5013H16"
-        stroke={color ? color : "#FFFFFF"}
+        stroke={props.color ?? "currentColor"}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M20 16.0013H16"
-        stroke={color ? color : "#FFFFFF"}
+        stroke={props.color ?? "currentColor"}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
     </svg>
   );
-  return <Icon rev={""} component={showCareerIconSvg}></Icon>;
+  return <Icon rev={""} component={showCareerIconSvg} {...props}></Icon>;
 };
 
-const PinFilledIconSvg = ({ size, color }) => {
+const PinFilledIconSvg = (props) => {
   const pinFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-pin-filled"
-      width={size ? size : "24"}
-      height={size ? size : "24"}
+      width={props.size ?? "24"}
+      height={props.size ?? "24"}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#35763B"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3501,14 +3459,14 @@ const PinFilledIconSvg = ({ size, color }) => {
       <path
         d="M15.113 3.21l.094 .083l5.5 5.5a1 1 0 0 1 -1.175 1.59l-3.172 3.171l-1.424 3.797a1 1 0 0 1 -.158 .277l-.07 .08l-1.5 1.5a1 1 0 0 1 -1.32 .082l-.095 -.083l-2.793 -2.792l-3.793 3.792a1 1 0 0 1 -1.497 -1.32l.083 -.094l3.792 -3.793l-2.792 -2.793a1 1 0 0 1 -.083 -1.32l.083 -.094l1.5 -1.5a1 1 0 0 1 .258 -.187l.098 -.042l3.796 -1.425l3.171 -3.17a1 1 0 0 1 1.497 -1.26z"
         stroke-width="0"
-        fill={color ? color : "#35763B"}
+        fill={props.color ?? "currentColor"}
       />
     </svg>
   );
-  return <Icon rev={""} component={pinFilledIconSvg}></Icon>;
+  return <Icon rev={""} component={pinFilledIconSvg} {...props}></Icon>;
 };
 
-const ArchivedIconSvg = ({ size, color }) => {
+const ArchivedIconSvg = (props) => {
   const archivedIconSvg = () => (
     <svg
       width="24"
@@ -3529,10 +3487,10 @@ const ArchivedIconSvg = ({ size, color }) => {
       />
     </svg>
   );
-  return <Icon rev={""} component={archivedIconSvg}></Icon>;
+  return <Icon rev={""} component={archivedIconSvg} {...props}></Icon>;
 };
 
-const WorkIconSvg = ({ size, color }) => {
+const WorkIconSvg = (props) => {
   const workIconSvg = () => (
     <svg
       width="24"
@@ -3550,10 +3508,10 @@ const WorkIconSvg = ({ size, color }) => {
       </g>
     </svg>
   );
-  return <Icon rev={""} component={workIconSvg}></Icon>;
+  return <Icon rev={""} component={workIconSvg} {...props}></Icon>;
 };
 
-const AccessTimeIconSvg = ({ size, color }) => {
+const AccessTimeIconSvg = (props) => {
   const accessTimeIconSvg = () => (
     <svg
       width="24"
@@ -3571,10 +3529,10 @@ const AccessTimeIconSvg = ({ size, color }) => {
       </g>
     </svg>
   );
-  return <Icon rev={""} component={accessTimeIconSvg}></Icon>;
+  return <Icon rev={""} component={accessTimeIconSvg} {...props}></Icon>;
 };
 
-const SpinnerIconSvg = ({ size, color }) => {
+const SpinnerIconSvg = (props) => {
   const spinnerIconSvg = () => (
     <svg
       width="53"
@@ -3593,10 +3551,10 @@ const SpinnerIconSvg = ({ size, color }) => {
       />
     </svg>
   );
-  return <Icon rev={""} component={spinnerIconSvg}></Icon>;
+  return <Icon rev={""} component={spinnerIconSvg} {...props}></Icon>;
 };
 
-const ViewModuleIconSvg = ({ size, color }) => {
+const ViewModuleIconSvg = (props) => {
   const viewModuleIconSvg = () => (
     <svg
       width="25"
@@ -3609,15 +3567,15 @@ const ViewModuleIconSvg = ({ size, color }) => {
         <path
           id="Vector"
           d="M15.17 5V11.5H9.83V5H15.17ZM16.17 11.5H21.5V5H16.17V11.5ZM15.17 19V12.5H9.83V19H15.17ZM16.17 12.5V19H21.5V12.5H16.17ZM8.83 12.5H3.5V19H8.83V12.5ZM8.83 11.5V5H3.5V11.5H8.83Z"
-          fill={color ? color : "white"}
+          fill={props.color ?? "currentColor"}
         />
       </g>
     </svg>
   );
-  return <Icon rev={""} component={viewModuleIconSvg}></Icon>;
+  return <Icon rev={""} component={viewModuleIconSvg} {...props}></Icon>;
 };
 
-const ViewListIconSvg = ({ size, color }) => {
+const ViewListIconSvg = (props) => {
   const viewListIconSvg = () => (
     <svg
       width="25"
@@ -3630,24 +3588,24 @@ const ViewListIconSvg = ({ size, color }) => {
         <path
           id="Vector"
           d="M3.5 14H7.5V10H3.5V14ZM3.5 19H7.5V15H3.5V19ZM3.5 9H7.5V5H3.5V9ZM8.5 14H21.5V10H8.5V14ZM8.5 19H21.5V15H8.5V19ZM8.5 5V9H21.5V5H8.5Z"
-          fill={color ? color : "#E6E6E6"}
+          fill={props.color ?? "currentColor"}
         />
       </g>
     </svg>
   );
-  return <Icon rev={""} component={viewListIconSvg}></Icon>;
+  return <Icon rev={""} component={viewListIconSvg} {...props}></Icon>;
 };
 
-const CalendarOffIconSvg = ({ size, color }) => {
+const CalendarOffIconSvg = (props) => {
   const calendarOffIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-calendar-off"
-      width={size ? size : "24"}
-      height={size ? size : "24"}
+      width={props.size ?? "24"}
+      height={props.size ?? "24"}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#35763B"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3660,19 +3618,19 @@ const CalendarOffIconSvg = ({ size, color }) => {
       <path d="M3 3l18 18" />
     </svg>
   );
-  return <Icon rev={""} component={calendarOffIconSvg}></Icon>;
+  return <Icon rev={""} component={calendarOffIconSvg} {...props}></Icon>;
 };
 
-const CalendarStatsIconSvg = ({ size, color }) => {
+const CalendarStatsIconSvg = (props) => {
   const calendarStatsIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-calendar-stats"
-      width={size ? size : "24"}
-      height={size ? size : "24"}
+      width={props.size ?? "24"}
+      height={props.size ?? "24"}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#35763B"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3686,7 +3644,7 @@ const CalendarStatsIconSvg = ({ size, color }) => {
       <path d="M3 11h16" />
     </svg>
   );
-  return <Icon rev={""} component={calendarStatsIconSvg}></Icon>;
+  return <Icon rev={""} component={calendarStatsIconSvg} {...props}></Icon>;
 };
 
 const MessageIconSvg = (props) => {
@@ -3694,8 +3652,8 @@ const MessageIconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-message"
-      width={props?.size ?? "24"}
-      height={props?.size ?? "24"}
+      width={props.size ?? "24"}
+      height={props.size ?? "24"}
       viewBox="0 0 24 24"
       strokeWidth="2"
       stroke={props?.color ?? "currentColor"}
@@ -3712,35 +3670,35 @@ const MessageIconSvg = (props) => {
   return <Icon rev={""} component={messageIconSvg} {...props}></Icon>;
 };
 
-const CloseIconSvg = ({ size, color }) => {
+const CloseIconSvg = (props) => {
   const closeIconSvg = () => (
     <svg
-      width={size ? size : "16"}
-      height={size ? size : "16"}
+      width={props.size ?? "16"}
+      height={props.size ?? "16"}
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         d="M12 4L4 12"
-        stroke={color ? color : "white"}
+        stroke={props.color ?? "currentColor"}
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M4 4L12 12"
-        stroke={color ? color : "white"}
+        stroke={props.color ?? "currentColor"}
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
     </svg>
   );
-  return <Icon rev={""} component={closeIconSvg}></Icon>;
+  return <Icon rev={""} component={closeIconSvg} {...props}></Icon>;
 };
 
-const AddNoteSvg = ({ size, color }) => {
+const AddNoteSvg = (props) => {
   const addNoteSvg = () => (
     <svg
       width="16"
@@ -3755,31 +3713,31 @@ const AddNoteSvg = ({ size, color }) => {
       />
     </svg>
   );
-  return <Icon rev={""} component={addNoteSvg}></Icon>;
+  return <Icon rev={""} component={addNoteSvg} {...props}></Icon>;
 };
 
-const CloseOverlay = ({ size, color }) => {
+const CloseOverlay = (props) => {
   const closeOverlay = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size ? size : "24"}
-      height={size ? size : "24"}
+      width={props.size ?? "24"}
+      height={props.size ?? "24"}
       viewBox="0 0 24 24"
       fill="none"
-      stroke={color ? color : "#333333"}
+      stroke={props.color ?? "currentColor"}
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="icon icon-tabler icons-tabler-outline icon-tabler-x"
+      className="icon icon-tabler icons-tabler-outline icon-tabler-x"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M18 6l-12 12" />
       <path d="M6 6l12 12" />
     </svg>
   );
-  return <Icon rev={""} component={closeOverlay}></Icon>;
+  return <Icon rev={""} component={closeOverlay} {...props}></Icon>;
 };
-const CheckBoldSvg = ({ size, color }) => {
+const CheckBoldSvg = (props) => {
   const checkBoldSvg = () => (
     <svg
       width="16"
@@ -3797,19 +3755,19 @@ const CheckBoldSvg = ({ size, color }) => {
       />
     </svg>
   );
-  return <Icon rev={""} component={checkBoldSvg}></Icon>;
+  return <Icon rev={""} component={checkBoldSvg} {...props}></Icon>;
 };
 
-const CopyrightIconSvg = ({ size, color }) => {
+const CopyrightIconSvg = (props) => {
   const copyrightIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-copyright"
-      width={size ? size : "24"}
-      height={size ? size : "24"}
+      width={props.size ?? "24"}
+      height={props.size ?? "24"}
       viewBox="0 0 24 24"
       strokeWidth="2"
-      stroke={color ? color : "#808080"}
+      stroke={props.color ?? "currentColor"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -3819,7 +3777,7 @@ const CopyrightIconSvg = ({ size, color }) => {
       <path d="M14 9.75a3.016 3.016 0 0 0 -4.163 .173a2.993 2.993 0 0 0 0 4.154a3.016 3.016 0 0 0 4.163 .173" />
     </svg>
   );
-  return <Icon rev={""} component={copyrightIconSvg}></Icon>;
+  return <Icon rev={""} component={copyrightIconSvg} {...props}></Icon>;
 };
 
 const Menu2IconSvg = (props) => {
@@ -3827,8 +3785,8 @@ const Menu2IconSvg = (props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-menu-2"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke={props?.color ?? "currentColor"}
@@ -3848,8 +3806,8 @@ const Menu2IconSvg = (props) => {
 const PartyIconSvg = (props) => {
   const partyIconSvg = () => (
     <svg
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -3866,8 +3824,8 @@ const PartyIconSvg = (props) => {
 const CalendarFilIconSvg = (props) => {
   const calendarFilIconSvg = () => (
     <svg
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -3896,8 +3854,8 @@ const CalendarFilIconSvg = (props) => {
 const SolarStarsIconSvg = (props) => {
   const solarStarsIconSvg = () => (
     <svg
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
@@ -3919,8 +3877,8 @@ const MessageFilledIconSvg = (props) => {
   const messageFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="currentColor"
       className="icon icon-tabler icons-tabler-filled icon-tabler-message"
@@ -3936,8 +3894,8 @@ const AlertCircleFilledIconSvg = (props) => {
   const alertCircleFilledIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="currentColor"
       className="icon icon-tabler icons-tabler-filled icon-tabler-alert-circle"
@@ -3949,39 +3907,39 @@ const AlertCircleFilledIconSvg = (props) => {
   return <Icon rev={""} component={alertCircleFilledIconSvg} {...props}></Icon>;
 };
 
-const LinkIconSvg = ({ size, color }) => {
+const LinkIconSvg = (props) => {
   const linkIconSvg = () => (
     <svg
-      width={size ? size : "16"}
-      height={size ? size : "16"}
+      width={props.size ?? "16"}
+      height={props.size ?? "16"}
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         d="M6.66797 9.33293C7.10684 9.78086 7.70754 10.0333 8.33464 10.0333C8.96173 10.0333 9.56243 9.78086 10.0013 9.33293L12.668 6.66627C13.5884 5.74579 13.5884 4.25341 12.668 3.33293C11.7475 2.41246 10.2551 2.41246 9.33464 3.33293L9.0013 3.66627"
-        stroke={color ? color : "#808080"}
+        stroke={props.color ?? "currentColor"}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M9.33489 6.66714C8.89601 6.21921 8.29531 5.9668 7.66822 5.9668C7.04113 5.9668 6.44043 6.21921 6.00155 6.66714L3.33489 9.3338C2.41441 10.2543 2.41441 11.7467 3.33489 12.6671C4.25536 13.5876 5.74775 13.5876 6.66822 12.6671L7.00155 12.3338"
-        stroke={color ? color : "#808080"}
+        stroke={props.color ?? "currentColor"}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
     </svg>
   );
-  return <Icon rev={""} component={linkIconSvg}></Icon>;
+  return <Icon rev={""} component={linkIconSvg} {...props}></Icon>;
 };
 const PdfIconSvg = (props) => {
   const pdfIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props?.size ?? 20}
-      height={props?.size ?? 20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -4032,7 +3990,6 @@ export {
   SquarePlusIconSvg,
   ContractIconSvg,
   IconBroadcast,
-  Iconquestion,
   NotesIconSvg,
   FaxIconSvg,
   PkpIconSvg,
