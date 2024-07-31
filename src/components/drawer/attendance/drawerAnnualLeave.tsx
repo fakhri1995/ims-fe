@@ -10,7 +10,7 @@ import React, { Dispatch, FC, SetStateAction, useState } from "react";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
-import { OneUserIconSvg, PdfIconSvg } from "components/icon.js";
+import { OneUserIconSvg, PdfIconSvg } from "components/icon";
 import { ModalAccept, ModalDelete } from "components/modal/modalConfirmation";
 import BadgeLeaveStatus from "components/screen/attendance/leave/BadgeLeaveStatus";
 

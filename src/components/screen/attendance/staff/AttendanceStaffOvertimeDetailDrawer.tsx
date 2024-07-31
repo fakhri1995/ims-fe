@@ -6,7 +6,7 @@ import { FC, useState } from "react";
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
 import { EditIconSvg } from "components/icon";
-import { OneUserIconSvg, PdfIconSvg } from "components/icon.js";
+import { OneUserIconSvg, PdfIconSvg } from "components/icon";
 import { ModalApply, ModalDelete } from "components/modal/modalConfirmation";
 
 import { useAccessControl } from "contexts/access-control";
