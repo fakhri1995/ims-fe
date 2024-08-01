@@ -2155,7 +2155,7 @@ const ContractIconSvg = () => {
       />
     </svg>
   );
-  return <Icon rev={""} component={contractIconSvg}></Icon>;
+  return <Icon component={contractIconSvg}></Icon>;
 };
 
 const IconBroadcast = (props) => {
