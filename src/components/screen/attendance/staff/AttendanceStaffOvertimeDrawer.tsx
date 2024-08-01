@@ -81,6 +81,7 @@ export const AttendanceStaffOvertimeDrawer: FC<
   );
   const [dataTipeCutis, setDataTipeCutis] = useState([]);
   const [dataEmployees, setDataEmployees] = useState([]);
+  const [dataProjects, setDataProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const searchTimeoutRef = useRef(null);
   useEffect(() => {
@@ -95,12 +96,13 @@ export const AttendanceStaffOvertimeDrawer: FC<
     start_date: null,
     end_date: null,
     manager_name: null,
-    tipe_cuti: null,
+    project_name: null,
     catatan: null,
   });
 
   useEffect(() => {
     fetchDataEmployees();
+    fetchDataProjects();
   }, []);
 
   const fetchDataEmployees = async () => {
@@ -116,6 +118,26 @@ export const AttendanceStaffOvertimeDrawer: FC<
         .then((res) => res.json())
         .then((res2) => {
           setDataEmployees(res2.data);
+        });
+    }
+  };
+
+  const fetchDataProjects = async () => {
+    if (!isAllowedToGetEmployees) {
+      permissionWarningNotification("Mendapatkan", "Daftar Projects");
+    } else {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects?user_id=${idUser}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(dataToken),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataProjects(res2.data.data);
         });
     }
   };
@@ -166,23 +188,15 @@ export const AttendanceStaffOvertimeDrawer: FC<
 
   const handleSubmit = (values) => {
     let formData = new FormData();
-    formData.append("type", values.type);
-    formData.append(
-      "start_date",
-      moment(values.start_date).format("YYYY-MM-DD")
-    );
-    formData.append("end_date", moment(values.end_date).format("YYYY-MM-DD"));
+    formData.append("manager_id", values.manager_name);
+    formData.append("project_id", values.project_name);
+    formData.append("start_at", moment(values.start_overtime).format("HH:mm"));
+    formData.append("end_at", moment(values.finish_overtime).format("HH:mm"));
     if (values.notes) {
       formData.append("notes", values.notes);
     }
-    if (values.delegate_id) {
-      formData.append("delegate_id", values.delegate_id);
-    }
-    if (resumeFileBlob) {
-      formData.append("document", resumeFileBlob);
-    }
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addLeaveUser`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addOvertimeUser`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(dataToken),
@@ -196,13 +210,13 @@ export const AttendanceStaffOvertimeDrawer: FC<
           onClose();
           getDataNew();
           notificationSuccess({
-            message: "Leave request successfully sent",
+            message: "Overtime request successfully sent",
             duration: 3,
           });
         } else {
           notificationError({
             message:
-              "Failed to sent leave request because of an error in the server",
+              "Failed to sent overtime request because of an error in the server",
             duration: 3,
           });
         }
@@ -260,6 +274,7 @@ export const AttendanceStaffOvertimeDrawer: FC<
                 rules={[
                   {
                     required: true,
+                    message: "Start Overtime is required",
                   },
                 ]}
               >
@@ -285,6 +300,7 @@ export const AttendanceStaffOvertimeDrawer: FC<
                 rules={[
                   {
                     required: true,
+                    message: "Finish Overtime is required",
                   },
                 ]}
               >
@@ -305,11 +321,38 @@ export const AttendanceStaffOvertimeDrawer: FC<
               label="Project’s Name"
               name={"project_name"}
               className="col-span-2"
+              rules={[
+                {
+                  required: true,
+                  message: "Project Name is required",
+                },
+              ]}
             >
-              <Input
-                className={"h-[32px] border border-solid border-[#CCCCCC]"}
-                placeholder="Input project’s name here"
-              />
+              <Select
+                showSearch
+                value={dataOvertime?.project_name}
+                placeholder={"Search Project Name"}
+                style={{ width: `100%`, borderColor: "#CCCCCC" }}
+                optionFilterProp="children"
+                onChange={(value, option) => {
+                  setDataOvertime((prev) => ({
+                    ...prev,
+                    project_name: value,
+                  }));
+                }}
+              >
+                {dataProjects?.map((item) => {
+                  return (
+                    <Select.Option
+                      key={item?.id}
+                      value={item.id}
+                      name={item?.name}
+                    >
+                      {item?.name}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
             </Form.Item>
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>

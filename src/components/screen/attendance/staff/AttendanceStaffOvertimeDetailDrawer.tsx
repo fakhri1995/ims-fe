@@ -23,15 +23,25 @@ import BadgeLeaveStatus from "../leave/BadgeLeaveStatus";
  */
 type objType = {
   id: number;
-  status: string;
+  status: {
+    id: number;
+    name: string;
+  };
   issued_date: string;
-  start_date: string;
-  end_date: string;
+  start_at: string;
+  end_at: string;
+  duration: number;
   delegate: {
     name: string;
   };
   notes: string;
   type: {
+    name: string;
+  };
+  project: {
+    name: string;
+  };
+  manager: {
     name: string;
   };
   admin_notes: string; // TODO: adjust if BE done
@@ -80,40 +90,6 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
     data: dataDefault?.issued_date,
   });
 
-  const batalCuti = () => {
-    setLoading(true);
-    let dataSend = {
-      id: dataDefault.id,
-    };
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteLeave`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: JSON.parse(dataToken),
-      },
-      body: JSON.stringify(dataSend),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setLoading(false);
-          handleCloseModalConfirm();
-
-          notification["success"]({
-            message: "Leave request successfully canceled",
-            duration: 3,
-          });
-          onClose();
-          fetchData();
-        } else {
-          notification["error"]({
-            message: res2.message,
-            duration: 3,
-          });
-        }
-      });
-  };
-
   const handleCloseModalConfirm = () => {
     setModalConfirm({ show: false, data: null });
   };
@@ -152,7 +128,7 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
       title={"Overtime Issued Details"}
       visible={visible}
       footer={
-        dataDefault?.status != "1"
+        dataDefault?.status?.id != 1
           ? null
           : isAllowedToDeleteLeave && (
               <ButtonSys
@@ -167,7 +143,7 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
                 }
                 disabled={!isAllowedToDeleteLeave}
               >
-                Cancel Leave Submission
+                Cancel Overtime Submission
               </ButtonSys>
             )
       }
@@ -183,36 +159,31 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
               </p>
             </div>
 
-            <BadgeLeaveStatus status={dataDefault?.status} />
+            <BadgeLeaveStatus status={dataDefault?.status?.id} />
           </div>
 
           <div className="flex justify-between items-center">
             <div>
               <p className={"mig-caption text-neutrals90"}>Over Time</p>
               <p className={"mig-body"}>
-                {moment(dataDefault?.start_date).format("DD MMMM YYYY")} -{" "}
-                {moment(dataDefault?.end_date).format("DD MMMM YYYY")}
+                {moment(dataDefault?.start_at, "HH:mm:ss").format("HH:mm")} -{" "}
+                {moment(dataDefault?.end_at, "HH:mm:ss").format("HH:mm")}
               </p>
             </div>
 
             <p
               className={`mig-caption--medium bg-neutrals60 rounded-[5px] px-2 py-[2px] `}
             >
-              {moment(dataDefault?.end_date).diff(
-                moment(dataDefault?.start_date),
-                "days"
-              )}{" "}
-              Days
+              {dataDefault?.duration} Hours
             </p>
           </div>
-
           <div>
             <p className={"mig-caption text-neutrals90"}>Project's Name</p>
-            <p className={"mig-body"}>{dataDefault?.type?.name}</p>
+            <p className={"mig-body"}>{dataDefault?.project?.name}</p>
           </div>
           <div>
             <p className={"mig-caption text-neutrals90"}>Manager's Name</p>
-            <p className={"mig-body"}>{dataDefault?.type?.name}</p>
+            <p className={"mig-body"}>{dataDefault?.manager?.name}</p>
           </div>
           <div>
             <p className={"mig-caption text-neutrals90"}>Notes</p>
@@ -227,7 +198,7 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
               <p className="mig-caption">{dataDefault.admin_notes}</p>
             </div>
           )}
-          <div className={"mt-2 flex flex-col gap-2"}>
+          {/* <div className={"mt-2 flex flex-col gap-2"}>
             <p className={"text-[#4D4D4D] text-xs leading-5 font-medium"}>
               Supporting File :
             </p>
@@ -252,11 +223,11 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
                 Upload File (Max. 5 MB).
               </em>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
-      <AccessControl hasPermission={LEAVE_DELETE}>
+      {/* <AccessControl hasPermission={LEAVE_DELETE}>
         <ModalApply
           visible={true}
           title="Confirm Your Overtime"
@@ -271,7 +242,7 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
             overtime?
           </p>
         </ModalApply>
-      </AccessControl>
+      </AccessControl> */}
     </Drawer>
   );
 };

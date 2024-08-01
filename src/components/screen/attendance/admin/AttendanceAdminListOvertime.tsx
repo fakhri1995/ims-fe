@@ -207,7 +207,7 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
       const params = QueryString.stringify(queryParams, {
         addQueryPrefix: true,
       });
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaves${params}`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getOvertimes${params}`, {
         method: `GET`,
         headers: {
           Authorization: JSON.parse(initProps),
@@ -215,8 +215,8 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
       })
         .then((res) => res.json())
         .then((res2) => {
-          setDisplayDataLeaves(res2.data); // table-related data source
-          setDataAnnualLeave(res2.data.data);
+          // setDisplayDataLeaves(res2.data); // table-related data source
+          // setDataAnnualLeave(res2.data.data);
         });
     }
   };
@@ -234,7 +234,7 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
           <div
             onClick={() => setShowModalOvertime(true)}
             className={
-              "flex items-center justify-center gap-2 h-[32px] w-[152px] rounded bg-[#35763B] "
+              "flex items-center justify-center gap-2 h-[32px] w-[152px] rounded bg-[#35763B] hover:cursor-pointer"
             }
           >
             <PlusCircleOutlined style={{ fontSize: 16, color: "white" }} />

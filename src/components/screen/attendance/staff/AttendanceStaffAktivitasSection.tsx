@@ -89,6 +89,7 @@ import { AttendanceTaskActivityService } from "apis/attendance/attendance-task-a
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
 import BadgeLeaveStatus from "../leave/BadgeLeaveStatus";
+import BadgeOvertimeStatus from "../overtime/BadgeOvertimeStatus";
 import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 import { AttendanceStaffAktivitasDetailDrawer } from "./AttendanceStaffAktivitasDetailDrawer";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
@@ -106,6 +107,13 @@ export interface IGetLeaveUser {
     name: string;
   };
   status: string;
+}
+
+export interface IGetOvertimeUser {
+  start_at: string;
+  end_at: string;
+  issued_date: string;
+  status_id: number;
 }
 
 /**
@@ -182,16 +190,19 @@ export const AttendanceStaffAktivitasSection: FC<
     idx: null,
   });
   const [displayDataLeaves, setDisplayDataLeaves] = useState([]);
+  const [displayDataOvertimes, setDisplayDataOvertimes] = useState([]);
   const [displayDataTaskToday, setDisplayDataTaskToday] = useState([]);
   const [displayDataTaskHistory, setDisplayDataTaskHistory] = useState([]);
   const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
-
+  const [showDetailOvertime, setShowDetailOvertime] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState("aktivitas");
   const [rowstate, setrowstate] = useState(0);
   const [dataDefault, setDataDefault] = useState(null);
+  const [dataDefaultOvertime, setDataDefaultOvertime] = useState(null);
   const [showDetailCuti, setShowDetailCuti] = useState(false);
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [loadingLeaves, setLoadingLeaves] = useState(true);
+  const [loadingOvertimes, setLoadingOvertimes] = useState(true);
   const [loadingDeleteTaskActivity, setLoadingDeleteTaskActivity] =
     useState(false);
   const [queryParams, setQueryParams] = useQueryParams({
@@ -199,7 +210,27 @@ export const AttendanceStaffAktivitasSection: FC<
     rows: withDefault(NumberParam, 10),
   });
 
+  const [queryParamsOvertime, setQueryParamsOvertime] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+  });
+
   const [rawDataLeaves, setRawDataLeaves] = useState({
+    current_page: "",
+    data: [],
+    first_page_url: "",
+    from: null,
+    last_page: null,
+    last_page_url: "",
+    next_page_url: "",
+    path: "",
+    per_page: null,
+    prev_page_url: null,
+    to: null,
+    total: null,
+  });
+
+  const [rawDataOvertimes, setRawDataOvertimes] = useState({
     current_page: "",
     data: [],
     first_page_url: "",
@@ -281,13 +312,71 @@ export const AttendanceStaffAktivitasSection: FC<
     },
   ];
 
+  const columnOvertime: ColumnsType<IGetOvertimeUser> = [
+    {
+      title: "No",
+      dataIndex: "num",
+      render: (text, record, index) => {
+        return {
+          children: <>{index + 1}</>,
+        };
+      },
+    },
+    {
+      title: "Issued Date",
+      dataIndex: "issued_date",
+      render: (text, record, index) => {
+        return {
+          children: <>{moment(record.issued_date).format("DD MMMM YYYY")}</>,
+        };
+      },
+    },
+    {
+      title: "Duration",
+      dataIndex: "start_at",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <>
+              {moment(record.start_at, "HH:mm:ss").format("HH:mm")} -{" "}
+              {moment(record.end_at, "HH:mm:ss").format("HH:mm")}
+            </>
+          ),
+        };
+      },
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      align: "center",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div className="flex justify-center">
+              <BadgeOvertimeStatus status={record?.status_id} />
+            </div>
+          ),
+        };
+      },
+    },
+  ];
+
   const detailCuti = (record) => {
     setShowDetailCuti(true);
     setDataDefault(record);
   };
 
+  const detailOvertime = (record) => {
+    setShowDetailOvertime(true);
+    setDataDefaultOvertime(record);
+  };
+
   const cancelShowDetail = () => {
     setShowDetailCuti(false);
+  };
+
+  const cancelShowDetailOvertime = () => {
+    setShowDetailOvertime(false);
   };
   const [queryParams2, setQueryParams2] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -382,7 +471,7 @@ export const AttendanceStaffAktivitasSection: FC<
       columns.push({
         key: "delete",
         title: "Actions",
-        render: (_, record: (typeof dataSource)[0]) => {
+        render: (_, record: typeof dataSource[0]) => {
           return (
             <button
               className="bg-transparent text-danger hover:opacity-75"
@@ -419,7 +508,7 @@ export const AttendanceStaffAktivitasSection: FC<
   );
 
   const mOnRowItemClicked = useCallback(
-    (datum: (typeof dataSource)[0], dataIndex?: number) => {
+    (datum: typeof dataSource[0], dataIndex?: number) => {
       if (tabActiveKey === HISTORY && tabActiveKey2 == TASK) {
         return;
       }
@@ -523,6 +612,16 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   }, [isAllowedToGetLeavesUser, queryParams.page, queryParams.rows]);
 
+  useEffect(() => {
+    if (isAllowedToGetLeavesUser) {
+      fetchDataOvertimes();
+    }
+  }, [
+    isAllowedToGetLeavesUser,
+    queryParamsOvertime.page,
+    queryParamsOvertime.rows,
+  ]);
+
   const fetchDataLeaves = async () => {
     if (!isAllowedToGetLeavesUser) {
       permissionWarningNotification("Mendapatkan", "Data Cuti");
@@ -551,6 +650,40 @@ export const AttendanceStaffAktivitasSection: FC<
           notificationError({ message: "Failed to get user leaves" });
         })
         .finally(() => setLoadingLeaves(false));
+    }
+  };
+
+  const fetchDataOvertimes = async () => {
+    if (!isAllowedToGetLeavesUser) {
+      permissionWarningNotification("Mendapatkan", "Data Overtimes");
+    } else {
+      const params = QueryString.stringify(queryParamsOvertime, {
+        addQueryPrefix: true,
+      });
+      setLoadingOvertimes(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getOvertimesUser${params}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(dataToken),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setRawDataOvertimes(res2.data);
+            setDisplayDataOvertimes(res2.data.data); // table-related data source
+            // setDataTipeCutis(res2.data);
+          } else {
+            notificationError({ message: res2?.message });
+          }
+        })
+        .catch((err) => {
+          notificationError({ message: "Failed to get user overtime" });
+        })
+        .finally(() => setLoadingOvertimes(false));
     }
   };
 
@@ -611,7 +744,7 @@ export const AttendanceStaffAktivitasSection: FC<
   function checkFormOrTask() {
     if (tabActiveKey2 == FORM && activeSubmenu == "aktivitas") {
       return (
-        <Table<(typeof dataSource)[0]>
+        <Table<typeof dataSource[0]>
           columns={tableColums}
           rowKey={(record) => record.id}
           dataSource={dataSource}
@@ -698,7 +831,7 @@ export const AttendanceStaffAktivitasSection: FC<
       );
     } else if (activeSubmenu == "aktivitas") {
       return (
-        <Table<(typeof dataSource)[0]>
+        <Table<typeof dataSource[0]>
           columns={TableTaskColumns}
           dataSource={displayDataTaskHistory}
           rowKey={(record) => record.id}
@@ -1050,24 +1183,24 @@ export const AttendanceStaffAktivitasSection: FC<
           >
             <Table
               className="tableTask"
-              dataSource={displayDataLeaves}
-              columns={columnLeaves}
-              loading={loadingLeaves}
+              dataSource={displayDataOvertimes}
+              columns={columnOvertime}
+              loading={loadingOvertimes}
               scroll={{ x: "max-content" }}
               pagination={{
-                current: queryParams.page,
-                pageSize: queryParams.rows,
-                total: rawDataLeaves?.total,
+                current: queryParamsOvertime.page,
+                pageSize: queryParamsOvertime.rows,
+                total: rawDataOvertimes?.total,
               }}
               onChange={(pagination, _, sorter) => {
-                setQueryParams({
+                setQueryParamsOvertime({
                   page: pagination.current,
                   rows: pagination.pageSize,
                 });
               }}
               onRow={(record) => {
                 return {
-                  onClick: (e) => detailCuti(record),
+                  onClick: (e) => detailOvertime(record),
                 };
               }}
               rowClassName={(record, idx) => {
@@ -1075,7 +1208,7 @@ export const AttendanceStaffAktivitasSection: FC<
               }}
             />
             <AttendanceStaffOvertimeDrawer
-              getDataNew={fetchDataLeaves}
+              getDataNew={fetchDataOvertimes}
               dataToken={dataToken}
               idUser={idUser}
               username={username}
@@ -1086,10 +1219,10 @@ export const AttendanceStaffAktivitasSection: FC<
             />
             <AttendanceStaffOvertimeDetailDrawer
               fetchData={fetchDataLeaves}
-              visible={false}
-              dataDefault={dataDefault}
+              visible={showDetailOvertime}
+              dataDefault={dataDefaultOvertime}
               dataToken={dataToken}
-              onClose={cancelShowDetail}
+              onClose={cancelShowDetailOvertime}
             />
           </div>
         )}

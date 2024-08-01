@@ -174,7 +174,7 @@ export async function getServerSideProps({ req, res }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "overtime",
+      sidemenu: "attendance/overtime",
     },
   };
 }
