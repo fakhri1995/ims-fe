@@ -59,7 +59,7 @@ import {
   EyeIconSvg,
   SettingsIconSvg,
 } from "../../../components/icon";
-import Layout from "../../../components/layout-dashboard-management";
+import LayoutDashboard from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard-management.module.css";
 import ModalPengajuanCuti from "../../../components/modal/attendance/modalPengajuanCuti";
 import ModalSetujuiCuti from "../../../components/modal/attendance/modalSetujuiCuti";
@@ -98,13 +98,13 @@ const OvertimeIndex = ({ initProps, dataProfile, sidemenu }) => {
     return null;
   }
   //1.Init
-  const rt = useRouter();
-  const pathArr = rt.pathname.split("/").slice(1);
-
   // Breadcrumb title
-  const pathTitleArr = [...pathArr];
-  pathTitleArr.splice(1, 1);
-  pathTitleArr.splice(1, 1, "Overtime");
+  const pageBreadcrumb = [
+    {
+      name: "Overtime",
+    },
+  ];
+
   const [loadingAnualLeave, setLoadingAnnualLeave] = useState(true);
   const isAllowedToSearchData = hasPermission(ATTENDANCES_USERS_GET);
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
@@ -320,13 +320,11 @@ const OvertimeIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   return (
-    <Layout
+    <LayoutDashboard
       tok={initProps}
       dataProfile={dataProfile}
       sidemenu={sidemenu}
-      pathArr={pathArr}
-      pathTitleArr={pathTitleArr}
-      st={st}
+      fixedBreadcrumbValues={pageBreadcrumb}
     >
       <div className="flex flex-col" id="mainWrapper">
         <div className={"flex flex-row gap-8"}>
@@ -661,7 +659,7 @@ const OvertimeIndex = ({ initProps, dataProfile, sidemenu }) => {
           </div>
         </div>
       </div>
-    </Layout>
+    </LayoutDashboard>
   );
 };
 

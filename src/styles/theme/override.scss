@@ -184,6 +184,11 @@ a:hover {
   display: inline-flex;
 }
 
+.miniMenu.ant-menu {
+  border-radius: 5px;
+  @apply shadow-desktopCard;
+}
+
 /* SUBMENU */
 /* submenu title padding */
 .ant-menu-root:not(.ant-menu.ant-menu-inline-collapsed)

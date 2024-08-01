@@ -2,10 +2,15 @@ import { Layout } from "antd";
 import { Breadcrumb, Spin } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { ReactNode } from "react";
 
 import st from "components/layout-dashboard-management.module.css";
 
+import { IDetailProfileSucceedResponse } from "apis/auth";
+
 import LayoutDashboardParent from "./layout-dashboard-parent";
+
+import { PageBreadcrumbValue } from "types/common";
 
 /**
  * @param {{ fixedBreadcrumbValues: { name: string; hrefValue?: string; }[] }} param0
@@ -20,6 +25,17 @@ function LayoutDashboard({
   idpage,
   fixedBreadcrumbValues = [],
   isPublic, // use for public talent pool
+}: {
+  children: ReactNode;
+  tok: string;
+  dataProfile: IDetailProfileSucceedResponse;
+
+  pathArr?: any[];
+  sidemenu?: string;
+  prevpath?: string;
+  idpage?: string;
+  fixedBreadcrumbValues?: PageBreadcrumbValue[];
+  isPublic?: boolean;
 }) {
   const rt = useRouter();
   var rootBreadcrumb = "";

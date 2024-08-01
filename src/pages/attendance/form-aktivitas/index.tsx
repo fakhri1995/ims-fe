@@ -42,7 +42,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
-      name: "Form Aktivitas",
+      name: "Activity Form",
     },
   ];
 

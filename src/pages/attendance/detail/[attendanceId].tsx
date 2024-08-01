@@ -55,6 +55,7 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
       dataProfile={dataProfile}
       tok={token}
       fixedBreadcrumbValues={pageBreadcrumb}
+      sidemenu="attendance/staff"
     >
       <div
         className="flex flex-col lg:flex-row w-full 
