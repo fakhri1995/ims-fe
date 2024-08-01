@@ -77,7 +77,7 @@ export interface IAttendanceAdminListOvertime {
   initProps: string;
 }
 
-export interface IGetOvertimeUser {
+export interface IGetOvertimeAdmin {
   start_date: string;
   end_date: string;
   issued_date: string;
@@ -136,7 +136,7 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
   });
   const [showModalOvertime, setShowModalOvertime] = useState(false);
 
-  const columns: ColumnsType<IGetOvertimeUser> = [
+  const columns: ColumnsType<IGetOvertimeAdmin> = [
     {
       title: "Nama Karyawan",
       dataIndex: "nama",
