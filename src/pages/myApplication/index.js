@@ -41,7 +41,7 @@ const CandidateRecruitmentDetailIndex = ({
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
   // console.log(pathArr);
-  pathArr[pathArr.length - 1] = "Lamaran Saya";
+  pathArr[pathArr.length - 1] = "My Application";
 
   // 1. STATE
   // 1.1. display

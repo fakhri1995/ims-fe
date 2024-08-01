@@ -109,7 +109,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
-      name: "Jadwal Kerja",
+      name: "Work Schedule",
     },
   ];
 

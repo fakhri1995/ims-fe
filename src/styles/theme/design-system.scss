@@ -6,12 +6,12 @@
 
 .mig-platform--p-0 {
   /** Sama seperti .mig-platform akan tetapi tanpa extra padding */
-  @apply bg-white rounded-[5px] border border-neutrals70 shadow-desktopCard;
+  @apply bg-white rounded-[10px] border border-neutrals70 shadow-desktopCard;
 }
 
 .mig-card {
   /** Digunakan untuk komponen card tanpa shadow */
-  @apply p-4 rounded-[5px] border;
+  @apply p-4 rounded-[10px] border;
 }
 
 /** Buttons */

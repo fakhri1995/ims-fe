@@ -96,7 +96,7 @@ export const AttendanceAdminLeaveStatisticCards: FC<
   };
 
   return (
-    <div className="w-full flex flex-col md:flex-row justify-between gap-3">
+    <div className="w-full flex flex-col md:flex-row justify-between gap-3 lg:gap-5">
       {/* Card Leave Accepted */}
       <StatisticCountCard
         dataCount={dataStatusCuti?.[0]}

@@ -198,10 +198,10 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             key="kehadirancompany"
             icon={<KehadiranCompanyIconSvg />}
             className="text-mono50 "
-            title={`Kehadiran ${dataPerusahaan}`}
+            title={`Attendance ${dataPerusahaan}`}
           >
             <Link href="/kehadiran/">
-              <p>Kehadiran {dataPerusahaan}</p>
+              <p>Attendance {dataPerusahaan}</p>
             </Link>
           </Menu.Item>
         )}
@@ -210,10 +210,10 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           key="projectscompany"
           icon={<ProyekCompanyIconSvg />}
           className="text-mono50"
-          title={`Proyek ${dataPerusahaan}`}
+          title={`Project ${dataPerusahaan}`}
         >
           <Link href="/projectCompany/">
-            <p>Proyek {dataPerusahaan}</p>
+            <p>Project {dataPerusahaan}</p>
           </Link>
         </Menu.Item>
       )}
@@ -272,10 +272,10 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         </Menu.Item>
       )}
 
-      {/* Perusahaan: Profil Perusahaan, Klien */}
+      {/* Company: Company Profile, Clients */}
       {hasPermission(SIDEBAR_COMPANY) && (
         <SubMenu
-          title="Perusahaan"
+          title="Company"
           key="5"
           icon={<CompanyIconSvg />}
           className="text-mono50"
@@ -283,24 +283,24 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_COMPANY_PROFILE) && (
             <Menu.Item key="51" className="text-mono50">
               <Link href="/company/myCompany">
-                <p>Profil Perusahaan</p>
+                <p>Company Profile</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_COMPANY_CLIENT) && (
             <Menu.Item key="52" className="text-mono50">
               <Link href="/company/clients">
-                <p>Klien</p>
+                <p>Clients</p>
               </Link>
             </Menu.Item>
           )}
         </SubMenu>
       )}
 
-      {/* Proyek: Proyek & Tugas, Admin Tugas */}
+      {/* Project: Project Management, Admin Task */}
       {hasPermission(SIDEBAR_PROJECT) && (
         <SubMenu
-          title="Proyek"
+          title="Project"
           key="project"
           icon={<FoldersIconSvg />}
           className="text-mono50"
@@ -308,21 +308,22 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_PROJECT_TASK) && (
             <Menu.Item key="projects" className="text-mono50">
               <Link href="/projects">
-                <p>Proyek & Tugas</p>
+                <p>Project Management</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_PROJECT_TASK_ADMIN) && (
             <Menu.Item key="projects/task-admin" className="text-mono50">
               <Link href="/projects/task-admin">
-                <p>Admin Tugas</p>
+                <p>Admin Task</p>
               </Link>
             </Menu.Item>
           )}
         </SubMenu>
       )}
 
-      {/* Attendance: Form Aktivitas, Admin Attendance, My Attendance */}
+      {/* Attendance: Activity Form, Admin Attendance, My Attendance, 
+      Work Shift, Work Schedule, Leave/Day Off, Overtime */}
       {hasPermission(SIDEBAR_ATTENDANCE) && (
         <SubMenu
           title="Attendance"
@@ -333,7 +334,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_ATTENDANCE_FORM_ACTIVITY) && (
             <Menu.Item key="attendance/form-aktivitas" className="text-mono50">
               <Link href="/attendance/form-aktivitas">
-                <p>Form Aktivitas</p>
+                <p>Activity Form</p>
               </Link>
             </Menu.Item>
           )}
@@ -355,7 +356,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_ATTENDANCE_SHIFT) && (
             <Menu.Item key="attendance/shift" className="text-mono50">
               <Link href="/attendance/shift">
-                <p>Shift Work</p>
+                <p>Work Shift</p>
               </Link>
             </Menu.Item>
           )}
@@ -369,7 +370,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(LEAVES_GET) && (
             <Menu.Item key="attendance/annualLeave" className="text-mono50">
               <Link href="/attendance/annual-leave">
-                <p>Cuti/Libur</p>
+                <p>Leave/Day Off</p>
               </Link>
             </Menu.Item>
           )}
@@ -383,7 +384,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         </SubMenu>
       )}
 
-      {/* Lamaran Saya */}
+      {/* My Application */}
       {hasPermission(SIDEBAR_MY_APPLICATION) && (
         <Menu.Item
           key="application"
@@ -392,12 +393,12 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           title="Items"
         >
           <Link href="/myApplication">
-            <p>Lamaran Saya</p>
+            <p>My Application</p>
           </Link>
         </Menu.Item>
       )}
 
-      {/* Public Talent Pool */}
+      {/* Public Talent Pool (Only used in shared talent pool link) */}
       {(hasPermission(SIDEBAR_TALENT_POOL) || isPublic) && (
         <SubMenu
           title="Talent"
@@ -408,7 +409,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {(hasPermission(SIDEBAR_TALENT_POOL) || isPublic) && (
             <Menu.Item key="talent/daftar-talent" className="text-mono50">
               <Link href="#">
-                <p>Daftar Talent</p>
+                <p>Talent List</p>
               </Link>
             </Menu.Item>
           )}
@@ -434,10 +435,10 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
   const manajemenContent = (
     <>
       <p className={menuSectionLabelClassName}>MANAJEMEN</p>
-      {/* Pengguna: Agents, Requesters, Groups, Guests */}
+      {/* Users: Agents, Requesters, Groups, Guests */}
       {hasPermission(SIDEBAR_USER) && (
         <SubMenu
-          title="Pengguna"
+          title="Users"
           key="6"
           icon={<UserIconSvg />}
           className="text-mono50"
@@ -473,9 +474,10 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         </SubMenu>
       )}
 
+      {/** Employees: Employee List, Payslip */}
       {hasPermission(SIDEBAR_EMPLOYEE) && (
         <SubMenu
-          title="Karyawan"
+          title="Employees"
           key="employee"
           icon={<UserCheckIconSvg />}
           className="text-mono50"
@@ -483,24 +485,24 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_EMPLOYEE_LIST) && (
             <Menu.Item key="employee-list" className="text-mono50">
               <Link href="/admin/employees">
-                <p>Daftar Karyawan</p>
+                <p>Employee List</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_EMPLOYEE_PAYSLIP) && (
             <Menu.Item key="employee-salary" className="text-mono50">
               <Link href="/admin/employees/payslip">
-                <p>Slip Gaji</p>
+                <p>Payslip</p>
               </Link>
             </Menu.Item>
           )}
         </SubMenu>
       )}
 
-      {/* Fitur: Roles. Modules */}
+      {/* Features: Roles, Modules */}
       {hasPermission(SIDEBAR_FEATURE) && (
         <SubMenu
-          title="Fitur"
+          title="Features"
           key="7"
           icon={<FiturIconSvg />}
           className="text-mono50"
@@ -522,10 +524,10 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         </SubMenu>
       )}
 
-      {/* Aset: Asset Types, Models, Vendors, Manufacturers, Relationship Type */}
+      {/* Assets: Asset Types, Models, Vendors, Manufacturers, Relationship Type */}
       {hasPermission(SIDEBAR_ASSET) && (
         <SubMenu
-          title="Aset"
+          title="Assets"
           key="8"
           icon={<AsetIconSvg />}
           className="text-mono50"
@@ -567,10 +569,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           )}
         </SubMenu>
       )}
-      {/* Product */}
+
+      {/* Catalogue: Product */}
       {hasPermission(SIDEBAR_ASSET) && (
         <SubMenu
-          title="Katalog"
+          title="Catalogue"
           key="12"
           icon={<KatalogIconSvg />}
           className="text-mono50"
@@ -584,7 +587,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           )}
         </SubMenu>
       )}
-      {/* CMS: Career. Messages */}
+      {/* CMS: Careers, Message, Form Solution, Blog, Product */}
       {hasPermission(SIDEBAR_CMS) && (
         <SubMenu
           title="CMS"
@@ -595,7 +598,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_CMS_CAREER) && (
             <Menu.Item key="91" className="text-mono50">
               <Link href="/admin/careers">
-                <p>Career</p>
+                <p>Careers</p>
               </Link>
             </Menu.Item>
           )}
@@ -631,7 +634,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         </SubMenu>
       )}
 
-      {/* Resume: Role Assessment, Daftar Kandidat */}
+      {/* Resume: Role Assessment, Candidate List */}
       {hasPermission(SIDEBAR_RESUME) && (
         <SubMenu
           title="Resume"
@@ -650,14 +653,14 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_RESUME_DAFTAR_KANDIDAT) && (
             <Menu.Item key="102" className="text-mono50">
               <Link href="/admin/candidates">
-                <p>Daftar Kandidat</p>
+                <p>Candidate List</p>
               </Link>
             </Menu.Item>
           )}
         </SubMenu>
       )}
 
-      {/* Recruitment Management */}
+      {/* Recruitment: Setup, Candidates, Talent Pool, Career Management */}
       {hasPermission(SIDEBAR_RECRUITMENT) && (
         <SubMenu
           title="Recruitment"
@@ -665,10 +668,10 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           icon={<UserPlusIconSvg />}
           className="text-mono50"
         >
-          {hasPermission(SIDEBAR_RECRUITMENT_CAREER) && (
-            <Menu.Item key="career-management" className="text-mono50">
-              <Link href="/admin/career">
-                <p>Career Management</p>
+          {hasPermission(SIDEBAR_RECRUITMENT_SETUP) && (
+            <Menu.Item key="112" className="text-mono50">
+              <Link href="/admin/recruitment/role">
+                <p>Setup</p>
               </Link>
             </Menu.Item>
           )}
@@ -680,14 +683,6 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
 
-          {hasPermission(SIDEBAR_RECRUITMENT_SETUP) && (
-            <Menu.Item key="112" className="text-mono50">
-              <Link href="/admin/recruitment/role">
-                <p>Setup</p>
-              </Link>
-            </Menu.Item>
-          )}
-
           {hasPermission(SIDEBAR_RECRUITMENT_TALENT_POOL) && (
             <Menu.Item key="recruitment-talent-pool" className="text-mono50">
               <Link href="/admin/recruitment/talent-pool">
@@ -695,13 +690,20 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
+          {hasPermission(SIDEBAR_RECRUITMENT_CAREER) && (
+            <Menu.Item key="career-management" className="text-mono50">
+              <Link href="/admin/career">
+                <p>Career Management</p>
+              </Link>
+            </Menu.Item>
+          )}
         </SubMenu>
       )}
 
-      {/* Contract Management */}
+      {/* Contract: Contract, Invoice */}
       {hasPermission(SIDEBAR_CONTRACT) && (
         <SubMenu
-          title="Kontrak"
+          title="Contract"
           key="contract"
           icon={<ResumeIconSvg />}
           className="text-mono50"
@@ -709,7 +711,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_CONTRACT_LIST) && (
             <Menu.Item key="contract-list" className="text-mono50">
               <Link href="/admin/contracts">
-                <p>Kontrak</p>
+                <p>Contract</p>
               </Link>
             </Menu.Item>
           )}

@@ -200,9 +200,8 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
       formData.append("document", personalFileBlob);
     }
 
-    // TODO: adjust if BE done
     if (approvedFileBlob) {
-      formData.append("approved_document", approvedFileBlob);
+      formData.append("approval", approvedFileBlob);
     }
     setLoading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addLeaveUser`, {
@@ -412,7 +411,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
           <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
               label="Leave Form Approved by Manager"
-              name={"approved_file"}
+              name={"approval"}
               className="col-span-2"
             >
               <div className={"flex flex-col"}>

@@ -10,7 +10,7 @@ import React, { Dispatch, FC, SetStateAction, useState } from "react";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
-import { OneUserIconSvg, PdfIconSvg } from "components/icon";
+import { ArrowLeftIconSvg, EditIconSvg, OneUserIconSvg } from "components/icon";
 import { ModalAccept, ModalDelete } from "components/modal/modalConfirmation";
 import BadgeLeaveStatus from "components/screen/attendance/leave/BadgeLeaveStatus";
 
@@ -24,6 +24,7 @@ import {
 } from "lib/helper";
 import { generateStaticAssetUrl, getFileName } from "lib/helper";
 
+import { LeaveStatus } from "apis/attendance";
 import { IEmployeeData } from "apis/employee/employee.types";
 
 import PdfIcon from "assets/vectors/pdf-icon.svg";
@@ -33,13 +34,13 @@ import { CloseIconSvg, DownloadIconSvg } from "../../icon";
 import { IFileAttribute } from "types/common";
 
 /**
- * Component AttendanceStaffAktivitasDrawer's props.
+ * Component DrawerLeaveDetail's props.
  */
-export interface IDrawerAnnualLeave {
+export interface IDrawerLeaveDetail {
   visible: boolean;
   dataDefault: {
     id: number;
-    status: number; // 1 -> pending | 2 -> accepted | 3 -> rejected
+    status: 1 | 2 | 3; // 1 -> pending | 2 -> accepted | 3 -> rejected
     issued_date: Date | string;
     start_date: Date | string;
     end_date: Date | string;
@@ -48,28 +49,31 @@ export interface IDrawerAnnualLeave {
     type: {
       name: string;
     };
-    approved_document: IFileAttribute;
+    approval: IFileAttribute;
     document: IFileAttribute;
     delegate: IEmployeeData;
     employee: IEmployeeData;
   };
+  isAdmin?: boolean;
   closeDrawer: () => void;
   initProps: string;
   fetchData: () => void;
 }
 
 /**
- * Component AttendanceStaffAktivitasDrawer
+ * Component DrawerLeaveDetail
  */
-const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
+const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
   visible,
   dataDefault,
   closeDrawer,
   initProps,
   fetchData,
+  isAdmin = false,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToApproveLeave = hasPermission(LEAVE_APPROVE);
+  const isAllowedToDeleteLeave = hasPermission(LEAVE_DELETE);
 
   const [showData, setShowData] = useState("1");
   const [detailEmployee, setDetailEmployee] = useState({
@@ -87,8 +91,15 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
     loadingReject: false,
   });
 
+  const [loadingCancel, setLoadingCancel] = useState(false);
+
   const [modalConfirmReject, setModalConfirmReject] = useState(false);
   const [modalConfirmApprove, setModalConfirmApprove] = useState(false);
+
+  const [modalConfirmCancel, setModalConfirmCancel] = useState({
+    show: false,
+    data: dataDefault?.issued_date,
+  });
 
   const clickDetailEmployee = (record) => {
     setDetailEmployee({
@@ -109,6 +120,10 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
     } else {
       closeDrawer();
     }
+  };
+
+  const handleCloseModalConfirmCancel = () => {
+    setModalConfirmCancel({ show: false, data: null });
   };
 
   const processCuti = (aksi) => {
@@ -172,6 +187,40 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
       });
   };
 
+  const batalCuti = () => {
+    setLoadingCancel(true);
+    let dataSend = {
+      id: dataDefault.id,
+    };
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteLeave`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: JSON.parse(initProps),
+      },
+      body: JSON.stringify(dataSend),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setLoadingCancel(false);
+          handleCloseModalConfirmCancel();
+
+          notificationSuccess({
+            message: "Leave request successfully canceled",
+            duration: 3,
+          });
+          handleCloseModalConfirmCancel();
+          fetchData();
+        } else {
+          notificationError({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      });
+  };
+
   const employeeProfile = (employee) => (
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-4">
@@ -195,51 +244,75 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
         <p className="text-[#35763B] text-xs leading-4 font-medium">
           View Detail
         </p>
-        <ArrowRightOutlined size={16} color="#35763B" />
       </div>
     </div>
   );
 
   return (
     <Drawer
-      title={showData == "1" ? "Leave Issued Details" : "Employee Details"}
-      open={visible}
-      closeIcon={
-        showData == "2" ? (
-          <ArrowLeftOutlined size={24} color={"black"} />
+      title={
+        showData == "1" ? (
+          "Leave Issued Details"
         ) : (
-          <CloseOutlined size={24} color="black" />
-        )
-      }
-      onClose={() => closeDrawerNew()}
-      footer={
-        showData == "1" &&
-        dataDefault?.status == 1 && (
-          <div className={"flex justify-between gap-4 w-full"}>
-            <div className="w-1/2">
-              <ButtonSys
-                fullWidth
-                type="default"
-                color="danger"
-                loading={dataLoading.loadingReject}
-                onClick={() => setModalConfirmReject(true)}
-              >
-                <p>Reject Leave</p>
-              </ButtonSys>
-            </div>
-
-            <div className="w-1/2">
-              <ButtonSys
-                fullWidth
-                type="primary"
-                loading={dataLoading.loadingApprove}
-                onClick={() => setModalConfirmApprove(true)}
-              >
-                <p>Approve Leave</p>
-              </ButtonSys>
-            </div>
+          <div className="flex items-center gap-3">
+            <button
+              className="hover:opacity-75 flex items-center "
+              onClick={() => setShowData("1")}
+            >
+              <ArrowLeftIconSvg size={20} color={"#808080"} />
+            </button>
+            <p>Employee Details</p>
           </div>
         )
+      }
+      open={visible}
+      closeIcon={showData == "1" && <CloseOutlined size={24} color="black" />}
+      onClose={() => closeDrawerNew()}
+      footer={
+        isAdmin ? (
+          showData == "1" &&
+          dataDefault?.status == LeaveStatus.PENDING && (
+            <div className={"flex justify-between gap-4 w-full"}>
+              <div className="w-1/2">
+                <ButtonSys
+                  fullWidth
+                  type="default"
+                  color="danger"
+                  loading={dataLoading.loadingReject}
+                  onClick={() => setModalConfirmReject(true)}
+                >
+                  <p>Reject Leave</p>
+                </ButtonSys>
+              </div>
+
+              <div className="w-1/2">
+                <ButtonSys
+                  fullWidth
+                  type="primary"
+                  loading={dataLoading.loadingApprove}
+                  onClick={() => setModalConfirmApprove(true)}
+                >
+                  <p>Approve Leave</p>
+                </ButtonSys>
+              </div>
+            </div>
+          )
+        ) : dataDefault?.status == LeaveStatus.PENDING ? (
+          <ButtonSys
+            fullWidth
+            color={"mono30"}
+            loading={loadingCancel}
+            onClick={() =>
+              setModalConfirmCancel({
+                show: true,
+                data: dataDefault?.issued_date,
+              })
+            }
+            disabled={!isAllowedToDeleteLeave}
+          >
+            Cancel Leave Submission
+          </ButtonSys>
+        ) : null
       }
     >
       {showData == "1" && (
@@ -252,18 +325,18 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
             </div>
 
             {/* Leave Detail */}
-            <div className="flex justify-between items-center border-b p-4">
-              <div>
-                <p className={"mig-caption text-neutrals90"}>Issued Date</p>
-                <p className={"mig-body"}>
-                  {moment(dataDefault?.issued_date).format("DD MMMM YYYY")}
-                </p>
-              </div>
-
-              <BadgeLeaveStatus status={dataDefault?.status} />
-            </div>
 
             <div className="p-4 flex flex-col gap-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className={"mig-caption text-neutrals90"}>Issued Date</p>
+                  <p className={"mig-body"}>
+                    {moment(dataDefault?.issued_date).format("DD MMMM YYYY")}
+                  </p>
+                </div>
+
+                <BadgeLeaveStatus status={dataDefault?.status} />
+              </div>
               <div className="flex justify-between items-center">
                 <div>
                   <p className={"mig-caption text-neutrals90"}>Leave Date</p>
@@ -296,7 +369,7 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
                 <p className={"mig-caption text-neutrals90"}>
                   Leave Form Approved by Manager
                 </p>
-                {dataDefault?.approved_document == null ? (
+                {dataDefault?.approval == null ? (
                   "-"
                 ) : (
                   <div
@@ -310,16 +383,14 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
                       </div>
                       <a
                         href={generateStaticAssetUrl(
-                          dataDefault?.approved_document?.link
+                          dataDefault?.approval?.link
                         )}
                         target="_blank"
                         rel="noopener noreferrer"
-                        title={getFileName(
-                          dataDefault?.approved_document?.link
-                        )}
+                        title={getFileName(dataDefault?.approval?.link)}
                       >
                         <p className="truncate w-40">
-                          {getFileName(dataDefault?.approved_document?.link)}
+                          {getFileName(dataDefault?.approval?.link)}
                         </p>
                       </a>
                     </div>
@@ -328,9 +399,7 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
                       color="mono100"
                       square
                       onClick={() =>
-                        downloadFileFromPath(
-                          dataDefault?.approved_document?.link
-                        )
+                        downloadFileFromPath(dataDefault?.approval?.link)
                       }
                     >
                       <DownloadIconSvg />
@@ -381,20 +450,32 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
                 )}
               </div>
 
-              <div className={"mt-2 flex flex-col gap-2"}>
-                <p className="mig-caption text-neutrals90">
-                  Additional Notes{" "}
-                  <span className="text-[12px] font-medium text-neutrals80">
-                    (optional)
-                  </span>
-                </p>
-                <textarea
-                  rows={3}
-                  className={" border border-solid border-[#E6E6E6] p-4"}
-                  placeholder={dataDefault?.admin_notes}
-                  disabled={dataDefault?.status != 1}
-                />
-              </div>
+              {!isAdmin && !!dataDefault?.admin_notes && (
+                <div
+                  className="py-2 px-3 rounded bg-secondary100 bg-opacity-10 
+              text-secondary100 flex items-center gap-2"
+                >
+                  <EditIconSvg />
+                  <p className="mig-caption">{dataDefault.admin_notes}</p>
+                </div>
+              )}
+
+              {isAdmin && (
+                <div className={"mt-2 flex flex-col gap-2"}>
+                  <p className="mig-caption text-neutrals90">
+                    Additional Notes{" "}
+                    <span className="text-[12px] font-medium text-neutrals80">
+                      (optional)
+                    </span>
+                  </p>
+                  <textarea
+                    rows={3}
+                    className={" border border-solid border-[#E6E6E6] p-4"}
+                    placeholder={dataDefault?.admin_notes}
+                    disabled={dataDefault?.status != 1}
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div>
@@ -499,8 +580,28 @@ const DrawerAnnualLeave: FC<IDrawerAnnualLeave> = ({
           </p>
         </ModalAccept>
       </AccessControl>
+
+      <AccessControl hasPermission={LEAVE_DELETE}>
+        <ModalDelete
+          visible={modalConfirmCancel?.show}
+          title="Cancel Leave Request"
+          itemName="Leave Request"
+          loading={loadingCancel}
+          disabled={!isAllowedToDeleteLeave}
+          onOk={() => batalCuti()}
+          onCancel={() => setModalConfirmCancel({ show: false, data: null })}
+        >
+          <p>
+            Are you sure you want to cancel your leave request on{" "}
+            <strong>
+              {moment(modalConfirmCancel?.data).format("DD MMMM YYYY")}
+            </strong>
+            ?
+          </p>
+        </ModalDelete>
+      </AccessControl>
     </Drawer>
   );
 };
 
-export default DrawerAnnualLeave;
+export default DrawerLeaveDetail;

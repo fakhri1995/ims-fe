@@ -13,7 +13,7 @@ const StatisticCountCard = ({
   description,
 }: IStatisticCountCard) => {
   return (
-    <div className="mig-card bg-white w-full flex justify-between items-start">
+    <div className="mig-platform bg-white w-full flex justify-between items-start">
       <div className="flex flex-col gap-4 justify-between h-full">
         <h4 className="mig-heading--4">{dataCount}</h4>
         <div>

@@ -98,7 +98,6 @@ const AttendanceCompanyDetailPage: NextPage<ProtectedPageProps> = ({
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
-      st={st}
       tok={token}
       sidemenu={"1"}
       fixedBreadcrumbValues={pageBreadcrumb}
