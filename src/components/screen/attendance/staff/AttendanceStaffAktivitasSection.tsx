@@ -39,6 +39,7 @@ import { useQuery, useQueryClient } from "react-query";
 
 import ButtonSys from "components/button";
 import ButtonTooltip from "components/buttonTooltip";
+import DrawerLeaveDetail from "components/drawer/attendance/drawerLeaveDetail";
 import { AccessControl } from "components/features/AccessControl";
 import {
   AddNoteSvg,
@@ -92,7 +93,6 @@ import BadgeLeaveStatus from "../leave/BadgeLeaveStatus";
 import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
 import { AttendanceStaffAktivitasDetailDrawer } from "./AttendanceStaffAktivitasDetailDrawer";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
-import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
 import { AttendanceStaffLeaveStatisticCards } from "./AttendanceStaffLeaveStatisticCards";
 import { AttendanceStaffOvertimeDetailDrawer } from "./AttendanceStaffOvertimeDetailDrawer";
@@ -1030,12 +1030,13 @@ export const AttendanceStaffAktivitasSection: FC<
                 activityFormId={activityDrawerState.selectedActivityFormId}
                 onClose={() => setShowModalLeave(false)}
               />
-              <AttendanceStaffLeaveDetailDrawer
-                fetchData={fetchDataLeaves}
+
+              <DrawerLeaveDetail
                 visible={showDetailCuti}
                 dataDefault={dataDefault}
-                dataToken={dataToken}
-                onClose={cancelShowDetail}
+                closeDrawer={cancelShowDetail}
+                initProps={dataToken}
+                fetchData={fetchDataLeaves}
               />
             </div>
           </AccessControl>

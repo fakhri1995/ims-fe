@@ -54,7 +54,6 @@ import {
 
 import { CompanyService, CompanyServiceQueryKeys } from "apis/company";
 
-import DrawerAnnualLeave from "../../../components/drawer/attendance/drawerAnnualLeave";
 import {
   AddNoteSvg,
   EyeIconSvg,

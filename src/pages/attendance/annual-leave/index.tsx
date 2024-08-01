@@ -38,7 +38,7 @@ import {
 
 import { LeaveStatus } from "apis/attendance";
 
-import DrawerAnnualLeave from "../../../components/drawer/attendance/drawerAnnualLeave";
+import DrawerLeaveDetail from "../../../components/drawer/attendance/drawerLeaveDetail";
 import Layout from "../../../components/layout-dashboard-management";
 import st from "../../../components/layout-dashboard-management.module.css";
 import ModalSetujuiCuti from "../../../components/modal/attendance/modalSetujuiCuti";
@@ -424,7 +424,8 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
               }}
             />
           </div>
-          <DrawerAnnualLeave
+          <DrawerLeaveDetail
+            isAdmin={true}
             dataDefault={dataDefault}
             visible={showDrawer}
             closeDrawer={closeDrawer}

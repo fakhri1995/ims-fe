@@ -71,8 +71,8 @@ import { AttendanceTaskActivityService } from "apis/attendance/attendance-task-a
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
-import { AttendanceStaffLeaveDetailDrawer } from "./AttendanceStaffLeaveDetailDrawer";
 import { AttendanceStaffLeaveDrawer } from "./AttendanceStaffLeaveDrawer";
+import { AttendanceStaffLeaveDetailDrawer } from "./OldAttendanceStaffLeaveDetailDrawer";
 
 const { TabPane } = Tabs;
 
