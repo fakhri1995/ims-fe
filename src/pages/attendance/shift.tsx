@@ -78,7 +78,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
-      name: "Shift Kerja",
+      name: "Work Shift",
     },
   ];
 

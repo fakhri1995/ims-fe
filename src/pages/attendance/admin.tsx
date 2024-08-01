@@ -32,7 +32,7 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
   const [roles, setRoles] = useState(0);
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
-      name: "Absensi",
+      name: "Admin Attendance",
     },
   ];
 

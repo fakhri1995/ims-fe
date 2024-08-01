@@ -1,32 +1,4 @@
-import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  CheckOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
-import {
-  Checkbox,
-  Collapse,
-  DatePicker,
-  Drawer,
-  Form,
-  Input,
-  Modal,
-  Select,
-  Spin,
-  Switch,
-  Table,
-  Tag,
-  notification,
-} from "antd";
-import { SorterResult } from "antd/lib/table/interface";
-import {
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from "next-query-params";
-import { useRouter } from "next/router";
+import { Modal, Table } from "antd";
 import React, { useEffect, useState } from "react";
 
 import ButtonSys from "components/button";
@@ -66,12 +38,7 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
   const [rowstate, setrowstate] = useState(0);
   const [showDrawerCuti, setShowDrawerTipeCuti] = useState(false);
   const [showModalConfirmDelete, setShowModalConfirmDelete] = useState(false);
-  const [queryParams, setQueryParams] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
-    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-  });
+
   const [dataRawTipeCuti, setDataRawTipeCuti] = useState({
     current_page: "",
     data: [],
@@ -89,16 +56,16 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
   const [loadingTipeCuti, setLoadingTipeCuti] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const columnsTipeCuti: typeof dataDefault = [
-    {
-      title: "No",
-      dataIndex: "num",
-      align: "center",
-      render: (text, record, index) => {
-        return {
-          children: <>{index + 1}</>,
-        };
-      },
-    },
+    // {
+    //   title: "No",
+    //   dataIndex: "num",
+    //   align: "center",
+    //   render: (text, record, index) => {
+    //     return {
+    //       children: <>{index + 1}</>,
+    //     };
+    //   },
+    // },
     {
       title: "Name",
       dataIndex: "name",
@@ -131,6 +98,7 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
     {
       title: "Description",
       dataIndex: "description",
+      width: 226,
       render: (text, record, index) => {
         return {
           children: <p>{record.description}</p>,
@@ -147,16 +115,16 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
           children: (
             <div className="flex flex-col md:flex-row gap-2 justify-center items-center">
               <div
-                className={"items-center hover:cursor-pointer"}
+                className={"items-center hover:cursor-pointer hover:opacity-75"}
                 onClick={() => editData(record)}
               >
-                <EditTablerIconSvg size={16} color={"#4D4D4D"} />
+                <EditTablerIconSvg size={20} color={"#4D4D4D"} />
               </div>
               <div
-                className={"items-center hover:cursor-pointer"}
+                className={"items-center hover:cursor-pointer hover:opacity-75"}
                 onClick={() => handleDelete(record)}
               >
-                <DeleteTablerIconSvg size={16} color={"#BF4A40"} />
+                <DeleteTablerIconSvg size={20} color={"#BF4A40"} />
               </div>
             </div>
           ),
@@ -191,15 +159,12 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
 
   const fetchData = async () => {
     setLoadingTipeCuti(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaveTypes?page=${queryParams.page}&rows=${queryParams.rows}&sort_by=${queryParams.sort_by}&sort_type=${queryParams.sort_type}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaveTypes`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         // setDataRawTipeCuti(res2.data); // table-related data source
@@ -244,13 +209,14 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
 
   return (
     <Modal
-      width={600}
+      width={750}
       footer={null}
       onCancel={onClose}
       open={visible}
+      className="modalCore"
       title={
         <p className={"text-[#4D4D4D] text-[14px] leading-6 font-bold"}>
-          Leave Types
+          Manage Leave Types
         </p>
       }
       closeIcon={<CloseOverlay size={24} />}
@@ -262,34 +228,14 @@ const ModalTipeCuti = ({ visible, onClose, initProps }) => {
         columns={columnsTipeCuti}
         loading={loadingTipeCuti}
         scroll={{ x: "max-content" }}
-        pagination={{
-          current: queryParams.page,
-          pageSize: queryParams.rows,
-          total: dataRawTipeCuti.total,
-          showSizeChanger: true,
-        }}
+        pagination={false}
         rowClassName={(record, idx) => {
           return `${record.id === rowstate && `cursor-pointer`} ${
             record.status === 1 && `bg-bgBackdropOverdue`
           }`;
         }}
-        onChange={(pagination, filters, sorter: SorterResult<any>, extra) => {
-          const sortTypePayload =
-            sorter.order === "ascend"
-              ? "asc"
-              : sorter.order === "descend"
-              ? "desc"
-              : undefined;
-
-          setQueryParams({
-            sort_type: sortTypePayload,
-            sort_by: sortTypePayload === undefined ? undefined : sorter.field,
-            page: pagination.current,
-            rows: pagination.pageSize,
-          });
-        }}
       />
-      <div className={"flex justify-center"}>
+      <div className={"flex justify-center mt-3"}>
         <ButtonSys
           onClick={() => setShowDrawerTipeCuti(true)}
           disabled={!isAllowedToAddLeaveType}

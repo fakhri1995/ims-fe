@@ -33,13 +33,12 @@ type objType = {
   type: {
     name: string;
   };
-  admin_notes: string; // TODO: adjust if BE done
+  admin_notes: string;
   document: {
     name: string;
     link: string;
   };
-  approved_document: {
-    // TODO: adjust if BE done
+  approval: {
     name: string;
     link: string;
   };
@@ -213,7 +212,7 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
               <p className={"mig-caption text-neutrals90"}>
                 Leave Form Approved by Manager
               </p>
-              {dataDefault?.approved_document == null ? (
+              {dataDefault?.approval == null ? (
                 "-"
               ) : (
                 <div
@@ -225,13 +224,11 @@ export const AttendanceStaffLeaveDetailDrawer: FC<
                     <PdfIcon />
                   </div>
                   <a
-                    href={generateStaticAssetUrl(
-                      dataDefault?.approved_document.link
-                    )}
+                    href={generateStaticAssetUrl(dataDefault?.approval.link)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <p>{getFileName(dataDefault.approved_document.link)}</p>
+                    <p>{getFileName(dataDefault.approval.link)}</p>
                   </a>
                 </div>
               )}

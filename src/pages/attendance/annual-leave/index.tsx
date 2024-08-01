@@ -22,6 +22,7 @@ import {
   EyeIconSvg,
   SettingsIconSvg,
 } from "components/icon";
+import LayoutDashboard from "components/layout-dashboard";
 import ModalPengajuanCuti from "components/modal/attendance/modalPengajuanCuti";
 import { AttendanceAdminLeaveStatisticCards } from "components/screen/attendance/leave/AttendanceAdminLeaveStatisticCards";
 import BadgeLeaveStatus from "components/screen/attendance/leave/BadgeLeaveStatus";
@@ -38,8 +39,7 @@ import {
 
 import { LeaveStatus } from "apis/attendance";
 
-import DrawerAnnualLeave from "../../../components/drawer/attendance/drawerAnnualLeave";
-import Layout from "../../../components/layout-dashboard-management";
+import DrawerLeaveDetail from "../../../components/drawer/attendance/drawerLeaveDetail";
 import st from "../../../components/layout-dashboard-management.module.css";
 import ModalSetujuiCuti from "../../../components/modal/attendance/modalSetujuiCuti";
 import ModalTipeCuti from "../../../components/modal/attendance/modalTipeCuti";
@@ -56,6 +56,8 @@ import {
 } from "chart.js";
 import clsx from "clsx";
 import httpcookie from "cookie";
+
+import { PageBreadcrumbValue } from "types/common";
 
 Chart.register(
   ArcElement,
@@ -78,13 +80,12 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
   }
 
   //1.Init
-  const rt = useRouter();
-  const pathArr = rt.pathname.split("/").slice(1);
-
   // Breadcrumb title
-  const pathTitleArr = [...pathArr];
-  pathTitleArr.splice(1, 1);
-  pathTitleArr.splice(1, 1, "Manajemen Cuti");
+  const pageBreadcrumb: PageBreadcrumbValue[] = [
+    {
+      name: "Leave / Day Off",
+    },
+  ];
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -278,13 +279,11 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   return (
-    <Layout
+    <LayoutDashboard
       tok={initProps}
       dataProfile={dataProfile}
       sidemenu={sidemenu}
-      pathArr={pathArr}
-      pathTitleArr={pathTitleArr}
-      st={st}
+      fixedBreadcrumbValues={pageBreadcrumb}
     >
       <div className="grid grid-cols-1 gap-5" id="mainWrapper">
         <AttendanceAdminLeaveStatisticCards dataToken={initProps} />
@@ -424,7 +423,8 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
               }}
             />
           </div>
-          <DrawerAnnualLeave
+          <DrawerLeaveDetail
+            isAdmin={true}
             dataDefault={dataDefault}
             visible={showDrawer}
             closeDrawer={closeDrawer}
@@ -452,7 +452,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
           />
         </div>
       </div>
-    </Layout>
+    </LayoutDashboard>
   );
 };
 

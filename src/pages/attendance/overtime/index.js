@@ -10,6 +10,14 @@ import { useAccessControl } from "contexts/access-control";
 
 import { LEAVE_STATISTICS_GET, LEAVE_STATUSES_GET } from "lib/features";
 
+import { CompanyService, CompanyServiceQueryKeys } from "apis/company";
+
+import {
+  AddNoteSvg,
+  EyeIconSvg,
+  SettingsIconSvg,
+} from "../../../components/icon";
+import LayoutDashboard from "../../../components/layout-dashboard";
 import Layout from "../../../components/layout-dashboard-management";
 import st from "../../../components/layout-dashboard-management.module.css";
 import { permissionWarningNotification } from "../../../lib/helper";
@@ -46,10 +54,9 @@ const OvertimeIndex = ({ initProps, dataProfile, sidemenu }) => {
     return null;
   }
   //1.Init
+  // Breadcrumb title
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
-
-  // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 1);
   pathTitleArr.splice(1, 1, "Overtime");
@@ -58,6 +65,11 @@ const OvertimeIndex = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToGetLeaveStatus = hasPermission(LEAVE_STATUSES_GET);
   const isAllowedToGetLeaveStatics = hasPermission(LEAVE_STATISTICS_GET);
   const [dataDefault, setDataDefault] = useState(null);
+  const pageBreadcrumb = [
+    {
+      name: "Overtime",
+    },
+  ];
 
   useEffect(() => {
     fetchDataStatus();
@@ -122,19 +134,17 @@ const OvertimeIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   return (
-    <Layout
+    <LayoutDashboard
       tok={initProps}
       dataProfile={dataProfile}
       sidemenu={sidemenu}
-      pathArr={pathArr}
-      pathTitleArr={pathTitleArr}
-      st={st}
+      fixedBreadcrumbValues={pageBreadcrumb}
     >
       <div className="flex flex-col" id="mainWrapper">
         <AttendanceAdminStatisticOvertime initProps={initProps} />
         <AttendanceAdminListOvertime initProps={initProps} />
       </div>
-    </Layout>
+    </LayoutDashboard>
   );
 };
 

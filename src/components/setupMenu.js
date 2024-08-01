@@ -28,78 +28,81 @@ const SetupMenu = ({ menu }) => {
   const { hasPermission, hasRole } = useAccessControl();
 
   return (
-    <Menu
-      theme="light"
-      mode="inline"
-      defaultSelectedKeys={[menu]}
-      triggerSubMenuAction="hover"
-      inlineIndent={10}
-    >
-      {hasPermission(RECRUITMENT_SETUP_ROLE) && (
-        <Menu.Item
-          key="1"
-          icon={<BriefcaseIconSvg />}
-          className="text-mono50"
-          title="Role"
-        >
-          <Link href="/admin/recruitment/role">
-            <p>Role</p>
-          </Link>
-        </Menu.Item>
-      )}
+    <div>
+      <Menu
+        className="miniMenu"
+        theme="light"
+        mode="inline"
+        defaultSelectedKeys={[menu]}
+        triggerSubMenuAction="hover"
+        inlineIndent={10}
+      >
+        {hasPermission(RECRUITMENT_SETUP_ROLE) && (
+          <Menu.Item
+            key="1"
+            icon={<BriefcaseIconSvg />}
+            className="text-mono50"
+            title="Role"
+          >
+            <Link href="/admin/recruitment/role">
+              <p>Role</p>
+            </Link>
+          </Menu.Item>
+        )}
 
-      {hasPermission(RECRUITMENT_SETUP_REGISTRATION) && (
-        <Menu.Item
-          key="2"
-          icon={<ClickIconSvg />}
-          className="text-mono50"
-          title="Registration"
-        >
-          <Link href="/admin/recruitment/registration">
-            <p>Jalur Daftar</p>
-          </Link>
-        </Menu.Item>
-      )}
+        {hasPermission(RECRUITMENT_SETUP_REGISTRATION) && (
+          <Menu.Item
+            key="2"
+            icon={<ClickIconSvg />}
+            className="text-mono50"
+            title="Registration"
+          >
+            <Link href="/admin/recruitment/registration">
+              <p>Jalur Daftar</p>
+            </Link>
+          </Menu.Item>
+        )}
 
-      {hasPermission(RECRUITMENT_SETUP_STAGE) && (
-        <Menu.Item
-          key="3"
-          icon={<TrendingUpIconSvg />}
-          className="text-mono50"
-          title="Stage"
-        >
-          <Link href="/admin/recruitment/stage">
-            <p>Stage</p>
-          </Link>
-        </Menu.Item>
-      )}
+        {hasPermission(RECRUITMENT_SETUP_STAGE) && (
+          <Menu.Item
+            key="3"
+            icon={<TrendingUpIconSvg />}
+            className="text-mono50"
+            title="Stage"
+          >
+            <Link href="/admin/recruitment/stage">
+              <p>Stage</p>
+            </Link>
+          </Menu.Item>
+        )}
 
-      {hasPermission(RECRUITMENT_SETUP_STATUS) && (
-        <Menu.Item
-          key="4"
-          icon={<InfoSquareIconSvg />}
-          className="text-mono50"
-          title="Status"
-        >
-          <Link href="/admin/recruitment/status">
-            <p>Status</p>
-          </Link>
-        </Menu.Item>
-      )}
+        {hasPermission(RECRUITMENT_SETUP_STATUS) && (
+          <Menu.Item
+            key="4"
+            icon={<InfoSquareIconSvg />}
+            className="text-mono50"
+            title="Status"
+          >
+            <Link href="/admin/recruitment/status">
+              <p>Status</p>
+            </Link>
+          </Menu.Item>
+        )}
 
-      {hasPermission(RECRUITMENT_SETUP_TEMPLATE) && (
-        <Menu.Item
-          key="5"
-          icon={<EmailIconSvg />}
-          className="text-mono50"
-          title="Template"
-        >
-          <Link href="/admin/recruitment/email-template">
-            <p>Template Email</p>
-          </Link>
-        </Menu.Item>
-      )}
-    </Menu>
+        {hasPermission(RECRUITMENT_SETUP_TEMPLATE) && (
+          <Menu.Item
+            key="5"
+            icon={<EmailIconSvg />}
+            className="text-mono50"
+            title="Template"
+          >
+            <Link href="/admin/recruitment/email-template">
+              <p>Template Email</p>
+            </Link>
+          </Menu.Item>
+        )}
+      </Menu>
+    </div>
   );
 };
 
