@@ -1,7 +1,9 @@
+import { CalendarFilled } from "@ant-design/icons";
 import { FC, useEffect, useState } from "react";
 
 import StatisticCountCard from "components/cards/StatisticCountCard";
 import {
+  CalendarCheckedFillIconSvg,
   CalendarFilIconSvg,
   CircleCheckFilledIconSvg,
   ClockIconFilledSvg,
@@ -55,31 +57,43 @@ export const AttendanceStaffLeaveStatisticCards: FC<
   };
 
   return (
-    <div className="w-full flex flex-col md:flex-row justify-between gap-3 my-4">
-      {/* Card Days Available */}
+    // TODO: adjust data if BE done
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 justify-between gap-3 my-4">
+      {/* Card Quota this year */}
       <StatisticCountCard
-        dataCount={12 + Number(leaveCount)}
+        dataCount={12}
         icon={
           <CircleCheckFilledIconSvg size={24} className={"text-primary100"} />
         }
-        title="Days available"
-        description="to book paid leave"
+        title="Quota this year"
+        description="to book leave"
+      />
+      {/* Card Leave remaining */}
+      <StatisticCountCard
+        dataCount={12 + Number(leaveCount)}
+        icon={
+          <CalendarFilIconSvg size={24} className={"text-accentblue text-lg"} />
+        }
+        title="Leave remaining"
+        description="this year"
       />
 
       {/* Card Pending Requests */}
       <StatisticCountCard
         dataCount={0}
-        icon={<ClockIconFilledSvg size={28} className={"text-warning"} />}
+        icon={<ClockIconFilledSvg size={26} className={"text-warning"} />}
         title="Pending Requests"
         description="awaiting approval"
       />
 
-      {/* Card Days Used */}
+      {/* Card Leave quota */}
       <StatisticCountCard
         dataCount={Math.abs(leaveCount)}
-        icon={<CalendarFilIconSvg size={24} className={"text-accentblue"} />}
-        title="Days"
-        description="leave has been taken"
+        icon={
+          <CalendarCheckedFillIconSvg size={22} className={"text-danger"} />
+        }
+        title="Leave quota"
+        description="that has been taken"
       />
     </div>
   );
