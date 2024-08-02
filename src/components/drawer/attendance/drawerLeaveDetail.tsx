@@ -8,6 +8,7 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import React, { Dispatch, FC, SetStateAction, useState } from "react";
 
+import InfoBanner from "components/InfoBanner";
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
 import { ArrowLeftIconSvg, EditIconSvg, OneUserIconSvg } from "components/icon";
@@ -210,7 +211,6 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
             message: "Leave request successfully canceled",
             duration: 3,
           });
-          handleCloseModalConfirmCancel();
           fetchData();
         } else {
           notificationError({
@@ -451,13 +451,10 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
               </div>
 
               {!isAdmin && !!dataDefault?.admin_notes && (
-                <div
-                  className="py-2 px-3 rounded bg-secondary100 bg-opacity-10 
-              text-secondary100 flex items-center gap-2"
-                >
-                  <EditIconSvg />
-                  <p className="mig-caption">{dataDefault.admin_notes}</p>
-                </div>
+                <InfoBanner
+                  icon={<EditIconSvg />}
+                  text={dataDefault.admin_notes}
+                />
               )}
 
               {isAdmin && (
