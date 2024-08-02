@@ -53,6 +53,7 @@ const DrawerDetailPelamar = ({
   disableUpdateNew,
   setModalUpdateStatusNew,
   handleClickExportPelamar,
+  exportRejectPelamar,
 }) => {
   /**
    * Dependencies
