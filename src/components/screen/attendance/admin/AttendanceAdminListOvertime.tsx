@@ -1,71 +1,36 @@
 import { CalendarOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import {
-  ConfigProvider,
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Switch,
-  Table,
-  Tabs,
-  Typography,
-} from "antd";
+import { DatePicker, Input, Select, Table, Tabs } from "antd";
 import type { ColumnsType } from "antd/lib/table";
-import { isBefore } from "date-fns";
 import moment from "moment";
 import {
+  DateParam,
   NumberParam,
   StringParam,
   useQueryParams,
   withDefault,
 } from "next-query-params";
-import { useRouter } from "next/router";
 import QueryString from "qs";
-import { FC, memo, useCallback, useEffect, useMemo, useState } from "react";
-import { useQuery } from "react-query";
-
-import ButtonSys from "components/button";
-import { AccessControl } from "components/features/AccessControl";
-import { DownloadIconSvg } from "components/icon";
-import { DataEmptyState } from "components/states/DataEmptyState";
+import { FC, useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { formatDateToLocale } from "lib/date-utils";
 import {
   ATTENDANCES_USERS_GET,
   ATTENDANCE_ACTIVITY_USERS_EXPORT,
   ATTENDANCE_FORMS_GET,
   ATTENDANCE_FORM_GET,
-  ATTENDANCE_USERS_PAGINATE_GET,
-  LEAVES_GET,
+  COMPANY_CLIENTS_GET,
+  OVERTIMES_GET,
 } from "lib/features";
-import {
-  generateStaticAssetUrl,
-  permissionWarningNotification,
-} from "lib/helper";
+import { permissionWarningNotification } from "lib/helper";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
-import {
-  AbsentUser,
-  AttendanceService,
-  AttendanceServiceQueryKeys,
-  AttendanceUser,
-  GetAttendanceUsersPaginateDatum,
-  IGetAttendanceUsersPaginateParams,
-  UsersAttendance,
-} from "apis/attendance";
-import { CompanyService, CompanyServiceQueryKeys } from "apis/company";
+import { LeaveStatus } from "apis/attendance";
 
-import {
-  AddNoteSvg,
-  EyeIconSvg,
-  SettingsIconSvg,
-} from "../../../../components/icon";
-import BadgeLeaveStatus from "../leave/BadgeLeaveStatus";
-import { EksporAbsensiDrawer } from "../shared/EksporAbsensiDrawer";
+import DrawerOvertimeDetail from "../../../../components/drawer/attendance/drawerOvertimeDetail";
+import BadgeOvertimeStatus from "../overtime/BadgeOvertimeStatus";
 import { AttendanceAdminOvertimeDrawer } from "./AttendanceAdminOvertimeDrawer";
 
 const { TabPane } = Tabs;
@@ -86,8 +51,18 @@ export interface IGetOvertimeAdmin {
   };
   employee: {
     name: string;
+    user: {
+      name: string;
+      position: string;
+      company: {
+        name: string;
+      };
+    };
   };
-  status: string;
+  status: {
+    id: number;
+    name: string;
+  };
 }
 
 /**
@@ -106,7 +81,8 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
   ]);
 
   const isAllowedToSearchData = hasPermission(ATTENDANCES_USERS_GET);
-  const isAllowedToGetLeave = hasPermission(LEAVES_GET);
+  const isAllowedToGetOvertime = hasPermission(OVERTIMES_GET);
+  const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
   const [dataAnnualLeave, setDataAnnualLeave] = useState([]);
   const [displayDataLeaves, setDisplayDataLeaves] = useState({
     current_page: "",
@@ -124,35 +100,60 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
   });
   const [showDrawer, setShowDrawer] = useState(false);
   const [dataDefault, setDataDefault] = useState(null);
+  const [dataCompanyList, setDataCompanyList] = useState([]);
+  const [loadingCompanyList, setLoadingCompanyList] = useState(false);
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    company_ids: withDefault(StringParam, undefined),
-    is_late: withDefault(NumberParam, undefined),
-    is_hadir: withDefault(NumberParam, undefined),
-    keyword: withDefault(StringParam, undefined),
+    issued_date: withDefault(StringParam, undefined),
+    issued_date_form: withDefault(DateParam, undefined),
+    company_id: withDefault(StringParam, undefined),
+    employee: withDefault(StringParam, undefined),
+    status: withDefault(StringParam, undefined),
   });
+  const [showDetailOvertime, setShowDetailOvertime] = useState(false);
   const [showModalOvertime, setShowModalOvertime] = useState(false);
-
-  const columns: ColumnsType<IGetOvertimeAdmin> = [
+  const overtimeStatuses = [
     {
-      title: "Nama Karyawan",
-      dataIndex: "nama",
-      key: "nama",
-      render: (text, record, index) => <p>{record.employee?.name}</p>,
+      label: "Pending",
+      value: LeaveStatus.PENDING,
     },
     {
-      title: "Tanggal Awal Cuti",
-      dataIndex: "start_date",
-      key: "start_date",
+      label: "Accepted",
+      value: LeaveStatus.ACCEPTED,
+    },
+    {
+      label: "Rejected",
+      value: LeaveStatus.REJECTED,
+    },
+  ];
+  const columns: ColumnsType<IGetOvertimeAdmin> = [
+    {
+      title: "Employee Name",
+      dataIndex: "nama",
+      key: "nama",
+      render: (text, record, index) => <p>{record.employee?.user?.name}</p>,
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
       render: (text, record, index) => (
-        <p>{moment(record.start_date).format("DD MMMM YYYY")}</p>
+        <p>{record?.employee?.user?.position}</p>
       ),
     },
     {
-      title: "Tanggal Pengajuan Cuti",
+      title: "Company",
+      dataIndex: "company",
+      key: "company",
+      render: (text, record, index) => (
+        <p>{record.employee.user.company.name}</p>
+      ),
+    },
+    {
+      title: "Issued Date",
       dataIndex: "issued_date",
       key: "issued_date",
       render: (text, record, index) => (
@@ -160,14 +161,18 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
       ),
     },
     {
-      title: "Durasi Cuti",
-      dataIndex: "durasi_cuti",
-      key: "durasi_cuti",
+      title: "Overtime Date",
+      dataIndex: "issued_date",
+      key: "issued_date",
       render: (text, record, index) => (
-        <p>
-          {moment(record.end_date).diff(moment(record.start_date), "days")} Hari
-        </p>
+        <p>{moment(record.issued_date).format("DD MMMM YYYY")}</p>
       ),
+    },
+    {
+      title: "Duration",
+      dataIndex: "duration",
+      key: "duration",
+      render: (text, record, index) => <p>{text} hour</p>,
     },
     {
       title: "Status",
@@ -176,14 +181,11 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
       render: (text, record, index) => {
         return {
           children: (
-            <div className={"flex gap-8 justify-center"}>
-              <BadgeLeaveStatus status={record.status} />
-              <div
-                onClick={() => detailCuti(record)}
-                className={"hover:cursor-pointer"}
-              >
-                <EyeIconSvg size={16} />
-              </div>
+            <div
+              onClick={() => detailOvertime(record)}
+              className={"flex gap-8 justify-center hover:cursor-pointer"}
+            >
+              <BadgeOvertimeStatus status={record?.status?.id} />
             </div>
           ),
         };
@@ -191,17 +193,28 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
     },
   ];
 
-  const detailCuti = (record) => {
-    setShowDrawer(true);
+  const detailOvertime = (record) => {
+    setShowDetailOvertime(true);
     setDataDefault(record);
   };
 
   useEffect(() => {
     fetchData();
-  }, [queryParams.page, queryParams.rows]);
+  }, [
+    queryParams.page,
+    queryParams.rows,
+    queryParams.company_id,
+    queryParams.employee,
+    queryParams.issued_date,
+    queryParams.status,
+  ]);
+
+  useEffect(() => {
+    fetchDataCompany();
+  }, []);
 
   const fetchData = async () => {
-    if (!isAllowedToGetLeave) {
+    if (!isAllowedToGetOvertime) {
       permissionWarningNotification("Mendapatkan", "Data Cuti");
     } else {
       const params = QueryString.stringify(queryParams, {
@@ -215,16 +228,43 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
       })
         .then((res) => res.json())
         .then((res2) => {
-          // setDisplayDataLeaves(res2.data); // table-related data source
-          // setDataAnnualLeave(res2.data.data);
+          setDisplayDataLeaves(res2.data); // table-related data source
+          setDataAnnualLeave(res2.data.data);
         });
     }
+  };
+
+  const fetchDataCompany = async () => {
+    if (!isAllowedToGetCompanyClients) {
+      permissionWarningNotification("Mendapatkan", "Data Company");
+    } else {
+      setLoadingCompanyList(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataCompanyList(res2.data);
+          setLoadingCompanyList(false);
+        });
+    }
+  };
+
+  const onChangeIssuedDate = (date, dateString) => {
+    setQueryParams({ issued_date: dateString, page: 1 });
+  };
+
+  const closeDetailDrawer = () => {
+    setShowDetailOvertime(false);
   };
 
   return (
     <>
       <div
-        className={"flex flex-col p-6  mt-8"}
+        className={"mig-platform--p-0 flex flex-col p-6  mt-8"}
         style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
       >
         <div className={"flex w-full justify-between items-center"}>
@@ -257,9 +297,9 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
                   event.target.value.length === 0 ||
                   event.target.value === ""
                 ) {
-                  setQueryParams({ keyword: "" });
+                  setQueryParams({ employee: "" });
                 } else {
-                  setQueryParams({ keyword: event.target.value });
+                  setQueryParams({ employee: event.target.value });
                 }
               }}
             />
@@ -267,24 +307,57 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
           <div className={"w-[20%] overtime-input"}>
             <DatePicker
               className="w-full"
+              // defaultValue={queryParams.issued_date_form}
               suffixIcon={
                 <CalendarOutlined style={{ color: "#808080", fontSize: 16 }} />
               }
+              onChange={onChangeIssuedDate}
             />
           </div>
           <div className={"w-[20%] overtime-input"}>
             <Select
-              bordered={false}
-              placeholder={"Select Placement"}
+              allowClear
+              showSearch
+              mode="multiple"
               className="w-full"
-            />
+              defaultValue={queryParams.company_id}
+              disabled={!isAllowedToGetCompanyClients || loadingCompanyList}
+              placeholder="Select Placement"
+              onChange={(value) => {
+                setQueryParams({ company_id: value, page: 1 });
+              }}
+              filterOption={(input, option) =>
+                (String(option?.children) ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              loading={loadingCompanyList}
+              optionFilterProp="children"
+            >
+              {dataCompanyList?.map((company) => (
+                <Select.Option key={company.id} value={company.id}>
+                  {company.name}
+                </Select.Option>
+              ))}
+            </Select>
           </div>
           <div className={"w-[20%] overtime-input"}>
             <Select
+              allowClear
               bordered={false}
-              placeholder={"Select Status"}
               className="w-full"
-            />
+              defaultValue={queryParams.status}
+              placeholder="Status"
+              onChange={(value) => {
+                setQueryParams({ status: value, page: 1 });
+              }}
+            >
+              {overtimeStatuses?.map((item) => (
+                <Select.Option key={item.label} value={item.value}>
+                  <BadgeOvertimeStatus status={item.value} />
+                </Select.Option>
+              ))}
+            </Select>
           </div>
         </div>
         <div className={"mt-6"}>
@@ -302,6 +375,12 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
                 rows: pagination.pageSize,
               });
             }}
+            onRow={(datum, rowIndex) => {
+              return {
+                className: "hover:cursor-pointer",
+                onClick: () => detailOvertime(datum),
+              };
+            }}
           />
         </div>
       </div>
@@ -312,6 +391,15 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
         visible={showModalOvertime}
         onClose={() => setShowModalOvertime(false)}
       />
+      {showDetailOvertime && (
+        <DrawerOvertimeDetail
+          visible={showDetailOvertime}
+          dataToken={initProps}
+          fetchData={fetchData}
+          dataDefault={dataDefault}
+          onClose={closeDetailDrawer}
+        />
+      )}
 
       {/* <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USERS_EXPORT}>
           <EksporAbsensiDrawer

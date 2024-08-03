@@ -1,41 +1,21 @@
-import { ClockCircleOutlined, UploadOutlined } from "@ant-design/icons";
-import {
-  DatePicker,
-  Drawer,
-  Form,
-  Input,
-  Select,
-  TimePicker,
-  Upload,
-} from "antd";
+import { ClockCircleOutlined } from "@ant-design/icons";
+import { Drawer, Form, Input, Select, TimePicker } from "antd";
 import { RcFile } from "antd/lib/upload/interface";
 import moment from "moment";
 import { FC, useEffect, useRef, useState } from "react";
-import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
-import { CalendartimeIconSvg, CheckIconSvg } from "components/icon";
+import { CheckIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { useAxiosClient } from "hooks/use-axios-client";
-
-import {
-  ATTENDANCE_ACTIVITY_ADD,
-  ATTENDANCE_ACTIVITY_DELETE,
-  ATTENDANCE_ACTIVITY_UPDATE,
-  FILTER_EMPLOYEES_GET,
-  LEAVE_TYPES_GET,
-  LEAVE_USER_ADD,
-} from "lib/features";
+import { FILTER_EMPLOYEES_GET, OVERTIME_USER_ADD } from "lib/features";
 import {
   getBase64,
   notificationError,
   notificationSuccess,
   permissionWarningNotification,
 } from "lib/helper";
-
-import { useGetUserAttendanceTodayActivities } from "apis/attendance";
 
 /**
  * Component AttendanceStaffAktivitasDrawer's props.
@@ -73,13 +53,11 @@ export const AttendanceStaffOvertimeDrawer: FC<
   const [instanceForm] = Form.useForm();
 
   const { hasPermission } = useAccessControl();
-  const isAllowedToGetLeaveTypes = hasPermission(LEAVE_TYPES_GET);
   const isAllowedToGetEmployees = hasPermission(FILTER_EMPLOYEES_GET);
-  const isAllowedToAddLeave = hasPermission(LEAVE_USER_ADD);
+  const isAllowedToAddOvertime = hasPermission(OVERTIME_USER_ADD);
   const [resumeFileBlob, setResumeFileBlob] = useState<RcFile | Blob | File>(
     null
   );
-  const [dataTipeCutis, setDataTipeCutis] = useState([]);
   const [dataEmployees, setDataEmployees] = useState([]);
   const [dataProjects, setDataProjects] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -235,7 +213,7 @@ export const AttendanceStaffOvertimeDrawer: FC<
             Cancel
           </ButtonSys>
           <ButtonSys
-            disabled={!isAllowedToAddLeave}
+            disabled={!isAllowedToAddOvertime}
             type="primary"
             onClick={() => instanceForm.submit()}
             loading={loading}
