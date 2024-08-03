@@ -1476,6 +1476,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               loadingUpdateNew={loadingUpdateNew}
               disableUpdateNew={disableUpdateNew}
               handleClickExportPelamar={handleClickExportPelamar}
+              exportRejectPelamar={exportRejectPelamar}
               setModalUpdateStatusNew={setModalUpdateStatusNew}
             />
           </AccessControl>
