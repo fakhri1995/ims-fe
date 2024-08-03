@@ -1,17 +1,26 @@
-import { Drawer } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { Drawer, Form, Upload, notification } from "antd";
 import moment from "moment";
 import { FC, useState } from "react";
 
 import ButtonSys from "components/button";
-import { EditIconSvg } from "components/icon";
-import { ModalDelete } from "components/modal/modalConfirmation";
+import { AccessControl } from "components/features/AccessControl";
+import { CloseIconSvg, EditIconSvg } from "components/icon";
+import { ModalAccept, ModalDelete } from "components/modal/modalConfirmation";
+import BadgeLeaveStatus from "components/screen/attendance/leave/BadgeLeaveStatus";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { LEAVE_DELETE, OVERTIME_DELETE } from "lib/features";
-import { getBase64, notificationError, notificationSuccess } from "lib/helper";
+import { LEAVE_DELETE, OVERTIME_APPROVE } from "lib/features";
+import {
+  generateStaticAssetUrl,
+  getBase64,
+  getFileName,
+  notificationError,
+  notificationSuccess,
+} from "lib/helper";
 
-import BadgeLeaveStatus from "../leave/BadgeLeaveStatus";
+import PdfIcon from "assets/vectors/pdf-icon.svg";
 
 /**
  * Component AttendanceStaffAktivitasDrawer's props.
@@ -53,6 +62,9 @@ type objType = {
     name: string;
     nip: string;
     email: string;
+    user: {
+      name: string;
+    };
     contract: {
       role: {
         name: string;
@@ -61,7 +73,7 @@ type objType = {
   };
 };
 
-export interface IAttendanceStaffOvertimeDetailDrawer {
+export interface IdrawerOvertimeDetail {
   dataToken: string;
   visible: boolean;
   onClose: () => void;
@@ -73,22 +85,32 @@ export interface IAttendanceStaffOvertimeDetailDrawer {
  * Component AttendanceStaffAktivitasDrawer
  */
 
-export const AttendanceStaffOvertimeDetailDrawer: FC<
-  IAttendanceStaffOvertimeDetailDrawer
-> = ({ visible, onClose, fetchData, dataDefault, dataToken }) => {
+export const DrawerOvertimeDetail: FC<IdrawerOvertimeDetail> = ({
+  visible,
+  onClose,
+  fetchData,
+  dataDefault,
+  dataToken,
+}) => {
   const { hasPermission } = useAccessControl();
-  const isAllowedToDeleteLeave = hasPermission(LEAVE_DELETE);
-  const isAllowedToDeleteOvertime = hasPermission(OVERTIME_DELETE);
+  const isAllowedToApproveOvertime = hasPermission(OVERTIME_APPROVE);
+
   const [loading, setLoading] = useState(false);
-  const [loadingCancel, setLoadingCancel] = useState(false);
   const [modalConfirm, setModalConfirm] = useState({
     show: false,
     data: dataDefault?.issued_date,
   });
 
-  const handleCloseModalConfirm = () => {
-    setModalConfirm({ show: false, data: null });
-  };
+  const [modalConfirmReject, setModalConfirmReject] = useState(false);
+  const [modalConfirmApprove, setModalConfirmApprove] = useState(false);
+  const [modalConfirmCancel, setModalConfirmCancel] = useState({
+    show: false,
+    data: dataDefault?.issued_date,
+  });
+  const [dataLoading, setDataLoading] = useState({
+    loadingApprove: false,
+    loadingReject: false,
+  });
 
   const onChangePersonalFile = async (info) => {
     if (info.file.status === "uploading") {
@@ -101,19 +123,26 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
       // setPersonalFileBlob(blobFile);
     }
   };
-  const handleCloseModalConfirmCancel = () => {
-    setModalConfirm({ show: false, data: null });
-    fetchData();
-    onClose();
-  };
 
-  const batalOvertime = () => {
-    setLoadingCancel(true);
+  const processOvertime = (aksi) => {
+    if (aksi == "tolak") {
+      setDataLoading({
+        ...dataLoading,
+        loadingReject: true,
+      });
+    }
+    if (aksi == "setuju") {
+      setDataLoading({
+        ...dataLoading,
+        loadingApprove: true,
+      });
+    }
     let dataSend = {
       id: dataDefault.id,
+      approve: aksi == "setuju" ? 1 : 0,
     };
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteOvertime`, {
-      method: "DELETE",
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/approveOvertime`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: JSON.parse(dataToken),
@@ -123,14 +152,29 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setLoadingCancel(false);
-          handleCloseModalConfirmCancel();
+          if (aksi == "tolak") {
+            setDataLoading({
+              ...dataLoading,
+              loadingReject: false,
+            });
+            setModalConfirmReject(false);
+          }
+          if (aksi == "setuju") {
+            setDataLoading({
+              ...dataLoading,
+              loadingApprove: false,
+            });
+            setModalConfirmApprove(false);
+          }
 
           notificationSuccess({
-            message: "Overtime request successfully canceled",
+            message:
+              aksi == "setuju"
+                ? "Overtime request successfully Approved"
+                : "Overtime request successfully Rejected",
             duration: 3,
           });
-          handleCloseModalConfirmCancel();
+          onClose();
           fetchData();
         } else {
           notificationError({
@@ -146,24 +190,32 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
       title={"Overtime Issued Details"}
       visible={visible}
       footer={
-        dataDefault?.status?.id != 1
-          ? null
-          : isAllowedToDeleteOvertime && (
+        dataDefault?.status?.id == 1 && (
+          <div className={"flex justify-between gap-4 w-full"}>
+            <div className="w-1/2">
               <ButtonSys
                 fullWidth
-                color={"mono30"}
-                loading={loading}
-                onClick={() =>
-                  setModalConfirm({
-                    show: true,
-                    data: dataDefault?.issued_date,
-                  })
-                }
-                disabled={!isAllowedToDeleteOvertime}
+                type="default"
+                color="danger"
+                loading={dataLoading.loadingReject}
+                onClick={() => setModalConfirmReject(true)}
               >
-                Cancel Overtime Submission
+                <p>Reject Overtime</p>
               </ButtonSys>
-            )
+            </div>
+
+            <div className="w-1/2">
+              <ButtonSys
+                fullWidth
+                type="primary"
+                loading={dataLoading.loadingApprove}
+                onClick={() => setModalConfirmApprove(true)}
+              >
+                <p>Approve Overtime</p>
+              </ButtonSys>
+            </div>
+          </div>
+        )
       }
       onClose={onClose}
     >
@@ -244,18 +296,41 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
           </div> */}
         </div>
       </div>
-      {modalConfirm?.show && (
+      <ModalAccept
+        visible={modalConfirmApprove}
+        title="Approve Overtime Request"
+        loading={dataLoading?.loadingApprove}
+        disabled={!isAllowedToApproveOvertime}
+        onOk={() => processOvertime("setuju")}
+        onCancel={() => setModalConfirmApprove(false)}
+      >
+        <p>
+          Are you sure you want to approve{" "}
+          <strong>{dataDefault?.employee?.user?.name}</strong> overtime request
+          on{" "}
+          <strong>
+            {moment(dataDefault.issued_date).format("DD MMMM YYYY")}{" "}
+            {moment(dataDefault.start_at, "HH:mm:ss").format("HH:mm")}-
+            {moment(dataDefault.end_at, "HH:mm:ss").format("HH:mm")}
+          </strong>
+          ?
+        </p>
+      </ModalAccept>
+      {modalConfirmReject && (
         <ModalDelete
-          visible={modalConfirm?.show}
-          title="Cancel overtime Request"
+          visible={modalConfirmReject}
+          title="Reject Overtime Request"
           itemName="Overtime Request"
-          loading={loadingCancel}
-          disabled={!isAllowedToDeleteOvertime}
-          onOk={() => batalOvertime()}
-          onCancel={() => setModalConfirm({ show: false, data: null })}
+          loading={dataLoading?.loadingReject}
+          disabled={!isAllowedToApproveOvertime}
+          onOk={() => processOvertime("tolak")}
+          onCancel={() => setModalConfirmReject(false)}
+          iconDelete={<CloseIconSvg />}
         >
           <p>
-            Are you sure you want to cancel your overtime request on{" "}
+            Are you sure you want to reject{" "}
+            <strong>{dataDefault?.employee?.user?.name}</strong> overtime
+            request on{" "}
             <strong>
               {moment(dataDefault.issued_date).format("DD MMMM YYYY")}{" "}
               {moment(dataDefault.start_at, "HH:mm:ss").format("HH:mm")}-
@@ -268,3 +343,5 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
     </Drawer>
   );
 };
+
+export default DrawerOvertimeDetail;

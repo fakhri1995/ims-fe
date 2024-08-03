@@ -71,6 +71,8 @@ import {
   LEAVES_COUNT_GET,
   LEAVES_USER_GET,
   LEAVE_USER_ADD,
+  OVERTIMES_USER_GET,
+  OVERTIME_USER_ADD,
 } from "lib/features";
 import {
   generateStaticAssetUrl,
@@ -152,7 +154,11 @@ export const AttendanceStaffAktivitasSection: FC<
   const isAllowedToExportTable = hasPermission(ATTENDANCE_ACTIVITY_USER_EXPORT);
 
   const isAllowedToGetLeavesUser = hasPermission(LEAVES_USER_GET) && isEmployee;
+  const isAllowedToGetOvertimeUser =
+    hasPermission(OVERTIMES_USER_GET) && isEmployee;
   const isAllowedToAddLeaveUser = hasPermission(LEAVE_USER_ADD) && isEmployee;
+  const isAllowedToAddOvertimeUser =
+    hasPermission(OVERTIME_USER_ADD) && isEmployee;
 
   // Constant for Activity State
   const [TODAY, HISTORY, FORM, TASK] = ["TODAY", "HISTORY", "FORM", "TASK"];
@@ -613,11 +619,11 @@ export const AttendanceStaffAktivitasSection: FC<
   }, [isAllowedToGetLeavesUser, queryParams.page, queryParams.rows]);
 
   useEffect(() => {
-    if (isAllowedToGetLeavesUser) {
+    if (isAllowedToGetOvertimeUser) {
       fetchDataOvertimes();
     }
   }, [
-    isAllowedToGetLeavesUser,
+    isAllowedToGetOvertimeUser,
     queryParamsOvertime.page,
     queryParamsOvertime.rows,
   ]);
@@ -654,7 +660,7 @@ export const AttendanceStaffAktivitasSection: FC<
   };
 
   const fetchDataOvertimes = async () => {
-    if (!isAllowedToGetLeavesUser) {
+    if (!isAllowedToGetOvertimeUser) {
       permissionWarningNotification("Mendapatkan", "Data Overtimes");
     } else {
       const params = QueryString.stringify(queryParamsOvertime, {
@@ -959,7 +965,7 @@ export const AttendanceStaffAktivitasSection: FC<
                   <Menu.Item
                     key={"overtime"}
                     onClick={() => setActiveSubmenu("overtime")}
-                    disabled={!isAllowedToGetLeavesUser}
+                    disabled={!isAllowedToGetOvertimeUser}
                   >
                     Overtime
                   </Menu.Item>
@@ -1026,7 +1032,7 @@ export const AttendanceStaffAktivitasSection: FC<
               </div>
             </ButtonSys>
           )}
-          {activeSubmenu == "overtime" && isAllowedToAddLeaveUser && (
+          {activeSubmenu == "overtime" && isAllowedToAddOvertimeUser && (
             <ButtonSys type={"primary"}>
               <div
                 onClick={() => setShowModalOvertime(true)}
