@@ -1,21 +1,19 @@
 import { UploadOutlined } from "@ant-design/icons";
 import { DatePicker, Drawer, Form, Input, Select, Upload } from "antd";
+import locale from "antd/lib/date-picker/locale/id_ID";
 import { RcFile } from "antd/lib/upload/interface";
 import moment from "moment";
 import { FC, useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
-import { CalendartimeIconSvg, CheckIconSvg } from "components/icon";
+import { CheckIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
-  ATTENDANCE_ACTIVITY_ADD,
-  ATTENDANCE_ACTIVITY_DELETE,
-  ATTENDANCE_ACTIVITY_UPDATE,
   FILTER_EMPLOYEES_GET,
   LEAVE_TYPES_GET,
   LEAVE_USER_ADD,
@@ -51,8 +49,6 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
   onClose,
   username,
   dataToken,
-  idUser,
-  activityFormId,
 }) => {
   const [instanceForm] = Form.useForm();
 
@@ -85,6 +81,8 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
     tipe_cuti: null,
     catatan: null,
   });
+
+  const [tempDates, setTempDates] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -185,11 +183,8 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
   const handleSubmit = (values) => {
     let formData = new FormData();
     formData.append("type", values.type);
-    formData.append(
-      "start_date",
-      moment(values.start_date).format("YYYY-MM-DD")
-    );
-    formData.append("end_date", moment(values.end_date).format("YYYY-MM-DD"));
+    formData.append("start_date", dataCuti.start_date);
+    formData.append("end_date", dataCuti.end_date);
     if (values.notes) {
       formData.append("notes", values.notes);
     }
@@ -231,12 +226,32 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
       });
   };
 
+  const handleClose = () => {
+    onClose();
+    setTempDates(null);
+    setDataCuti({
+      nama_karyawan: null,
+      start_date: null,
+      end_date: null,
+      delegasi: null,
+      tipe_cuti: null,
+      catatan: null,
+    });
+    instanceForm.resetFields();
+  };
+
+  useEffect(() => {
+    return () => {
+      handleClose();
+    };
+  }, []);
+
   return (
     <Drawer
       title={<h1 className="mig-body--bold">Apply for Leave</h1>}
       open={visible}
       width={400}
-      onClose={onClose}
+      onClose={handleClose}
       footer={
         <div className={"flex gap-4 justify-end p-2"}>
           <ButtonSys type={"default"} color="mono50" onClick={onClose}>
@@ -273,54 +288,62 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               <Input value={username} disabled />
             </div>
           </Form.Item>
-          <div className={"mt-2 flex items-center justify-between gap-2"}>
-            <div className={"calendar-cuti"}>
-              <Form.Item
-                label="Start Date"
-                name={"start_date"}
-                className="col-span-2"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <DatePicker
-                  disabledDate={(current) =>
-                    current.isBefore(moment().subtract(1, "day"))
+          <div className={"mt-2 calendar-cuti"}>
+            <Form.Item
+              label="Leave Range"
+              name={"leave_dates"}
+              rules={[
+                {
+                  required: true,
+                  message: "Leave Range is required",
+                },
+              ]}
+              className="col-span-2 "
+            >
+              <DatePicker.RangePicker
+                locale={locale}
+                picker="date"
+                className="w-full"
+                format={"DD MMMM YYYY"}
+                placeholder={["Start", "End"]}
+                disabledDate={(current) => {
+                  const pastDates = current.isBefore(
+                    moment().subtract(1, "day")
+                  );
+
+                  if (!tempDates) {
+                    return pastDates;
                   }
-                  placeholder="Select Start Date"
-                  style={{ width: "100%", borderColor: "#E6E6E6" }}
-                  suffixIcon={
-                    <CalendartimeIconSvg size={20} color={"#808080"} />
-                  }
-                />
-              </Form.Item>
-            </div>
-            <p className="mt-2">-</p>
-            <div className={"calendar-cuti "}>
-              <Form.Item
-                label="End Date"
-                name={"end_date"}
-                className="col-span-2"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <DatePicker
-                  disabledDate={(current) =>
-                    current.isBefore(moment().subtract(1, "day"))
-                  }
-                  placeholder="Select End Date"
-                  style={{ width: "100%", borderColor: "#E6E6E6" }}
-                  suffixIcon={
-                    <CalendartimeIconSvg size={20} color={"#808080"} />
-                  }
-                />
-              </Form.Item>
-            </div>
+
+                  const daysAfter =
+                    tempDates?.[0] && current.diff(tempDates?.[0], "days") > 4;
+
+                  const daysBefore =
+                    tempDates?.[1] && tempDates?.[1].diff(current, "days") > 4;
+
+                  return pastDates || !!daysBefore || !!daysAfter;
+                }}
+                value={tempDates}
+                onCalendarChange={(values) => {
+                  setTempDates(values);
+                }}
+                onChange={(values) => {
+                  let formattedStartDate = moment(values?.[0]).isValid()
+                    ? moment(values?.[0]).format("YYYY-MM-DD")
+                    : null;
+
+                  let formattedEndDate = moment(values?.[1]).isValid()
+                    ? moment(values?.[1]).format("YYYY-MM-DD")
+                    : null;
+
+                  setDataCuti((prev) => ({
+                    ...prev,
+                    start_date: formattedStartDate,
+                    end_date: formattedEndDate,
+                  }));
+                }}
+              />
+            </Form.Item>
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>
             <Form.Item
@@ -372,6 +395,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
               rules={[
                 {
                   required: true,
+                  message: "Leave Type is required",
                 },
               ]}
             >
@@ -450,7 +474,7 @@ export const AttendanceStaffLeaveDrawer: FC<IAttendanceStaffLeaveDrawer> = ({
                       : dataCuti?.tipe_cuti?.is_document_required
                       ? true
                       : false,
-                  message: "Personal Reason File is required",
+                  message: "MIG Leave Form File is required",
                 },
               ]}
             >

@@ -441,7 +441,6 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
             visible={showDrawerCutiSatuan}
             onCancel={() => {
               setShowDrawerCutiSatuan(false);
-              closeModalAdd();
             }}
           />
           <ModalSetujuiCuti />

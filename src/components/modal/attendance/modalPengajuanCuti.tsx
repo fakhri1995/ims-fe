@@ -23,6 +23,8 @@ import {
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
+import ButtonSys from "components/button";
+
 import PengajuanCutiIcon from "assets/vectors/pengajuan-cuti.svg";
 
 import {
@@ -57,26 +59,25 @@ const ModalPengajuanCuti = ({
       className="modalCore"
       title={
         <div className={"flex justify-center"}>
-          <p className={"text-[#4D4D4D] font-bold text-[16px] leading-6"}>
-            Select Leave Request
-          </p>
+          <p className={"mig-body--bold"}>Select Leave Request</p>
         </div>
       }
       footer={null}
+      width={450}
     >
-      <div className="flex flex-col gap-8 ">
+      <div className="flex flex-col gap-3 ">
         <div className={"flex justify-center gap-2"}>
           <div
             onClick={() => setStatusActive("1")}
             className={`${
               statusActive == "1" ? "bg-primary100" : "bg-transparent border"
-            } px-4 py-1 rounded-[48px] hover:cursor-pointer hover:bg-primary100 hover:text-white`}
+            } px-4 py-1 rounded-[48px] hover:cursor-pointer hover:bg-primary100`}
           >
             <p
               className={`${
                 statusActive == "1"
                   ? "mig-body--medium text-white"
-                  : "mig-body text-neutrals70"
+                  : "mig-body text-neutrals90 hover:text-white"
               }`}
             >
               Single Leave
@@ -86,13 +87,13 @@ const ModalPengajuanCuti = ({
             onClick={() => setStatusActive("2")}
             className={`${
               statusActive == "2" ? "bg-primary100" : "bg-transparent border"
-            } px-4 py-1 rounded-[48px] hover:cursor-pointer hover:bg-primary100 hover:text-white`}
+            } px-4 py-1 rounded-[48px] hover:cursor-pointer hover:bg-primary100`}
           >
             <p
               className={`${
                 statusActive == "2"
                   ? "mig-body--medium text-white"
-                  : "mig-body text-neutrals70"
+                  : "mig-body text-neutrals90 hover:text-white"
               } `}
             >
               Joint Leave
@@ -109,14 +110,11 @@ const ModalPengajuanCuti = ({
           </p>
         </div>
         <div className={"flex justify-center"}>
-          <div
-            onClick={() => createCuti()}
-            className="hover:cursor-pointer bg-[#35763B] rounded-[5px] py-2 px-6"
-          >
-            <p className="text-white font-bold text-xs leading-5">
+          <ButtonSys type="primary" onClick={() => createCuti()}>
+            <p className="">
               Make {statusActive == "1" ? "Single" : "Joint"} Leave Request
             </p>
-          </div>
+          </ButtonSys>
         </div>
       </div>
     </Modal>
