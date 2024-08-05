@@ -17,7 +17,7 @@ const BadgeLeaveStatus = ({ status }: { status: string | number }) => (
         : status == LeaveStatus.ACCEPTED
         ? "bg-primary100 bg-opacity-10"
         : "bg-danger bg-opacity-10"
-    } py-1 px-4 max-w-max rounded-[5px] flex items-center gap-2`}
+    } py-1 px-4 rounded-[5px] flex items-center justify-center gap-2 w-28 min-w-fit`}
   >
     <span
       className={`w-2 h-2 flex rounded-full ${

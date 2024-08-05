@@ -259,7 +259,7 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
         ) : (
           <div className="flex items-center gap-3">
             <button
-              className="hover:opacity-75 flex items-center "
+              className="hover:opacity-75 flex items-center bg-transparent"
               onClick={() => setShowData("1")}
             >
               <ArrowLeftIconSvg size={20} color={"#808080"} />

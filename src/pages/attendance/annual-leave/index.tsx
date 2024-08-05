@@ -352,7 +352,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                   />
                 </Form.Item>
               </div>
-              <div className="sm:w-1/4">
+              <div className="flex flex-1 ">
                 <Form.Item noStyle>
                   <DatePicker
                     allowClear
@@ -366,11 +366,11 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                   />
                 </Form.Item>
               </div>
-              <div className="sm:w-1/4">
+              <div className="md:w-36">
                 <Form.Item noStyle>
                   <Select
                     allowClear
-                    className="w-full"
+                    className="w-full "
                     defaultValue={queryParams.status}
                     disabled={!isAllowedToGetLeaveStatus}
                     placeholder="Status"
