@@ -9,7 +9,11 @@ import { CheckIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { FILTER_EMPLOYEES_GET, OVERTIME_USER_ADD } from "lib/features";
+import {
+  FILTER_EMPLOYEES_GET,
+  OVERTIME_USER_ADD,
+  PROJECTS_GET,
+} from "lib/features";
 import {
   getBase64,
   notificationError,
@@ -54,6 +58,7 @@ export const AttendanceStaffOvertimeDrawer: FC<
 
   const { hasPermission } = useAccessControl();
   const isAllowedToGetEmployees = hasPermission(FILTER_EMPLOYEES_GET);
+  const isAllowedToGetProjects = hasPermission(PROJECTS_GET);
   const isAllowedToAddOvertime = hasPermission(OVERTIME_USER_ADD);
   const [resumeFileBlob, setResumeFileBlob] = useState<RcFile | Blob | File>(
     null
@@ -101,7 +106,7 @@ export const AttendanceStaffOvertimeDrawer: FC<
   };
 
   const fetchDataProjects = async () => {
-    if (!isAllowedToGetEmployees) {
+    if (!isAllowedToGetProjects) {
       permissionWarningNotification("Mendapatkan", "Daftar Projects");
     } else {
       fetch(
