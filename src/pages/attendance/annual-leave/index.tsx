@@ -388,7 +388,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
               </div>
             </Form>
           </div>
-          <div className={"mt-6 px-4 "}>
+          <div className={"px-4 "}>
             <Table
               columns={columns}
               dataSource={dataAnnualLeave}
