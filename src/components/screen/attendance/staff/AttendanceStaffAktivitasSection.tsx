@@ -1120,17 +1120,13 @@ export const AttendanceStaffAktivitasSection: FC<
 
         {/* Table "Activites" */}
         {activeSubmenu == "aktivitas" && (
-          <div className="px-4">{checkFormOrTask()}</div>
+          <div className="px-4 mb-3">{checkFormOrTask()}</div>
         )}
 
         {/* Table "Leave" */}
         {activeSubmenu == "cuti" && (
           <AccessControl hasPermission={[LEAVES_USER_GET, LEAVES_COUNT_GET]}>
-            <div
-              className={
-                "bg-white rounded-[5px] mt-3 first-letter:border border-solid px-6"
-              }
-            >
+            <div className={" mt-3 px-6"}>
               <AttendanceStaffLeaveStatisticCards dataToken={dataToken} />
 
               <Table
@@ -1186,11 +1182,7 @@ export const AttendanceStaffAktivitasSection: FC<
 
         {/* table overtime */}
         {activeSubmenu == "overtime" && (
-          <div
-            className={
-              "bg-white rounded-[5px] mt-3 first-letter:border border-solid px-6"
-            }
-          >
+          <div className={"mt-3 px-6"}>
             <Table
               className="tableTask"
               dataSource={displayDataOvertimes}

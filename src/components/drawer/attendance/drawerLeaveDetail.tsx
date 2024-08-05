@@ -91,6 +91,7 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
     loadingApprove: false,
     loadingReject: false,
   });
+  const [adminNotes, setAdminNotes] = useState("");
 
   const [loadingCancel, setLoadingCancel] = useState(false);
 
@@ -143,6 +144,7 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
     let dataSend = {
       id: dataDefault.id,
       approve: aksi == "setuju" ? 1 : 0,
+      admin_notes: adminNotes,
     };
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/approveLeave`, {
       method: "PUT",
@@ -177,6 +179,7 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
                 : "Tolak Pengajuan Cuti Sukses",
             duration: 3,
           });
+          setAdminNotes("");
           closeDrawer();
           fetchData();
         } else {
@@ -256,7 +259,7 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
         ) : (
           <div className="flex items-center gap-3">
             <button
-              className="hover:opacity-75 flex items-center "
+              className="hover:opacity-75 flex items-center bg-transparent"
               onClick={() => setShowData("1")}
             >
               <ArrowLeftIconSvg size={20} color={"#808080"} />
@@ -468,7 +471,10 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
                   <textarea
                     rows={3}
                     className={" border border-solid border-[#E6E6E6] p-4"}
-                    placeholder={dataDefault?.admin_notes}
+                    value={adminNotes}
+                    onChange={(e) => {
+                      setAdminNotes(e.target.value);
+                    }}
                     disabled={dataDefault?.status != 1}
                   />
                 </div>
