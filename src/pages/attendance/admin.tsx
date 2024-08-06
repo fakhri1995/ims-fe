@@ -29,7 +29,7 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
   }
 
   const isAllowedToDisplayContent = hasPermission(ATTENDANCES_USERS_GET);
-  const [roles, setRoles] = useState(0);
+  const [roles, setRoles] = useState(null);
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Admin Attendance",
@@ -73,7 +73,7 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
             </div>
 
             <div className="h-1/2">
-              <AttendanceAdminTodayStatCard role={roles} />
+              {roles && <AttendanceAdminTodayStatCard role={roles} />}
             </div>
           </div>
 
@@ -86,11 +86,13 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
         {/* Second row: Table all attendance */}
         <div className="grid grid-cols-12">
           <div className="col-span-full">
-            <AttendanceAdminListSection
-              initProps={token}
-              role={roles}
-              companyId={dataProfile.data.company.id}
-            />
+            {roles && (
+              <AttendanceAdminListSection
+                initProps={token}
+                role={roles}
+                companyId={dataProfile.data.company.id}
+              />
+            )}
           </div>
         </div>
       </div>
