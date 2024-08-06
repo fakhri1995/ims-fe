@@ -23,7 +23,7 @@ import {
   ANNOUNCEMENT_EMPLOYEE_GET,
   ANNOUNCEMENT_GET,
 } from "lib/features";
-import { generateStaticAssetUrl, stripTagsNewLine } from "lib/helper";
+import { generateStaticAssetUrl, stripTagsNewLine, trimText } from "lib/helper";
 
 import { AnnouncementService } from "apis/announcement";
 
@@ -148,7 +148,7 @@ export const AnnouncementCard: FC<IAnnouncementCard> = ({
               {/* Content */}
               <div className="flex flex-col justify-between min-h-fit">
                 <div className="flex flex-col justify-between gap-2">
-                  <h1 className="font-bold text-lg text-mono30">
+                  <h1 className="font-bold text-lg text-mono30 truncate">
                     {dataAnnouncements[0]?.title}
                   </h1>
                   <p className="mig-caption--medium text-mono50">
@@ -223,8 +223,11 @@ export const AnnouncementCard: FC<IAnnouncementCard> = ({
 
                 {/* Content */}
                 <div className=" flex flex-col justify-between max-h-24 min-h-fit">
-                  <h1 className="mb-2 font-bold text-md text-mono30 max-h-20 text-ellipsis ">
-                    {item?.title}
+                  <h1
+                    title={item?.title}
+                    className="mb-2 font-bold text-md text-mono30 max-h-20 text-ellipsis"
+                  >
+                    {trimText(item?.title, 60)}
                   </h1>
                   <p className="mb-2 mig-caption--medium text-mono50">
                     by{" "}

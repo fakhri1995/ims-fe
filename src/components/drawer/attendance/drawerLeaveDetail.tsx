@@ -6,7 +6,13 @@ import {
 import { Drawer } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import React, { Dispatch, FC, SetStateAction, useState } from "react";
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 
 import InfoBanner from "components/InfoBanner";
 import ButtonSys from "components/button";
@@ -103,6 +109,12 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
     data: dataDefault?.issued_date,
   });
 
+  useEffect(() => {
+    if (visible && dataDefault && dataDefault.admin_notes) {
+      setAdminNotes(dataDefault.admin_notes);
+    }
+  }, [dataDefault, visible]);
+
   const clickDetailEmployee = (record) => {
     setDetailEmployee({
       nama: record?.name,
@@ -120,6 +132,7 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
     if (showData == "2") {
       setShowData("1");
     } else {
+      setAdminNotes("");
       closeDrawer();
     }
   };
@@ -175,8 +188,8 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
           notificationSuccess({
             message:
               aksi == "setuju"
-                ? "Setujui Pengajuan Cuti Sukses"
-                : "Tolak Pengajuan Cuti Sukses",
+                ? "Approve leave request success"
+                : "Reject leave request success",
             duration: 3,
           });
           setAdminNotes("");
@@ -188,7 +201,20 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
             duration: 3,
           });
         }
-      });
+      })
+      .catch((err) => {
+        notificationError({
+          message: "Failed to handle leave request",
+          duration: 3,
+        });
+      })
+      .finally(() =>
+        setDataLoading({
+          ...dataLoading,
+          loadingReject: false,
+          loadingApprove: false,
+        })
+      );
   };
 
   const batalCuti = () => {
