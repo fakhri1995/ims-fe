@@ -141,7 +141,7 @@ const OvertimeIndex = ({ initProps, dataProfile, sidemenu }) => {
       fixedBreadcrumbValues={pageBreadcrumb}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <AttendanceAdminStatisticOvertime initProps={initProps} />
+        {/* <AttendanceAdminStatisticOvertime initProps={initProps} /> */}
         <AttendanceAdminListOvertime initProps={initProps} />
       </div>
     </LayoutDashboard>
