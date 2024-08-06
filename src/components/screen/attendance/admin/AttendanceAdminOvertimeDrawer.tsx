@@ -387,31 +387,10 @@ export const AttendanceAdminOvertimeDrawer: FC<
                 },
               ]}
             >
-              <Select
-                showSearch
-                value={dataOvertime?.project_name}
-                placeholder={"Search Project Name"}
-                style={{ width: `100%`, borderColor: "#CCCCCC" }}
-                optionFilterProp="children"
-                onChange={(value, option) => {
-                  setDataOvertime((prev) => ({
-                    ...prev,
-                    project_name: value,
-                  }));
-                }}
-              >
-                {dataProjects?.map((item) => {
-                  return (
-                    <Select.Option
-                      key={item?.id}
-                      value={item.id}
-                      name={item?.name}
-                    >
-                      {item?.name}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
+              <Input
+                className={"border border-solid border-[#CCCCCC]"}
+                placeholder={"Input Project's name"}
+              />
             </Form.Item>
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>
@@ -426,33 +405,10 @@ export const AttendanceAdminOvertimeDrawer: FC<
                 },
               ]}
             >
-              <Select
-                showSearch
-                value={dataOvertime?.manager_name}
-                placeholder={"Search Name"}
-                style={{ width: `100%`, borderColor: "#CCCCCC" }}
-                onSearch={(value) => onSearchManagers(value, setDataManagers)}
-                optionFilterProp="children"
-                onChange={(value, option) => {
-                  setDataOvertime((prev) => ({
-                    ...prev,
-                    manager_name: option,
-                  }));
-                }}
-              >
-                {dataManagers?.map((item) => {
-                  return (
-                    <Select.Option
-                      key={item?.id}
-                      value={item.id}
-                      position={item?.contract?.role?.name}
-                      name={item?.name}
-                    >
-                      {item?.name}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
+              <Input
+                className={"border border-solid border-[#CCCCCC]"}
+                placeholder={"Input Manager's name"}
+              />
             </Form.Item>
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>

@@ -477,7 +477,7 @@ export const AttendanceStaffAktivitasSection: FC<
       columns.push({
         key: "delete",
         title: "Actions",
-        render: (_, record: (typeof dataSource)[0]) => {
+        render: (_, record: typeof dataSource[0]) => {
           return (
             <button
               className="bg-transparent text-danger hover:opacity-75"
@@ -514,7 +514,7 @@ export const AttendanceStaffAktivitasSection: FC<
   );
 
   const mOnRowItemClicked = useCallback(
-    (datum: (typeof dataSource)[0], dataIndex?: number) => {
+    (datum: typeof dataSource[0], dataIndex?: number) => {
       if (tabActiveKey === HISTORY && tabActiveKey2 == TASK) {
         return;
       }
@@ -618,15 +618,15 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   }, [isAllowedToGetLeavesUser, queryParams.page, queryParams.rows]);
 
-  useEffect(() => {
-    if (isAllowedToGetOvertimeUser) {
-      fetchDataOvertimes();
-    }
-  }, [
-    isAllowedToGetOvertimeUser,
-    queryParamsOvertime.page,
-    queryParamsOvertime.rows,
-  ]);
+  // useEffect(() => {
+  //   if (isAllowedToGetOvertimeUser) {
+  //     fetchDataOvertimes();
+  //   }
+  // }, [
+  //   isAllowedToGetOvertimeUser,
+  //   queryParamsOvertime.page,
+  //   queryParamsOvertime.rows,
+  // ]);
 
   const fetchDataLeaves = async () => {
     if (!isAllowedToGetLeavesUser) {
@@ -660,39 +660,39 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   };
 
-  const fetchDataOvertimes = async () => {
-    if (!isAllowedToGetOvertimeUser) {
-      permissionWarningNotification("Mendapatkan", "Data Overtimes");
-    } else {
-      const params = QueryString.stringify(queryParamsOvertime, {
-        addQueryPrefix: true,
-      });
-      setLoadingOvertimes(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getOvertimesUser${params}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(dataToken),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setRawDataOvertimes(res2.data);
-            setDisplayDataOvertimes(res2.data.data); // table-related data source
-            // setDataTipeCutis(res2.data);
-          } else {
-            notificationError({ message: res2?.message });
-          }
-        })
-        .catch((err) => {
-          notificationError({ message: "Failed to get user overtime" });
-        })
-        .finally(() => setLoadingOvertimes(false));
-    }
-  };
+  // const fetchDataOvertimes = async () => {
+  //   if (!isAllowedToGetOvertimeUser) {
+  //     permissionWarningNotification("Mendapatkan", "Data Overtimes");
+  //   } else {
+  //     const params = QueryString.stringify(queryParamsOvertime, {
+  //       addQueryPrefix: true,
+  //     });
+  //     setLoadingOvertimes(true);
+  //     fetch(
+  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getOvertimesUser${params}`,
+  //       {
+  //         method: `GET`,
+  //         headers: {
+  //           Authorization: JSON.parse(dataToken),
+  //         },
+  //       }
+  //     )
+  //       .then((res) => res.json())
+  //       .then((res2) => {
+  //         if (res2.success) {
+  //           setRawDataOvertimes(res2.data);
+  //           setDisplayDataOvertimes(res2.data.data); // table-related data source
+  //           // setDataTipeCutis(res2.data);
+  //         } else {
+  //           notificationError({ message: res2?.message });
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         notificationError({ message: "Failed to get user overtime" });
+  //       })
+  //       .finally(() => setLoadingOvertimes(false));
+  //   }
+  // };
 
   const checkActivityTask = () => {
     if (isAllowedToGetActivity) {
@@ -751,7 +751,7 @@ export const AttendanceStaffAktivitasSection: FC<
   function checkFormOrTask() {
     if (tabActiveKey2 == FORM && activeSubmenu == "aktivitas") {
       return (
-        <Table<(typeof dataSource)[0]>
+        <Table<typeof dataSource[0]>
           columns={tableColums}
           rowKey={(record) => record.id}
           dataSource={dataSource}
@@ -838,7 +838,7 @@ export const AttendanceStaffAktivitasSection: FC<
       );
     } else if (activeSubmenu == "aktivitas") {
       return (
-        <Table<(typeof dataSource)[0]>
+        <Table<typeof dataSource[0]>
           columns={TableTaskColumns}
           dataSource={displayDataTaskHistory}
           rowKey={(record) => record.id}
@@ -963,13 +963,13 @@ export const AttendanceStaffAktivitasSection: FC<
                   >
                     Leave
                   </Menu.Item>
-                  <Menu.Item
+                  {/* <Menu.Item
                     key={"overtime"}
                     onClick={() => setActiveSubmenu("overtime")}
                     disabled={!isAllowedToGetOvertimeUser}
                   >
                     Overtime
-                  </Menu.Item>
+                  </Menu.Item> */}
                 </Menu>
               }
             >
@@ -1209,7 +1209,7 @@ export const AttendanceStaffAktivitasSection: FC<
                 return `cursor-pointer`;
               }}
             />
-            <AttendanceStaffOvertimeDrawer
+            {/* <AttendanceStaffOvertimeDrawer
               getDataNew={fetchDataOvertimes}
               dataToken={dataToken}
               idUser={idUser}
@@ -1225,7 +1225,7 @@ export const AttendanceStaffAktivitasSection: FC<
               dataDefault={dataDefaultOvertime}
               dataToken={dataToken}
               onClose={cancelShowDetailOvertime}
-            />
+            /> */}
           </div>
         )}
       </section>
