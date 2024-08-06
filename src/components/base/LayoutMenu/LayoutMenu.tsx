@@ -31,6 +31,7 @@ import { useAccessControl } from "contexts/access-control";
 import { ROLE_SUPER_ADMIN } from "lib/constants";
 import {
   LEAVES_GET,
+  OVERTIMES_GET,
   SIDEBAR_ANNOUNCEMENT,
   SIDEBAR_ASSET,
   SIDEBAR_ASSET_MANUFACTURER,
@@ -372,13 +373,13 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
-          {hasPermission(LEAVES_GET) && (
+          {/* {hasPermission(OVERTIMES_GET) && (
             <Menu.Item key="attendance/overtime" className="text-mono50">
               <Link href="/attendance/overtime">
                 <p>Overtime</p>
               </Link>
             </Menu.Item>
-          )}
+          )} */}
         </SubMenu>
       )}
 

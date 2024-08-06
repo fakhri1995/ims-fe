@@ -3400,7 +3400,7 @@ function Talents({}) {
               <div className={"flex justify-items-center self-center w-1/2"}>
                 <img
                   src="/image/landingpage/Talents-2.png"
-                  className={"h-fit max-w-[95%] mx-auto"}
+                  className={"h-min-content max-w-[95%] mx-auto"}
                 ></img>
               </div>
             </div>

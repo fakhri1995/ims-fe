@@ -8,7 +8,11 @@ import { AttendanceAdminStatisticOvertime } from "components/screen/attendance/a
 
 import { useAccessControl } from "contexts/access-control";
 
-import { LEAVE_STATISTICS_GET, LEAVE_STATUSES_GET } from "lib/features";
+import {
+  LEAVE_STATISTICS_GET,
+  LEAVE_STATUSES_GET,
+  OVERTIME_STATISTICS_GET,
+} from "lib/features";
 
 import { CompanyService, CompanyServiceQueryKeys } from "apis/company";
 
@@ -60,10 +64,8 @@ const OvertimeIndex = ({ initProps, dataProfile, sidemenu }) => {
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 1);
   pathTitleArr.splice(1, 1, "Overtime");
-  const [dataStatusCuti, setDataStatusCuti] = useState([]);
-  const [dataStatusPengajuan, setDataStatusPengajuan] = useState([]);
-  const isAllowedToGetLeaveStatus = hasPermission(LEAVE_STATUSES_GET);
-  const isAllowedToGetLeaveStatics = hasPermission(LEAVE_STATISTICS_GET);
+  const [dataStatistic, setDataStatistic] = useState(null);
+  const isAllowedTogetStatistics = hasPermission(OVERTIME_STATISTICS_GET);
   const [dataDefault, setDataDefault] = useState(null);
   const pageBreadcrumb = [
     {
@@ -72,15 +74,14 @@ const OvertimeIndex = ({ initProps, dataProfile, sidemenu }) => {
   ];
 
   useEffect(() => {
-    fetchDataStatus();
-    fetchDataStatusPengajuan();
+    fetchDataStatistic();
   }, []);
 
-  const fetchDataStatus = async () => {
-    if (!isAllowedToGetLeaveStatus) {
-      permissionWarningNotification("Mendapatkan", "Data Status Cuti");
+  const fetchDataStatistic = async () => {
+    if (!isAllowedTogetStatistics) {
+      permissionWarningNotification("Mendapatkan", "Data Statistik Overtime");
     } else {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaveStatuses`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getOvertimeStatistics`, {
         method: `GET`,
         headers: {
           Authorization: JSON.parse(initProps),
@@ -88,49 +89,18 @@ const OvertimeIndex = ({ initProps, dataProfile, sidemenu }) => {
       })
         .then((res) => res.json())
         .then((res2) => {
-          let dataTemp = [];
-          for (let a = 0; a < res2.data.length; a++) {
-            if (res2.data[a].status == 2) {
-              dataTemp[0] = res2.data[a].total;
-            }
-            if (res2.data[a].status == 1) {
-              dataTemp[1] = res2.data[a].total;
-            }
-            if (res2.data[a].status == 3) {
-              dataTemp[2] = res2.data[a].total;
-            }
+          let dataGet = res2.data;
+          if (dataGet) {
+            let dataSave = {
+              request: dataGet.total_overtime,
+              accepted: dataGet.approved_overtime,
+              rejected: dataGet.rejected_overtime,
+              pending: dataGet.pending_overtime,
+            };
+            setDataStatistic(dataSave);
           }
-          setDataStatusCuti(dataTemp);
         });
     }
-  };
-
-  const fetchDataStatusPengajuan = async () => {
-    if (!isAllowedToGetLeaveStatics) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Status Pengajuan Cuti"
-      );
-    } else {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaveStatistics`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          let dataTemp = [];
-          dataTemp.push(res2.data.has_leave);
-          dataTemp.push(res2.data.no_leave);
-          setDataStatusPengajuan(dataTemp);
-        });
-    }
-  };
-
-  const detailCuti = (record) => {
-    setShowDrawer(true);
-    setDataDefault(record);
   };
 
   return (
@@ -141,7 +111,15 @@ const OvertimeIndex = ({ initProps, dataProfile, sidemenu }) => {
       fixedBreadcrumbValues={pageBreadcrumb}
     >
       <div className="flex flex-col" id="mainWrapper">
-        {/* <AttendanceAdminStatisticOvertime initProps={initProps} /> */}
+        {dataStatistic && (
+          <AttendanceAdminStatisticOvertime
+            initProps={initProps}
+            rejected={dataStatistic?.rejected}
+            request={dataStatistic?.request}
+            accepted={dataStatistic?.accepted}
+            pending={dataStatistic?.pending}
+          />
+        )}
         <AttendanceAdminListOvertime initProps={initProps} />
       </div>
     </LayoutDashboard>

@@ -31,8 +31,15 @@ import { FC, memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
+import StatisticCountCard from "components/cards/StatisticCountCard";
 import { AccessControl } from "components/features/AccessControl";
-import { DownloadIconSvg } from "components/icon";
+import {
+  CircleCheckFilledIconSvg,
+  CircleXFilledIconSvg,
+  ClockIconFilledSvg,
+  DownloadIconSvg,
+  UsersFilledIconSvg,
+} from "components/icon";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
@@ -40,14 +47,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
-import {
-  ATTENDANCES_USERS_GET,
-  ATTENDANCE_ACTIVITY_USERS_EXPORT,
-  ATTENDANCE_FORMS_GET,
-  ATTENDANCE_FORM_GET,
-  ATTENDANCE_USERS_PAGINATE_GET,
-  LEAVES_GET,
-} from "lib/features";
+import { OVERTIME_STATISTICS_GET } from "lib/features";
 import {
   generateStaticAssetUrl,
   permissionWarningNotification,
@@ -81,6 +81,10 @@ const { TabPane } = Tabs;
  */
 export interface IAttendanceAdminStatisticOvertime {
   initProps: string;
+  request: number;
+  accepted: number;
+  rejected: number;
+  pending: number;
 }
 
 /**
@@ -88,94 +92,39 @@ export interface IAttendanceAdminStatisticOvertime {
  */
 export const AttendanceAdminStatisticOvertime: FC<
   IAttendanceAdminStatisticOvertime
-> = ({ initProps }) => {
+> = ({ initProps, rejected, request, accepted, pending }) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
-
-  const renderStatistic = (jumlah, status) => {
-    return (
-      <div className={"flex justify-between h-full"}>
-        <div className={"flex flex-col justify-between"}>
-          <div>
-            <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>
-              {jumlah}
-            </p>
-          </div>
-          <div className={"flex flex-col gap-1"}>
-            <p className={"text-xs leading-5 font-bold text-[#4D4D4D]"}>
-              {status}
-            </p>
-            <p className={"text-[#4D4D4D] text-[10px]"}>from all employee</p>
-          </div>
-        </div>
-        <div className={""}>
-          {status == "Request Pending" && (
-            <ClockCircleFilled style={{ color: "#F5851E", fontSize: 24 }} />
-          )}
-          {status == "Request Rejected" && (
-            <CloseCircleFilled style={{ color: "#BF4A40", fontSize: 24 }} />
-          )}
-        </div>
-      </div>
-    );
-  };
+  const isAllowedTogetStatistics = hasPermission(OVERTIME_STATISTICS_GET);
 
   return (
-    <div className={"flex flex-col sm:flex-row sm:gap-8 gap-2"}>
-      <div
-        className={"w-full sm:w-1/4 h-[108px] bg-white rounded-[10px] p-4"}
-        style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
-      >
-        <div className={"flex justify-between h-full"}>
-          <div className={"flex flex-col justify-between"}>
-            <div>
-              <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>15</p>
-            </div>
-            <div className={"flex flex-col gap-1"}>
-              <p className={"text-xs leading-5 font-bold text-[#4D4D4D]"}>
-                Total Request
-              </p>
-              <p className={"text-[#4D4D4D] text-[10px]"}>from all employee</p>
-            </div>
-          </div>
-          <div className={""}></div>
-        </div>
-      </div>
-      <div
-        className={"w-full sm:w-1/4 h-[108px] bg-white rounded-[10px] p-4"}
-        style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
-      >
-        <div className={"flex justify-between h-full"}>
-          <div className={"flex flex-col justify-between"}>
-            <div>
-              <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>
-                100
-              </p>
-            </div>
-            <div className={"flex flex-col gap-1"}>
-              <p className={"text-xs leading-5 font-bold text-[#4D4D4D]"}>
-                Request Accepted
-              </p>
-              <p className={"text-[#4D4D4D] text-[10px]"}>from all employee</p>
-            </div>
-          </div>
-          <div className={""}>
-            <CheckCircleFilled style={{ color: "#35763B", fontSize: 24 }} />
-          </div>
-        </div>
-      </div>
-      <div
-        className={"w-full sm:w-1/4 h-[108px] bg-white rounded-[10px] p-4"}
-        style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
-      >
-        {renderStatistic(3, "Request Rejected")}
-      </div>
-      <div
-        className={"w-full sm:w-1/4 h-[108px] bg-white rounded-[10px] p-4"}
-        style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
-      >
-        {renderStatistic(3, "Request Pending")}
-      </div>
+    <div className={"flex flex-col sm:flex-row sm:gap-5 gap-2"}>
+      <StatisticCountCard
+        dataCount={request}
+        icon={<UsersFilledIconSvg size={24} className={"text-accentblue"} />}
+        title="Request Overtime"
+        description="from all employees this month"
+      />
+      <StatisticCountCard
+        dataCount={accepted}
+        icon={
+          <CircleCheckFilledIconSvg size={24} className={"text-primary100"} />
+        }
+        title="Request Accepted"
+        description="from all employees this month"
+      />
+      <StatisticCountCard
+        dataCount={rejected}
+        icon={<CircleXFilledIconSvg size={24} className={"text-danger"} />}
+        title="Request Rejected"
+        description="from all employees this month"
+      />
+      <StatisticCountCard
+        dataCount={pending}
+        icon={<ClockIconFilledSvg size={28} className={"text-warning"} />}
+        title="Request pending"
+        description="awaiting approval"
+      />
     </div>
   );
 };

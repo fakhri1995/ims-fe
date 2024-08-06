@@ -9,7 +9,7 @@ import { CheckIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { FILTER_EMPLOYEES_GET, OVERTIME_ADD } from "lib/features";
+import { FILTER_EMPLOYEES_GET, OVERTIME_ADD, PROJECTS_GET } from "lib/features";
 import {
   getBase64,
   notificationError,
@@ -41,6 +41,7 @@ export const AttendanceAdminOvertimeDrawer: FC<
 
   const { hasPermission } = useAccessControl();
   const isAllowedToGetEmployees = hasPermission(FILTER_EMPLOYEES_GET);
+  const isAllowedToGetProjects = hasPermission(PROJECTS_GET);
   const isAllowedToAddOvertime = hasPermission(OVERTIME_ADD);
   const [resumeFileBlob, setResumeFileBlob] = useState<RcFile | Blob | File>(
     null
@@ -81,7 +82,7 @@ export const AttendanceAdminOvertimeDrawer: FC<
   }, [dataOvertime.nama_karyawan]);
 
   const fetchDataProjects = async (idUser) => {
-    if (!isAllowedToGetEmployees) {
+    if (!isAllowedToGetProjects) {
       permissionWarningNotification("Mendapatkan", "Daftar Projects");
     } else {
       fetch(
@@ -386,31 +387,10 @@ export const AttendanceAdminOvertimeDrawer: FC<
                 },
               ]}
             >
-              <Select
-                showSearch
-                value={dataOvertime?.project_name}
-                placeholder={"Search Project Name"}
-                style={{ width: `100%`, borderColor: "#CCCCCC" }}
-                optionFilterProp="children"
-                onChange={(value, option) => {
-                  setDataOvertime((prev) => ({
-                    ...prev,
-                    project_name: value,
-                  }));
-                }}
-              >
-                {dataProjects?.map((item) => {
-                  return (
-                    <Select.Option
-                      key={item?.id}
-                      value={item.id}
-                      name={item?.name}
-                    >
-                      {item?.name}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
+              <Input
+                className={"border border-solid border-[#CCCCCC]"}
+                placeholder={"Input Project's name"}
+              />
             </Form.Item>
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>
@@ -425,33 +405,10 @@ export const AttendanceAdminOvertimeDrawer: FC<
                 },
               ]}
             >
-              <Select
-                showSearch
-                value={dataOvertime?.manager_name}
-                placeholder={"Search Name"}
-                style={{ width: `100%`, borderColor: "#CCCCCC" }}
-                onSearch={(value) => onSearchManagers(value, setDataManagers)}
-                optionFilterProp="children"
-                onChange={(value, option) => {
-                  setDataOvertime((prev) => ({
-                    ...prev,
-                    manager_name: option,
-                  }));
-                }}
-              >
-                {dataManagers?.map((item) => {
-                  return (
-                    <Select.Option
-                      key={item?.id}
-                      value={item.id}
-                      position={item?.contract?.role?.name}
-                      name={item?.name}
-                    >
-                      {item?.name}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
+              <Input
+                className={"border border-solid border-[#CCCCCC]"}
+                placeholder={"Input Manager's name"}
+              />
             </Form.Item>
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>
