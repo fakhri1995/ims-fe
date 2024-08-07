@@ -3526,7 +3526,7 @@ function Hardware({}) {
               <div className={"flex justify-items-center self-center w-1/2"}>
                 <img
                   src="/image/hardware/Hardware-Solution.png"
-                  className={"h-fit max-w-[95%] mx-auto"}
+                  className={"h-auto max-w-[95%] mx-auto"}
                 ></img>
               </div>
             </div>
