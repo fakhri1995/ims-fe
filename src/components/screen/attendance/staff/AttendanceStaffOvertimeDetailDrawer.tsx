@@ -1,4 +1,5 @@
-import { Drawer } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { Drawer, Upload } from "antd";
 import moment from "moment";
 import { FC, useState } from "react";
 
@@ -216,32 +217,34 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
               <p className="mig-caption">{dataDefault.admin_notes}</p>
             </div>
           )}
-          {/* <div className={"mt-2 flex flex-col gap-2"}>
-            <p className={"text-[#4D4D4D] text-xs leading-5 font-medium"}>
-              Supporting File :
-            </p>
-            <div className={"flex flex-col"}>
-              <div className="mb-4 ">
-                <Upload
-                  accept=".pdf"
-                  multiple={false}
-                  maxCount={1}
-                  onChange={onChangePersonalFile}
-                >
-                  <ButtonSys>
-                    <div className="flex justify-center items-center gap-2 ">
-                      <UploadOutlined size={16} />
-                      <p>Upload File</p>
-                    </div>
-                  </ButtonSys>
-                </Upload>
-              </div>
+          {dataDefault?.status?.id == 2 && (
+            <div className={"mt-2 flex flex-col gap-2"}>
+              <p className={"text-[#4D4D4D] text-xs leading-5 font-medium"}>
+                Supporting File :
+              </p>
+              <div className={"flex flex-col"}>
+                <div className="mb-4 ">
+                  <Upload
+                    accept=".pdf"
+                    multiple={false}
+                    maxCount={1}
+                    onChange={onChangePersonalFile}
+                  >
+                    <ButtonSys>
+                      <div className="flex justify-center items-center gap-2 ">
+                        <UploadOutlined size={16} />
+                        <p>Upload File</p>
+                      </div>
+                    </ButtonSys>
+                  </Upload>
+                </div>
 
-              <em className={"text-[#808080] text-xs leading-4 font-normal "}>
-                Upload File (Max. 5 MB).
-              </em>
+                <em className={"text-[#808080] text-xs leading-4 font-normal "}>
+                  Upload File (Max. 5 MB).
+                </em>
+              </div>
             </div>
-          </div> */}
+          )}
         </div>
       </div>
       {modalConfirm?.show && (

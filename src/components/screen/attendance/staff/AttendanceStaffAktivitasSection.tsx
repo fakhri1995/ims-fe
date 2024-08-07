@@ -618,15 +618,15 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   }, [isAllowedToGetLeavesUser, queryParams.page, queryParams.rows]);
 
-  // useEffect(() => {
-  //   if (isAllowedToGetOvertimeUser) {
-  //     fetchDataOvertimes();
-  //   }
-  // }, [
-  //   isAllowedToGetOvertimeUser,
-  //   queryParamsOvertime.page,
-  //   queryParamsOvertime.rows,
-  // ]);
+  useEffect(() => {
+    if (isAllowedToGetOvertimeUser) {
+      fetchDataOvertimes();
+    }
+  }, [
+    isAllowedToGetOvertimeUser,
+    queryParamsOvertime.page,
+    queryParamsOvertime.rows,
+  ]);
 
   const fetchDataLeaves = async () => {
     if (!isAllowedToGetLeavesUser) {
@@ -660,39 +660,39 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   };
 
-  // const fetchDataOvertimes = async () => {
-  //   if (!isAllowedToGetOvertimeUser) {
-  //     permissionWarningNotification("Mendapatkan", "Data Overtimes");
-  //   } else {
-  //     const params = QueryString.stringify(queryParamsOvertime, {
-  //       addQueryPrefix: true,
-  //     });
-  //     setLoadingOvertimes(true);
-  //     fetch(
-  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getOvertimesUser${params}`,
-  //       {
-  //         method: `GET`,
-  //         headers: {
-  //           Authorization: JSON.parse(dataToken),
-  //         },
-  //       }
-  //     )
-  //       .then((res) => res.json())
-  //       .then((res2) => {
-  //         if (res2.success) {
-  //           setRawDataOvertimes(res2.data);
-  //           setDisplayDataOvertimes(res2.data.data); // table-related data source
-  //           // setDataTipeCutis(res2.data);
-  //         } else {
-  //           notificationError({ message: res2?.message });
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         notificationError({ message: "Failed to get user overtime" });
-  //       })
-  //       .finally(() => setLoadingOvertimes(false));
-  //   }
-  // };
+  const fetchDataOvertimes = async () => {
+    if (!isAllowedToGetOvertimeUser) {
+      permissionWarningNotification("Mendapatkan", "Data Overtimes");
+    } else {
+      const params = QueryString.stringify(queryParamsOvertime, {
+        addQueryPrefix: true,
+      });
+      setLoadingOvertimes(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getOvertimesUser${params}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(dataToken),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setRawDataOvertimes(res2.data);
+            setDisplayDataOvertimes(res2.data.data); // table-related data source
+            // setDataTipeCutis(res2.data);
+          } else {
+            notificationError({ message: res2?.message });
+          }
+        })
+        .catch((err) => {
+          notificationError({ message: "Failed to get user overtime" });
+        })
+        .finally(() => setLoadingOvertimes(false));
+    }
+  };
 
   const checkActivityTask = () => {
     if (isAllowedToGetActivity) {
@@ -963,13 +963,13 @@ export const AttendanceStaffAktivitasSection: FC<
                   >
                     Leave
                   </Menu.Item>
-                  {/* <Menu.Item
+                  <Menu.Item
                     key={"overtime"}
                     onClick={() => setActiveSubmenu("overtime")}
                     disabled={!isAllowedToGetOvertimeUser}
                   >
                     Overtime
-                  </Menu.Item> */}
+                  </Menu.Item>
                 </Menu>
               }
             >
@@ -1209,7 +1209,7 @@ export const AttendanceStaffAktivitasSection: FC<
                 return `cursor-pointer`;
               }}
             />
-            {/* <AttendanceStaffOvertimeDrawer
+            <AttendanceStaffOvertimeDrawer
               getDataNew={fetchDataOvertimes}
               dataToken={dataToken}
               idUser={idUser}
@@ -1220,12 +1220,12 @@ export const AttendanceStaffAktivitasSection: FC<
               onClose={() => setShowModalOvertime(false)}
             />
             <AttendanceStaffOvertimeDetailDrawer
-              fetchData={fetchDataLeaves}
+              fetchData={fetchDataOvertimes}
               visible={showDetailOvertime}
               dataDefault={dataDefaultOvertime}
               dataToken={dataToken}
               onClose={cancelShowDetailOvertime}
-            /> */}
+            />
           </div>
         )}
       </section>
