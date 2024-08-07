@@ -171,8 +171,8 @@ export const AttendanceStaffOvertimeDrawer: FC<
 
   const handleSubmit = (values) => {
     let formData = new FormData();
-    formData.append("manager_id", values.manager_name);
-    formData.append("project_id", values.project_name);
+    formData.append("manager_name", values.manager_name);
+    formData.append("project_name", values.project_name);
     formData.append("start_at", moment(values.start_overtime).format("HH:mm"));
     formData.append("end_at", moment(values.finish_overtime).format("HH:mm"));
     if (values.notes) {
@@ -311,31 +311,10 @@ export const AttendanceStaffOvertimeDrawer: FC<
                 },
               ]}
             >
-              <Select
-                showSearch
-                value={dataOvertime?.project_name}
-                placeholder={"Search Project Name"}
-                style={{ width: `100%`, borderColor: "#CCCCCC" }}
-                optionFilterProp="children"
-                onChange={(value, option) => {
-                  setDataOvertime((prev) => ({
-                    ...prev,
-                    project_name: value,
-                  }));
-                }}
-              >
-                {dataProjects?.map((item) => {
-                  return (
-                    <Select.Option
-                      key={item?.id}
-                      value={item.id}
-                      name={item?.name}
-                    >
-                      {item?.name}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
+              <Input
+                className={"border border-solid border-[#CCCCCC]"}
+                placeholder={"Input Project's name"}
+              />
             </Form.Item>
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>
@@ -350,33 +329,10 @@ export const AttendanceStaffOvertimeDrawer: FC<
                 },
               ]}
             >
-              <Select
-                showSearch
-                value={dataOvertime?.manager_name}
-                placeholder={"Search Name"}
-                style={{ width: `100%`, borderColor: "#CCCCCC" }}
-                onSearch={(value) => onSearchUsers(value, setDataEmployees)}
-                optionFilterProp="children"
-                onChange={(value, option) => {
-                  setDataOvertime((prev) => ({
-                    ...prev,
-                    manager_name: option,
-                  }));
-                }}
-              >
-                {dataEmployees?.map((item) => {
-                  return (
-                    <Select.Option
-                      key={item?.id}
-                      value={item.id}
-                      position={item?.contract?.role?.name}
-                      name={item?.name}
-                    >
-                      {item?.name}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
+              <Input
+                className={"border border-solid border-[#CCCCCC]"}
+                placeholder={"Input Manager's name"}
+              />
             </Form.Item>
           </div>
           <div className={"mt-2 flex flex-col gap-2"}>

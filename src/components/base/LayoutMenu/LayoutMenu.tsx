@@ -373,13 +373,13 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
-          {/* {hasPermission(OVERTIMES_GET) && (
+          {hasPermission(OVERTIMES_GET) && (
             <Menu.Item key="attendance/overtime" className="text-mono50">
               <Link href="/attendance/overtime">
                 <p>Overtime</p>
               </Link>
             </Menu.Item>
-          )} */}
+          )}
         </SubMenu>
       )}
 

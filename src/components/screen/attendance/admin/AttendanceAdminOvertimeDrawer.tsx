@@ -214,8 +214,8 @@ export const AttendanceAdminOvertimeDrawer: FC<
   const handleSubmit = (values) => {
     let formData = new FormData();
     formData.append("employee_id", values.employee_name);
-    formData.append("manager_id", values.manager_name);
-    formData.append("project_id", values.project_name);
+    formData.append("manager_name", values.manager_name);
+    formData.append("project_name", values.project_name);
     formData.append("start_at", moment(values.start_overtime).format("HH:mm"));
     formData.append("end_at", moment(values.finish_overtime).format("HH:mm"));
     if (values.notes) {
