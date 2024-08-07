@@ -293,10 +293,6 @@ export const AttendanceStaffAktivitasDrawer: FC<
                       required={!!required}
                       key={key}
                     >
-                      {!!description && (
-                        <p className="mb-4 mt-2">{description}</p>
-                      )}
-
                       {type === 6 ? (
                         <Form.Item name={key} rules={[{ required }]}>
                           {_renderDynamicUpload(
@@ -309,7 +305,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
                         </Form.Item>
                       ) : (
                         <Form.Item name={key} rules={[{ required }]}>
-                          {_renderDynamicInput(type, list)}
+                          {_renderDynamicInput(type, list, description)}
                         </Form.Item>
                       )}
                     </Form.Item>
@@ -331,14 +327,15 @@ export const AttendanceStaffAktivitasDrawer: FC<
  */
 const _renderDynamicInput = (
   type: FormAktivitasTypes,
-  list?: Pick<Detail, "list">["list"]
+  list?: Pick<Detail, "list">["list"],
+  description?: string
 ) => {
   switch (type) {
     case FormAktivitasTypes.TEKS:
-      return <Input name="" type="text" />;
+      return <Input name="" type="text" placeholder={description} />;
 
     case FormAktivitasTypes.PARAGRAPH:
-      return <Input.TextArea />;
+      return <Input.TextArea placeholder={description} />;
 
     case FormAktivitasTypes.CHECKLIST:
       return (
@@ -356,7 +353,7 @@ const _renderDynamicInput = (
 
     case FormAktivitasTypes.DROPDOWN:
       return (
-        <Select placeholder="Pilih nilai" allowClear>
+        <Select placeholder={description || "Pilih nilai"} allowClear>
           {list?.map((value, idx) => (
             <Select.Option value={value} key={idx}>
               {value}
