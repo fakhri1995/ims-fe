@@ -457,7 +457,7 @@ export const AttendanceStaffAktivitasSection: FC<
       }
 
       return (
-        <p title={text} className={"truncate max-w-[252px]"}>
+        <p title={text} className={"truncate max-w-72 xl:max-w-[400px]"}>
           {text}
         </p>
       );
@@ -477,7 +477,7 @@ export const AttendanceStaffAktivitasSection: FC<
       columns.push({
         key: "delete",
         title: "Actions",
-        render: (_, record: typeof dataSource[0]) => {
+        render: (_, record: (typeof dataSource)[0]) => {
           return (
             <button
               className="bg-transparent text-danger hover:opacity-75"
@@ -514,7 +514,7 @@ export const AttendanceStaffAktivitasSection: FC<
   );
 
   const mOnRowItemClicked = useCallback(
-    (datum: typeof dataSource[0], dataIndex?: number) => {
+    (datum: (typeof dataSource)[0], dataIndex?: number) => {
       if (tabActiveKey === HISTORY && tabActiveKey2 == TASK) {
         return;
       }
@@ -751,7 +751,7 @@ export const AttendanceStaffAktivitasSection: FC<
   function checkFormOrTask() {
     if (tabActiveKey2 == FORM && activeSubmenu == "aktivitas") {
       return (
-        <Table<typeof dataSource[0]>
+        <Table<(typeof dataSource)[0]>
           columns={tableColums}
           rowKey={(record) => record.id}
           dataSource={dataSource}
@@ -838,7 +838,7 @@ export const AttendanceStaffAktivitasSection: FC<
       );
     } else if (activeSubmenu == "aktivitas") {
       return (
-        <Table<typeof dataSource[0]>
+        <Table<(typeof dataSource)[0]>
           columns={TableTaskColumns}
           dataSource={displayDataTaskHistory}
           rowKey={(record) => record.id}

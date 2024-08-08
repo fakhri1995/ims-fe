@@ -2,7 +2,7 @@ import { ConfigProvider, Table, Tabs } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
 import moment from "moment";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import React from "react";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -10,11 +10,16 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import { formatDateToLocale } from "lib/date-utils";
-import { ATTENDANCE_TASK_ACTIVITIES_GET } from "lib/features";
+import {
+  ATTENDANCE_ACTIVITIES_GET,
+  ATTENDANCE_TASK_ACTIVITIES_GET,
+} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import { useGetAttendanceDetailDataSource } from "apis/attendance";
+
+import { AttendanceStaffAktivitasDetailDrawer } from "../staff/AttendanceStaffAktivitasDetailDrawer";
 
 /**
  * Component AttendanceDetailFormAttendanceSection's props.
@@ -35,10 +40,22 @@ export const AttendanceDetailFormAttendanceSection: FC<
   const isAllowedToGetTaskActivities = hasPermission(
     ATTENDANCE_TASK_ACTIVITIES_GET
   );
+
+  // Constant for Activity State
+  const [FORM, TASK] = ["FORM", "TASK"];
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [dataTasks, setDataTasks] = useState([]);
-  const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
+  const [tabActiveKey, setTabActiveKey] = useState<"FORM" | "TASK" | string>(
+    FORM
+  );
+  const [showDrawerAktivitasDetail, setShowDrawerAktivitasDetail] = useState({
+    visible: false,
+    data: null,
+    idx: null,
+  });
+
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
     useGetAttendanceDetailDataSource(attendanceId);
   const tableColums = useMemo<ColumnsType>(() => {
@@ -76,7 +93,9 @@ export const AttendanceDetailFormAttendanceSection: FC<
         key: dynamicNameFieldPairs.fieldKeys[index],
         title: column,
         dataIndex: dynamicNameFieldPairs.fieldKeys[index],
-        render: (value) => <p className="truncate max-w-80">{value}</p>,
+        render: (value) => (
+          <p className="max-w-80 xl:max-w-120 truncate">{value} </p>
+        ),
         width: 320,
       });
     });
@@ -129,14 +148,51 @@ export const AttendanceDetailFormAttendanceSection: FC<
     }
   }
 
+  const mOnRowItemClicked = useCallback(
+    (datum: (typeof dataSource)[0], dataIndex?: number) => {
+      if (tabActiveKey == TASK) {
+        return;
+      }
+
+      if (tabActiveKey == FORM) {
+        setShowDrawerAktivitasDetail({
+          visible: true,
+          data: datum,
+          idx: dataIndex,
+        });
+        return;
+      }
+    },
+    [tabActiveKey]
+  );
+
+  function onClickPrevNextData(type: "next" | "prev") {
+    const nextIdx = showDrawerAktivitasDetail.idx + 1;
+    const prevIdx = showDrawerAktivitasDetail.idx - 1;
+
+    if (type == "next" && nextIdx < dataSource.length) {
+      setShowDrawerAktivitasDetail((prev) => ({
+        ...prev,
+        data: dataSource[nextIdx],
+        idx: nextIdx,
+      }));
+    } else if (type == "prev" && prevIdx > -1) {
+      setShowDrawerAktivitasDetail((prev) => ({
+        ...prev,
+        data: dataSource[prevIdx],
+        idx: prevIdx,
+      }));
+    }
+  }
+
   return (
     <section className="mig-platform--p-0 text-gray-500 pb-3">
       <h1 className="mig-body--bold border-b py-3 px-4">Activity</h1>
       <div className="flex items-center gap-3 py-3 px-4">
         <div
-          onClick={() => setTabActiveKey("1")}
+          onClick={() => setTabActiveKey(FORM)}
           className={`${
-            tabActiveKey == "1"
+            tabActiveKey == FORM
               ? "bg-primary100 mig-body--medium text-white"
               : "bg-white border hover:bg-primary75 mig-body text-mono80 hover:text-white"
           } rounded-[48px] py-1 px-4 hover:cursor-pointer `}
@@ -145,9 +201,9 @@ export const AttendanceDetailFormAttendanceSection: FC<
         </div>
         {isAllowedToGetTaskActivities && (
           <div
-            onClick={() => setTabActiveKey("2")}
+            onClick={() => setTabActiveKey(TASK)}
             className={`${
-              tabActiveKey == "2"
+              tabActiveKey == TASK
                 ? "bg-primary100 mig-body--medium text-white"
                 : "bg-white border hover:bg-primary75 mig-body text-mono80 hover:text-white "
             } rounded-[48px] py-1 px-4 hover:cursor-pointer`}
@@ -158,7 +214,7 @@ export const AttendanceDetailFormAttendanceSection: FC<
       </div>
 
       <div className="px-4">
-        {tabActiveKey == "1" ? (
+        {tabActiveKey == FORM ? (
           <Table<(typeof dataSource)[0]>
             columns={tableColums}
             dataSource={dataSource}
@@ -166,6 +222,14 @@ export const AttendanceDetailFormAttendanceSection: FC<
             loading={isDataSourceLoading}
             scroll={{ x: "max-content" }}
             className="tableTypeTask"
+            onRow={(datum, rowIndex) => {
+              const currentDataIdx =
+                currentPage * pageSize - (pageSize - rowIndex);
+              return {
+                className: "hover:cursor-pointer",
+                onClick: () => mOnRowItemClicked(datum, currentDataIdx),
+              };
+            }}
           />
         ) : (
           dataTasks.length > 0 && (
@@ -198,6 +262,21 @@ export const AttendanceDetailFormAttendanceSection: FC<
           )
         )}
       </div>
+
+      <AccessControl hasPermission={ATTENDANCE_ACTIVITIES_GET}>
+        <AttendanceStaffAktivitasDetailDrawer
+          visible={showDrawerAktivitasDetail.visible}
+          activityData={showDrawerAktivitasDetail.data}
+          onClickPrevNext={onClickPrevNextData}
+          onClose={() =>
+            setShowDrawerAktivitasDetail({
+              visible: false,
+              data: null,
+              idx: null,
+            })
+          }
+        />
+      </AccessControl>
     </section>
   );
 };
