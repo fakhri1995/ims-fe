@@ -1,31 +1,54 @@
-import { SearchOutlined } from "@ant-design/icons";
-import { Button, Form, Input } from "antd";
+import { Form, Input } from "antd";
 import { FC, memo } from "react";
+
+import ButtonSys from "components/button";
+import { CirclePlusIconSvg } from "components/icon";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { ATTENDANCE_FORM_ADD } from "lib/features";
 
 export interface IFormAktivitasTableHeader {
   onSearchTriggered: (searchValue: string) => void;
+  onAddActivityFormClicked: () => void;
 }
 
 export const FormAktivitasTableHeader: FC<IFormAktivitasTableHeader> = memo(
-  ({ onSearchTriggered }) => {
+  ({ onSearchTriggered, onAddActivityFormClicked }) => {
+    const { hasPermission, isPending: isAccessControlPending } =
+      useAccessControl();
     const [searchForm] = Form.useForm();
 
     return (
-      <div className="flex flex-col md:flex-row md:items-center justify-between overflow-x-auto">
-        {/* Title */}
-        <span className="mig-heading--4 mb-2 md:mb-0">Form Aktivitas</span>
+      <div>
+        <div className="flex justify-between items-center border-b py-3 px-4">
+          {/* Title */}
+          <p className="mig-body--bold text-neutrals100">
+            List of Activity Form
+          </p>
 
+          <ButtonSys
+            type="primary"
+            onClick={onAddActivityFormClicked}
+            disabled={!hasPermission(ATTENDANCE_FORM_ADD)}
+          >
+            <div className="flex items-center gap-2">
+              <CirclePlusIconSvg />
+              <p>Add Activity Form</p>
+            </div>
+          </ButtonSys>
+        </div>
         {/* Buttons and Input */}
         <Form
           form={searchForm}
-          className="flex flex-row space-x-2 md:space-x-4"
+          className="flex justify-between gap-3 py-3 px-4"
           onFinish={() => {
             onSearchTriggered(searchForm.getFieldValue("search"));
           }}
         >
           <Form.Item noStyle name="search">
             <Input
-              placeholder="Cari..."
+              placeholder="Search activity form..."
               allowClear
               onChange={(event) => {
                 if (
@@ -37,16 +60,6 @@ export const FormAktivitasTableHeader: FC<IFormAktivitasTableHeader> = memo(
                 setTimeout(() => onSearchTriggered(event.target.value), 1000);
               }}
             />
-          </Form.Item>
-
-          <Form.Item noStyle>
-            <Button
-              htmlType="submit"
-              className="mig-button mig-button--solid-primary"
-              icon={<SearchOutlined />}
-            >
-              Cari
-            </Button>
           </Form.Item>
         </Form>
       </div>
