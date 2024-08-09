@@ -5,7 +5,7 @@ import { FC, useState } from "react";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
-import { CloseIconSvg, EditIconSvg } from "components/icon";
+import { CloseIconSvg, DownloadIconSvg, EditIconSvg } from "components/icon";
 import { ModalAccept, ModalDelete } from "components/modal/modalConfirmation";
 import BadgeLeaveStatus from "components/screen/attendance/leave/BadgeLeaveStatus";
 
@@ -13,6 +13,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { LEAVE_DELETE, OVERTIME_APPROVE } from "lib/features";
 import {
+  downloadFileFromPath,
   generateStaticAssetUrl,
   getBase64,
   getFileName,
@@ -268,32 +269,43 @@ export const DrawerOvertimeDetail: FC<IdrawerOvertimeDetail> = ({
               <p className="mig-caption">{dataDefault.admin_notes}</p>
             </div>
           )}
-          {/* <div className={"mt-2 flex flex-col gap-2"}>
-            <p className={"text-[#4D4D4D] text-xs leading-5 font-medium"}>
-              Supporting File :
-            </p>
-            <div className={"flex flex-col"}>
-              <div className="mb-4 ">
-                <Upload
-                  accept=".pdf"
-                  multiple={false}
-                  maxCount={1}
-                  onChange={onChangePersonalFile}
+          {dataDefault?.document == null ? (
+            "-"
+          ) : (
+            <div
+              className={
+                "mig-body border p-4 rounded-[5px] flex w-full items-center gap-4"
+              }
+            >
+              <div className="flex w-2/3 items-center gap-4">
+                <div>
+                  <PdfIcon />
+                </div>
+                <a
+                  href={generateStaticAssetUrl(dataDefault?.document.link)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={getFileName(dataDefault?.document?.link)}
                 >
-                  <ButtonSys>
-                    <div className="flex justify-center items-center gap-2 ">
-                      <UploadOutlined size={16} />
-                      <p>Upload File</p>
-                    </div>
-                  </ButtonSys>
-                </Upload>
+                  <p className="truncate w-40">
+                    {getFileName(dataDefault?.document?.link)}
+                  </p>
+                </a>
               </div>
-
-              <em className={"text-[#808080] text-xs leading-4 font-normal "}>
-                Upload File (Max. 5 MB).
-              </em>
+              <div className="w-1/3 text-right">
+                <ButtonSys
+                  type="primary"
+                  color="mono100"
+                  square
+                  onClick={() =>
+                    downloadFileFromPath(dataDefault?.document?.link)
+                  }
+                >
+                  <DownloadIconSvg />
+                </ButtonSys>
+              </div>
             </div>
-          </div> */}
+          )}
         </div>
       </div>
       <ModalAccept

@@ -4,13 +4,23 @@ import moment from "moment";
 import { FC, useState } from "react";
 
 import ButtonSys from "components/button";
-import { EditIconSvg } from "components/icon";
+import { DownloadIconSvg, EditIconSvg } from "components/icon";
 import { ModalDelete } from "components/modal/modalConfirmation";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { LEAVE_DELETE, OVERTIME_DELETE } from "lib/features";
-import { getBase64, notificationError, notificationSuccess } from "lib/helper";
+import { LEAVE_DELETE, OVERTIME_DELETE, OVERTIME_GET } from "lib/features";
+import {
+  downloadFileFromPath,
+  generateStaticAssetUrl,
+  getBase64,
+  getFileName,
+  notificationError,
+  notificationSuccess,
+  permissionWarningNotification,
+} from "lib/helper";
+
+import PdfIcon from "assets/vectors/pdf-icon.svg";
 
 import BadgeLeaveStatus from "../leave/BadgeLeaveStatus";
 
@@ -79,6 +89,7 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
 > = ({ visible, onClose, fetchData, dataDefault, dataToken }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToDeleteLeave = hasPermission(LEAVE_DELETE);
+  const isAllowedToGetOvertimeDetail = hasPermission(OVERTIME_GET);
   const isAllowedToDeleteOvertime = hasPermission(OVERTIME_DELETE);
   const [loading, setLoading] = useState(false);
   const [loadingCancel, setLoadingCancel] = useState(false);
@@ -91,17 +102,35 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
     setModalConfirm({ show: false, data: null });
   };
 
-  const onChangePersonalFile = async (info) => {
-    if (info.file.status === "uploading") {
-      // setLoadingupload(true);
-      return;
-    }
-    if (info.file.status === "done") {
-      const blobFile = info.file.originFileObj;
-      const base64Data = await getBase64(blobFile);
-      // setPersonalFileBlob(blobFile);
-    }
+  const propsUpload = {
+    accept: ".pdf",
+    multiple: false,
+    maxCount: 1,
+    data: { id: dataDefault?.id },
+    action: `${process.env.NEXT_PUBLIC_BACKEND_URL}/addOvertimeDocument`,
+    headers: {
+      authorization: JSON.parse(dataToken),
+    },
+    onChange(info) {
+      if (info.file.status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === "done") {
+        notificationSuccess({
+          message: `${info.file.name} file uploaded successfully`,
+          duration: 3,
+        });
+        fetchData();
+        onClose();
+      } else if (info.file.status === "error") {
+        notificationError({
+          message: `${info.file.name} file upload failed.`,
+          duration: 3,
+        });
+      }
+    },
   };
+
   const handleCloseModalConfirmCancel = () => {
     setModalConfirm({ show: false, data: null });
     fetchData();
@@ -177,7 +206,7 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
                 {moment(dataDefault?.issued_date).format("DD MMMM YYYY")}
               </p>
             </div>
-
+            {console.log("isi file ", dataDefault)}
             <BadgeLeaveStatus status={dataDefault?.status?.id} />
           </div>
 
@@ -217,19 +246,14 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
               <p className="mig-caption">{dataDefault.admin_notes}</p>
             </div>
           )}
-          {dataDefault?.status?.id == 2 && (
+          {dataDefault?.status?.id == 2 && dataDefault?.document == null && (
             <div className={"mt-2 flex flex-col gap-2"}>
               <p className={"text-[#4D4D4D] text-xs leading-5 font-medium"}>
                 Supporting File :
               </p>
               <div className={"flex flex-col"}>
                 <div className="mb-4 ">
-                  <Upload
-                    accept=".pdf"
-                    multiple={false}
-                    maxCount={1}
-                    onChange={onChangePersonalFile}
-                  >
+                  <Upload {...propsUpload}>
                     <ButtonSys>
                       <div className="flex justify-center items-center gap-2 ">
                         <UploadOutlined size={16} />
@@ -242,6 +266,43 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
                 <em className={"text-[#808080] text-xs leading-4 font-normal "}>
                   Upload File (Max. 5 MB).
                 </em>
+              </div>
+            </div>
+          )}
+          {dataDefault?.document == null ? (
+            "-"
+          ) : (
+            <div
+              className={
+                "mig-body border p-4 rounded-[5px] flex w-full items-center gap-4"
+              }
+            >
+              <div className="flex w-2/3 items-center gap-4">
+                <div>
+                  <PdfIcon />
+                </div>
+                <a
+                  href={generateStaticAssetUrl(dataDefault?.document.link)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={getFileName(dataDefault?.document?.link)}
+                >
+                  <p className="truncate w-40">
+                    {getFileName(dataDefault?.document?.link)}
+                  </p>
+                </a>
+              </div>
+              <div className="w-1/3 text-right">
+                <ButtonSys
+                  type="primary"
+                  color="mono100"
+                  square
+                  onClick={() =>
+                    downloadFileFromPath(dataDefault?.document?.link)
+                  }
+                >
+                  <DownloadIconSvg />
+                </ButtonSys>
               </div>
             </div>
           )}
