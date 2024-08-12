@@ -1,15 +1,22 @@
-import { Table } from "antd";
+import { Modal, Table } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { useRouter } from "next/router";
-import { FC, memo, useMemo } from "react";
+import { FC, memo, useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
+
+import { EditIconSvg, EditSquareIconSvg, TrashIconSvg } from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { formatDateToLocale } from "lib/date-utils";
-import { ATTENDANCE_FORMS_GET } from "lib/features";
+import {
+  ATTENDANCE_FORMS_GET,
+  ATTENDANCE_FORM_DELETE,
+  ATTENDANCE_FORM_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
@@ -17,7 +24,10 @@ import {
   AttendanceFormAktivitasServiceQueryKeys,
   GetAttendanceFormsDatum,
   IGetAttendanceFormsParams,
+  useDeleteFormAktivitas,
 } from "apis/attendance";
+
+import { FormAktivitasDrawer } from "../shared/FormAktivitasDrawer";
 
 export interface IFormAktivitasTable {
   page: number;
@@ -41,8 +51,17 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
     keyword = "",
   }) => {
     const router = useRouter();
+
     const axiosClient = useAxiosClient();
     const { hasPermission } = useAccessControl();
+    const isAllowedToUpdateFormDetail = hasPermission(ATTENDANCE_FORM_UPDATE);
+    const isAllowedToDeleteFormDetail = hasPermission(ATTENDANCE_FORM_DELETE);
+
+    const canOpenUpdateDrawer =
+      isAllowedToUpdateFormDetail || isAllowedToDeleteFormDetail;
+
+    const [isDrawerShown, setIsDrawerShown] = useState(false);
+    const [aktivtasId, setAktivitasId] = useState(null);
 
     const tableQueryCriteria = useMemo(
       () => ({
@@ -53,6 +72,9 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
         keyword,
       }),
       [page, rows, sort_by, sort_type, keyword]
+    );
+    const { mutateAsync: deleteFormAktivitas } = useDeleteFormAktivitas(
+      "/attendance/form-aktivitas"
     );
 
     const { data, isLoading } = useQuery(
@@ -119,6 +141,39 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
           dataIndex: "description",
           ellipsis: { showTitle: true },
         },
+        {
+          title: "Actions",
+          dataIndex: "action",
+          align: "center",
+          render: (status, record, index) => {
+            return {
+              children: (
+                <div className="flex items-center gap-2 justify-center">
+                  <button
+                    className="bg-transparent"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteButtonClicked(record);
+                    }}
+                    disabled={!isAllowedToDeleteFormDetail}
+                  >
+                    <TrashIconSvg color={"#BF4A40"} size={20} />
+                  </button>
+                  <button
+                    className="bg-transparent"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditButtonClicked(record);
+                    }}
+                    disabled={!canOpenUpdateDrawer}
+                  >
+                    <EditSquareIconSvg color={"#808080"} size={20} />
+                  </button>
+                </div>
+              ),
+            };
+          },
+        },
       ];
     }, [data]);
 
@@ -130,44 +185,86 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
       });
     }, [rows, data, page]);
 
+    const onEditButtonClicked = useCallback((record) => {
+      setAktivitasId(record.id);
+      setIsDrawerShown(true);
+    }, []);
+
+    const onDeleteButtonClicked = (record) => {
+      if (!isAllowedToDeleteFormDetail) {
+        permissionWarningNotification("Menghapus", "Form Aktivitas");
+        return;
+      }
+
+      if (!record.id) {
+        return;
+      }
+
+      Modal.confirm({
+        title: "Confirm Delete Activity Form!",
+        content: (
+          <p>
+            Are you sure to delete Activity Form <strong>{record.name}</strong>{" "}
+            with ID <strong>{record.id}</strong>?
+          </p>
+        ),
+        onOk: () => {
+          setIsDrawerShown(false);
+          return deleteFormAktivitas(record.id);
+        },
+        centered: true,
+      });
+    };
+
     return (
-      <Table<GetAttendanceFormsDatum>
-        loading={isLoading}
-        columns={tableColumns}
-        dataSource={data?.data.data.data || []}
-        scroll={{ x: 640 }}
-        className="tableTypeTask"
-        onChange={(pagination, _, sorter) => {
-          let criteria: IGetAttendanceFormsParams = {
-            page: pagination.current,
-            rows: pagination.pageSize,
-          };
+      <>
+        <Table<GetAttendanceFormsDatum>
+          loading={isLoading}
+          columns={tableColumns}
+          dataSource={data?.data.data.data || []}
+          scroll={{ x: 640 }}
+          className="tableTypeTask"
+          onChange={(pagination, _, sorter) => {
+            let criteria: IGetAttendanceFormsParams = {
+              page: pagination.current,
+              rows: pagination.pageSize,
+            };
 
-          if ("field" in sorter) {
-            criteria.sort_by =
-              sorter.order === undefined
-                ? ""
-                : sorter.field === "users_count"
-                ? "count"
-                : sorter.field?.toString();
-            criteria.sort_type =
-              sorter.order === undefined
-                ? ""
-                : sorter.order === "ascend"
-                ? "asc"
-                : "desc";
-          }
+            if ("field" in sorter) {
+              criteria.sort_by =
+                sorter.order === undefined
+                  ? ""
+                  : sorter.field === "users_count"
+                  ? "count"
+                  : sorter.field?.toString();
+              criteria.sort_type =
+                sorter.order === undefined
+                  ? ""
+                  : sorter.order === "ascend"
+                  ? "asc"
+                  : "desc";
+            }
 
-          onTriggerChangeCriteria(criteria);
-        }}
-        pagination={tablePaginationConf}
-        onRow={(datum) => {
-          return {
-            onClick: () => onRowClicked(datum),
-            className: "hover:cursor-pointer",
-          };
-        }}
-      />
+            onTriggerChangeCriteria(criteria);
+          }}
+          pagination={tablePaginationConf}
+          onRow={(datum) => {
+            return {
+              onClick: () => onRowClicked(datum),
+              className: "hover:cursor-pointer",
+            };
+          }}
+        />
+        {canOpenUpdateDrawer && (
+          <FormAktivitasDrawer
+            title="Update Activity Form"
+            buttonOkText="Save Form"
+            onvisible={setIsDrawerShown}
+            visible={isDrawerShown}
+            formAktivitasId={aktivtasId}
+          />
+        )}
+      </>
     );
   }
 );

@@ -116,7 +116,7 @@ const CardContent: FC<CardContentType> = memo(
       labelClassName
     );
     const mContentClassName = clsx(
-      "mig-caption--medium text-neutrals100 block",
+      "mig-body text-neutrals100 block",
       contentClassName
     );
 

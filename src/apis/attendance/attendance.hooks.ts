@@ -87,12 +87,16 @@ export const useUpdateFormAktivitas = () => {
 export const useDeleteFormAktivitas = (redirectTo: string) => {
   const router = useRouter();
   const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
 
   return useMutation(
     (formAktivitasId: number) =>
       AttendanceFormAktivitasService.remove(axiosClient, formAktivitasId),
     {
       onSuccess: () => {
+        queryClient.invalidateQueries(
+          AttendanceFormAktivitasServiceQueryKeys.FIND
+        );
         router.push(redirectTo);
       },
     }

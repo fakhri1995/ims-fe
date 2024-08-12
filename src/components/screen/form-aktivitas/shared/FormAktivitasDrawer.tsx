@@ -11,7 +11,7 @@ import {
 import type { AxiosError } from "axios";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 import DrawerCore from "components/drawer/drawerCore";
 import {
@@ -82,6 +82,8 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
   formAktivitasId,
 }) => {
   const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+
   const { hasPermission } = useAccessControl();
   const isAllowedToCreateForm = hasPermission(ATTENDANCE_FORM_ADD);
   let isAllowedToUpdateForm = false;
@@ -102,12 +104,13 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
   const {
     data: existingFormAktivitasData,
     refetch: refetchExistingFormAktivitasData,
+    isLoading: isLoadingExistingFormAktivitasData,
     isStale: isExistingDataStale,
   } = useQuery(
     [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, formAktivitasId],
     () => AttendanceFormAktivitasService.findOne(axiosClient, formAktivitasId),
     {
-      enabled: false,
+      enabled: !!formAktivitasId,
       select: (response) => {
         const mapDetailsToWorks = [...response.data.data.details].map(
           (detail) => {
@@ -157,7 +160,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
     });
   };
 
-  const handleAddTipeTask = () => {
+  const handleSaveForm = () => {
     const payload = {
       name: datacreate.name,
       description: datacreate.description,
@@ -218,6 +221,9 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
               message: response.data.message,
               duration: 3,
             });
+            queryClient.invalidateQueries(
+              AttendanceFormAktivitasServiceQueryKeys.FIND
+            );
 
             onvisible(false);
           },
@@ -239,15 +245,16 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
     }
 
     confirm({
-      title: "Konfirmasi Penghapusan Form Aktivitas!",
+      title: "Confirm Delete Activity Form!",
       content: (
         <p>
-          Apakah Anda yakin untuk menghapus Form Aktivitas{" "}
-          <strong>{existingFormAktivitasData.name}</strong> dengan ID{" "}
+          Are you sure to delete Activity Form{" "}
+          <strong>{existingFormAktivitasData.name}</strong> with ID{" "}
           <strong>{formAktivitasId}</strong>?
         </p>
       ),
       onOk: () => {
+        onvisible(false);
         return deleteFormAktivitas(formAktivitasId);
       },
       centered: true,
@@ -302,14 +309,20 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
         onvisible(false);
       }}
       buttonOkText={buttonOkText}
-      buttonCancelText={formAktivitasId ? "Hapus Form" : undefined}
+      buttonCancelText={formAktivitasId ? "Delete Form" : undefined}
       onButtonCancelClicked={
         formAktivitasId ? onDeleteButtonClicked : undefined
       }
-      onClick={handleAddTipeTask}
+      onClick={handleSaveForm}
       disabled={disabledcreate}
     >
-      <Spin spinning={addFormLoading || updateFormLoading}>
+      <Spin
+        spinning={
+          addFormLoading ||
+          updateFormLoading ||
+          isLoadingExistingFormAktivitasData
+        }
+      >
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
@@ -329,7 +342,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                 <Input
                   style={{ width: `100%` }}
                   name="name"
-                  defaultValue={datacreate.name}
+                  value={datacreate.name}
                   onChange={onChangeInput}
                 ></Input>
               </div>
@@ -337,7 +350,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
 
             <TextAreaRequired
               name="description"
-              defaultValue={datacreate.description}
+              value={datacreate.description}
               onChangeInput={onChangeInput}
               label="Activity Form Description"
             ></TextAreaRequired>
