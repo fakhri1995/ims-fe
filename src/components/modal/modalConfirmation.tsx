@@ -17,6 +17,7 @@ const ModalWarning = ({
   okText,
   onOk,
   onCancel,
+  title,
   loading = false,
   disabled = false,
   children,
@@ -25,6 +26,7 @@ const ModalWarning = ({
   okText: string;
   onOk: any;
   onCancel: () => void;
+  title?: string;
   loading?: boolean;
   disabled?: boolean;
   children: ReactElement;
@@ -34,7 +36,7 @@ const ModalWarning = ({
       title={
         <div className="text-warning flex items-center gap-3">
           <AlertCircleFilledIconSvg size={24} />
-          <p>Attention</p>
+          <p>{title || "Attention"}</p>
         </div>
       }
       visible={visible}
@@ -70,7 +72,7 @@ const ModalDelete = ({
   onOk: any;
   children: ReactElement;
   onCancel?: any;
-  title?: string;
+  title?: string | ReactElement;
   iconDelete?: ReactElement;
 }) => {
   return (

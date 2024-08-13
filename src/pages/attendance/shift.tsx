@@ -15,11 +15,18 @@ import DrawerShift from "components/drawer/attendance/drawerShift";
 import { AccessControl } from "components/features/AccessControl";
 import {
   AlertCircleIconSvg,
+  CirclePlusIconSvg,
   EditIconSvg,
+  EditSquareIconSvg,
   PlusIconSvg,
   TrashIconSvg,
 } from "components/icon";
 import LayoutDashboard from "components/layout-dashboard";
+import {
+  ModalAccept,
+  ModalDelete,
+  ModalWarning,
+} from "components/modal/modalConfirmation";
 import ModalCore from "components/modal/modalCore";
 import { ModalHapus2 } from "components/modal/modalCustom";
 import { ModalUbah } from "components/modal/modalCustom";
@@ -223,7 +230,7 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
     },
 
     {
-      title: "Nama Shift",
+      title: "Shift Name",
       dataIndex: "title",
       render: (text, record, index) => {
         return {
@@ -232,29 +239,50 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       },
     },
     {
-      title: "Jam Kerja",
+      title: "Working Hours",
       dataIndex: "work_time",
       render: (text, record, index) => {
         return {
           children: (
-            <>
-              {record?.start_at?.slice(0, 5) || "-"} -{" "}
-              {record?.end_at?.slice(0, 5) || "-"}
-            </>
+            <div className="flex items-center gap-2">
+              <p className="whitespace-nowrap">
+                {record?.start_at?.slice(0, 5)} - {record?.end_at?.slice(0, 5)}
+              </p>
+              {record?.end_at < record?.start_at && (
+                <p
+                  className="whitespace-nowrap mig-caption--medium
+                 text-secondary100 bg-secondary100 bg-opacity-10 
+                 rounded-full px-[10px] py-0.5"
+                >
+                  +1 day
+                </p>
+              )}
+            </div>
           ),
         };
       },
     },
     {
-      title: "Jam Istirahat",
+      title: "Break Time",
       dataIndex: "break_time",
       render: (text, record, index) => {
         return {
           children: (
-            <>
-              {record?.start_break?.slice(0, 5)} -{" "}
-              {record?.end_break?.slice(0, 5)}
-            </>
+            <div className="flex items-center gap-2">
+              <p className="whitespace-nowrap">
+                {record?.start_break?.slice(0, 5)} -{" "}
+                {record?.end_break?.slice(0, 5)}
+              </p>
+              {record?.end_break < record?.start_break && (
+                <p
+                  className="whitespace-nowrap mig-caption--medium
+               text-secondary100 bg-secondary100 bg-opacity-10 
+               rounded-full px-[10px] py-0.5"
+                >
+                  +1 day
+                </p>
+              )}
+            </div>
           ),
         };
       },
@@ -279,11 +307,10 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                     <div className="p-2">
                       <div className="flex gap-2 items-center">
                         <div className="bg-primary100 w-2 h-2 rounded-full" />
-                        <p className="mig-caption--bold text-mono30">Aktif</p>
+                        <p className="mig-caption--bold text-mono30">Active</p>
                       </div>
                       <p className="text-mono50">
-                        Terjadwal di jadwal kerja karyawan dan sedang
-                        berlangsung
+                        Scheduled in the employee's work schedule and ongoing
                       </p>
                     </div>
                   ) : (
@@ -291,11 +318,11 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                       <div className="flex gap-2 items-center">
                         <div className="bg-mono50 w-2 h-2 rounded-full" />
                         <p className="mig-caption--bold text-mono30">
-                          Non-Aktif
+                          Inactive
                         </p>
                       </div>
                       <p className="text-mono50">
-                        Tidak terjadwal di jadwal kerja karyawan
+                        Not scheduled in the employee's work schedule
                       </p>
                     </div>
                   )
@@ -306,11 +333,13 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                   disabled={!isAllowedToUpdateShift}
                   optionFilterProp="children"
                   bordered={false}
-                  className={`w-2/3 rounded-md p-1 flex text-center ${
-                    status == 1
-                      ? "bg-primary100 text-white"
-                      : "bg-mono90 text-mono30 "
-                  }`}
+                  className={`w-fit rounded-md flex text-center
+                     ${
+                       status == 1
+                         ? "bg-primary100 bg-opacity-10 text-primary100"
+                         : "bg-mono30 bg-opacity-10 text-mono30 "
+                     }
+                      `}
                   onChange={(value) => {
                     setCurrentDataShift({
                       ...record,
@@ -325,9 +354,22 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
                     <Select.Option
                       key={id}
                       value={item?.value}
-                      className={`rounded-md px-4 py-2 text-center`}
+                      className={`rounded-md px-4 py-2  `}
                     >
-                      {item?.title}
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-2 h-2 flex rounded-full ${
+                            item.value == 1 ? "bg-primary100" : "bg-mono30"
+                          } `}
+                        ></div>
+                        <p
+                          className={`${
+                            item.value == 1 ? "text-primary100" : "text-mono30"
+                          } `}
+                        >
+                          {item?.title}
+                        </p>
+                      </div>
                     </Select.Option>
                   ))}
                 </Select>
@@ -338,26 +380,26 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       },
     },
     {
-      title: "Aksi",
+      title: "Actions",
       dataIndex: "action",
       align: "center",
       render: (status, record, index) => {
         return {
           children: (
-            <div className="flex items-center gap-6 justify-center">
-              <button
-                className="bg-transparent"
-                onClick={() => handleShowUpdate(record)}
-                disabled={!isAllowedToUpdateShift}
-              >
-                <EditIconSvg color={"#808080"} size={24} />
-              </button>
+            <div className="flex items-center gap-2 justify-center">
               <button
                 className="bg-transparent"
                 onClick={() => handleShowDelete(record)}
                 disabled={!isAllowedToDeleteShift}
               >
                 <TrashIconSvg color={"#BF4A40"} size={24} />
+              </button>
+              <button
+                className="bg-transparent"
+                onClick={() => handleShowUpdate(record)}
+                disabled={!isAllowedToUpdateShift}
+              >
+                <EditSquareIconSvg color={"#808080"} size={24} />
               </button>
             </div>
           ),
@@ -368,11 +410,11 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
 
   const dataStatusList = [
     {
-      title: "Aktif",
+      title: "Active",
       value: 1,
     },
     {
-      title: "Non-Aktif",
+      title: "Inactive",
       value: 0,
     },
   ];
@@ -384,49 +426,48 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/shift"
     >
-      <div className="grid grid-cols-1 px-6 md:px-0" id="mainWrapper">
+      <div className="grid grid-cols-1" id="mainWrapper">
         {/* Table Daftar Shift */}
-        <div className="flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-            <h4 className="mig-heading--4 ">Daftar Shift</h4>
+        <div className="flex flex-col mig-platform--p-0">
+          <div className="flex items-center justify-between gap-4 border-b py-3 px-4">
+            <h4 className="mig-body--bold">List of Work Shift</h4>
 
-            <div className="flex flex-col md:flex-row gap-2 items-end md:items-center lg:w-6/12">
-              {/* Search by keyword (kata kunci) */}
-              <div className="w-full lg:w-2/3">
-                <Input
-                  style={{ width: `100%` }}
-                  placeholder="Cari Shift..."
-                  allowClear
-                  onChange={(e) => {
-                    setTimeout(
-                      () =>
-                        setQueryParams({
-                          keyword: e.target.value,
-                          page: 1,
-                        }),
-                      1000
-                    );
-                  }}
-                  disabled={!isAllowedToGetShifts}
-                />
-              </div>
-              <div className="w-full xl:w-1/3">
-                <ButtonSys
-                  fullWidth
-                  type={"primary"}
-                  onClick={() => setShowCreateDrawer(true)}
-                  disabled={!isAllowedToAddShift}
-                >
-                  <div className="flex flex-row items-center space-x-2">
-                    <PlusIconSvg size={16} color="#FFFFFF" />
-                    <p className="whitespace-nowrap">Tambah Shift</p>
-                  </div>
-                </ButtonSys>
-              </div>
+            <div className="w-fit">
+              <ButtonSys
+                fullWidth
+                type={"primary"}
+                onClick={() => setShowCreateDrawer(true)}
+                disabled={!isAllowedToAddShift}
+              >
+                <div className="flex flex-row items-center space-x-2">
+                  <CirclePlusIconSvg size={20} color="#FFFFFF" />
+                  <p className="whitespace-nowrap">Add Work Shift</p>
+                </div>
+              </ButtonSys>
             </div>
           </div>
 
-          <div>
+          {/* Search by keyword (kata kunci) */}
+          <div className="w-full py-3 px-4">
+            <Input
+              style={{ width: `100%` }}
+              placeholder="Search shift name..."
+              allowClear
+              onChange={(e) => {
+                setTimeout(
+                  () =>
+                    setQueryParams({
+                      keyword: e.target.value,
+                      page: 1,
+                    }),
+                  1000
+                );
+              }}
+              disabled={!isAllowedToGetShifts}
+            />
+          </div>
+
+          <div className=" px-4">
             <TableCustomShiftList
               dataSource={dataShifts}
               columns={columnShifts}
@@ -456,92 +497,63 @@ const ShiftAttendancePage: NextPage<ProtectedPageProps> = ({
 
       {/* Modal Delete Shift */}
       <AccessControl hasPermission={ATTENDANCE_SHIFT_DELETE}>
-        <ModalCore
-          title={
-            <div className="flex gap-4 items-center">
-              <AlertCircleIconSvg color={"#BF4A40"} size={24} />
-              <p>
-                {currentDataShift?.status == 1
-                  ? "Peringatan"
-                  : "Konfirmasi Hapus"}
-              </p>
-            </div>
-          }
-          visible={isShowDeleteModal}
-          onCancel={() => setShowDeleteModal(false)}
-          footer={
-            <Spin spinning={loadingDeleteShift}>
-              <div className="flex gap-4 items-center justify-end">
-                <ButtonSys
-                  type={"primary"}
-                  color={"mono100"}
-                  onClick={() => {
-                    setShowDeleteModal(false);
-                  }}
-                >
-                  Tutup
-                </ButtonSys>
-                {currentDataShift?.status == 0 && (
-                  <div className="col-span-2 hover:opacity-75">
-                    <ButtonSys
-                      type={"primary"}
-                      color={"danger"}
-                      onClick={() => deleteShift(currentDataShift?.id)}
-                      disabled={!isAllowedToDeleteShift}
-                    >
-                      <div className="flex flex-row gap-2 items-center">
-                        <TrashIconSvg size={16} color={"#FFFFFF"} />
-                        <p>Hapus Shift</p>
-                      </div>
-                    </ButtonSys>
-                  </div>
-                )}
-              </div>
-            </Spin>
-          }
-          loading={loadingDeleteShift}
-        >
-          {currentDataShift?.status == 1 ? (
+        {currentDataShift?.status == 1 ? (
+          <ModalWarning
+            title={"Warning"}
+            visible={isShowDeleteModal}
+            okText="I Understand"
+            onCancel={() => setShowDeleteModal(false)}
+            loading={loadingDeleteShift}
+            disabled={!isAllowedToDeleteShift}
+            onOk={() => setShowDeleteModal(false)}
+          >
             <p>
-              Shift <strong>{currentDataShift?.title}</strong> sedang aktif.
-              Anda tidak bisa menghapus shift kerja yang sedang aktif.
+              <strong>{currentDataShift?.title}</strong> is currently active.
+              You cannot delete an active work shift.
             </p>
-          ) : (
+          </ModalWarning>
+        ) : (
+          <ModalDelete
+            visible={isShowDeleteModal}
+            onCancel={() => setShowDeleteModal(false)}
+            itemName="Shift"
+            loading={loadingDeleteShift}
+            disabled={!isAllowedToDeleteShift}
+            onOk={() => deleteShift(currentDataShift?.id)}
+          >
             <p>
-              Apakah Anda yakin ingin menghapus{" "}
+              Are you sure you want to delete{" "}
               <strong>{currentDataShift?.title}</strong>?
             </p>
-          )}
-        </ModalCore>
+          </ModalDelete>
+        )}
       </AccessControl>
 
       {/* Modal Update Status Shift */}
       <AccessControl hasPermission={ATTENDANCE_SHIFT_UPDATE}>
-        <ModalUbah
-          title={`Konfirmasi Perubahan`}
+        <ModalAccept
+          title={`Confirm Changes`}
           visible={isShowUpdateStatusModal}
-          onvisible={setShowUpdateStatusModal}
           onOk={() =>
             updateShiftStatus({
               id: currentDataShift?.id,
               status: Boolean(currentDataShift?.status),
             })
           }
-          okButtonText="Ya, saya yakin"
           onCancel={() => handleCloseUpdateStatus()}
           loading={loadingUpdateShiftStatus}
           disabled={!isAllowedToUpdateShift}
         >
           <div className="space-y-4">
             <p className="">
-              Apakah Anda yakin ingin mengubah status pada shift kerja{" "}
-              <strong>{currentDataShift.title}</strong> menjadi{" "}
+              Are you sure you want to change status of shift{" "}
+              <strong>{currentDataShift.title}</strong> to{" "}
               <strong>
-                {currentDataShift.status == 1 ? "Aktif ?" : "Non-Aktif ?"}
+                {currentDataShift.status == 1 ? "Active ?" : "Inactive ?"}
               </strong>
             </p>
           </div>
-        </ModalUbah>
+        </ModalAccept>
       </AccessControl>
     </LayoutDashboard>
   );
