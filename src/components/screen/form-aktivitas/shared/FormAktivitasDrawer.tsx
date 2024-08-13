@@ -11,7 +11,7 @@ import {
 import type { AxiosError } from "axios";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 import DrawerCore from "components/drawer/drawerCore";
 import {
@@ -82,6 +82,8 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
   formAktivitasId,
 }) => {
   const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+
   const { hasPermission } = useAccessControl();
   const isAllowedToCreateForm = hasPermission(ATTENDANCE_FORM_ADD);
   let isAllowedToUpdateForm = false;
@@ -102,12 +104,13 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
   const {
     data: existingFormAktivitasData,
     refetch: refetchExistingFormAktivitasData,
+    isLoading: isLoadingExistingFormAktivitasData,
     isStale: isExistingDataStale,
   } = useQuery(
     [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, formAktivitasId],
     () => AttendanceFormAktivitasService.findOne(axiosClient, formAktivitasId),
     {
-      enabled: false,
+      enabled: !!formAktivitasId,
       select: (response) => {
         const mapDetailsToWorks = [...response.data.data.details].map(
           (detail) => {
@@ -157,7 +160,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
     });
   };
 
-  const handleAddTipeTask = () => {
+  const handleSaveForm = () => {
     const payload = {
       name: datacreate.name,
       description: datacreate.description,
@@ -218,6 +221,9 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
               message: response.data.message,
               duration: 3,
             });
+            queryClient.invalidateQueries(
+              AttendanceFormAktivitasServiceQueryKeys.FIND
+            );
 
             onvisible(false);
           },
@@ -239,15 +245,16 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
     }
 
     confirm({
-      title: "Konfirmasi Penghapusan Form Aktivitas!",
+      title: "Confirm Delete Activity Form!",
       content: (
         <p>
-          Apakah Anda yakin untuk menghapus Form Aktivitas{" "}
-          <strong>{existingFormAktivitasData.name}</strong> dengan ID{" "}
+          Are you sure to delete Activity Form{" "}
+          <strong>{existingFormAktivitasData.name}</strong> with ID{" "}
           <strong>{formAktivitasId}</strong>?
         </p>
       ),
       onOk: () => {
+        onvisible(false);
         return deleteFormAktivitas(formAktivitasId);
       },
       centered: true,
@@ -302,75 +309,72 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
         onvisible(false);
       }}
       buttonOkText={buttonOkText}
-      buttonCancelText={formAktivitasId ? "Hapus Form" : undefined}
+      buttonCancelText={formAktivitasId ? "Delete Form" : undefined}
       onButtonCancelClicked={
         formAktivitasId ? onDeleteButtonClicked : undefined
       }
-      onClick={handleAddTipeTask}
+      onClick={handleSaveForm}
       disabled={disabledcreate}
     >
-      <Spin spinning={addFormLoading || updateFormLoading}>
-        <div className="flex flex-col">
-          <div className="mb-8">
-            <p className="mb-0 text-red-500 text-xs italic">
-              *Informasi ini harus diisi
-            </p>
-          </div>
-          <div className="flex flex-col">
-            <div className=" mb-5 px-3 flex flex-col">
-              <div className="flex mb-1">
-                <Label>Nama Form Aktivitas</Label>
+      <Spin
+        spinning={
+          addFormLoading ||
+          updateFormLoading ||
+          isLoadingExistingFormAktivitasData
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <div className="flex">
+                <p>Activity Form Name</p>
                 <span className="namaField"></span>
                 <style jsx>
                   {`
-                                          .namaField::before{
-                                              content: '*';
-                                              color: red;
-                                          }
-                                      `}
+                      .namaField::before{
+                          content: '*';
+                          color: #BF4A40;
+                      }
+                  `}
                 </style>
               </div>
-              <div className=" flex flex-col">
-                <div className="mb-2 w-full">
-                  <Input
-                    style={{ width: `100%` }}
-                    name="name"
-                    defaultValue={datacreate.name}
-                    onChange={onChangeInput}
-                  ></Input>
-                </div>
+              <div className="mb-2 w-full">
+                <Input
+                  style={{ width: `100%` }}
+                  name="name"
+                  value={datacreate.name}
+                  onChange={onChangeInput}
+                ></Input>
               </div>
             </div>
+
             <TextAreaRequired
               name="description"
-              defaultValue={datacreate.description}
+              value={datacreate.description}
               onChangeInput={onChangeInput}
-              label="Deskripsi Form Aktivitas"
+              label="Activity Form Description"
             ></TextAreaRequired>
           </div>
 
           {/* Menampilkan fields untuk create new form aktivitas */}
           {!formAktivitasId && (
             <>
-              <div className="flex flex-col px-3 mb-5">
-                <div className="flex mb-5">
-                  <Label>Daftar Isian</Label>
+              <div className="flex flex-col">
+                <div className="flex">
+                  <p>List of Fields</p>
                   <span className="pekerjaan"></span>
                   <style jsx>
                     {`
-                                      .pekerjaan::before{
-                                          content: '*';
-                                          color: red;
-                                      }
-                                  `}
+                        .pekerjaan::before{
+                            content: '*';
+                            color: #BF4A40;
+                        }
+                    `}
                   </style>
                 </div>
                 {datacreate.works.length === 0 ? (
                   <>
-                    <Empty
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description="Daftar aktivitas masih kosong"
-                    />
+                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                   </>
                 ) : (
                   datacreate.works.map((doc, idx) => {
@@ -380,7 +384,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                         className="bg-white flex flex-col shadow-md rounded-md p-3 mb-4 border"
                       >
                         <div className="flex items-center justify-between mb-6">
-                          <span className="block">Wajib Diisi</span>
+                          <span className="block">Required</span>
                           <Switch
                             checked={doc.required}
                             onChange={(checked) => {
@@ -398,7 +402,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                             <div className="mr-2">
                               <Input
                                 value={doc.name}
-                                placeholder="Nama"
+                                placeholder="Title"
                                 onChange={(e) => {
                                   var temp = [...datacreate.works];
                                   temp[idx].name = e.target.value;
@@ -440,7 +444,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                     size={12}
                                     color={`#35763B`}
                                   />
-                                  Teks
+                                  Text
                                 </div>
                               </Select.Option>
                               <Select.Option
@@ -451,7 +455,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                     size={12}
                                     color={`#35763B`}
                                   />
-                                  Paragraf
+                                  Paragraph
                                 </div>
                               </Select.Option>
                               <Select.Option
@@ -462,13 +466,13 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                     size={12}
                                     color={`#35763B`}
                                   />
-                                  Ceklis
+                                  Checklist
                                 </div>
                               </Select.Option>
                               <Select.Option value={FormAktivitasTypes.NUMERAL}>
                                 <div className="flex items-center">
                                   <ListNumbersSvg size={12} color={`#35763B`} />
-                                  Numeral
+                                  Number
                                 </div>
                               </Select.Option>
                               <Select.Option
@@ -482,7 +486,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                               <Select.Option value={FormAktivitasTypes.UNGGAH}>
                                 <div className="flex items-center">
                                   <UploadIconSvg size={12} color={`#35763B`} />
-                                  Unggah File
+                                  Upload File
                                 </div>
                               </Select.Option>
                             </Select>
@@ -490,7 +494,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
 
                           <div className="mb-5 col-span-2">
                             <Input
-                              placeholder="Deskripsi"
+                              placeholder="Description"
                               value={doc.description}
                               onChange={(e) => {
                                 var temp = [...datacreate.works];
@@ -507,7 +511,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                             <div className="flex flex-col mb-3 col-span-2">
                               <div className="mb-3 flex flex-col">
                                 <div className="mb-1">
-                                  <Label>Keterangan</Label>
+                                  <Label>Checklist</Label>
                                 </div>
                                 {doc.lists.map((doc2, idx2) => {
                                   return (
@@ -560,7 +564,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                     <H2>+</H2>
                                   </div>
                                   <Input
-                                    placeholder="Tambah"
+                                    placeholder="Add"
                                     value={tempcb[idx]}
                                     onChange={(e) => {
                                       var temptempcb = [...tempcb];
@@ -587,7 +591,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                                                           </div> */}
                                     <div className="flex items-center mr-2">
                                       <Input
-                                        placeholder="Tambah"
+                                        placeholder="Add"
                                         style={{ marginRight: `0.5rem` }}
                                         value={doc4}
                                         onChange={(e) => {
@@ -634,7 +638,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                   }}
                                 >
                                   <h1 className="font-semibold text-sm hover:text-primary100">
-                                    + Tambah Value
+                                    + Add Value
                                   </h1>
                                 </div>
                               </div>
@@ -747,7 +751,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                 }}
               >
                 <div className="text-primary100 hover:text-primary75">
-                  + Tambah Aktivitas Baru
+                  + Add New Fields
                 </div>
               </div>
             </>

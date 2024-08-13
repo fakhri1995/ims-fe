@@ -15,13 +15,13 @@ const InputRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
   return (
     <div className="flex flex-col mb-5 px-3">
       <div className="flex mb-1">
-        <Label>{label}</Label>
+        <p>{label}</p>
         <span className="namaField"></span>
         <style jsx>
           {`
                         .namaField::before{
                             content: '*';
-                            color: red;
+                            color: #BF4A40;
                         }
                     `}
         </style>
@@ -44,15 +44,15 @@ const TextAreaRequired = ({
   value,
 }) => {
   return (
-    <div className="flex flex-col mb-5 px-3">
+    <div className="flex flex-col">
       <div className="flex mb-1">
-        <Label>{label}</Label>
+        <p>{label}</p>
         <span className="namaField"></span>
         <style jsx>
           {`
                         .namaField::before{
                             content: '*';
-                            color: red;
+                            color: #BF4A40;
                         }
                     `}
         </style>
@@ -78,7 +78,7 @@ const TextAreaNotRequired = ({
   return (
     <div className="flex flex-col mb-5 px-3">
       <div className="flex mb-1">
-        <Label>{label}</Label>
+        <p>{label}</p>
       </div>
       <Input.TextArea
         rows={rows}
@@ -101,7 +101,7 @@ const InputNotRequired = ({
   return (
     <div className="flex flex-col mb-5 px-3">
       <div className="flex mb-1">
-        <Label>{label}</Label>
+        <p>{label}</p>
       </div>
       <Input
         name={name}
@@ -125,7 +125,7 @@ const TreeSelectRequired = ({
   return (
     <div className="flex flex-col mb-5 px-3">
       <div className="flex">
-        <Label>{label}</Label>
+        <p>{label}</p>
         <span className="namaField"></span>
         <style jsx>
           {`
@@ -167,7 +167,7 @@ const SelectRequired = ({
   return (
     <div className="flex flex-col mb-5 px-3">
       <div className="flex mb-1">
-        <Label>{label}</Label>
+        <p>{label}</p>
         <span className="namaField"></span>
         <style jsx>
           {`
@@ -203,7 +203,7 @@ const SelectNotRequired = ({
   return (
     <div className={`flex flex-col mb-${mb} px-${px}`}>
       <div className="flex">
-        <Label>{label}</Label>
+        <p>{label}</p>
       </div>
       <Select
         name={name}
@@ -228,7 +228,7 @@ const DateRequired = ({
   return (
     <div className="flex flex-col mb-5 px-3">
       <div className="flex">
-        <Label>{label}</Label>
+        <p>{label}</p>
         <span className="namaField"></span>
         <style jsx>
           {`
@@ -261,7 +261,7 @@ const DateNotRequired = ({
   return (
     <div className="flex flex-col mb-5 px-3">
       <div className="flex">
-        <Label>{label}</Label>
+        <p>{label}</p>
       </div>
       <DatePicker
         name={name}
@@ -287,7 +287,7 @@ const TimeNotRequired = ({
   return (
     <div className="flex flex-col mb-5 px-3">
       <div className="flex">
-        <Label>{label}</Label>
+        <p>{label}</p>
       </div>
       <TimePicker
         name={name}
@@ -313,7 +313,7 @@ const RadioRequired = ({
   return (
     <div className="flex flex-col mb-3 px-3">
       <div className="flex">
-        <Label>{label}</Label>
+        <p>{label}</p>
         <span className="namaField"></span>
         <style jsx>
           {`
@@ -354,7 +354,7 @@ const RadioNotRequired = ({
   return (
     <div className="flex flex-col mb-3 px-3">
       <div className="flex">
-        <Label>{label}</Label>
+        <p>{label}</p>
       </div>
       <Radio.Group
         name={name}

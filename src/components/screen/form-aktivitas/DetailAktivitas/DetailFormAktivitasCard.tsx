@@ -4,6 +4,7 @@ import React from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
+import ButtonBack from "components/buttonBack";
 import { DetailCard, IDetailCard } from "components/cards/DetailCard";
 
 import { useAccessControl } from "contexts/access-control";
@@ -26,7 +27,7 @@ import {
 import EditIcon from "assets/vectors/icon-edit.svg";
 
 export interface IDetailFormAktivitasCard {
-  onUbahButtonClicked: () => void;
+  onUbahButtonClicked?: () => void;
 
   aktivitasId?: number;
 }
@@ -75,42 +76,31 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
       const detailCardContent: Pick<IDetailCard, "content"> = { content: [] };
 
       detailCardContent.content.push({
-        label: "Deskripsi Form",
+        label: "",
         content: data.description,
       });
 
       detailCardContent.content.push({
-        label: "Tanggal Diubah",
+        label: "Date Modified",
         content: data.updated_at,
       });
 
       detailCardContent.content.push({
-        label: "Jumlah Staff",
-        content: data.users.length,
+        label: "Created by",
+        content: data.creator.name,
       });
 
       detailCardContent.content.push({
-        label: "Nama Pembuat",
-        content: (
-          <div className="flex items-center space-x-3 text-gray-500">
-            <div className="w-8 h-8 rounded-full bg-mono80">
-              <img
-                className="w-full h-full bg-cover rounded-full"
-                src={data.creator.profile_image || "/image/staffTask.png"}
-                alt="Avatar"
-              />
-            </div>
-
-            <span>{data.creator.name}</span>
-          </div>
-        ),
+        label: "Total Staff",
+        content: data.users.length,
       });
 
       return detailCardContent.content;
     }, [data]);
 
     const cardHeader = (
-      <div className="flex flex-col space-y-6">
+      <div className="flex items-center gap-3">
+        <ButtonBack />
         {/* Title */}
         <span className="text-center text-mono30 font-bold text-lg">
           {isLoading && <Skeleton active round paragraph={{ rows: 1 }} />}
@@ -118,18 +108,17 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
         </span>
 
         {/* Button Edit */}
-        <div className="self-center">
+        {/* <div className="self-center">
           {!isLoading && (
             <ButtonSys
               type={!canOpenUpdateDrawer ? "primary" : "default"}
               disabled={isLoading || !canOpenUpdateDrawer}
-              onClick={onUbahButtonClicked}
-            >
+              onClick={onUbahButtonClicked}>
               <EditIcon className="mr-2 w-3 h-3" />
               Ubah Form
             </ButtonSys>
           )}
-        </div>
+        </div> */}
       </div>
     );
 

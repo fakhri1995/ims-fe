@@ -17,6 +17,8 @@ import React, {
 } from "react";
 import { useQuery } from "react-query";
 
+import ButtonSys from "components/button";
+
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -142,7 +144,7 @@ export const AktivitasUserListEditableCard: FC<
 
   const onDeleteStaffButtonClicked = () => {
     confirm({
-      title: "Hapus Staff",
+      title: "Remove Staff",
       icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
       content: (
         <p>
@@ -296,10 +298,11 @@ export const AktivitasUserListEditableCard: FC<
         searchValue={searchValue}
         onChangePhase={triggerChangePhase}
         isAllowedToDeleteStaff={currentFormAktivitasUsers?.length > 0}
+        canAddNewStaffToFormActivity={canAddNewStaffToFormActivity}
       />
 
       {/* Content Container */}
-      <div className="my-10">
+      <div className="mt-2 mb-10">
         <div className="w-full">
           {cardPhase === "default" && (
             <StaffSectionContainer
@@ -309,21 +312,7 @@ export const AktivitasUserListEditableCard: FC<
               onItemClicked={() => {
                 /** noop */
               }}
-            >
-              <div
-                className={tambahStaffClassName}
-                onClick={() => triggerChangePhase("add")}
-              >
-                <Button
-                  className="rounded-full bg-primary100/25 w-12 h-12 flex items-center justify-center group-hover:border-primary100 group-hover:bg-primary100/50 focus:border-primary100"
-                  disabled={!canAddNewStaffToFormActivity}
-                >
-                  <UserAddOutlined className="text-xl text-primary100" />
-                </Button>
-
-                <span className="text-mono30 text-center">Tambah Staff</span>
-              </div>
-            </StaffSectionContainer>
+            />
           )}
 
           {cardPhase === "remove" && (
@@ -377,6 +366,7 @@ interface ICardHeader {
   onSearch: (searchValue: string) => void;
   searchValue: string;
   isAllowedToDeleteStaff?: boolean;
+  canAddNewStaffToFormActivity?: boolean;
 }
 
 /**
@@ -388,11 +378,12 @@ const CardHeader: FC<ICardHeader> = ({
   onSearch,
   searchValue,
   isAllowedToDeleteStaff = false,
+  canAddNewStaffToFormActivity,
 }) => {
   const [form] = Form.useForm();
 
   const cardTitlePrefix =
-    cardPhase === "add" ? "Tambah" : cardPhase === "remove" ? "Hapus" : "";
+    cardPhase === "add" ? "Add" : cardPhase === "remove" ? "Remove" : "";
 
   const onBackButtonClicked = () => {
     onChangePhase("default");
@@ -406,72 +397,84 @@ const CardHeader: FC<ICardHeader> = ({
     form?.setFields([{ name: "search", value: searchValue || "" }]);
   }, [searchValue]);
 
-  return (
-    <div className="grid grid-cols-12 grid-rows-2  lg:flex-row lg:items-center justify-between gap-4">
-      {/* LHS: Back Button, Title */}
-      <div className="col-span-6 row-span-1 lg:col-span-3 flex items-center ">
-        {/* Back button */}
-        {cardPhase !== "default" && (
-          <Button
-            type="link"
-            className="flex items-center text-mono30 hover:text-mono50 focus:text-mono50"
-            onClick={onBackButtonClicked}
-          >
-            <LeftOutlined />
-          </Button>
-        )}
-        <span className="font-bold text-mono30 text-lg">
-          {[cardTitlePrefix, "Staff"].join(" ")}
-        </span>
-      </div>
+  let timer: NodeJS.Timeout; // use for delay time in table's search
 
-      {/* Sampe sini */}
-      {/* RHS: Search Input, Button */}
-      <div className="col-span-6 lg:col-span-3 row-span-1 flex justify-end">
-        {cardPhase === "default" && isAllowedToDeleteStaff && (
-          <Button
-            type="ghost"
-            className="mig-button mig-button--outlined-danger "
-            onClick={onRemoveButtonClicked}
-          >
-            <UserDeleteOutlined />
-            Hapus Staff
-          </Button>
-        )}
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-row items-center justify-between gap-4">
+        {/* LHS: Back Button, Title */}
+        <div className=" flex items-center ">
+          {/* Back button */}
+          {cardPhase !== "default" && (
+            <Button
+              type="link"
+              className="flex items-center text-mono30 hover:text-mono50 focus:text-mono50"
+              onClick={onBackButtonClicked}
+            >
+              <LeftOutlined />
+            </Button>
+          )}
+          <span className="font-bold text-mono30 text-lg">
+            {[cardTitlePrefix, "Staff"].join(" ")}
+          </span>
+        </div>
+
+        {/* RHS: Search Input, Button */}
+        <div className="flex items-center gap-2 ">
+          <div className="w-1/2">
+            {cardPhase === "default" && isAllowedToDeleteStaff && (
+              <ButtonSys
+                type="default"
+                color="danger"
+                onClick={onRemoveButtonClicked}
+                fullWidth
+              >
+                <div className="flex gap-2 items-center whitespace-nowrap">
+                  <UserAddOutlined />
+                  Remove Staff
+                </div>
+              </ButtonSys>
+            )}
+          </div>
+          <div className="w-1/2">
+            {cardPhase === "default" && canAddNewStaffToFormActivity && (
+              <ButtonSys
+                type="primary"
+                fullWidth
+                onClick={() => onChangePhase("add")}
+              >
+                <div className="flex gap-2 items-center whitespace-nowrap">
+                  <UserAddOutlined />
+                  Add Staff
+                </div>
+              </ButtonSys>
+            )}
+          </div>
+        </div>
       </div>
-      <div className="col-span-full lg:col-span-6 row-span-1">
+      <div className="w-full">
         <Form
           form={form}
-          layout="inline"
           onFinish={(value: { search?: string }) => {
             onSearch(value.search);
           }}
         >
-          <div className="flex w-full justify-between gap-2">
-            <div className="w-full">
-              <Form.Item name="search">
-                <Input
-                  allowClear
-                  placeholder="Cari..."
-                  onChange={(ev) => {
-                    if (ev.target.value === "") {
-                      onSearch("");
-                    }
-                  }}
-                />
-              </Form.Item>
-            </div>
-
-            <Form.Item noStyle>
-              <Button
-                htmlType="submit"
-                className="mig-button mig-button--solid-primary"
-                icon={<SearchOutlined />}
-              >
-                Cari
-              </Button>
-            </Form.Item>
-          </div>
+          <Form.Item name="search">
+            <Input
+              allowClear
+              placeholder="Search staff..."
+              onChange={(ev) => {
+                if (ev.target.value === "") {
+                  onSearch("");
+                } else {
+                  clearTimeout(timer);
+                  timer = setTimeout(() => {
+                    form.submit();
+                  }, 500);
+                }
+              }}
+            />
+          </Form.Item>
         </Form>
       </div>
     </div>
@@ -537,7 +540,7 @@ const CardFooter: FC<ICardFooter> = ({
             className={batalkanButtonClassName}
             onClick={onBatalkanClicked}
           >
-            Batalkan
+            Cancel
           </Button>
 
           <Button
@@ -550,7 +553,7 @@ const CardFooter: FC<ICardFooter> = ({
             ) : (
               <UserDeleteOutlined className="text-base" />
             )}
-            {cardPhase === "add" ? "Tambah" : "Hapus Terpilih"}
+            {cardPhase === "add" ? "Add" : "Delete Selected"}
           </Button>
         </div>
       )}
@@ -580,7 +583,7 @@ const StaffListItem: FC<IStaffListItem> = ({
   onClick,
 }) => {
   const gridItemClassName = clsx(
-    "flex flex-col justify-start items-center space-y-3 text-center rounded-lg mx-4 py-2",
+    "h-24 flex flex-col justify-center items-center text-center rounded-lg py-2 px-1 border",
     {
       "hover:cursor-pointer transition-colors duration-300 bg-white/0 hover:bg-primary100/10":
         isSelectable,
@@ -593,10 +596,10 @@ const StaffListItem: FC<IStaffListItem> = ({
   return (
     <div className={gridItemClassName} onClick={onClickHandler}>
       {/* Avatar */}
-      <div className="relative">
-        <div className="w-12 h-12 rounded-full bg-mono80 overflow-hidden">
+      <div className="relative mb-1">
+        <div className="w-10 h-10 rounded-full bg-mono80 overflow-hidden">
           <img
-            className="w-full h-full bg-cover"
+            className="w-full h-full object-cover"
             alt={`${name}'s Avatar`}
             src={
               profileImageUrl === "-" || profileImageUrl === ""
@@ -613,10 +616,17 @@ const StaffListItem: FC<IStaffListItem> = ({
       </div>
 
       {/* Staff name */}
-      <span className="block text-mono30">{name}</span>
+      <p
+        title={name}
+        className="block mig-caption--medium text-mono30 truncate w-36 md:w-24 xl:w-36"
+      >
+        {name}
+      </p>
 
       {/* Staff Position */}
-      <span className="block text-mono50 text-xs">{position}</span>
+      <p className="block text-mono50 mig-small truncate w-36 md:w-24 xl:w-36">
+        {position}
+      </p>
     </div>
   );
 };
@@ -642,9 +652,9 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
   onItemClicked,
   children,
 }) => {
-  const sectionClassName = clsx("py-6 h-80 overflow-x-auto", {
+  const sectionClassName = clsx("py-6 h-60 overflow-x-auto", {
     "flex flex-col space-y-6 items-center justify-center": isLoading,
-    "grid grid-cols-3 2xl:grid-cols-5 gap-y-6 auto-rows-min":
+    "grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-5 auto-rows-min gap-2 md:gap-4":
       !isLoading && (data.length > 0 || React.Children.count(children) > 0),
   });
 
@@ -655,14 +665,14 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
       {data.length === 0 && React.Children.count(children) === 0 && (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={emptyMessage || "Tidak ada daftar staff"}
+          description={emptyMessage || "There’s no staff here. "}
         />
       )}
 
       {!isLoading && children}
 
       {data.map(({ id, name, position, profile_image }) => (
-        <div key={id}>
+        <div key={id} className="w-full">
           <StaffListItem
             id={id}
             name={name}
@@ -756,7 +766,7 @@ const StaffSectionOnRemoveContainer: FC<IStaffSectionOnRemoveContainer> = ({
         data={items.top}
         isItemHoverable
         isSelectableSection
-        emptyMessage="Pilih staff untuk dihapus"
+        emptyMessage="Select staff to be deleted"
         onItemClicked={handleItemClickedFromTop}
       />
 
@@ -766,7 +776,7 @@ const StaffSectionOnRemoveContainer: FC<IStaffSectionOnRemoveContainer> = ({
         data={mappedBottomData}
         isItemHoverable
         isSelectableSection={false}
-        emptyMessage="Semua staff akan terhapus"
+        emptyMessage="All staffs will be deleted"
         onItemClicked={handleItemClickedFromBottom}
       />
     </>
@@ -846,7 +856,7 @@ const StaffSectionOnAddContainer: FC<IStaffSectionOnAddContainer> = ({
         data={topItems}
         isItemHoverable
         isSelectableSection
-        emptyMessage="Pilih staff untuk ditambahkan"
+        emptyMessage="Select staff to be added"
         onItemClicked={handleItemClickedFromTop}
       />
 
@@ -856,7 +866,7 @@ const StaffSectionOnAddContainer: FC<IStaffSectionOnAddContainer> = ({
         data={agentList || []}
         isItemHoverable
         isSelectableSection={false}
-        emptyMessage="Daftar staff kosong"
+        emptyMessage="Staff is empty"
         onItemClicked={handleItemClickedFromBottom}
         isLoading={loadingAgentList}
       />

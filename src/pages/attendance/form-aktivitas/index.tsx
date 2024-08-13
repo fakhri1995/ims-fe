@@ -91,31 +91,17 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/form-aktivitas"
     >
-      <div className="px-6 md:px-0">
-        {/* First Row */}
-        <div className="flex mb-6 md:space-x-6 space-y-6 md:space-y-0 flex-wrap md:flex-nowrap">
-          {/* Total Form Aktivitas */}
-          <div className="w-full md:w-1/2">
-            <TotalFormAktivitasCard />
-          </div>
-
-          {/* Create new Form Aktivitas */}
-          <div className="w-full md:w-1/2">
-            <AddNewAktivitasButton
-              disabled={!hasPermission(ATTENDANCE_FORM_ADD)}
-              onButtonClicked={onAddNewAktivitasButtonClicked}
-            />
-          </div>
-        </div>
-
-        {/* Second Row */}
+      <div className="px-6 md:px-0 grid grid-cols-1">
         {/* Table: Form Aktivitas */}
-        <div className="mig-platform">
+        <div className="mig-platform--p-0">
           {/* Table header */}
-          <FormAktivitasTableHeader onSearchTriggered={onSearchTriggered} />
+          <FormAktivitasTableHeader
+            onSearchTriggered={onSearchTriggered}
+            onAddActivityFormClicked={onAddNewAktivitasButtonClicked}
+          />
 
           {/* Table */}
-          <div className="my-6">
+          <div className="px-4">
             <FormAktivitasTable
               page={criteria.page}
               rows={criteria.rows}
@@ -129,8 +115,8 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
 
         <AccessControl hasPermission={ATTENDANCE_FORM_ADD}>
           <FormAktivitasDrawer
-            title="Tambah Form Aktivitas Baru"
-            buttonOkText="Simpan Form"
+            title="Add New Activity Form"
+            buttonOkText="Create Activity Form"
             onvisible={setCreateDrawerShown}
             visible={isCreateDrawerShown}
           />
