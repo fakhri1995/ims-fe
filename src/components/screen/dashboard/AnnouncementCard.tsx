@@ -89,7 +89,7 @@ export const AnnouncementCard: FC<IAnnouncementCard> = ({
   );
 
   return (
-    <section className="flex flex-col px-6 md:px-0" id="mainWrapper">
+    <section className="flex flex-col " id="mainWrapper">
       <div className="grid grid-cols-1">
         <div className="flex justify-between items-center mb-6">
           <div className="flex gap-2 items-center">
@@ -148,8 +148,10 @@ export const AnnouncementCard: FC<IAnnouncementCard> = ({
               {/* Content */}
               <div className="flex flex-col justify-between min-h-fit">
                 <div className="flex flex-col justify-between gap-2">
-                  <h1 className="font-bold text-lg text-mono30 truncate">
-                    {dataAnnouncements[0]?.title}
+                  <h1 className="font-bold text-lg text-mono30  ">
+                    {dataAnnouncements[0]?.title?.length > 60
+                      ? trimText(dataAnnouncements[0]?.title, 60)
+                      : dataAnnouncements[0]?.title}
                   </h1>
                   <p className="mig-caption--medium text-mono50">
                     by{" "}
