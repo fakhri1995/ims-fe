@@ -172,10 +172,10 @@ const DrawerShift: FC<IDrawerShift> = ({ visible, onvisible, data = null }) => {
 
   return (
     <DrawerCore
-      title={!data ? "Tambah Shift" : "Edit Shift"}
+      title={!data ? "Add Shift" : "Edit Shift"}
       visible={visible}
       onClose={handleClose}
-      buttonOkText={"Simpan Shift"}
+      buttonOkText={"Save"}
       onClick={() => (!data ? addShift(dataShift) : updateShift(dataShift))}
       disabled={
         (!data ? !isAllowedToAddShift : !isAllowedToUpdateShift) ||
