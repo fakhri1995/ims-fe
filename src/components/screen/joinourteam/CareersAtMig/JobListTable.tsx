@@ -26,7 +26,7 @@ import {
 } from "../../../icon";
 import styles from "./CareersAtMig.module.scss";
 
-const JOB_LIMIT_ADDER = 5;
+const JOB_LIMIT_ADDER = 100;
 
 /**
  * @private
@@ -128,7 +128,7 @@ export const JobListTable: FC = () => {
     router?.push(`/joinourteam/${career.slug}`);
   };
 
-  const [choiceList, setChoiceList] = useState("list");
+  const [choiceList, setChoiceList] = useState("grid");
   const currencyI18n = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -138,42 +138,40 @@ export const JobListTable: FC = () => {
 
   return (
     <div className={"mt-[41.5px]"}>
-      <div className={"flex justify-between px-4 lg:px-[112px]"}>
+      <div className={"flex justify-between px-4 lg:px-20"}>
         <p className={"text-mono30 text-[18px] font-bold leading-6"}>
           Latest Job Vacancy
         </p>
-        <div className={"flex flex-row gap-3"}>
+
+        {/* Below code is commented because of latest request: show only grid view & show all job post available (no need to click "load more") */}
+        {/* <div className={"flex flex-row gap-3"}>
           {choiceList == "list" ? (
             <div
               className={`p-2 rounded hover:cursor-pointer bg-primarygreen`}
-              onClick={() => setChoiceList("list")}
-            >
+              onClick={() => setChoiceList("list")}>
               <ViewListIconSvg color={"#ffffff"} />
             </div>
           ) : (
             <div
               className={`p-2 rounded hover:cursor-pointer border border-solid border-inputkategori`}
-              onClick={() => setChoiceList("list")}
-            >
+              onClick={() => setChoiceList("list")}>
               <ViewListIconSvg />
             </div>
           )}
           {choiceList == "list" ? (
             <div
               className={`p-2 rounded hover:cursor-pointer border border-solid border-inputkategori`}
-              onClick={() => setChoiceList("grid")}
-            >
+              onClick={() => setChoiceList("grid")}>
               <ViewModuleIconSvg color={"#E6E6E6"} />
             </div>
           ) : (
             <div
               className={`p-2 rounded hover:cursor-pointer bg-primarygreen`}
-              onClick={() => setChoiceList("grid")}
-            >
+              onClick={() => setChoiceList("grid")}>
               <ViewModuleIconSvg />
             </div>
           )}
-        </div>
+        </div> */}
       </div>
       {choiceList == "list" ? (
         <div className="grid grid-cols-1 mt-4  lg:gap-y-8 px-4 lg:px-[112px]">
@@ -226,7 +224,7 @@ export const JobListTable: FC = () => {
           )}
         </div>
       ) : (
-        <div className={"mt-4 px-4 lg:px-[112px]"}>
+        <div className={"mt-4 px-4 lg:px-20"}>
           <p>
             {locale == "en" ? "Showing " : "Menampilkan "}
             <span className={"text-[18px] text-blackmig font-gilroysemibold"}>
@@ -238,7 +236,9 @@ export const JobListTable: FC = () => {
             </span>
           </p>
           {data && data.data && (
-            <div className={"grid grid-cols-4 gap-8"}>
+            <div
+              className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"}
+            >
               {data.data.map((newdata, key) => (
                 <div
                   style={{ boxShadow: "0px 0px 20px 0px rgba(0, 0, 0, 0.05)" }}
@@ -289,7 +289,7 @@ export const JobListTable: FC = () => {
                   <div
                     onClick={() => onRowClicked(newdata)}
                     className={
-                      "mt-6 flex justify-center items-center gap-[9px] bg-primarygreen rounded py-4 w-full hover:cursor-pointer"
+                      "mt-6 flex justify-center items-center gap-[9px] bg-primarygreen rounded py-4 w-full hover:cursor-pointer hover:bg-opacity-75"
                     }
                   >
                     <p

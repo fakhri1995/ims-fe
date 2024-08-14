@@ -74,7 +74,7 @@ export const SearchAndFilter: FC = () => {
   return (
     <Form
       form={form}
-      className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 lg:px-[122px]"
+      className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 lg:px-20"
       onFinish={onFormSubmitted}
       onValuesChange={onFormValueChanged}
     >
