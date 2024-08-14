@@ -94,7 +94,7 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
     () => [
       {
         key: "id",
-        title: "Aktivitas",
+        title: "Activity",
         dataIndex: "name",
         sorter: (a, b) => +(a.name > b.name) || -(a.name < b.name),
         showSorterTooltip: false,
@@ -140,9 +140,7 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
             </span>
 
             <p>
-              {aktivitasIsRequired
-                ? "Isian wajib diisi"
-                : "Isian tidak wajib diisi"}
+              {aktivitasIsRequired ? "Required field" : "Not required field"}
             </p>
 
             {/* Aktivitas Deskription */}

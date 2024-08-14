@@ -172,10 +172,10 @@ const DrawerShift: FC<IDrawerShift> = ({ visible, onvisible, data = null }) => {
 
   return (
     <DrawerCore
-      title={!data ? "Tambah Shift" : "Edit Shift"}
+      title={!data ? "Add Shift" : "Edit Shift"}
       visible={visible}
       onClose={handleClose}
-      buttonOkText={"Simpan Shift"}
+      buttonOkText={"Save"}
       onClick={() => (!data ? addShift(dataShift) : updateShift(dataShift))}
       disabled={
         (!data ? !isAllowedToAddShift : !isAllowedToUpdateShift) ||
@@ -186,18 +186,15 @@ const DrawerShift: FC<IDrawerShift> = ({ visible, onvisible, data = null }) => {
     >
       <Spin spinning={!data ? null : loadingUpdateShift}>
         <div className="flex flex-col">
-          <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
-          </p>
           <Form layout="vertical" form={instanceForm}>
             <div>
               <Form.Item
-                label="Nama Shift"
+                label="Shift Name"
                 name={"title"}
                 rules={[
                   {
                     required: true,
-                    message: "Nama Shift wajib diisi",
+                    message: "Shift Name is required",
                   },
                 ]}
                 className="col-span-2"
@@ -207,18 +204,18 @@ const DrawerShift: FC<IDrawerShift> = ({ visible, onvisible, data = null }) => {
                     value={dataShift.title}
                     name={"title"}
                     onChange={onChangeInput}
-                    placeholder="Masukkan Nama Shift..."
+                    placeholder="Insert Shift Name..."
                   />
                 </div>
               </Form.Item>
 
               <Form.Item
-                label="Jam Kerja"
+                label="Working Hours"
                 name={"work_time"}
                 rules={[
                   {
                     required: true,
-                    message: "Jam kerja wajib diisi",
+                    message: "Working Hours are required",
                   },
                 ]}
                 className="col-span-2"
@@ -247,29 +244,26 @@ const DrawerShift: FC<IDrawerShift> = ({ visible, onvisible, data = null }) => {
                       }));
                     }}
                   />
-                  {dataShift?.end_at < dataShift?.start_at ? (
+                  {dataShift?.end_at < dataShift?.start_at && (
                     <p className="w-3/12 whitespace-nowrap text-mono80 flex justify-end">
-                      (+1 hari)
+                      (+1 day)
                     </p>
-                  ) : (
-                    <p className="w-3/12"></p>
                   )}
                 </div>
               </Form.Item>
               <Form.Item>
                 <Checkbox checked={valueShiftCheckbox} onChange={onChangeShift}>
-                  <span className={"text-[#4D4D4D] text-xs leading-5"}>
-                    Shift tidak mewajibkan absen
+                  <span className={"text-mono30 mig-body"}>
+                    This shift does not require attendance
                   </span>{" "}
-                  <span className={"text-[#CCCCCC]"}>
-                    (ex. : cuti bersama, libur nasional,...
+                  <span className={"text-mono80"}>
+                    (ex. : cuti bersama, libur nasional, ...)
                   </span>
-                  )
                 </Checkbox>
               </Form.Item>
 
               <Form.Item
-                label="Jam Istirahat"
+                label="Break Time"
                 name={"break_time"}
                 className="col-span-2"
               >
@@ -295,12 +289,10 @@ const DrawerShift: FC<IDrawerShift> = ({ visible, onvisible, data = null }) => {
                       }));
                     }}
                   />
-                  {dataShift?.end_break < dataShift?.start_break ? (
+                  {dataShift?.end_break < dataShift?.start_break && (
                     <p className="w-3/12 whitespace-nowrap text-mono80 flex justify-end">
-                      (+1 hari)
+                      (+1 day)
                     </p>
-                  ) : (
-                    <p className="w-3/12"></p>
                   )}
                 </div>
               </Form.Item>
