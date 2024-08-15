@@ -492,16 +492,16 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/schedule"
     >
-      <div className="grid grid-cols-1 px-6 md:px-0" id="mainWrapper">
+      <div className="grid grid-cols-1" id="mainWrapper">
         {/* Table Daftar Jadwal */}
-        <div className="flex flex-col shadow-md rounded-md bg-white p-4 mb-6 gap-6">
+        <div className="flex flex-col shadow-md rounded-md bg-white  mb-6  ">
           {/* Filter */}
-          <div className="flex flex-col lg:flex-row items-end md:items-center gap-4">
+          <div className="flex flex-col lg:flex-row items-end md:items-center gap-4 py-3 px-4 border-b">
             {/* Search by keyword (kata kunci) */}
             <div className="w-full lg:w-3/12">
               <Input
                 style={{ width: `100%` }}
-                placeholder="Cari Jadwal..."
+                placeholder="Search schedule here"
                 allowClear
                 onChange={(e) => {
                   setTimeout(
@@ -521,7 +521,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 allowClear
                 showSearch
                 disabled={!isAllowedToGetCompanyList}
-                placeholder="Pilih Perusahaan"
+                placeholder="Select Company"
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   setQueryParams({ company_id: value, page: 1 });
@@ -548,7 +548,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 allowClear
                 showSearch
                 disabled={!isAllowedToGetRoleList}
-                placeholder="Pilih Posisi"
+                placeholder="Select Role"
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   setQueryParams({ position: value, page: 1 });
@@ -576,12 +576,13 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   <ButtonSys
                     fullWidth
                     type={"default"}
+                    color="danger"
                     onClick={() => setSelectMode(true)}
                     disabled={!isAllowedToDeleteAllSchedule}
                   >
                     <div className="flex flex-row items-center space-x-2">
-                      <CalendarOffIconSvg size={16} color="#35763B" />
-                      <p className="">Kosongkan Jadwal</p>
+                      <CalendarOffIconSvg size={16} />
+                      <p className="">Clear Schedule</p>
                     </div>
                   </ButtonSys>
                 </div>
@@ -593,8 +594,8 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     disabled={!isAllowedToAddSchedule}
                   >
                     <div className="flex flex-row items-center space-x-2">
-                      <CalendarStatsIconSvg size={16} color="#FFFFFF" />
-                      <p className="">Jadwalkan Karywan</p>
+                      <CalendarStatsIconSvg size={16} />
+                      <p className="">Schedule an Employee</p>
                     </div>
                   </ButtonSys>
                 </div>
