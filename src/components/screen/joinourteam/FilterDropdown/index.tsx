@@ -83,14 +83,14 @@ export const FilterDropdown: FC<FilterDropdownProps> = memo(
           margin: 0,
         }}
         overlay={
-          <div className="px-4 py-2 w-full bg-white h-[40px] border border-lightgrey">
+          <div className="w-full bg-white  border border-lightgrey">
             {_data.map(({ label, checked }, index) => (
               <div
                 key={index}
                 onClick={(e) => {
                   onOptionSelected(index);
                 }}
-                className="flex items-center space-x-4 py-2 border border-lightgrey hover:bg-[#e4e4e4] hover:cursor-pointer transition-colors duration-300"
+                className="flex items-center space-x-4 py-2 px-4 hover:bg-[#e4e4e4] hover:cursor-pointer transition-colors duration-300"
               >
                 <Checkbox checked={checked} />
                 <span>{label}</span>
