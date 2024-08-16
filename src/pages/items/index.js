@@ -5,7 +5,6 @@ import {
   Select,
   Spin,
   Table,
-  TableColumnsType,
   Tooltip,
   TreeSelect,
   notification,
@@ -103,7 +102,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [totalItems, setTotalItems] = useState(0);
 
   //3.Define
-  /** @type {TableColumnsType<{ mig_id: string | null }>} */
+  // /** @type {TableColumnsType<{ mig_id: string | null }>} */
   const columnsTable = [
     {
       title: "MIG ID",

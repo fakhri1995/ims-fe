@@ -111,10 +111,11 @@ function LayoutDashboard({
                   );
                 } else {
                   breadcrumbContent = (
-                    <Link href={breadcrumbItem.hrefValue}>
-                      <a className="text-sm font-semibold">
-                        {breadcrumbItem.name}
-                      </a>
+                    <Link
+                      href={breadcrumbItem.hrefValue}
+                      className="text-sm font-semibold"
+                    >
+                      {breadcrumbItem.name}
                     </Link>
                   );
                 }
