@@ -310,7 +310,7 @@ const BasicInfoCard = ({
               {!isGuest && (
                 <div
                   className="grid md:grid-cols-2 w-full gap-2
-                  items-end lg:items-center"
+                items-end lg:items-center"
                 >
                   <ButtonSys
                     type={isAllowedToDeleteCandidate ? "default" : "primary"}

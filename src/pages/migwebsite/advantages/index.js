@@ -47,7 +47,7 @@ function Advantages({}) {
       >
         <div className={"block md:flex"}>
           <div className={"flex py-4"}>
-            <Link href={{ pathname: "/advantages" }}>
+            <Link href={{ pathname: "/advantages" }} legacyBehavior>
               <p
                 className={
                   "cursor-pointer flex-col text-base font-gilroysemibold pr-4"
@@ -57,7 +57,7 @@ function Advantages({}) {
                 Advantages
               </p>
             </Link>
-            <Link href={{ pathname: "/hardware" }}>
+            <Link href={{ pathname: "/hardware" }} legacyBehavior>
               <p
                 className={
                   "cursor-pointer flex-col text-base font-gilroysemibold px-4"
@@ -66,7 +66,7 @@ function Advantages({}) {
                 Hardware
               </p>
             </Link>
-            <Link href={{ pathname: "/software" }}>
+            <Link href={{ pathname: "/software" }} legacyBehavior>
               <p
                 className={
                   "cursor-pointer flex-col text-base font-gilroysemibold px-4"
@@ -75,7 +75,7 @@ function Advantages({}) {
                 Software
               </p>
             </Link>
-            <Link href={{ pathname: "/people" }}>
+            <Link href={{ pathname: "/people" }} legacyBehavior>
               <p
                 className={
                   "cursor-pointer flex-col text-base font-gilroysemibold px-4"
@@ -134,7 +134,7 @@ function Advantages({}) {
                 electronic equipments
               </p>
               <div className={"absolute bottom-0"}>
-                <Link href={{ pathname: "/hardware" }}>
+                <Link href={{ pathname: "/hardware" }} legacyBehavior>
                   <button className={"pt-4 font-bold text-purple-800"}>
                     Get yours&nbsp;{" "}
                     <ArrowRightOutlined
@@ -167,7 +167,7 @@ function Advantages({}) {
                 through digitalization
               </p>
               <div className={"absolute bottom-0"}>
-                <Link href={{ pathname: "/software" }}>
+                <Link href={{ pathname: "/software" }} legacyBehavior>
                   <button className={"pt-4 font-bold text-purple-800"}>
                     Build now&nbsp;{" "}
                     <ArrowRightOutlined
@@ -199,7 +199,7 @@ function Advantages({}) {
                 We help you reduce complexity in talent sourcing and management
               </p>
               <div className={"absolute bottom-0"}>
-                <Link href={{ pathname: "/people" }}>
+                <Link href={{ pathname: "/people" }} legacyBehavior>
                   <button className={"pt-4 font-bold text-purple-800"}>
                     Setup your team&nbsp;{" "}
                     <ArrowRightOutlined
@@ -250,7 +250,7 @@ function Advantages({}) {
                 electronic equipments
               </p>
               <div className={"absolute bottom-0"}>
-                <Link href={{ pathname: "/hardware" }}>
+                <Link href={{ pathname: "/hardware" }} legacyBehavior>
                   <button className={"pt-4 font-bold text-purple-800"}>
                     Get yours&nbsp;{" "}
                     <ArrowRightOutlined
@@ -283,7 +283,7 @@ function Advantages({}) {
                 through digitalization
               </p>
               <div className={"absolute bottom-0"}>
-                <Link href={{ pathname: "/software" }}>
+                <Link href={{ pathname: "/software" }} legacyBehavior>
                   <button className={"pt-4 font-bold text-purple-800"}>
                     Build now&nbsp;{" "}
                     <ArrowRightOutlined
@@ -313,7 +313,7 @@ function Advantages({}) {
                 We help you reduce complexity in talent sourcing and management
               </p>
               <div className={"absolute bottom-0"}>
-                <Link href={{ pathname: "/people" }}>
+                <Link href={{ pathname: "/people" }} legacyBehavior>
                   <button className={"pt-4 font-bold text-purple-800"}>
                     Setup your team&nbsp;{" "}
                     <ArrowRightOutlined

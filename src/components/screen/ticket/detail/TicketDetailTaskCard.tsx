@@ -98,6 +98,7 @@ export const TicketDetailTaskCard: FC<Task> = ({
     <Link
       href={`${destinationUrl}?prevpath=${originUrl}`}
       className="mig-platform--p-0 p-4 space-y-4 text-gray-400 hover:text-gray-400 hover:cursor-pointer hover:bg-gray-50 transition-colors"
+      legacyBehavior
     >
       {/* Name, Deadlie, and No Task */}
       <div>

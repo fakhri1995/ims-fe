@@ -406,7 +406,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 {updatedata.model_inventory?.name}
               </h1>
               <div className="flex space-x-2">
-                <Link href={`/items/detail/${itemid}`}>
+                <Link href={`/items/detail/${itemid}`} legacyBehavior>
                   <Button
                     type="default" /*onClick={() => { console.log(updatedata); console.log(disabledfield) }}*/
                   >

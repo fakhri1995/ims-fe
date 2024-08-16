@@ -97,7 +97,11 @@ function LayoutDashboardCompany({
                   );
                 } else {
                   breadcrumbContent = (
-                    <Link href={breadcrumbItem.hrefValue} className="font-bold">
+                    <Link
+                      href={breadcrumbItem.hrefValue}
+                      className="font-bold"
+                      legacyBehavior
+                    >
                       {breadcrumbItem.name}
                     </Link>
                   );

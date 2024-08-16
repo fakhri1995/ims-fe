@@ -164,7 +164,7 @@ function GroupsRequestersCreate({
                   New Requesters Group
                 </h1>
                 <div className="flex space-x-2">
-                  <Link href="/admin/groups">
+                  <Link href="/admin/groups" legacyBehavior>
                     <Button type="default" size="middle">
                       Cancel
                     </Button>

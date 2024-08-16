@@ -1195,7 +1195,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
             <div className=" col-span-4 flex justify-between pt-4 border-t-2 border-b-2 bg-white">
               <h1 className="font-semibold py-2">Form Tambah Item</h1>
               <div className="flex space-x-2">
-                <Link href={`/items`}>
+                <Link href={`/items`} legacyBehavior>
                   <Button
                     type="default"
                     onClick={() => {

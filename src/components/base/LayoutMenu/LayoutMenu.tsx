@@ -175,35 +175,37 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           className="text-mono50"
           title="Dashboard"
         >
-          <Link href="/dashboard/home">
+          <Link href="/dashboard/home" legacyBehavior>
             <p>Dashboard</p>
           </Link>
         </Menu.Item>
       )}
-      {hasPermission(SIDEBAR_CLIENT_DASHBOARD) && !hasRole(ROLE_SUPER_ADMIN) && (
-        <Menu.Item
-          key="1"
-          icon={<DashboardCompanyIconSvg />}
-          className="text-mono50"
-          title={`Dashboard ${dataPerusahaan}`}
-        >
-          <Link href="/dashboard/home">
-            <p>Dashboard {dataPerusahaan}</p>
-          </Link>
-        </Menu.Item>
-      )}
-      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) && !hasRole(ROLE_SUPER_ADMIN) && (
-        <Menu.Item
-          key="kehadirancompany"
-          icon={<KehadiranCompanyIconSvg />}
-          className="text-mono50 "
-          title={`Attendance ${dataPerusahaan}`}
-        >
-          <Link href="/kehadiran/">
-            <p>Attendance {dataPerusahaan}</p>
-          </Link>
-        </Menu.Item>
-      )}
+      {hasPermission(SIDEBAR_CLIENT_DASHBOARD) &&
+        !hasRole(ROLE_SUPER_ADMIN) && (
+          <Menu.Item
+            key="1"
+            icon={<DashboardCompanyIconSvg />}
+            className="text-mono50"
+            title={`Dashboard ${dataPerusahaan}`}
+          >
+            <Link href="/dashboard/home" legacyBehavior>
+              <p>Dashboard {dataPerusahaan}</p>
+            </Link>
+          </Menu.Item>
+        )}
+      {hasPermission(SIDEBAR_CLIENT_ATTENDANCE) &&
+        !hasRole(ROLE_SUPER_ADMIN) && (
+          <Menu.Item
+            key="kehadirancompany"
+            icon={<KehadiranCompanyIconSvg />}
+            className="text-mono50 "
+            title={`Attendance ${dataPerusahaan}`}
+          >
+            <Link href="/kehadiran/" legacyBehavior>
+              <p>Attendance {dataPerusahaan}</p>
+            </Link>
+          </Menu.Item>
+        )}
       {hasPermission(SIDEBAR_CLIENT_PROJECT) && !hasRole(ROLE_SUPER_ADMIN) && (
         <Menu.Item
           key="projectscompany"
@@ -211,7 +213,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           className="text-mono50"
           title={`Project ${dataPerusahaan}`}
         >
-          <Link href="/projectCompany/">
+          <Link href="/projectCompany/" legacyBehavior>
             <p>Project {dataPerusahaan}</p>
           </Link>
         </Menu.Item>
@@ -225,7 +227,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           icon={<TicketIconSvg size={20} />}
           className="text-mono50"
         >
-          <Link href="/tickets">
+          <Link href="/tickets" legacyBehavior>
             <p>Ticket</p>
           </Link>
         </Menu.Item>
@@ -241,7 +243,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_TASK_ADMIN) && (
             <Menu.Item key="201" title="Admin Task" className="text-mono50">
-              <Link href="/tasks/admin">
+              <Link href="/tasks/admin" legacyBehavior>
                 <p>Admin Task</p>
               </Link>
             </Menu.Item>
@@ -249,7 +251,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
 
           {hasPermission(SIDEBAR_TASK_MY) && (
             <Menu.Item key="202" title="My Task" className="text-mono50">
-              <Link href="/tasks/mytask">
+              <Link href="/tasks/mytask" legacyBehavior>
                 <p>My Task</p>
               </Link>
             </Menu.Item>
@@ -265,7 +267,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           className="text-mono50"
           title="Items"
         >
-          <Link href="/items">
+          <Link href="/items" legacyBehavior>
             <p>Items</p>
           </Link>
         </Menu.Item>
@@ -281,14 +283,14 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_COMPANY_PROFILE) && (
             <Menu.Item key="51" className="text-mono50">
-              <Link href="/company/myCompany">
+              <Link href="/company/myCompany" legacyBehavior>
                 <p>Company Profile</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_COMPANY_CLIENT) && (
             <Menu.Item key="52" className="text-mono50">
-              <Link href="/company/clients">
+              <Link href="/company/clients" legacyBehavior>
                 <p>Clients</p>
               </Link>
             </Menu.Item>
@@ -306,14 +308,14 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_PROJECT_TASK) && (
             <Menu.Item key="projects" className="text-mono50">
-              <Link href="/projects">
+              <Link href="/projects" legacyBehavior>
                 <p>Project Management</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_PROJECT_TASK_ADMIN) && (
             <Menu.Item key="projects/task-admin" className="text-mono50">
-              <Link href="/projects/task-admin">
+              <Link href="/projects/task-admin" legacyBehavior>
                 <p>Admin Task</p>
               </Link>
             </Menu.Item>
@@ -332,21 +334,21 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_ATTENDANCE_FORM_ACTIVITY) && (
             <Menu.Item key="attendance/form-aktivitas" className="text-mono50">
-              <Link href="/attendance/form-aktivitas">
+              <Link href="/attendance/form-aktivitas" legacyBehavior>
                 <p>Activity Form</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_ATTENDANCE_ADMIN) && (
             <Menu.Item key="attendance/admin" className="text-mono50">
-              <Link href="/attendance/admin">
+              <Link href="/attendance/admin" legacyBehavior>
                 <p>Admin Attendance</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_ATTENDANCE_MY) && (
             <Menu.Item key="attendance/staff" className="text-mono50">
-              <Link href="/attendance/staff">
+              <Link href="/attendance/staff" legacyBehavior>
                 <p>My Attendance</p>
               </Link>
             </Menu.Item>
@@ -354,28 +356,28 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
 
           {hasPermission(SIDEBAR_ATTENDANCE_SHIFT) && (
             <Menu.Item key="attendance/shift" className="text-mono50">
-              <Link href="/attendance/shift">
+              <Link href="/attendance/shift" legacyBehavior>
                 <p>Work Shift</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_ATTENDANCE_SCHEDULE) && (
             <Menu.Item key="attendance/schedule" className="text-mono50">
-              <Link href="/attendance/schedule">
+              <Link href="/attendance/schedule" legacyBehavior>
                 <p>Work Schedule</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(LEAVES_GET) && (
             <Menu.Item key="attendance/annualLeave" className="text-mono50">
-              <Link href="/attendance/annual-leave">
+              <Link href="/attendance/annual-leave" legacyBehavior>
                 <p>Leave/Day Off</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(OVERTIMES_GET) && (
             <Menu.Item key="attendance/overtime" className="text-mono50">
-              <Link href="/attendance/overtime">
+              <Link href="/attendance/overtime" legacyBehavior>
                 <p>Overtime</p>
               </Link>
             </Menu.Item>
@@ -391,7 +393,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           className="text-mono50"
           title="Items"
         >
-          <Link href="/myApplication">
+          <Link href="/myApplication" legacyBehavior>
             <p>My Application</p>
           </Link>
         </Menu.Item>
@@ -407,7 +409,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {(hasPermission(SIDEBAR_TALENT_POOL) || isPublic) && (
             <Menu.Item key="talent/daftar-talent" className="text-mono50">
-              <Link href="#">
+              <Link href="#" legacyBehavior>
                 <p>Talent List</p>
               </Link>
             </Menu.Item>
@@ -423,7 +425,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           className="text-mono50"
           title="Announcement"
         >
-          <Link href="/announcement">
+          <Link href="/announcement" legacyBehavior>
             <p>Announcement</p>
           </Link>
         </Menu.Item>
@@ -444,28 +446,28 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_USER_AGENT) && (
             <Menu.Item key="61" className="text-mono50">
-              <Link href="/admin/agents">
+              <Link href="/admin/agents" legacyBehavior>
                 <p>Agents</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_USER_REQUESTER) && (
             <Menu.Item key="62" className="text-mono50">
-              <Link href="/admin/requesters">
+              <Link href="/admin/requesters" legacyBehavior>
                 <p>Requesters</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_USER_GROUP) && (
             <Menu.Item key="63" className="text-mono50">
-              <Link href="/admin/groups">
+              <Link href="/admin/groups" legacyBehavior>
                 <p>Groups</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_USER_GUEST) && (
             <Menu.Item key="64" className="text-mono50">
-              <Link href="/admin/guests">
+              <Link href="/admin/guests" legacyBehavior>
                 <p>Guests</p>
               </Link>
             </Menu.Item>
@@ -483,14 +485,14 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_EMPLOYEE_LIST) && (
             <Menu.Item key="employee-list" className="text-mono50">
-              <Link href="/admin/employees">
+              <Link href="/admin/employees" legacyBehavior>
                 <p>Employee List</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_EMPLOYEE_PAYSLIP) && (
             <Menu.Item key="employee-salary" className="text-mono50">
-              <Link href="/admin/employees/payslip">
+              <Link href="/admin/employees/payslip" legacyBehavior>
                 <p>Payslip</p>
               </Link>
             </Menu.Item>
@@ -508,14 +510,17 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_FEATURE_ROLE) && (
             <Menu.Item key="71" className="text-mono50">
-              <Link href="/admin/roles">
+              <Link href="/admin/roles" legacyBehavior>
                 <p>Roles</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_FEATURE_MODULE) && (
             <Menu.Item key="72" className="text-mono50">
-              <Link href="/admin/modules?module=&featuredisplay=">
+              <Link
+                href="/admin/modules?module=&featuredisplay="
+                legacyBehavior
+              >
                 <p>Modules</p>
               </Link>
             </Menu.Item>
@@ -533,35 +538,35 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_ASSET_TYPE) && (
             <Menu.Item key="81" className="text-mono50">
-              <Link href="/admin/assets">
+              <Link href="/admin/assets" legacyBehavior>
                 <p>Asset Types</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_ASSET_MODEL) && (
             <Menu.Item key="82" className="text-mono50">
-              <Link href="/admin/models">
+              <Link href="/admin/models" legacyBehavior>
                 <p>Models</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_ASSET_VENDOR) && (
             <Menu.Item key="83" className="text-mono50">
-              <Link href="/admin/vendors">
+              <Link href="/admin/vendors" legacyBehavior>
                 <p>Vendors</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_ASSET_MANUFACTURER) && (
             <Menu.Item key="84" className="text-mono50">
-              <Link href="/admin/manufacturers">
+              <Link href="/admin/manufacturers" legacyBehavior>
                 <p>Manufacturers</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_ASSET_RELATIONSHIP_TYPE) && (
             <Menu.Item key="85" className="text-mono50">
-              <Link href="/admin/relationships">
+              <Link href="/admin/relationships" legacyBehavior>
                 <p>Relationship Type</p>
               </Link>
             </Menu.Item>
@@ -579,7 +584,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_ASSET_TYPE) && (
             <Menu.Item key="113" className="text-mono50">
-              <Link href="/admin/product-catalog">
+              <Link href="/admin/product-catalog" legacyBehavior>
                 <p>Product</p>
               </Link>
             </Menu.Item>
@@ -596,7 +601,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_CMS_CAREER) && (
             <Menu.Item key="91" className="text-mono50">
-              <Link href="/admin/careers">
+              <Link href="/admin/careers" legacyBehavior>
                 <p>Careers</p>
               </Link>
             </Menu.Item>
@@ -604,28 +609,28 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
 
           {hasPermission(SIDEBAR_CMS_MESSAGE) && (
             <Menu.Item key="92" className="text-mono50">
-              <Link href="/admin/messages">
+              <Link href="/admin/messages" legacyBehavior>
                 <p>Message</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_CMS_FORM_SOLUTION) && (
             <Menu.Item key="93" className="text-mono50">
-              <Link href="/admin/form-solution">
+              <Link href="/admin/form-solution" legacyBehavior>
                 <p>Form Solution</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_CMS_BLOG) && (
             <Menu.Item key="94" className="text-mono50">
-              <Link href="/admin/blog">
+              <Link href="/admin/blog" legacyBehavior>
                 <p>Blog</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_CMS_PRODUCT) && (
             <Menu.Item key="95" className="text-mono50">
-              <Link href="/admin/product">
+              <Link href="/admin/product" legacyBehavior>
                 <p>Product</p>
               </Link>
             </Menu.Item>
@@ -643,7 +648,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_RESUME_ROLE_ASSESSMENT) && (
             <Menu.Item key="101" className="text-mono50">
-              <Link href="/admin/role-assessment">
+              <Link href="/admin/role-assessment" legacyBehavior>
                 <p>Role Assessment</p>
               </Link>
             </Menu.Item>
@@ -651,7 +656,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
 
           {hasPermission(SIDEBAR_RESUME_DAFTAR_KANDIDAT) && (
             <Menu.Item key="102" className="text-mono50">
-              <Link href="/admin/candidates">
+              <Link href="/admin/candidates" legacyBehavior>
                 <p>Candidate List</p>
               </Link>
             </Menu.Item>
@@ -669,14 +674,14 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_RECRUITMENT_SETUP) && (
             <Menu.Item key="112" className="text-mono50">
-              <Link href="/admin/recruitment/role">
+              <Link href="/admin/recruitment/role" legacyBehavior>
                 <p>Setup</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_RECRUITMENT_CANDIDATE) && (
             <Menu.Item key="111" className="text-mono50">
-              <Link href="/admin/recruitment">
+              <Link href="/admin/recruitment" legacyBehavior>
                 <p>Candidates</p>
               </Link>
             </Menu.Item>
@@ -684,14 +689,14 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
 
           {hasPermission(SIDEBAR_RECRUITMENT_TALENT_POOL) && (
             <Menu.Item key="recruitment-talent-pool" className="text-mono50">
-              <Link href="/admin/recruitment/talent-pool">
+              <Link href="/admin/recruitment/talent-pool" legacyBehavior>
                 <p>Talent Pool</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_RECRUITMENT_CAREER) && (
             <Menu.Item key="career-management" className="text-mono50">
-              <Link href="/admin/career">
+              <Link href="/admin/career" legacyBehavior>
                 <p>Career Management</p>
               </Link>
             </Menu.Item>
@@ -709,14 +714,14 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_CONTRACT_LIST) && (
             <Menu.Item key="contract-list" className="text-mono50">
-              <Link href="/admin/contracts">
+              <Link href="/admin/contracts" legacyBehavior>
                 <p>Contract</p>
               </Link>
             </Menu.Item>
           )}
           {hasPermission(SIDEBAR_CONTRACT_INVOICE) && (
             <Menu.Item key="contract-invoice" className="text-mono50">
-              <Link href="/admin/contracts/invoice">
+              <Link href="/admin/contracts/invoice" legacyBehavior>
                 <p>Invoice</p>
               </Link>
             </Menu.Item>

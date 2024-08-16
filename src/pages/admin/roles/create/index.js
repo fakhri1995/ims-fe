@@ -162,7 +162,7 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
               <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
                 <h1 className="font-semibold text-base w-auto ">Buat Role</h1>
                 <div className="flex space-x-2">
-                  <Link href="/admin/roles">
+                  <Link href="/admin/roles" legacyBehavior>
                     <Button type="default" size="middle">
                       Batal
                     </Button>

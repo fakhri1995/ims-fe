@@ -1364,7 +1364,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                   Form Ubah Model - {newdata.name}
                 </h1>
                 <div className="flex space-x-2">
-                  <Link href={`/admin/models/detail/${modelid}`}>
+                  <Link href={`/admin/models/detail/${modelid}`} legacyBehavior>
                     <Button
                       /*onClick={() => { console.log(newdata); console.log(fielddata); console.log(fielddata2); console.log(defaultdata); console.log(defaultasset) }}*/ type="default"
                     >

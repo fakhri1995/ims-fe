@@ -252,7 +252,7 @@ function RolesUpdate({
                                         [178].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                         <Button type="default" size="middle" onClick={() => { setmodaldelete(true) }} loading={loadingdelete} danger>Delete</Button>
                                     } */}
-                  <Link href={`/admin/roles/detail/${idrole}`}>
+                  <Link href={`/admin/roles/detail/${idrole}`} legacyBehavior>
                     <Button type="default" size="middle">
                       Batal
                     </Button>

@@ -165,7 +165,7 @@ const NotificationOverlayContainer: FC = () => {
       {/* Footer */}
       {!isNotificationListEmpty && (
         <div className="w-full p-4 bg-white flex justify-center">
-          <Link href="/notifications" className="">
+          <Link href="/notifications" className="" legacyBehavior>
             <div
               className="cursor-pointer flex items-center gap-[6px] 
           text-primary100 hover:text-primary100/75 mig-caption--medium"

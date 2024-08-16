@@ -29,7 +29,7 @@ function layout({ children }) {
       className={"bg-white w-96 h-auto p-2 top-6 relative"}
       // style={{ boxShadow: "0px 0px 3px rgba(50, 50, 50, 0.75)" }}
     >
-      <Link href="/hardware">
+      <Link href="/hardware" legacyBehavior>
         <div className={"group flex py-2 cursor-pointer hover:bg-gray-100"}>
           <div className={"px-4 my-auto w-1/6"}>
             {/* <img className={'relative -top-5'} width={40} src={'/image/navbar/hardware_black.png'}></img> */}
@@ -63,7 +63,7 @@ function layout({ children }) {
           </div>
         </div>
       </Link>
-      <Link href="/software">
+      <Link href="/software" legacyBehavior>
         <div className={"group flex py-2 cursor-pointer hover:bg-gray-100"}>
           <div className={"px-4 my-auto w-1/6"}>
             <svg
@@ -96,7 +96,7 @@ function layout({ children }) {
           </div>
         </div>
       </Link>
-      <Link href="/talents">
+      <Link href="/talents" legacyBehavior>
         <div className={"group flex py-2 cursor-pointer hover:bg-gray-100"}>
           <div className={"px-4 my-auto w-1/6"}>
             <svg
@@ -138,7 +138,7 @@ function layout({ children }) {
       // style={{ boxShadow: "0px 0px 3px rgba(50, 50, 50, 0.75)" }}
     >
       {countStories > 0 && (
-        <Link href="/customerstories">
+        <Link href="/customerstories" legacyBehavior>
           <Button
             className={"bg-transparent border-0 border-white "}
             // onClick={() => changeLanguage("en")}
@@ -151,7 +151,7 @@ function layout({ children }) {
       )}
 
       {countArticle > 0 && (
-        <Link href="/blog">
+        <Link href="/blog" legacyBehavior>
           <Button
             className={"bg-transparent border-0 border-white"}
             // onClick={() => changeLanguage("id")}
@@ -379,7 +379,7 @@ function layout({ children }) {
             // boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <Link href="/">
+          <Link href="/" legacyBehavior>
             <div className="logo top-4 md:top-4 absolute w-24 md:w-32 cursor-pointer ml-[55px]">
               <img width={"auto"} height={"auto"} src="/mig.png" />
             </div>
@@ -482,30 +482,27 @@ function layout({ children }) {
                 </p>
               </Button>
             </Dropdown>
-            <Link href="/aboutus">
-              <a
-                style={{ textDecoration: "none" }}
-                className="text-base font-gilroyregular text-blackmig menu-underlined mx-4 hover:text-green-500 no-underline"
-              >
-                {t.aboutus}
-              </a>
+            <Link
+              href="/aboutus"
+              style={{ textDecoration: "none" }}
+              className="text-base font-gilroyregular text-blackmig menu-underlined mx-4 hover:text-green-500 no-underline"
+            >
+              {t.aboutus}
             </Link>
-            <Link href="/joinourteam">
-              <a
+            <Link
+              href="/joinourteam"
+              style={{ textDecoration: "none" }}
+              className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500"
+            >
+              {t.career}
+            </Link>
+            {countArticle == 0 && countStories == 0 && (
+              <Link
+                href="/contactus"
                 style={{ textDecoration: "none" }}
                 className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500"
               >
-                {t.career}
-              </a>
-            </Link>
-            {countArticle == 0 && countStories == 0 && (
-              <Link href="/contactus">
-                <a
-                  style={{ textDecoration: "none" }}
-                  className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500"
-                >
-                  {t.contactus}
-                </a>
+                {t.contactus}
               </Link>
             )}
             {countArticle > 0 || countStories > 0 ? (
@@ -538,13 +535,12 @@ function layout({ children }) {
               <div></div>
             )}
             {countArticle > 0 || countStories > 0 ? (
-              <Link href="/contactus">
-                <a
-                  style={{ textDecoration: "none" }}
-                  className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500"
-                >
-                  {t.contactus}
-                </a>
+              <Link
+                href="/contactus"
+                style={{ textDecoration: "none" }}
+                className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500"
+              >
+                {t.contactus}
               </Link>
             ) : (
               <div></div>
@@ -647,13 +643,12 @@ function layout({ children }) {
                     width={40}
                     src={"/image/navbar/hardware_black.png"}
                   ></img>
-                  <Link href="/hardware">
-                    <a
-                      style={{ textDecoration: "none" }}
-                      className="text-base font-gilroyregular text-blackmig  pl-3"
-                    >
-                      Hardware
-                    </a>
+                  <Link
+                    href="/hardware"
+                    style={{ textDecoration: "none" }}
+                    className="text-base font-gilroyregular text-blackmig  pl-3"
+                  >
+                    Hardware
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="sub2-2">
@@ -663,13 +658,12 @@ function layout({ children }) {
                     width={40}
                     src={"/image/navbar/software_black.png"}
                   ></img>
-                  <Link href="/software">
-                    <a
-                      style={{ textDecoration: "none" }}
-                      className="text-base font-gilroyregular text-blackmig  pl-3"
-                    >
-                      Software
-                    </a>
+                  <Link
+                    href="/software"
+                    style={{ textDecoration: "none" }}
+                    className="text-base font-gilroyregular text-blackmig  pl-3"
+                  >
+                    Software
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="3">
@@ -679,35 +673,32 @@ function layout({ children }) {
                     width={40}
                     src={"/image/navbar/talents_black.png"}
                   ></img>
-                  <Link href="/talents">
-                    <a
-                      style={{ textDecoration: "none" }}
-                      className="text-base font-gilroyregular text-blackmig  pl-3"
-                    >
-                      Talents
-                    </a>
+                  <Link
+                    href="/talents"
+                    style={{ textDecoration: "none" }}
+                    className="text-base font-gilroyregular text-blackmig  pl-3"
+                  >
+                    Talents
                   </Link>
                 </Menu.Item>
               </SubMenu>
 
               <Menu.Item key="4">
-                <Link href="/aboutus">
-                  <a
-                    style={{ textDecoration: "none" }}
-                    className="text-base font-gilroyregular text-blackmig"
-                  >
-                    {t.navbaraboutus}
-                  </a>
+                <Link
+                  href="/aboutus"
+                  style={{ textDecoration: "none" }}
+                  className="text-base font-gilroyregular text-blackmig"
+                >
+                  {t.navbaraboutus}
                 </Link>
               </Menu.Item>
               <Menu.Item key="5">
-                <Link href="/joinourteam">
-                  <a
-                    style={{ textDecoration: "none" }}
-                    className="text-base font-gilroyregular text-blackmig"
-                  >
-                    {t.navbarcareerinmig}
-                  </a>
+                <Link
+                  href="/joinourteam"
+                  style={{ textDecoration: "none" }}
+                  className="text-base font-gilroyregular text-blackmig"
+                >
+                  {t.navbarcareerinmig}
                 </Link>
               </Menu.Item>
               {countArticle > 0 || countStories > 0 ? (
@@ -718,25 +709,23 @@ function layout({ children }) {
                 >
                   {countStories > 0 && (
                     <Menu.Item key="sub6-1">
-                      <Link href="/migwebsite/customerstories">
-                        <a
-                          style={{ textDecoration: "none" }}
-                          className="text-base font-gilroyregular text-blackmig  pl-3"
-                        >
-                          {t.navbarcustomerstories}
-                        </a>
+                      <Link
+                        href="/migwebsite/customerstories"
+                        style={{ textDecoration: "none" }}
+                        className="text-base font-gilroyregular text-blackmig  pl-3"
+                      >
+                        {t.navbarcustomerstories}
                       </Link>
                     </Menu.Item>
                   )}
                   {countArticle > 0 && (
                     <Menu.Item key="sub6-2">
-                      <Link href="/migwebsite/blog">
-                        <a
-                          style={{ textDecoration: "none" }}
-                          className="text-base font-gilroyregular text-blackmig  pl-3"
-                        >
-                          Blog
-                        </a>
+                      <Link
+                        href="/migwebsite/blog"
+                        style={{ textDecoration: "none" }}
+                        className="text-base font-gilroyregular text-blackmig  pl-3"
+                      >
+                        Blog
                       </Link>
                     </Menu.Item>
                   )}
@@ -745,41 +734,41 @@ function layout({ children }) {
                 <div></div>
               )}
               {/* <Menu.Item key='6'
-                            style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                zIndex: 1,
-                                transition: 'all 0.2s',
-                            }}><a href='/contactus' className="text-lg gilroy-medium">Contact Us &nbsp;&nbsp;
-                            <ArrowRightOutlined rev={""} style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
-                            <LinkedinFilled  rev={""} style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
-                            <InstagramFilled  rev={""} style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
-                            </a></Menu.Item> */}
+                          style={{
+                              position: 'absolute',
+                              bottom: 0,
+                              zIndex: 1,
+                              transition: 'all 0.2s',
+                          }}><a href='/contactus' className="text-lg gilroy-medium">Contact Us &nbsp;&nbsp;
+                          <ArrowRightOutlined rev={""} style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
+                          <LinkedinFilled  rev={""} style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
+                          <InstagramFilled  rev={""} style={{fontSize:'20px' ,display: 'inline-block', verticalAlign: 'middle'}}/>
+                          </a></Menu.Item> */}
               {/* <SubMenu key="sub 2" title="Contactus" className="text-lg gilroy-medium"style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                zIndex: 1,
-                                transition: 'all 0.2s',
-                            }}>
-                                <Menu.Item key='1'>
-                                    <img className={'relative'} style={{ display: 'inline-block' }} width={40} src={'/image/navbar/hardware_black.png'}></img>
-                                    <a href='/hardware' className="text-lg gilroy-medium pl-3">
-                                        Hardware
-                                    </a>
-                                </Menu.Item>
-                                <Menu.Item key='2'>
-                                    <img className={'relative'} style={{ display: 'inline-block' }} width={40} src={'/image/navbar/software_black.png'}></img>
-                                    <a href='/software' className="text-lg gilroy-medium pl-3">
-                                        Software
-                                    </a>
-                                </Menu.Item>
-                                <Menu.Item key='3'>
-                                    <img className={'relative'} style={{ display: 'inline-block' }} width={40} src={'/image/navbar/talents_black.png'}></img>
-                                    <a href='/talents' className="text-lg gilroy-medium pl-3">
-                                        Talents
-                                    </a>
-                                </Menu.Item>
-                            </SubMenu> */}
+                              position: 'absolute',
+                              bottom: 0,
+                              zIndex: 1,
+                              transition: 'all 0.2s',
+                          }}>
+                              <Menu.Item key='1'>
+                                  <img className={'relative'} style={{ display: 'inline-block' }} width={40} src={'/image/navbar/hardware_black.png'}></img>
+                                  <a href='/hardware' className="text-lg gilroy-medium pl-3">
+                                      Hardware
+                                  </a>
+                              </Menu.Item>
+                              <Menu.Item key='2'>
+                                  <img className={'relative'} style={{ display: 'inline-block' }} width={40} src={'/image/navbar/software_black.png'}></img>
+                                  <a href='/software' className="text-lg gilroy-medium pl-3">
+                                      Software
+                                  </a>
+                              </Menu.Item>
+                              <Menu.Item key='3'>
+                                  <img className={'relative'} style={{ display: 'inline-block' }} width={40} src={'/image/navbar/talents_black.png'}></img>
+                                  <a href='/talents' className="text-lg gilroy-medium pl-3">
+                                      Talents
+                                  </a>
+                              </Menu.Item>
+                          </SubMenu> */}
             </Menu>
             <div
               className="text-lg gilroy-medium mx-6 my-10"
@@ -790,13 +779,12 @@ function layout({ children }) {
                 transition: "all 0.2s",
               }}
             >
-              <Link href="/contactus">
-                <a
-                  style={{ textDecoration: "none" }}
-                  className="text-base font-gilroyregular text-blackmig menu-navbar"
-                >
-                  {t.contactus}
-                </a>
+              <Link
+                href="/contactus"
+                style={{ textDecoration: "none" }}
+                className="text-base font-gilroyregular text-blackmig menu-navbar"
+              >
+                {t.contactus}
               </Link>
               &nbsp;&nbsp;
               <ArrowRightOutlined
@@ -866,7 +854,7 @@ function layout({ children }) {
             <div
               className={"py-8 flex flex-col lg:flex-row lg:justify-between"}
             >
-              <Link href="/">
+              <Link href="/" legacyBehavior>
                 <div
                   className={"pb-4 cursor-pointer w-[132px] md:w-[150px]"}
                   // style={{ minWidth: "132px", width: "150px" }}
@@ -883,7 +871,7 @@ function layout({ children }) {
                   >
                     {t.solutions}
                   </p>
-                  <Link href={{ pathname: "/hardware" }}>
+                  <Link href={{ pathname: "/hardware" }} legacyBehavior>
                     <p
                       className={
                         "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
@@ -892,7 +880,7 @@ function layout({ children }) {
                       Hardware
                     </p>
                   </Link>
-                  <Link href={{ pathname: "/software" }}>
+                  <Link href={{ pathname: "/software" }} legacyBehavior>
                     <p
                       className={
                         "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
@@ -901,7 +889,7 @@ function layout({ children }) {
                       Software
                     </p>
                   </Link>
-                  <Link href={{ pathname: "/talents" }}>
+                  <Link href={{ pathname: "/talents" }} legacyBehavior>
                     <p
                       className={
                         "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
@@ -919,7 +907,7 @@ function layout({ children }) {
                   >
                     {locale == "en" ? "Company" : "Perusahaan"}
                   </p>
-                  <Link href={{ pathname: "/aboutus" }}>
+                  <Link href={{ pathname: "/aboutus" }} legacyBehavior>
                     {locale == "en" ? (
                       <p
                         className={
@@ -938,7 +926,7 @@ function layout({ children }) {
                       </p>
                     )}
                   </Link>
-                  <Link href={{ pathname: "/joinourteam" }}>
+                  <Link href={{ pathname: "/joinourteam" }} legacyBehavior>
                     {locale == "en" ? (
                       <p
                         className={
@@ -958,7 +946,7 @@ function layout({ children }) {
                     )}
                   </Link>
                   {countArticle > 0 && (
-                    <Link href="/blog">
+                    <Link href="/blog" legacyBehavior>
                       <p
                         className={
                           "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
@@ -969,7 +957,7 @@ function layout({ children }) {
                     </Link>
                   )}
                   {countStories > 0 && (
-                    <Link href="/customerstories">
+                    <Link href="/customerstories" legacyBehavior>
                       {locale == "en" ? (
                         <p
                           className={
@@ -998,7 +986,7 @@ function layout({ children }) {
                   >
                     {locale == "en" ? "Get in touch" : "Hubungi Kami"}
                   </p>
-                  <Link href="/contactus">
+                  <Link href="/contactus" legacyBehavior>
                     {locale == "en" ? (
                       <p
                         className={
@@ -1072,7 +1060,7 @@ function layout({ children }) {
                     >
                       {t.navbarsolutions}
                     </p>
-                    <Link href={{ pathname: "/hardware" }}>
+                    <Link href={{ pathname: "/hardware" }} legacyBehavior>
                       <p
                         className={
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
@@ -1081,7 +1069,7 @@ function layout({ children }) {
                         Hardware
                       </p>
                     </Link>
-                    <Link href={{ pathname: "/software" }}>
+                    <Link href={{ pathname: "/software" }} legacyBehavior>
                       <p
                         className={
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
@@ -1090,7 +1078,7 @@ function layout({ children }) {
                         Software
                       </p>
                     </Link>
-                    <Link href={{ pathname: "/talents" }}>
+                    <Link href={{ pathname: "/talents" }} legacyBehavior>
                       <p
                         className={
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
@@ -1106,7 +1094,7 @@ function layout({ children }) {
                     >
                       {t.footercompany}
                     </p>
-                    <Link href={{ pathname: "/aboutus" }}>
+                    <Link href={{ pathname: "/aboutus" }} legacyBehavior>
                       <p
                         className={
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
@@ -1116,7 +1104,7 @@ function layout({ children }) {
                         {locale == "en" ? "Us" : "Kami"}
                       </p>
                     </Link>
-                    <Link href={{ pathname: "/joinourteam" }}>
+                    <Link href={{ pathname: "/joinourteam" }} legacyBehavior>
                       <p
                         className={
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
@@ -1127,7 +1115,10 @@ function layout({ children }) {
                       </p>
                     </Link>
                     {countStories > 0 && (
-                      <Link href={{ pathname: "/migwebsite/customerstories" }}>
+                      <Link
+                        href={{ pathname: "/migwebsite/customerstories" }}
+                        legacyBehavior
+                      >
                         {locale == "en" ? (
                           <p
                             className={
@@ -1148,7 +1139,10 @@ function layout({ children }) {
                       </Link>
                     )}
                     {countArticle > 0 && (
-                      <Link href={{ pathname: "/migwebsite/blog" }}>
+                      <Link
+                        href={{ pathname: "/migwebsite/blog" }}
+                        legacyBehavior
+                      >
                         <p
                           className={
                             "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
@@ -1169,7 +1163,7 @@ function layout({ children }) {
                     >
                       {t.getintouch}
                     </p>
-                    <Link href="/contactus">
+                    <Link href="/contactus" legacyBehavior>
                       <p
                         className={
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
@@ -1184,7 +1178,10 @@ function layout({ children }) {
                     <p className={"gilroy-bold py-1 text-xs"}>
                       {t.footersosmed}
                     </p>
-                    <Link href="https://instagram.com/mitramasglobal?utm_medium=copy_link">
+                    <Link
+                      href="https://instagram.com/mitramasglobal?utm_medium=copy_link"
+                      legacyBehavior
+                    >
                       <div className={"flex"}>
                         <img
                           className={"w-5 h-5 relative top-1 mr-2"}
@@ -1199,7 +1196,10 @@ function layout({ children }) {
                         </p>
                       </div>
                     </Link>
-                    <Link href="https://www.linkedin.com/company/pt-mitramas-infosys-global">
+                    <Link
+                      href="https://www.linkedin.com/company/pt-mitramas-infosys-global"
+                      legacyBehavior
+                    >
                       <div className={"flex"}>
                         <img
                           className={"w-5 h-5 relative top-1 mr-2"}
@@ -1224,7 +1224,7 @@ function layout({ children }) {
                 Copyright © 2021 Mitramas Infosys Global. All rights reserved
               </p>
               <div className={"flex flex-row "}>
-                <Link href={{ pathname: "/privacy" }}>
+                <Link href={{ pathname: "/privacy" }} legacyBehavior>
                   <p
                     className={
                       "menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 hover:text-green-500"
@@ -1233,7 +1233,7 @@ function layout({ children }) {
                     Privacy
                   </p>
                 </Link>
-                <Link href={{ pathname: "/term" }}>
+                <Link href={{ pathname: "/term" }} legacyBehavior>
                   <p
                     className={
                       "menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 hover:text-green-500"
@@ -1242,7 +1242,7 @@ function layout({ children }) {
                     Term
                   </p>
                 </Link>
-                <Link href={{ pathname: "/sitemap" }}>
+                <Link href={{ pathname: "/sitemap" }} legacyBehavior>
                   <p
                     className={
                       "menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 hover:text-green-500"

@@ -44,7 +44,7 @@ const SetupMenu = ({ menu }) => {
             className="text-mono50"
             title="Role"
           >
-            <Link href="/admin/recruitment/role">
+            <Link href="/admin/recruitment/role" legacyBehavior>
               <p>Role</p>
             </Link>
           </Menu.Item>
@@ -57,7 +57,7 @@ const SetupMenu = ({ menu }) => {
             className="text-mono50"
             title="Registration"
           >
-            <Link href="/admin/recruitment/registration">
+            <Link href="/admin/recruitment/registration" legacyBehavior>
               <p>Jalur Daftar</p>
             </Link>
           </Menu.Item>
@@ -70,7 +70,7 @@ const SetupMenu = ({ menu }) => {
             className="text-mono50"
             title="Stage"
           >
-            <Link href="/admin/recruitment/stage">
+            <Link href="/admin/recruitment/stage" legacyBehavior>
               <p>Stage</p>
             </Link>
           </Menu.Item>
@@ -83,7 +83,7 @@ const SetupMenu = ({ menu }) => {
             className="text-mono50"
             title="Status"
           >
-            <Link href="/admin/recruitment/status">
+            <Link href="/admin/recruitment/status" legacyBehavior>
               <p>Status</p>
             </Link>
           </Menu.Item>
@@ -96,7 +96,7 @@ const SetupMenu = ({ menu }) => {
             className="text-mono50"
             title="Template"
           >
-            <Link href="/admin/recruitment/email-template">
+            <Link href="/admin/recruitment/email-template" legacyBehavior>
               <p>Template Email</p>
             </Link>
           </Menu.Item>

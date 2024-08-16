@@ -249,7 +249,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
             <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
               <h1 className="font-semibold py-2">Form Tambah Asset Types</h1>
               <div className="flex space-x-2">
-                <Link href={`/admin/assets`}>
+                <Link href={`/admin/assets`} legacyBehavior>
                   <Button
                     type="default" /*onClick={() => { console.log(newdata); console.log(fielddata); console.log(currentdropdown) }}*/
                   >

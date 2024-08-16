@@ -438,7 +438,7 @@ function Software({}) {
         >
           <div className={"block lg:flex container mx-auto"}>
             <div className={"flex py-4"}>
-              <Link href={{ pathname: "/hardware" }}>
+              <Link href={{ pathname: "/hardware" }} legacyBehavior>
                 <p
                   className={
                     "cursor-pointer flex-col text-base gilroy-medium mr-4"
@@ -447,7 +447,7 @@ function Software({}) {
                   Hardware
                 </p>
               </Link>
-              <Link href={{ pathname: "/software" }}>
+              <Link href={{ pathname: "/software" }} legacyBehavior>
                 <p
                   className={
                     "cursor-pointer flex-col text-base font-gilroybold mx-4"
@@ -460,7 +460,7 @@ function Software({}) {
                   Software
                 </p>
               </Link>
-              <Link href={{ pathname: "/talents" }}>
+              <Link href={{ pathname: "/talents" }} legacyBehavior>
                 <p
                   className={
                     "cursor-pointer flex-col text-base gilroy-medium mx-4"
@@ -2143,7 +2143,7 @@ function Software({}) {
               </div>
               <img className={"m-auto w-full"} src="/image-software.png"></img>
               <div className={"mt-1 lg:mt-4 mx-auto"}>
-                <Link href="/contactus">
+                <Link href="/contactus" legacyBehavior>
                   <button
                     className={
                       "text-sm lg:text-xl  rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 lg:px-2"
@@ -2576,6 +2576,7 @@ function Software({}) {
                                 {locale == "en" ? (
                                   <Linkk
                                     href={`/migwebsite/customerstories/${data1.page_path}`}
+                                    legacyBehavior
                                   >
                                     <button
                                       className={
@@ -2749,6 +2750,7 @@ function Software({}) {
                         {locale == "en" ? (
                           <Linkk
                             href={`/migwebsite/customerstories/${data1.page_path}`}
+                            legacyBehavior
                           >
                             <button
                               className={
@@ -2798,7 +2800,7 @@ function Software({}) {
                 </Slider>
               </div>
               <div className={"block lg:hidden mt-16 flex justify-center"}>
-                <Linkk href={`/migwebsite/customerstories`}>
+                <Linkk href={`/migwebsite/customerstories`} legacyBehavior>
                   <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
                     <div className={"flex flex-row justify-around"}>
                       <p
@@ -2854,7 +2856,7 @@ function Software({}) {
                 </div>
                 <div className="mt-3.5 flex flex-row justify-center">
                   <div className={"mr-3.5"}>
-                    <Linkk href="/contactus">
+                    <Linkk href="/contactus" legacyBehavior>
                       <button
                         className={
                           "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -2867,7 +2869,7 @@ function Software({}) {
                     </Linkk>
                   </div>
                   <div>
-                    <Linkk href="/aboutus">
+                    <Linkk href="/aboutus" legacyBehavior>
                       <button
                         className={
                           "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
@@ -2912,7 +2914,7 @@ function Software({}) {
                 </p>
                 <div className="mt-4 flex flex-row justify-center">
                   <div className={"mr-1.5"}>
-                    <Linkk href="/contactus">
+                    <Linkk href="/contactus" legacyBehavior>
                       <button
                         className={
                           "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -2925,7 +2927,7 @@ function Software({}) {
                     </Linkk>
                   </div>
                   <div>
-                    <Linkk href="/aboutus">
+                    <Linkk href="/aboutus" legacyBehavior>
                       <button
                         className={
                           "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"

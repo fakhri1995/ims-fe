@@ -35,7 +35,7 @@ function LayoutFormContactUs({ title, description, button_title }) {
               hardware, software, or even talent hiring? Contact us and hear
               what service can we offer to you and your company!`}
             </p>
-            <Linkk href="/contactus">
+            <Linkk href="/contactus" legacyBehavior>
               <button
                 className={
                   "text-sm -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
@@ -83,7 +83,7 @@ function LayoutFormContactUs({ title, description, button_title }) {
               hardware, software, or even talent hiring? Contact us and hear
               what service can we offer to you and your company!`}
             </p>
-            <Linkk href="/contactus">
+            <Linkk href="/contactus" legacyBehavior>
               <button
                 className={
                   "text-base text-center rounded  text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4"

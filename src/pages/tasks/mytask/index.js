@@ -1116,61 +1116,56 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                               <Link
                                 key={index}
                                 href={`/tasks/detail/${id}?prevpath=mytask`}
+                                className={cardContainerClassName}
                               >
-                                <a className={cardContainerClassName}>
-                                  <div className="flex flex-col">
-                                    <div>
-                                      <ClipboardcheckIconSvg
-                                        size={50}
-                                        color={
-                                          isOverdue ? "#ffffff" : "#35763B"
-                                        }
-                                      />
-                                    </div>
-                                    <div className="flex flex-col mt-2">
-                                      <Text
-                                        color={isOverdue ? "white" : undefined}
-                                      >
-                                        {berakhirSentence}
-                                      </Text>
-                                      <Progress
-                                        trailColor={
-                                          isOverdue ? "#4D4D4D" : "#d8e8da"
-                                        }
-                                        strokeColor={
-                                          isOverdue ? "#ffffff" : "#35763B"
-                                        }
-                                        percent={progressPrecentage}
-                                        showInfo={false}
-                                      />
-                                    </div>
+                                <div className="flex flex-col">
+                                  <div>
+                                    <ClipboardcheckIconSvg
+                                      size={50}
+                                      color={isOverdue ? "#ffffff" : "#35763B"}
+                                    />
                                   </div>
-                                  <div className="flex flex-col">
-                                    <div className="flex flex-col text-right text-black">
-                                      {isOverdue ? (
-                                        <p
-                                          className={`font-bold text-xl mb-0 text-white`}
-                                        >
-                                          {name}
-                                        </p>
-                                      ) : (
-                                        <H1>{name}</H1>
-                                      )}
-                                      <Label
-                                        color={isOverdue ? "white" : undefined}
-                                      >
-                                        T-000{id}
-                                      </Label>
-                                    </div>
-                                    <div className="flex flex-col mt-4 text-right">
-                                      <H2
-                                        color={isOverdue ? "white" : "primary"}
-                                      >
-                                        {timeLeftSentence}
-                                      </H2>
-                                    </div>
+                                  <div className="flex flex-col mt-2">
+                                    <Text
+                                      color={isOverdue ? "white" : undefined}
+                                    >
+                                      {berakhirSentence}
+                                    </Text>
+                                    <Progress
+                                      trailColor={
+                                        isOverdue ? "#4D4D4D" : "#d8e8da"
+                                      }
+                                      strokeColor={
+                                        isOverdue ? "#ffffff" : "#35763B"
+                                      }
+                                      percent={progressPrecentage}
+                                      showInfo={false}
+                                    />
                                   </div>
-                                </a>
+                                </div>
+                                <div className="flex flex-col">
+                                  <div className="flex flex-col text-right text-black">
+                                    {isOverdue ? (
+                                      <p
+                                        className={`font-bold text-xl mb-0 text-white`}
+                                      >
+                                        {name}
+                                      </p>
+                                    ) : (
+                                      <H1>{name}</H1>
+                                    )}
+                                    <Label
+                                      color={isOverdue ? "white" : undefined}
+                                    >
+                                      T-000{id}
+                                    </Label>
+                                  </div>
+                                  <div className="flex flex-col mt-4 text-right">
+                                    <H2 color={isOverdue ? "white" : "primary"}>
+                                      {timeLeftSentence}
+                                    </H2>
+                                  </div>
+                                </div>
                               </Link>
                             );
                           }

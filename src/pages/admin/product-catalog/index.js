@@ -774,6 +774,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
                   <Link
                     href={"/admin/product-catalog/create"}
                     disabled={!isAllowedToAddProduct}
+                    legacyBehavior
                   >
                     <p className={"text-white text-xs"}>Tambah Produk</p>
                   </Link>

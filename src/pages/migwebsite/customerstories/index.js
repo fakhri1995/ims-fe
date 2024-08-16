@@ -384,6 +384,7 @@ function CustomerStories({ dataBlog }) {
                 <Linkk
                   className={"cursor-pointer"}
                   href={`/migwebsite/customerstories/${dataarticle.page_path}`}
+                  legacyBehavior
                 >
                   <div className={"bg-white w-[292px] mt-4 p-4 cursor-pointer"}>
                     {dataarticle.attachment_article ? (
@@ -472,6 +473,7 @@ function CustomerStories({ dataBlog }) {
             articleList.map((dataarticle) => (
               <Linkk
                 href={`/migwebsite/customerstories/${dataarticle.page_path}`}
+                legacyBehavior
               >
                 <div
                   className={"bg-white w-full rounded-lg mt-3 p-4"}
@@ -734,7 +736,7 @@ function CustomerStories({ dataBlog }) {
             </div>
             <div className="mt-3.5 flex flex-row justify-center">
               <div className={"mr-3.5"}>
-                <Linkk href="/contactus">
+                <Linkk href="/contactus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -747,7 +749,7 @@ function CustomerStories({ dataBlog }) {
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/aboutus">
+                <Linkk href="/aboutus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
@@ -789,7 +791,7 @@ function CustomerStories({ dataBlog }) {
             </p>
             <div className="mt-4 flex flex-row justify-center">
               <div className={"mr-1.5"}>
-                <Linkk href="/contactus">
+                <Linkk href="/contactus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -802,7 +804,7 @@ function CustomerStories({ dataBlog }) {
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/aboutus">
+                <Linkk href="/aboutus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"

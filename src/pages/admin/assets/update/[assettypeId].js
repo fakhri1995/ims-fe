@@ -404,7 +404,10 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
                 {praloading ? null : `- ${displaydata.name}`}
               </h1>
               <div className="flex space-x-2">
-                <Link href={`/admin/assets/detail/${assettypeid}`}>
+                <Link
+                  href={`/admin/assets/detail/${assettypeid}`}
+                  legacyBehavior
+                >
                   <Button
                     /*onClick={() => { console.log(updatedata); console.log(displaydata); console.log(currentfield); console.log(currentdropdown) }}*/ type="default"
                   >

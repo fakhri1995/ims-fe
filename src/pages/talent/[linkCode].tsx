@@ -1,13 +1,11 @@
-import { Spin, Tabs, notification } from "antd";
+import { Spin, Tabs } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useMemo } from "react";
-import { useEffect } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
-import { PlusIconSvg, UsersIconSvg, XIconSvg } from "components/icon";
 import LayoutDashboard from "components/layout-dashboard";
 import st from "components/layout-dashboard-management.module.css";
 
@@ -35,9 +33,10 @@ const TalentPoolPublicIndex = ({
   const pathArr = rt.pathname?.split("/")?.slice(1);
 
   // Breadcrumb title
-  const pageBreadcrumbValue = useMemo(() => [
-    { name: "Talent Pool", hrefValue: "" },
-  ]);
+  const pageBreadcrumbValue = useMemo(
+    () => [{ name: "Talent Pool", hrefValue: "" }],
+    []
+  );
 
   // 2. Use state
   const [modalTable, setModalTable] = useState(false);
@@ -65,7 +64,6 @@ const TalentPoolPublicIndex = ({
       tok={initProps}
       dataProfile={dataProfile}
       sidemenu={sidemenu}
-      st={st}
       pathArr={pathArr}
       fixedBreadcrumbValues={pageBreadcrumbValue}
       isPublic={isPublic}
@@ -139,7 +137,7 @@ const TalentPoolPublicIndex = ({
 };
 
 export async function getServerSideProps({ req, res, params }) {
-  let initProps = {};
+  let initProps = "";
   let cookiesJSON1 = {};
   let linkCode = params.linkCode;
   let dataProfile = {};
@@ -158,7 +156,7 @@ export async function getServerSideProps({ req, res, params }) {
     cookiesJSON1 = httpcookie.parse(req.headers.cookie);
   }
 
-  if (!cookiesJSON1.token && !linkCode) {
+  if (!(cookiesJSON1 as any).token && !linkCode) {
     return {
       redirect: {
         permanent: false,
@@ -167,7 +165,7 @@ export async function getServerSideProps({ req, res, params }) {
     };
   }
 
-  initProps = cookiesJSON1.token || null;
+  initProps = (cookiesJSON1 as any).token || null;
   if (initProps) {
     const resourcesGP = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,

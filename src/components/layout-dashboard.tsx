@@ -105,6 +105,7 @@ function LayoutDashboard({
                         e.preventDefault();
                         rt.back();
                       }}
+                      legacyBehavior
                     >
                       {breadcrumbItem.name}
                     </Link>
@@ -114,6 +115,7 @@ function LayoutDashboard({
                     <Link
                       href={breadcrumbItem.hrefValue}
                       className="text-sm font-semibold"
+                      legacyBehavior
                     >
                       {breadcrumbItem.name}
                     </Link>

@@ -164,7 +164,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                       pathname: `/admin/contracts/${record.key}`,
                     }}
                   >
-                    <a>{record.nomor_kontrak}</a>
+                    {record.nomor_kontrak}
                   </Link>
                 </div>
               }
@@ -248,6 +248,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                     href={{
                       pathname: `/admin/contracts/update/${record.key}`,
                     }}
+                    legacyBehavior
                   >
                     <EditOutlined />
                   </Link>
@@ -311,7 +312,7 @@ function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
                 {
                   // [196].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <div className="flex space-x-2">
-                    <Link href={`/admin/contracts/create`}>
+                    <Link href={`/admin/contracts/create`} legacyBehavior>
                       <Button type="primary" size="large">
                         Add New
                       </Button>
