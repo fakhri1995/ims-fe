@@ -100,61 +100,65 @@ export const TicketDetailTaskCard: FC<Task> = ({
       className="mig-platform--p-0 p-4 space-y-4 text-gray-400 hover:text-gray-400 hover:cursor-pointer hover:bg-gray-50 transition-colors"
       legacyBehavior
     >
-      {/* Name, Deadlie, and No Task */}
       <div>
-        <div className="flex items-center justify-between">
-          <span className="font-bold text-mono30">{name}</span>
-          <span className="mig-caption text-right">{deadlineDateContent}</span>
+        {/* Name, Deadlie, and No Task */}
+        <div>
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-mono30">{name}</span>
+            <span className="mig-caption text-right">
+              {deadlineDateContent}
+            </span>
+          </div>
+
+          <span className="mig-caption">{taskIdContent}</span>
         </div>
 
-        <span className="mig-caption">{taskIdContent}</span>
-      </div>
+        {/* Status badge and User name and avatar */}
+        <div className="flex items-center">
+          <div className="w-1/2">
+            <span className={statusBadgeClassName}>{statusBadgeContent}</span>
+          </div>
 
-      {/* Status badge and User name and avatar */}
-      <div className="flex items-center">
-        <div className="w-1/2">
-          <span className={statusBadgeClassName}>{statusBadgeContent}</span>
-        </div>
-
-        {isAssigned && (
-          <div className="flex w-1/2 justify-end items-center space-x-2">
-            {!hasMultipleUsers ? (
-              <>
-                <span className="mig-caption">{tasksUser.name}</span>
-                <img
-                  src={generateStaticAssetUrl(tasksUser.profile_image?.link)}
-                  alt={`${tasksUser.name}'s Avatar`}
-                  className="w-5 h-5 rounded-full"
-                />
-              </>
-            ) : (
-              <Dropdown
-                arrow
-                placement="bottomLeft"
-                overlay={usersDropdownList}
-              >
-                <div className="flex space-x-2">
-                  <span className="mig-caption">
-                    {!isGroup ? `${usersLength} Orang` : groupName}
-                  </span>
-                  <div className="w-5 h-5 rounded-full bg-primary100 flex items-center justify-center">
-                    <UsersIcon />
+          {isAssigned && (
+            <div className="flex w-1/2 justify-end items-center space-x-2">
+              {!hasMultipleUsers ? (
+                <>
+                  <span className="mig-caption">{tasksUser.name}</span>
+                  <img
+                    src={generateStaticAssetUrl(tasksUser.profile_image?.link)}
+                    alt={`${tasksUser.name}'s Avatar`}
+                    className="w-5 h-5 rounded-full"
+                  />
+                </>
+              ) : (
+                <Dropdown
+                  arrow
+                  placement="bottomLeft"
+                  overlay={usersDropdownList}
+                >
+                  <div className="flex space-x-2">
+                    <span className="mig-caption">
+                      {!isGroup ? `${usersLength} Orang` : groupName}
+                    </span>
+                    <div className="w-5 h-5 rounded-full bg-primary100 flex items-center justify-center">
+                      <UsersIcon />
+                    </div>
                   </div>
-                </div>
-              </Dropdown>
-            )}
-          </div>
-        )}
-
-        {/* Kondisi ketika task belum di assign staff / group */}
-        {!isAssigned && (
-          <div className="flex w-1/2 justify-end items-center space-x-2">
-            <span className="mig-caption">Belum ditugaskan</span>
-            <div className="w-5 h-5 rounded-full flex justify-center items-center overflow-hidden bg-primary100">
-              <UserOutlined className="text-white" />
+                </Dropdown>
+              )}
             </div>
-          </div>
-        )}
+          )}
+
+          {/* Kondisi ketika task belum di assign staff / group */}
+          {!isAssigned && (
+            <div className="flex w-1/2 justify-end items-center space-x-2">
+              <span className="mig-caption">Belum ditugaskan</span>
+              <div className="w-5 h-5 rounded-full flex justify-center items-center overflow-hidden bg-primary100">
+                <UserOutlined className="text-white" />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </Link>
   );
