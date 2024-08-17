@@ -266,124 +266,123 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
       prevpath={"admin"}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="px-5">
-          <div className="flex flex-col shadow-md rounded-lg bg-white p-5 mb-6 mx-3">
-            <div className="flex justify-between items-center mb-5">
-              <div className="flex">
-                <div
-                  className="mr-2 cursor-pointer"
-                  onClick={() => {
-                    rt.push(`/tasks/admin`);
-                  }}
-                >
-                  <BackIconSvg size={15} color={`#000000`} />
-                </div>
-                <H1>Semua Tipe Task</H1>
+        <div className="flex flex-col shadow-md rounded-lg bg-white p-5 mb-6">
+          <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-5">
+            <div className="flex items-center">
+              <div
+                className="mr-2 cursor-pointer"
+                onClick={() => {
+                  rt.push(`/tasks/admin`);
+                }}
+              >
+                <BackIconSvg size={15} color={`#000000`} />
               </div>
-              <div className="w-8/12 flex justify-end">
-                <div className=" mx-2">
-                  <Buttonsys
-                    type="primary"
-                    disabled={!canAddNewTaskType}
-                    onClick={() => {
-                      setdrawertasktypecreate(true);
-                    }}
-                  >
-                    + Tambah Tipe Task
-                  </Buttonsys>
-                </div>
-                <div className="mx-2">
-                  <Input
-                    style={{ width: `20rem` }}
-                    placeholder="Nama tipe task.."
-                    disabled={!isAllowedToGetTaskTypeList}
-                    allowClear
-                    onChange={(e) => {
-                      setsearcingtipetask(e.target.value);
-                      setloadingtipetasks(true);
-                      fetch(
-                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}&name=${e.target.value}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}`,
-                        {
-                          method: `GET`,
-                          headers: {
-                            Authorization: JSON.parse(initProps),
-                          },
-                        }
-                      )
-                        .then((res) => res.json())
-                        .then((res2) => {
-                          setdatarawtipetask(res2.data);
-                          setdatatipetasks(res2.data.data);
-                          setloadingtipetasks(false);
-                        });
-                    }}
-                  />
-                </div>
-              </div>
+              <H1>Semua Tipe Task</H1>
             </div>
-            <div>
-              <TableCustomTipeTask
-                dataSource={datatipetasks}
-                setDataSource={setdatatipetasks}
-                columns={columnsTipetask}
-                loading={loadingtipetasks}
-                setpraloading={setloadingtipetasks}
-                pageSize={rowstipetask}
-                total={datarawtipetask.total}
-                initProps={initProps}
-                setpage={setpagetipetask}
-                pagefromsearch={pagetipetask}
-                setdataraw={setdatarawtipetask}
-                setsortingtipetask={setsortingtipetask}
-                sortingtipetask={sortingtipetask}
-                searcingtipetask={searcingtipetask}
-              />
+            <div className="md:w-8/12 flex flex-col md:flex-row gap-4 md:justify-end">
+              <div className="">
+                <Buttonsys
+                  type="primary"
+                  disabled={!canAddNewTaskType}
+                  onClick={() => {
+                    setdrawertasktypecreate(true);
+                  }}
+                  fullWidth
+                >
+                  + Tambah Tipe Task
+                </Buttonsys>
+              </div>
+              <div className="">
+                <Input
+                  // style={{ width: `20rem` }}
+                  placeholder="Nama tipe task.."
+                  disabled={!isAllowedToGetTaskTypeList}
+                  allowClear
+                  onChange={(e) => {
+                    setsearcingtipetask(e.target.value);
+                    setloadingtipetasks(true);
+                    fetch(
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}&name=${e.target.value}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}`,
+                      {
+                        method: `GET`,
+                        headers: {
+                          Authorization: JSON.parse(initProps),
+                        },
+                      }
+                    )
+                      .then((res) => res.json())
+                      .then((res2) => {
+                        setdatarawtipetask(res2.data);
+                        setdatatipetasks(res2.data.data);
+                        setloadingtipetasks(false);
+                      });
+                  }}
+                />
+              </div>
             </div>
           </div>
-
-          <AccessControl hasPermission={TASK_TYPE_DELETE}>
-            <ModalHapusTipeTask
-              title={"Konfirmasi Hapus Tipe Task"}
-              visible={modaltipetaskdelete}
-              onvisible={setmodaltipetaskdelete}
-              onCancel={() => {
-                setmodaltipetaskdelete(false);
-              }}
-              loading={loadingtipetaskdelete}
-              datadelete={datatipetaskdelete}
-              onOk={handleDeleteTipeTask}
-            />
-          </AccessControl>
-
-          <AccessControl hasPermission={[TASK_TYPE_ADD, TASK_TYPES_GET]}>
-            <DrawerTaskTypesCreate
-              title={"Tambah Tipe Task"}
-              visible={drawertasktypecreate}
-              onClose={() => {
-                setdrawertasktypecreate(false);
-              }}
-              buttonOkText={"Simpan Tipe Task"}
-              initProps={initProps}
-              onvisible={setdrawertasktypecreate}
-            />
-          </AccessControl>
-
-          <AccessControl hasPermission={[TASK_TYPE_UPDATE, TASK_TYPE_GET]}>
-            <DrawerTaskTypesUpdate
-              title={"Ubah Tipe Task"}
-              visible={drawertasktypupdate}
-              onClose={() => {
-                setdrawertasktypupdate(false);
-              }}
-              buttonOkText={"Simpan Tipe Task"}
-              initProps={initProps}
-              onvisible={setdrawertasktypupdate}
+          <div>
+            <TableCustomTipeTask
+              dataSource={datatipetasks}
+              setDataSource={setdatatipetasks}
+              columns={columnsTipetask}
               loading={loadingtipetasks}
-              id={tempidtasktypeupdate}
-              trigger={triggertasktypupdate}
+              setpraloading={setloadingtipetasks}
+              pageSize={rowstipetask}
+              total={datarawtipetask.total}
+              initProps={initProps}
+              setpage={setpagetipetask}
+              pagefromsearch={pagetipetask}
+              setdataraw={setdatarawtipetask}
+              setsortingtipetask={setsortingtipetask}
+              sortingtipetask={sortingtipetask}
+              searcingtipetask={searcingtipetask}
             />
-          </AccessControl>
+          </div>
         </div>
+
+        <AccessControl hasPermission={TASK_TYPE_DELETE}>
+          <ModalHapusTipeTask
+            title={"Konfirmasi Hapus Tipe Task"}
+            visible={modaltipetaskdelete}
+            onvisible={setmodaltipetaskdelete}
+            onCancel={() => {
+              setmodaltipetaskdelete(false);
+            }}
+            loading={loadingtipetaskdelete}
+            datadelete={datatipetaskdelete}
+            onOk={handleDeleteTipeTask}
+          />
+        </AccessControl>
+
+        <AccessControl hasPermission={[TASK_TYPE_ADD, TASK_TYPES_GET]}>
+          <DrawerTaskTypesCreate
+            title={"Tambah Tipe Task"}
+            visible={drawertasktypecreate}
+            onClose={() => {
+              setdrawertasktypecreate(false);
+            }}
+            buttonOkText={"Simpan Tipe Task"}
+            initProps={initProps}
+            onvisible={setdrawertasktypecreate}
+          />
+        </AccessControl>
+
+        <AccessControl hasPermission={[TASK_TYPE_UPDATE, TASK_TYPE_GET]}>
+          <DrawerTaskTypesUpdate
+            title={"Ubah Tipe Task"}
+            visible={drawertasktypupdate}
+            onClose={() => {
+              setdrawertasktypupdate(false);
+            }}
+            buttonOkText={"Simpan Tipe Task"}
+            initProps={initProps}
+            onvisible={setdrawertasktypupdate}
+            loading={loadingtipetasks}
+            id={tempidtasktypeupdate}
+            trigger={triggertasktypupdate}
+          />
+        </AccessControl>
       </div>
     </Layout>
   );
