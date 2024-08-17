@@ -213,6 +213,7 @@ const Messages = ({ initProps, dataProfile, sidemenu }) => {
                     name: record.name,
                     company_email: record.company_email,
                     company_name: record.company_name,
+                    phone_number: record.phone_number,
                     interseted_in: record.interested_in,
                     message: record.message,
                     sending_date: record.created_at,
@@ -237,6 +238,7 @@ const Messages = ({ initProps, dataProfile, sidemenu }) => {
     name: "",
     company_email: "",
     company_name: "",
+    phone_number: "",
     interseted_in: "",
     message: "",
     sending_date: "",
@@ -309,6 +311,8 @@ const Messages = ({ initProps, dataProfile, sidemenu }) => {
           <p className="text-sm mb-5">{datadetail.company_name}</p>
           <h1 className="text-sm font-semibold mb-2">Company Email:</h1>
           <p className="text-sm mb-5">{datadetail.company_email}</p>
+          <h1 className="text-sm font-semibold mb-2">Phone Number:</h1>
+          <p className="text-sm mb-5">{datadetail.phone_number}</p>
           <h1 className="text-sm font-semibold mb-2">Interested In:</h1>
           <p className="text-sm mb-5">{datadetail.interseted_in}</p>
           <h1 className="text-sm font-semibold mb-2">Sending Date:</h1>
