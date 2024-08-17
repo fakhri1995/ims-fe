@@ -122,7 +122,6 @@ const modalTalentRemoved = ({
           },
         ]}
       />
-      {console.log("data raw ", dataRawCandidates)}
       <Table
         rowKey={(record) => record.id}
         className="tableTalentCandidate mt-4"
