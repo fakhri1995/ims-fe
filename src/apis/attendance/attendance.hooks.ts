@@ -530,7 +530,7 @@ export const useGetUserAttendanceTodayActivities = () => {
  * Setiap mutasi berhasil akan update @see AttendanceActivityQueryKeys.FIND agar UI sync dengan backend.
  */
 export const useMutateAttendanceActivity = () => {
-  const axiosClient = useAxiosClient();
+  const axiosClient = useAxiosClient("multipart/form-data");
   const queryClient = useQueryClient();
 
   const onSucceed = useCallback(() => {

@@ -177,7 +177,6 @@ export const AttendanceStaffAktivitasDrawer: FC<
           Object.assign(allDetailObject, detailObject);
         }
       }
-
       if (action === "create") {
         if (!isAllowedToAddActivity) {
           permissionWarningNotification("Membuat", "Aktivitas");
