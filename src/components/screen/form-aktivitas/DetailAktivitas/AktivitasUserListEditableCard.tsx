@@ -403,7 +403,7 @@ const CardHeader: FC<ICardHeader> = ({
     <div className="flex flex-col gap-4">
       <div className="flex flex-row items-center justify-between gap-4">
         {/* LHS: Back Button, Title */}
-        <div className=" flex items-center ">
+        <div className="flex items-center ">
           {/* Back button */}
           {cardPhase !== "default" && (
             <Button
@@ -421,8 +421,8 @@ const CardHeader: FC<ICardHeader> = ({
 
         {/* RHS: Search Input, Button */}
         <div className="flex items-center gap-2 ">
-          <div className="w-1/2">
-            {cardPhase === "default" && isAllowedToDeleteStaff && (
+          {cardPhase === "default" && isAllowedToDeleteStaff && (
+            <div className="w-full">
               <ButtonSys
                 type="default"
                 color="danger"
@@ -434,10 +434,10 @@ const CardHeader: FC<ICardHeader> = ({
                   Remove Staff
                 </div>
               </ButtonSys>
-            )}
-          </div>
-          <div className="w-1/2">
-            {cardPhase === "default" && canAddNewStaffToFormActivity && (
+            </div>
+          )}
+          {cardPhase === "default" && canAddNewStaffToFormActivity && (
+            <div className="w-full">
               <ButtonSys
                 type="primary"
                 fullWidth
@@ -448,8 +448,8 @@ const CardHeader: FC<ICardHeader> = ({
                   Add Staff
                 </div>
               </ButtonSys>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
       <div className="w-full">
