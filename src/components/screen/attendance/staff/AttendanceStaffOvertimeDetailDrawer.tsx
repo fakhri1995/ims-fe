@@ -206,7 +206,6 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
                 {moment(dataDefault?.issued_date).format("DD MMMM YYYY")}
               </p>
             </div>
-            {console.log("isi file ", dataDefault)}
             <BadgeLeaveStatus status={dataDefault?.status?.id} />
           </div>
 
