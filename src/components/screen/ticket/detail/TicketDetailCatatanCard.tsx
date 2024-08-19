@@ -102,7 +102,7 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
       message,
     });
   };
-  const onMutationError = (error: AxiosError) => {
+  const onMutationError = (error: AxiosError<any, any>) => {
     notification.error({
       message: error.response.data.message,
     });

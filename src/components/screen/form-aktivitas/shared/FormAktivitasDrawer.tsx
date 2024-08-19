@@ -196,7 +196,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
           onvisible(false);
           setdatacreate({ name: "", description: "", works: [] });
         },
-        onError: (error: AxiosError) => {
+        onError: (error: AxiosError<any, any>) => {
           notification.error({
             message: `Gagal menambahkan form aktivitas. ${error.response.data.message}`,
             duration: 3,
@@ -227,7 +227,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
 
             onvisible(false);
           },
-          onError: (error: AxiosError) => {
+          onError: (error: AxiosError<any, any>) => {
             notification.error({
               message: `Gagal memperbarui form aktivitas. ${error.response.data.message}`,
               duration: 3,

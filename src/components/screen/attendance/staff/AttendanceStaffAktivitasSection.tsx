@@ -862,7 +862,7 @@ export const AttendanceStaffAktivitasSection: FC<
     notificationSuccess({ message: response.data.message });
   }, []);
 
-  const onMutationFailed = useCallback((error: AxiosError) => {
+  const onMutationFailed = useCallback((error: AxiosError<any, any>) => {
     notificationError({ message: error.response.data.message });
   }, []);
 
