@@ -9,7 +9,7 @@ import { getClientToken } from "lib/auth";
  * NOTE: hook ini akan selalu re-create axios instance ketika digunakan.
  * TODO: seharusnya ga begitu. Jadiin context atau global variable.
  */
-export const useAxiosClient = () => {
+export const useAxiosClient = (contentType?: string) => {
   const token = getClientToken();
 
   const tokenizedAxiosClient = useMemo(() => {
@@ -17,7 +17,7 @@ export const useAxiosClient = () => {
       baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json",
+        "Content-Type": contentType ?? "application/json",
       },
     };
 

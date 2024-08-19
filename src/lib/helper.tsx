@@ -451,7 +451,7 @@ export const momentFormatDate = (
  * ```
  */
 export const getFileName = (pathString: string = "") => {
-  const splittedArr = pathString.split("/");
+  const splittedArr = pathString?.split("/");
   return splittedArr[splittedArr.length - 1];
 };
 
