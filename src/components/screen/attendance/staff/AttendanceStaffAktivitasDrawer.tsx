@@ -335,7 +335,7 @@ const _renderDynamicInput = (
       return <Input name="" type="text" placeholder={description} />;
 
     case FormAktivitasTypes.PARAGRAPH:
-      return <Input.TextArea placeholder={description} />;
+      return <Input.TextArea rows={10} placeholder={description} />;
 
     case FormAktivitasTypes.CHECKLIST:
       return (

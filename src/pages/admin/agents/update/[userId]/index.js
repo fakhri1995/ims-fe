@@ -184,13 +184,7 @@ function AgentUpdate({
       });
   };
 
-  //useEffect
-  useEffect(async () => {
-    if (!isAllowedToGetAgentDetail) {
-      permissionWarningNotification("Mendapatkan", "Detail Agent");
-      return;
-    }
-
+  const fetchAgentDetail = async () => {
     await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentDetail?account_id=${userid}`,
       {
@@ -243,6 +237,16 @@ function AgentUpdate({
         setpatharr(pathArr);
         setpreloading(false);
       });
+  };
+
+  //useEffect
+  useEffect(() => {
+    if (!isAllowedToGetAgentDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Agent");
+      return () => {};
+    }
+
+    fetchAgentDetail();
   }, [isAllowedToGetAgentDetail, userid]);
 
   useEffect(() => {
@@ -263,7 +267,7 @@ function AgentUpdate({
         .then((res2) => {
           setdataroles(res2);
         });
-      return;
+      return () => {};
     }
   }, [isAllowedToGetRolesList]);
 
@@ -271,7 +275,7 @@ function AgentUpdate({
   useEffect(() => {
     if (!isAllowedToGetCompanyClients) {
       setpreloading(false);
-      return;
+      return () => {};
     }
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`,
@@ -360,7 +364,6 @@ function AgentUpdate({
                           "Detail Agent"
                         );
                         e.stopPropagation();
-                        return;
                       }
                     }}
                   >
@@ -527,7 +530,6 @@ function AgentUpdate({
                               attendance_form_ids: [],
                             }));
                             setFormAktivitasValue("");
-                            return;
                           }
 
                           setdataupdate((prev) => ({

@@ -139,7 +139,7 @@ function IncidentsCreate({ initProps, dataProfile, sidemenu }) {
                     Report an Issue
                   </h1>
                   <div className="flex space-x-2">
-                    <Link href="/groups?originPath=Admin">
+                    <Link href="/groups?originPath=Admin" legacyBehavior>
                       <Button type="default" size="middle">
                         Batalkan
                       </Button>

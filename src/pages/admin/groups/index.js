@@ -216,7 +216,7 @@ function Groups({
                       },
                     }}
                   >
-                    <a>{record.name}</a>
+                    {record.name}
                   </Link>
                 </Button>
                 <p style={{ fontSize: "13px" }}>{record.description}</p>
@@ -251,6 +251,7 @@ function Groups({
                               originPath: "Admin",
                             },
                           }}
+                          legacyBehavior
                         >
                           <div className="flex items-center">
                             <EditOutlined />
@@ -274,6 +275,7 @@ function Groups({
                               originPath: "Admin",
                             },
                           }}
+                          legacyBehavior
                         >
                           <div className="flex items-center">
                             <EditOutlined />

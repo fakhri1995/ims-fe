@@ -130,7 +130,7 @@ export const LayoutMenuCompany: FC<ILayoutMenuCompany> = ({
       {/* Dashboard */}
       {hasPermission(SIDEBAR_DASHBOARD) && (
         <Menu.Item key="1" icon={<KehadiranCompanyIconSvg />} title="Dashboard">
-          <Link href="/dashboard/company">
+          <Link href="/dashboard/company" legacyBehavior>
             <p>Kehadiran AQRO</p>
           </Link>
         </Menu.Item>
@@ -141,7 +141,7 @@ export const LayoutMenuCompany: FC<ILayoutMenuCompany> = ({
           icon={<ProyekCompanyIconSvg />}
           title="projectscompany"
         >
-          <Link href="/projectCompany/">
+          <Link href="/projectCompany/" legacyBehavior>
             <p>Proyek AQRO</p>
           </Link>
         </Menu.Item>

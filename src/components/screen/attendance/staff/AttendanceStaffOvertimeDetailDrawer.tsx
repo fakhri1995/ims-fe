@@ -307,28 +307,29 @@ export const AttendanceStaffOvertimeDetailDrawer: FC<
             </div>
           )}
         </div>
+
+        {modalConfirm?.show && (
+          <ModalDelete
+            visible={modalConfirm?.show}
+            title="Cancel overtime Request"
+            itemName="Overtime Request"
+            loading={loadingCancel}
+            disabled={!isAllowedToDeleteOvertime}
+            onOk={() => batalOvertime()}
+            onCancel={() => setModalConfirm({ show: false, data: null })}
+          >
+            <p>
+              Are you sure you want to cancel your overtime request on{" "}
+              <strong>
+                {moment(dataDefault.issued_date).format("DD MMMM YYYY")}{" "}
+                {moment(dataDefault.start_at, "HH:mm:ss").format("HH:mm")}-
+                {moment(dataDefault.end_at, "HH:mm:ss").format("HH:mm")}
+              </strong>
+              ?
+            </p>
+          </ModalDelete>
+        )}
       </div>
-      {modalConfirm?.show && (
-        <ModalDelete
-          visible={modalConfirm?.show}
-          title="Cancel overtime Request"
-          itemName="Overtime Request"
-          loading={loadingCancel}
-          disabled={!isAllowedToDeleteOvertime}
-          onOk={() => batalOvertime()}
-          onCancel={() => setModalConfirm({ show: false, data: null })}
-        >
-          <p>
-            Are you sure you want to cancel your overtime request on{" "}
-            <strong>
-              {moment(dataDefault.issued_date).format("DD MMMM YYYY")}{" "}
-              {moment(dataDefault.start_at, "HH:mm:ss").format("HH:mm")}-
-              {moment(dataDefault.end_at, "HH:mm:ss").format("HH:mm")}
-            </strong>
-            ?
-          </p>
-        </ModalDelete>
-      )}
     </Drawer>
   );
 };

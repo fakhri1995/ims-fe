@@ -264,7 +264,7 @@ const Product = ({ initProps, dataProfile, sidemenu }) => {
               {
                 // [176].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                 <div className="flex space-x-2">
-                  <Link href="/admin/product/create">
+                  <Link href="/admin/product/create" legacyBehavior>
                     <Button
                       type="primary"
                       size="large"

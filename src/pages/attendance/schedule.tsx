@@ -40,6 +40,7 @@ import {
 } from "components/icon";
 import LayoutDashboard from "components/layout-dashboard";
 import ModalScheduleUpdate from "components/modal/attendance/modalScheduleUpdate";
+import { ModalDelete } from "components/modal/modalConfirmation";
 import { ModalHapus2 } from "components/modal/modalCustom";
 
 import { useAccessControl } from "contexts/access-control";
@@ -161,7 +162,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       },
       onError: (error) => {
         notification.error({
-          message: "Gagal mendapatkan daftar jadwal kerja.",
+          message: "Failed to get schedules.",
         });
       },
     }
@@ -179,7 +180,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       select: (response) => response.data.data,
       onError: (error) => {
         notification.error({
-          message: "Gagal mendapatkan daftar company.",
+          message: "Failed to get list of company.",
         });
       },
     }
@@ -220,7 +221,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           handleCloseDelete();
         },
         onError: (error) => {
-          notification.error({ message: "Gagal mengosongkan jadwal." });
+          notification.error({ message: "Failed to delete schedules." });
         },
       }
     );
@@ -324,7 +325,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   px-3 py-2 rounded-md w-24"
                 >
                   <p className="mig-caption--bold text-[#BF4A40] text-center">
-                    Cuti Tahunan
+                    Annual Leave
                   </p>
                 </button>
               </div>
@@ -338,7 +339,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   px-3 py-2 rounded-md w-24"
                 >
                   <p className="mig-caption--bold text-[#00589F] text-center">
-                    Libur Nasional
+                    National Holiday
                   </p>
                 </button>
               </div>
@@ -352,7 +353,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                       px-3 py-2 rounded-md w-24"
                 >
                   <p className="mig-caption--bold text-[#00589F] text-center">
-                    Cuti Bersama
+                    Joint Leave
                   </p>
                 </button>
               </div>
@@ -366,7 +367,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     px-3 py-2 rounded-md w-24"
                 >
                   <p className="mig-caption--bold text-[#ED962F] text-center">
-                    Sakit
+                    Sick
                   </p>
                 </button>
               </div>
@@ -406,8 +407,8 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           disabled={!isAllowedToDeleteAllSchedule}
         >
           <div className="flex flex-row items-center space-x-2">
-            <CalendarOffIconSvg size={16} color="#BF4A40" />
-            <p className="whitespace-nowrap">Kosongkan Jadwal</p>
+            <CalendarOffIconSvg size={16} />
+            <p className="whitespace-nowrap">Clear Schedule</p>
           </div>
         </ButtonSys>
       ) : (
@@ -420,7 +421,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       render: (text, record, index) => {
         return {
           children: (
-            <div className="px-3 py-2 bg-mono120 flex flex-col gap-1 rounded-md border-">
+            <div className="px-3 py-2 flex flex-col gap-1 ">
               <p className="mig-caption--bold text-mono30">{record?.name}</p>
               <p className="mig-caption text-mono50">{record?.position}</p>
               <p className="mig-caption text-mono50">{record?.company_name}</p>
@@ -461,7 +462,9 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               title={
                 <div className="flex gap-3 items-center p-2 text-mono30 rounded-lg">
                   <InfoCircleOutlined color="#4D4D4D" size={18} />
-                  <p className="font-bold">Jadwal selanjutnya belum tersedia</p>
+                  <p className="font-bold">
+                    Next schedule is not yet available
+                  </p>
                 </div>
               }
               color="#FFFFFF"
@@ -492,16 +495,16 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/schedule"
     >
-      <div className="grid grid-cols-1 px-6 md:px-0" id="mainWrapper">
+      <div className="grid grid-cols-1" id="mainWrapper">
         {/* Table Daftar Jadwal */}
-        <div className="flex flex-col shadow-md rounded-md bg-white p-4 mb-6 gap-6">
+        <div className="flex flex-col shadow-md rounded-md bg-white  mb-6  ">
           {/* Filter */}
-          <div className="flex flex-col lg:flex-row items-end md:items-center gap-4">
+          <div className="flex flex-col lg:flex-row items-end md:items-center gap-4 py-3 px-4 border-b">
             {/* Search by keyword (kata kunci) */}
             <div className="w-full lg:w-3/12">
               <Input
                 style={{ width: `100%` }}
-                placeholder="Cari Jadwal..."
+                placeholder="Search schedule here"
                 allowClear
                 onChange={(e) => {
                   setTimeout(
@@ -521,7 +524,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 allowClear
                 showSearch
                 disabled={!isAllowedToGetCompanyList}
-                placeholder="Pilih Perusahaan"
+                placeholder="Select Company"
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   setQueryParams({ company_id: value, page: 1 });
@@ -548,7 +551,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 allowClear
                 showSearch
                 disabled={!isAllowedToGetRoleList}
-                placeholder="Pilih Posisi"
+                placeholder="Select Role"
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   setQueryParams({ position: value, page: 1 });
@@ -575,26 +578,27 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 <div className="w-full lg:w-2/12">
                   <ButtonSys
                     fullWidth
-                    type={"default"}
-                    onClick={() => setSelectMode(true)}
-                    disabled={!isAllowedToDeleteAllSchedule}
+                    type={"primary"}
+                    onClick={() => setShowCreateDrawer(true)}
+                    disabled={!isAllowedToAddSchedule}
                   >
                     <div className="flex flex-row items-center space-x-2">
-                      <CalendarOffIconSvg size={16} color="#35763B" />
-                      <p className="">Kosongkan Jadwal</p>
+                      <CalendarStatsIconSvg size={16} />
+                      <p className="">Schedule an Employee</p>
                     </div>
                   </ButtonSys>
                 </div>
                 <div className="w-full lg:w-2/12">
                   <ButtonSys
                     fullWidth
-                    type={"primary"}
-                    onClick={() => setShowCreateDrawer(true)}
-                    disabled={!isAllowedToAddSchedule}
+                    type={"default"}
+                    color="danger"
+                    onClick={() => setSelectMode(true)}
+                    disabled={!isAllowedToDeleteAllSchedule}
                   >
                     <div className="flex flex-row items-center space-x-2">
-                      <CalendarStatsIconSvg size={16} color="#FFFFFF" />
-                      <p className="">Jadwalkan Karywan</p>
+                      <CalendarOffIconSvg size={16} />
+                      <p className="">Clear Schedule</p>
                     </div>
                   </ButtonSys>
                 </div>
@@ -617,19 +621,19 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           </div>
 
           {isSelectMode && (
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center py-4 px-4">
               <CheckIconSvg color="#35763B" size={20} />
               <p className="mig-caption--bold">
-                {selectedEmployees?.length} Karyawan Dipilih
+                {selectedEmployees?.length} Employees Selected
               </p>
             </div>
           )}
 
           {!!queryParams?.keyword?.length && (
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center py-4 px-4">
               <SearchIconSvg color="#35763B" size={20} />
               <p className="mig-caption">
-                Menampilkan {dataRawSchedules?.total} data pencarian dari{" "}
+                Displaying {dataRawSchedules?.total} results from{" "}
                 <strong>{queryParams?.keyword}</strong>
               </p>
             </div>
@@ -713,7 +717,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     <div className="flex gap-3 items-center p-2 text-mono30 rounded-lg">
                       <InfoCircleOutlined color="#4D4D4D" size={18} />
                       <p className="font-bold">
-                        Jadwal selanjutnya belum tersedia
+                        Next schedule is not yet available
                       </p>
                     </div>
                   }
@@ -789,28 +793,22 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
 
       {/* Modal Confirmation Kosongkan Jadwal */}
       <AccessControl hasPermission={ATTENDANCE_SCHEDULE_ALL_DELETE}>
-        <ModalHapus2
-          title={
-            <div className="flex items-center gap-4">
-              <AlertCircleIconSvg color={"#BF4A40"} size={24} />
-              <p className="font-bold">Peringatan</p>
-            </div>
-          }
+        <ModalDelete
           visible={isShowDeleteAllModal}
-          onvisible={setShowDeleteAllModal}
+          // onvisible={setShowDeleteAllModal}
           onOk={() => {
             const selectedEmployeeeIds = selectedEmployees?.map((e) => e.id);
             deleteAllSchedule(selectedEmployeeeIds);
           }}
           onCancel={() => setShowDeleteAllModal(false)}
-          itemName={"jadwal"}
+          itemName={"Schedule"}
           loading={loadingDeleteAllSchedule}
+          disabled={!isAllowedToDeleteAllSchedule}
         >
           <div>
             <p className="mb-2">
-              Apakah Anda yakin ingin mengosongkan semua jadwal milik{" "}
-              <strong>{selectedEmployees.length} karyawan</strong>
-              &nbsp;berikut:
+              Are you sure you want to clear all schedules for the following{" "}
+              <strong>{selectedEmployees.length} employee(s)</strong>:
             </p>
             {selectedEmployees?.map((item, idx) => (
               <p key={item?.id} className="font-bold">
@@ -818,7 +816,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               </p>
             ))}
           </div>
-        </ModalHapus2>
+        </ModalDelete>
       </AccessControl>
     </LayoutDashboard>
   );

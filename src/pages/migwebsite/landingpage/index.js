@@ -513,7 +513,7 @@ function LandingPage({ dataBlog }) {
           </div>
           <div className={"flex-col center"}>
             <div className={"grid justify-items-center text-center"}>
-              <Linkk href="/freeconsultation">
+              <Linkk href="/freeconsultation" legacyBehavior>
                 <button
                   className={
                     "flex text-base text-white border-2 rounded bg-primarygreen rounded border-primarygreen px-4 py-2 mt-9"
@@ -635,7 +635,7 @@ function LandingPage({ dataBlog }) {
                 {t.hardwaredescription}
               </p>
               <div className={"mt-[32px]"}>
-                <Linkk href="/hardware">
+                <Linkk href="/hardware" legacyBehavior>
                   <button
                     className={
                       "text-base font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
@@ -697,7 +697,7 @@ function LandingPage({ dataBlog }) {
                 {t.softwaredescription}
               </p>
               <div className={"mt-[32px]"}>
-                <Linkk href="/software">
+                <Linkk href="/software" legacyBehavior>
                   <button
                     className={
                       "text-base font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
@@ -745,7 +745,7 @@ function LandingPage({ dataBlog }) {
                 {t.talentdescription}
               </p>
               <div className={"mt-[32px]"}>
-                <Linkk href="/talents">
+                <Linkk href="/talents" legacyBehavior>
                   <button
                     className={
                       "text-base font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
@@ -816,7 +816,7 @@ function LandingPage({ dataBlog }) {
               {t.hardwaredescription}
             </p>
             <div className={"flex mt-3 justify-end"}>
-              <Linkk href="/hardware">
+              <Linkk href="/hardware" legacyBehavior>
                 <button
                   className={
                     "text-sm text-center rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
@@ -856,7 +856,7 @@ function LandingPage({ dataBlog }) {
               {t.softwaredescription}
             </p>
             <div className={"flex mt-3 justify-end"}>
-              <Linkk href="/software">
+              <Linkk href="/software" legacyBehavior>
                 <button
                   className={
                     "text-sm text-center rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
@@ -896,7 +896,7 @@ function LandingPage({ dataBlog }) {
               {t.talentdescription}
             </p>
             <div className={"flex mt-3 justify-end"}>
-              <Linkk href="/talents">
+              <Linkk href="/talents" legacyBehavior>
                 <button
                   className={
                     "text-sm text-center rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
@@ -1194,6 +1194,7 @@ function LandingPage({ dataBlog }) {
                             {locale == "en" ? (
                               <Linkk
                                 href={`/migwebsite/customerstories/${data1.page_path}`}
+                                legacyBehavior
                               >
                                 <button
                                   className={
@@ -1352,6 +1353,7 @@ function LandingPage({ dataBlog }) {
                     {locale == "en" ? (
                       <Linkk
                         href={`/migwebsite/customerstories/${data1.page_path}`}
+                        legacyBehavior
                       >
                         <button
                           className={
@@ -1809,7 +1811,7 @@ function LandingPage({ dataBlog }) {
             </div>
             <div className="mt-3.5 flex flex-row justify-center">
               <div className={"mr-3.5"}>
-                <Linkk href="/contactus">
+                <Linkk href="/contactus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -1822,7 +1824,7 @@ function LandingPage({ dataBlog }) {
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/aboutus">
+                <Linkk href="/aboutus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
@@ -1864,7 +1866,7 @@ function LandingPage({ dataBlog }) {
             </p>
             <div className="mt-4 flex flex-row justify-center">
               <div className={"mr-1.5"}>
-                <Linkk href="/contactus">
+                <Linkk href="/contactus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -1877,7 +1879,7 @@ function LandingPage({ dataBlog }) {
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/aboutus">
+                <Linkk href="/aboutus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"

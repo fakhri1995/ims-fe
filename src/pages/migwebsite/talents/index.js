@@ -726,7 +726,7 @@ function Talents({}) {
         >
           <div className={"block lg:flex container mx-auto"}>
             <div className={"flex py-4"}>
-              <Link href={{ pathname: "/hardware" }}>
+              <Link href={{ pathname: "/hardware" }} legacyBehavior>
                 <p
                   className={
                     "cursor-pointer flex-col text-base font-gilroyregular mr-4"
@@ -735,7 +735,7 @@ function Talents({}) {
                   Hardware
                 </p>
               </Link>
-              <Link href={{ pathname: "/software" }}>
+              <Link href={{ pathname: "/software" }} legacyBehavior>
                 <p
                   className={
                     "cursor-pointer flex-col text-base font-gilroyregular mx-4"
@@ -744,7 +744,7 @@ function Talents({}) {
                   Software
                 </p>
               </Link>
-              <Link href={{ pathname: "/talents" }}>
+              <Link href={{ pathname: "/talents" }} legacyBehavior>
                 <p
                   className={
                     "cursor-pointer flex-col text-base font-gilroybold mx-4"
@@ -3938,7 +3938,7 @@ function Talents({}) {
               </p>
             </div>
             <div className={"mt-1 lg:mt-4 flex justify-center"}>
-              <Link href="/contactus">
+              <Link href="/contactus" legacyBehavior>
                 <button
                   className={
                     "text-sm lg:w-[209px] -mt-10 rounded text-primarygreen border-2 bg-bgjoinmig border-primarygreen px-4 py-2 lg:px-2 mt-4"
@@ -5142,6 +5142,7 @@ function Talents({}) {
                                 {locale == "en" ? (
                                   <Linkk
                                     href={`/migwebsite/customerstories/${data1.page_path}`}
+                                    legacyBehavior
                                   >
                                     <button
                                       className={
@@ -5315,6 +5316,7 @@ function Talents({}) {
                         {locale == "en" ? (
                           <Linkk
                             href={`/migwebsite/customerstories/${data1.page_path}`}
+                            legacyBehavior
                           >
                             <button
                               className={
@@ -5364,7 +5366,7 @@ function Talents({}) {
                 </Slider>
               </div>
               <div className={"block lg:hidden mt-16 flex justify-center"}>
-                <Linkk href={`/migwebsite/customerstories`}>
+                <Linkk href={`/migwebsite/customerstories`} legacyBehavior>
                   <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
                     <div className={"flex flex-row justify-around"}>
                       <p
@@ -5732,7 +5734,7 @@ function Talents({}) {
                 </div>
                 <div className="mt-3.5 flex flex-row justify-center">
                   <div className={"mr-3.5"}>
-                    <Linkk href="/contactus">
+                    <Linkk href="/contactus" legacyBehavior>
                       <button
                         className={
                           "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -5745,7 +5747,7 @@ function Talents({}) {
                     </Linkk>
                   </div>
                   <div>
-                    <Linkk href="/aboutus">
+                    <Linkk href="/aboutus" legacyBehavior>
                       <button
                         className={
                           "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
@@ -5789,7 +5791,7 @@ function Talents({}) {
                 </p>
                 <div className="mt-4 flex flex-row justify-center">
                   <div className={"mr-1.5"}>
-                    <Linkk href="/contactus">
+                    <Linkk href="/contactus" legacyBehavior>
                       <button
                         className={
                           "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -5802,7 +5804,7 @@ function Talents({}) {
                     </Linkk>
                   </div>
                   <div>
-                    <Linkk href="/aboutus">
+                    <Linkk href="/aboutus" legacyBehavior>
                       <button
                         className={
                           "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"

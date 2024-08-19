@@ -688,7 +688,7 @@ function CustomerStoriesDetail({}) {
             <p className={"text-base lg:text-xl gilroy-bold text-primarygreen"}>
               {locale == "en" ? "Read Other Stories" : "Baca Cerita Lainnya"}
             </p>
-            <Linkk href={`/customerstories`}>
+            <Linkk href={`/customerstories`} legacyBehavior>
               <p
                 className={
                   "text-base pr-10 lg:text-base gilroy-bold text-darkgreen"
@@ -703,6 +703,7 @@ function CustomerStoriesDetail({}) {
               ? dataOthers.map((dataarticle) => (
                   <Linkk
                     href={`/migwebsite/customerstories/${dataarticle.page_path}`}
+                    legacyBehavior
                   >
                     <div
                       className={
@@ -780,6 +781,7 @@ function CustomerStoriesDetail({}) {
             {dataOthers.map((dataarticle) => (
               <Linkk
                 href={`/migwebsite/customerstories/${dataarticle.page_path}`}
+                legacyBehavior
               >
                 <div
                   className={"flex flex-row bg-white mt-3 p-4 rounded-lg"}
@@ -1229,7 +1231,7 @@ function CustomerStoriesDetail({}) {
             </div>
             <div className="mt-3.5 flex flex-row justify-center">
               <div className={"mr-3.5"}>
-                <Linkk href="/contactus">
+                <Linkk href="/contactus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -1242,7 +1244,7 @@ function CustomerStoriesDetail({}) {
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/aboutus">
+                <Linkk href="/aboutus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
@@ -1284,7 +1286,7 @@ function CustomerStoriesDetail({}) {
             </p>
             <div className="mt-4 flex flex-row justify-center">
               <div className={"mr-1.5"}>
-                <Linkk href="/contactus">
+                <Linkk href="/contactus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -1297,7 +1299,7 @@ function CustomerStoriesDetail({}) {
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/aboutus">
+                <Linkk href="/aboutus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"

@@ -117,7 +117,7 @@ function HardwareDetail({}) {
       >
         <div className={"block md:flex container mx-auto"}>
           <div className={"flex py-4"}>
-            <Link href={{ pathname: "/hardware" }}>
+            <Link href={{ pathname: "/hardware" }} legacyBehavior>
               <p
                 className={"cursor-pointer flex-col gilroy-bold text-lg mr-4"}
                 style={{
@@ -128,14 +128,14 @@ function HardwareDetail({}) {
                 Hardware
               </p>
             </Link>
-            <Link href={{ pathname: "/software" }}>
+            <Link href={{ pathname: "/software" }} legacyBehavior>
               <p
                 className={"cursor-pointer flex-col gilroy-medium text-lg mx-4"}
               >
                 Software
               </p>
             </Link>
-            <Link href={{ pathname: "/talents" }}>
+            <Link href={{ pathname: "/talents" }} legacyBehavior>
               <p
                 className={"cursor-pointer flex-col gilroy-medium text-lg mx-4"}
               >
@@ -146,7 +146,7 @@ function HardwareDetail({}) {
         </div>
       </section>
       <section className={"pagehardware pt-4 mt-16 ml-48"}>
-        <Link href={{ pathname: "/hardware" }}>
+        <Link href={{ pathname: "/hardware" }} legacyBehavior>
           <div className={"flex flex-row justify-between w-[163px]"}>
             <img
               src="/image/hardware/arrow_back_ios_new.png"
@@ -460,7 +460,7 @@ function HardwareDetail({}) {
               hardware, software, or even talent hiring? Contact us and hear
               what service can we offer to you and your company!
             </p>
-            <Link href="/contactus">
+            <Link href="/contactus" legacyBehavior>
               <button
                 className={
                   "text-sm w-[145px] -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
@@ -502,7 +502,7 @@ function HardwareDetail({}) {
               hardware, software, or even talent hiring? Contact us and hear
               what service can we offer to you and your company!
             </p>
-            <Link href="/hardware">
+            <Link href="/hardware" legacyBehavior>
               <button
                 className={
                   "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"

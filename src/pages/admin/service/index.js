@@ -70,11 +70,9 @@ function ServiceCatalog({
               {/* {
                                 [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ? */}
               <Link href={`/admin/service/${record.id}`}>
-                <a href="#">
-                  <h1 className="font-semibold hover:text-gray-500">
-                    {record.itemName}
-                  </h1>
-                </a>
+                <h1 className="font-semibold hover:text-gray-500">
+                  {record.itemName}
+                </h1>
               </Link>
               {/* //         :
                             //         <h1 className="font-semibold hover:text-gray-500">{record.itemName}</h1>
@@ -98,11 +96,9 @@ function ServiceCatalog({
               {/* {
                                 [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ? */}
               <Link href={`/admin/service/${record.id}`}>
-                <a href="#">
-                  <h1 className="hover:text-gray-500 text-xs">
-                    {record.shortDesc}
-                  </h1>
-                </a>
+                <h1 className="hover:text-gray-500 text-xs">
+                  {record.shortDesc}
+                </h1>
               </Link>
               {/* :
                                     <h1 className="hover:text-gray-500 text-xs">{record.shortDesc}</h1>
@@ -126,11 +122,9 @@ function ServiceCatalog({
               {/* {
                                 [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ? */}
               <Link href={`/admin/service/${record.id}`}>
-                <a href="#">
-                  <h1 className="hover:text-gray-500 text-sm">
-                    {record.categoryName}
-                  </h1>
-                </a>
+                <h1 className="hover:text-gray-500 text-sm">
+                  {record.categoryName}
+                </h1>
               </Link>
               {/* :
                                     <h1 className="hover:text-gray-500 text-sm">{record.categoryName}</h1>
@@ -154,17 +148,15 @@ function ServiceCatalog({
               {/* {
                                 [188, 190, 191, 192, 193].every((curr) => dataProfile.data.registered_feature.includes(curr)) ? */}
               <Link href={`/admin/service/${record.id}`}>
-                <a href="#">
-                  {record.status ? (
-                    <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">
-                      Published
-                    </div>
-                  ) : (
-                    <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs">
-                      Draft
-                    </div>
-                  )}
-                </a>
+                {record.status ? (
+                  <div className="py-1 px-2 rounded-l-full rounded-r-full text-green-500 border border-green-500 bg-green-100 text-center text-xs">
+                    Published
+                  </div>
+                ) : (
+                  <div className="py-1 px-2 rounded-l-full rounded-r-full text-gray-500 border border-gray-500 bg-gray-100 text-center text-xs">
+                    Draft
+                  </div>
+                )}
               </Link>
               {/* :
                                     <>

@@ -86,7 +86,7 @@ const DrawerPayslipDetail = ({
               }));
 
             // Add value to receivement benefit
-            const receiveBenefits = [
+            let receiveBenefits = [
               {
                 key: "Gaji Pokok",
                 column: { name: "Gaji Pokok" },

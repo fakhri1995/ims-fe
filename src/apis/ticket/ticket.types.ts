@@ -32,6 +32,7 @@ export enum TaskStatus {
   ON_HOLD,
   COMPLETED,
   CLOSED,
+  CANCELED,
 }
 
 /**

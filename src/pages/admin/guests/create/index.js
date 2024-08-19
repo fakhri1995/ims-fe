@@ -210,7 +210,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
             <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
               <h1 className="font-semibold py-2">Buat Akun Guest</h1>
               <div className="flex space-x-2">
-                <Link href="/admin/guests">
+                <Link href="/admin/guests" legacyBehavior>
                   <Button type="default">Batal</Button>
                 </Link>
                 <Button

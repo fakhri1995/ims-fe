@@ -912,7 +912,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
               <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white">
                 <h1 className="font-semibold py-2">Form Tambah Model</h1>
                 <div className="flex space-x-2">
-                  <Link href={`/admin/models`}>
+                  <Link href={`/admin/models`} legacyBehavior>
                     <Button
                       type="default" /*onClick={() => { console.log(fielddata2); console.log(newdata); }}*/
                     >

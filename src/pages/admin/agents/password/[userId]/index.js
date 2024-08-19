@@ -95,7 +95,7 @@ function AgentPassword({ initProps, dataProfile, sidemenu, userid }) {
             <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
               <h1 className="font-semibold py-2">Ubah Password Agent</h1>
               <div className="flex space-x-2">
-                <Link href={`/admin/agents/detail/${userid}`}>
+                <Link href={`/admin/agents/detail/${userid}`} legacyBehavior>
                   <Button disabled={praloading} type="default">
                     Batal
                   </Button>

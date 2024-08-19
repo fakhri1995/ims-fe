@@ -114,7 +114,7 @@ function AboutUs({}) {
           className={"mt-4 text-sm lg:text-xl font-gilroyregular"}
         >
           {t.whowearejoinmig}{" "}
-          <Link href="joinourteam">
+          <Link href="joinourteam" legacyBehavior>
             <em className={"cursor-pointer text-primarygreen underline"}>
               {t.whowearejoinmiglink}
             </em>
@@ -187,7 +187,7 @@ function AboutUs({}) {
                 </p>
 
                 <div className={"text-center"}>
-                  <Linkk href="/hardware">
+                  <Linkk href="/hardware" legacyBehavior>
                     <button
                       className={
                         "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium"
@@ -250,7 +250,7 @@ function AboutUs({}) {
                 </p>
 
                 <div className={"text-center"}>
-                  <Linkk href="/software">
+                  <Linkk href="/software" legacyBehavior>
                     <button
                       className={
                         "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium"
@@ -313,7 +313,7 @@ function AboutUs({}) {
                 </p>
 
                 <div className={"text-center"}>
-                  <Linkk href="/talents">
+                  <Linkk href="/talents" legacyBehavior>
                     <button
                       className={
                         "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium"
@@ -379,7 +379,7 @@ function AboutUs({}) {
                   </p>
 
                   <div className={"text-center"}>
-                    <Linkk href="/hardware">
+                    <Linkk href="/hardware" legacyBehavior>
                       <button
                         className={
                           "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium"
@@ -442,7 +442,7 @@ function AboutUs({}) {
                   </p>
 
                   <div className={"text-center"}>
-                    <Linkk href="/software">
+                    <Linkk href="/software" legacyBehavior>
                       <button
                         className={
                           "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium "
@@ -505,7 +505,7 @@ function AboutUs({}) {
                   </p>
 
                   <div className={"text-center"}>
-                    <Linkk href="/talents">
+                    <Linkk href="/talents" legacyBehavior>
                       <button
                         className={
                           "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium "
@@ -572,7 +572,7 @@ function AboutUs({}) {
                   </p>
 
                   <div className={"text-center"}>
-                    <Linkk href="/hardware">
+                    <Linkk href="/hardware" legacyBehavior>
                       <button
                         className={
                           "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium "
@@ -635,7 +635,7 @@ function AboutUs({}) {
                   </p>
 
                   <div className={"text-center"}>
-                    <Linkk href="/software">
+                    <Linkk href="/software" legacyBehavior>
                       <button
                         className={
                           "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium "
@@ -698,7 +698,7 @@ function AboutUs({}) {
                   </p>
 
                   <div className={"text-center"}>
-                    <Linkk href="/talents">
+                    <Linkk href="/talents" legacyBehavior>
                       <button
                         className={
                           "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium "
@@ -1134,7 +1134,7 @@ function AboutUs({}) {
             </div>
             <div className="mt-3.5 flex flex-row justify-center">
               <div className={"mr-3.5"}>
-                <Linkk href="/contactus">
+                <Linkk href="/contactus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -1147,7 +1147,7 @@ function AboutUs({}) {
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/aboutus">
+                <Linkk href="/aboutus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
@@ -1189,7 +1189,7 @@ function AboutUs({}) {
             </p>
             <div className="mt-4 flex flex-row justify-center">
               <div className={"mr-1.5"}>
-                <Linkk href="/contactus">
+                <Linkk href="/contactus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -1202,7 +1202,7 @@ function AboutUs({}) {
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/aboutus">
+                <Linkk href="/aboutus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"

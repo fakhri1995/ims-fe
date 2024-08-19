@@ -281,7 +281,10 @@ function ViewContract({
                   {[197].every((curr) =>
                     dataProfile.data.registered_feature.includes(curr)
                   ) && (
-                    <Link href={`/admin/contracts/update/${contract.id}`}>
+                    <Link
+                      href={`/admin/contracts/update/${contract.id}`}
+                      legacyBehavior
+                    >
                       <div className=" text-white text-sm bg-blue-500 hover:bg-blue-600 border-gray-900 cursor-pointer h-10 py-2.5 w-20 text-center">
                         <p>Edit</p>
                       </div>

@@ -281,7 +281,7 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
                 {
                   // [176].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <div className="flex space-x-2">
-                    <Link href="/admin/roles/create">
+                    <Link href="/admin/roles/create" legacyBehavior>
                       <Button
                         type="primary"
                         size="large"

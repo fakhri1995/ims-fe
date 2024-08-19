@@ -445,7 +445,7 @@ function UpdateContract({
                     Update Contracts
                   </h1>
                   <div className="flex space-x-2">
-                    <Link href="/admin/contracts">
+                    <Link href="/admin/contracts" legacyBehavior>
                       <Button type="default" size="middle">
                         Cancel
                       </Button>

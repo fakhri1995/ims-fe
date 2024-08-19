@@ -95,8 +95,12 @@ export const TicketDetailTaskCard: FC<Task> = ({
   const originUrl = encodeURIComponent(router?.asPath);
 
   return (
-    <Link href={`${destinationUrl}?prevpath=${originUrl}`}>
-      <a className="mig-platform--p-0 p-4 space-y-4 text-gray-400 hover:text-gray-400 hover:cursor-pointer hover:bg-gray-50 transition-colors">
+    <Link
+      href={`${destinationUrl}?prevpath=${originUrl}`}
+      className="mig-platform--p-0 p-4 space-y-4 text-gray-400 hover:text-gray-400 hover:cursor-pointer hover:bg-gray-50 transition-colors"
+      legacyBehavior
+    >
+      <div>
         {/* Name, Deadlie, and No Task */}
         <div>
           <div className="flex items-center justify-between">
@@ -155,7 +159,7 @@ export const TicketDetailTaskCard: FC<Task> = ({
             </div>
           )}
         </div>
-      </a>
+      </div>
     </Link>
   );
 };

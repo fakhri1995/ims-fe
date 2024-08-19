@@ -97,18 +97,16 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
           children: (
             <>
               <Link href={`/company/clients/${record.id}`}>
-                <a>
-                  <img
-                    src={generateStaticAssetUrl(record.company_logo?.link)}
-                    // src={
-                    //   record.image_logo === "-" || record.image_logo === ""
-                    //     ? `/image/Induk.png`
-                    //     : record.image_logo
-                    // }
-                    alt="imageProfile"
-                    className=" object-cover w-10 h-10 rounded-full"
-                  />
-                </a>
+                <img
+                  src={generateStaticAssetUrl(record.company_logo?.link)}
+                  // src={
+                  //   record.image_logo === "-" || record.image_logo === ""
+                  //     ? `/image/Induk.png`
+                  //     : record.image_logo
+                  // }
+                  alt="imageProfile"
+                  className=" object-cover w-10 h-10 rounded-full"
+                />
               </Link>
             </>
           ),
@@ -145,9 +143,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
           children: (
             <>
               <Link href={`/company/clients/${record.id}`}>
-                <a>
-                  <h1>{record.name}</h1>
-                </a>
+                <h1>{record.name}</h1>
               </Link>
             </>
           ),
@@ -167,7 +163,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
           // },
           children: (
             <div className="flex justify-center">
-              <Link href={`/company/clients/${record.id}`}>
+              <Link href={`/company/clients/${record.id}`} legacyBehavior>
                 {record.is_enabled ? (
                   <a>
                     <div className=" bg-blue-100 text-blue-600 border-blue-600 border py-1 px-3 rounded-md text-center w-40">

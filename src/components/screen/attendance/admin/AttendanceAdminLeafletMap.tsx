@@ -1,3 +1,5 @@
+import MarkerClusterGroup from "@changey/react-leaflet-markercluster";
+import "@changey/react-leaflet-markercluster/dist/styles.min.css";
 import { icon } from "leaflet";
 import type { LeafletEventHandlerFnMap } from "leaflet";
 import "leaflet-defaulticon-compatibility";
@@ -5,8 +7,6 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet/dist/leaflet.css";
 import { FC, useMemo } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-markercluster";
-import "react-leaflet-markercluster/dist/styles.min.css";
 import { useQuery } from "react-query";
 
 import { useAccessControl } from "contexts/access-control";

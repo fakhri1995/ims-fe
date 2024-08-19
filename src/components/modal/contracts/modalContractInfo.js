@@ -38,7 +38,7 @@ const ModalContractInfo = ({
           type: extra?.type,
         })) || [];
 
-      const tempNotDisplayed = [
+      let tempNotDisplayed = [
         {
           name: "code_number",
           title: contractInfoString?.code_number,

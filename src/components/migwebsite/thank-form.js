@@ -33,7 +33,7 @@ function ThankForm({ type_form }) {
         </p>
         {type_form == "Hardware" ? (
           <div className={"mt-3 flex flex-row justify-between"}>
-            <Link href={{ pathname: "/software" }}>
+            <Link href={{ pathname: "/software" }} legacyBehavior>
               <button
                 className={
                   "w-[175px] bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
@@ -48,7 +48,7 @@ function ThankForm({ type_form }) {
                 />
               </button>
             </Link>
-            <Link href={{ pathname: "/talents" }}>
+            <Link href={{ pathname: "/talents" }} legacyBehavior>
               <button
                 className={
                   "w-[160px] bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
@@ -66,7 +66,7 @@ function ThankForm({ type_form }) {
           </div>
         ) : type_form == "Software" ? (
           <div className={"mt-3 flex flex-row justify-between"}>
-            <Link href={{ pathname: "/talents" }}>
+            <Link href={{ pathname: "/talents" }} legacyBehavior>
               <button
                 className={
                   "w-[153px] bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
@@ -81,7 +81,7 @@ function ThankForm({ type_form }) {
                 />
               </button>
             </Link>
-            <Link href={{ pathname: "/hardware" }}>
+            <Link href={{ pathname: "/hardware" }} legacyBehavior>
               <button
                 className={
                   "w-[180px] bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
@@ -99,7 +99,7 @@ function ThankForm({ type_form }) {
           </div>
         ) : (
           <div className={"mt-3 flex flex-row justify-between"}>
-            <Link href={{ pathname: "/software" }}>
+            <Link href={{ pathname: "/software" }} legacyBehavior>
               <button
                 className={
                   "w-[175px] bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
@@ -114,7 +114,7 @@ function ThankForm({ type_form }) {
                 />
               </button>
             </Link>
-            <Link href={{ pathname: "/hardware" }}>
+            <Link href={{ pathname: "/hardware" }} legacyBehavior>
               <button
                 className={
                   "w-[180px] bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
@@ -132,7 +132,7 @@ function ThankForm({ type_form }) {
           </div>
         )}
         <p className={"mt-3 text-sm text-blackmig"}>Or</p>
-        <Link href={{ pathname: "/" }}>
+        <Link href={{ pathname: "/" }} legacyBehavior>
           <button
             className={
               "mt-3 border-2 py-2 px-4 border-primarygreen bg-white text-primarygreen font-gilroysemibold rounded text-base"

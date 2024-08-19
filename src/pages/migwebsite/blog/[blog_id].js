@@ -662,7 +662,7 @@ function BlogDetail({}) {
             <p className={"text-base lg:text-xl gilroy-bold text-primarygreen"}>
               {locale == "en" ? "Read Other Articles" : "Baca Artikel Lain"}
             </p>
-            <Linkk href={`/blog`}>
+            <Linkk href={`/blog`} legacyBehavior>
               <p
                 className={
                   "text-base pr-10 lg:text-base gilroy-bold text-darkgreen"
@@ -734,7 +734,7 @@ function BlogDetail({}) {
           </p>
           <Slider {...sliderSettingsPhone}>
             {articleList.map((dataarticle) => (
-              <Linkk href={`/blog/${dataarticle.page_path}`}>
+              <Linkk href={`/blog/${dataarticle.page_path}`} legacyBehavior>
                 <div
                   className={"flex flex-row bg-white mt-3 p-4 rounded-lg"}
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
@@ -1180,7 +1180,7 @@ function BlogDetail({}) {
             </div>
             <div className="mt-3.5 flex flex-row justify-center">
               <div className={"mr-3.5"}>
-                <Linkk href="/contactus">
+                <Linkk href="/contactus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -1193,7 +1193,7 @@ function BlogDetail({}) {
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/aboutus">
+                <Linkk href="/aboutus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
@@ -1235,7 +1235,7 @@ function BlogDetail({}) {
             </p>
             <div className="mt-4 flex flex-row justify-center">
               <div className={"mr-1.5"}>
-                <Linkk href="/contactus">
+                <Linkk href="/contactus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
@@ -1248,7 +1248,7 @@ function BlogDetail({}) {
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/aboutus">
+                <Linkk href="/aboutus" legacyBehavior>
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"

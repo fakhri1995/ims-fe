@@ -113,7 +113,7 @@ const FeatureUpdate = ({ initProps, sidemenu, dataProfile, idfeature }) => {
                 Ubah Feature - {datadisplay.name}
               </h1>
               <div className="flex space-x-2">
-                <Link href={`/admin/modules?feature=${feature}`}>
+                <Link href={`/admin/modules?feature=${feature}`} legacyBehavior>
                   <Button
                     type="default"
                     onClick={() => {

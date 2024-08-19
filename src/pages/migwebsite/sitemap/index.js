@@ -18,7 +18,7 @@ function Sitemap({}) {
           <div className={"flex flex-rowflex-row"}>
             <div className={"w-1/2"}>
               <div>
-                <Link href={{ pathname: "/" }}>
+                <Link href={{ pathname: "/" }} legacyBehavior>
                   <p
                     className={
                       "cursor-pointer gilroy-bold menu-underlined w-min mb-8 text-base hover:text-green-500"
@@ -31,7 +31,7 @@ function Sitemap({}) {
               <div>
                 <p className={"gilroy-bold pb-1 text-base"}>Our Solutions</p>
                 {/* <Link href={{pathname: '/advantages'}}><p className={'cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base'}>Advantages</p></Link> */}
-                <Link href={{ pathname: "/hardware" }}>
+                <Link href={{ pathname: "/hardware" }} legacyBehavior>
                   <p
                     className={
                       "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base hover:text-green-500"
@@ -40,7 +40,7 @@ function Sitemap({}) {
                     Hardware
                   </p>
                 </Link>
-                <Link href={{ pathname: "/software" }}>
+                <Link href={{ pathname: "/software" }} legacyBehavior>
                   <p
                     className={
                       "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base hover:text-green-500"
@@ -49,7 +49,7 @@ function Sitemap({}) {
                     Software
                   </p>
                 </Link>
-                <Link href={{ pathname: "/talents" }}>
+                <Link href={{ pathname: "/talents" }} legacyBehavior>
                   <p
                     className={
                       "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base hover:text-green-500"
@@ -63,7 +63,7 @@ function Sitemap({}) {
             <div className={"w-1/2"}>
               <div className={"pb-8"}>
                 <p className={"gilroy-bold pb-1 text-base"}>Company</p>
-                <Link href={{ pathname: "/aboutus" }}>
+                <Link href={{ pathname: "/aboutus" }} legacyBehavior>
                   <p
                     className={
                       "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base hover:text-green-500"
@@ -72,7 +72,7 @@ function Sitemap({}) {
                     About&nbsp;Us
                   </p>
                 </Link>
-                <Link href={{ pathname: "/joinourteam" }}>
+                <Link href={{ pathname: "/joinourteam" }} legacyBehavior>
                   <p
                     className={
                       "cursor-pointer gilroy-regular menu-underlined w-min text-base hover:text-green-500"
@@ -83,7 +83,7 @@ function Sitemap({}) {
                 </Link>
               </div>
               <div className={"pb-8"}>
-                <Link href={{ pathname: "/contactus" }}>
+                <Link href={{ pathname: "/contactus" }} legacyBehavior>
                   <p
                     className={
                       "cursor-pointer gilroy-bold menu-underlined w-min text-base hover:text-green-500"
@@ -94,7 +94,7 @@ function Sitemap({}) {
                 </Link>
               </div>
               <div>
-                <Link href={{ pathname: "/privacy" }}>
+                <Link href={{ pathname: "/privacy" }} legacyBehavior>
                   <p
                     className={
                       "cursor-pointer gilroy-bold menu-underlined w-min text-base hover:text-green-500"
@@ -103,7 +103,7 @@ function Sitemap({}) {
                     Privacy
                   </p>
                 </Link>
-                <Link href={{ pathname: "/term" }}>
+                <Link href={{ pathname: "/term" }} legacyBehavior>
                   <p
                     className={
                       "cursor-pointer gilroy-bold menu-underlined w-min text-base hover:text-green-500"

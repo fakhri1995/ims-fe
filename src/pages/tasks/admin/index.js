@@ -762,7 +762,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         {viewdetailstaff ? (
           <>
             {viewdetailstaff && (
-              <div className="px-6 md:px-0">
+              <div className="">
                 <div className="flex flex-col shadow-md rounded-lg bg-white p-5 mb-6">
                   <div className="flex flex-col md:flex-row justify-between md:items-center mb-5">
                     <div className="flex mb-4 md:mb-0">
@@ -876,7 +876,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           </>
         ) : (
           <div
-            className="grid grid-cols-1 md:grid-cols-10 px-6 md:px-0 gap-x-3 gap-y-6"
+            className="grid grid-cols-1 md:grid-cols-10 gap-x-3 gap-y-6"
             id="wrapper1"
           >
             {/* DEADLINE TASK */}

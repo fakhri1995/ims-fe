@@ -140,7 +140,7 @@ const ModuleUpdate = ({ initProps, sidemenu, dataProfile, idmodule }) => {
                 Ubah Module - {datadisplay.name}
               </h1>
               <div className="flex space-x-2">
-                <Link href="/admin/modules">
+                <Link href="/admin/modules" legacyBehavior>
                   <Button
                     type="default"
                     onClick={() => {

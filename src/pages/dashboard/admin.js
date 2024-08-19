@@ -57,6 +57,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                 href={{
                   pathname: "/admin/agents",
                 }}
+                legacyBehavior
               >
                 <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                   <div className="flex">
@@ -74,6 +75,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                 href={{
                   pathname: "/admin/requesters",
                 }}
+                legacyBehavior
               >
                 <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                   <div className="flex">
@@ -94,6 +96,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                     originPath: "Admin",
                   },
                 }}
+                legacyBehavior
               >
                 <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                   <div className="flex">
@@ -127,6 +130,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                   originPath: "Admin",
                 },
               }}
+              legacyBehavior
             >
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
@@ -139,7 +143,10 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                          null
                         } */}
             {/* {dataProfile.data.registered_feature.includes(179) ? */}
-            <Link href={"/admin/modules?module=&featuredisplay="}>
+            <Link
+              href={"/admin/modules?module=&featuredisplay="}
+              legacyBehavior
+            >
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
                   <IconModules />
@@ -150,7 +157,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
             {/* :
                          null
                      } */}
-            <Link href={"/admin/features"}>
+            <Link href={"/admin/features"} legacyBehavior>
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
                   <IconFeatures />
@@ -176,6 +183,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
               href={{
                 pathname: "/admin/myCompany/",
               }}
+              legacyBehavior
             >
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
@@ -192,6 +200,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
               href={{
                 pathname: "/admin/clients",
               }}
+              legacyBehavior
             >
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
@@ -217,7 +226,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
             </h3>
           </div>
           <div className="grid md:grid-cols-5 sm:grid-cols-1">
-            <Link href={"/admin/assets"}>
+            <Link href={"/admin/assets"} legacyBehavior>
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
                   <IconAssets />
@@ -225,7 +234,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                 </div>
               </div>
             </Link>
-            <Link href={"/admin/models"}>
+            <Link href={"/admin/models"} legacyBehavior>
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
                   <IconAssets />
@@ -237,6 +246,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
               href={{
                 pathname: "/admin/vendors",
               }}
+              legacyBehavior
             >
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
@@ -249,6 +259,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
               href={{
                 pathname: "/admin/manufacturers",
               }}
+              legacyBehavior
             >
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
@@ -261,6 +272,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
               href={{
                 pathname: "/admin/relationships",
               }}
+              legacyBehavior
             >
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
@@ -282,7 +294,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
           </div>
           <div className="grid md:grid-cols-5 sm:grid-cols-1">
             {/* {dataProfile.data.registered_feature.includes(183) && dataProfile.data.registered_feature.includes(187) ? */}
-            <Link href={"/admin/service"}>
+            <Link href={"/admin/service"} legacyBehavior>
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
                   <IconCatalog />
@@ -294,7 +306,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                                  null
                              } */}
             {/* {dataProfile.data.registered_feature.includes(194) ? */}
-            <Link href={"/admin/contracts"}>
+            <Link href={"/admin/contracts"} legacyBehavior>
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
                   <IconContract />
@@ -320,7 +332,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
             </h3>
           </div>
           <div className="grid md:grid-cols-5 sm:grid-cols-1">
-            <Link href={"/admin/financial"}>
+            <Link href={"/admin/financial"} legacyBehavior>
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
                   <IconDepreciation />
@@ -344,7 +356,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
             </h3>
           </div>
           <div className="grid md:grid-cols-5 sm:grid-cols-1">
-            <Link href={"/admin/careers"}>
+            <Link href={"/admin/careers"} legacyBehavior>
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
                   <IconCareer />
@@ -352,7 +364,7 @@ function DashboardAdmin({ initProps, dataProfile, sidemenu }) {
                 </div>
               </div>
             </Link>
-            <Link href={"/admin/messages"}>
+            <Link href={"/admin/messages"} legacyBehavior>
               <div className="border-2 border-transparent hover:border-blue-500 cursor-pointer rounded-md py-4 px-3 mt-5 mx-1">
                 <div className="flex">
                   <IconMessages />

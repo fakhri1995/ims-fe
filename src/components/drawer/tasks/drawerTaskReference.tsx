@@ -40,11 +40,13 @@ export const DrawerTaskReference: FC<IDrawerTaskReference> = ({
 
   const title = isAllowedToSeeTicketDetail ? (
     <>
-      <Link href={`/tickets/detail/${reference?.id}`}>
-        <a className="flex space-x-2 text-mono30 hover:text-mono30">
-          <H1>{titleContent}</H1>
-          <ExternalLinkIcon className="w-6 h-6 stroke-2" />
-        </a>
+      <Link
+        href={`/tickets/detail/${reference?.id}`}
+        className="flex space-x-2 text-mono30 hover:text-mono30"
+        legacyBehavior
+      >
+        <H1>{titleContent}</H1>
+        <ExternalLinkIcon className="w-6 h-6 stroke-2" />
       </Link>
     </>
   ) : (

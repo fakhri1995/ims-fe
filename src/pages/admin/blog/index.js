@@ -271,7 +271,7 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
               {
                 // [176].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                 <div className="flex space-x-2">
-                  <Link href="/admin/blog/create">
+                  <Link href="/admin/blog/create" legacyBehavior>
                     <Button
                       type="primary"
                       size="large"
