@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "format": "prettier --write \"src/**/*.{js,ts,jsx,tsx,css,scss}\"",
     "prepare": "husky install",
     "new:component": "plop component"

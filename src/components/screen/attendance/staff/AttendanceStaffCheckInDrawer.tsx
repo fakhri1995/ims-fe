@@ -183,7 +183,7 @@ export const AttendanceStaffCheckInDrawer: FC<
               });
             }
           },
-          onError: (error: AxiosError) => {
+          onError: (error: AxiosError<any, any>) => {
             const errorMessage = error.response.data.message;
             const actualErrorMessage =
               "errorInfo" in errorMessage

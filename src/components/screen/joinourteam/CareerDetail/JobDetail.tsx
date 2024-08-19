@@ -206,7 +206,7 @@ export const JobDetail: FC = () => {
               }
             }, 5000);
           },
-          onError: (error: AxiosError) => {
+          onError: (error: AxiosError<any, any>) => {
             notification.error({
               message: error.response.data?.message?.errorInfo?.reason,
             });

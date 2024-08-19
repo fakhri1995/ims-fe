@@ -100,7 +100,7 @@ export const Apply: FC = () => {
             // TODO: handle on succeed
             notification.success({ message: response.data.message });
           },
-          onError: (error: AxiosError) => {
+          onError: (error: AxiosError<any, any>) => {
             notification.error({
               message: error.response.data?.message?.errorInfo?.reason,
             });

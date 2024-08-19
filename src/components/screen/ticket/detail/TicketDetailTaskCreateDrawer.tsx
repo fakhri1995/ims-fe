@@ -293,7 +293,7 @@ export const TicketDetailTaskCreateDrawer: FC<
             duration: 3,
           });
         },
-        onError: (error: AxiosError) => {
+        onError: (error: AxiosError<any, any>) => {
           notification["error"]({
             message: error.response.data.message,
             duration: 3,

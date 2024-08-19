@@ -129,7 +129,7 @@ export const CareersAtMig: FC = () => {
               setShowThankYou2(true);
             }, 10000);
           },
-          onError: (error: AxiosError) => {
+          onError: (error: AxiosError<any, any>) => {
             notification.error({
               message: error.response.data?.message?.errorInfo?.reason,
             });
