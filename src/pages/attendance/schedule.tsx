@@ -9,7 +9,7 @@ import {
   Tooltip,
   notification,
 } from "antd";
-import locale from "antd/lib/date-picker/locale/id_ID";
+// import locale from "antd/lib/date-picker/locale/id_ID";
 import { ColumnsType } from "antd/lib/table";
 import { AxiosResponse } from "axios";
 import moment from "moment";
@@ -291,16 +291,18 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       title: (
         <div className="flex flex-col justify-center items-center">
           <div
-            className={`px-2 py-1 w-16 h-16 rounded-full flex flex-col
+            className={`px-2 w-14 h-14 rounded-full flex flex-col
             items-center justify-center 
             ${
               isToday
                 ? `bg-primary100 border-2 border-primary25 text-white text-center`
-                : `text-mono50`
+                : `text-neutrals80`
             }`}
           >
-            <p className="">{DAYS[i].toUpperCase()}</p>
-            <p className="font-bold text-lg leading-5">
+            <p className="font-semibold text-sm leading-5">
+              {DAYS[i].toUpperCase()}
+            </p>
+            <p className="font-bold text-base leading-6">
               {currentDate?.format("DD")}
             </p>
           </div>
@@ -314,71 +316,67 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           (i) => i.date == currentDate?.format("YYYY-MM-DD")
         );
         return {
-          children:
-            scheduleIdx > -1 &&
-            schedules[scheduleIdx]?.shift?.title == "Cuti Tahunan" ? (
-              <div className="flex justify-center">
-                <button
-                  onClick={() => handleShowUpdate(schedules[scheduleIdx])}
-                  disabled={!isAllowedToUpdateSchedule || isBeforeToday}
-                  className="bg-[#BF4A40] bg-opacity-10 flex flex-col items-center justify-center 
-                  px-3 py-2 rounded-md w-24"
-                >
-                  <p className="mig-caption--bold text-[#BF4A40] text-center">
-                    Annual Leave
-                  </p>
-                </button>
-              </div>
-            ) : scheduleIdx > -1 &&
-              schedules[scheduleIdx]?.shift?.title == "Libur Nasional" ? (
-              <div className="flex justify-center">
-                <button
-                  onClick={() => handleShowUpdate(schedules[scheduleIdx])}
-                  disabled={!isAllowedToUpdateSchedule || isBeforeToday}
-                  className="bg-[#00589F] bg-opacity-10 flex flex-col items-center justify-center 
-                  px-3 py-2 rounded-md w-24"
-                >
-                  <p className="mig-caption--bold text-[#00589F] text-center">
-                    National Holiday
-                  </p>
-                </button>
-              </div>
-            ) : scheduleIdx > -1 &&
-              schedules[scheduleIdx]?.shift?.title == "Cuti Bersama" ? (
-              <div className="flex justify-center">
-                <button
-                  onClick={() => handleShowUpdate(schedules[scheduleIdx])}
-                  disabled={!isAllowedToUpdateSchedule || isBeforeToday}
-                  className="bg-[#00589F] bg-opacity-10 flex flex-col items-center justify-center 
-                      px-3 py-2 rounded-md w-24"
-                >
-                  <p className="mig-caption--bold text-[#00589F] text-center">
-                    Joint Leave
-                  </p>
-                </button>
-              </div>
-            ) : scheduleIdx > -1 &&
-              schedules[scheduleIdx]?.shift?.title == "Sakit" ? (
-              <div className="flex justify-center h-16">
-                <button
-                  onClick={() => handleShowUpdate(schedules[scheduleIdx])}
-                  disabled={!isAllowedToUpdateSchedule || isBeforeToday}
-                  className="bg-[#FBEAD5] flex flex-col items-center justify-center 
-                    px-3 py-2 rounded-md w-24"
-                >
-                  <p className="mig-caption--bold text-[#ED962F] text-center">
-                    Sick
-                  </p>
-                </button>
-              </div>
-            ) : (
-              scheduleIdx > -1 && (
+          children: scheduleIdx > -1 && (
+            <div className="w-20 flex items-center justify-center">
+              {schedules[scheduleIdx]?.shift?.title == "Cuti Tahunan" ? (
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => handleShowUpdate(schedules[scheduleIdx])}
+                    disabled={!isAllowedToUpdateSchedule || isBeforeToday}
+                    className="bg-[#BF4A40] bg-opacity-10 flex flex-col items-center justify-center 
+                  px-3 py-2 rounded-md w-24 h-16"
+                  >
+                    <p className="mig-caption--bold text-[#BF4A40] text-center">
+                      Annual Leave
+                    </p>
+                  </button>
+                </div>
+              ) : schedules[scheduleIdx]?.shift?.title == "Libur Nasional" ? (
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => handleShowUpdate(schedules[scheduleIdx])}
+                    disabled={!isAllowedToUpdateSchedule || isBeforeToday}
+                    className="bg-[#00589F] bg-opacity-10 flex flex-col items-center justify-center 
+                  px-3 py-2 rounded-md w-24 h-16"
+                  >
+                    <p className="mig-caption--bold text-[#00589F] text-center">
+                      National Holiday
+                    </p>
+                  </button>
+                </div>
+              ) : schedules[scheduleIdx]?.shift?.title == "Cuti Bersama" ? (
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => handleShowUpdate(schedules[scheduleIdx])}
+                    disabled={!isAllowedToUpdateSchedule || isBeforeToday}
+                    className="bg-[#00589F] bg-opacity-10 flex flex-col items-center justify-center 
+                      px-3 py-2 rounded-md w-24 h-16"
+                  >
+                    <p className="mig-caption--bold text-[#00589F] text-center">
+                      Joint Leave
+                    </p>
+                  </button>
+                </div>
+              ) : schedules[scheduleIdx]?.shift?.title == "Sakit" ? (
+                <div className="flex justify-center h-16">
+                  <button
+                    onClick={() => handleShowUpdate(schedules[scheduleIdx])}
+                    disabled={!isAllowedToUpdateSchedule || isBeforeToday}
+                    className="bg-[#FBEAD5] flex flex-col items-center justify-center 
+                    px-3 py-2 rounded-md w-24 h-16"
+                  >
+                    <p className="mig-caption--bold text-[#ED962F] text-center">
+                      Sick
+                    </p>
+                  </button>
+                </div>
+              ) : (
                 <div className="flex justify-center">
                   <button
                     onClick={() => handleShowUpdate(schedules[scheduleIdx])}
                     disabled={!isAllowedToUpdateSchedule || isBeforeToday}
                     className="bg-backdrop flex flex-col items-center justify-center 
-                        p-3 rounded-md w-24"
+                        p-3 rounded-md w-24 h-16"
                   >
                     <p className="mig-caption--bold text-mono30 text-center">
                       {schedules[scheduleIdx]?.shift?.title}
@@ -389,8 +387,9 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     </p>
                   </button>
                 </div>
-              )
-            ),
+              )}
+            </div>
+          ),
         };
       },
     };
@@ -421,10 +420,10 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       render: (text, record, index) => {
         return {
           children: (
-            <div className="px-3 py-2 flex flex-col gap-1 ">
-              <p className="mig-caption--bold text-mono30">{record?.name}</p>
-              <p className="mig-caption text-mono50">{record?.position}</p>
-              <p className="mig-caption text-mono50">{record?.company_name}</p>
+            <div className="flex flex-col ">
+              <p className="mig-caption--medium text-mono30">{record?.name}</p>
+              <p className="mig-small text-mono50">{record?.position}</p>
+              <p className="mig-small text-mono50">{record?.company_name}</p>
             </div>
           ),
         };
@@ -435,7 +434,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
         <button
           onClick={handleClickPrevWeek}
           className="bg-mono100 p-2 w-9 h-9 rounded-full 
-            flex items-center justify-center"
+            flex items-center justify-center hover:opacity-75"
         >
           <LeftIconSvg color={"#808080"} size={16} />
         </button>
@@ -451,9 +450,8 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             <button
               onClick={handleClickNextWeek}
               disabled={!isCanBeScheduled}
-              className="bg-mono100 p-2 w-9 h-9 rounded-full 
-            flex items-center justify-center"
-              style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+              className={`bg-mono100 p-2 w-9 h-9 rounded-full 
+            flex items-center justify-center hover:opacity-75`}
             >
               <RightIconSvg color={"#808080"} size={16} />
             </button>
@@ -474,8 +472,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 <button
                   disabled={!isCanBeScheduled}
                   className="bg-mono100 p-2 w-9 h-9 rounded-full 
-                 flex items-center justify-center"
-                  style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+                 flex items-center justify-center opacity-30"
                 >
                   <RightIconSvg color={"#808080"} size={16} />
                 </button>
@@ -497,11 +494,11 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
     >
       <div className="grid grid-cols-1" id="mainWrapper">
         {/* Table Daftar Jadwal */}
-        <div className="flex flex-col shadow-md rounded-md bg-white  mb-6  ">
+        <div className="flex flex-col shadow-md rounded-md bg-white mb-6">
           {/* Filter */}
-          <div className="flex flex-col lg:flex-row items-end md:items-center gap-4 py-3 px-4 border-b">
+          <div className="flex flex-col lg:flex-row items-end md:items-center gap-3 py-3 px-4 border-b">
             {/* Search by keyword (kata kunci) */}
-            <div className="w-full lg:w-3/12">
+            <div className="w-full ">
               <Input
                 style={{ width: `100%` }}
                 placeholder="Search schedule here"
@@ -519,7 +516,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 disabled={!isAllowedToGetSchedules}
               />
             </div>
-            <div className="w-full lg:w-3/12">
+            <div className="w-full ">
               <Select
                 allowClear
                 showSearch
@@ -546,7 +543,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 ))}
               </Select>
             </div>
-            <div className="w-full lg:w-3/12">
+            <div className="w-full ">
               <Select
                 allowClear
                 showSearch
@@ -575,20 +572,20 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             </div>
             {!isSelectMode ? (
               <>
-                <div className="w-full lg:w-2/12">
+                <div className="w-full ">
                   <ButtonSys
                     fullWidth
                     type={"primary"}
                     onClick={() => setShowCreateDrawer(true)}
                     disabled={!isAllowedToAddSchedule}
                   >
-                    <div className="flex flex-row items-center space-x-2">
+                    <div className="flex flex-row items-center space-x-2 whitespace-nowrap">
                       <CalendarStatsIconSvg size={16} />
                       <p className="">Schedule an Employee</p>
                     </div>
                   </ButtonSys>
                 </div>
-                <div className="w-full lg:w-2/12">
+                <div className="w-full ">
                   <ButtonSys
                     fullWidth
                     type={"default"}
@@ -596,7 +593,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     onClick={() => setSelectMode(true)}
                     disabled={!isAllowedToDeleteAllSchedule}
                   >
-                    <div className="flex flex-row items-center space-x-2">
+                    <div className="flex flex-row items-center space-x-2 whitespace-nowrap">
                       <CalendarOffIconSvg size={16} />
                       <p className="">Clear Schedule</p>
                     </div>
@@ -604,19 +601,22 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 </div>
               </>
             ) : (
-              <ButtonSys
-                type={"default"}
-                color={"danger"}
-                onClick={() => {
-                  setSelectMode(false);
-                  setSelectedEmployees([]);
-                }}
-              >
-                <div className="flex flex-row space-x-1 items-center">
-                  <CloseOutlined />
-                  <p>Batal</p>
-                </div>
-              </ButtonSys>
+              <div className="w-full flex ">
+                <ButtonSys
+                  type={"default"}
+                  color={"danger"}
+                  fullWidth
+                  onClick={() => {
+                    setSelectMode(false);
+                    setSelectedEmployees([]);
+                  }}
+                >
+                  <div className="flex flex-row space-x-1 items-center">
+                    <CloseOutlined />
+                    <p>Cancel</p>
+                  </div>
+                </ButtonSys>
+              </div>
             )}
           </div>
 
@@ -646,7 +646,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               <button
                 onClick={() => handleClickPrevMonth()}
                 className="bg-mono100 p-2 w-9 h-9 rounded-full 
-                flex items-center justify-center"
+                flex items-center justify-center hover:opacity-75"
               >
                 <LeftIconSvg color={"#808080"} size={16} />
               </button>
@@ -662,7 +662,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   // open
                   allowClear={false}
                   bordered={false}
-                  locale={locale}
+                  // locale={locale}
                   format={"MMMM YYYY"}
                   value={currentStartOfWeek}
                   className="scheduleCalendar cursor-pointer"
@@ -706,8 +706,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                   onClick={handleClickNextMonth}
                   disabled={!isCanBeScheduled}
                   className="bg-mono100 p-2 w-9 h-9 rounded-full 
-                flex items-center justify-center"
-                  style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+                flex items-center justify-center hover:opacity-75"
                 >
                   <RightIconSvg color={"#808080"} size={16} />
                 </button>
@@ -728,8 +727,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                     <button
                       disabled={!isCanBeScheduled}
                       className="bg-mono100 p-2 w-9 h-9 rounded-full 
-                   flex items-center justify-center"
-                      style={{ opacity: isCanBeScheduled ? 1 : 0.3 }}
+                   flex items-center justify-center opacity-30"
                     >
                       <RightIconSvg color={"#808080"} size={16} />
                     </button>

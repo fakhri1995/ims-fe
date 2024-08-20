@@ -211,12 +211,24 @@ const ButtonSys = ({
     case "ghost":
       buttonElement = (
         <button
+          disabled={disabled || loading}
           form={form}
           onClick={onClick}
           type={buttonType}
           className={ghostButtonClassName}
         >
-          {children}
+          {loading ? (
+            <Spin
+              indicator={
+                <LoadingOutlined
+                  style={{ fontSize: 12, fontWeight: "bold", color: "white" }}
+                  spin
+                />
+              }
+            />
+          ) : (
+            children
+          )}
         </button>
       );
       break;
