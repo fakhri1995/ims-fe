@@ -601,19 +601,22 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
                 </div>
               </>
             ) : (
-              <ButtonSys
-                type={"default"}
-                color={"danger"}
-                onClick={() => {
-                  setSelectMode(false);
-                  setSelectedEmployees([]);
-                }}
-              >
-                <div className="flex flex-row space-x-1 items-center">
-                  <CloseOutlined />
-                  <p>Cancel</p>
-                </div>
-              </ButtonSys>
+              <div className="w-full flex ">
+                <ButtonSys
+                  type={"default"}
+                  color={"danger"}
+                  fullWidth
+                  onClick={() => {
+                    setSelectMode(false);
+                    setSelectedEmployees([]);
+                  }}
+                >
+                  <div className="flex flex-row space-x-1 items-center">
+                    <CloseOutlined />
+                    <p>Cancel</p>
+                  </div>
+                </ButtonSys>
+              </div>
             )}
           </div>
 
