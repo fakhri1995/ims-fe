@@ -37,5 +37,5 @@ export const DATE_MOMENT_FORMAT_PAYLOAD = "YYYY-MM-DD HH:mm:ss";
  * Used in attendance schedule
  */
 export const TODAY = new Date();
-export const DAYS = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+export const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 export const MAX_SCHEDULED_DAYS = 90; // maximum number of days that can be scheduled or accessed

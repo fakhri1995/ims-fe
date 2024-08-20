@@ -18,10 +18,8 @@ import {
   AttendanceScheduleService,
   IGetScheduleSucceedResponse,
   IUpdateSchedulePayload,
-  ScheduleData,
   ScheduleDetailData,
 } from "apis/attendance";
-import { RequesterService } from "apis/user";
 
 import { AttendanceShiftService } from "../../../apis/attendance/attendance-shift.service";
 import {
@@ -31,13 +29,10 @@ import {
   ATTENDANCE_SCHEDULE_GET,
   ATTENDANCE_SCHEDULE_UPDATE,
   ATTENDANCE_SHIFTS_GET,
-  REQUESTERS_GET,
-  TALENT_POOL_SHARES_GET,
-  TALENT_POOL_SHARE_ADD,
 } from "../../../lib/features";
 import ButtonSys from "../../button";
-import { AlertCircleIconSvg, CopyIconSvg, InfoCircleIconSvg } from "../../icon";
-import { ModalHapus2 } from "../../modal/modalCustom";
+import { CheckIconSvg } from "../../icon";
+import { ModalDelete } from "../modalConfirmation";
 import ModalCore from "../modalCore";
 
 const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
@@ -145,7 +140,7 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
           handleClose();
         },
         onError: (error) => {
-          notificationError({ message: "Gagal mengubah jadwal." });
+          notificationError({ message: "Failed to update schedule." });
         },
       }
     );
@@ -164,50 +159,33 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
           handleClose();
         },
         onError: (error) => {
-          notificationError({ message: "Gagal menghapus jadwal." });
+          notificationError({ message: "Failed to delete schedule." });
         },
       }
     );
 
-  const title = (
-    <div className="flex items-center gap-4">
-      <p className="mig-heading--4 w-2/3">Perubahan Shift Kerja</p>
-      <ButtonSys
-        type={"default"}
-        color={"danger"}
-        onClick={() => setModalDelete(true)}
-        disabled={!isAllowedToDeleteSchedule}
-      >
-        Hapus
-      </ButtonSys>
-    </div>
-  );
+  const title = <p className="mig-heading--4 w-2/3">Work Shift Change</p>;
   // console.log({ dataSchedule });
 
   if (modalDelete) {
     return (
       <AccessControl hasPermission={ATTENDANCE_SCHEDULE_DELETE}>
-        <ModalHapus2
-          title={
-            <div className="flex items-center gap-4">
-              <AlertCircleIconSvg color={"#BF4A40"} size={24} />
-              <p className="font-bold">Peringatan</p>
-            </div>
-          }
+        <ModalDelete
+          title={"Warning"}
           visible={modalDelete}
-          onvisible={setModalDelete}
           onOk={() => deleteSchedule(dataSchedule?.id)}
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"jadwal"}
+          itemName={"schedule"}
           loading={loadingDeleteSchedule}
+          disabled={!isAllowedToDeleteSchedule}
         >
           <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan jadwal milik{" "}
+            Are you sure you want to delete this schedule owned by{" "}
             <strong>{dataSchedule?.user?.name}</strong>?
           </p>
-        </ModalHapus2>
+        </ModalDelete>
       </AccessControl>
     );
   }
@@ -220,31 +198,45 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
       maskClosable={false}
       width={500}
       footer={
-        <div className="flex items-center justify-end gap-4">
+        <div className="flex items-center justify-between gap-4">
           <ButtonSys
-            onClick={() => onvisible(false)}
-            type={"default"}
+            type={"ghost"}
             color={"danger"}
+            onClick={() => setModalDelete(true)}
+            disabled={!isAllowedToDeleteSchedule}
           >
-            Batal
+            Delete
           </ButtonSys>
-          <Spin spinning={loading}>
+
+          <div className="flex items-center gap-4">
             <ButtonSys
-              fullWidth
-              type={"primary"}
-              onClick={() => updateSchedule(dataSchedule)}
-              disabled={!isAllowedToUpdateSchedule}
+              onClick={() => onvisible(false)}
+              type={"default"}
+              color={"mono50"}
             >
-              <p>Simpan</p>
+              Cancel
             </ButtonSys>
-          </Spin>
+            <Spin spinning={loading}>
+              <ButtonSys
+                fullWidth
+                type={"primary"}
+                onClick={() => updateSchedule(dataSchedule)}
+                disabled={!isAllowedToUpdateSchedule}
+              >
+                <div className="flex items-center gap-2">
+                  <CheckIconSvg size={16} />
+                  <p>Save Changes</p>
+                </div>
+              </ButtonSys>
+            </Spin>
+          </div>
         </div>
       }
       loading={loading}
     >
       <Form layout="vertical">
         <Form.Item
-          label="Karyawan Dipilih"
+          label="Employee Selected"
           name={"employee"}
           rules={[
             {
@@ -257,19 +249,19 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
               showSearch
               allowClear
               value={dataSchedule?.user?.name}
-              placeholder="Pilih nama karyawan"
+              placeholder="Select employee name"
               disabled={true}
             ></Select>
           </>
         </Form.Item>
 
         <Form.Item
-          label="Tanggal Berlaku"
+          label="Effective Date"
           name={"tanggal_berlaku"}
           rules={[
             {
               required: true,
-              message: "Tanggal Berlaku wajib diisi",
+              message: "Effective Date is required",
             },
           ]}
           className="col-span-2"
@@ -277,7 +269,7 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
           <div className="flex gap-2 items-center">
             <DatePicker
               // allowEmpty
-              placeholder="Pilih Tanggal Berlaku"
+              placeholder="Select Effective Date"
               className="w-full"
               format={"DD MMMM YYYY"}
               disabled={true}
@@ -291,8 +283,8 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
         </Form.Item>
 
         <Form.Item
-          label="Tetapkan Shift"
-          name={"employee"}
+          label="Shift"
+          name={"shift"}
           rules={[
             {
               required: true,
@@ -304,7 +296,7 @@ const ModalScheduleUpdate = ({ initProps, scheduleId, visible, onvisible }) => {
               showSearch
               allowClear
               value={dataSchedule?.shift_id}
-              placeholder="Pilih shift"
+              placeholder="Select Shift"
               disabled={!isAllowedToGetShifts}
               onChange={(value) =>
                 setDataSchedule((prev) => ({
