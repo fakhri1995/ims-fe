@@ -162,6 +162,7 @@ const DrawerRegistrationUpdate = ({
         onClickDelete(dataRegistration);
         onvisible(false);
       }}
+      width={380}
     >
       <Spin spinning={loadingUpdate}>
         <div className="flex flex-col">

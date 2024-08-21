@@ -449,13 +449,16 @@ export const Careers = ({ initProps, dataProfile, sidemenu }) => {
           }, 500);
         } else if (!res2.success) {
           notification["error"]({
-            message: res2.message.errorInfo.status_detail,
+            message: res2.message,
             duration: 3,
           });
-          setloadingcreate(false);
           setdrawcreate(false);
         }
-      });
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => setloadingcreate(false));
   };
   const handleEdit = () => {
     setloadingedit(true);
