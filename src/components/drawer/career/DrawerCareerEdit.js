@@ -64,8 +64,6 @@ const DrawerCareerEdit = ({
     RECRUITMENT_JALUR_DAFTARS_LIST_GET
   );
 
-  const [instanceForm] = Form.useForm();
-
   //USESTATE
 
   const [disabledcreate, setdisabledcreate] = useState(true);
@@ -93,7 +91,7 @@ const DrawerCareerEdit = ({
   ];
 
   return (
-    <Drawer
+    <DrawerCore
       title={title}
       visible={visible}
       onClose={() => {
@@ -102,7 +100,14 @@ const DrawerCareerEdit = ({
       destroyOnClose={true}
       maskClosable={false}
       width={450}
-      //   disabled={disabledcreate}
+      buttonOkText={"Update Lowongan Kerja"}
+      submit={true}
+      form="formCareer"
+      buttonCancelText={"Cancel"}
+      onButtonCancelClicked={() => {
+        setdrawedit(false);
+      }}
+      // disabled={disabledcreate}
     >
       <Spin spinning={loadingEdit}>
         <div className={"flex flex-row mb-6"}>
@@ -139,7 +144,12 @@ const DrawerCareerEdit = ({
             )}
           </div>
         </div>
-        <Form layout="vertical" initialValues={dataedit} onFinish={handleEdit}>
+        <Form
+          id="formCareer"
+          layout="vertical"
+          initialValues={dataedit}
+          onFinish={handleEdit}
+        >
           {activeTab == "1" ? (
             <div className="flex flex-col">
               <Form.Item
@@ -414,7 +424,7 @@ const DrawerCareerEdit = ({
                   }}
                 />
               </Form.Item>
-              <div className="bottom-0 flex justify-end">
+              {/* <div className="bottom-0 flex justify-end">
                 <Button
                   type="default"
                   onClick={() => {
@@ -433,7 +443,7 @@ const DrawerCareerEdit = ({
                 >
                   Update Lowongan Kerja
                 </Button>
-              </div>
+              </div> */}
             </div>
           ) : (
             <div>
@@ -799,7 +809,7 @@ const DrawerCareerEdit = ({
                   + Tambah Field Baru
                 </div>
               </div>
-              {dataedit.question.length <= 2 ? (
+              {/* {dataedit.question.length <= 2 ? (
                 <div className="fixed bottom-0 right-6 mb-6">
                   <Button
                     type="default"
@@ -841,7 +851,7 @@ const DrawerCareerEdit = ({
                     Update Lowongan Kerja
                   </Button>
                 </div>
-              )}
+              )} */}
             </div>
           )}
           {/* <div className="fixed bottom-0 right-6 mb-6">
@@ -866,7 +876,7 @@ const DrawerCareerEdit = ({
           </div> */}
         </Form>
       </Spin>
-    </Drawer>
+    </DrawerCore>
   );
 };
 

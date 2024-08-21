@@ -27,6 +27,8 @@ import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
 import DrawerCore from "../../../../components/drawer/drawerCore";
+import DrawerEmailTemplateCreate from "../../../../components/drawer/recruitment/drawerEmailTemplateCreate";
+import DrawerEmailTemplateUpdate from "../../../../components/drawer/recruitment/drawerEmailTemplateUpdate";
 import { SearchIconSvg } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard-management";
 import st from "../../../../components/layout-dashboard-management.module.css";
@@ -35,24 +37,6 @@ import SetupMenu from "../../../../components/setupMenu";
 import { TableCustomRecruitmentTemplateEmail } from "../../../../components/table/tableCustom";
 import { createKeyPressHandler } from "../../../../lib/helper";
 import httpcookie from "cookie";
-
-const DrawerEmailTemplateCreate = dynamic(
-  () => {
-    return import(
-      "../../../../components/drawer/recruitment/drawerEmailTemplateCreate"
-    );
-  },
-  { ssr: false }
-);
-
-const DrawerEmailTemplateUpdate = dynamic(
-  () => {
-    return import(
-      "../../../../components/drawer/recruitment/drawerEmailTemplateUpdate"
-    );
-  },
-  { ssr: false }
-);
 
 const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   /**
