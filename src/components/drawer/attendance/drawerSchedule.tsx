@@ -152,7 +152,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
       onSuccess: (data) => setDataAgents(data.data),
       onError: (error) => {
         notificationError({
-          message: "Gagal mendapatkan daftar karyawan (agent).",
+          message: "Failed to get list of employee (agent).",
         });
       },
     }
@@ -188,7 +188,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
       },
       onError: (error) => {
         notificationError({
-          message: "Gagal mendapatkan daftar shift.",
+          message: "Failed to get list of shift.",
         });
       },
     }
@@ -313,7 +313,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
   const validateRepetitionRange = (_, value) => {
     if (value && value[1].diff(value[0], "days") > MAX_SCHEDULED_DAYS) {
       return Promise.reject(
-        "Maksimal rentang tanggal yang dapat dipilih adalah 3 bulan"
+        "Maximum date range that can be selected is 3 months."
       );
     }
     return Promise.resolve();
@@ -321,31 +321,31 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
 
   const dayList = [
     {
-      label: "Senin",
+      label: "Monday",
       value: 1,
     },
     {
-      label: "Selasa",
+      label: "Tuesday",
       value: 2,
     },
     {
-      label: "Rabu",
+      label: "Wednesday",
       value: 3,
     },
     {
-      label: "Kamis",
+      label: "Thursday",
       value: 4,
     },
     {
-      label: "Jumat",
+      label: "Friday",
       value: 5,
     },
     {
-      label: "Sabtu",
+      label: "Saturday",
       value: 6,
     },
     {
-      label: "Minggu",
+      label: "Sunday",
       value: 0,
     },
   ];
@@ -355,12 +355,12 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
 
   return (
     <DrawerCore
-      title={"Jadwalkan Karyawan"}
+      title={"Schedule an Employee"}
       visible={visible}
-      width={530}
+      width={500}
       onClose={handleClose}
-      buttonOkText={"Simpan"}
-      buttonCancelText={"Batal"}
+      buttonOkText={"Save Schedule"}
+      buttonCancelText={"Cancel"}
       onClick={() => addSchedule(dataSchedule)}
       onButtonCancelClicked={handleClose}
       disabled={
@@ -375,9 +375,6 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
       }
     >
       <div className="flex flex-col">
-        <p className="mb-6 text-red-500 text-xs italic">
-          *Informasi ini harus diisi
-        </p>
         <Form layout="vertical" form={instanceForm}>
           <div>
             <div className="mb-6 ">
@@ -393,13 +390,13 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                   key={"1"}
                   header={
                     <div className="flex items-center justify-between w-full">
-                      <p className="text-md">Pilih Karyawan</p>
+                      <p className="text-md">Select Employee</p>
                       {selectedAgents?.length ? (
                         <div
                           className="flex items-center gap-2 bg-backdrop text-primary100 
                           px-3 py-1 rounded-full mig-caption--bold"
                         >
-                          <p>{selectedAgents?.length} Karyawan Dipilih</p>
+                          <p>{selectedAgents?.length} Employees Selected</p>
                         </div>
                       ) : (
                         <div
@@ -407,7 +404,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                           px-3 py-1 rounded-full text-[10px] font-bold"
                         >
                           <AlerttriangleIconSvg size={18} color={"#BF4A40"} />
-                          <p>Kamu Belum Memilih Karyawan</p>
+                          <p>No employees selected yet</p>
                         </div>
                       )}
                     </div>
@@ -419,7 +416,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                         <div className="flex items-center gap-2">
                           <InfoCircleIconSvg color={"#ED962F"} size={18} />
                           <p className="mig-caption--medium text-xs text-onprogress">
-                            Maksimal karyawan yang dipilih adalah 20 orang.
+                            Maximum number of employees selected is 20 people.
                           </p>
                         </div>
                         {/* <button onClick={} className="bg-transparent p-0 m-0 flex items-center">
@@ -433,7 +430,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                         allowClear
                         style={{ width: `100%` }}
                         suffix={<SearchOutlined />}
-                        placeholder="Cari Nama Karyawan.."
+                        placeholder="Search Employee Name.."
                         onChange={onChangeSearchAgents}
                         disabled={!isAllowedToGetAgents}
                       />
@@ -442,7 +439,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                           allowClear
                           showSearch
                           disabled={!isAllowedToGetCompanyList}
-                          placeholder="Pilih Perusahaan"
+                          placeholder="Select Company"
                           style={{ width: `100%` }}
                           onChange={(value) => {
                             setAgentFilterParams((prev) => ({
@@ -474,7 +471,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                     </div>
                     <div className="flex justify-between items-center gap-2">
                       <p className="mig-caption--bold text-mono30">
-                        Daftar Karyawan
+                        List of Employee
                       </p>
                       {selectedAgents?.length < agentFilterParams?.rows ? (
                         <button
@@ -483,7 +480,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                           onClick={handleSelectAll}
                           type="button"
                         >
-                          Pilih Semua
+                          Select All
                         </button>
                       ) : (
                         <button
@@ -492,7 +489,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                           onClick={handleUnselectAll}
                           type="button"
                         >
-                          Hapus Semua
+                          Deselect All
                         </button>
                       )}
                     </div>
@@ -583,22 +580,22 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
             </div>
 
             <Form.Item
-              label="Tanggal Berlaku"
+              label="Effective Date"
               name={"date"}
               rules={[
                 {
                   required: true,
-                  message: "Tanggal Berlaku wajib diisi",
+                  message: "Effective Date is required",
                 },
               ]}
               className="col-span-2"
             >
               <div className="flex gap-2 items-center">
                 <DatePicker
-                  placeholder="Pilih Tanggal Berlaku"
+                  placeholder="Select Effective Date"
                   className="w-full"
                   format={"DD MMMM YYYY"}
-                  locale={locale}
+                  // locale={locale}
                   value={
                     moment(dataSchedule.date).isValid()
                       ? moment(dataSchedule.date)
@@ -618,13 +615,13 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
             </Form.Item>
 
             <Form.Item
-              label="Tetapkan Shift"
+              label="Shift"
               name={"shift_id"}
               className="col-span-2"
               rules={[
                 {
                   required: true,
-                  message: "Shift wajib diisi",
+                  message: "Shift is required",
                 },
               ]}
             >
@@ -632,7 +629,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                 <AsyncSelect
                   allowClear
                   value={dataSchedule.shift_id}
-                  placeholder="Pilih Shift"
+                  placeholder="Select Shift"
                   disabled={!isAllowedToGetShifts}
                   className=" mb-2"
                   lock={lockScroll}
@@ -658,7 +655,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
               <div className="flex items-center gap-2">
                 <InfoCircleIconSvg color={"#00589F"} size={18} />
                 <p className="mig-caption--medium text-secondary100">
-                  Belum memiliki shift yang sesuai?
+                  Don't have a suitable shift yet?
                 </p>
               </div>
               <ButtonSys
@@ -671,7 +668,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
             </div>
 
             <div className="flex items-center gap-4 mb-6">
-              <p className="mig-caption--bold">Jadwal Repetisi</p>
+              <p className="mig-caption--bold">Repeat Schedule</p>
               <Switch
                 checked={isRepetition}
                 onChange={handleSwitchRepetition}
@@ -682,15 +679,15 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
 
             <div className={isRepetition ? `opacity-100` : `opacity-20`}>
               <h4 className="mig-heading--4 mb-6">
-                Menyiapkan Jadwal Repetisi
+                Setting Up Schedule Repetition
               </h4>
               <Form.Item
-                label="Pilih Salah Satu"
+                label="Select One"
                 name={"repeat"}
                 rules={[
                   {
                     required: true,
-                    message: "Wajib diisi",
+                    message: "Required",
                   },
                 ]}
                 className="col-span-2"
@@ -707,7 +704,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                     className="border border-primary100 py-1 px-3 rounded-full mb-2"
                   >
                     <div className="flex flex-row items-center space-x-1">
-                      <p>Selamanya</p>
+                      <p>All Time</p>
                     </div>
                   </CheckableTag>
 
@@ -724,7 +721,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                     }}
                   >
                     <div className="flex flex-row items-center space-x-1">
-                      <p>Pilih Rentang Tanggal Repetisi</p>
+                      <p>Select Recurrence Date Range</p>
                     </div>
                   </CheckableTag>
                 </div>
@@ -732,12 +729,12 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
               {!dataSchedule.forever && (
                 <>
                   <Form.Item
-                    label="Rentang Tanggal Repetisi"
+                    label="Date Range"
                     name={"repetition_dates"}
                     rules={[
                       {
                         required: true,
-                        message: "Rentang tanggal repetisi wajib diisi",
+                        message: "Date Range is required",
                       },
 
                       { validator: validateRepetitionRange },
@@ -749,7 +746,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                       picker="date"
                       className="w-full"
                       format={"DD MMMM YYYY"}
-                      placeholder={["Mulai", "Akhir"]}
+                      placeholder={["Start", "End"]}
                       disabledDate={(current) => {
                         return (
                           moment(current) < moment(dataSchedule?.date) ||
@@ -790,8 +787,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                       <div className="flex items-center gap-2 bg-danger px-4 py-3 rounded-md mb-6">
                         <AlerttriangleIconSvg color={"#FFF"} size={20} />
                         <p className="text-white">
-                          <b>Tanggal Mulai Repetisi</b> harus melebihi{" "}
-                          <b>Tanggal Berlaku</b>!
+                          <b>Start Date</b> must be after <b>Effective Date</b>!
                         </p>
                       </div>
                     )}
@@ -799,12 +795,12 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
               )}
 
               <Form.Item
-                label="Tentukan Hari"
+                label="Set Days"
                 name={"repeats"}
                 rules={[
                   {
                     required: true,
-                    message: "Hari wajib diisi",
+                    message: "Day is required",
                   },
                 ]}
                 className="col-span-2"
@@ -842,7 +838,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                   <div className="flex items-center gap-2">
                     <InfoCircleIconSvg color={"#00589F"} size={14} />
                     <p className="mig-caption text-secondary100">
-                      Anda dapat memilih hari lebih dari satu
+                      You can select more than one day
                     </p>
                   </div>
                 </div>

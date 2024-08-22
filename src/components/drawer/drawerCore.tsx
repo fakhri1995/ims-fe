@@ -19,6 +19,8 @@ const DrawerCore = ({
   buttonUpdateText,
   iconButtonText,
   width = 360,
+  form,
+  submit,
 }: {
   title: string | ReactNode;
   visible: boolean;
@@ -34,6 +36,8 @@ const DrawerCore = ({
   buttonUpdateText?: string | ReactNode;
   iconButtonText?: ReactNode;
   width?: number;
+  form?: string;
+  submit?: boolean;
 }) => {
   return (
     <Drawer
@@ -60,12 +64,14 @@ const DrawerCore = ({
             </ButtonSys>
           )}
 
-          {buttonOkText && onClick && (
+          {buttonOkText && (onClick || (submit && form)) && (
             <ButtonSys
               disabled={disabled}
               type="primary"
               onClick={onClick}
               loading={loading}
+              form={form}
+              submit={submit}
             >
               <div className={"flex items-center gap-2"}>
                 {iconButtonText ? (

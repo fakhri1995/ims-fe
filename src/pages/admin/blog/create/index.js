@@ -26,7 +26,6 @@ import { getBase64 } from "lib/helper";
 
 import { RequesterService } from "apis/user";
 
-import CustomTextEditor from "../../../../components/CustomTextEditor";
 import Layout from "../../../../components/layout-dashboard-management";
 import st from "../../../../components/layout-dashboard-management.module.css";
 import RichText from "../../../../components/migwebsite/RichText";

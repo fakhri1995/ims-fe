@@ -436,6 +436,7 @@ const ModulesIndex = ({
         }
       });
   };
+
   const handleUpdate = () => {
     setloadingupdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateModuleFeature`, {
@@ -1095,11 +1096,11 @@ const ModulesIndex = ({
           {datamodules[checkedmodules] === undefined ? (
             <p className="font-semibold">-</p>
           ) : (
-            <ol>
+            <ol className="px-3">
               {datamodules[checkedmodules].features.map((doc, idx) => {
                 return (
                   <li key={idx} className="font-semibold">
-                    {idx + 1}. {doc.name}
+                    {doc.name}
                   </li>
                 );
               })}
