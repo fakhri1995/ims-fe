@@ -524,7 +524,7 @@ const AbsenTable: FC<IAbsenTable> = ({ keyword, role }) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
   const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
-
+  const [isReady, setIsReady] = useState(false);
   const { data, isLoading } = useQuery(
     [AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET],
     () =>
