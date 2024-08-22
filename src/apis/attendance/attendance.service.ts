@@ -49,7 +49,12 @@ export class AttendanceService {
       "/getAttendancesUsers"
     );
   }
-
+  /**
+   * Retrieve all attendances as an Admin.
+   *
+   * @see {AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET}
+   * @access GET /getAttendancesUsersCompany
+   */
   static async findAsAdminCompany(axiosClient: AxiosInstance) {
     return await axiosClient.get<IGetAttendanceUsersSucceedResponse>(
       "/getAttendancesUsersCompany"

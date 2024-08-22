@@ -52,6 +52,9 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
             a = dataRoles.length;
           }
         }
+        if (roles == null) {
+          setRoles(2);
+        }
       }
     }
   }, [dataProfile]);
@@ -73,7 +76,9 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
             </div>
 
             <div className="h-1/2">
-              {roles && <AttendanceAdminTodayStatCard role={roles} />}
+              {roles && roles == 1 && (
+                <AttendanceAdminTodayStatCard role={roles} />
+              )}
             </div>
           </div>
 

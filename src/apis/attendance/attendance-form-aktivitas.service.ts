@@ -33,11 +33,44 @@ export class AttendanceFormAktivitasService {
     );
   }
 
+  static async findCompany(
+    axiosClient: AxiosInstance,
+    criteria?: IGetAttendanceFormsParams
+  ) {
+    const querySearchCriteria = QueryString.stringify(criteria, {
+      addQueryPrefix: true,
+    });
+
+    return await axiosClient.get<IGetAttendanceFormsSucceedResponse>(
+      "/getAttendanceFormCompany" + querySearchCriteria
+    );
+  }
+
   /**
    * @see {AttendanceFormAktivitasServiceQueryKeys.FIND_ONE} Query key attach with `aktivitasId` (e.g. [FIND, aktivitasId]).
    * @access GET /getAttendanceForm
    */
   static async findOne(
+    axiosClient: AxiosInstance,
+    aktivitasId: number[] | number,
+    role: number
+  ) {
+    const querySearchCriteria = QueryString.stringify(
+      { id: aktivitasId },
+      { addQueryPrefix: true }
+    );
+    if (role == 1) {
+      return await axiosClient.get<IGetAttendanceFormSucceedResponse>(
+        "/getAttendanceForm" + querySearchCriteria
+      );
+    } else {
+      return await axiosClient.get<IGetAttendanceFormSucceedResponse>(
+        "/getAttendanceFormCompany" + querySearchCriteria
+      );
+    }
+  }
+
+  static async findCompanyOne(
     axiosClient: AxiosInstance,
     aktivitasId: number[] | number
   ) {
@@ -47,7 +80,7 @@ export class AttendanceFormAktivitasService {
     );
 
     return await axiosClient.get<IGetAttendanceFormSucceedResponse>(
-      "/getAttendanceForm" + querySearchCriteria
+      "/getAttendanceFormCompany" + querySearchCriteria
     );
   }
 
