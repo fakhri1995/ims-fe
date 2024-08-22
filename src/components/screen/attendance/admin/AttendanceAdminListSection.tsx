@@ -90,10 +90,7 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    company_ids:
-      role == 1
-        ? withDefault(StringParam, undefined)
-        : withDefault(NumberParam, companyId),
+    company_ids: withDefault(StringParam, undefined),
     is_late: withDefault(NumberParam, undefined),
     is_hadir: withDefault(NumberParam, undefined),
     keyword: withDefault(StringParam, undefined),
@@ -138,17 +135,15 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
         <div className="flex flex-col">
           <div className="flex items-center justify-between pt-3 px-4">
             <h4 className="mig-body--bold">Employee Attendance List</h4>
-            {role == 1 && (
-              <ButtonSys
-                square
-                type={"primary"}
-                color="mono100"
-                onClick={() => setIsExportDrawerShown(true)}
-                disabled={!canExportTableData}
-              >
-                <DownloadIconSvg />
-              </ButtonSys>
-            )}
+            <ButtonSys
+              square
+              type={"primary"}
+              color="mono100"
+              onClick={() => setIsExportDrawerShown(true)}
+              disabled={!canExportTableData}
+            >
+              <DownloadIconSvg />
+            </ButtonSys>
           </div>
           <div className="border-b space-y-3 px-4">
             <Tabs
