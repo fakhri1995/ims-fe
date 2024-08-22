@@ -76,9 +76,7 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
             </div>
 
             <div className="h-1/2">
-              {roles && roles == 1 && (
-                <AttendanceAdminTodayStatCard role={roles} />
-              )}
+              <AttendanceAdminTodayStatCard />
             </div>
           </div>
 
