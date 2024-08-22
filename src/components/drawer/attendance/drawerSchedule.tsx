@@ -21,6 +21,7 @@ import locale from "antd/lib/date-picker/locale/id_ID";
 import CheckableTag from "antd/lib/tag/CheckableTag";
 import { AxiosResponse } from "axios";
 import moment from "moment";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -48,6 +49,7 @@ import {
   COMPANY_CLIENTS_GET,
 } from "lib/features";
 import {
+  generateStaticAssetUrl,
   getNameInitial,
   notificationError,
   notificationSuccess,
@@ -130,6 +132,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
   const [isMaxAgents, setIsMaxAgents] = useState(false);
   const [isRepetition, setRepetition] = useState(false);
   const [lockScroll, setLockScroll] = useState(false);
+  const [totalAgents, setTotalAgents] = useState(0);
 
   // 2. USE EFFECT
   const {
@@ -149,7 +152,10 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
       select: (response: AxiosResponse<IGetAgentsPaginateSucceedResponse>) => {
         return response.data.data;
       },
-      onSuccess: (data) => setDataAgents(data.data),
+      onSuccess: (data) => {
+        setDataAgents(data.data);
+        setTotalAgents(data.total);
+      },
       onError: (error) => {
         notificationError({
           message: "Failed to get list of employee (agent).",
@@ -357,7 +363,6 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
     <DrawerCore
       title={"Schedule an Employee"}
       visible={visible}
-      width={500}
       onClose={handleClose}
       buttonOkText={"Save Schedule"}
       buttonCancelText={"Cancel"}
@@ -391,22 +396,20 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                   header={
                     <div className="flex items-center justify-between w-full">
                       <p className="text-md">Select Employee</p>
-                      {selectedAgents?.length ? (
+                      {/* {selectedAgents?.length ? (
                         <div
                           className="flex items-center gap-2 bg-backdrop text-primary100 
-                          px-3 py-1 rounded-full mig-caption--bold"
-                        >
+                          px-3 py-1 rounded-full mig-caption--bold">
                           <p>{selectedAgents?.length} Employees Selected</p>
                         </div>
                       ) : (
                         <div
                           className="flex items-center gap-2 bg-danger bg-opacity-[0.15] text-danger 
-                          px-3 py-1 rounded-full text-[10px] font-bold"
-                        >
+                          px-3 py-1 rounded-full text-[10px] font-bold">
                           <AlerttriangleIconSvg size={18} color={"#BF4A40"} />
                           <p>No employees selected yet</p>
                         </div>
-                      )}
+                      )} */}
                     </div>
                   }
                 >
@@ -425,7 +428,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                       </div>
                     )}
 
-                    <div className="flex flex-col md:flex-row items-center gap-2">
+                    <div className="flex flex-col  items-center gap-2">
                       <Input
                         allowClear
                         style={{ width: `100%` }}
@@ -434,7 +437,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                         onChange={onChangeSearchAgents}
                         disabled={!isAllowedToGetAgents}
                       />
-                      <div className="w-full md:w-1/3">
+                      <div className="w-full ">
                         <Select
                           allowClear
                           showSearch
@@ -500,13 +503,15 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                       dataSource={dataAgents}
                       loading={loadingAgents}
                       pagination={{
+                        defaultCurrent: 1,
                         current: agentFilterParams.page,
                         pageSize: agentFilterParams.rows,
-                        total: dataRawAgents?.total,
-                        showSizeChanger: true,
-                        pageSizeOptions: [10, 20],
-                        showTotal: (total, range) =>
-                          `Showing ${range[0]}-${range[1]} of ${total} items`,
+                        total: totalAgents,
+                        showSizeChanger: false,
+                        simple: true,
+                        // pageSizeOptions: [10, 20],
+                        // showTotal: (total, range) =>
+                        //   `Showing ${range[0]}-${range[1]} of ${total} items`,
                       }}
                       onChange={(pagination, filters, sorter) => {
                         setAgentFilterParams((prev) => ({
@@ -536,13 +541,26 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                             );
                             return (
                               <div
-                                className={`p-3 relative hover:bg-backdrop rounded-md flex 
+                                className={`p-3 relative hover:bg-backdrop rounded-md flex gap-2
                               items-center mb-2 border border-mono100 cursor-pointer ${
                                 isChecked ? "bg-backdrop" : "bg-transparent"
                               }`}
                               >
-                                <div className="flex gap-3 items-center w-11/12">
-                                  <p className="font-medium">{record?.name}</p>
+                                <div className="flex w-11/12 items-center gap-2">
+                                  <img
+                                    src={generateStaticAssetUrl(
+                                      record?.profile_image?.link
+                                    )}
+                                    alt="profile image"
+                                    className="w-8 h-8 rounded-full object-cover"
+                                  />
+                                  {/* </div> */}
+                                  <div className="flex flex-col ">
+                                    <p className="mig-body">{record?.name}</p>
+                                    <p className="mig-caption text-neutrals90">
+                                      {record.position ?? "-"}
+                                    </p>
+                                  </div>
                                 </div>
                                 <Checkbox
                                   key={record.id}
@@ -651,7 +669,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
               </div>
             </Form.Item>
 
-            <div className="flex items-center justify-between bg-lightblue px-4 py-3 rounded-md mb-6">
+            <div className="flex items-center justify-between gap-2 bg-secondary100 bg-opacity-10 px-4 py-3 rounded-md mb-6">
               <div className="flex items-center gap-2">
                 <InfoCircleIconSvg color={"#00589F"} size={18} />
                 <p className="mig-caption--medium text-secondary100">
@@ -663,12 +681,12 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                 color={"secondary100"}
                 onClick={() => rt.push("/attendance/shift")}
               >
-                Buat Shift
+                Create Work Shift
               </ButtonSys>
             </div>
 
             <div className="flex items-center gap-4 mb-6">
-              <p className="mig-caption--bold">Repeat Schedule</p>
+              <p className="mig-caption--bold">Schedule Repetition</p>
               <Switch
                 checked={isRepetition}
                 onChange={handleSwitchRepetition}
@@ -679,7 +697,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
 
             <div className={isRepetition ? `opacity-100` : `opacity-20`}>
               <h4 className="mig-heading--4 mb-6">
-                Setting Up Schedule Repetition
+                Preparing Schedule Repetition
               </h4>
               <Form.Item
                 label="Select One"
@@ -729,12 +747,12 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
               {!dataSchedule.forever && (
                 <>
                   <Form.Item
-                    label="Date Range"
+                    label="Time Range"
                     name={"repetition_dates"}
                     rules={[
                       {
                         required: true,
-                        message: "Date Range is required",
+                        message: "Time Range is required",
                       },
 
                       { validator: validateRepetitionRange },
@@ -795,7 +813,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
               )}
 
               <Form.Item
-                label="Set Days"
+                label="Set The Day"
                 name={"repeats"}
                 rules={[
                   {
@@ -835,7 +853,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                       </CheckableTag>
                     ))}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 bg-secondary100 bg-opacity-10 px-3 py-2 rounded">
                     <InfoCircleIconSvg color={"#00589F"} size={14} />
                     <p className="mig-caption text-secondary100">
                       You can select more than one day
