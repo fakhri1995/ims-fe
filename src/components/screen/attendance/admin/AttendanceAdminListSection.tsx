@@ -297,6 +297,7 @@ export const AttendanceAdminListSection: FC<IAttendanceAdminListSection> = ({
         <EksporAbsensiDrawer
           exportAsAdmin
           visible={isExportDrawerShown}
+          role={1}
           onClose={() => setIsExportDrawerShown(false)}
         />
       </AccessControl>

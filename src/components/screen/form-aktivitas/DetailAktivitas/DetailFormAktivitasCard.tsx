@@ -44,7 +44,7 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
 
     const { data, isLoading } = useQuery(
       [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
-      () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId),
+      () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId, 0),
       {
         enabled: hasPermission(ATTENDANCE_FORM_GET),
         select: (response) => {
