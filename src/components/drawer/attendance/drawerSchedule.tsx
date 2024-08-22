@@ -382,10 +382,9 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
       <div className="flex flex-col">
         <Form layout="vertical" form={instanceForm}>
           <div>
-            <div className="mb-6 ">
+            <div className="mb-2 ">
               <Collapse
                 className="col-span-2 bg-transparent rounded-md"
-                bordered={true}
                 expandIconPosition="right"
                 expandIcon={({ isActive }) => (
                   <RightOutlined rotate={isActive ? 90 : 0} />
@@ -582,7 +581,7 @@ const DrawerSchedule: FC<IDrawerSchedule> = ({
                   </div>
                 </Collapse.Panel>
               </Collapse>
-              <div className="flex flex-wrap gap-2 items-center  pt-2">
+              <div className="flex flex-wrap gap-2 items-center mt-3">
                 {selectedAgents?.map((item) => (
                   <Tag
                     key={item?.id}
