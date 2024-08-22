@@ -56,7 +56,7 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
 
   const { data } = useQuery(
     [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, +aktivitasId],
-    () => AttendanceFormAktivitasService.findOne(axiosClient, +aktivitasId),
+    () => AttendanceFormAktivitasService.findOne(axiosClient, +aktivitasId, 0),
     {
       enabled: isAllowedToShowFormAktivitasDetail,
     }

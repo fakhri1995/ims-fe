@@ -24,6 +24,7 @@ import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
+import { DownloadIconSvg } from "components/icon";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
@@ -130,6 +131,17 @@ export const AttendanceCompanyListSection: FC<
     <>
       <div className="mig-platform space-y-6">
         {/* Header: tabs, buttons, filter, and search box */}
+        <div className={"flex justify-end"}>
+          <ButtonSys
+            square
+            type={"primary"}
+            color="mono100"
+            onClick={() => setIsExportDrawerShown(true)}
+            disabled={!canExportTableData}
+          >
+            <DownloadIconSvg />
+          </ButtonSys>
+        </div>
         <div className="flex flex-col xl:flex-row xl:items-center space-y-2 xl:space-y-0">
           <div className="flex flex-row w-full xl:w-3/6 items-center space-x-2 justify-between xl:justify-start">
             <Tabs
@@ -230,6 +242,7 @@ export const AttendanceCompanyListSection: FC<
       <AccessControl hasPermission={ATTENDANCE_ACTIVITY_USERS_EXPORT}>
         <EksporAbsensiDrawer
           exportAsAdmin
+          role={0}
           visible={isExportDrawerShown}
           onClose={() => setIsExportDrawerShown(false)}
         />
