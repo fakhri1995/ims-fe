@@ -79,7 +79,7 @@ export const AktivitasUserListEditableCard: FC<
     isLoading: currentFormAktivitasUsersLoading,
   } = useQuery(
     [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
-    () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId, 0),
+    () => AttendanceFormAktivitasService.findOne(axiosClient, aktivitasId, 1),
     {
       enabled: hasPermission(ATTENDANCE_FORM_GET),
       select: (response) => response.data.data.users as StaffModelType[],
