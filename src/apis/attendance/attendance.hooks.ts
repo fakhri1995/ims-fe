@@ -530,7 +530,8 @@ export const useGetUserAttendanceTodayActivities = () => {
  * Setiap mutasi berhasil akan update @see AttendanceActivityQueryKeys.FIND agar UI sync dengan backend.
  */
 export const useMutateAttendanceActivity = () => {
-  const axiosClient = useAxiosClient("multipart/form-data");
+  const axiosClientForm = useAxiosClient("multipart/form-data");
+  const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
 
   const onSucceed = useCallback(() => {
@@ -541,7 +542,7 @@ export const useMutateAttendanceActivity = () => {
     (
       payload: FormData
       // IAddAttendanceActivityPayload
-    ) => AttendanceActivityService.add(axiosClient, payload),
+    ) => AttendanceActivityService.add(axiosClientForm, payload),
     {
       onSuccess: onSucceed,
     }
@@ -551,7 +552,7 @@ export const useMutateAttendanceActivity = () => {
     (
       payload: FormData
       // IUpdateAttendanceActivityPayload
-    ) => AttendanceActivityService.update(axiosClient, payload),
+    ) => AttendanceActivityService.update(axiosClientForm, payload),
     {
       onSuccess: onSucceed,
     }
