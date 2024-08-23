@@ -13,6 +13,7 @@ import {
 } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
+import moment from "moment";
 import {
   NumberParam,
   StringParam,
@@ -94,7 +95,7 @@ export const AttendanceCompanyListSection: FC<
     is_late: withDefault(NumberParam, undefined),
     is_hadir: withDefault(NumberParam, undefined),
     keyword: withDefault(StringParam, undefined),
-    date: withDefault(StringParam, undefined),
+    date: withDefault(StringParam, moment().format("YYYY-MM-DD")),
   });
 
   const onTriggerChangeParams = useCallback(
@@ -130,7 +131,11 @@ export const AttendanceCompanyListSection: FC<
   //   }
   // );
   const onChangeDate = (date, dateString) => {
-    setQueryParams({ date: dateString, page: 1 });
+    if (date == null) {
+      setQueryParams({ date: moment().format("YYYY-MM-DD"), page: 1 });
+    } else {
+      setQueryParams({ date: dateString, page: 1 });
+    }
   };
 
   return (
@@ -201,7 +206,7 @@ export const AttendanceCompanyListSection: FC<
               <DatePicker
                 allowClear
                 className="w-full"
-                defaultValue={queryParams.date}
+                // defaultValue={queryParams.date}
                 placeholder="Select Date"
                 onChange={onChangeDate}
               />
