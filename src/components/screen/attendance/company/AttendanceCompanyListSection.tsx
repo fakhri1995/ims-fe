@@ -2,6 +2,7 @@ import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   ConfigProvider,
+  DatePicker,
   Form,
   Input,
   Select,
@@ -93,6 +94,7 @@ export const AttendanceCompanyListSection: FC<
     is_late: withDefault(NumberParam, undefined),
     is_hadir: withDefault(NumberParam, undefined),
     keyword: withDefault(StringParam, undefined),
+    date: withDefault(StringParam, undefined),
   });
 
   const onTriggerChangeParams = useCallback(
@@ -106,6 +108,7 @@ export const AttendanceCompanyListSection: FC<
         company_ids: newParams.company_ids,
         is_late: newParams.is_late,
         is_hadir: newParams.is_hadir,
+        date: newParams.date,
       });
     },
     []
@@ -126,6 +129,9 @@ export const AttendanceCompanyListSection: FC<
   //     select: (response) => response.data.data,
   //   }
   // );
+  const onChangeDate = (date, dateString) => {
+    setQueryParams({ date: dateString, page: 1 });
+  };
 
   return (
     <>
@@ -191,6 +197,15 @@ export const AttendanceCompanyListSection: FC<
                 Unduh Tabel
               </ButtonSys>
             </div> */}
+            <Form.Item noStyle>
+              <DatePicker
+                allowClear
+                className="w-full"
+                defaultValue={queryParams.date}
+                placeholder="Select Date"
+                onChange={onChangeDate}
+              />
+            </Form.Item>
             <Form.Item noStyle name="search">
               <Input
                 prefix={<SearchOutlined />}
@@ -232,6 +247,7 @@ export const AttendanceCompanyListSection: FC<
               is_late={queryParams.is_late}
               is_hadir={queryParams.is_hadir}
               company_ids={queryParams.company_ids}
+              date={queryParams.date}
               onTriggerChangeParams={onTriggerChangeParams}
             />
           )}
@@ -263,6 +279,7 @@ interface ITable {
   is_late: number;
   is_hadir: number;
   company_ids: string;
+  date: string;
   onTriggerChangeParams: (
     newParams: Partial<IGetAttendanceUsersPaginateParams>
   ) => void;
@@ -282,6 +299,7 @@ const HadirTable: FC<ITable> = memo(
     is_late = 0,
     is_hadir = 1,
     company_ids = "",
+    date = "",
   }) => {
     const router = useRouter();
     const axiosClient = useAxiosClient();
@@ -300,8 +318,19 @@ const HadirTable: FC<ITable> = memo(
         is_late,
         is_hadir,
         company_ids,
+        date,
       }),
-      [page, rows, sort_by, sort_type, keyword, is_late, is_hadir, company_ids]
+      [
+        page,
+        rows,
+        sort_by,
+        sort_type,
+        keyword,
+        is_late,
+        is_hadir,
+        company_ids,
+        date,
+      ]
     );
 
     const { data, isLoading } = useQuery(

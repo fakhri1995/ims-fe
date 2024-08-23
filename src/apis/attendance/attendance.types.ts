@@ -167,6 +167,7 @@ export interface IGetAttendanceUsersPaginateParams {
   company_ids?: string;
   is_late?: number;
   is_hadir?: number;
+  date?: string;
 }
 
 export type IGetAttendanceUsersPaginateSucceedResponse =
