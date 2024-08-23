@@ -60,7 +60,7 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
             creator: {
               ...response.data.data.creator,
               profile_image: generateStaticAssetUrl(
-                response.data.data.creator.profile_image.link
+                response.data.data.creator?.profile_image.link
               ),
             },
           };
