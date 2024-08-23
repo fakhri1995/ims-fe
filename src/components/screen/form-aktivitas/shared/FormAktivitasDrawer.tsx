@@ -109,7 +109,7 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
   } = useQuery(
     [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, formAktivitasId],
     () =>
-      AttendanceFormAktivitasService.findOne(axiosClient, formAktivitasId, 0),
+      AttendanceFormAktivitasService.findOne(axiosClient, formAktivitasId, 1),
     {
       enabled: !!formAktivitasId,
       select: (response) => {
