@@ -480,7 +480,7 @@ const ProjectDetailIndex = ({
   const pageBreadcrumbValue = useMemo(
     () => [
       { name: "Manajemen Proyek", hrefValue: "/projects" },
-      { name: dataProject?.name, hrefValue: `/projects/${projectId}` },
+      { name: "Detail Proyek", hrefValue: `/projects/${projectId}` },
     ],
     [dataProject?.name]
   );
