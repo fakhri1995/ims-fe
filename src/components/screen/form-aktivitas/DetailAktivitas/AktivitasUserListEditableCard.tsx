@@ -7,6 +7,7 @@ import {
   UserDeleteOutlined,
 } from "@ant-design/icons";
 import { Button, Empty, Form, Input, Modal, Spin } from "antd";
+import Checkbox from "antd/lib/checkbox/Checkbox";
 import React, {
   FC,
   ReactNode,
@@ -308,7 +309,7 @@ export const AktivitasUserListEditableCard: FC<
             <StaffSectionContainer
               data={filteredCurrentFormAktivitasUsers || []}
               isLoading={currentFormAktivitasUsersLoading}
-              isSelectableSection={false}
+              isSelectable={false}
               onItemClicked={() => {
                 /** noop */
               }}
@@ -462,7 +463,7 @@ const CardHeader: FC<ICardHeader> = ({
           <Form.Item name="search">
             <Input
               allowClear
-              placeholder="Search staff..."
+              placeholder="Search staff name..."
               onChange={(ev) => {
                 if (ev.target.value === "") {
                   onSearch("");
@@ -569,6 +570,7 @@ interface IStaffListItem {
 
   isSelected: boolean;
   isSelectable?: boolean;
+  selectedColor?: string;
 
   onClick: (id: number) => void;
 }
@@ -580,14 +582,18 @@ const StaffListItem: FC<IStaffListItem> = ({
   profileImageUrl,
   isSelected,
   isSelectable = false,
+  selectedColor,
   onClick,
 }) => {
   const gridItemClassName = clsx(
-    "h-24 flex flex-col justify-center items-center text-center rounded-lg py-2 px-1 border",
+    "h-fit flex flex-col justify-center items-center text-center rounded-lg py-2 px-1 border",
     {
-      "hover:cursor-pointer transition-colors duration-300 bg-white/0 hover:bg-primary100/10":
-        isSelectable,
-      // "hover:cursor-pointer": isSelected,
+      "bg-danger/10 border-danger": isSelected && selectedColor == "danger",
+      "bg-primary100/10 border-primary100": isSelected && !selectedColor,
+      "hover:cursor-pointer transition-colors duration-300  hover:bg-danger/10":
+        isSelectable && selectedColor == "danger",
+      "hover:cursor-pointer transition-colors duration-300  hover:bg-primary100/10":
+        isSelectable && !selectedColor,
     }
   );
 
@@ -608,11 +614,11 @@ const StaffListItem: FC<IStaffListItem> = ({
             }
           />
         </div>
-        {isSelected && (
+        {/* {isSelected && (
           <button className="bg-state1/40 rounded-full flex items-center p-1 absolute -top-1 -right-2">
             <CloseOutlined className="text-state1" />
           </button>
-        )}
+        )} */}
       </div>
 
       {/* Staff name */}
@@ -627,30 +633,39 @@ const StaffListItem: FC<IStaffListItem> = ({
       <p className="block text-mono50 mig-small truncate w-36 md:w-24 xl:w-36">
         {position}
       </p>
+
+      {isSelectable && (
+        <div className="block text-mono50 mig-small truncate w-36 md:w-24 xl:w-36">
+          <Checkbox checked={isSelected} />
+        </div>
+      )}
     </div>
   );
 };
 
 interface IStaffSectionContainer {
   data: StaffModelType[];
-  isSelectableSection: boolean;
 
   onItemClicked: (id: number) => void;
 
+  selectedItemsIdx?: number[];
   emptyMessage?: string;
   isLoading?: boolean;
-  isItemHoverable?: boolean;
+  isSelectable?: boolean;
   children?: ReactNode;
+  selectedColor?: string;
 }
 
 const StaffSectionContainer: FC<IStaffSectionContainer> = ({
   data,
-  isSelectableSection,
-  isItemHoverable,
+  selectedItemsIdx,
+  isSelectable,
+
   isLoading = false,
   emptyMessage,
   onItemClicked,
   children,
+  selectedColor,
 }) => {
   const sectionClassName = clsx("py-6 h-60 overflow-x-auto", {
     "flex flex-col space-y-6 items-center justify-center": isLoading,
@@ -679,8 +694,9 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
             position={position}
             profileImageUrl={generateStaticAssetUrl(profile_image.link)}
             onClick={onItemClicked}
-            isSelected={isSelectableSection}
-            isSelectable={isItemHoverable}
+            isSelected={selectedItemsIdx?.includes(id)}
+            isSelectable={isSelectable}
+            selectedColor={selectedColor}
           />
         </div>
       ))}
@@ -706,78 +722,49 @@ const StaffSectionOnRemoveContainer: FC<IStaffSectionOnRemoveContainer> = ({
   updateSelectedStaffBuffer,
   searchValue,
 }) => {
-  const [items, setItems] = useState<{
-    top: StaffModelType[];
-    bottom: StaffModelType[];
-  }>({ top: [], bottom: currentStaff });
+  const [selectedItems, setSelectedItems] = useState<StaffModelType[]>([]);
 
-  const handleItemClickedFromTop = (staffId: number) => {
-    const candidateStaffIndex = items.top.findIndex(
-      (staff) => staff.id === staffId
-    );
-    const candidateStaff = items.top[candidateStaffIndex];
-
-    setItems((prev) => {
-      return {
-        top: prev.top.filter((staff) => staff.id !== staffId),
-        bottom: [...prev.bottom, candidateStaff],
-      };
-    });
-
-    updateSelectedStaffBuffer("delete", {
-      id: candidateStaff.id,
-      name: candidateStaff.name,
-    });
-  };
-
-  const handleItemClickedFromBottom = (staffId: number) => {
-    const candidateStaffIndex = items.bottom.findIndex(
-      (staff) => staff.id === staffId
-    );
-    const candidateStaff = items.bottom[candidateStaffIndex];
-
-    setItems((prev) => {
-      return {
-        top: [...prev.top, candidateStaff],
-        bottom: prev.bottom.filter((staff) => staff.id !== staffId),
-      };
-    });
-
-    updateSelectedStaffBuffer("insert", {
-      id: candidateStaff.id,
-      name: candidateStaff.name,
-    });
-  };
-
-  /** Filter bottom data to match with the `searchValue` */
-  const mappedBottomData = useMemo(() => {
-    if (!searchValue || searchValue === "" || items.bottom.length === 0) {
-      return items.bottom;
+  /** Filter data to match with the `searchValue` */
+  const mappedCurrentStaff = useMemo(() => {
+    if (!searchValue || searchValue === "" || currentStaff.length === 0) {
+      return currentStaff;
     }
 
-    return items.bottom.filter((staff) => {
+    return currentStaff.filter((staff) => {
       return staff.name.toLowerCase().includes(searchValue.toLowerCase());
     });
-  }, [searchValue, items.bottom]);
+  }, [searchValue, currentStaff]);
+
+  const handleItemClicked = (staffId: number) => {
+    const candidateStaff = currentStaff.find((staff) => staff.id === staffId);
+
+    const selectedItemsIdx = selectedItems.map((item) => item.id);
+
+    if (selectedItemsIdx.includes(staffId)) {
+      setSelectedItems((prev) => prev.filter((staff) => staff.id !== staffId));
+
+      updateSelectedStaffBuffer("delete", {
+        id: candidateStaff.id,
+        name: candidateStaff.name,
+      });
+    } else {
+      setSelectedItems((prev) => [...prev, candidateStaff]);
+      updateSelectedStaffBuffer("insert", {
+        id: candidateStaff.id,
+        name: candidateStaff.name,
+      });
+    }
+  };
 
   return (
     <>
       <StaffSectionContainer
-        data={items.top}
-        isItemHoverable
-        isSelectableSection
-        emptyMessage="Select staff to be deleted"
-        onItemClicked={handleItemClickedFromTop}
-      />
-
-      <hr />
-
-      <StaffSectionContainer
-        data={mappedBottomData}
-        isItemHoverable
-        isSelectableSection={false}
-        emptyMessage="All staffs will be deleted"
-        onItemClicked={handleItemClickedFromBottom}
+        data={mappedCurrentStaff}
+        isSelectable
+        selectedItemsIdx={selectedItems?.map((item) => item.id)}
+        emptyMessage="Staff is empty"
+        selectedColor={"danger"}
+        onItemClicked={handleItemClicked}
       />
     </>
   );
@@ -793,7 +780,10 @@ const StaffSectionOnAddContainer: FC<IStaffSectionOnAddContainer> = ({
   updateSelectedStaffBuffer,
 }) => {
   const axiosClient = useAxiosClient();
-  const [topItems, setTopItems] = useState<StaffModelType[]>([]);
+  const [currentAgentList, setCurrentAgentList] = useState<StaffModelType[]>(
+    []
+  );
+  const [selectedItems, setSelectedItems] = useState<StaffModelType[]>([]);
 
   const excludeStaffIds = useMemo(() => {
     const selectedStaffIds = currentSelectedStaff.map((staff) => staff.id);
@@ -823,51 +813,43 @@ const StaffSectionOnAddContainer: FC<IStaffSectionOnAddContainer> = ({
             profile_image: agent.profile_image,
             attendance_forms: agent.attendance_forms,
           })) as StaffModelType[],
+
+      onSuccess: (data) => {
+        setCurrentAgentList(data);
+      },
     }
   );
 
-  const handleItemClickedFromTop = (selectedAgentId: number) => {
-    setTopItems((prev) => prev.filter((agent) => agent.id !== selectedAgentId));
-    updateSelectedStaffBuffer("delete", { id: selectedAgentId, name: "" });
-  };
+  const handleItemClicked = (staffId: number) => {
+    const candidateStaff = currentAgentList.find(
+      (staff) => staff.id === staffId
+    );
+    const selectedItemsIdx = selectedItems.map((item) => item.id);
 
-  const handleItemClickedFromBottom = (agentId: number) => {
-    const selectedAgent = agentList.find((agent) => agent.id === agentId);
-    const selectedAgentCurrentAttendanceForm =
-      selectedAgent.attendance_forms[0];
+    if (selectedItemsIdx.includes(staffId)) {
+      setSelectedItems((prev) => prev.filter((staff) => staff.id !== staffId));
 
-    setTopItems((prev) => [...prev, selectedAgent]);
-    updateSelectedStaffBuffer("insert", {
-      id: agentId,
-      name: selectedAgent.name,
-      attendance_form:
-        selectedAgentCurrentAttendanceForm === undefined
-          ? undefined
-          : {
-              id: selectedAgentCurrentAttendanceForm.id,
-              name: selectedAgentCurrentAttendanceForm.name,
-            },
-    });
+      updateSelectedStaffBuffer("delete", {
+        id: candidateStaff.id,
+        name: candidateStaff.name,
+      });
+    } else {
+      setSelectedItems((prev) => [...prev, candidateStaff]);
+      updateSelectedStaffBuffer("insert", {
+        id: candidateStaff.id,
+        name: candidateStaff.name,
+      });
+    }
   };
 
   return (
     <>
       <StaffSectionContainer
-        data={topItems}
-        isItemHoverable
-        isSelectableSection
-        emptyMessage="Select staff to be added"
-        onItemClicked={handleItemClickedFromTop}
-      />
-
-      <hr />
-
-      <StaffSectionContainer
-        data={agentList || []}
-        isItemHoverable
-        isSelectableSection={false}
+        data={currentAgentList}
+        isSelectable
+        selectedItemsIdx={selectedItems?.map((item) => item.id)}
         emptyMessage="Staff is empty"
-        onItemClicked={handleItemClickedFromBottom}
+        onItemClicked={handleItemClicked}
         isLoading={loadingAgentList}
       />
     </>
