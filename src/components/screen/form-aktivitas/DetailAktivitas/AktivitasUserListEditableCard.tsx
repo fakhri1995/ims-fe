@@ -149,13 +149,13 @@ export const AktivitasUserListEditableCard: FC<
       icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
       content: (
         <p>
-          Apakah Anda yakin ingin menghapus staff{" "}
+          Are you sure you want to delete staff{" "}
           <strong>{selectedStaffNames.join(", ")}</strong>?
         </p>
       ),
       width: 640,
       centered: true,
-      okText: "Ya, saya yakin dan hapus staff",
+      okText: "Yes, delete staff",
       okType: "danger",
       cancelText: "Kembali",
       onOk: () => {
@@ -165,11 +165,11 @@ export const AktivitasUserListEditableCard: FC<
             onSuccess: () => {
               setCardPhase("default");
               info({
-                title: "Staff Berhasil Dihapus",
+                title: "Staff Removed Successfully",
                 content: (
                   <p>
-                    Staff <strong>{selectedStaffNames.join(", ")}</strong> telah
-                    terhapus
+                    Staff <strong>{selectedStaffNames.join(", ")}</strong> have
+                    been removed
                   </p>
                 ),
                 width: 640,
@@ -206,13 +206,13 @@ export const AktivitasUserListEditableCard: FC<
     });
 
     confirm({
-      title: "Menambahkan Staff",
+      title: "Add Staff",
       icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
       content: (
         <>
           {someStaffHaveFormAttendance && (
             <div className="flex flex-col space-y-6 mb-6">
-              <p>Beberapa staff sebelumnya memiliki aktivitas.</p>
+              <p>Some staff previously had activities.</p>
               <ul>
                 {Object.entries(mSelectedStaffNameAndFormActivities).map(
                   ([staffName, staffFormAktivitas], idx) => (
@@ -227,17 +227,17 @@ export const AktivitasUserListEditableCard: FC<
             </div>
           )}
           <p>
-            Apakah Anda yakin ingin menambahkan staff{" "}
-            <strong>{mSelectedStaffNames.join(", ")}</strong>? Staff yang
-            memiliki aktivitas akan terhapus dari aktivitas sebelumnya.
+            Are you sure you want to add staff{" "}
+            <strong>{mSelectedStaffNames.join(", ")}</strong>? Staff who have
+            activities will be deleted from previous activities.
           </p>
         </>
       ),
       width: 640,
       centered: true,
-      okText: "Ya, saya yakin dan tambah staff",
+      okText: "Yes, add staff",
       okType: "primary",
-      cancelText: "Kembali",
+      cancelText: "Cancel",
       onOk: () => {
         return addFormAktivitasStaff(
           { id: aktivitasId, user_ids: mSelectedStaffIds },
@@ -245,11 +245,11 @@ export const AktivitasUserListEditableCard: FC<
             onSuccess: () => {
               setCardPhase("default");
               info({
-                title: "Staff Berhasil Ditambahkan",
+                title: "Staff Added Successfully",
                 content: (
                   <p>
-                    Staff <strong>{mSelectedStaffNames.join(", ")}</strong>{" "}
-                    telah ditambahkan
+                    Staff <strong>{mSelectedStaffNames.join(", ")}</strong> have
+                    been added
                   </p>
                 ),
                 width: 640,
@@ -291,7 +291,7 @@ export const AktivitasUserListEditableCard: FC<
   );
 
   return (
-    <div className="mig-platform w-full overflow-x-auto">
+    <div className="mig-platform--p-0 w-full overflow-x-auto">
       {/* Header */}
       <CardHeader
         cardPhase={cardPhase}
@@ -401,8 +401,8 @@ const CardHeader: FC<ICardHeader> = ({
   let timer: NodeJS.Timeout; // use for delay time in table's search
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-row items-center justify-between gap-4">
+    <div className="flex flex-col gap-4 ">
+      <div className="flex flex-row items-center justify-between gap-4 px-4 py-3 border-b">
         {/* LHS: Back Button, Title */}
         <div className="flex items-center ">
           {/* Back button */}
@@ -415,7 +415,7 @@ const CardHeader: FC<ICardHeader> = ({
               <LeftOutlined />
             </Button>
           )}
-          <span className="font-bold text-mono30 text-lg">
+          <span className="mig-body--bold text-mono30">
             {[cardTitlePrefix, "Staff"].join(" ")}
           </span>
         </div>
@@ -453,7 +453,7 @@ const CardHeader: FC<ICardHeader> = ({
           )}
         </div>
       </div>
-      <div className="w-full">
+      <div className="w-full px-4">
         <Form
           form={form}
           onFinish={(value: { search?: string }) => {
@@ -667,7 +667,7 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
   children,
   selectedColor,
 }) => {
-  const sectionClassName = clsx("py-6 h-60 overflow-x-auto", {
+  const sectionClassName = clsx("px-4 h-60 overflow-x-auto", {
     "flex flex-col space-y-6 items-center justify-center": isLoading,
     "grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-5 auto-rows-min gap-2 md:gap-4":
       !isLoading && (data.length > 0 || React.Children.count(children) > 0),
