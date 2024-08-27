@@ -102,7 +102,7 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
       <div className="flex items-center gap-3">
         <ButtonBack />
         {/* Title */}
-        <span className="text-center text-mono30 font-bold text-lg">
+        <span className="text-center text-mono30 mig-body--bold">
           {isLoading && <Skeleton active round paragraph={{ rows: 1 }} />}
           {!isLoading && data?.name}
         </span>
