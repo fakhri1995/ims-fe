@@ -109,44 +109,50 @@ export const AktivitasTableInfoCard: FC<IAktivitasTableInfoCard> = ({
   );
 
   return (
-    <div className="mig-platform w-full flex flex-wrap md:flex-nowrap md:space-x-10 space-y-6 md:space-y-0">
-      {/* Table */}
-      <div className="w-full md:w-1/3">
-        <Table<AktivitasDetailType>
-          loading={isLoading}
-          columns={tableColumns}
-          dataSource={dataSource}
-          className="tableTypeTask"
-          pagination={{
-            pageSize: 100,
-            position: [
-              /** No Pagination */
-            ],
-          }}
-          onRow={(datum) => ({
-            className: "hover:cursor-pointer",
-            onClick: () => onRowClicked(datum),
-          })}
-        />
-      </div>
+    <div className="mig-platform--p-0 w-full ">
+      <h1 className="py-3 px-4 border-b mig-body--medium">
+        Activity Form Conditions
+      </h1>
 
-      {/* Content */}
-      <div className="w-full md:w-2/3 text-mono30">
-        {!isLoading && data && (
-          <>
-            {/* Aktivitas Title */}
-            <span className="py-3 block font-bold text-sm">
-              {aktivitasTitle}
-            </span>
+      <div className="flex flex-wrap md:flex-nowrap py-3 px-4 md:space-x-10 space-y-6 md:space-y-0">
+        {/* Table */}
+        <div className="w-full md:w-1/3">
+          <Table<AktivitasDetailType>
+            loading={isLoading}
+            columns={tableColumns}
+            dataSource={dataSource}
+            className="tableTypeTask"
+            pagination={{
+              pageSize: 100,
+              position: [
+                /** No Pagination */
+              ],
+            }}
+            onRow={(datum) => ({
+              className: "hover:cursor-pointer",
+              onClick: () => onRowClicked(datum),
+            })}
+          />
+        </div>
 
-            <p>
-              {aktivitasIsRequired ? "Required field" : "Not required field"}
-            </p>
+        {/* Content */}
+        <div className="w-full md:w-2/3 text-mono30">
+          {!isLoading && data && (
+            <>
+              {/* Aktivitas Title */}
+              <span className="py-3 block font-bold text-sm">
+                {aktivitasTitle}
+              </span>
 
-            {/* Aktivitas Deskription */}
-            <p className="mt-6">{aktivitasDescription}</p>
-          </>
-        )}
+              <p>
+                {aktivitasIsRequired ? "Required field" : "Not required field"}
+              </p>
+
+              {/* Aktivitas Deskription */}
+              <p className="mt-6">{aktivitasDescription}</p>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
