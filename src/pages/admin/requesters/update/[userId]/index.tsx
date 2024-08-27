@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
 import { AccessControl } from "components/features/AccessControl";
+import { ModalAccept } from "components/modal/modalConfirmation";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -20,6 +21,7 @@ import {
 import {
   generateStaticAssetUrl,
   getBase64,
+  notificationError,
   permissionWarningNotification,
 } from "lib/helper";
 
@@ -80,9 +82,9 @@ function RequestersUpdate({
   //     profile_image: dataDetailRequester.data.profile_image === "" ? `/default-users.jpeg` : dataDetailRequester.data.profile_image
   // })
   const [data1, setData1] = useState({
-    id: "",
+    id: 0,
     fullname: "",
-    role: "",
+    role: 0,
     phone_number: "",
     profile_image: `/default-users.jpeg`,
     profile_image_file: null, // File | null
@@ -110,6 +112,7 @@ function RequestersUpdate({
   // });
   const [loadingupdate, setLoadingupdate] = useState(false);
   const [dataraw1, setdataraw1] = useState({ data: [] });
+  const [modalConfirm, setModalConfirm] = useState(false);
 
   const onChangeRole = (value) => {
     // const arr = []
@@ -162,14 +165,14 @@ function RequestersUpdate({
             rt.back();
           }, 300);
         } else if (!res2.success) {
-          notification["error"]({
-            message: res2.message.errorInfo.status_detail,
+          notificationError({
+            message: res2.message,
             duration: 3,
           });
         }
       })
       .catch(() => {
-        notification["error"]({
+        notificationError({
           message: "Terjadi kesalahan saat memperbarui profil",
           duration: 3,
         });
@@ -284,6 +287,7 @@ function RequestersUpdate({
           role: res2.data.role,
           phone_number: res2.data.phone_number,
           profile_image: generateStaticAssetUrl(res2.data.profile_image?.link),
+          profile_image_file: null,
           // profile_image:
           //   res2.data.profile_image === "" || res2.data.profile_image === "-"
           //     ? `/default-users.jpeg`
@@ -368,7 +372,7 @@ function RequestersUpdate({
                     disabled={preloading || !isAllowedToUpdateRequester}
                     type="primary"
                     loading={loadingupdate}
-                    onClick={instanceForm.submit}
+                    onClick={() => setModalConfirm(true)}
                   >
                     Simpan
                   </Button>
@@ -444,6 +448,7 @@ function RequestersUpdate({
                 {preloading ? null : (
                   <div className="p-3 col-span-1 md:col-span-3">
                     <Form
+                      name="requesterForm"
                       layout="vertical"
                       initialValues={data1}
                       form={instanceForm}
@@ -685,6 +690,23 @@ function RequestersUpdate({
                     </p>
                 </div> */}
       </div>
+      <ModalAccept
+        visible={modalConfirm}
+        loading={loadingupdate}
+        disabled={!isAllowedToUpdateRequester}
+        htmlType="submit"
+        form="requesterForm"
+        onOk={() => {
+          setModalConfirm(false);
+        }}
+        onCancel={() => setModalConfirm(false)}
+        title="Ubah Akun Requester"
+      >
+        <p>
+          Apakah Anda yakin ingin mengubah akun requester dengan nama{" "}
+          <strong>{data1?.fullname}</strong>?
+        </p>
+      </ModalAccept>
     </Layout>
   );
 }
@@ -692,7 +714,7 @@ function RequestersUpdate({
 export async function getServerSideProps({ req, res, resolvedUrl, params }) {
   // const userid = resolvedUrl.split("/").slice(1)[2]
   const userid = params.userId;
-  var initProps = {};
+  var initProps = "";
   if (!req.headers.cookie) {
     return {
       redirect: {
