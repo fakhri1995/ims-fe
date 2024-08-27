@@ -91,7 +91,7 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/form-aktivitas"
     >
-      <div className="px-6 md:px-0 grid grid-cols-1">
+      <div className="grid grid-cols-1">
         {/* Table: Form Aktivitas */}
         <div className="mig-platform--p-0">
           {/* Table header */}

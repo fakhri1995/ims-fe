@@ -264,7 +264,7 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
   return (
     <>
       <div
-        className={"mig-platform--p-0 flex flex-col p-6  mt-8"}
+        className={"mig-platform--p-0 p-6  mt-8"}
         style={{ boxShadow: " 0px 6px 25px 0px rgba(0, 0, 0, 0.05)" }}
       >
         <div className={"flex w-full justify-between items-center"}>
@@ -364,6 +364,7 @@ export const AttendanceAdminListOvertime: FC<IAttendanceAdminListOvertime> = ({
           <Table
             columns={columns}
             dataSource={dataAnnualLeave}
+            scroll={{ x: 200 }}
             pagination={{
               current: queryParams.page,
               pageSize: queryParams.rows,
