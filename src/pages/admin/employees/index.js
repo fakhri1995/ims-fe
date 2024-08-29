@@ -594,6 +594,10 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                       rt.push(`/admin/employees/create?id=${record.id}`);
                     }}
                     icon={<EditOutlined />}
+                    style={{
+                      backgroundColor: "#DDB44A",
+                      borderColor: "#DDB44A",
+                    }}
                     className="bg-notice border-notice hover:bg-notice hover:opacity-75 hover:border-notice focus:bg-notice focus:border-notice focus:opacity-75"
                   />
                   <Button
@@ -605,6 +609,10 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                       setModalDelete(true);
                     }}
                     icon={<DeleteOutlined />}
+                    style={{
+                      backgroundColor: "#BF4A40",
+                      borderColor: "#BF4A40",
+                    }}
                     className="bg-danger border-danger hover:bg-danger hover:opacity-75 hover:border-danger focus:bg-danger focus:border-danger focus:opacity-75"
                   />
                 </div>
