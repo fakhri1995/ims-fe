@@ -21,6 +21,21 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
     return [text];
   }
 
+  // Only show initials if full name is more than 2 words
+  const getFormattedCandidateName = (fullname) => {
+    const nameArr = fullname.split(" ");
+    if (nameArr.length > 2) {
+      const firstTwoName = nameArr.slice(0, 2).join(" ")?.toUpperCase();
+      const initials = nameArr
+        .slice(2)
+        .map((name) => name.charAt(0).toUpperCase() + ".")
+        .join("");
+      return `${firstTwoName} ${initials}`;
+    }
+
+    return fullname?.toUpperCase();
+  };
+
   // function checkDataDescription(data) {
   //   if (data.description != undefined) {
   //     let checkDescription = parse(data.description);
@@ -97,7 +112,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
                 marginBottom: 16,
               }}
             >
-              {dataResume?.name?.toUpperCase()}
+              {getFormattedCandidateName(dataResume?.name)}
             </Text>
             <View
               style={{
