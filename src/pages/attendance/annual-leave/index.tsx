@@ -93,7 +93,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
     sort_by: withDefault(StringParam, /** @type {"status"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     keyword: withDefault(StringParam, ""),
-    date: withDefault(DateParam, undefined),
+    date: withDefault(StringParam, undefined),
     status: withDefault(StringParam, undefined),
   });
 
@@ -140,7 +140,13 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [dataDefault, setDataDefault] = useState(null);
   useEffect(() => {
     fetchData();
-  }, [queryParams.page, queryParams.rows]);
+  }, [
+    queryParams.page,
+    queryParams.rows,
+    queryParams.date,
+    queryParams.keyword,
+    queryParams.status,
+  ]);
 
   const fetchData = async () => {
     if (!isAllowedToGetLeave) {
@@ -157,6 +163,7 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
       })
         .then((res) => res.json())
         .then((res2) => {
+          console.log("isi datanya ", res2.data);
           setDisplayDataLeaves(res2.data); // table-related data source
           setDataAnnualLeave(res2?.data?.data);
         });
@@ -278,6 +285,14 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
     setShowDrawer(false);
   };
 
+  const onChangeDate = (date, dateString) => {
+    if (date == null) {
+      setQueryParams({ date: undefined, page: 1 });
+    } else {
+      setQueryParams({ date: dateString, page: 1 });
+    }
+  };
+
   return (
     <LayoutDashboard
       tok={initProps}
@@ -357,12 +372,10 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
                   <DatePicker
                     allowClear
                     className="w-full"
-                    defaultValue={queryParams.date}
+                    // defaultValue={queryParams.date}
                     disabled={!isAllowedToGetLeave}
                     placeholder="Select Date"
-                    onChange={(value) => {
-                      setQueryParams({ date: value, page: 1 });
-                    }}
+                    onChange={onChangeDate}
                   />
                 </Form.Item>
               </div>
@@ -491,7 +504,7 @@ export async function getServerSideProps({ req, res }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "annualleave",
+      sidemenu: "attendance/annualLeave",
     },
   };
 }
