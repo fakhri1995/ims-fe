@@ -27,9 +27,6 @@ import {
   ModalDelete,
   ModalWarning,
 } from "components/modal/modalConfirmation";
-import ModalCore from "components/modal/modalCore";
-import { ModalHapus2 } from "components/modal/modalCustom";
-import { ModalUbah } from "components/modal/modalCustom";
 import { TableCustomShiftList } from "components/table/tableCustom";
 
 import { useAccessControl } from "contexts/access-control";

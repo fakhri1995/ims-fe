@@ -291,7 +291,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       title: (
         <div className="flex flex-col justify-center items-center">
           <div
-            className={`px-2 w-14 h-14 rounded-full flex flex-col
+            className={` w-14 h-14 rounded-full flex flex-col
             items-center justify-center 
             ${
               isToday
@@ -302,7 +302,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
             <p className="font-semibold text-sm leading-5">
               {DAYS[i].toUpperCase()}
             </p>
-            <p className="font-bold text-base leading-6">
+            <p className="font-bold text-base leading-4">
               {currentDate?.format("DD")}
             </p>
           </div>
@@ -492,11 +492,11 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/schedule"
     >
-      <div className="grid grid-cols-1" id="mainWrapper">
+      <div className="mig-platform--p-0 grid grid-cols-1" id="mainWrapper">
         {/* Table Daftar Jadwal */}
-        <div className="flex flex-col shadow-md rounded-md bg-white mb-6">
+        <div className="flex flex-col mb-6">
           {/* Filter */}
-          <div className="flex flex-col lg:flex-row items-end md:items-center gap-3 py-3 px-4 border-b">
+          <div className="flex flex-col lg:flex-row items-end md:items-center gap-3 py-3 px-4">
             {/* Search by keyword (kata kunci) */}
             <div className="w-full ">
               <Input
@@ -642,7 +642,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
           {/* Calendar */}
           <div>
             {/* Month header */}
-            <div className="flex justify-between items-center p-4 border-x border-t">
+            <div className="flex justify-between items-center p-4 border-t">
               <button
                 onClick={() => handleClickPrevMonth()}
                 className="bg-mono100 p-2 w-9 h-9 rounded-full 
@@ -741,7 +741,7 @@ const ScheduleAttendancePage: NextPage<ProtectedPageProps> = ({
               columns={calendarColumns}
               rowKey={(record) => record.id}
               loading={loadingSchedules}
-              className="border border-collapse tableSchedule"
+              className="border-t tableSchedule"
               scroll={{ x: 200 }}
               pagination={{
                 current: queryParams.page,

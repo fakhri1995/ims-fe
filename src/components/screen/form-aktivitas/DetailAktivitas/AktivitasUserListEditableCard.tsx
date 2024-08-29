@@ -7,6 +7,7 @@ import {
   UserDeleteOutlined,
 } from "@ant-design/icons";
 import { Button, Empty, Form, Input, Modal, Spin } from "antd";
+import Checkbox from "antd/lib/checkbox/Checkbox";
 import React, {
   FC,
   ReactNode,
@@ -148,13 +149,13 @@ export const AktivitasUserListEditableCard: FC<
       icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
       content: (
         <p>
-          Apakah Anda yakin ingin menghapus staff{" "}
+          Are you sure you want to delete staff{" "}
           <strong>{selectedStaffNames.join(", ")}</strong>?
         </p>
       ),
       width: 640,
       centered: true,
-      okText: "Ya, saya yakin dan hapus staff",
+      okText: "Yes, delete staff",
       okType: "danger",
       cancelText: "Kembali",
       onOk: () => {
@@ -164,11 +165,11 @@ export const AktivitasUserListEditableCard: FC<
             onSuccess: () => {
               setCardPhase("default");
               info({
-                title: "Staff Berhasil Dihapus",
+                title: "Staff Removed Successfully",
                 content: (
                   <p>
-                    Staff <strong>{selectedStaffNames.join(", ")}</strong> telah
-                    terhapus
+                    Staff <strong>{selectedStaffNames.join(", ")}</strong> have
+                    been removed
                   </p>
                 ),
                 width: 640,
@@ -205,13 +206,13 @@ export const AktivitasUserListEditableCard: FC<
     });
 
     confirm({
-      title: "Menambahkan Staff",
+      title: "Add Staff",
       icon: <ExclamationCircleOutlined style={{ color: "rgb(191 74 64)" }} />,
       content: (
         <>
           {someStaffHaveFormAttendance && (
             <div className="flex flex-col space-y-6 mb-6">
-              <p>Beberapa staff sebelumnya memiliki aktivitas.</p>
+              <p>Some staff previously had activities.</p>
               <ul>
                 {Object.entries(mSelectedStaffNameAndFormActivities).map(
                   ([staffName, staffFormAktivitas], idx) => (
@@ -226,17 +227,17 @@ export const AktivitasUserListEditableCard: FC<
             </div>
           )}
           <p>
-            Apakah Anda yakin ingin menambahkan staff{" "}
-            <strong>{mSelectedStaffNames.join(", ")}</strong>? Staff yang
-            memiliki aktivitas akan terhapus dari aktivitas sebelumnya.
+            Are you sure you want to add staff{" "}
+            <strong>{mSelectedStaffNames.join(", ")}</strong>? Staff who have
+            activities will be deleted from previous activities.
           </p>
         </>
       ),
       width: 640,
       centered: true,
-      okText: "Ya, saya yakin dan tambah staff",
+      okText: "Yes, add staff",
       okType: "primary",
-      cancelText: "Kembali",
+      cancelText: "Cancel",
       onOk: () => {
         return addFormAktivitasStaff(
           { id: aktivitasId, user_ids: mSelectedStaffIds },
@@ -244,11 +245,11 @@ export const AktivitasUserListEditableCard: FC<
             onSuccess: () => {
               setCardPhase("default");
               info({
-                title: "Staff Berhasil Ditambahkan",
+                title: "Staff Added Successfully",
                 content: (
                   <p>
-                    Staff <strong>{mSelectedStaffNames.join(", ")}</strong>{" "}
-                    telah ditambahkan
+                    Staff <strong>{mSelectedStaffNames.join(", ")}</strong> have
+                    been added
                   </p>
                 ),
                 width: 640,
@@ -290,7 +291,7 @@ export const AktivitasUserListEditableCard: FC<
   );
 
   return (
-    <div className="mig-platform w-full overflow-x-auto">
+    <div className="mig-platform--p-0 w-full overflow-x-auto">
       {/* Header */}
       <CardHeader
         cardPhase={cardPhase}
@@ -308,7 +309,7 @@ export const AktivitasUserListEditableCard: FC<
             <StaffSectionContainer
               data={filteredCurrentFormAktivitasUsers || []}
               isLoading={currentFormAktivitasUsersLoading}
-              isSelectableSection={false}
+              isSelectable={false}
               onItemClicked={() => {
                 /** noop */
               }}
@@ -400,8 +401,8 @@ const CardHeader: FC<ICardHeader> = ({
   let timer: NodeJS.Timeout; // use for delay time in table's search
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-row items-center justify-between gap-4">
+    <div className="flex flex-col gap-4 ">
+      <div className="flex flex-row items-center justify-between gap-4 px-4 py-3 border-b">
         {/* LHS: Back Button, Title */}
         <div className="flex items-center ">
           {/* Back button */}
@@ -414,7 +415,7 @@ const CardHeader: FC<ICardHeader> = ({
               <LeftOutlined />
             </Button>
           )}
-          <span className="font-bold text-mono30 text-lg">
+          <span className="mig-body--bold text-mono30">
             {[cardTitlePrefix, "Staff"].join(" ")}
           </span>
         </div>
@@ -452,7 +453,7 @@ const CardHeader: FC<ICardHeader> = ({
           )}
         </div>
       </div>
-      <div className="w-full">
+      <div className="w-full px-4">
         <Form
           form={form}
           onFinish={(value: { search?: string }) => {
@@ -462,7 +463,7 @@ const CardHeader: FC<ICardHeader> = ({
           <Form.Item name="search">
             <Input
               allowClear
-              placeholder="Search staff..."
+              placeholder="Search staff name..."
               onChange={(ev) => {
                 if (ev.target.value === "") {
                   onSearch("");
@@ -569,6 +570,7 @@ interface IStaffListItem {
 
   isSelected: boolean;
   isSelectable?: boolean;
+  selectedColor?: string;
 
   onClick: (id: number) => void;
 }
@@ -580,14 +582,18 @@ const StaffListItem: FC<IStaffListItem> = ({
   profileImageUrl,
   isSelected,
   isSelectable = false,
+  selectedColor,
   onClick,
 }) => {
   const gridItemClassName = clsx(
-    "h-24 flex flex-col justify-center items-center text-center rounded-lg py-2 px-1 border",
+    "h-fit flex flex-col justify-center items-center text-center rounded-lg py-2 px-1 border",
     {
-      "hover:cursor-pointer transition-colors duration-300 bg-white/0 hover:bg-primary100/10":
-        isSelectable,
-      // "hover:cursor-pointer": isSelected,
+      "bg-danger/10 border-danger": isSelected && selectedColor == "danger",
+      "bg-primary100/10 border-primary100": isSelected && !selectedColor,
+      "hover:cursor-pointer transition-colors duration-300  hover:bg-danger/10":
+        isSelectable && selectedColor == "danger",
+      "hover:cursor-pointer transition-colors duration-300  hover:bg-primary100/10":
+        isSelectable && !selectedColor,
     }
   );
 
@@ -608,11 +614,11 @@ const StaffListItem: FC<IStaffListItem> = ({
             }
           />
         </div>
-        {isSelected && (
+        {/* {isSelected && (
           <button className="bg-state1/40 rounded-full flex items-center p-1 absolute -top-1 -right-2">
             <CloseOutlined className="text-state1" />
           </button>
-        )}
+        )} */}
       </div>
 
       {/* Staff name */}
@@ -627,32 +633,41 @@ const StaffListItem: FC<IStaffListItem> = ({
       <p className="block text-mono50 mig-small truncate w-36 md:w-24 xl:w-36">
         {position}
       </p>
+
+      {isSelectable && (
+        <div className="block text-mono50 mig-small truncate w-36 md:w-24 xl:w-36">
+          <Checkbox checked={isSelected} />
+        </div>
+      )}
     </div>
   );
 };
 
 interface IStaffSectionContainer {
   data: StaffModelType[];
-  isSelectableSection: boolean;
 
   onItemClicked: (id: number) => void;
 
+  selectedItemsIdx?: number[];
   emptyMessage?: string;
   isLoading?: boolean;
-  isItemHoverable?: boolean;
+  isSelectable?: boolean;
   children?: ReactNode;
+  selectedColor?: string;
 }
 
 const StaffSectionContainer: FC<IStaffSectionContainer> = ({
   data,
-  isSelectableSection,
-  isItemHoverable,
+  selectedItemsIdx,
+  isSelectable,
+
   isLoading = false,
   emptyMessage,
   onItemClicked,
   children,
+  selectedColor,
 }) => {
-  const sectionClassName = clsx("py-6 h-60 overflow-x-auto", {
+  const sectionClassName = clsx("px-4 h-60 overflow-x-auto", {
     "flex flex-col space-y-6 items-center justify-center": isLoading,
     "grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-5 auto-rows-min gap-2 md:gap-4":
       !isLoading && (data.length > 0 || React.Children.count(children) > 0),
@@ -679,8 +694,9 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
             position={position}
             profileImageUrl={generateStaticAssetUrl(profile_image.link)}
             onClick={onItemClicked}
-            isSelected={isSelectableSection}
-            isSelectable={isItemHoverable}
+            isSelected={selectedItemsIdx?.includes(id)}
+            isSelectable={isSelectable}
+            selectedColor={selectedColor}
           />
         </div>
       ))}
@@ -706,78 +722,49 @@ const StaffSectionOnRemoveContainer: FC<IStaffSectionOnRemoveContainer> = ({
   updateSelectedStaffBuffer,
   searchValue,
 }) => {
-  const [items, setItems] = useState<{
-    top: StaffModelType[];
-    bottom: StaffModelType[];
-  }>({ top: [], bottom: currentStaff });
+  const [selectedItems, setSelectedItems] = useState<StaffModelType[]>([]);
 
-  const handleItemClickedFromTop = (staffId: number) => {
-    const candidateStaffIndex = items.top.findIndex(
-      (staff) => staff.id === staffId
-    );
-    const candidateStaff = items.top[candidateStaffIndex];
-
-    setItems((prev) => {
-      return {
-        top: prev.top.filter((staff) => staff.id !== staffId),
-        bottom: [...prev.bottom, candidateStaff],
-      };
-    });
-
-    updateSelectedStaffBuffer("delete", {
-      id: candidateStaff.id,
-      name: candidateStaff.name,
-    });
-  };
-
-  const handleItemClickedFromBottom = (staffId: number) => {
-    const candidateStaffIndex = items.bottom.findIndex(
-      (staff) => staff.id === staffId
-    );
-    const candidateStaff = items.bottom[candidateStaffIndex];
-
-    setItems((prev) => {
-      return {
-        top: [...prev.top, candidateStaff],
-        bottom: prev.bottom.filter((staff) => staff.id !== staffId),
-      };
-    });
-
-    updateSelectedStaffBuffer("insert", {
-      id: candidateStaff.id,
-      name: candidateStaff.name,
-    });
-  };
-
-  /** Filter bottom data to match with the `searchValue` */
-  const mappedBottomData = useMemo(() => {
-    if (!searchValue || searchValue === "" || items.bottom.length === 0) {
-      return items.bottom;
+  /** Filter data to match with the `searchValue` */
+  const mappedCurrentStaff = useMemo(() => {
+    if (!searchValue || searchValue === "" || currentStaff.length === 0) {
+      return currentStaff;
     }
 
-    return items.bottom.filter((staff) => {
+    return currentStaff.filter((staff) => {
       return staff.name.toLowerCase().includes(searchValue.toLowerCase());
     });
-  }, [searchValue, items.bottom]);
+  }, [searchValue, currentStaff]);
+
+  const handleItemClicked = (staffId: number) => {
+    const candidateStaff = currentStaff.find((staff) => staff.id === staffId);
+
+    const selectedItemsIdx = selectedItems.map((item) => item.id);
+
+    if (selectedItemsIdx.includes(staffId)) {
+      setSelectedItems((prev) => prev.filter((staff) => staff.id !== staffId));
+
+      updateSelectedStaffBuffer("delete", {
+        id: candidateStaff.id,
+        name: candidateStaff.name,
+      });
+    } else {
+      setSelectedItems((prev) => [...prev, candidateStaff]);
+      updateSelectedStaffBuffer("insert", {
+        id: candidateStaff.id,
+        name: candidateStaff.name,
+      });
+    }
+  };
 
   return (
     <>
       <StaffSectionContainer
-        data={items.top}
-        isItemHoverable
-        isSelectableSection
-        emptyMessage="Select staff to be deleted"
-        onItemClicked={handleItemClickedFromTop}
-      />
-
-      <hr />
-
-      <StaffSectionContainer
-        data={mappedBottomData}
-        isItemHoverable
-        isSelectableSection={false}
-        emptyMessage="All staffs will be deleted"
-        onItemClicked={handleItemClickedFromBottom}
+        data={mappedCurrentStaff}
+        isSelectable
+        selectedItemsIdx={selectedItems?.map((item) => item.id)}
+        emptyMessage="Staff is empty"
+        selectedColor={"danger"}
+        onItemClicked={handleItemClicked}
       />
     </>
   );
@@ -793,7 +780,10 @@ const StaffSectionOnAddContainer: FC<IStaffSectionOnAddContainer> = ({
   updateSelectedStaffBuffer,
 }) => {
   const axiosClient = useAxiosClient();
-  const [topItems, setTopItems] = useState<StaffModelType[]>([]);
+  const [currentAgentList, setCurrentAgentList] = useState<StaffModelType[]>(
+    []
+  );
+  const [selectedItems, setSelectedItems] = useState<StaffModelType[]>([]);
 
   const excludeStaffIds = useMemo(() => {
     const selectedStaffIds = currentSelectedStaff.map((staff) => staff.id);
@@ -823,51 +813,43 @@ const StaffSectionOnAddContainer: FC<IStaffSectionOnAddContainer> = ({
             profile_image: agent.profile_image,
             attendance_forms: agent.attendance_forms,
           })) as StaffModelType[],
+
+      onSuccess: (data) => {
+        setCurrentAgentList(data);
+      },
     }
   );
 
-  const handleItemClickedFromTop = (selectedAgentId: number) => {
-    setTopItems((prev) => prev.filter((agent) => agent.id !== selectedAgentId));
-    updateSelectedStaffBuffer("delete", { id: selectedAgentId, name: "" });
-  };
+  const handleItemClicked = (staffId: number) => {
+    const candidateStaff = currentAgentList.find(
+      (staff) => staff.id === staffId
+    );
+    const selectedItemsIdx = selectedItems.map((item) => item.id);
 
-  const handleItemClickedFromBottom = (agentId: number) => {
-    const selectedAgent = agentList.find((agent) => agent.id === agentId);
-    const selectedAgentCurrentAttendanceForm =
-      selectedAgent.attendance_forms[0];
+    if (selectedItemsIdx.includes(staffId)) {
+      setSelectedItems((prev) => prev.filter((staff) => staff.id !== staffId));
 
-    setTopItems((prev) => [...prev, selectedAgent]);
-    updateSelectedStaffBuffer("insert", {
-      id: agentId,
-      name: selectedAgent.name,
-      attendance_form:
-        selectedAgentCurrentAttendanceForm === undefined
-          ? undefined
-          : {
-              id: selectedAgentCurrentAttendanceForm.id,
-              name: selectedAgentCurrentAttendanceForm.name,
-            },
-    });
+      updateSelectedStaffBuffer("delete", {
+        id: candidateStaff.id,
+        name: candidateStaff.name,
+      });
+    } else {
+      setSelectedItems((prev) => [...prev, candidateStaff]);
+      updateSelectedStaffBuffer("insert", {
+        id: candidateStaff.id,
+        name: candidateStaff.name,
+      });
+    }
   };
 
   return (
     <>
       <StaffSectionContainer
-        data={topItems}
-        isItemHoverable
-        isSelectableSection
-        emptyMessage="Select staff to be added"
-        onItemClicked={handleItemClickedFromTop}
-      />
-
-      <hr />
-
-      <StaffSectionContainer
-        data={agentList || []}
-        isItemHoverable
-        isSelectableSection={false}
+        data={currentAgentList}
+        isSelectable
+        selectedItemsIdx={selectedItems?.map((item) => item.id)}
         emptyMessage="Staff is empty"
-        onItemClicked={handleItemClickedFromBottom}
+        onItemClicked={handleItemClicked}
         isLoading={loadingAgentList}
       />
     </>

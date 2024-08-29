@@ -3,6 +3,7 @@
  * Currently used in revamped design July 2024.
  * */
 import { Modal, Spin } from "antd";
+import { ButtonHTMLType } from "antd/lib/button/button";
 import { ReactElement } from "react";
 
 import ButtonSys from "components/button";
@@ -122,6 +123,8 @@ const ModalAccept = ({
   onCancel,
   title,
   icon,
+  htmlType,
+  form,
 }: {
   visible: boolean;
   loading: boolean;
@@ -131,6 +134,8 @@ const ModalAccept = ({
   onCancel?: any;
   title?: string;
   icon?: ReactElement;
+  htmlType?: ButtonHTMLType;
+  form?: string;
 }) => {
   return (
     <Modal
@@ -154,6 +159,8 @@ const ModalAccept = ({
               onClick={onOk}
               loading={loading}
               disabled={disabled}
+              submit={htmlType == "submit" ? true : false}
+              form={form}
             >
               <div className="flex items-center gap-2">
                 {icon ? icon : <CheckIconSvg />}

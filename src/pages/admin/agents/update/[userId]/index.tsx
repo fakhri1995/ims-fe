@@ -6,6 +6,7 @@ import { useQuery } from "react-query";
 import Sticky from "wil-react-sticky";
 
 import { AccessControl } from "components/features/AccessControl";
+import { ModalAccept } from "components/modal/modalConfirmation";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -61,6 +62,8 @@ function AgentUpdate({
 
   // START: Form Aktivitas
   const [searchFormAktivitasValue, setFormAktivitasValue] = useState("");
+  const [modalConfirm, setModalConfirm] = useState(false);
+
   const debouncedSearchFormAktivitasValue = useDebounce(
     searchFormAktivitasValue
   );
@@ -100,11 +103,12 @@ function AgentUpdate({
     company_id: null,
     fullname: "",
     phone_number: "",
+    email: "",
     profile_image: `/default-users.jpeg`,
     profile_image_file: null, // File | null (hanya digunakan sebagai payload)
     role_ids: [],
     position: "",
-    nip: "",
+    nip: 0,
     attendance_form_ids: [],
   });
   //data company
@@ -219,6 +223,7 @@ function AgentUpdate({
           role: res2.data.role,
           phone_number: res2.data.phone_number,
           profile_image: generateStaticAssetUrl(res2.data.profile_image?.link),
+          profile_image_file: null,
           // profile_image:
           //   res2.data.profile_image === "" || res2.data.profile_image === "-"
           //     ? `/default-users.jpeg`
@@ -328,7 +333,7 @@ function AgentUpdate({
                     disabled={preloading || !isAllowedToUpdateAgent}
                     type="primary"
                     loading={loadingupdate}
-                    onClick={instanceForm.submit}
+                    onClick={() => setModalConfirm(true)}
                   >
                     Simpan
                   </Button>
@@ -387,6 +392,7 @@ function AgentUpdate({
               {preloading ? null : (
                 <div className="p-3 col-span-1 md:col-span-3">
                   <Form
+                    name="agentForm"
                     layout="vertical"
                     initialValues={dataupdate}
                     form={instanceForm}
@@ -524,7 +530,7 @@ function AgentUpdate({
                         filterOption={false}
                         onSearch={(value) => setFormAktivitasValue(value)}
                         onChange={(value) => {
-                          if (value === undefined || value === "") {
+                          if (!value) {
                             setdataupdate((prev) => ({
                               ...prev,
                               attendance_form_ids: [],
@@ -578,13 +584,30 @@ function AgentUpdate({
           </div>
         </div>
       </div>
+      <ModalAccept
+        visible={modalConfirm}
+        loading={loadingupdate}
+        disabled={!isAllowedToUpdateAgent}
+        htmlType="submit"
+        form="agentForm"
+        onOk={() => {
+          setModalConfirm(false);
+        }}
+        onCancel={() => setModalConfirm(false)}
+        title="Ubah Profil Agent"
+      >
+        <p>
+          Apakah Anda yakin ingin mengubah profil agent dengan nama{" "}
+          <strong>{dataupdate?.fullname}</strong>?
+        </p>
+      </ModalAccept>
     </Layout>
   );
 }
 
 export async function getServerSideProps({ req, res, resolvedUrl, params }) {
   const userid = params.userId;
-  var initProps = {};
+  var initProps = "";
   if (!req.headers.cookie) {
     return {
       redirect: {
