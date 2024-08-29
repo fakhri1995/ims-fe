@@ -983,6 +983,10 @@ const ModalDownloadPayslip = ({
             />
           </>
         </Form.Item>
+        <p className="mb-4">
+          <strong>Catatan:</strong> Kata sandi juga akan digunakan untuk membuka
+          file PDF yang telah diunduh.
+        </p>
       </Form>
     </Modal>
   );
