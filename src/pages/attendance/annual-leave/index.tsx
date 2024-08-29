@@ -163,7 +163,6 @@ const AnnualLeaveIndex = ({ initProps, dataProfile, sidemenu }) => {
       })
         .then((res) => res.json())
         .then((res2) => {
-          console.log("isi datanya ", res2.data);
           setDisplayDataLeaves(res2.data); // table-related data source
           setDataAnnualLeave(res2?.data?.data);
         });
