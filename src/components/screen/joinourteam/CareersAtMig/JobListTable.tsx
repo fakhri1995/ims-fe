@@ -249,12 +249,12 @@ export const JobListTable: FC = () => {
                   <p className={"text-[18px] text-mono30 font-bold leading-6"}>
                     {newdata.name}
                   </p>
-                  <p
+                  {/* <p
                     className={"text-xs text-mono30 font-medium leading-5 mt-3"}
                   >
                     Posted on{" "}
                     {moment(newdata.created_at).format("DD MMMM YYYY")}
-                  </p>
+                  </p> */}
                   {/* <div className={"flex flex-row gap-3 mt-[26px]"}>
                     <WorkIconSvg />
                     <p
