@@ -153,6 +153,23 @@ const Messages = ({ initProps, dataProfile, sidemenu }) => {
       },
     },
     {
+      title: "Phone Number",
+      dataIndex: "phone_number",
+      key: "phone_number",
+      render: (text, record, index) => {
+        return {
+          props: {
+            style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
+          },
+          children: (
+            <>
+              <p className="text-xs">{text}</p>
+            </>
+          ),
+        };
+      },
+    },
+    {
       title: "Interested In",
       dataIndex: "interested_in",
       key: "interested_in",
