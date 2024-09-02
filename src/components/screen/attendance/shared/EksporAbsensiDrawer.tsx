@@ -306,18 +306,18 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
               form_activity_name: response2.data.attendance_forms[0].name,
             });
           } else {
-            notificationError({
-              message: `${response2.message}`,
-              duration: 3,
-            });
+            // notificationError({
+            //   message: `${response2.message}`,
+            //   duration: 3,
+            // });
             setLoadingData(false);
           }
         })
         .catch((err) => {
-          notificationError({
-            message: `${err.response}`,
-            duration: 3,
-          });
+          // notificationError({
+          //   message: `${err.response}`,
+          //   duration: 3,
+          // });
           setLoadingData(false);
         });
     }
@@ -769,17 +769,19 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                         </Button>
                       )}
 
-                    {!formAktivitasStaffList && !formAktivitasStaffListLoading && (
-                      <div
-                        className="flex gap-2 items-center bg-secondary100 bg-opacity-10
+                    {!formAktivitasStaffList &&
+                      !formAktivitasStaffListLoading && (
+                        <div
+                          className="flex gap-2 items-center bg-secondary100 bg-opacity-10
                         text-secondary100 py-2 px-3 rounded "
-                      >
-                        <InfoCircleIconSvg size={18} />
-                        <p className="mig-caption">
-                          Please select the Activity Form first to select staff.
-                        </p>
-                      </div>
-                    )}
+                        >
+                          <InfoCircleIconSvg size={18} />
+                          <p className="mig-caption">
+                            Please select the Activity Form first to select
+                            staff.
+                          </p>
+                        </div>
+                      )}
 
                     {Array.isArray(formAktivitasStaffList) &&
                       dataFormAktifitas.length < 1 && (
