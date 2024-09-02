@@ -382,6 +382,13 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
+          {/* {hasPermission(LEAVES_GET) && (
+            <Menu.Item key="attendance/leavequota" className="text-mono50">
+              <Link href="/attendance/leave-quota" legacyBehavior>
+                <p>Leave Quota</p>
+              </Link>
+            </Menu.Item>
+          )} */}
         </SubMenu>
       )}
 

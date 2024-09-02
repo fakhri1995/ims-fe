@@ -59,11 +59,9 @@ export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
           select: (response) => response.data,
           retry: 1,
           onError: (error: any) => {
-            if (error?.response?.status !== 404) {
-              notificationError({
-                message: "Gagal mendapatkan jadwal kerja karyawan saat ini.",
-              });
-            }
+            // notificationError({
+            //   message: "Gagal mendapatkan jadwal kerja karyawan saat ini.",
+            // });
           },
         }
       )
