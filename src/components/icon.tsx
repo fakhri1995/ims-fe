@@ -3123,16 +3123,16 @@ const TautanIconSvg = (props) => {
       <path
         d="M6.66797 9.33489C7.10684 9.78281 7.70754 10.0352 8.33464 10.0352C8.96173 10.0352 9.56243 9.78281 10.0013 9.33489L12.668 6.66822C13.5884 5.74775 13.5884 4.25536 12.668 3.33489C11.7475 2.41441 10.2551 2.41441 9.33464 3.33489L9.0013 3.66822"
         stroke="#35763B"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M9.33489 6.66518C8.89601 6.21726 8.29531 5.96484 7.66822 5.96484C7.04113 5.96484 6.44043 6.21726 6.00155 6.66518L3.33489 9.33185C2.41441 10.2523 2.41441 11.7447 3.33489 12.6652C4.25536 13.5857 5.74775 13.5857 6.66822 12.6652L7.00155 12.3319"
         stroke="#35763B"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -3154,9 +3154,9 @@ const DashboardCompanyIconSvg = (props) => {
         width="4"
         height="3.33333"
         stroke={props?.color ?? "currentColor"}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <rect
         x="2.66406"
@@ -3164,9 +3164,9 @@ const DashboardCompanyIconSvg = (props) => {
         width="4"
         height="4.66667"
         stroke={props?.color ?? "currentColor"}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <rect
         x="9.33594"
@@ -3174,9 +3174,9 @@ const DashboardCompanyIconSvg = (props) => {
         width="4"
         height="4.66667"
         stroke={props?.color ?? "currentColor"}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <rect
         x="9.33594"
@@ -3184,9 +3184,9 @@ const DashboardCompanyIconSvg = (props) => {
         width="4"
         height="3.33333"
         stroke={props?.color ?? "currentColor"}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -3370,11 +3370,11 @@ const AddCareerIconSvg = (props) => {
       width={props.size ?? "36"}
       height={props.size ?? "36"}
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke={props.color ?? "currentColor"}
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
@@ -3398,9 +3398,9 @@ const ShowCareerIconSvg = (props) => {
       <path
         d="M13.5 7.5H10.5C8.84315 7.5 7.5 8.84315 7.5 10.5V28.5C7.5 30.1569 8.84315 31.5 10.5 31.5H25.5C27.1569 31.5 28.5 30.1569 28.5 28.5V10.5C28.5 8.84315 27.1569 7.5 25.5 7.5H22.5"
         stroke="white"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <rect
         x="13.5"
@@ -3409,32 +3409,32 @@ const ShowCareerIconSvg = (props) => {
         height="6"
         rx="2"
         stroke={props.color ?? "currentColor"}
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         fill-rule="evenodd"
         clip-rule="evenodd"
         d="M19.9975 21.0014H22.3881C22.6577 21.0015 22.9008 21.2045 23.0039 21.5159C23.1071 21.8272 23.0501 22.1856 22.8595 22.4239L18.4688 27.9123C18.2085 28.2376 17.7865 28.2376 17.5261 27.9123L13.1355 22.4239C12.9449 22.1856 12.8879 21.8272 12.991 21.5159C13.0942 21.2045 13.3372 21.0015 13.6068 21.0014H15.9975V18.5014H19.9975V21.0014Z"
         stroke="white"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M20 13.5013H16"
         stroke={props.color ?? "currentColor"}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M20 16.0013H16"
         stroke={props.color ?? "currentColor"}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -3458,7 +3458,7 @@ const PinFilledIconSvg = (props) => {
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path
         d="M15.113 3.21l.094 .083l5.5 5.5a1 1 0 0 1 -1.175 1.59l-3.172 3.171l-1.424 3.797a1 1 0 0 1 -.158 .277l-.07 .08l-1.5 1.5a1 1 0 0 1 -1.32 .082l-.095 -.083l-2.793 -2.792l-3.793 3.792a1 1 0 0 1 -1.497 -1.32l.083 -.094l3.792 -3.793l-2.792 -2.793a1 1 0 0 1 -.083 -1.32l.083 -.094l1.5 -1.5a1 1 0 0 1 .258 -.187l.098 -.042l3.796 -1.425l3.171 -3.17a1 1 0 0 1 1.497 -1.26z"
-        stroke-width="0"
+        strokeWidth="0"
         fill={props.color ?? "currentColor"}
       />
     </svg>
@@ -3545,9 +3545,9 @@ const SpinnerIconSvg = (props) => {
       <path
         d="M14.6953 26.2043L22.9152 34.4242L39.355 17.9844"
         stroke="white"
-        stroke-width="7"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -3682,16 +3682,16 @@ const CloseIconSvg = (props) => {
       <path
         d="M12 4L4 12"
         stroke={props.color ?? "currentColor"}
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M4 4L12 12"
         stroke={props.color ?? "currentColor"}
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -3725,9 +3725,9 @@ const CloseOverlay = (props) => {
       viewBox="0 0 24 24"
       fill="none"
       stroke={props.color ?? "currentColor"}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className="icon icon-tabler icons-tabler-outline icon-tabler-x"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -3975,6 +3975,24 @@ const PdfIconSvg = (props) => {
   return <Icon rev={""} component={pdfIconSvg} {...props}></Icon>;
 };
 
+const WarningIconSvg = (props) => {
+  const warningIconSvg = () => (
+    <svg
+      width={props.size ?? 24}
+      height={props.size ?? 24}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 2C14.6522 2 17.1957 3.05357 19.0711 4.92893C20.9464 6.8043 22 9.34784 22 12C22 14.6522 20.9464 17.1957 19.0711 19.0711C17.1957 20.9464 14.6522 22 12 22C9.34784 22 6.8043 20.9464 4.92893 19.0711C3.05357 17.1957 2 14.6522 2 12C2 9.34784 3.05357 6.8043 4.92893 4.92893C6.8043 3.05357 9.34784 2 12 2ZM12 6.28571C11.8186 6.28555 11.6392 6.32322 11.4732 6.39632C11.3072 6.46941 11.1583 6.57632 11.036 6.71022C10.9136 6.84413 10.8206 7.00207 10.7627 7.17397C10.7049 7.34587 10.6835 7.52795 10.7 7.70857L11.2214 13.4314C11.2416 13.6238 11.3324 13.8019 11.4762 13.9314C11.6199 14.0608 11.8065 14.1325 12 14.1325C12.1935 14.1325 12.3801 14.0608 12.5238 13.9314C12.6676 13.8019 12.7584 13.6238 12.7786 13.4314L13.2986 7.70857C13.3151 7.52807 13.2937 7.34611 13.236 7.17431C13.1782 7.00251 13.0853 6.84463 12.9631 6.71075C12.8409 6.57687 12.6922 6.46993 12.5263 6.39675C12.3605 6.32357 12.1813 6.28575 12 6.28571ZM12 17.7143C12.3031 17.7143 12.5938 17.5939 12.8081 17.3796C13.0224 17.1652 13.1429 16.8745 13.1429 16.5714C13.1429 16.2683 13.0224 15.9776 12.8081 15.7633C12.5938 15.549 12.3031 15.4286 12 15.4286C11.6969 15.4286 11.4062 15.549 11.1919 15.7633C10.9776 15.9776 10.8571 16.2683 10.8571 16.5714C10.8571 16.8745 10.9776 17.1652 11.1919 17.3796C11.4062 17.5939 11.6969 17.7143 12 17.7143Z"
+        fill="#BF4A40"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={warningIconSvg} {...props}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -4142,4 +4160,5 @@ export {
   AlertCircleFilledIconSvg,
   LinkIconSvg,
   PdfIconSvg,
+  WarningIconSvg,
 };

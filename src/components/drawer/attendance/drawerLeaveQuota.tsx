@@ -1,61 +1,22 @@
-import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  LoadingOutlined,
-  RightOutlined,
-  SearchOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import {
-  Checkbox,
-  Collapse,
-  DatePicker,
-  Drawer,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Spin,
-  Switch,
-  Table,
-  Tag,
-  Upload,
-  notification,
-} from "antd";
+import { DatePicker, Form, InputNumber, Select, notification } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
 import { RcFile } from "antd/lib/upload";
-import { AxiosResponse } from "axios";
 import moment from "moment";
-import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-
-import ButtonSys from "components/button";
+import { useQueryClient } from "react-query";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { MAX_SCHEDULED_DAYS, TODAY } from "lib/constants";
+import { MAX_CONTRACT_DAYS, MAX_SCHEDULED_DAYS, TODAY } from "lib/constants";
 import {
   AGENTS_GET,
   COMPANY_CLIENTS_GET,
   FILTER_EMPLOYEES_GET,
   LEAVE_TYPES_GET,
 } from "lib/features";
-import {
-  generateStaticAssetUrl,
-  getBase64,
-  permissionWarningNotification,
-} from "lib/helper";
-
-import {
-  AgentService,
-  IGetAgentsPaginateParams,
-  IGetAgentsPaginateSucceedResponse,
-} from "apis/user";
+import { permissionWarningNotification } from "lib/helper";
 
 import DrawerCore from "../drawerCore";
 
@@ -63,10 +24,22 @@ const DrawerLeaveQuota = ({
   dataToken,
   visible,
   onCancel,
+  fetchData,
+  resetParams,
+  dataDefault,
 }: {
   dataToken: string;
   visible: boolean;
   onCancel: () => void;
+  fetchData: () => void;
+  resetParams: () => void;
+  dataDefault?: {
+    employee_id: null;
+    id: null;
+    leave_quota: null;
+    start_date: null;
+    end_date: null;
+  };
 }) => {
   const [showData, setShowData] = useState("1");
   const axiosClient = useAxiosClient();
@@ -107,20 +80,20 @@ const DrawerLeaveQuota = ({
     if (visible) {
       fetchDataEmployees();
     }
-  }, [visible]);
-
-  const [dataPengajuan, setDataPengajuan] = useState({
-    user_ids: [],
-    date: "",
-    tipe_cuti: null,
-    start_date: "",
-    end_date: "",
-  });
+    if (dataDefault) {
+      instanceForm.setFieldValue("leave_quota", dataDefault.leave_quota);
+      instanceForm.setFieldValue("employee_id", dataDefault.employee_id);
+      instanceForm.setFieldValue("validity_period", [
+        moment(dataDefault.start_date),
+        moment(dataDefault.end_date),
+      ]);
+    }
+  }, [visible, dataDefault]);
 
   const validateRepetitionRange = (_, value) => {
-    if (value && value[1].diff(value[0], "days") > MAX_SCHEDULED_DAYS) {
+    if (value && value[1].diff(value[0], "days") > MAX_CONTRACT_DAYS) {
       return Promise.reject(
-        "Maksimal rentang tanggal yang dapat dipilih adalah 3 bulan"
+        "Maksimal rentang tanggal yang dapat dipilih adalah 1 tahun"
       );
     }
     return Promise.resolve();
@@ -178,41 +151,54 @@ const DrawerLeaveQuota = ({
   };
 
   const handleSubmit = (values) => {
-    let formData = new FormData();
-    formData.append("type", values.tipe_cuti);
-    formData.append("start_date", values.tanggal_cuti[0]);
-    formData.append("end_date", values.tanggal_cuti[1]);
-    if (values.notes) {
-      formData.append("notes", values.notes);
-    }
-    formData.append("employee_id", values.employee_id);
-    if (values.delegate_id) {
-      formData.append("delegate_id", values.delegate_id);
-    }
-    if (dokumenFileBlob) {
-      formData.append("document", dokumenFileBlob);
-    }
     setLoadingSave(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addLeave `, {
-      method: "POST",
+    let url = "";
+    let method = "POST";
+    let datapayload = {};
+    if (dataDefault) {
+      url = `updateEmployeeLeaveQuota`;
+      method = "PUT";
+      datapayload = {
+        id: dataDefault.id,
+        employee_id: values.employee_id,
+        leave_total: values.leave_quota,
+        start_period: moment(values.validity_period[0]).format("YYYY-MM-DD"),
+        end_period: moment(values.validity_period[1]).format("YYYY-MM-DD"),
+      };
+    } else {
+      url = "addEmployeeLeaveQuota";
+      method = "POST";
+      datapayload = {
+        employee_id: values.employee_id,
+        leave_total: values.leave_quota,
+        start_period: moment(values.validity_period[0]).format("YYYY-MM-DD"),
+        end_period: moment(values.validity_period[1]).format("YYYY-MM-DD"),
+      };
+    }
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`, {
+      method: method,
       headers: {
         Authorization: JSON.parse(dataToken),
+        "Content-Type": "application/json",
       },
-      body: formData,
+      body: JSON.stringify(datapayload),
     })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
           setLoadingSave(false);
+          instanceForm.resetFields();
+          resetParams();
           onCancel();
-          // fetchData()
+          fetchData();
           notification["success"]({
-            message: "Add Leave Quota Success",
+            message: `${dataDefault ? "Update" : " Add"} Leave Quota Success`,
             duration: 3,
           });
         } else {
+          setLoadingSave(false);
           notification["error"]({
-            message: "Add Leave Quota Success",
+            message: `${dataDefault ? "Update" : " Add"} Leave Quota Failed`,
             duration: 3,
           });
         }
@@ -221,13 +207,13 @@ const DrawerLeaveQuota = ({
 
   return (
     <DrawerCore
-      title={"Add Leave Quota"}
+      title={dataDefault ? "Update Leave Quota" : "Add Leave Quota"}
       visible={visible}
       onClose={onCancel}
       onButtonCancelClicked={onCancel}
       buttonCancelText={"Cancel"}
       onClick={() => instanceForm.submit()}
-      buttonOkText="Add Leave Quota"
+      buttonOkText={dataDefault ? "Update Leave Quota" : "Add Leave Quota"}
       loading={loadingSave}
     >
       <div className={"flex flex-col gap-8"}>
@@ -248,7 +234,11 @@ const DrawerLeaveQuota = ({
                 <Select
                   showSearch
                   // className="dontShow"
-                  value={dataLeaveQuota?.employee_id}
+                  value={
+                    dataDefault
+                      ? dataDefault.employee_id
+                      : dataLeaveQuota?.employee_id
+                  }
                   placeholder={"Search employee’s name"}
                   style={{ width: `100%` }}
                   onSearch={(value) => onSearchUsers(value, setDataEmployees)}
@@ -288,6 +278,7 @@ const DrawerLeaveQuota = ({
                 className="col-span-2 "
               >
                 <InputNumber
+                  value={dataDefault ? dataDefault.leave_quota : null}
                   placeholder="input leave quota"
                   className={"w-full"}
                   onChange={(value) =>
