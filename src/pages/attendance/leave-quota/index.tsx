@@ -1,43 +1,45 @@
-import { DatePicker, Form, Input, Select, Table } from "antd";
+import {
+  DeleteFilled,
+  LoadingOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
+import { Form, Input, Modal, Select, Spin, Table, notification } from "antd";
 import { SorterResult } from "antd/lib/table/interface";
 import moment from "moment";
 import {
-  DateParam,
   NumberParam,
   StringParam,
   useQueryParams,
   withDefault,
 } from "next-query-params";
-import { useRouter } from "next/router";
 import QueryString from "qs";
 import { useEffect, useState } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
-import DrawerCutiSatuan from "components/drawer/attendance/drawerCutiSatuan";
 import DrawerLeaveQuota from "components/drawer/attendance/drawerLeaveQuota";
 import {
-  AddNoteSvg,
-  AdjusmentsHorizontalIconSvg,
   CirclePlusIconSvg,
+  CloseIconSvg,
   EditSquareIconSvg,
-  EyeIconSvg,
-  SettingsIconSvg,
   TrashIconSvg,
+  WarningIconSvg,
 } from "components/icon";
 import LayoutDashboard from "components/layout-dashboard";
-import ModalPengajuanCuti from "components/modal/attendance/modalPengajuanCuti";
-import { AttendanceAdminLeaveStatisticCards } from "components/screen/attendance/leave/AttendanceAdminLeaveStatisticCards";
-import BadgeLeaveStatus from "components/screen/attendance/leave/BadgeLeaveStatus";
 
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  EMPLOYEE_LEAVE_QUOTAS_GET,
+  EMPLOYEE_LEAVE_QUOTA_ADD,
+  EMPLOYEE_LEAVE_QUOTA_DELETE,
+  EMPLOYEE_LEAVE_QUOTA_UPDATE,
   LEAVES_GET,
   LEAVE_ADD,
   LEAVE_STATISTICS_GET,
   LEAVE_STATUSES_GET,
   LEAVE_TYPES_GET,
+  RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
 
 import { LeaveStatus } from "apis/attendance";
@@ -86,7 +88,7 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
   // Breadcrumb title
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
-      name: "Leave / Day Off",
+      name: "Leave Quota",
     },
   ];
 
@@ -96,9 +98,20 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
     sort_by: withDefault(StringParam, /** @type {"status"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     keyword: withDefault(StringParam, ""),
-    date: withDefault(StringParam, undefined),
-    status: withDefault(StringParam, undefined),
+    role_ids: withDefault(StringParam, undefined),
   });
+
+  const [theForm] = Form.useForm();
+
+  const isAllowedToGetLeaveQuota = hasPermission(EMPLOYEE_LEAVE_QUOTAS_GET);
+  const isAllowedToAddLeaveQuota = hasPermission(EMPLOYEE_LEAVE_QUOTA_ADD);
+  const isAllowedToUpdateLeaveQuota = hasPermission(
+    EMPLOYEE_LEAVE_QUOTA_UPDATE
+  );
+  const isAllowedToDeleteLeaveQuota = hasPermission(
+    EMPLOYEE_LEAVE_QUOTA_DELETE
+  );
+  const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
 
   let timer: NodeJS.Timeout; // use for delay time in table's search
 
@@ -133,6 +146,7 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
     to: null,
     total: null,
   });
+  const [roleList, setDataRoleList] = useState([]);
   const [dataAnnualLeave, setDataAnnualLeave] = useState([]);
   const [dataStatusCuti, setDataStatusCuti] = useState([]);
   const [dataStatusPengajuan, setDataStatusPengajuan] = useState([]);
@@ -140,30 +154,45 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToAddLeave = hasPermission(LEAVE_ADD);
   const isAllowedToGetLeave = hasPermission(LEAVES_GET);
   const isAllowedToGetLeaveStatus = hasPermission(LEAVE_STATUSES_GET);
+  const [showModalDelete, setShowModalDelete] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [recordDelete, setRecordDelete] = useState({
+    name: null,
+    totalLeave: null,
+    id: null,
+  });
+
   const [dataDefault, setDataDefault] = useState(null);
+  const [showEdit, setShowEdit] = useState(false);
   useEffect(() => {
     fetchData();
   }, [
     queryParams.page,
     queryParams.rows,
-    queryParams.date,
+    queryParams.role_ids,
     queryParams.keyword,
-    queryParams.status,
   ]);
 
+  useEffect(() => {
+    fetchDataRole();
+  }, []);
+
   const fetchData = async () => {
-    if (!isAllowedToGetLeave) {
+    if (!isAllowedToGetLeaveQuota) {
       permissionWarningNotification("Mendapatkan", "Data Cuti");
     } else {
       const params = QueryString.stringify(queryParams, {
         addQueryPrefix: true,
       });
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLeaves${params}`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeLeaveQuotas${params}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
         .then((res) => res.json())
         .then((res2) => {
           setDisplayDataLeaves(res2.data); // table-related data source
@@ -172,9 +201,47 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   };
 
+  const fetchDataRole = async () => {
+    if (!isAllowedToGetRoleList) {
+      permissionWarningNotification("Mendapatkan", "Data Role");
+    } else {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRolesList`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataRoleList(res2.data);
+        });
+    }
+  };
+
   const detailCuti = (record) => {
     setShowDrawer(true);
     setDataDefault(record);
+  };
+
+  const onDeleteButtonClicked = (record) => {
+    setShowModalDelete(true);
+    setRecordDelete({
+      ...recordDelete,
+      totalLeave: record.leave_quota.leave_total,
+      name: record.name,
+      id: record.id,
+    });
+  };
+
+  const onEditButtonClicked = (record) => {
+    setShowEdit(true);
+    setDataDefault({
+      leave_quota: record.leave_quota.leave_total,
+      employee_id: record.leave_quota.employee_id,
+      id: record.leave_quota.id,
+      start_date: record.start_period,
+      end_date: record.end_period,
+    });
   };
 
   const columns: typeof dataAnnualLeave = [
@@ -190,9 +257,9 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
     },
     {
       title: "Employee Name",
-      dataIndex: ["employee", "name"],
-      key: "employee_name",
-      sorter: (a, b) => a.employee.name.localeCompare(b.employee.name),
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
       width: 100,
       render: (text, record, index) => (
         <p className="whitespace-nowrap truncate w-32" title={text}>
@@ -202,33 +269,32 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
     },
     {
       title: "Role",
-      dataIndex: ["employee", "contract", "role", "alias"],
+      dataIndex: "role",
       key: "role",
       align: "center",
-      sorter: (a, b) =>
-        a.employee.contract.role.alias.localeCompare(
-          b.employee.contract.role.alias
-        ),
+      sorter: true,
       render: (text, record, index) => (
-        <p className="whitespace-nowrap truncate">{text}</p>
+        <p className="whitespace-nowrap truncate">
+          {record.contract.role?.alias}
+        </p>
       ),
     },
     {
       title: "Total Leave Quota",
-      dataIndex: "duration",
-      key: "duration",
+      dataIndex: ["leave_quota", "leave_total"],
+      key: "leave_quota",
       render: (text, record, index) => <p>{text}</p>,
     },
     {
       title: "Leave Used",
-      dataIndex: "duration",
-      key: "duration",
+      dataIndex: ["leave_quota", "leave_used"],
+      key: "leave_used",
       render: (text, record, index) => <p>{text}</p>,
     },
     {
       title: "Leave Remains",
-      dataIndex: "duration",
-      key: "duration",
+      dataIndex: ["leave_quota", "leave_remaining"],
+      key: "leave_remains",
       render: (text, record, index) => <p>{text}</p>,
     },
     {
@@ -237,8 +303,8 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
       key: "valid_period",
       render: (text, record, index) => (
         <p className="whitespace-nowrap truncate">
-          {moment(record.start_date).format("D MMMM YYYY")} -{" "}
-          {moment(record.end_date).format("D MMMM YYYY")}
+          {moment(record.leave_quota.start_period).format("D MMMM YYYY")} -{" "}
+          {moment(record.leave_quota.end_period).format("D MMMM YYYY")}
         </p>
       ),
       sorter: isAllowedToGetLeave
@@ -254,20 +320,22 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
           children: (
             <div className="flex items-center gap-2 justify-center">
               <button
+                disabled={!isAllowedToDeleteLeaveQuota}
                 className="bg-transparent"
                 onClick={(e) => {
                   e.stopPropagation();
-                  // onDeleteButtonClicked(record);
+                  onDeleteButtonClicked(record);
                 }}
                 //   disabled={!isAllowedToDeleteFormDetail}
               >
                 <TrashIconSvg color={"#BF4A40"} size={20} />
               </button>
               <button
+                disabled={!isAllowedToUpdateLeaveQuota}
                 className="bg-transparent"
                 onClick={(e) => {
                   e.stopPropagation();
-                  // onEditButtonClicked(record);
+                  onEditButtonClicked(record);
                 }}
                 //   disabled={!canOpenUpdateDrawer}
               >
@@ -284,20 +352,70 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [modalAdd, setModalAdd] = useState(false);
   const [modalTipeCuti, setModalTipeCuti] = useState(false);
 
-  const closeModalAdd = () => {
-    setModalAdd(false);
+  const resetParams = () => {
+    theForm.setFieldsValue({
+      role: undefined,
+    });
+    setQueryParams({
+      ...queryParams,
+      page: 1,
+      rows: 10,
+      role_ids: undefined,
+      sort_by: undefined,
+      sort_type: undefined,
+      keyword: undefined,
+    });
   };
 
-  const closeDrawer = () => {
-    setShowDrawer(false);
+  const cancelDelete = () => {
+    setShowModalDelete(false);
+    setRecordDelete({
+      ...recordDelete,
+      totalLeave: null,
+      name: null,
+      id: null,
+    });
   };
 
-  const onChangeDate = (date, dateString) => {
-    if (date == null) {
-      setQueryParams({ date: undefined, page: 1 });
-    } else {
-      setQueryParams({ date: dateString, page: 1 });
-    }
+  const handleDeleteLeaveQuota = () => {
+    setLoadingDelete(true);
+    let params = {
+      id: recordDelete.id,
+    };
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteEmployeeLeaveQuota`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(params),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: response2.message,
+            duration: 3,
+          });
+          cancelDelete();
+          resetParams();
+          fetchData();
+        } else {
+          notification.error({
+            message: `Delete Leave Quota Failed. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Delete Leave Quota Failed. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingDelete(false);
+      });
   };
 
   return (
@@ -315,22 +433,25 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
             }
           >
             <p className="mig-body--bold ">Employee Leave Quota</p>
-            <div className={"flex flex-col sm:flex-row gap-4 items-end"}>
-              <ButtonSys
-                type="primary"
-                onClick={() => setShowDrawerLeaveQuota(true)}
-                disabled={!isAllowedToAddLeave}
-              >
-                <div className="flex items-center gap-2 text-white whitespace-nowrap">
-                  <CirclePlusIconSvg size={20} />
-                  <p>Add Leave Quota</p>
-                </div>
-              </ButtonSys>
-            </div>
+            {isAllowedToAddLeaveQuota && (
+              <div className={"flex flex-col sm:flex-row gap-4 items-end"}>
+                <ButtonSys
+                  type="primary"
+                  onClick={() => setShowDrawerLeaveQuota(true)}
+                  disabled={!isAllowedToAddLeave}
+                >
+                  <div className="flex items-center gap-2 text-white whitespace-nowrap">
+                    <CirclePlusIconSvg size={20} />
+                    <p>Add Leave Quota</p>
+                  </div>
+                </ButtonSys>
+              </div>
+            )}
           </div>
           {/* Table's filter */}
           <div className="px-4 py-3">
             <Form
+              form={theForm}
               className="flex flex-col sm:flex-row w-full sm:justify-between sm:items-center gap-2"
               onFinish={(values) => {
                 setQueryParams({ keyword: values.search, page: 1 });
@@ -360,32 +481,33 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
                 </Form.Item>
               </div>
               <div className="flex flex-1 ">
-                <Form.Item noStyle>
-                  <DatePicker
-                    allowClear
-                    className="w-full"
-                    // defaultValue={queryParams.date}
-                    disabled={!isAllowedToGetLeave}
-                    placeholder="Select Date"
-                    onChange={onChangeDate}
-                  />
-                </Form.Item>
-              </div>
-              <div className="md:w-36">
-                <Form.Item noStyle>
+                <Form.Item name={"role"} noStyle>
                   <Select
                     allowClear
-                    className="w-full "
-                    defaultValue={queryParams.status}
-                    disabled={!isAllowedToGetLeaveStatus}
-                    placeholder="Status"
+                    mode="tags"
+                    tokenSeparators={[","]}
+                    showSearch
+                    disabled={!isAllowedToGetRoleList}
+                    placeholder="Select Role"
+                    style={{ width: `100%` }}
                     onChange={(value) => {
-                      setQueryParams({ status: value, page: 1 });
+                      setQueryParams({ role_ids: value, page: 1 });
                     }}
+                    optionFilterProp="children"
+                    filterOption={(
+                      input,
+                      option: { label: string; value: string }
+                    ) =>
+                      option?.label?.toLowerCase().includes(input.toLowerCase())
+                    }
                   >
-                    {leaveStatuses?.map((item) => (
-                      <Select.Option key={item.label} value={item.value}>
-                        <BadgeLeaveStatus status={item.value} />
+                    {roleList?.map((item) => (
+                      <Select.Option
+                        key={item.id}
+                        value={item.id}
+                        label={item.name}
+                      >
+                        {item.name}
                       </Select.Option>
                     ))}
                   </Select>
@@ -428,13 +550,95 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
               }}
             />
           </div>
-          <DrawerLeaveQuota
-            dataToken={initProps}
-            visible={showDrawerLeaveQuota}
+          {showDrawerLeaveQuota && (
+            <DrawerLeaveQuota
+              dataToken={initProps}
+              resetParams={resetParams}
+              fetchData={fetchData}
+              visible={showDrawerLeaveQuota}
+              onCancel={() => {
+                setShowDrawerLeaveQuota(false);
+              }}
+            />
+          )}
+
+          {showEdit && (
+            <DrawerLeaveQuota
+              dataToken={initProps}
+              resetParams={resetParams}
+              fetchData={fetchData}
+              visible={showEdit}
+              onCancel={() => {
+                setShowEdit(false);
+              }}
+              dataDefault={dataDefault}
+            />
+          )}
+
+          <Modal
+            closeIcon={<CloseIconSvg size={24} color={"#4D4D4D"} />}
+            title={
+              <div className={"flex gap-2"}>
+                <WarningIconSvg />
+                <p className={"font-semibold text-sm leading-6 text-[#BF4A40]"}>
+                  Confirm Delete
+                </p>
+              </div>
+            }
+            open={showModalDelete}
             onCancel={() => {
-              setShowDrawerLeaveQuota(false);
+              // setmodaldelete(false);
+              cancelDelete();
             }}
-          />
+            footer={
+              <div className={"flex gap-4 justify-end"}>
+                <div
+                  onClick={() => cancelDelete()}
+                  className={
+                    "bg-white border border-solid border-[#808080] py-2 px-4 rounded-md hover:cursor-pointer"
+                  }
+                >
+                  <p className={"text-xs leading-5 text-[#808080] font-bold"}>
+                    Cancel
+                  </p>
+                </div>
+                <div
+                  onClick={() => handleDeleteLeaveQuota()}
+                  className={
+                    "bg-[#BF4A40] flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
+                  }
+                >
+                  {loadingDelete ? (
+                    <Spin
+                      spinning={loadingDelete}
+                      indicator={<LoadingOutlined />}
+                      size={"default"}
+                    />
+                  ) : (
+                    <TrashIconSvg color={"white"} size={16} />
+                  )}
+                  <p className="text-white text-xs leading-5 font-bold">
+                    Delete
+                  </p>
+                </div>
+              </div>
+            }
+            // onOk={handleDelete}
+
+            maskClosable={true}
+            style={{ top: `3rem` }}
+            width={440}
+            destroyOnClose={true}
+          >
+            <p className={"text-[#4D4D4D] "}>
+              Are you sure you want to delete{" "}
+              <span className={"font-bold"}>{recordDelete?.name}</span> with{" "}
+              <span className={"font-bold"}>
+                {recordDelete?.totalLeave} total leave quota
+              </span>
+              ?
+            </p>
+          </Modal>
         </div>
       </div>
     </LayoutDashboard>
