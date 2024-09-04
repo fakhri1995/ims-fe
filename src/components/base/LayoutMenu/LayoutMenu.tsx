@@ -30,6 +30,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { ROLE_SUPER_ADMIN } from "lib/constants";
 import {
+  EMPLOYEE_LEAVE_QUOTAS_GET,
   LEAVES_GET,
   OVERTIMES_GET,
   SIDEBAR_ANNOUNCEMENT,
@@ -382,7 +383,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
-          {hasPermission(LEAVES_GET) && (
+          {hasPermission(EMPLOYEE_LEAVE_QUOTAS_GET) && (
             <Menu.Item key="attendance/leavequota" className="text-mono50">
               <Link href="/attendance/leave-quota" legacyBehavior>
                 <p>Leave Quota</p>
