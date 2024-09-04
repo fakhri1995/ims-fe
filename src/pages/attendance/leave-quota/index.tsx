@@ -229,7 +229,7 @@ const LeaveQuotaIndex = ({ initProps, dataProfile, sidemenu }) => {
       ...recordDelete,
       totalLeave: record.leave_quota.leave_total,
       name: record.name,
-      id: record.id,
+      id: record.leave_quota.id,
     });
   };
 
