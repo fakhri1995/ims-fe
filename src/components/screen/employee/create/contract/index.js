@@ -738,19 +738,6 @@ const EmployeeContractForm = ({
           />
         </div>
       </Form.Item>
-      <Form.Item label="Cuti Tahunan" name={"annual_leave"}>
-        <div>
-          <InputNumber
-            type={"number"}
-            min={0}
-            value={dataContract?.annual_leave}
-            name={"annual_leave"}
-            onChange={(value) => onChangeSelect(value, "annual_leave")}
-            placeholder="Masukkan jumlah hari cuti"
-            className="w-full"
-          />
-        </div>
-      </Form.Item>
       <Form.Item
         label="Tanggal Resign"
         name={"resign_at"}
@@ -779,6 +766,7 @@ const EmployeeContractForm = ({
           />
         </>
       </Form.Item>
+      <div></div>
 
       <div className="flex flex-col space-y-3">
         <p className="mig-heading--5">BENEFIT PENERIMAAN</p>
