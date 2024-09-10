@@ -317,12 +317,12 @@ const EmployeeContractDetail = ({
                     <p>{dataContract.new_office}</p>
                   </div>
                 )}
-                <div className="space-y-1">
+                {/* <div className="space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Cuti Tahunan
                   </p>
                   <p>{dataContract.annual_leave || "-"} hari</p>
-                </div>
+                </div> */}
                 {moment(dataContract.resign_at).isValid() && (
                   <div className="space-y-1">
                     <p className="mig-caption--medium text-mono80">
