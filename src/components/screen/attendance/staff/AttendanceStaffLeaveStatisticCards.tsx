@@ -61,7 +61,7 @@ export const AttendanceStaffLeaveStatisticCards: FC<
     <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 justify-between gap-3 my-4">
       {/* Card Quota this year */}
       <StatisticCountCard
-        dataCount={12}
+        dataCount={Number(leaveCount?.leave_total)}
         icon={
           <CircleCheckFilledIconSvg size={24} className={"text-primary100"} />
         }
@@ -70,7 +70,7 @@ export const AttendanceStaffLeaveStatisticCards: FC<
       />
       {/* Card Leave remaining */}
       <StatisticCountCard
-        dataCount={12 + Number(leaveCount)}
+        dataCount={Number(leaveCount?.leave_remaining)}
         icon={
           <CalendarFilIconSvg size={24} className={"text-accentblue text-lg"} />
         }
@@ -88,7 +88,7 @@ export const AttendanceStaffLeaveStatisticCards: FC<
 
       {/* Card Leave quota */}
       <StatisticCountCard
-        dataCount={Math.abs(leaveCount)}
+        dataCount={Number(leaveCount?.leave_used)}
         icon={
           <CalendarCheckedFillIconSvg size={22} className={"text-danger"} />
         }

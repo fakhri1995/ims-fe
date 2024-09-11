@@ -27,9 +27,12 @@ import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import DrawerLeaveQuota from "components/drawer/attendance/drawerLeaveQuota";
+import DrawerRecapitulation from "components/drawer/attendance/drawerRecapitulation";
 import {
   CirclePlusIconSvg,
   CloseIconSvg,
+  DownloadIcon2Svg,
+  DownloadIconSvg,
   EditSquareIconSvg,
   TableExportIconSvg,
   TrashIconSvg,
@@ -316,36 +319,94 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       ),
     },
     {
-      title: "Total Leave Quota",
+      title: "Company",
+      dataIndex: "role",
+      key: "role",
+      align: "center",
+      sorter: true,
+      render: (text, record, index) => (
+        <p className="whitespace-nowrap truncate">
+          {record.contract.role?.alias}
+        </p>
+      ),
+    },
+    {
+      title: "Jumlah Kerja",
       dataIndex: ["leave_quota", "leave_total"],
       key: "leave_quota",
       render: (text, record, index) => <p>{text}</p>,
     },
     {
-      title: "Leave Used",
-      dataIndex: ["leave_quota", "leave_used"],
-      key: "leave_used",
-      render: (text, record, index) => <p>{text}</p>,
-    },
-    {
-      title: "Leave Remains",
-      dataIndex: ["leave_quota", "leave_remaining"],
-      key: "leave_remains",
-      render: (text, record, index) => <p>{text}</p>,
-    },
-    {
-      title: "Valid Period",
-      dataIndex: "valid_period",
-      key: "valid_period",
+      title: "WFO",
+      dataIndex: "role",
+      key: "role",
+      align: "center",
+      sorter: true,
       render: (text, record, index) => (
         <p className="whitespace-nowrap truncate">
-          {moment(record.leave_quota.start_period).format("D MMMM YYYY")} -{" "}
-          {moment(record.leave_quota.end_period).format("D MMMM YYYY")}
+          {record.contract.role?.alias}
         </p>
       ),
-      sorter: isAllowedToGetLeave
-        ? (a, b) => a?.issued_date?.localeCompare(b?.issued_date)
-        : false,
+    },
+    {
+      title: "WFH",
+      dataIndex: "role",
+      key: "role",
+      align: "center",
+      sorter: true,
+      render: (text, record, index) => (
+        <p className="whitespace-nowrap truncate">
+          {record.contract.role?.alias}
+        </p>
+      ),
+    },
+    {
+      title: "Telat",
+      dataIndex: "role",
+      key: "role",
+      align: "center",
+      sorter: true,
+      render: (text, record, index) => (
+        <p className="whitespace-nowrap truncate">
+          {record.contract.role?.alias}
+        </p>
+      ),
+    },
+    {
+      title: "Alpha",
+      dataIndex: "role",
+      key: "role",
+      align: "center",
+      sorter: true,
+      render: (text, record, index) => (
+        <p className="whitespace-nowrap truncate">
+          {record.contract.role?.alias}
+        </p>
+      ),
+    },
+    {
+      title: "Cuti",
+      dataIndex: "role",
+      key: "role",
+      align: "center",
+      sorter: true,
+      render: (text, record, index) => (
+        <p className="whitespace-nowrap truncate">
+          {record.contract.role?.alias}
+        </p>
+      ),
+    },
+    {
+      title: "lembur",
+      dataIndex: "role",
+      key: "role",
+      align: "center",
+      sorter: true,
+      render: (text, record, index) => (
+        <p className="whitespace-nowrap truncate">
+          {record.contract.role?.alias}
+        </p>
+      ),
     },
     {
       title: "Actions",
@@ -364,18 +425,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
                 }}
                 //   disabled={!isAllowedToDeleteFormDetail}
               >
-                <TrashIconSvg color={"#BF4A40"} size={20} />
-              </button>
-              <button
-                disabled={!isAllowedToUpdateLeaveQuota}
-                className="bg-transparent"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEditButtonClicked(record);
-                }}
-                //   disabled={!canOpenUpdateDrawer}
-              >
-                <EditSquareIconSvg color={"#808080"} size={20} />
+                <DownloadIconSvg color={"#808080"} size={20} />
               </button>
             </div>
           ),
@@ -526,7 +576,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
                     tokenSeparators={[","]}
                     showSearch
                     disabled={!isAllowedToGetRoleList}
-                    placeholder="Select Role"
+                    placeholder="Role"
                     style={{ width: `100%` }}
                     onChange={(value) => {
                       setQueryParams({ role_ids: value, page: 1 });
@@ -559,7 +609,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
                   className="w-full"
                   defaultValue={queryParams.company_id}
                   disabled={!isAllowedToGetCompanyClients || loadingCompanyList}
-                  placeholder="Select Placement"
+                  placeholder="Company"
                   onChange={(value) => {
                     setQueryParams({ company_id: value, page: 1 });
                   }}
@@ -617,25 +667,13 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
             />
           </div>
           {showDrawerLeaveQuota && (
-            <DrawerLeaveQuota
+            <DrawerRecapitulation
               dataToken={initProps}
               resetParams={resetParams}
               fetchData={fetchData}
               visible={showDrawerLeaveQuota}
               onCancel={() => {
                 setShowDrawerLeaveQuota(false);
-              }}
-            />
-          )}
-
-          {showEdit && (
-            <DrawerLeaveQuota
-              dataToken={initProps}
-              resetParams={resetParams}
-              fetchData={fetchData}
-              visible={showEdit}
-              onCancel={() => {
-                setShowEdit(false);
               }}
               dataDefault={dataDefault}
             />
