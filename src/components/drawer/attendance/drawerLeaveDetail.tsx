@@ -523,9 +523,9 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
            bg-backdrop text-primary100 py-2 rounded-[5px]"
           >
             <h5 className="mig-heading--5 text-primary100">
-              {detailEmployee?.jumlah_cuti_tahunan
-                ? Number(detailEmployee?.jumlah_cuti_tahunan)
-                : "0" || "-"}{" "}
+              {detailEmployee.jumlah_cuti_tahunan
+                ? Number(detailEmployee.jumlah_cuti_tahunan)
+                : "0 "}
               days quota
             </h5>
             <p>leave remaining</p>
