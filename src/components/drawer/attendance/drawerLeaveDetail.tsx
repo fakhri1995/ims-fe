@@ -116,7 +116,6 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
   }, [dataDefault, visible]);
 
   const clickDetailEmployee = (record) => {
-    console.log("isi detail ", record);
     setDetailEmployee({
       nama: record?.name,
       role: record?.contract?.role?.name,
@@ -124,7 +123,7 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
       nip: record?.nip,
       no_telp: record?.phone_number,
       email: record?.email_office,
-      jumlah_cuti_tahunan: record?.leave_quota,
+      jumlah_cuti_tahunan: record?.leave_quota?.leave_remaining,
     });
     setShowData("2");
   };
@@ -524,7 +523,7 @@ const DrawerLeaveDetail: FC<IDrawerLeaveDetail> = ({
           >
             <h5 className="mig-heading--5 text-primary100">
               {detailEmployee.jumlah_cuti_tahunan
-                ? Number(detailEmployee.jumlah_cuti_tahunan)
+                ? Number(detailEmployee.jumlah_cuti_tahunan) + " "
                 : "0 "}
               days quota
             </h5>
