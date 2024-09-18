@@ -1480,6 +1480,33 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               setModalUpdateStatusNew={setModalUpdateStatusNew}
             />
           </AccessControl>
+          {modalUpdateStatusNew && (
+            <ModalUbah
+              title={`Konfirmasi Perubahan`}
+              visible={modalUpdateStatusNew}
+              onvisible={setModalUpdateStatusNew}
+              onOk={handleUpdateStatusNew}
+              onCancel={() => {
+                setModalUpdateStatusNew(false);
+                setDataUpdateStatus({});
+              }}
+              loading={loadingUpdateNew}
+              disabled={disableUpdateNew}
+            >
+              <div className="space-y-4">
+                <p className="">
+                  Anda telah melakukan perubahan pada kandidat{" "}
+                  <strong>{dataUpdateStatus.name}</strong>
+                  &nbsp;pada item berikut
+                </p>
+                <p className="font-bold">
+                  {`Status ${dataUpdateStatus.prev_recruitment_status_name} → ${dataUpdateStatus.recruitment_status_name}`}
+                </p>
+
+                <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
+              </div>
+            </ModalUbah>
+          )}
           <AccessControl hasPermission={CAREERS_V2_GET}>
             <ModalUbah
               title={`Konfirmasi Perubahan`}

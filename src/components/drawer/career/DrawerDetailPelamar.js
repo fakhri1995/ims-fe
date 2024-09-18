@@ -77,31 +77,6 @@ const DrawerDetailPelamar = ({
       width={731}
       destroyOnClose={true}
     >
-      <ModalUbah
-        title={`Konfirmasi Perubahan`}
-        visible={modalUpdateStatusNew}
-        onvisible={setModalUpdateStatusNew}
-        onOk={handleUpdateStatusNew}
-        onCancel={() => {
-          setModalUpdateStatusNew(false);
-          setDataUpdateStatus({});
-        }}
-        loading={loadingUpdateNew}
-        disabled={disableUpdateNew}
-      >
-        <div className="space-y-4">
-          <p className="">
-            Anda telah melakukan perubahan pada kandidat{" "}
-            <strong>{dataUpdateStatus.name}</strong>
-            &nbsp;pada item berikut
-          </p>
-          <p className="font-bold">
-            {`Status ${dataUpdateStatus.prev_recruitment_status_name} → ${dataUpdateStatus.recruitment_status_name}`}
-          </p>
-
-          <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
-        </div>
-      </ModalUbah>
       <div
         className={
           "flex flex-col gap-4 mt-4 border border-[#F3F3F3] rounded-[6px] p-4"
@@ -122,6 +97,7 @@ const DrawerDetailPelamar = ({
                 recruitment_status_name: event.target.selectedOptions[0].text,
                 recruitment_status_id: Number(event.target.value),
               });
+              setDrawDetailPelamar(false);
               setModalUpdateStatusNew(true);
             }}
             style={{
