@@ -747,6 +747,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   };
 
   const handleClickExportPelamar = (record, jenis) => {
+    setDrawDetailPelamar(false);
     if (jenis != "terpilih") {
       setDataTerpilih(null);
     }
@@ -1040,6 +1041,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   };
 
   const exportRejectPelamar = (data, type) => {
+    setDrawDetailPelamar(false);
     setDataUpdateStatus({
       ...dataUpdateStatus,
       id: data?.id,
