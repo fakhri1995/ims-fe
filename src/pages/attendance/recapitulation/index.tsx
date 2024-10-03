@@ -224,7 +224,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
         addQueryPrefix: true,
       });
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeLeaveQuotas${params}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendaceRecap${params}`,
         {
           method: `GET`,
           headers: {
@@ -234,8 +234,9 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       )
         .then((res) => res.json())
         .then((res2) => {
+          console.log("isi res2.data ", res2.data);
           setDisplayDataLeaves(res2.data); // table-related data source
-          setDataAnnualLeave(res2?.data?.data);
+          setDataAnnualLeave(res2?.data);
         });
     }
   };
@@ -290,7 +291,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       align: "center",
       render: (text, record, index) => {
         return {
-          children: <>{Number(displayDataLeaves?.from + index)}</>,
+          children: <>{index + 1}</>,
         };
       },
     },
@@ -312,101 +313,60 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       key: "role",
       align: "center",
       sorter: true,
-      render: (text, record, index) => (
-        <p className="whitespace-nowrap truncate">
-          {record.contract.role?.alias}
-        </p>
-      ),
     },
     {
       title: "Company",
-      dataIndex: "role",
-      key: "role",
+      dataIndex: "company",
+      key: "company",
       align: "center",
       sorter: true,
-      render: (text, record, index) => (
-        <p className="whitespace-nowrap truncate">
-          {record.contract.role?.alias}
-        </p>
-      ),
     },
     {
       title: "Jumlah Kerja",
-      dataIndex: ["leave_quota", "leave_total"],
-      key: "leave_quota",
-      render: (text, record, index) => <p>{text}</p>,
+      dataIndex: "total_work_day",
+      key: "total_work_day",
     },
     {
       title: "WFO",
-      dataIndex: "role",
-      key: "role",
+      dataIndex: "wfo_count",
+      key: "wfo_count",
       align: "center",
       sorter: true,
-      render: (text, record, index) => (
-        <p className="whitespace-nowrap truncate">
-          {record.contract.role?.alias}
-        </p>
-      ),
     },
     {
       title: "WFH",
-      dataIndex: "role",
-      key: "role",
+      dataIndex: "wfh_count",
+      key: "wfh_count",
       align: "center",
       sorter: true,
-      render: (text, record, index) => (
-        <p className="whitespace-nowrap truncate">
-          {record.contract.role?.alias}
-        </p>
-      ),
     },
     {
       title: "Telat",
-      dataIndex: "role",
-      key: "role",
+      dataIndex: "late_count",
+      key: "late_count",
       align: "center",
       sorter: true,
-      render: (text, record, index) => (
-        <p className="whitespace-nowrap truncate">
-          {record.contract.role?.alias}
-        </p>
-      ),
     },
     {
       title: "Alpha",
-      dataIndex: "role",
-      key: "role",
+      dataIndex: "alpha_count",
+      key: "alpha_count",
       align: "center",
       sorter: true,
-      render: (text, record, index) => (
-        <p className="whitespace-nowrap truncate">
-          {record.contract.role?.alias}
-        </p>
-      ),
     },
     {
       title: "Cuti",
-      dataIndex: "role",
-      key: "role",
+      dataIndex: "leave_count",
+      key: "leave_count",
       align: "center",
       sorter: true,
-      render: (text, record, index) => (
-        <p className="whitespace-nowrap truncate">
-          {record.contract.role?.alias}
-        </p>
-      ),
     },
     {
       title: "lembur",
-      dataIndex: "role",
-      key: "role",
+      dataIndex: "overtime_count",
+      key: "overtime_count",
       align: "center",
       sorter: true,
-      render: (text, record, index) => (
-        <p className="whitespace-nowrap truncate">
-          {record.contract.role?.alias}
-        </p>
-      ),
     },
     {
       title: "Actions",

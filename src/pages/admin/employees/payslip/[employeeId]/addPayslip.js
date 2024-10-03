@@ -558,76 +558,49 @@ const EmployeePayslipAddIndex = ({
 
         {/* Form Buat Slip Gaji */}
         <Spin spinning={praloading}>
-          <Form
-            layout="vertical"
-            form={instanceForm}
-            className="md:grid md:grid-cols-2 md:gap-x-8"
-          >
-            <Form.Item
-              label="Periode"
-              name={"periode"}
-              className="col-span-2"
-              rules={[
-                {
-                  required: true,
-                  message: "Periode wajib diisi",
-                },
-              ]}
-            >
-              <>
-                <DatePicker
-                  name="periode"
-                  placeholder="Pilih periode"
-                  className="w-full"
-                  picker="month"
-                  value={
-                    moment(
-                      `${dataPayslip?.year}-${dataPayslip?.month}`,
-                      "YYYY-M"
-                    ).isValid()
-                      ? moment(
-                          `${dataPayslip?.year}-${dataPayslip?.month}`,
-                          "YYYY-M"
-                        )
-                      : null
-                  }
-                  format={"YYYY-M"}
-                  onChange={(value, datestring) => {
-                    const monthYearArr = datestring.split("-");
-                    setDataPayslip((prev) => ({
-                      ...prev,
-                      year: Number(monthYearArr[0]),
-                      month: Number(monthYearArr[1]),
-                    }));
-                  }}
-                />
-              </>
-            </Form.Item>
-            <Form.Item
-              label="Total Hari Kerja"
-              name={"total_hari_kerja"}
-              rules={[
-                {
-                  required: true,
-                  message: "Total hari kerja wajib diisi",
-                },
-              ]}
-            >
-              <div>
-                <InputNumber
-                  min={1}
-                  max={31}
-                  value={dataPayslip?.total_hari_kerja}
-                  name={"total_hari_kerja"}
-                  onChange={(value) =>
-                    onChangeSelect(value, "total_hari_kerja")
-                  }
-                  placeholder="Masukkan total hari kerja"
-                  className="w-full"
-                />
-              </div>
-            </Form.Item>
-            <Form.Item
+          <Form layout="vertical" form={instanceForm}>
+            <div className={"md:grid md:grid-cols-2 md:gap-x-8"}>
+              <Form.Item
+                label="Periode"
+                name={"periode"}
+                className="col-span-2"
+                rules={[
+                  {
+                    required: true,
+                    message: "Periode wajib diisi",
+                  },
+                ]}
+              >
+                <>
+                  <DatePicker
+                    name="periode"
+                    placeholder="Pilih periode"
+                    className="w-full"
+                    picker="month"
+                    value={
+                      moment(
+                        `${dataPayslip?.year}-${dataPayslip?.month}`,
+                        "YYYY-M"
+                      ).isValid()
+                        ? moment(
+                            `${dataPayslip?.year}-${dataPayslip?.month}`,
+                            "YYYY-M"
+                          )
+                        : null
+                    }
+                    format={"YYYY-M"}
+                    onChange={(value, datestring) => {
+                      const monthYearArr = datestring.split("-");
+                      setDataPayslip((prev) => ({
+                        ...prev,
+                        year: Number(monthYearArr[0]),
+                        month: Number(monthYearArr[1]),
+                      }));
+                    }}
+                  />
+                </>
+              </Form.Item>
+              {/* <Form.Item
               label="Tanggal Dibayarkan"
               name={"tanggal_dibayarkan"}
               rules={[
@@ -653,223 +626,280 @@ const EmployeePayslipAddIndex = ({
                   }}
                 />
               </>
-            </Form.Item>
-            <div className="flex flex-col">
-              <p className="mig-heading--5 mb-3">PENERIMAAN</p>
+            </Form.Item> */}
               <Form.Item
-                label="Gaji Pokok"
-                name={"gaji_pokok"}
+                label="Total Hari Kerja"
+                name={"total_hari_kerja"}
                 rules={[
                   {
                     required: true,
-                    message: "Gaji pokok wajib diisi",
+                    message: "Total hari kerja wajib diisi",
                   },
                 ]}
-                className="mb-2"
               >
                 <div>
-                  <CurrencyFormat
-                    customInput={Input}
-                    placeholder={"Masukkan gaji pokok"}
-                    value={dataPayslip?.gaji_pokok || 0}
-                    thousandSeparator={"."}
-                    decimalSeparator={","}
-                    prefix={"Rp"}
-                    allowNegative={false}
-                    disabled={canUpdateMainSalary ? false : true}
-                    onValueChange={(values) => {
-                      const { formattedValue, value, floatValue } = values;
-                      setDataPayslip((prev) => ({
-                        ...prev,
-                        gaji_pokok: floatValue || 0,
-                      }));
-                    }}
-                    renderText={(value) => <p>{value}</p>}
+                  <InputNumber
+                    min={1}
+                    max={31}
+                    addonAfter={"Days"}
+                    value={dataPayslip?.total_hari_kerja}
+                    name={"total_hari_kerja"}
+                    onChange={(value) =>
+                      onChangeSelect(value, "total_hari_kerja")
+                    }
+                    placeholder="Masukkan total hari kerja"
+                    className="w-full"
                   />
                 </div>
               </Form.Item>
-              <Checkbox
-                className="mb-3"
-                checked={canUpdateMainSalary}
-                onChange={(e) => {
-                  setCanUpdateMainSalary(e.target.checked);
-                  if (!e.target.checked) {
-                    setDataPayslip((prev) => ({
-                      ...prev,
-                      gaji_pokok: oldMainSalary,
-                    }));
+              {/* <Form.Item
+              label="Total Kehadiran"
+              name={"total_kehadiran"}
+              rules={[
+                {
+                  required: true,
+                  message: "Total Kehadiran wajib diisi",
+                },
+              ]}
+            >
+              <div>
+                <InputNumber
+                  min={1}
+                  max={31}
+                  value={dataPayslip?.total_kehadiran}
+                  name={"total_kehadiran"}
+                  onChange={(value) =>
+                    onChangeSelect(value, "total_kehadiran")
                   }
-                }}
+                  placeholder="Masukkan total kehadiran"
+                  className="w-full"
+                />
+              </div>
+            </Form.Item> */}
+
+              <Form.Item
+                label="Tanggal Dibayarkan"
+                name={"tanggal_dibayarkan"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Tanggal dibayarkan wajib diisi",
+                  },
+                ]}
               >
-                Ubah gaji pokok
-              </Checkbox>
-
-              {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
-              if toggle is checked in Modal Tambah Variabel Gaji */}
-              {Boolean(dataPayslip?.show_all_benefit) && (
                 <>
-                  {defaultSalaryVar
-                    ?.filter(
-                      (v) =>
-                        dataPayslip[v.attrName] !== false &&
-                        dataPayslip[v.attrName] !== null &&
-                        v.attrName !== "pph21"
-                    )
-                    ?.map((item) => (
-                      <Form.Item
-                        key={item.attrName}
-                        label={item.title}
-                        name={item.attrName}
-                        rules={[
-                          {
-                            required: true,
-                          },
-                        ]}
-                      >
-                        <div>
-                          <CustomCurrencyInput
-                            fieldLabel={item.attrName}
-                            fieldName={item.attrName}
-                            setDataForm={setDataPayslip}
-                            value={countBPJSValue(item.percent)}
-                            disabled
-                          />
-                        </div>
-                      </Form.Item>
-                    ))}
-
-                  {dataPayslip?.pph21 !== false &&
-                    dataPayslip?.pph21 != null && (
-                      <Form.Item
-                        label="PPh 21"
-                        name={"pph21"}
-                        rules={[
-                          {
-                            required: true,
-                            message: "PPh 21 wajib diisi",
-                          },
-                        ]}
-                      >
-                        <>
-                          <CurrencyFormat
-                            customInput={Input}
-                            placeholder={"Masukkan PPh 21"}
-                            value={Number(dataPayslip?.pph21 || 0)}
-                            thousandSeparator={"."}
-                            decimalSeparator={","}
-                            prefix={"Rp"}
-                            allowNegative={false}
-                            disabled={true}
-                            renderText={(value) => <p>{value}</p>}
-                          />
-                        </>
-                      </Form.Item>
-                    )}
+                  <DatePicker
+                    name="tanggal_dibayarkan"
+                    placeholder="Pilih tanggal dibayarkan"
+                    className="w-full"
+                    value={
+                      moment(dataPayslip?.tanggal_dibayarkan).isValid()
+                        ? moment(dataPayslip?.tanggal_dibayarkan)
+                        : null
+                    }
+                    format={"YYYY-MM-DD"}
+                    onChange={(value, datestring) => {
+                      onChangeDatePicker(datestring, "tanggal_dibayarkan");
+                    }}
+                  />
                 </>
-              )}
-
-              {dataPayslip?.salaries
-                ?.filter((variable) => variable?.column?.type === 1)
-                .map((variable) => (
-                  <Form.Item
-                    key={variable.employee_salary_column_id}
-                    label={variable?.column?.name}
-                    name={formatVariableName(variable?.column?.name)}
-                    rules={[
-                      {
-                        required: variable?.column?.required,
-                        message: `${variable?.column?.name} wajib diisi`,
-                      },
-                    ]}
-                  >
-                    <div className="flex flex-row items-center space-x-2">
-                      <CustomCurrencyInput
-                        fieldLabel={`${variable?.column?.name.toLowerCase()}`}
-                        dataForm={dataPayslip}
-                        setDataForm={setDataPayslip}
-                        value={variable.value}
-                        dataColumn={variable.column}
-                        payslipId={payslipId}
-                        setVarFields={setReceiveVarFields}
-                      />
-                    </div>
-                  </Form.Item>
-                ))}
+              </Form.Item>
             </div>
-
-            <div className="flex flex-col">
-              <p className="mig-heading--5 mb-3">PENGURANGAN</p>
-
-              {/* Default "Pengurangan" salary variable field (BPJS) */}
-              {defaultSalaryVar
-                ?.filter(
-                  (v) =>
-                    dataPayslip[v.attrName] !== false &&
-                    dataPayslip[v.attrName] !== null &&
-                    v.attrName !== "pph21"
-                )
-                ?.map((item) => (
-                  <Form.Item
-                    key={item.attrName}
-                    label={item.title}
-                    name={item.attrName}
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <div>
-                      <CustomCurrencyInput
-                        fieldLabel={item.attrName}
-                        fieldName={item.attrName}
-                        setDataForm={setDataPayslip}
-                        value={countBPJSValue(item.percent)}
-                        disabled
-                      />
-                    </div>
-                  </Form.Item>
-                ))}
-
-              {/* Pph 21 field */}
-              {dataPayslip?.pph21 !== false && dataPayslip?.pph21 !== null && (
+            {/* <div className={'md:grid md:grid-cols-3 md:gap-x-8'}>
+            <Form.Item
+              label="Total Late"
+              name={"total_hari_kerja"}
+              rules={[
+                {
+                  required: true,
+                  message: "Total hari kerja wajib diisi",
+                },
+              ]}
+            >
+              <div>
+                <InputNumber
+                  min={1}
+                  max={31}
+                  addonAfter={'Days'}
+                  value={dataPayslip?.total_hari_kerja}
+                  name={"total_hari_kerja"}
+                  onChange={(value) =>
+                    onChangeSelect(value, "total_hari_kerja")
+                  }
+                  placeholder="Masukkan total hari kerja"
+                  className="w-full"
+                />
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="Total Overtime"
+              name={"total_hari_kerja"}
+              rules={[
+                {
+                  required: true,
+                  message: "Total hari kerja wajib diisi",
+                },
+              ]}
+            >
+              <div>
+                <InputNumber
+                  min={1}
+                  max={31}
+                  addonAfter={'Days'}
+                  value={dataPayslip?.total_hari_kerja}
+                  name={"total_hari_kerja"}
+                  onChange={(value) =>
+                    onChangeSelect(value, "total_hari_kerja")
+                  }
+                  placeholder="Masukkan total hari kerja"
+                  className="w-full"
+                />
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="Total Leave"
+              name={"total_hari_kerja"}
+              rules={[
+                {
+                  required: true,
+                  message: "Total hari kerja wajib diisi",
+                },
+              ]}
+            >
+              <div>
+                <InputNumber
+                  min={1}
+                  max={31}
+                  addonAfter={'Days'}
+                  value={dataPayslip?.total_hari_kerja}
+                  name={"total_hari_kerja"}
+                  onChange={(value) =>
+                    onChangeSelect(value, "total_hari_kerja")
+                  }
+                  placeholder="Masukkan total hari kerja"
+                  className="w-full"
+                />
+              </div>
+            </Form.Item>
+            </div> */}
+            <div className={"md:grid md:grid-cols-2 md:gap-x-8"}>
+              <div className="flex flex-col">
+                <p className="mig-heading--5 mb-3">PENERIMAAN</p>
                 <Form.Item
-                  label="PPh 21"
-                  name={"pph21"}
+                  label="Gaji Pokok"
+                  name={"gaji_pokok"}
                   rules={[
                     {
                       required: true,
-                      message: "PPh 21 wajib diisi",
+                      message: "Gaji pokok wajib diisi",
                     },
                   ]}
+                  className="mb-2"
                 >
-                  <>
+                  <div>
                     <CurrencyFormat
                       customInput={Input}
-                      placeholder={"Masukkan PPh 21"}
-                      value={Number(dataPayslip?.pph21 || 0)}
+                      placeholder={"Masukkan gaji pokok"}
+                      value={dataPayslip?.gaji_pokok || 0}
                       thousandSeparator={"."}
                       decimalSeparator={","}
                       prefix={"Rp"}
                       allowNegative={false}
+                      disabled={canUpdateMainSalary ? false : true}
                       onValueChange={(values) => {
                         const { formattedValue, value, floatValue } = values;
                         setDataPayslip((prev) => ({
                           ...prev,
-                          pph21: Number(floatValue) || 0,
+                          gaji_pokok: floatValue || 0,
                         }));
                       }}
                       renderText={(value) => <p>{value}</p>}
                     />
-                  </>
+                  </div>
                 </Form.Item>
-              )}
+                <Checkbox
+                  className="mb-3"
+                  checked={canUpdateMainSalary}
+                  onChange={(e) => {
+                    setCanUpdateMainSalary(e.target.checked);
+                    if (!e.target.checked) {
+                      setDataPayslip((prev) => ({
+                        ...prev,
+                        gaji_pokok: oldMainSalary,
+                      }));
+                    }
+                  }}
+                >
+                  Ubah gaji pokok
+                </Checkbox>
 
-              {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
-              {dataPayslip?.salaries
-                ?.filter((variable) => variable?.column?.type === 2)
-                .map((variable) => {
-                  return (
+                {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
+              if toggle is checked in Modal Tambah Variabel Gaji */}
+                {Boolean(dataPayslip?.show_all_benefit) && (
+                  <>
+                    {defaultSalaryVar
+                      ?.filter(
+                        (v) =>
+                          dataPayslip[v.attrName] !== false &&
+                          dataPayslip[v.attrName] !== null &&
+                          v.attrName !== "pph21"
+                      )
+                      ?.map((item) => (
+                        <Form.Item
+                          key={item.attrName}
+                          label={item.title}
+                          name={item.attrName}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <div>
+                            <CustomCurrencyInput
+                              fieldLabel={item.attrName}
+                              fieldName={item.attrName}
+                              setDataForm={setDataPayslip}
+                              value={countBPJSValue(item.percent)}
+                              disabled
+                            />
+                          </div>
+                        </Form.Item>
+                      ))}
+
+                    {dataPayslip?.pph21 !== false &&
+                      dataPayslip?.pph21 != null && (
+                        <Form.Item
+                          label="PPh 21"
+                          name={"pph21"}
+                          rules={[
+                            {
+                              required: true,
+                              message: "PPh 21 wajib diisi",
+                            },
+                          ]}
+                        >
+                          <>
+                            <CurrencyFormat
+                              customInput={Input}
+                              placeholder={"Masukkan PPh 21"}
+                              value={Number(dataPayslip?.pph21 || 0)}
+                              thousandSeparator={"."}
+                              decimalSeparator={","}
+                              prefix={"Rp"}
+                              allowNegative={false}
+                              disabled={true}
+                              renderText={(value) => <p>{value}</p>}
+                            />
+                          </>
+                        </Form.Item>
+                      )}
+                  </>
+                )}
+
+                {dataPayslip?.salaries
+                  ?.filter((variable) => variable?.column?.type === 1)
+                  .map((variable) => (
                     <Form.Item
                       key={variable.employee_salary_column_id}
                       label={variable?.column?.name}
@@ -881,108 +911,210 @@ const EmployeePayslipAddIndex = ({
                         },
                       ]}
                     >
-                      <div>
+                      <div className="flex flex-row items-center space-x-2">
                         <CustomCurrencyInput
-                          fieldLabel={`${variable?.column?.name?.toLowerCase()}`}
+                          fieldLabel={`${variable?.column?.name.toLowerCase()}`}
                           dataForm={dataPayslip}
                           setDataForm={setDataPayslip}
-                          value={variable?.value}
+                          value={variable.value}
                           dataColumn={variable.column}
                           payslipId={payslipId}
-                          setVarFields={setReductionVarFields}
+                          setVarFields={setReceiveVarFields}
                         />
                       </div>
                     </Form.Item>
-                  );
-                })}
-            </div>
-            <div className="col-span-2 mb-6">
-              <ButtonSys
-                type={"dashed"}
-                onClick={() => {
-                  setModalSalaryVar(true);
-                }}
-              >
-                <p className="text-primary100 hover:text-primary75">
-                  + Tambah Variabel Gaji
-                </p>
-              </ButtonSys>
-            </div>
+                  ))}
+              </div>
 
-            <p className="mig-heading--5 col-span-2 mb-3">TOTAL</p>
-            <Form.Item
-              label="Total Gross Penerimaan"
-              name={"total_gross_penerimaan"}
-              rules={[
-                {
-                  required: true,
-                  message: "Total gross penerimaan wajib diisi",
-                },
-              ]}
-            >
-              <>
-                <CurrencyFormat
-                  customInput={Input}
-                  placeholder={"Masukkan total gross penerimaan"}
-                  value={dataPayslip?.total_gross_penerimaan || 0}
-                  thousandSeparator={"."}
-                  decimalSeparator={","}
-                  prefix={"Rp"}
-                  allowNegative={false}
-                  disabled={true}
-                  renderText={(value) => <p>{value}</p>}
-                />
-              </>
-            </Form.Item>
-            <Form.Item
-              label="Total Gross Pengurangan"
-              name={"total_gross_pengurangan"}
-              rules={[
-                {
-                  required: true,
-                  message: "Total gross pengurangan wajib diisi",
-                },
-              ]}
-            >
-              <>
-                <CurrencyFormat
-                  customInput={Input}
-                  placeholder={"Masukkan total gross pengurangan"}
-                  value={dataPayslip?.total_gross_pengurangan || 0}
-                  thousandSeparator={"."}
-                  decimalSeparator={","}
-                  prefix={"Rp"}
-                  allowNegative={false}
-                  disabled={true}
-                  renderText={(value) => <p>{value}</p>}
-                />
-              </>
-            </Form.Item>
-            <Form.Item
-              label="Take Home Pay"
-              name={"take_home_pay"}
-              rules={[
-                {
-                  required: true,
-                  message: "Take home pay wajib diisi",
-                },
-              ]}
-              className="col-span-2"
-            >
-              <>
-                <CurrencyFormat
-                  customInput={Input}
-                  placeholder={"Masukkan take home pay"}
-                  value={dataPayslip?.take_home_pay || 0}
-                  thousandSeparator={"."}
-                  decimalSeparator={","}
-                  prefix={"Rp"}
-                  allowNegative={true}
-                  disabled={true}
-                  renderText={(value) => <p>{value}</p>}
-                />
-              </>
-            </Form.Item>
+              <div className="flex flex-col">
+                <p className="mig-heading--5 mb-3">PENGURANGAN</p>
+
+                {/* Default "Pengurangan" salary variable field (BPJS) */}
+                {defaultSalaryVar
+                  ?.filter(
+                    (v) =>
+                      dataPayslip[v.attrName] !== false &&
+                      dataPayslip[v.attrName] !== null &&
+                      v.attrName !== "pph21"
+                  )
+                  ?.map((item) => (
+                    <Form.Item
+                      key={item.attrName}
+                      label={item.title}
+                      name={item.attrName}
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <div>
+                        <CustomCurrencyInput
+                          fieldLabel={item.attrName}
+                          fieldName={item.attrName}
+                          setDataForm={setDataPayslip}
+                          value={countBPJSValue(item.percent)}
+                          disabled
+                        />
+                      </div>
+                    </Form.Item>
+                  ))}
+
+                {/* Pph 21 field */}
+                {dataPayslip?.pph21 !== false &&
+                  dataPayslip?.pph21 !== null && (
+                    <Form.Item
+                      label="PPh 21"
+                      name={"pph21"}
+                      rules={[
+                        {
+                          required: true,
+                          message: "PPh 21 wajib diisi",
+                        },
+                      ]}
+                    >
+                      <>
+                        <CurrencyFormat
+                          customInput={Input}
+                          placeholder={"Masukkan PPh 21"}
+                          value={Number(dataPayslip?.pph21 || 0)}
+                          thousandSeparator={"."}
+                          decimalSeparator={","}
+                          prefix={"Rp"}
+                          allowNegative={false}
+                          onValueChange={(values) => {
+                            const { formattedValue, value, floatValue } =
+                              values;
+                            setDataPayslip((prev) => ({
+                              ...prev,
+                              pph21: Number(floatValue) || 0,
+                            }));
+                          }}
+                          renderText={(value) => <p>{value}</p>}
+                        />
+                      </>
+                    </Form.Item>
+                  )}
+
+                {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
+                {dataPayslip?.salaries
+                  ?.filter((variable) => variable?.column?.type === 2)
+                  .map((variable) => {
+                    return (
+                      <Form.Item
+                        key={variable.employee_salary_column_id}
+                        label={variable?.column?.name}
+                        name={formatVariableName(variable?.column?.name)}
+                        rules={[
+                          {
+                            required: variable?.column?.required,
+                            message: `${variable?.column?.name} wajib diisi`,
+                          },
+                        ]}
+                      >
+                        <div>
+                          <CustomCurrencyInput
+                            fieldLabel={`${variable?.column?.name?.toLowerCase()}`}
+                            dataForm={dataPayslip}
+                            setDataForm={setDataPayslip}
+                            value={variable?.value}
+                            dataColumn={variable.column}
+                            payslipId={payslipId}
+                            setVarFields={setReductionVarFields}
+                          />
+                        </div>
+                      </Form.Item>
+                    );
+                  })}
+              </div>
+              <div className="col-span-2 mb-6">
+                <ButtonSys
+                  type={"dashed"}
+                  onClick={() => {
+                    setModalSalaryVar(true);
+                  }}
+                >
+                  <p className="text-primary100 hover:text-primary75">
+                    + Tambah Variabel Gaji
+                  </p>
+                </ButtonSys>
+              </div>
+
+              <p className="mig-heading--5 col-span-2 mb-3">TOTAL</p>
+              <Form.Item
+                label="Total Gross Penerimaan"
+                name={"total_gross_penerimaan"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Total gross penerimaan wajib diisi",
+                  },
+                ]}
+              >
+                <>
+                  <CurrencyFormat
+                    customInput={Input}
+                    placeholder={"Masukkan total gross penerimaan"}
+                    value={dataPayslip?.total_gross_penerimaan || 0}
+                    thousandSeparator={"."}
+                    decimalSeparator={","}
+                    prefix={"Rp"}
+                    allowNegative={false}
+                    disabled={true}
+                    renderText={(value) => <p>{value}</p>}
+                  />
+                </>
+              </Form.Item>
+              <Form.Item
+                label="Total Gross Pengurangan"
+                name={"total_gross_pengurangan"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Total gross pengurangan wajib diisi",
+                  },
+                ]}
+              >
+                <>
+                  <CurrencyFormat
+                    customInput={Input}
+                    placeholder={"Masukkan total gross pengurangan"}
+                    value={dataPayslip?.total_gross_pengurangan || 0}
+                    thousandSeparator={"."}
+                    decimalSeparator={","}
+                    prefix={"Rp"}
+                    allowNegative={false}
+                    disabled={true}
+                    renderText={(value) => <p>{value}</p>}
+                  />
+                </>
+              </Form.Item>
+              <Form.Item
+                label="Take Home Pay"
+                name={"take_home_pay"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Take home pay wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <>
+                  <CurrencyFormat
+                    customInput={Input}
+                    placeholder={"Masukkan take home pay"}
+                    value={dataPayslip?.take_home_pay || 0}
+                    thousandSeparator={"."}
+                    decimalSeparator={","}
+                    prefix={"Rp"}
+                    allowNegative={true}
+                    disabled={true}
+                    renderText={(value) => <p>{value}</p>}
+                  />
+                </>
+              </Form.Item>
+            </div>
           </Form>
         </Spin>
       </div>
