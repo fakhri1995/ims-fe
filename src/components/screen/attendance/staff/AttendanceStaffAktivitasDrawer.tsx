@@ -167,10 +167,12 @@ export const AttendanceStaffAktivitasDrawer: FC<
       let formValuesArr = Object.entries(formValues);
       if (formValuesArr.length > 0) {
         let detailObjectList = formValuesArr.map((detail, idx) => {
-          let obj = {};
-          obj[`details[${idx}][key]`] = detail[0];
-          obj[`details[${idx}][value]`] = _safeCastPayloadValue(detail[1]);
-          return obj;
+          if (detail[0] != "Aktivitas") {
+            let obj = {};
+            obj[`details[${idx}][key]`] = detail[0];
+            obj[`details[${idx}][value]`] = _safeCastPayloadValue(detail[1]);
+            return obj;
+          }
         });
 
         for (let detailObject of detailObjectList) {
