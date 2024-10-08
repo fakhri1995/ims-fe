@@ -43,8 +43,8 @@ import LayoutDashboard from "components/layout-dashboard";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  ATTENDANCE_RECAP_GET,
   COMPANY_CLIENTS_GET,
-  EMPLOYEE_LEAVE_QUOTAS_GET,
   EMPLOYEE_LEAVE_QUOTA_ADD,
   EMPLOYEE_LEAVE_QUOTA_DELETE,
   EMPLOYEE_LEAVE_QUOTA_UPDATE,
@@ -120,7 +120,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   const [theForm] = Form.useForm();
   const [dataCompanyList, setDataCompanyList] = useState([]);
-  const isAllowedToGetLeaveQuota = hasPermission(EMPLOYEE_LEAVE_QUOTAS_GET);
+  const isAllowedToGetRecapitulation = hasPermission(ATTENDANCE_RECAP_GET);
   const isAllowedToAddLeaveQuota = hasPermission(EMPLOYEE_LEAVE_QUOTA_ADD);
   const isAllowedToUpdateLeaveQuota = hasPermission(
     EMPLOYEE_LEAVE_QUOTA_UPDATE
@@ -217,8 +217,8 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   const fetchData = async () => {
-    if (!isAllowedToGetLeaveQuota) {
-      permissionWarningNotification("Mendapatkan", "Data Cuti");
+    if (!isAllowedToGetRecapitulation) {
+      permissionWarningNotification("Mendapatkan", "Data Recapitulation");
     } else {
       const params = QueryString.stringify(queryParams, {
         addQueryPrefix: true,
@@ -234,9 +234,8 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       )
         .then((res) => res.json())
         .then((res2) => {
-          console.log("isi res2.data ", res2.data);
           setDisplayDataLeaves(res2.data); // table-related data source
-          setDataAnnualLeave(res2?.data);
+          setDataAnnualLeave(res2?.data?.data);
         });
     }
   };
