@@ -30,6 +30,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { ROLE_SUPER_ADMIN } from "lib/constants";
 import {
+  ATTENDANCE_RECAP_GET,
   EMPLOYEE_LEAVE_QUOTAS_GET,
   LEAVES_GET,
   OVERTIMES_GET,
@@ -387,6 +388,13 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             <Menu.Item key="attendance/leavequota" className="text-mono50">
               <Link href="/attendance/leave-quota" legacyBehavior>
                 <p>Leave Quota</p>
+              </Link>
+            </Menu.Item>
+          )}
+          {hasPermission(ATTENDANCE_RECAP_GET) && (
+            <Menu.Item key="attendance/recapitulation" className="text-mono50">
+              <Link href="/attendance/recapitulation" legacyBehavior>
+                <p>Recapitulation</p>
               </Link>
             </Menu.Item>
           )}
