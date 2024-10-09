@@ -116,6 +116,8 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
     keyword: withDefault(StringParam, ""),
     role_ids: withDefault(StringParam, undefined),
     company_id: withDefault(StringParam, undefined),
+    start_date: withDefault(StringParam, undefined),
+    end_date: withDefault(StringParam, undefined),
   });
 
   const [theForm] = Form.useForm();
@@ -190,6 +192,9 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
     queryParams.rows,
     queryParams.role_ids,
     queryParams.keyword,
+    queryParams.company_id,
+    queryParams.start_date,
+    queryParams.end_date,
   ]);
 
   useEffect(() => {
@@ -202,12 +207,15 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       permissionWarningNotification("Mendapatkan", "Data Company");
     } else {
       setLoadingCompanyList(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=true`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
         .then((res) => res.json())
         .then((res2) => {
           setDataCompanyList(res2.data);
@@ -409,6 +417,8 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       sort_by: undefined,
       sort_type: undefined,
       keyword: undefined,
+      start_date: undefined,
+      end_date: undefined,
     });
   };
 
@@ -463,6 +473,24 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   };
 
+  const onRangeChange = (dates, dateStrings) => {
+    if (dates) {
+      console.log("From: ", dates[0], ", to: ", dates[1]);
+      console.log("From: ", dateStrings[0], ", to: ", dateStrings[1]);
+      setQueryParams({
+        start_date: dateStrings[0],
+        end_date: dateStrings[1],
+        page: 1,
+      });
+    } else {
+      setQueryParams({
+        start_date: moment().format("YYYY-MM-DD"),
+        page: 1,
+        end_date: moment().format("YYYY-MM-DD"),
+      });
+    }
+  };
+
   return (
     <LayoutDashboard
       tok={initProps}
@@ -498,7 +526,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
           {/* Table's filter */}
           <div className="px-4 py-3">
             <Form
-              form={theForm}
+              // form={theForm}
               className="flex flex-col sm:flex-row w-full sm:justify-between sm:items-center gap-2"
               onFinish={(values) => {
                 setQueryParams({ keyword: values.search, page: 1 });
@@ -561,33 +589,37 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
                 </Form.Item>
               </div>
               <div className={"w-[20%]"}>
-                <Select
-                  allowClear
-                  showSearch
-                  mode="multiple"
-                  className="w-full"
-                  defaultValue={queryParams.company_id}
-                  disabled={!isAllowedToGetCompanyClients || loadingCompanyList}
-                  placeholder="Company"
-                  onChange={(value) => {
-                    setQueryParams({ company_id: value, page: 1 });
-                  }}
-                  filterOption={(input, option) =>
-                    (String(option?.children) ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  loading={loadingCompanyList}
-                  optionFilterProp="children"
-                >
-                  {dataCompanyList?.map((company) => (
-                    <Select.Option key={company.id} value={company.id}>
-                      {company.name}
-                    </Select.Option>
-                  ))}
-                </Select>
+                <Form.Item noStyle>
+                  <Select
+                    allowClear
+                    showSearch
+                    mode="multiple"
+                    className="w-full"
+                    defaultValue={queryParams.company_id}
+                    disabled={
+                      !isAllowedToGetCompanyClients || loadingCompanyList
+                    }
+                    placeholder="Company"
+                    onChange={(value) => {
+                      setQueryParams({ company_id: value, page: 1 });
+                    }}
+                    filterOption={(input, option) =>
+                      (String(option?.children) ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    loading={loadingCompanyList}
+                    optionFilterProp="children"
+                  >
+                    {dataCompanyList?.map((company) => (
+                      <Select.Option key={company.id} value={company.id}>
+                        {company.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
               </div>
-              <RangePicker />
+              <RangePicker onChange={onRangeChange} />
             </Form>
           </div>
           <div className={"px-4 "}>
