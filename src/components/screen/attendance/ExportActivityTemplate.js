@@ -65,7 +65,7 @@ const ExportActivityTemplate = ({
       let kata = "";
       for (let a = 0; a < daily.length; a++) {
         if (a != daily.length - 1) {
-          if (!daily[a].key.includes("-")) {
+          if (daily[a].key.includes("-")) {
             kata = kata + daily[a].value + ", ";
           }
         } else {
