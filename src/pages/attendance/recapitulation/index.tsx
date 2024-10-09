@@ -316,8 +316,8 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
     },
     {
       title: "Role",
-      dataIndex: "role",
-      key: "role",
+      dataIndex: "position",
+      key: "position",
       align: "center",
       sorter: true,
     },
