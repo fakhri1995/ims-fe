@@ -26,7 +26,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
-import DrawerLeaveQuota from "components/drawer/attendance/drawerLeaveQuota";
+import DrawerFormRequestCapitulation from "components/drawer/attendance/drawerFormRequestCapitulation";
 import DrawerRecapitulation from "components/drawer/attendance/drawerRecapitulation";
 import {
   CirclePlusIconSvg,
@@ -36,6 +36,7 @@ import {
   EditSquareIconSvg,
   TableExportIconSvg,
   TrashIconSvg,
+  UserPlusIconSvg,
   WarningIconSvg,
 } from "components/icon";
 import LayoutDashboard from "components/layout-dashboard";
@@ -134,23 +135,8 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   let timer: NodeJS.Timeout; // use for delay time in table's search
 
-  const leaveStatuses = [
-    {
-      label: "Pending",
-      value: LeaveStatus.PENDING,
-    },
-    {
-      label: "Accepted",
-      value: LeaveStatus.ACCEPTED,
-    },
-    {
-      label: "Rejected",
-      value: LeaveStatus.REJECTED,
-    },
-  ];
-
-  const [loadingAnualLeave, setLoadingAnnualLeave] = useState(true);
   const [showDrawerLeaveQuota, setShowDrawerLeaveQuota] = useState(false);
+  const [showDrawerRequest, setShowDrawerRequest] = useState(false);
   const [displayDataLeaves, setDisplayDataLeaves] = useState({
     current_page: "",
     data: [],
@@ -169,14 +155,9 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [roleList, setDataRoleList] = useState([]);
   const [dataAnnualLeave, setDataAnnualLeave] = useState([]);
   const [loadingCompanyList, setLoadingCompanyList] = useState(false);
-  const [dataStatusCuti, setDataStatusCuti] = useState([]);
-  const [dataStatusPengajuan, setDataStatusPengajuan] = useState([]);
   const isAllowedToManageLeaveTypes = hasPermission(LEAVE_TYPES_GET);
   const isAllowedToAddLeave = hasPermission(LEAVE_ADD);
   const isAllowedToGetLeave = hasPermission(LEAVES_GET);
-  const isAllowedToGetLeaveStatus = hasPermission(LEAVE_STATUSES_GET);
-  const [showModalDelete, setShowModalDelete] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
   const [recordDelete, setRecordDelete] = useState({
     name: null,
     totalLeave: null,
@@ -184,9 +165,16 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
   });
 
   const [dataDefault, setDataDefault] = useState(null);
-  const [showEdit, setShowEdit] = useState(false);
   useEffect(() => {
-    fetchData();
+    if (
+      queryParams.role_ids != undefined ||
+      queryParams.keyword != "" ||
+      queryParams.company_id != undefined ||
+      queryParams.start_date != undefined ||
+      queryParams.end_date != undefined
+    ) {
+      fetchData();
+    }
   }, [
     queryParams.page,
     queryParams.rows,
@@ -268,27 +256,6 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
   const detailCuti = (record) => {
     setShowDrawer(true);
     setDataDefault(record);
-  };
-
-  const onDeleteButtonClicked = (record) => {
-    setShowModalDelete(true);
-    setRecordDelete({
-      ...recordDelete,
-      totalLeave: record.leave_quota.leave_total,
-      name: record.name,
-      id: record.leave_quota.id,
-    });
-  };
-
-  const onEditButtonClicked = (record) => {
-    setShowEdit(true);
-    setDataDefault({
-      leave_quota: record.leave_quota.leave_total,
-      employee_id: record.leave_quota.employee_id,
-      id: record.leave_quota.id,
-      start_date: record.start_period,
-      end_date: record.end_period,
-    });
   };
 
   const columns: typeof dataAnnualLeave = [
@@ -386,10 +353,10 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
               <button
                 disabled={!isAllowedToDeleteLeaveQuota}
                 className="bg-transparent"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeleteButtonClicked(record);
-                }}
+                // onClick={(e) => {
+                //   e.stopPropagation();
+                //   onDeleteButtonClicked(record);
+                // }}
                 //   disabled={!isAllowedToDeleteFormDetail}
               >
                 <DownloadIconSvg color={"#808080"} size={20} />
@@ -420,57 +387,6 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       start_date: undefined,
       end_date: undefined,
     });
-  };
-
-  const cancelDelete = () => {
-    setShowModalDelete(false);
-    setRecordDelete({
-      ...recordDelete,
-      totalLeave: null,
-      name: null,
-      id: null,
-    });
-  };
-
-  const handleDeleteLeaveQuota = () => {
-    setLoadingDelete(true);
-    let params = {
-      id: recordDelete.id,
-    };
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteEmployeeLeaveQuota`, {
-      method: "DELETE",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(params),
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          notification.success({
-            message: response2.message,
-            duration: 3,
-          });
-          cancelDelete();
-          resetParams();
-          fetchData();
-        } else {
-          notification.error({
-            message: `Delete Leave Quota Failed. ${response2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Delete Leave Quota Failed. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingDelete(false);
-      });
   };
 
   const onRangeChange = (dates, dateStrings) => {
@@ -510,6 +426,16 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
             </p>
             {isAllowedToAddLeaveQuota && (
               <div className={"flex flex-col sm:flex-row gap-4 items-end"}>
+                <ButtonSys
+                  type="default"
+                  onClick={() => setShowDrawerRequest(true)}
+                  disabled={!isAllowedToAddLeave}
+                >
+                  <div className="flex items-center gap-2 text-primary100 whitespace-nowrap">
+                    <UserPlusIconSvg size={16} color="#35763B" />
+                    <p>Form Request Recapitulation</p>
+                  </div>
+                </ButtonSys>
                 <ButtonSys
                   type="primary"
                   onClick={() => setShowDrawerLeaveQuota(true)}
@@ -670,70 +596,17 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
             />
           )}
 
-          <Modal
-            closeIcon={<CloseIconSvg size={24} color={"#4D4D4D"} />}
-            title={
-              <div className={"flex gap-2"}>
-                <WarningIconSvg />
-                <p className={"font-semibold text-sm leading-6 text-[#BF4A40]"}>
-                  Confirm Delete
-                </p>
-              </div>
-            }
-            open={showModalDelete}
-            onCancel={() => {
-              // setmodaldelete(false);
-              cancelDelete();
-            }}
-            footer={
-              <div className={"flex gap-4 justify-end"}>
-                <div
-                  onClick={() => cancelDelete()}
-                  className={
-                    "bg-white border border-solid border-[#808080] py-2 px-4 rounded-md hover:cursor-pointer"
-                  }
-                >
-                  <p className={"text-xs leading-5 text-[#808080] font-bold"}>
-                    Cancel
-                  </p>
-                </div>
-                <div
-                  onClick={() => handleDeleteLeaveQuota()}
-                  className={
-                    "bg-[#BF4A40] flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
-                  }
-                >
-                  {loadingDelete ? (
-                    <Spin
-                      spinning={loadingDelete}
-                      indicator={<LoadingOutlined />}
-                      size={"default"}
-                    />
-                  ) : (
-                    <TrashIconSvg color={"white"} size={16} />
-                  )}
-                  <p className="text-white text-xs leading-5 font-bold">
-                    Delete
-                  </p>
-                </div>
-              </div>
-            }
-            // onOk={handleDelete}
-
-            maskClosable={true}
-            style={{ top: `3rem` }}
-            width={440}
-            destroyOnClose={true}
-          >
-            <p className={"text-[#4D4D4D] "}>
-              Are you sure you want to delete{" "}
-              <span className={"font-bold"}>{recordDelete?.name}</span> with{" "}
-              <span className={"font-bold"}>
-                {recordDelete?.totalLeave} total leave quota
-              </span>
-              ?
-            </p>
-          </Modal>
+          {showDrawerRequest && (
+            <DrawerFormRequestCapitulation
+              dataToken={initProps}
+              visible={showDrawerRequest}
+              queryParams={queryParams}
+              setQueryParams={setQueryParams}
+              onCancel={() => {
+                setShowDrawerRequest(false);
+              }}
+            />
+          )}
         </div>
       </div>
     </LayoutDashboard>
