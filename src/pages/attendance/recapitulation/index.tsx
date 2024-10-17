@@ -117,6 +117,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
     keyword: withDefault(StringParam, ""),
     role_ids: withDefault(StringParam, undefined),
     company_id: withDefault(StringParam, undefined),
+    employee_ids: withDefault(StringParam, undefined),
     start_date: withDefault(StringParam, undefined),
     end_date: withDefault(StringParam, undefined),
   });
@@ -155,14 +156,8 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [roleList, setDataRoleList] = useState([]);
   const [dataAnnualLeave, setDataAnnualLeave] = useState([]);
   const [loadingCompanyList, setLoadingCompanyList] = useState(false);
-  const isAllowedToManageLeaveTypes = hasPermission(LEAVE_TYPES_GET);
   const isAllowedToAddLeave = hasPermission(LEAVE_ADD);
   const isAllowedToGetLeave = hasPermission(LEAVES_GET);
-  const [recordDelete, setRecordDelete] = useState({
-    name: null,
-    totalLeave: null,
-    id: null,
-  });
 
   const [dataDefault, setDataDefault] = useState(null);
   useEffect(() => {
@@ -182,6 +177,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
     queryParams.keyword,
     queryParams.company_id,
     queryParams.start_date,
+    queryParams.employee_ids,
     queryParams.end_date,
   ]);
 
@@ -385,14 +381,14 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       sort_type: undefined,
       keyword: undefined,
       start_date: undefined,
+      company_id: undefined,
+      employee_ids: undefined,
       end_date: undefined,
     });
   };
 
   const onRangeChange = (dates, dateStrings) => {
     if (dates) {
-      console.log("From: ", dates[0], ", to: ", dates[1]);
-      console.log("From: ", dateStrings[0], ", to: ", dateStrings[1]);
       setQueryParams({
         start_date: dateStrings[0],
         end_date: dateStrings[1],
@@ -450,7 +446,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
             )}
           </div>
           {/* Table's filter */}
-          <div className="px-4 py-3">
+          {/* <div className="px-4 py-3">
             <Form
               // form={theForm}
               className="flex flex-col sm:flex-row w-full sm:justify-between sm:items-center gap-2"
@@ -547,7 +543,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
               </div>
               <RangePicker onChange={onRangeChange} />
             </Form>
-          </div>
+          </div> */}
           <div className={"px-4 "}>
             <Table
               columns={columns}

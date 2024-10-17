@@ -28,10 +28,8 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import { MAX_CONTRACT_DAYS, MAX_SCHEDULED_DAYS, TODAY } from "lib/constants";
 import {
-  AGENTS_GET,
   COMPANY_CLIENTS_GET,
-  FILTER_EMPLOYEES_GET,
-  LEAVE_TYPES_GET,
+  EMPLOYEE_NAMES_GET,
   RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
@@ -55,20 +53,53 @@ const DrawerFormRequestCapitulation = ({
   const [instanceForm] = Form.useForm();
   const [loadingSave, setLoadingSave] = useState(false);
   const [dataCompanyList, setDataCompanyList] = useState([]);
+  const [dataEmployee, setDataEmployee] = useState([]);
   const [roleList, setDataRoleList] = useState([]);
   const [loadingCompanyList, setLoadingCompanyList] = useState(false);
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
+  const isAllowedToGetEmployeeNames = hasPermission(EMPLOYEE_NAMES_GET);
   const [dateForm, setDateForm] = useState({
     start_date: null,
     end_date: null,
   });
+  const [companyIds, setCompanyIds] = useState(null);
+  const [employeeIds, setEmployeeIds] = useState(null);
+  const [position, setPosition] = useState(null);
   useEffect(() => {
     if (visible) {
       fetchDataCompany();
       fetchDataRole();
     }
   }, [visible]);
+
+  useEffect(() => {
+    if (position && companyIds) {
+      fetchDataEmployee();
+    }
+  }, [position, companyIds]);
+
+  const fetchDataEmployee = async () => {
+    if (!isAllowedToGetEmployeeNames) {
+      permissionWarningNotification("Mendapatkan", "Data Employee");
+    } else {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeNames?role_ids=${position}&company_id=${companyIds}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(dataToken),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.data) {
+            setDataEmployee(res2.data);
+          }
+        });
+    }
+  };
 
   const fetchDataCompany = async () => {
     if (!isAllowedToGetCompanyClients) {
@@ -110,7 +141,6 @@ const DrawerFormRequestCapitulation = ({
   };
 
   const handleSubmit = (values) => {
-    console.log("submit ", values);
     setLoadingSave(true);
     setQueryParams({
       ...queryParams,
@@ -118,9 +148,14 @@ const DrawerFormRequestCapitulation = ({
       role_ids: values.position ? values.position : undefined,
       start_date: dateForm.start_date ? dateForm.start_date : undefined,
       end_date: dateForm.end_date ? dateForm.end_date : undefined,
+      employee_ids: employeeIds ? employeeIds : undefined,
     });
     onCancel();
     setLoadingSave(false);
+    notification.success({
+      message: "Filter Berhasil diterapkan",
+      duration: 3,
+    });
   };
 
   const onRangeChange = (dates, dateStrings) => {
@@ -135,6 +170,21 @@ const DrawerFormRequestCapitulation = ({
         end_date: null,
       });
     }
+  };
+
+  const handleChangeCompany = (value) => {
+    setEmployeeIds(null);
+    instanceForm.setFieldValue("employee", []);
+    setCompanyIds(value);
+  };
+
+  const handleChange = (value) => {
+    setEmployeeIds(null);
+    setPosition(value);
+  };
+
+  const handleChangeEmployee = (value) => {
+    setEmployeeIds(value);
   };
 
   return (
@@ -175,6 +225,7 @@ const DrawerFormRequestCapitulation = ({
                       .toLowerCase()
                       .includes(input.toLowerCase())
                   }
+                  onChange={handleChangeCompany}
                   loading={loadingCompanyList}
                   optionFilterProp="children"
                 >
@@ -207,8 +258,39 @@ const DrawerFormRequestCapitulation = ({
                   placeholder="Select Position"
                   style={{ width: `100%` }}
                   optionFilterProp="children"
+                  onChange={handleChange}
                 >
                   {roleList?.map((item) => (
+                    <Select.Option
+                      key={item.id}
+                      value={item.id}
+                      label={item.name}
+                    >
+                      {item.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </div>
+            <div className={"mb-2"}>
+              <Form.Item
+                label="Employee"
+                name={"employee"}
+                value={employeeIds}
+                className="col-span-2"
+              >
+                <Select
+                  allowClear
+                  mode="tags"
+                  tokenSeparators={[","]}
+                  showSearch
+                  disabled={!isAllowedToGetRoleList}
+                  placeholder="Select Employee"
+                  style={{ width: `100%` }}
+                  optionFilterProp="children"
+                  onChange={handleChangeEmployee}
+                >
+                  {dataEmployee?.map((item) => (
                     <Select.Option
                       key={item.id}
                       value={item.id}
@@ -226,7 +308,7 @@ const DrawerFormRequestCapitulation = ({
                 name={"date_range"}
                 className="col-span-2"
               >
-                <RangePicker onChange={onRangeChange} />
+                <RangePicker className={"w-full"} onChange={onRangeChange} />
               </Form.Item>
             </div>
           </div>
