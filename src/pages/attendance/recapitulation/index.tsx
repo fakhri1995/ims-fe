@@ -292,7 +292,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       sorter: true,
     },
     {
-      title: "Jumlah Kerja",
+      title: "Total Daily Work",
       dataIndex: "total_work_day",
       key: "total_work_day",
     },
@@ -311,7 +311,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       sorter: true,
     },
     {
-      title: "Telat",
+      title: "Late",
       dataIndex: "late_count",
       key: "late_count",
       align: "center",
@@ -325,43 +325,43 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
       sorter: true,
     },
     {
-      title: "Cuti",
+      title: "Leave",
       dataIndex: "leave_count",
       key: "leave_count",
       align: "center",
       sorter: true,
     },
     {
-      title: "lembur",
+      title: "Overtime",
       dataIndex: "overtime_count",
       key: "overtime_count",
       align: "center",
       sorter: true,
     },
-    {
-      title: "Actions",
-      dataIndex: "action",
-      align: "center",
-      render: (status, record, index) => {
-        return {
-          children: (
-            <div className="flex items-center gap-2 justify-center">
-              <button
-                disabled={!isAllowedToDeleteLeaveQuota}
-                className="bg-transparent"
-                // onClick={(e) => {
-                //   e.stopPropagation();
-                //   onDeleteButtonClicked(record);
-                // }}
-                //   disabled={!isAllowedToDeleteFormDetail}
-              >
-                <DownloadIconSvg color={"#808080"} size={20} />
-              </button>
-            </div>
-          ),
-        };
-      },
-    },
+    // {
+    //   title: "Actions",
+    //   dataIndex: "action",
+    //   align: "center",
+    //   render: (status, record, index) => {
+    //     return {
+    //       children: (
+    //         <div className="flex items-center gap-2 justify-center">
+    //           <button
+    //             disabled={!isAllowedToDeleteLeaveQuota}
+    //             className="bg-transparent"
+    //             // onClick={(e) => {
+    //             //   e.stopPropagation();
+    //             //   onDeleteButtonClicked(record);
+    //             // }}
+    //             //   disabled={!isAllowedToDeleteFormDetail}
+    //           >
+    //             <DownloadIconSvg color={"#808080"} size={20} />
+    //           </button>
+    //         </div>
+    //       ),
+    //     };
+    //   },
+    // },
   ];
 
   const [showDrawer, setShowDrawer] = useState(false);
