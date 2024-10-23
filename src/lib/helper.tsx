@@ -398,6 +398,27 @@ export const beforeUploadFileMaxSize = (
   };
 };
 
+export const beforeUploadFileMaxSizeAnnouncement = (
+  sizeInMiB: number = 2,
+  errorMessage?: string
+): Pick<UploadProps, "beforeUpload">["beforeUpload"] => {
+  return (file) => {
+    const fileSizeInMb = Number.parseFloat(
+      (file.size / 1024 / 1024).toFixed(2)
+    );
+
+    if (fileSizeInMb > sizeInMiB) {
+      notification.error({
+        message:
+          errorMessage ||
+          `Ukuran File ${fileSizeInMb} MB melebih batas persyaratan maksimum sebesar ${sizeInMiB} MB`,
+      });
+
+      return Upload.LIST_IGNORE;
+    }
+  };
+};
+
 /**
  * Client-side validator for date-like value given from the backend.
  *

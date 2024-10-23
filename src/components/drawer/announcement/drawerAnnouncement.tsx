@@ -32,6 +32,7 @@ import {
 } from "lib/features";
 import {
   beforeUploadFileMaxSize,
+  beforeUploadFileMaxSizeAnnouncement,
   notificationError,
   notificationSuccess,
 } from "lib/helper";
@@ -171,7 +172,7 @@ const DrawerAnnouncement = ({
 
   // Handle upload file
   const beforeUploadPicture = useCallback((uploadedFile, fileList) => {
-    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+    const checkMaxFileSizeFilter = beforeUploadFileMaxSizeAnnouncement();
     const isReachedMaxFileSize =
       checkMaxFileSizeFilter(uploadedFile, fileList) === Upload.LIST_IGNORE;
     const allowedFileTypes = [
