@@ -280,7 +280,7 @@ const DrawerAnnouncement = ({
                 <>
                   <p className="text-mono50 mr-10 mb-4">
                     <em>
-                      Unggah Gambar (Maksimal 5 MB dengan format PNG / JPG /
+                      Unggah Gambar (Maksimal 2 MB dengan format PNG / JPG /
                       JPEG / GIF)
                     </em>
                   </p>
