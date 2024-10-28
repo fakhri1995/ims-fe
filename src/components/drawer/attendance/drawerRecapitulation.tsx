@@ -31,6 +31,8 @@ import { permissionWarningNotification } from "lib/helper";
 
 import DrawerCore from "../drawerCore";
 
+const { RangePicker } = DatePicker;
+
 const DrawerRecapitulation = ({
   dataToken,
   visible,
@@ -76,6 +78,10 @@ const DrawerRecapitulation = ({
   const [dokumenFileBlob, setDokumenFileBlob] = useState<RcFile | Blob | File>(
     null
   );
+  const [dateForm, setDateForm] = useState({
+    start_date: null,
+    end_date: null,
+  });
   const [queryParams, setQueryParams] = useState({
     company_id: null,
   });
@@ -247,6 +253,20 @@ const DrawerRecapitulation = ({
     },
   ];
 
+  const onRangeChange = (dates, dateStrings) => {
+    if (dates) {
+      setDateForm({
+        start_date: dateStrings[0],
+        end_date: dateStrings[1],
+      });
+    } else {
+      setDateForm({
+        start_date: null,
+        end_date: null,
+      });
+    }
+  };
+
   return (
     <DrawerCore
       title={"Export Recapitulation"}
@@ -348,26 +368,11 @@ const DrawerRecapitulation = ({
             </div>
             <div className={"mb-2"}>
               <Form.Item
-                label="Select Month"
-                name={"month"}
+                label="Date Range"
+                name={"date_range"}
                 className="col-span-2"
-                rules={[
-                  {
-                    required: true,
-                    message: "Month is required",
-                  },
-                ]}
               >
-                <DatePicker
-                  placeholder="Select Month"
-                  size={"middle"}
-                  format={"MMMM YYYY"}
-                  className={"w-full"}
-                  picker={"month"}
-                  suffixIcon={
-                    <CalendarOutlined className={"text-[#4D4D4D] font-sm"} />
-                  }
-                />
+                <RangePicker className={"w-full"} onChange={onRangeChange} />
               </Form.Item>
             </div>
             <div className={"mb-2"}>
