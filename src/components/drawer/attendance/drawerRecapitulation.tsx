@@ -4,8 +4,10 @@ import {
   DatePicker,
   Form,
   InputNumber,
+  Radio,
   Row,
   Select,
+  Space,
   notification,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/id_ID";
@@ -30,6 +32,8 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import DrawerCore from "../drawerCore";
+
+const { RangePicker } = DatePicker;
 
 const DrawerRecapitulation = ({
   dataToken,
@@ -76,6 +80,10 @@ const DrawerRecapitulation = ({
   const [dokumenFileBlob, setDokumenFileBlob] = useState<RcFile | Blob | File>(
     null
   );
+  const [dateForm, setDateForm] = useState({
+    start_date: null,
+    end_date: null,
+  });
   const [queryParams, setQueryParams] = useState({
     company_id: null,
   });
@@ -134,12 +142,15 @@ const DrawerRecapitulation = ({
       permissionWarningNotification("Mendapatkan", "Data Company");
     } else {
       setLoadingCompanyList(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(dataToken),
-        },
-      })
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=true`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(dataToken),
+          },
+        }
+      )
         .then((res) => res.json())
         .then((res2) => {
           setDataCompanyList(res2.data);
@@ -183,56 +194,42 @@ const DrawerRecapitulation = ({
 
   const handleSubmit = (values) => {
     setLoadingSave(true);
-    let url = "";
-    let method = "POST";
-    let datapayload = {};
-    if (dataDefault) {
-      url = `updateEmployeeLeaveQuota`;
-      method = "PUT";
-      datapayload = {
-        id: dataDefault.id,
-        employee_id: values.employee_id,
-        leave_total: values.leave_quota,
-        start_period: moment(values.validity_period[0]).format("YYYY-MM-DD"),
-        end_period: moment(values.validity_period[1]).format("YYYY-MM-DD"),
-      };
-    } else {
-      url = "addEmployeeLeaveQuota";
-      method = "POST";
-      datapayload = {
-        employee_id: values.employee_id,
-        leave_total: values.leave_quota,
-        start_period: moment(values.validity_period[0]).format("YYYY-MM-DD"),
-        end_period: moment(values.validity_period[1]).format("YYYY-MM-DD"),
-      };
-    }
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}`, {
-      method: method,
+    let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/exportAttendanceRecap?employee_ids${values.employee_id}&company_id=${values.company_id}&start_date=${dateForm.start_date}&end_date=${dateForm.end_date}&format=${values.export_data}`;
+    fetch(`${url}`, {
+      method: `GET`,
       headers: {
         Authorization: JSON.parse(dataToken),
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(datapayload),
     })
-      .then((res) => res.json())
+      .then((res) => res.blob())
       .then((res2) => {
-        if (res2.success) {
-          setLoadingSave(false);
-          instanceForm.resetFields();
-          resetParams();
-          onCancel();
-          fetchData();
-          notification["success"]({
-            message: `${dataDefault ? "Update" : " Add"} Leave Quota Success`,
-            duration: 3,
+        if (values.export_data == "pdf") {
+          var newBlob = new Blob([res2], {
+            type: "application/pdf",
+          });
+          const data = window.URL.createObjectURL(newBlob);
+          var link = document.createElement("a");
+          link.href = data;
+          link.download = `recapitulation_${dateForm.start_date}_${dateForm.end_date}.pdf`;
+          link.click();
+          setTimeout(function () {
+            window.URL.revokeObjectURL(data);
           });
         } else {
-          setLoadingSave(false);
-          notification["error"]({
-            message: `${dataDefault ? "Update" : " Add"} Leave Quota Failed`,
-            duration: 3,
+          var newBlob = new Blob([res2], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+          const data = window.URL.createObjectURL(newBlob);
+          var link = document.createElement("a");
+          link.href = data;
+          link.download = `recapitulation_${dateForm.start_date}_${dateForm.end_date}.xlsx`;
+          link.click();
+          setTimeout(function () {
+            window.URL.revokeObjectURL(data);
           });
         }
+
+        setLoadingSave(false);
       });
   };
 
@@ -246,6 +243,20 @@ const DrawerRecapitulation = ({
       value: "Excel",
     },
   ];
+
+  const onRangeChange = (dates, dateStrings) => {
+    if (dates) {
+      setDateForm({
+        start_date: dateStrings[0],
+        end_date: dateStrings[1],
+      });
+    } else {
+      setDateForm({
+        start_date: null,
+        end_date: null,
+      });
+    }
+  };
 
   return (
     <DrawerCore
@@ -348,26 +359,17 @@ const DrawerRecapitulation = ({
             </div>
             <div className={"mb-2"}>
               <Form.Item
-                label="Select Month"
-                name={"month"}
+                label="Date Range"
+                name={"date_range"}
                 className="col-span-2"
                 rules={[
                   {
                     required: true,
-                    message: "Month is required",
+                    message: "Date Range is required",
                   },
                 ]}
               >
-                <DatePicker
-                  placeholder="Select Month"
-                  size={"middle"}
-                  format={"MMMM YYYY"}
-                  className={"w-full"}
-                  picker={"month"}
-                  suffixIcon={
-                    <CalendarOutlined className={"text-[#4D4D4D] font-sm"} />
-                  }
-                />
+                <RangePicker className={"w-full"} onChange={onRangeChange} />
               </Form.Item>
             </div>
             <div className={"mb-2"}>
@@ -382,14 +384,12 @@ const DrawerRecapitulation = ({
                   },
                 ]}
               >
-                <Checkbox.Group>
-                  <Row>
-                    <Checkbox value="PDF">PDF</Checkbox>
-                  </Row>
-                  <Row>
-                    <Checkbox value="Excel">Excel</Checkbox>
-                  </Row>
-                </Checkbox.Group>
+                <Radio.Group>
+                  <Space direction="vertical">
+                    <Radio value={"pdf"}>PDF</Radio>
+                    <Radio value={"Excel"}>Excel</Radio>
+                  </Space>
+                </Radio.Group>
               </Form.Item>
             </div>
           </div>

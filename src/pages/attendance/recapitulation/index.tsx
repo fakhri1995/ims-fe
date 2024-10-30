@@ -216,7 +216,7 @@ const RecapitulationIndex = ({ initProps, dataProfile, sidemenu }) => {
         addQueryPrefix: true,
       });
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendaceRecap${params}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceRecap${params}`,
         {
           method: `GET`,
           headers: {
