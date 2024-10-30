@@ -194,28 +194,23 @@ const DrawerRecapitulation = ({
 
   const handleSubmit = (values) => {
     setLoadingSave(true);
-    console.log("values ", values);
-    console.log("date form ", dateForm);
-    //${process.env.NEXT_PUBLIC_BACKEND_URL}/exportAttendanceRecap?employee_ids${values.employee_id}&company_id=${values.company_id}&start_date=${dateForm.start_date}&end_date=${dateForm.end_date}
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/exportAttendanceRecap?start_date=2023-01-01`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(dataToken),
-        },
-      }
-    )
+    let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/exportAttendanceRecap?employee_ids${values.employee_id}&company_id=${values.company_id}&start_date=${dateForm.start_date}&end_date=${dateForm.end_date}&format=${values.export_data}`;
+    fetch(`${url}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(dataToken),
+      },
+    })
       .then((res) => res.blob())
       .then((res2) => {
-        if (values.export_data == "PDF") {
+        if (values.export_data == "pdf") {
           var newBlob = new Blob([res2], {
             type: "application/pdf",
           });
           const data = window.URL.createObjectURL(newBlob);
           var link = document.createElement("a");
           link.href = data;
-          link.download = `tes.pdf`;
+          link.download = `recapitulation_${dateForm.start_date}_${dateForm.end_date}.pdf`;
           link.click();
           setTimeout(function () {
             window.URL.revokeObjectURL(data);
@@ -227,7 +222,7 @@ const DrawerRecapitulation = ({
           const data = window.URL.createObjectURL(newBlob);
           var link = document.createElement("a");
           link.href = data;
-          link.download = `tes.xlsx`;
+          link.download = `recapitulation_${dateForm.start_date}_${dateForm.end_date}.xlsx`;
           link.click();
           setTimeout(function () {
             window.URL.revokeObjectURL(data);
@@ -391,7 +386,7 @@ const DrawerRecapitulation = ({
               >
                 <Radio.Group>
                   <Space direction="vertical">
-                    <Radio value={"PDF"}>PDF</Radio>
+                    <Radio value={"pdf"}>PDF</Radio>
                     <Radio value={"Excel"}>Excel</Radio>
                   </Space>
                 </Radio.Group>
