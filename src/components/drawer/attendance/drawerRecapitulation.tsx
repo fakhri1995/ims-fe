@@ -387,7 +387,7 @@ const DrawerRecapitulation = ({
                 <Radio.Group>
                   <Space direction="vertical">
                     <Radio value={"pdf"}>PDF</Radio>
-                    <Radio value={"Excel"}>Excel</Radio>
+                    <Radio value={"excel"}>Excel</Radio>
                   </Space>
                 </Radio.Group>
               </Form.Item>
