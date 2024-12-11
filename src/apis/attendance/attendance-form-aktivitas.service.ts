@@ -2,6 +2,7 @@ import { AxiosInstance } from "axios";
 import QueryString from "qs";
 
 import {
+  IAddAttendanceFormDetailsPayload,
   IAddAttendanceFormPayload,
   IAddAttendanceFormSucceedResponse,
   IAddUserAttendanceFormPayload,
@@ -108,6 +109,16 @@ export class AttendanceFormAktivitasService {
   ) {
     return await axiosClient.put<IUpdateAttendanceFormSucceedResponse>(
       "/updateAttendanceForm",
+      payload
+    );
+  }
+
+  static async addDetails(
+    axiosClient: AxiosInstance,
+    payload: IAddAttendanceFormDetailsPayload
+  ) {
+    return await axiosClient.put<IUpdateAttendanceFormSucceedResponse>(
+      "/addAttendanceFormDetails",
       payload
     );
   }

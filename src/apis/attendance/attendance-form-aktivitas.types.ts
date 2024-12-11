@@ -106,6 +106,11 @@ export interface IAddAttendanceFormPayload {
   details: Detail[];
 }
 
+export interface IAddAttendanceFormDetailsPayload {
+  id: number;
+  details: Detail[];
+}
+
 export interface IAddAttendanceFormSucceedResponse
   extends HttpRequestBaseSucceedResponse {
   id: number;

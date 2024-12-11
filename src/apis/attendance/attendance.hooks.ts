@@ -27,6 +27,7 @@ import { AttendanceFormAktivitasService } from "./attendance-form-aktivitas.serv
 import {
   AttendanceFormAktivitasServiceQueryKeys,
   FormAktivitasTypes,
+  IAddAttendanceFormDetailsPayload,
   IAddAttendanceFormPayload,
   IAddUserAttendanceFormPayload,
   IRemoveUserAttendanceFormPayload,
@@ -70,6 +71,23 @@ export const useUpdateFormAktivitas = () => {
   return useMutation(
     (payload: IUpdateAttendanceFormPayload) =>
       AttendanceFormAktivitasService.update(axiosClient, payload),
+    {
+      onSuccess: (_, payload) => {
+        queryClient.invalidateQueries([
+          AttendanceFormAktivitasServiceQueryKeys.FIND_ONE,
+          payload.id,
+        ]);
+      },
+    }
+  );
+};
+
+export const useAddFormAktivitasDetails = () => {
+  const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+  return useMutation(
+    (payload: IAddAttendanceFormDetailsPayload) =>
+      AttendanceFormAktivitasService.addDetails(axiosClient, payload),
     {
       onSuccess: (_, payload) => {
         queryClient.invalidateQueries([
