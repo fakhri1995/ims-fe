@@ -4,7 +4,12 @@ import { useRouter } from "next/router";
 import { FC, memo, useCallback, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
-import { EditIconSvg, EditSquareIconSvg, TrashIconSvg } from "components/icon";
+import {
+  CirclePlusIconSvg,
+  EditIconSvg,
+  EditSquareIconSvg,
+  TrashIconSvg,
+} from "components/icon";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -27,6 +32,7 @@ import {
   useDeleteFormAktivitas,
 } from "apis/attendance";
 
+import { FormAddDetailsActivityDrawer } from "../shared/FormAddDetailsActivityDrawer";
 import { FormAktivitasDrawer } from "../shared/FormAktivitasDrawer";
 
 export interface IFormAktivitasTable {
@@ -76,7 +82,11 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
     const { mutateAsync: deleteFormAktivitas } = useDeleteFormAktivitas(
       "/attendance/form-aktivitas"
     );
-
+    const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
+    const [dataActivityForm, setDataActivityForm] = useState({
+      id: null,
+      title: null,
+    });
     const { data, isLoading } = useQuery(
       [AttendanceFormAktivitasServiceQueryKeys.FIND, tableQueryCriteria],
       () =>
@@ -153,6 +163,16 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
                     className="bg-transparent"
                     onClick={(e) => {
                       e.stopPropagation();
+                      onAddButtonClicked(record);
+                    }}
+                    disabled={!isAllowedToDeleteFormDetail}
+                  >
+                    <CirclePlusIconSvg color={"#BF4A40"} size={20} />
+                  </button>
+                  <button
+                    className="bg-transparent"
+                    onClick={(e) => {
+                      e.stopPropagation();
                       onDeleteButtonClicked(record);
                     }}
                     disabled={!isAllowedToDeleteFormDetail}
@@ -216,6 +236,23 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
       });
     };
 
+    const onAddButtonClicked = (record) => {
+      if (!isAllowedToDeleteFormDetail) {
+        permissionWarningNotification("Menghapus", "Form Aktivitas");
+        return;
+      }
+
+      if (!record.id) {
+        return;
+      }
+      setCreateDrawerShown(true);
+      setDataActivityForm({
+        ...dataActivityForm,
+        id: record.id,
+        title: record.name,
+      });
+    };
+
     return (
       <>
         <Table<GetAttendanceFormsDatum>
@@ -262,6 +299,15 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
             onvisible={setIsDrawerShown}
             visible={isDrawerShown}
             formAktivitasId={aktivtasId}
+          />
+        )}
+        {canOpenUpdateDrawer && (
+          <FormAddDetailsActivityDrawer
+            title={"Add Details Form " + dataActivityForm.title}
+            buttonOkText="Save Form"
+            onvisible={setCreateDrawerShown}
+            visible={isCreateDrawerShown}
+            formAktivitasId={dataActivityForm?.id}
           />
         )}
       </>
