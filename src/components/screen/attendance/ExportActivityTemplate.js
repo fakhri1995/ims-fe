@@ -64,17 +64,19 @@ const ExportActivityTemplate = ({
     } else {
       let kata = "";
       for (let a = 0; a < daily.length; a++) {
-        if (a != daily.length - 1) {
-          if (!daily[a].key.includes("-") && daily[a].value != "") {
+        if (daily[a].value) {
+          if (a != daily.length - 1) {
             kata = kata + daily[a].value + ", ";
+          } else {
+            kata = kata + daily[a].value;
           }
-        } else {
-          kata = kata + daily[a].value;
         }
       }
       return kata;
     }
   };
+
+  const renderDetails = (details) => {};
 
   return (
     <Document>
