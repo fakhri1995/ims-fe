@@ -159,7 +159,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
             return {
               children: (
                 <div className="flex items-center gap-2 justify-center">
-                  <button
+                  {/* <button
                     className="bg-transparent"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -168,7 +168,7 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
                     disabled={!isAllowedToDeleteFormDetail}
                   >
                     <CirclePlusIconSvg color={"#BF4A40"} size={20} />
-                  </button>
+                  </button> */}
                   <button
                     className="bg-transparent"
                     onClick={(e) => {
