@@ -391,13 +391,13 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
-          {hasPermission(ATTENDANCE_RECAP_GET) && (
+          {/* {hasPermission(ATTENDANCE_RECAP_GET) && (
             <Menu.Item key="attendance/recapitulation" className="text-mono50">
               <Link href="/attendance/recapitulation" legacyBehavior>
                 <p>Recapitulation</p>
               </Link>
             </Menu.Item>
-          )}
+          )} */}
         </SubMenu>
       )}
 
@@ -451,7 +451,16 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
 
   const manajemenContent = (
     <>
-      <p className={menuSectionLabelClassName}>MANAJEMEN</p>
+      {hasPermission(SIDEBAR_USER) ||
+        hasPermission(SIDEBAR_EMPLOYEE) ||
+        hasPermission(SIDEBAR_FEATURE) ||
+        hasPermission(SIDEBAR_ASSET) ||
+        hasPermission(SIDEBAR_CMS) ||
+        hasPermission(SIDEBAR_RESUME) ||
+        hasPermission(SIDEBAR_RECRUITMENT) ||
+        (hasPermission(SIDEBAR_CONTRACT) && (
+          <p className={menuSectionLabelClassName}>MANAJEMEN</p>
+        ))}
       {/* Users: Agents, Requesters, Groups, Guests */}
       {hasPermission(SIDEBAR_USER) && (
         <SubMenu
