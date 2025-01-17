@@ -65,10 +65,18 @@ const ExportActivityTemplate = ({
       let kata = "";
       for (let a = 0; a < daily.length; a++) {
         if (daily[a].value) {
-          if (a != daily.length - 1) {
-            kata = kata + daily[a].value + ", ";
+          let temp_word = null;
+          if (daily[a].value == 0) {
+            temp_word = "Tidak";
+          } else if (daily[a].value == 1) {
+            temp_word = "Ya";
           } else {
-            kata = kata + daily[a].value;
+            temp_word = daily[a].value;
+          }
+          if (a != daily.length - 1) {
+            kata = kata + temp_word + ", ";
+          } else {
+            kata = kata + temp_word;
           }
         }
       }
@@ -582,7 +590,7 @@ const ExportActivityTemplate = ({
                     >
                       {datanew.details
                         ? renderDetailDailyActivity(datanew.details)
-                        : datanew.activity}
+                        : datanew}
                     </Text>
                   </View>
                 ))
