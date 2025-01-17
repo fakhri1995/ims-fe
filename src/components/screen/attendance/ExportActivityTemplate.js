@@ -563,7 +563,7 @@ const ExportActivityTemplate = ({
                     ? renderDetailDailyActivity(
                         data["daily activity"][0].details
                       )
-                    : data["daily activity"][0].activity}
+                    : data["daily activity"][0]}
                 </Text>
               ) : Array.isArray(data["daily activity"]) &&
                 data["daily activity"].length > 1 ? (
