@@ -804,7 +804,11 @@ const RecruitmentDetailIndex = ({
                           className="rounded-full w-5 h-5 mr-2"
                         ></img>
                         <p className="mig-caption--medium text-primary100 ">
-                          {`${activity?.causer?.name} - ${activity?.causer?.roles[0].name}`}
+                          {`${activity?.causer?.name} - ${
+                            Array.isArray(activity?.causer?.roles)
+                              ? activity?.causer?.roles[0].name
+                              : activity?.causer?.roles.name
+                          }`}
                         </p>
                       </div>
                       <p className="text-sm text-mono80">
@@ -842,7 +846,11 @@ const RecruitmentDetailIndex = ({
                           className="rounded-full w-5 h-5 mr-2"
                         ></img>
                         <p className="mig-caption--medium text-primary100 ">
-                          {`${activity?.causer?.name} - ${activity?.causer?.roles[0].name}`}
+                          {`${activity?.causer?.name} - ${
+                            Array.isArray(activity?.causer?.roles)
+                              ? activity?.causer?.roles[0].name
+                              : activity?.causer?.roles.name
+                          }`}
                         </p>
                       </div>
                       <p className="text-sm text-mono80 ">
@@ -1512,7 +1520,11 @@ const RecruitmentDetailIndex = ({
                       className="rounded-full w-5 h-5 mr-2"
                     ></img>
                     <p className="mig-caption--medium text-primary100 ">
-                      {`${activity.causer?.name} - ${activity.causer?.roles[0].name}`}
+                      {`${activity.causer?.name} - ${
+                        Array.isArray(activity?.causer?.roles)
+                          ? activity?.causer?.roles[0].name
+                          : activity?.causer?.roles.name
+                      }`}
                     </p>
                   </div>
                   <p className="text-sm text-mono80">
