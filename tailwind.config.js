@@ -8,6 +8,9 @@ module.exports = {
         224: "37rem",
         500: "50rem",
       },
+      borderWidth: {
+        '1.5': '1.5px',
+      },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
         roboto: ['Roboto', 'sans-serif'],
