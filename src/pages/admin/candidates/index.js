@@ -1,4 +1,4 @@
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Input, Modal, Select, Spin, Switch, notification } from "antd";
 import {
@@ -458,7 +458,19 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
 
           {/* TABEL SEMUA KANDIDAT */}
           <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mt-6 md:mt-0">
-            <h4 className="mig-heading--4">Semua Kandidat</h4>
+            <div className={"flex flex-row justify-between"}>
+              <h4 className="mig-heading--4">Semua Kandidat</h4>
+              <ButtonSys
+                type={"primary"}
+                onClick={onFilterResume}
+                disabled={!isAllowedToGetResumeList}
+              >
+                <div className="flex flex-row space-x-2 items-center">
+                  <PlusCircleOutlined />
+                  <p className="whitespace-nowrap">Input CV</p>
+                </div>
+              </ButtonSys>
+            </div>
             <div className="mt-5 flex flex-col">
               <div className="flex flex-col md:flex-row w-full mb-5 gap-4">
                 <Input
