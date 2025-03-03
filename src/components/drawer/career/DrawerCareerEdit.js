@@ -1,11 +1,14 @@
 import {
   Button,
   Checkbox,
+  Col,
   Drawer,
   Empty,
   Form,
   Input,
+  Row,
   Select,
+  Space,
   Spin,
   Switch,
 } from "antd";
@@ -90,6 +93,10 @@ const DrawerCareerEdit = ({
     "link",
   ];
 
+  const onChangeJobPlaftorm = (checkedValues) => {
+    console.log("checked = ", checkedValues);
+  };
+
   return (
     <DrawerCore
       title={title}
@@ -152,6 +159,44 @@ const DrawerCareerEdit = ({
         >
           {activeTab == "1" ? (
             <div className="flex flex-col">
+              <Form.Item
+                label="ID Role"
+                name="recruitment_role_id"
+                rules={[
+                  {
+                    required: true,
+                    message: "Role wajib diisi",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch={true}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  value={
+                    dataedit?.recruitment_role_id &&
+                    Number(dataedit?.recruitment_role_id)
+                  }
+                  onChange={(e) => {
+                    setdataedit({
+                      ...dataedit,
+                      recruitment_role_id: e,
+                    });
+                  }}
+                  placeholder="Pilih ID Role"
+                >
+                  <>
+                    {dataRoles?.map((option) => (
+                      <Select.Option key={option.id} value={option.id}>
+                        {option.name}
+                      </Select.Option>
+                    ))}
+                  </>
+                </Select>
+              </Form.Item>
               <Form.Item
                 label="Position Name"
                 name="name"
@@ -233,44 +278,7 @@ const DrawerCareerEdit = ({
                   </>
                 </Select>
               </Form.Item>
-              <Form.Item
-                label="ID Role"
-                name="recruitment_role_id"
-                rules={[
-                  {
-                    required: true,
-                    message: "Role wajib diisi",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch={true}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                  value={
-                    dataedit?.recruitment_role_id &&
-                    Number(dataedit?.recruitment_role_id)
-                  }
-                  onChange={(e) => {
-                    setdataedit({
-                      ...dataedit,
-                      recruitment_role_id: e,
-                    });
-                  }}
-                  placeholder="Pilih ID Role"
-                >
-                  <>
-                    {dataRoles?.map((option) => (
-                      <Select.Option key={option.id} value={option.id}>
-                        {option.name}
-                      </Select.Option>
-                    ))}
-                  </>
-                </Select>
-              </Form.Item>
+
               <Form.Item
                 label="Salary Min"
                 name="salary_min"
@@ -401,6 +409,35 @@ const DrawerCareerEdit = ({
                 />
               </Form.Item>
               <Form.Item
+                label="Platform"
+                name="platform"
+                rules={[
+                  {
+                    required: true,
+                    message: "Platform wajib diisi",
+                  },
+                ]}
+              >
+                <Checkbox.Group
+                  style={{ width: "100%" }}
+                  onChange={onChangeJobPlaftorm}
+                >
+                  <Row>
+                    <Col>
+                      <Space direction="vertical">
+                        <Checkbox value="Deals">Deals</Checkbox>
+                        <Checkbox value="Glints">Glints</Checkbox>
+                        <Checkbox value="Kitalulus">Kitalulus</Checkbox>
+                        <Checkbox value="Internal Website">
+                          Internal Website
+                        </Checkbox>
+                      </Space>
+                    </Col>
+                  </Row>
+                </Checkbox.Group>
+              </Form.Item>
+
+              {/* <Form.Item
                 label="Status"
                 name="is_posted"
                 rules={[
@@ -423,7 +460,7 @@ const DrawerCareerEdit = ({
                     });
                   }}
                 />
-              </Form.Item>
+              </Form.Item> */}
               {/* <div className="bottom-0 flex justify-end">
                 <Button
                   type="default"

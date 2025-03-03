@@ -22,8 +22,9 @@ const DrawerRoleCreate = ({
   // USESTATE
   const [dataRole, setDataRole] = useState({
     id: null,
-    name: "",
+    role: "",
     alias: "",
+    client: "",
     recruitment_role_type_id: null,
   });
   const [disabledCreate, setDisabledCreate] = useState(true);
@@ -31,7 +32,11 @@ const DrawerRoleCreate = ({
   // USEEFFECT
   // Validate input field
   useEffect(() => {
-    if (dataRole.name !== "" && dataRole.recruitment_role_type_id !== null) {
+    if (
+      dataRole.role !== "" &&
+      dataRole.client !== "" &&
+      dataRole.recruitment_role_type_id !== null
+    ) {
       setDisabledCreate(false);
     } else {
       setDisabledCreate(true);
@@ -121,7 +126,7 @@ const DrawerRoleCreate = ({
             className="grid grid-cols-2 gap-x-6"
           >
             <Form.Item
-              label="Nama"
+              label="Role"
               name={"name"}
               rules={[
                 {
@@ -133,14 +138,42 @@ const DrawerRoleCreate = ({
             >
               <div>
                 <Input
-                  value={dataRole.name}
-                  name={"name"}
+                  value={dataRole.role}
+                  name={"role"}
                   onChange={onChangeInput}
                 />
               </div>
             </Form.Item>
-
-            <Form.Item label="Alias" name={"alias"} className="col-span-2">
+            <Form.Item
+              label="Client"
+              name={"client"}
+              rules={[
+                {
+                  required: true,
+                  message: "Nama Client wajib diisi",
+                },
+              ]}
+              className="col-span-2"
+            >
+              <div>
+                <Input
+                  value={dataRole.client}
+                  name={"client"}
+                  onChange={onChangeInput}
+                />
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="Alias"
+              name={"alias"}
+              rules={[
+                {
+                  required: true,
+                  message: "Alias wajib diisi",
+                },
+              ]}
+              className="col-span-2"
+            >
               <div>
                 <Input
                   value={dataRole.alias}
@@ -151,19 +184,19 @@ const DrawerRoleCreate = ({
             </Form.Item>
 
             <Form.Item
-              label="Tipe"
+              label="Tipe Kontrak"
               name={"recruitment_role_type_id"}
               rules={[
                 {
                   required: true,
-                  message: "Tipe role wajib diisi",
+                  message: "Tipe Kontrak wajib diisi",
                 },
               ]}
               className="col-span-2"
             >
               <div>
                 <Select
-                  placeholder="Pilih tipe.."
+                  placeholder="Pilih Status Kontrak"
                   style={{ width: `100%` }}
                   value={dataRole.recruitment_role_type_id}
                   onChange={(value) => {
