@@ -5,7 +5,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 /** @type {import("next").NextConfig } */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: false,
+  swcMinify: true,
   i18n: {
     locales: ["en", "id"],
     defaultLocale: "en",
@@ -60,7 +60,6 @@ const nextConfig = {
       test: /\.svg$/,
       use: ["@svgr/webpack"],
     });
-    config.resolve.alias.canvas = false;
 
     return config;
   },
