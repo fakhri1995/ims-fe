@@ -2,6 +2,7 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
+  Col,
   DatePicker,
   Drawer,
   Empty,
@@ -9,7 +10,9 @@ import {
   Input,
   Menu,
   Modal,
+  Row,
   Select,
+  Space,
   Spin,
   Switch,
   Table,
@@ -947,6 +950,10 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
+  const onChangeJobPlaftorm = (checkedValues) => {
+    console.log("checked = ", checkedValues);
+  };
+
   return (
     <Layout
       tok={initProps}
@@ -1301,6 +1308,44 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   </p>
                   <div className="flex flex-col">
                     <Form.Item
+                      label="ID Role"
+                      name="recruitment_role_id"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Role wajib diisi",
+                        },
+                      ]}
+                    >
+                      <Select
+                        showSearch={true}
+                        value={
+                          datacreate?.recruitment_role_id &&
+                          Number(datacreate?.recruitment_role_id)
+                        }
+                        onChange={(e) => {
+                          setdatacreate({
+                            ...datacreate,
+                            recruitment_role_id: e,
+                          });
+                        }}
+                        filterOption={(input, option) =>
+                          option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                        placeholder="Pilih ID Role"
+                      >
+                        <>
+                          {dataRoles?.map((option) => (
+                            <Select.Option key={option.id} value={option.id}>
+                              {option.name}
+                            </Select.Option>
+                          ))}
+                        </>
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
                       label="Position Name"
                       name="name"
                       rules={[
@@ -1384,44 +1429,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                         </>
                       </Select>
                     </Form.Item>
-                    <Form.Item
-                      label="ID Role"
-                      name="recruitment_role_id"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Role wajib diisi",
-                        },
-                      ]}
-                    >
-                      <Select
-                        showSearch={true}
-                        value={
-                          datacreate?.recruitment_role_id &&
-                          Number(datacreate?.recruitment_role_id)
-                        }
-                        onChange={(e) => {
-                          setdatacreate({
-                            ...datacreate,
-                            recruitment_role_id: e,
-                          });
-                        }}
-                        filterOption={(input, option) =>
-                          option.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                        placeholder="Pilih ID Role"
-                      >
-                        <>
-                          {dataRoles?.map((option) => (
-                            <Select.Option key={option.id} value={option.id}>
-                              {option.name}
-                            </Select.Option>
-                          ))}
-                        </>
-                      </Select>
-                    </Form.Item>
+
                     <Form.Item
                       label="Salary Min"
                       name="salary_min"
@@ -1526,8 +1534,35 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                         }}
                       />
                     </Form.Item>
-
                     <Form.Item
+                      label="Platform"
+                      name="platform"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Platform wajib diisi",
+                        },
+                      ]}
+                    >
+                      <Checkbox.Group
+                        style={{ width: "100%" }}
+                        onChange={onChangeJobPlaftorm}
+                      >
+                        <Row>
+                          <Col>
+                            <Space direction="vertical">
+                              <Checkbox value="Deals">Deals</Checkbox>
+                              <Checkbox value="Glints">Glints</Checkbox>
+                              <Checkbox value="Kitalulus">Kitalulus</Checkbox>
+                              <Checkbox value="Internal Website">
+                                Internal Website
+                              </Checkbox>
+                            </Space>
+                          </Col>
+                        </Row>
+                      </Checkbox.Group>
+                    </Form.Item>
+                    {/* <Form.Item
                       label="Qualification"
                       name="qualification"
                       rules={[
@@ -1550,8 +1585,8 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                           });
                         }}
                       />
-                    </Form.Item>
-                    <Form.Item
+                    </Form.Item> */}
+                    {/* <Form.Item
                       label="Status"
                       name="is_posted"
                       rules={[
@@ -1574,7 +1609,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                           });
                         }}
                       />
-                    </Form.Item>
+                    </Form.Item> */}
                   </div>
                   <div className="bottom-0 flex justify-end">
                     <Button

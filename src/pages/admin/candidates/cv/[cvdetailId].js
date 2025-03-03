@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -16,8 +17,6 @@ import {
   RESUME_SKILL_LISTS,
   RESUME_UPDATE,
 } from "lib/features";
-
-import MdChevronDown from "assets/vectors/icon-chevron-down.svg";
 
 import EducationInfoCard from "../../../../components/cards/resume/educationinfo/EducationInfoCard";
 import EvaluationCard from "../../../../components/cards/resume/evaluation/EvaluationCard";
@@ -49,6 +48,11 @@ const CVDetail = ({ initProps, dataProfile, sidemenu, cvdetailId }) => {
   /**
    * Dependencies
    */
+
+  if (typeof window !== "undefined") {
+    pdfjs.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs";
+  }
 
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
@@ -88,6 +92,8 @@ const CVDetail = ({ initProps, dataProfile, sidemenu, cvdetailId }) => {
 
   pathTitleArr[pathTitleArr.length - 1] = "Detail CV";
   const [idChoose, setIdChoose] = useState(null);
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
   const dataExample = [
     {
       id: 1,
@@ -130,6 +136,29 @@ const CVDetail = ({ initProps, dataProfile, sidemenu, cvdetailId }) => {
       skills: ["Embedded Systems", "C", "Python", "MATLAB"],
     },
   ];
+
+  function onDocumentLoadSuccess({ numPages }) {
+    console.log("numpage  ", numPages);
+    setNumPages(numPages);
+  }
+
+  const onLoadSuccess = ({ numPages }) => {
+    setNumPages(numPages);
+  };
+
+  // Navigasi ke halaman berikutnya
+  const goToNextPage = () => {
+    if (pageNumber < numPages) {
+      setPageNumber(pageNumber + 1);
+    }
+  };
+
+  // Navigasi ke halaman sebelumnya
+  const goToPrevPage = () => {
+    if (pageNumber > 1) {
+      setPageNumber(pageNumber - 1);
+    }
+  };
 
   return (
     <LayoutDashboard
@@ -208,9 +237,32 @@ const CVDetail = ({ initProps, dataProfile, sidemenu, cvdetailId }) => {
         <div className={"mt-2 flex gap-4"}>
           <div
             className={
-              "border border-[#E6E6E6] rounded-[10px] bg-white w-2/5 h-[750px]"
+              "border border-[#E6E6E6] rounded-[10px] bg-white max-w-2/5 p-4"
             }
-          ></div>
+          >
+            <Document
+              re
+              file={{
+                url: "https://cdn.mig.id/staging/EmployeeContract/CV-Frontend-Developer-Yasmin-(1)_1687169077285.pdf",
+              }}
+              onLoadError={(error) => console.log("Inside Error", error)}
+              onLoadSuccess={onLoadSuccess}
+            >
+              <Page
+                pageNumber={pageNumber}
+                renderAnnotationLayer={false}
+                renderTextLayer={false}
+              />
+            </Document>
+            <div>
+              <button onClick={goToPrevPage} disabled={pageNumber === 1}>
+                Previous Page
+              </button>
+              <button onClick={goToNextPage} disabled={pageNumber === numPages}>
+                Next Page
+              </button>
+            </div>
+          </div>
           <div className={"flex flex-col w-3/5"}>
             <PersonalInfoCard />
             <ExperienceInfoCard />

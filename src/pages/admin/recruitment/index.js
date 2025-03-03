@@ -295,7 +295,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataJalurDaftarOptions, setDataJalurDaftarOptions] = useState([]);
   const [dataStageOptions, setDataStageOptions] = useState([]);
   const [dataStatusOptions, setDataStatusOptions] = useState([]);
-
+  const [tabActive, setTabActive] = useState("new");
   // 3. UseEffect
   // 3.1. Get Recruitment Count
   useEffect(() => {
@@ -1431,6 +1431,16 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               <ListSearchIconSvg size={24} />
             </div>
           </div> */}
+          {/* <div className={'lg:col-span-3 flex justify-center'}>
+          <div className={'bg-primary100 rounded-md flex gap-3 self-center p-1 my-4'}>
+                <div onClick={()=>setTabActive('new')} className={`${tabActive=='new' ? 'bg-white' : 'bg-primary100'} p-2 rounded-md hover:cursor-pointer`}>
+                  <p className={`${tabActive=='new' ? 'text-black' : 'text-white'} text-sm font-semibold`}>New Candidates</p>
+                </div>
+                <div onClick={()=>setTabActive('done')} className={`${tabActive=='done' ? 'bg-white' : 'bg-primary100'} p-2 rounded-md hover:cursor-pointer`}>
+                  <p className={`${tabActive=='done' ? 'text-black' : 'text-white'} text-sm font-semibold `}>Done Validation</p>
+                </div>
+            </div>
+          </div> */}
 
           {/* Table Kandidat */}
           <div className="lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
@@ -1651,6 +1661,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 },
               ]}
             />
+
             {/* Start: Search criteria */}
             <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
               {/* Search by keyword (kata kunci) */}

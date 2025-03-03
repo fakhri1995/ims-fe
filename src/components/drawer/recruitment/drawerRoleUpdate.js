@@ -29,8 +29,9 @@ const DrawerRoleUpdate = ({
   // USESTATE
   const [dataRole, setDataRole] = useState({
     id: null,
-    name: "",
+    role: "",
     alias: "",
+    client: "",
     recruitments_count: 0,
     recruitment_role_type_id: null,
   });
@@ -71,8 +72,9 @@ const DrawerRoleUpdate = ({
           setDataRole((prev) => ({
             ...prev,
             id: res2.data.id,
-            name: res2.data.name,
+            role: res2.data.role,
             alias: res2.data.alias,
+            client: res2.data.client,
             recruitments_count: res2.data.recruitments_count,
             recruitment_role_type_id: res2.data.recruitment_role_type_id,
           }));
@@ -176,8 +178,8 @@ const DrawerRoleUpdate = ({
             className="grid grid-cols-2 gap-x-6"
           >
             <Form.Item
-              label="Nama"
-              name={"name"}
+              label="Role"
+              name={"role"}
               rules={[
                 {
                   required: true,
@@ -188,14 +190,42 @@ const DrawerRoleUpdate = ({
             >
               <div>
                 <Input
-                  value={dataRole.name}
-                  name={"name"}
+                  value={dataRole.role}
+                  name={"role"}
                   onChange={onChangeInput}
                 />
               </div>
             </Form.Item>
-
-            <Form.Item label="Alias" name={"alias"} className="col-span-2">
+            <Form.Item
+              label="Client"
+              name={"client"}
+              rules={[
+                {
+                  required: true,
+                  message: "Nama Client wajib diisi",
+                },
+              ]}
+              className="col-span-2"
+            >
+              <div>
+                <Input
+                  value={dataRole.client}
+                  name={"client"}
+                  onChange={onChangeInput}
+                />
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="Alias"
+              rules={[
+                {
+                  required: true,
+                  message: "Alias wajib diisi",
+                },
+              ]}
+              name={"alias"}
+              className="col-span-2"
+            >
               <div>
                 <Input
                   value={dataRole.alias}
@@ -206,12 +236,12 @@ const DrawerRoleUpdate = ({
             </Form.Item>
 
             <Form.Item
-              label="Tipe"
+              label="Tipe Kontrak"
               name={"recruitment_role_type_id"}
               rules={[
                 {
                   required: true,
-                  message: "Tipe role wajib diisi",
+                  message: "Tipe kontrak wajib diisi",
                 },
               ]}
               className="col-span-2"

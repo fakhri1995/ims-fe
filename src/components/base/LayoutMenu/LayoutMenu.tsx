@@ -1,7 +1,7 @@
 import { CheckSquareOutlined } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import Link from "next/link";
-import type { FC } from "react";
+import { type FC, useEffect, useState } from "react";
 
 import BrandLogo from "components/BrandLogo";
 import {
@@ -160,7 +160,6 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
    * Dependencies
    */
   const { hasPermission, hasRole } = useAccessControl();
-
   /**
    * JSX
    */

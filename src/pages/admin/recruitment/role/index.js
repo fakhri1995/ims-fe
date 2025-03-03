@@ -305,19 +305,19 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Nama",
-      dataIndex: "name",
+      title: "Role",
+      dataIndex: "role",
       render: (text, record, index) => {
         return {
-          children: <>{record.name}</>,
+          children: <>{record.role}</>,
         };
       },
       sorter: isAllowedToGetRoles
-        ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
+        ? (a, b) => a.role?.toLowerCase() > b.role?.toLowerCase()
         : false,
     },
     {
-      title: "Alias",
+      title: "Role ID",
       dataIndex: "alias",
       render: (text, record, index) => {
         return {
@@ -338,16 +338,14 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
     {
-      title: "Jumlah Kandidat",
-      dataIndex: "recruitments_count",
+      title: "Client",
+      dataIndex: "client",
       render: (text, record, index) => {
         return {
-          children: <>{record.recruitments_count}</>,
+          children: <>{record.client}</>,
         };
       },
-      sorter: isAllowedToGetRoles
-        ? (a, b) => a.recruitments_count > b.recruitments_count
-        : false,
+      sorter: isAllowedToGetRoles ? (a, b) => a.client > b.client : false,
     },
     {
       title: "Aksi",
