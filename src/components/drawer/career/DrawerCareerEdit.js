@@ -94,8 +94,32 @@ const DrawerCareerEdit = ({
   ];
 
   const onChangeJobPlaftorm = (checkedValues) => {
-    console.log("checked = ", checkedValues);
+    form.setFieldsValue({
+      platform: checkedValues, // Mengatur nilai "role" menjadi "Backend"
+    });
+    setdataedit({
+      ...dataedit,
+      platform_value: checkedValues,
+    });
   };
+
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (dataedit.platforms) {
+      let datatemp = [];
+      for (let a = 0; a < dataedit.platforms.length; a++) {
+        datatemp.push(dataedit.platforms[a].id.toString());
+      }
+      form.setFieldsValue({
+        platform: datatemp, // Mengatur nilai "role" menjadi "Backend"
+      });
+      setdataedit({
+        ...dataedit,
+        platform_value: datatemp,
+      });
+    }
+  }, [dataedit.platforms]);
 
   return (
     <DrawerCore
@@ -153,6 +177,7 @@ const DrawerCareerEdit = ({
         </div>
         <Form
           id="formCareer"
+          form={form}
           layout="vertical"
           initialValues={dataedit}
           onFinish={handleEdit}
@@ -180,25 +205,33 @@ const DrawerCareerEdit = ({
                     dataedit?.recruitment_role_id &&
                     Number(dataedit?.recruitment_role_id)
                   }
-                  onChange={(e) => {
+                  onChange={(e, index) => {
+                    form.setFieldsValue({
+                      name: index.role, // Mengatur nilai "role" menjadi "Backend"
+                    });
                     setdataedit({
                       ...dataedit,
                       recruitment_role_id: e,
+                      name: index.role,
                     });
                   }}
                   placeholder="Pilih ID Role"
                 >
                   <>
                     {dataRoles?.map((option) => (
-                      <Select.Option key={option.id} value={option.id}>
-                        {option.name}
+                      <Select.Option
+                        role={option.role}
+                        key={option.id}
+                        value={option.id}
+                      >
+                        {option.alias}
                       </Select.Option>
                     ))}
                   </>
                 </Select>
               </Form.Item>
               <Form.Item
-                label="Position Name"
+                label="Role"
                 name="name"
                 rules={[
                   {
@@ -208,6 +241,7 @@ const DrawerCareerEdit = ({
                 ]}
               >
                 <Input
+                  disabled
                   defaultValue={dataedit.name}
                   onChange={(e) => {
                     setdataedit({ ...dataedit, name: e.target.value });
@@ -215,7 +249,7 @@ const DrawerCareerEdit = ({
                 />
               </Form.Item>
               <Form.Item
-                label="Status Kontrak"
+                label="Tipe Kontrak"
                 name="career_role_type_id"
                 rules={[
                   {
@@ -235,7 +269,7 @@ const DrawerCareerEdit = ({
                       career_role_type_id: e,
                     });
                   }}
-                  placeholder="Pilih status kontrak"
+                  placeholder="Pilih tipe kontrak"
                 >
                   <>
                     {dataRoleTypeList?.map((option) => (
@@ -279,62 +313,67 @@ const DrawerCareerEdit = ({
                 </Select>
               </Form.Item>
 
-              <Form.Item
-                label="Salary Min"
-                name="salary_min"
-                rules={[
-                  {
-                    required: true,
-                    message: "Salary Min wajib diisi",
-                  },
-                ]}
-              >
-                <CurrencyFormat
-                  customInput={Input}
-                  placeholder={"Masukkan Minimal Gaji"}
-                  value={dataedit?.salary_min || 0}
-                  thousandSeparator={"."}
-                  decimalSeparator={","}
-                  prefix={"Rp"}
-                  allowNegative={false}
-                  onValueChange={(values) => {
-                    const { formattedValue, value, floatValue } = values;
-                    setdataedit((prev) => ({
-                      ...prev,
-                      salary_min: floatValue || 0,
-                    }));
-                  }}
-                  renderText={(value) => <p>{value}</p>}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Salary Max"
-                name="salary_max"
-                rules={[
-                  {
-                    required: true,
-                    message: "Salary Max wajib diisi",
-                  },
-                ]}
-              >
-                <CurrencyFormat
-                  customInput={Input}
-                  placeholder={"Masukkan Maksimal Gaji"}
-                  value={dataedit?.salary_max || 0}
-                  thousandSeparator={"."}
-                  decimalSeparator={","}
-                  prefix={"Rp"}
-                  allowNegative={false}
-                  onValueChange={(values) => {
-                    const { formattedValue, value, floatValue } = values;
-                    setdataedit((prev) => ({
-                      ...prev,
-                      salary_max: floatValue || 0,
-                    }));
-                  }}
-                  renderText={(value) => <p>{value}</p>}
-                />
-              </Form.Item>
+              <div className={"flex flex-row"}>
+                <Form.Item
+                  label="Salary Range"
+                  name="salary_min"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Salary Min wajib diisi",
+                    },
+                  ]}
+                >
+                  <CurrencyFormat
+                    customInput={Input}
+                    placeholder={"Masukkan Minimal Gaji"}
+                    value={dataedit?.salary_min || 0}
+                    thousandSeparator={"."}
+                    decimalSeparator={","}
+                    prefix={"Rp"}
+                    allowNegative={false}
+                    onValueChange={(values) => {
+                      const { formattedValue, value, floatValue } = values;
+                      setdataedit((prev) => ({
+                        ...prev,
+                        salary_min: floatValue || 0,
+                      }));
+                    }}
+                    renderText={(value) => <p>{value}</p>}
+                  />
+                </Form.Item>
+                <div className={"mt-9 mx-2"}>
+                  <p>-</p>
+                </div>
+                <Form.Item
+                  label=" "
+                  name="salary_max"
+                  // rules={[
+                  //   {
+                  //     required: true,
+                  //     message: "Salary Max wajib diisi",
+                  //   },
+                  // ]}
+                >
+                  <CurrencyFormat
+                    customInput={Input}
+                    placeholder={"Masukkan Maksimal Gaji"}
+                    value={dataedit?.salary_max || 0}
+                    thousandSeparator={"."}
+                    decimalSeparator={","}
+                    prefix={"Rp"}
+                    allowNegative={false}
+                    onValueChange={(values) => {
+                      const { formattedValue, value, floatValue } = values;
+                      setdataedit((prev) => ({
+                        ...prev,
+                        salary_max: floatValue || 0,
+                      }));
+                    }}
+                    renderText={(value) => <p>{value}</p>}
+                  />
+                </Form.Item>
+              </div>
               <Form.Item
                 label="Overview"
                 name="overview"
@@ -383,31 +422,6 @@ const DrawerCareerEdit = ({
                   }}
                 />
               </Form.Item>
-
-              <Form.Item
-                label="Qualification"
-                name="qualification"
-                rules={[
-                  {
-                    required: true,
-                    message: "Qualification wajib diisi",
-                  },
-                ]}
-              >
-                <ReactQuill
-                  theme="snow"
-                  value={dataedit?.qualification}
-                  modules={modules}
-                  formats={formats}
-                  className="h-44 pb-10"
-                  onChange={(value) => {
-                    setdataedit({
-                      ...dataedit,
-                      qualification: value,
-                    });
-                  }}
-                />
-              </Form.Item>
               <Form.Item
                 label="Platform"
                 name="platform"
@@ -425,18 +439,15 @@ const DrawerCareerEdit = ({
                   <Row>
                     <Col>
                       <Space direction="vertical">
-                        <Checkbox value="Deals">Deals</Checkbox>
-                        <Checkbox value="Glints">Glints</Checkbox>
-                        <Checkbox value="Kitalulus">Kitalulus</Checkbox>
-                        <Checkbox value="Internal Website">
-                          Internal Website
-                        </Checkbox>
+                        <Checkbox value="1">Deals</Checkbox>
+                        <Checkbox value="2">Glints</Checkbox>
+                        <Checkbox value="3">Kitalulus</Checkbox>
+                        <Checkbox value="4">Internal Website</Checkbox>
                       </Space>
                     </Col>
                   </Row>
                 </Checkbox.Group>
               </Form.Item>
-
               {/* <Form.Item
                 label="Status"
                 name="is_posted"

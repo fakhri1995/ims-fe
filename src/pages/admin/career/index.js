@@ -209,6 +209,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   //create
   const [drawcreate, setdrawcreate] = useState(false);
   const [loadingcreate, setloadingcreate] = useState(false);
+  const [loadingdraft, setloadingdraft] = useState(false);
   const [datacreate, setdatacreate] = useState({
     name: "",
     description: "",
@@ -220,7 +221,9 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     recruitment_role_id: null,
     career_experience_id: null,
     is_posted: 0,
+    role: "",
     question: [],
+    platforms: null,
   });
   const [tempcb, settempcb] = useState([]);
   const [tempinfo, settempinfo] = useState([]);
@@ -239,6 +242,8 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     career_experience_id: null,
     is_posted: 0,
     question: [],
+    platforms: null,
+    platform_value: null,
   });
   const [dataExperience, setDataExperience] = useState([
     {
@@ -273,7 +278,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataLabelStatistic, setDataLabelStatistic] = useState([]);
   const [activeTab, setActiveTab] = useState("1");
   const [dataSets, setDataSets] = useState([]);
-
+  const [form] = Form.useForm();
   const { TabPane } = Tabs;
   // 3. UseEffect
   // 3.1. Get Recruitment Count
@@ -336,6 +341,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
+          console.log("isi roles ", res2.data);
           setDataRoles(res2.data);
         } else {
           notification.error({
@@ -531,6 +537,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     )
       .then((res) => res.json())
       .then((res2) => {
+        console.log("hasil data ", res2.data);
         if (res2.success) {
           setDataRawCareers(res2.data);
           setDataCareers(res2.data.data);
@@ -734,12 +741,26 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <div className=" flex">
               <Button
+                danger
+                onClick={() => {
+                  handleClickCareer(record);
+                }}
+                style={{
+                  paddingTop: `0`,
+                  paddingBottom: `0.3rem`,
+                  marginRight: `1rem`,
+                }}
+              >
+                <SearchIconSvg size={15} color={`#ff4d4f`} />
+              </Button>
+              <Button
                 disabled={!isAllowedToUpdateCareer}
                 onClick={() => {
                   if (!isAllowedToUpdateCareer) {
                     permissionWarningNotification("Memperbarui", "Career");
                     return;
                   }
+                  let datatemp = [];
                   setdrawedit(true);
                   setdataedit({
                     id: record.id,
@@ -752,6 +773,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                     career_role_type_id: record.career_role_type_id,
                     recruitment_role_id: record.recruitment_role_id,
                     career_experience_id: record.career_experience_id,
+                    platforms: record.platforms,
                     is_posted: record.is_posted,
                     question: record.question ? record.question.details : [],
                   });
@@ -783,6 +805,11 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
   const handleCreate = () => {
+    sendData("posted");
+    console.log("handle create ", datacreate);
+  };
+
+  const sendData = (type) => {
     let dataQuestions = {
       name: datacreate.name,
       description: "New Description",
@@ -791,7 +818,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     let dataTemp = null;
     if (datacreate.question.length == 0) {
       dataTemp = {
-        name: datacreate.name,
+        name: datacreate.role,
         description: datacreate.description,
         qualification: datacreate.qualification,
         overview: datacreate.overview,
@@ -800,11 +827,12 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
         career_role_type_id: datacreate.career_role_type_id,
         recruitment_role_id: datacreate.recruitment_role_id,
         career_experience_id: datacreate.career_experience_id,
-        is_posted: datacreate.is_posted,
+        is_posted: type == "posted" ? 1 : 0,
+        platforms: datacreate.platforms,
       };
     } else {
       dataTemp = {
-        name: datacreate.name,
+        name: datacreate.role,
         description: datacreate.description,
         qualification: datacreate.qualification,
         overview: datacreate.overview,
@@ -813,12 +841,17 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
         career_role_type_id: datacreate.career_role_type_id,
         recruitment_role_id: datacreate.recruitment_role_id,
         career_experience_id: datacreate.career_experience_id,
-        is_posted: datacreate.is_posted,
+        is_posted: type == "posted" ? 1 : 0,
+        platforms: datacreate.platforms,
         question: dataQuestions,
       };
     }
+    if (type == "posted") {
+      setloadingcreate(true);
+    } else {
+      setloadingdraft(true);
+    }
 
-    setloadingcreate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/addCareer`, {
       method: "POST",
       headers: {
@@ -847,7 +880,11 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
             question: [],
           });
           setTimeout(() => {
-            setloadingcreate(false);
+            if (type == "posted") {
+              setloadingcreate(false);
+            } else {
+              setloadingdraft(false);
+            }
             setdrawcreate(false);
             const params = QueryString.stringify(queryParams, {
               addQueryPrefix: true,
@@ -859,21 +896,47 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
             message: "Add Career Failed!",
             duration: 3,
           });
-          setloadingcreate(false);
+          if (type == "posted") {
+            setloadingcreate(false);
+          } else {
+            setloadingdraft(false);
+          }
           setdrawcreate(false);
         }
       });
   };
 
   const handleEdit = () => {
-    setloadingedit(true);
+    sendEditData("posted");
+    // console.log('data edit ',dataedit)
+  };
+
+  const sendEditData = (type) => {
+    if (type == "posted") {
+      setloadingedit(true);
+    }
+    let dataTemp = {
+      id: dataedit.id,
+      name: dataedit.name,
+      description: dataedit.description,
+      qualification: dataedit.qualification,
+      overview: dataedit.overview,
+      salary_min: dataedit.salary_min,
+      salary_max: dataedit.salary_max,
+      career_role_type_id: dataedit.career_role_type_id,
+      recruitment_role_id: dataedit.recruitment_role_id,
+      career_experience_id: dataedit.career_experience_id,
+      is_posted: type == "posted" ? 1 : 0,
+      platforms: dataedit.platform_value,
+      question: dataedit.question,
+    };
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/updateCareer`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataedit),
+      body: JSON.stringify(dataTemp),
     })
       .then((res) => res.json())
       .then((res2) => {
@@ -893,9 +956,12 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
             recruitment_role_id: null,
             career_role_type_id: null,
             career_experience_id: null,
+            platforms: null,
             question: [],
           });
-          setloadingedit(false);
+          if (type == "posted") {
+            setloadingedit(true);
+          }
           setdrawedit(false);
           const params = QueryString.stringify(queryParams, {
             addQueryPrefix: true,
@@ -951,7 +1017,10 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   const onChangeJobPlaftorm = (checkedValues) => {
-    console.log("checked = ", checkedValues);
+    setdatacreate({
+      ...datacreate,
+      platforms: checkedValues,
+    });
   };
 
   return (
@@ -1294,6 +1363,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
             </Tabs> */}
             <Form
               layout="vertical"
+              form={form}
               initialValues={datacreate}
               onFinish={handleCreate}
             >
@@ -1323,10 +1393,14 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                           datacreate?.recruitment_role_id &&
                           Number(datacreate?.recruitment_role_id)
                         }
-                        onChange={(e) => {
+                        onChange={(e, index) => {
+                          form.setFieldsValue({
+                            role: index.role, // Mengatur nilai "role" menjadi "Backend"
+                          });
                           setdatacreate({
                             ...datacreate,
                             recruitment_role_id: e,
+                            role: index.role,
                           });
                         }}
                         filterOption={(input, option) =>
@@ -1338,35 +1412,25 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                       >
                         <>
                           {dataRoles?.map((option) => (
-                            <Select.Option key={option.id} value={option.id}>
-                              {option.name}
+                            <Select.Option
+                              role={option.role}
+                              key={option.id}
+                              value={option.id}
+                            >
+                              {option.alias}
                             </Select.Option>
                           ))}
                         </>
                       </Select>
                     </Form.Item>
-                    <Form.Item
-                      label="Position Name"
-                      name="name"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Position Name wajib diisi",
-                        },
-                      ]}
-                    >
+                    <Form.Item label="Role" name="role">
                       <Input
-                        defaultValue={datacreate.name}
-                        onChange={(e) => {
-                          setdatacreate({
-                            ...datacreate,
-                            name: e.target.value,
-                          });
-                        }}
+                        disabled // Input dalam kondisi disable
                       />
                     </Form.Item>
+
                     <Form.Item
-                      label="Status Kontrak"
+                      label="Tipe Kontrak"
                       name="career_role_type_id"
                       rules={[
                         {
@@ -1430,62 +1494,69 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                       </Select>
                     </Form.Item>
 
-                    <Form.Item
-                      label="Salary Min"
-                      name="salary_min"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Salary Min wajib diisi",
-                        },
-                      ]}
-                    >
-                      <CurrencyFormat
-                        customInput={Input}
-                        placeholder={"Masukkan Minimal Gaji"}
-                        value={datacreate?.salary_min || 0}
-                        thousandSeparator={"."}
-                        decimalSeparator={","}
-                        prefix={"Rp"}
-                        allowNegative={false}
-                        onValueChange={(values) => {
-                          const { formattedValue, value, floatValue } = values;
-                          setdatacreate((prev) => ({
-                            ...prev,
-                            salary_min: floatValue || 0,
-                          }));
-                        }}
-                        renderText={(value) => <p>{value}</p>}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Salary Max"
-                      name="salary_max"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Salary Max wajib diisi",
-                        },
-                      ]}
-                    >
-                      <CurrencyFormat
-                        customInput={Input}
-                        placeholder={"Masukkan Maksimal Gaji"}
-                        value={datacreate?.salary_max || 0}
-                        thousandSeparator={"."}
-                        decimalSeparator={","}
-                        prefix={"Rp"}
-                        allowNegative={false}
-                        onValueChange={(values) => {
-                          const { formattedValue, value, floatValue } = values;
-                          setdatacreate((prev) => ({
-                            ...prev,
-                            salary_max: floatValue || 0,
-                          }));
-                        }}
-                        renderText={(value) => <p>{value}</p>}
-                      />
-                    </Form.Item>
+                    <div className={"flex flex-row"}>
+                      <Form.Item
+                        label="Salary Range"
+                        name="salary_min"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Salary Min wajib diisi",
+                          },
+                        ]}
+                      >
+                        <CurrencyFormat
+                          customInput={Input}
+                          placeholder={"Masukkan Minimal Gaji"}
+                          value={datacreate?.salary_min || 0}
+                          thousandSeparator={"."}
+                          decimalSeparator={","}
+                          prefix={"Rp"}
+                          allowNegative={false}
+                          onValueChange={(values) => {
+                            const { formattedValue, value, floatValue } =
+                              values;
+                            setdatacreate((prev) => ({
+                              ...prev,
+                              salary_min: floatValue || 0,
+                            }));
+                          }}
+                          renderText={(value) => <p>{value}</p>}
+                        />
+                      </Form.Item>
+                      <div className={"mx-2 mt-9"}>
+                        <p>-</p>
+                      </div>
+                      <Form.Item
+                        label=" "
+                        name="salary_max"
+                        // rules={[
+                        //   {
+                        //     required: true,
+                        //     message: "Salary Max wajib diisi",
+                        //   },
+                        // ]}
+                      >
+                        <CurrencyFormat
+                          customInput={Input}
+                          placeholder={"Masukkan Maksimal Gaji"}
+                          value={datacreate?.salary_max || 0}
+                          thousandSeparator={"."}
+                          decimalSeparator={","}
+                          prefix={"Rp"}
+                          allowNegative={false}
+                          onValueChange={(values) => {
+                            const { formattedValue, value, floatValue } =
+                              values;
+                            setdatacreate((prev) => ({
+                              ...prev,
+                              salary_max: floatValue || 0,
+                            }));
+                          }}
+                          renderText={(value) => <p>{value}</p>}
+                        />
+                      </Form.Item>
+                    </div>
                     <Form.Item
                       label="Overview"
                       name="overview"
@@ -1551,12 +1622,10 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                         <Row>
                           <Col>
                             <Space direction="vertical">
-                              <Checkbox value="Deals">Deals</Checkbox>
-                              <Checkbox value="Glints">Glints</Checkbox>
-                              <Checkbox value="Kitalulus">Kitalulus</Checkbox>
-                              <Checkbox value="Internal Website">
-                                Internal Website
-                              </Checkbox>
+                              <Checkbox value="1">Deals</Checkbox>
+                              <Checkbox value="2">Glints</Checkbox>
+                              <Checkbox value="3">Kitalulus</Checkbox>
+                              <Checkbox value="4">Internal Website</Checkbox>
                             </Space>
                           </Col>
                         </Row>
@@ -1614,13 +1683,22 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <div className="bottom-0 flex justify-end">
                     <Button
                       type="default"
+                      loading={loadingdraft}
                       onClick={() => {
-                        setdrawcreate(false);
+                        form
+                          .validateFields()
+                          .then(() => {
+                            sendData("draft");
+                          })
+                          .catch(() => {
+                            // form validation failed
+                          });
                       }}
                       style={{ marginRight: `1rem` }}
                     >
-                      Cancel
+                      Save as Draft
                     </Button>
+
                     <Button
                       htmlType="submit"
                       type="primary"
@@ -2016,12 +2094,20 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                     <div className="mt-4 bottom-0 absolute flex justify-end right-6 mb-6">
                       <Button
                         type="default"
+                        loading={loadingdraft}
                         onClick={() => {
-                          setdrawcreate(false);
+                          form
+                            .validateFields()
+                            .then(() => {
+                              sendData("draft");
+                            })
+                            .catch(() => {
+                              // form validation failed
+                            });
                         }}
                         style={{ marginRight: `1rem` }}
                       >
-                        Cancel
+                        Save as Draft
                       </Button>
                       <Button
                         htmlType="submit"
@@ -2037,12 +2123,20 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                     <div className="mt-4 bottom-0 flex justify-end right-6 mb-6">
                       <Button
                         type="default"
+                        loading={loadingdraft}
                         onClick={() => {
-                          setdrawcreate(false);
+                          form
+                            .validateFields()
+                            .then(() => {
+                              sendData("draft");
+                            })
+                            .catch(() => {
+                              // form validation failed
+                            });
                         }}
                         style={{ marginRight: `1rem` }}
                       >
-                        Cancel
+                        Save as Draft
                       </Button>
                       <Button
                         htmlType="submit"
