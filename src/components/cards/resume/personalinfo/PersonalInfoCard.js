@@ -10,8 +10,16 @@ import { EditCvIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const PersonalInfoCard = ({}) => {
+const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit }) => {
   const [showMore, setShowMore] = useState(true);
+
+  useEffect(() => {
+    if (statusEdit) {
+      setShowMore(true);
+    } else {
+    }
+  }, [statusEdit]);
+
   return (
     <div
       className={
@@ -32,7 +40,17 @@ const PersonalInfoCard = ({}) => {
             <MdChevronUp className="w-[14px] h-[14px]" />
           )}
         </div>
-        <EditCvIconSvg />
+        <div
+          className={"hover:cursor-pointer"}
+          onClick={() =>
+            setFormEdit({
+              ...formEdit,
+              personal: true,
+            })
+          }
+        >
+          <EditCvIconSvg />
+        </div>
       </div>
       {showMore && (
         <div className={"flex flex-col gap-2 mt-4"}>
