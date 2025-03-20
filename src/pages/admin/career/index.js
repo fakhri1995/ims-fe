@@ -740,7 +740,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <div className=" flex">
               <Button
-                danger
                 onClick={() => {
                   handleClickCareer(record);
                 }}
@@ -750,7 +749,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
                   marginRight: `1rem`,
                 }}
               >
-                <SearchIconSvg size={15} color={`#ff4d4f`} />
+                <SearchIconSvg size={15} color={`black`} />
               </Button>
               <Button
                 disabled={!isAllowedToUpdateCareer}
@@ -927,7 +926,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       career_experience_id: dataedit.career_experience_id,
       is_posted: type == "posted" ? 1 : 0,
       platforms: dataedit.platform_value,
-      qualification: "qualification",
+      // qualification: "qualification",
       question: dataedit.question,
     };
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/updateCareer`, {

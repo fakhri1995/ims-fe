@@ -443,50 +443,6 @@ const DrawerCareerEdit = ({
                     </Row>
                   </Checkbox.Group>
                 </Form.Item>
-                {/* <Form.Item
-                label="Status"
-                name="is_posted"
-                rules={[
-                  {
-                    required: true,
-                    message: "Status wajib diisi",
-                  },
-                ]}
-              >
-                <Switch
-                  size="large"
-                  checkedChildren="Posted"
-                  unCheckedChildren="Archived"
-                  defaultChecked
-                  checked={dataedit?.is_posted}
-                  onChange={(e) => {
-                    setdataedit({
-                      ...dataedit,
-                      is_posted: e == true ? 1 : 0,
-                    });
-                  }}
-                />
-              </Form.Item> */}
-                {/* <div className="bottom-0 flex justify-end">
-                <Button
-                  type="default"
-                  onClick={() => {
-                    setdrawedit(false);
-                  }}
-                  style={{ marginRight: `1rem` }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  htmlType="submit"
-                  type="primary"
-                  danger
-                  icon={<CheckIconSvg size={16} color={"#ffffff"} />}
-                  loading={loadingEdit}
-                >
-                  Update Lowongan Kerja
-                </Button>
-              </div> */}
               </div>
               <div className="bottom-0 flex justify-end">
                 <Button

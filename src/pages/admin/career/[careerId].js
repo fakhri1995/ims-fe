@@ -166,6 +166,8 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
 
   const [draweditinformation, setdraweditinformation] = useState(false);
   const [loadingeditinformation, setloadingeditinformation] = useState(false);
+  const [loadingeditinformationdraft, setloadingeditinformationdraft] =
+    useState(false);
   const [dataeditinformation, setdataeditinformation] = useState({
     id: 0,
     name: "",
@@ -178,6 +180,8 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
     career_experience_id: null,
     recruitment_role_id: null,
     is_posted: 0,
+    platforms: null,
+    platform_value: null,
   });
   // 2.3. Download Resume
   const [candidateId, setCandidateId] = useState(null);
@@ -982,14 +986,38 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
   };
 
   const handleEditInformation = () => {
-    setloadingeditinformation(true);
+    sendEditData("posted");
+  };
+
+  const sendEditData = (type) => {
+    if (type == "posted") {
+      setloadingeditinformation(true);
+    } else {
+      setloadingeditinformationdraft(true);
+    }
+    let dataTemp = {
+      id: dataeditinformation.id,
+      name: dataeditinformation.name,
+      description: dataeditinformation.description,
+      qualification: dataeditinformation.qualification,
+      overview: dataeditinformation.overview,
+      salary_min: dataeditinformation.salary_min,
+      salary_max: dataeditinformation.salary_max,
+      career_role_type_id: dataeditinformation.career_role_type_id,
+      recruitment_role_id: dataeditinformation.recruitment_role_id,
+      career_experience_id: dataeditinformation.career_experience_id,
+      is_posted: type == "posted" ? 1 : 0,
+      platforms: dataeditinformation.platform_value,
+      // qualification: "qualification",
+      question: dataeditinformation.question,
+    };
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/updateCareer`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataeditinformation),
+      body: JSON.stringify(dataTemp),
     })
       .then((res) => res.json())
       .then((res2) => {
@@ -1009,8 +1037,14 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
             career_role_type_id: null,
             career_experience_id: null,
             recruitment_role_id: null,
+            platform_value: null,
+            platforms: null,
           });
-          setloadingeditinformation(false);
+          if (type == "posted") {
+            setloadingeditinformation(false);
+          } else {
+            setloadingeditinformationdraft(false);
+          }
           setdraweditinformation(false);
           getDetailCareer();
         } else if (!res2.success) {
@@ -1018,7 +1052,11 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
             message: res2.message.errorInfo.status_detail,
             duration: 3,
           });
-          setloadingeditinformation(false);
+          if (type == "posted") {
+            setloadingeditinformation(false);
+          } else {
+            setloadingeditinformationdraft(false);
+          }
           setdraweditinformation(false);
         }
       });
@@ -1133,6 +1171,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                       ? detailCareer.recruitment_role.id
                       : NULL,
                     is_posted: detailCareer.is_posted,
+                    platforms: detailCareer.platforms,
                   });
                 }}
                 className={
@@ -1179,7 +1218,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
                 <div className={"mt-5 flex flex-col md:flex-row"}>
                   <div className={"w-full md:w-1/4 mt-3 md:mt-0"}>
                     <p className={"text-mono50 font-medium leading-5 "}>
-                      TIpe Kontrak
+                      Tipe Kontrak
                     </p>
                     <p
                       className={
@@ -1589,6 +1628,7 @@ const CareerDetailIndex = ({ initProps, dataProfile, sidemenu, careerId }) => {
               dataRoleTypeList={dataRoleTypeList}
               dataRoles={dataRoles}
               loadingeditinformation={loadingeditinformation}
+              sendEditData={sendEditData}
             />
           </AccessControl>
         </div>

@@ -1,11 +1,14 @@
 import {
   Button,
   Checkbox,
+  Col,
   Drawer,
   Empty,
   Form,
   Input,
+  Row,
   Select,
+  Space,
   Spin,
   Switch,
   notification,
@@ -50,6 +53,7 @@ const DrawerInformationEdit = ({
   dataRoleTypeList,
   dataExperience,
   dataRoles,
+  sendEditData,
 }) => {
   /**
    * Dependencies
@@ -87,6 +91,34 @@ const DrawerInformationEdit = ({
     "link",
   ];
 
+  const [form] = Form.useForm();
+
+  const onChangeJobPlaftorm = (checkedValues) => {
+    form.setFieldsValue({
+      platform: checkedValues, // Mengatur nilai "role" menjadi "Backend"
+    });
+    setdataeditinformation({
+      ...dataeditinformation,
+      platform_value: checkedValues,
+    });
+  };
+
+  useEffect(() => {
+    if (dataeditinformation.platforms) {
+      let datatemp = [];
+      for (let a = 0; a < dataeditinformation.platforms.length; a++) {
+        datatemp.push(dataeditinformation.platforms[a].id.toString());
+      }
+      form.setFieldsValue({
+        platform: datatemp, // Mengatur nilai "role" menjadi "Backend"
+      });
+      setdataeditinformation({
+        ...dataeditinformation,
+        platform_value: datatemp,
+      });
+    }
+  }, [dataeditinformation.platforms]);
+
   return (
     <Drawer
       title={title}
@@ -102,28 +134,56 @@ const DrawerInformationEdit = ({
       <Spin spinning={loadingeditinformation}>
         <Form
           layout="vertical"
+          form={form}
           initialValues={dataeditinformation}
           onFinish={handleEditInformation}
         >
           <Form.Item
-            label="Position Name"
-            name="name"
+            label="ID Role"
+            name="recruitment_role_id"
             rules={[
               {
                 required: true,
-                message: "Position Name wajib diisi",
+                message: "Role wajib diisi",
               },
             ]}
           >
-            <Input
-              defaultValue={dataeditinformation.name}
-              onChange={(e) => {
+            <Select
+              showSearch={true}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+              value={
+                dataeditinformation?.recruitment_role_id &&
+                Number(dataeditinformation?.recruitment_role_id)
+              }
+              onChange={(e, index) => {
+                form.setFieldsValue({
+                  name: index.role, // Mengatur nilai "role" menjadi "Backend"
+                });
                 setdataeditinformation({
                   ...dataeditinformation,
-                  name: e.target.value,
+                  recruitment_role_id: e,
+                  name: index.role,
                 });
               }}
-            />
+              placeholder="Pilih ID Role"
+            >
+              <>
+                {dataRoles?.map((option) => (
+                  <Select.Option
+                    role={option.role}
+                    key={option.id}
+                    value={option.id}
+                  >
+                    {option.alias}
+                  </Select.Option>
+                ))}
+              </>
+            </Select>
+          </Form.Item>
+          <Form.Item label="Role" name="name">
+            <Input defaultValue={dataeditinformation.name} disabled />
           </Form.Item>
           <Form.Item
             label="Status Kontrak"
@@ -189,42 +249,7 @@ const DrawerInformationEdit = ({
               </>
             </Select>
           </Form.Item>
-          <Form.Item
-            label="ID Role"
-            name="recruitment_role_id"
-            rules={[
-              {
-                required: true,
-                message: "Role wajib diisi",
-              },
-            ]}
-          >
-            <Select
-              showSearch={true}
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-              value={
-                dataeditinformation?.recruitment_role_id &&
-                Number(dataeditinformation?.recruitment_role_id)
-              }
-              onChange={(e) => {
-                setdataeditinformation({
-                  ...dataeditinformation,
-                  recruitment_role_id: e,
-                });
-              }}
-              placeholder="Pilih ID Role"
-            >
-              <>
-                {dataRoles?.map((option) => (
-                  <Select.Option key={option.id} value={option.id}>
-                    {option.name}
-                  </Select.Option>
-                ))}
-              </>
-            </Select>
-          </Form.Item>
+
           <Form.Item
             label="Salary Min"
             name="salary_min"
@@ -329,64 +354,48 @@ const DrawerInformationEdit = ({
               }}
             />
           </Form.Item>
-
           <Form.Item
-            label="Qualification"
-            name="qualification"
+            label="Platform"
+            name="platform"
             rules={[
               {
                 required: true,
-                message: "Qualification wajib diisi",
+                message: "Platform wajib diisi",
               },
             ]}
           >
-            <ReactQuill
-              theme="snow"
-              value={dataeditinformation?.qualification}
-              modules={modules}
-              formats={formats}
-              className="h-44 pb-10"
-              onChange={(value) => {
-                setdataeditinformation({
-                  ...dataeditinformation,
-                  qualification: value,
-                });
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Status"
-            name="is_posted"
-            rules={[
-              {
-                required: true,
-                message: "Status wajib diisi",
-              },
-            ]}
-          >
-            <Switch
-              size="large"
-              checkedChildren="Posted"
-              unCheckedChildren="Archived"
-              defaultChecked
-              checked={dataeditinformation?.is_posted}
-              onChange={(e) => {
-                setdataeditinformation({
-                  ...dataeditinformation,
-                  is_posted: e == true ? 1 : 0,
-                });
-              }}
-            />
+            <Checkbox.Group
+              style={{ width: "100%" }}
+              onChange={onChangeJobPlaftorm}
+            >
+              <Row>
+                <Col>
+                  <Space direction="vertical">
+                    <Checkbox value="1">Deals</Checkbox>
+                    <Checkbox value="2">Glints</Checkbox>
+                    <Checkbox value="3">Kitalulus</Checkbox>
+                    <Checkbox value="4">Internal Website</Checkbox>
+                  </Space>
+                </Col>
+              </Row>
+            </Checkbox.Group>
           </Form.Item>
           <div className="flex justify-end">
             <Button
               type="default"
               onClick={() => {
-                setdraweditinformation(false);
+                form
+                  .validateFields()
+                  .then(() => {
+                    sendEditData("draft");
+                  })
+                  .catch(() => {
+                    // form validation failed
+                  });
               }}
               style={{ marginRight: `1rem` }}
             >
-              Cancel
+              Save as Draft
             </Button>
             <Button
               htmlType="submit"
