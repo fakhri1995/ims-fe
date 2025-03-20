@@ -157,6 +157,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     is_posted: withDefault(NumberParam, undefined),
   });
+  const [loadingDraftEdit, setLoadingDraftEdit] = useState(false);
 
   const [dataStatusList, setDataStatusList] = useState([
     {
@@ -341,7 +342,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log("isi roles ", res2.data);
           setDataRoles(res2.data);
         } else {
           notification.error({
@@ -537,7 +537,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
     )
       .then((res) => res.json())
       .then((res2) => {
-        console.log("hasil data ", res2.data);
         if (res2.success) {
           setDataRawCareers(res2.data);
           setDataCareers(res2.data.data);
@@ -806,7 +805,6 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
   ];
   const handleCreate = () => {
     sendData("posted");
-    console.log("handle create ", datacreate);
   };
 
   const sendData = (type) => {
@@ -908,12 +906,13 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const handleEdit = () => {
     sendEditData("posted");
-    // console.log('data edit ',dataedit)
   };
 
   const sendEditData = (type) => {
     if (type == "posted") {
       setloadingedit(true);
+    } else {
+      setLoadingDraftEdit(true);
     }
     let dataTemp = {
       id: dataedit.id,
@@ -928,6 +927,7 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
       career_experience_id: dataedit.career_experience_id,
       is_posted: type == "posted" ? 1 : 0,
       platforms: dataedit.platform_value,
+      qualification: "qualification",
       question: dataedit.question,
     };
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/updateCareer`, {
@@ -960,7 +960,9 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
             question: [],
           });
           if (type == "posted") {
-            setloadingedit(true);
+            setloadingedit(false);
+          } else {
+            setLoadingDraftEdit(false);
           }
           setdrawedit(false);
           const params = QueryString.stringify(queryParams, {
@@ -972,7 +974,11 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
             message: "Update Career Gagal",
             duration: 3,
           });
-          setloadingedit(false);
+          if (type == "posted") {
+            setloadingedit(false);
+          } else {
+            setLoadingDraftEdit(false);
+          }
           setdrawedit(false);
         }
       });
@@ -2166,7 +2172,9 @@ const CareerIndex = ({ dataProfile, sidemenu, initProps }) => {
           setdataedit={setdataedit}
           dataedit={dataedit}
           handleEdit={handleEdit}
+          sendEditData={sendEditData}
           loadingEdit={loadingedit}
+          loadingDraftEdit={loadingDraftEdit}
           dataRoleTypeList={dataRoleTypeList}
           dataExperience={dataExperience}
           dataRoles={dataRoles}
