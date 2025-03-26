@@ -460,13 +460,12 @@ const DrawerCareerEdit = ({
                   }}
                   style={{ marginRight: `1rem` }}
                 >
-                  Update as Draft
+                  Save as Draft
                 </Button>
 
                 <Button
                   htmlType="submit"
-                  type="primary"
-                  danger
+                  className={"bg-primarygreen text-white"}
                   icon={<CheckIconSvg size={16} color={"#ffffff"} />}
                   loading={loadingEdit}
                 >
@@ -855,12 +854,11 @@ const DrawerCareerEdit = ({
                     }}
                     style={{ marginRight: `1rem` }}
                   >
-                    Update as Draft
+                    Save as Draft
                   </Button>
                   <Button
                     htmlType="submit"
-                    type="primary"
-                    danger
+                    className={"bg-primarygreen text-white"}
                     icon={<CheckIconSvg size={16} color={"#ffffff"} />}
                     loading={loadingEdit}
                   >
@@ -884,12 +882,11 @@ const DrawerCareerEdit = ({
                     }}
                     style={{ marginRight: `1rem` }}
                   >
-                    Update as Draft
+                    Save as Draft
                   </Button>
                   <Button
                     htmlType="submit"
-                    type="primary"
-                    danger
+                    className={"bg-primarygreen text-white"}
                     icon={<CheckIconSvg size={16} color={"#ffffff"} />}
                     loading={loadingEdit}
                   >
