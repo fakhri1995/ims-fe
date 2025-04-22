@@ -192,7 +192,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         return response.data;
       },
       onSuccess: (data) => {
-        setDataEmployees(data.data);
+        setDataEmployees(data);
       },
       onError: (error) => {
         notification.error({ message: "Gagal mendapatkan daftar karyawan." });

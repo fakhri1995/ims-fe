@@ -92,6 +92,7 @@ import Layout from "../../../components/layout-dashboard-management";
 import st from "../../../components/layout-dashboard-management.module.css";
 import ModalCore from "../../../components/modal/modalCore";
 import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
+import RecruitmentNewCandidate from "../../../components/screen/recruitment/newcandidate";
 import { TableCustomRecruitmentCandidate } from "../../../components/table/tableCustom";
 import { createKeyPressHandler } from "../../../lib/helper";
 import {
@@ -2009,301 +2010,39 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
             </div>
           ) : (
-            <div className="lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-              <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between mb-6">
-                <h4 className="mig-heading--4 mb-2 md:mb-0">Semua Kandidat</h4>
-                <div
-                  className={
-                    "flex flex-col lg:flex-row md:space-x-6 space-y-2 lg:space-y-0 w-full md:w-fit"
-                  }
-                >
-                  <ButtonSys
-                    type={"default"}
-                    onClick={() => setCreateDrawerShown(true)}
-                    //  disabled={!isAllowedToAddRole}
-                  >
-                    <div className="flex flex-row space-x-2.5 items-center">
-                      <UserPlusIconSvg />
-                      <p>Add Candidate</p>
-                    </div>
-                  </ButtonSys>
-                  <Dropdown.Button
-                    type="primary"
-                    menu={menuProps}
-                    placement="bottom"
-                    icon={<DownOutlined />}
-                  >
-                    Input CV
-                  </Dropdown.Button>
-                </div>
-              </div>
-
-              {/* Import excel */}
-              <ReactSpreadsheetImport
-                isOpen={modalSheetImport}
-                onClose={() => setModalSheetImport(false)}
-                onSubmit={(data) => {
-                  setTimeout(() => {
-                    handleCreateRecruitments(data?.validData);
-                  }, 1000);
-                }}
-                allowInvalidSubmit={false}
-                translations={{
-                  uploadStep: {
-                    manifestTitle: "Data yang diharapkan:",
-                    manifestDescription:
-                      "(Anda dapat mengubah data pada langkah selanjutnya)",
-                  },
-                }}
-                autoMapDistance={3}
-                fields={[
-                  {
-                    label: "Nama",
-                    key: "name",
-                    alternateMatches: ["Nama", "nama"],
-                    fieldType: {
-                      type: "input",
-                    },
-                    example: "John Doe",
-                    validations: [
-                      {
-                        rule: "required",
-                        errorMessage: "Nama wajib diisi",
-                        level: "error",
-                      },
-                    ],
-                  },
-                  {
-                    label: "Email",
-                    key: "email",
-                    alternateMatches: ["email", "Email"],
-                    fieldType: {
-                      type: "input",
-                    },
-                    example: "someone@example-mail.com",
-                    validations: [
-                      {
-                        rule: "required",
-                        errorMessage: "Email wajib diisi",
-                        level: "error",
-                      },
-                      {
-                        rule: "regex",
-                        value: "[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,3}",
-                        errorMessage: "Email belum terisi dengan benar",
-                        level: "warning",
-                      },
-                    ],
-                  },
-                  {
-                    label: "Universitas",
-                    key: "university",
-                    alternateMatches: ["Universitas", "universitas"],
-                    fieldType: {
-                      type: "input",
-                    },
-                    example: "Institut Teknologi Bandung",
-                    validations: [
-                      {
-                        rule: "required",
-                        errorMessage: "Universitas wajib diisi",
-                        level: "error",
-                      },
-                    ],
-                  },
-                  {
-                    label: "Role",
-                    key: "recruitment_role_id",
-                    alternateMatches: ["Role", "role"],
-                    fieldType: {
-                      type: "select",
-                      options: dataRoleOptions,
-                    },
-                    example: "Product Manager",
-                    validations: [
-                      {
-                        rule: "required",
-                        errorMessage: "Role wajib diisi",
-                        level: "error",
-                      },
-                    ],
-                  },
-                  {
-                    label: "Jalur Daftar",
-                    key: "recruitment_jalur_daftar_id",
-                    alternateMatches: ["jalur daftar", "Jalur Daftar"],
-                    fieldType: {
-                      type: "select",
-                      options: dataJalurDaftarOptions,
-                    },
-                    example: "Glints",
-                    validations: [
-                      {
-                        rule: "required",
-                        errorMessage: "Jalur Daftar wajib diisi",
-                        level: "error",
-                      },
-                    ],
-                  },
-                  {
-                    label: "Stage",
-                    key: "recruitment_stage_id",
-                    alternateMatches: ["Stage", "stage"],
-                    fieldType: {
-                      type: "select",
-                      options: dataStageOptions,
-                    },
-                    example: "Behavior Interview",
-                    validations: [
-                      {
-                        rule: "required",
-                        errorMessage: "Stage wajib diisi",
-                        level: "error",
-                      },
-                    ],
-                  },
-                  {
-                    label: "Status",
-                    key: "recruitment_status_id",
-                    alternateMatches: ["Status", "status"],
-                    fieldType: {
-                      type: "select",
-                      options: dataStatusOptions,
-                    },
-                    example: "On Hold",
-                    validations: [
-                      {
-                        rule: "required",
-                        errorMessage: "Status wajib diisi",
-                        level: "error",
-                      },
-                    ],
-                  },
-                ]}
-              />
-
-              {/* Start: Search criteria */}
-              <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
-                {/* Search by keyword (kata kunci) */}
-                <div className="w-full md:w-4/12">
-                  <Input
-                    defaultValue={searchingFilterRecruitments}
-                    style={{ width: `100%` }}
-                    placeholder="Kata Kunci.."
-                    allowClear
-                    onChange={(e) => {
-                      setSearchingFilterRecruitments(e.target.value);
-                      setQueryParams({ page: 1 });
-                    }}
-                    onKeyPress={onKeyPressHandler}
-                    disabled={!isAllowedToGetRecruitments}
-                  />
-                </div>
-
-                {/* Filter by role (dropdown) */}
-                <div className="w-full md:w-2/12">
-                  <Select
-                    defaultValue={queryParams.recruitment_role_id}
-                    allowClear
-                    name={`role`}
-                    disabled={!isAllowedToGetRecruitmentRolesList}
-                    placeholder="Semua Role"
-                    style={{ width: `100%` }}
-                    onChange={(value) => {
-                      setQueryParams({ recruitment_role_id: value, page: 1 });
-                      setSelectedRoleId(value);
-                    }}
-                  >
-                    {dataRoleList.map((role) => (
-                      <Select.Option key={role.id} value={role.id}>
-                        {role.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-
-                {/* Filter by stage */}
-                <div className="w-full md:w-2/12">
-                  <Select
-                    defaultValue={queryParams.recruitment_stage_id}
-                    allowClear
-                    name={`stage`}
-                    disabled={!isAllowedToGetRecruitmentStagesList}
-                    placeholder="Semua Stage"
-                    style={{ width: `100%` }}
-                    onChange={(value) => {
-                      setQueryParams({ recruitment_stage_id: value, page: 1 });
-                      setSelectedStage(value);
-                    }}
-                  >
-                    {dataStageList.map((stage) => (
-                      <Select.Option key={stage.id} value={stage.id}>
-                        {stage.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-
-                {/* Search by status (dropdown) */}
-                <div className="w-full md:w-2/12">
-                  <Select
-                    defaultValue={queryParams.recruitment_status_id}
-                    allowClear
-                    name={`status`}
-                    disabled={!isAllowedToGetRecruitmentStatusesList}
-                    placeholder="Semua Status"
-                    style={{ width: `100%` }}
-                    onChange={(value) => {
-                      setQueryParams({ recruitment_status_id: value, page: 1 });
-                      setSelectedStatus(value);
-                    }}
-                  >
-                    {dataStatusList.map((status) => (
-                      <Select.Option key={status.id} value={status.id}>
-                        <div className="flex items-center">
-                          <div
-                            className="rounded-full w-4 h-4 mr-2"
-                            style={{ backgroundColor: `${status.color}` }}
-                          />
-                          <p className="truncate">{status.name}</p>
-                        </div>
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-
-                <div className="flex justify-end">
-                  <ButtonSys
-                    type={`primary`}
-                    onClick={onFilterRecruitments}
-                    disabled={!isAllowedToGetRecruitments}
-                  >
-                    <div className="flex flex-row space-x-2.5 w-full items-center">
-                      <SearchIconSvg size={15} color={`#ffffff`} />
-                      <p>Cari</p>
-                    </div>
-                  </ButtonSys>
-                </div>
-              </div>
-              {/* End: Search criteria */}
-
-              <div>
-                <TableCustomRecruitmentCandidate
-                  dataSource={dataRecruitments}
-                  columns={columnRecruitmentNew}
-                  loading={loadingRecruitments}
-                  total={dataRawRecruitments?.total}
-                  isBulk={isBulk}
-                  setSelectedRecruitments={setSelectedRecruitments}
-                  setSelectedRecruitmentIds={setSelectedRecruitmentIds}
-                  setDrawerShown={setPreviewDrawerShown}
-                  tempIdClicked={tempIdClicked}
-                  setTriggerRowClicked={setTriggerRowClicked}
-                  queryParams={queryParams}
-                  setQueryParams={setQueryParams}
-                />
-              </div>
-            </div>
+            <RecruitmentNewCandidate
+              setSelectedStatus={setSelectedStatus}
+              onFilterRecruitments={onFilterRecruitments}
+              handleCreateRecruitments={handleCreateRecruitments}
+              menuProps={menuProps}
+              setCreateDrawerShown={setCreateDrawerShown}
+              setSelectedRoleId={setSelectedRoleId}
+              dataRoleList={dataRoleList}
+              isAllowedToGetRecruitmentRolesList={
+                isAllowedToGetRecruitmentRolesList
+              }
+              isAllowedToGetRecruitmentStagesList={
+                isAllowedToGetRecruitmentStagesList
+              }
+              setSelectedStage={setSelectedStage}
+              dataStageList={dataStageList}
+              isAllowedToGetRecruitmentStatusesList={
+                isAllowedToGetRecruitmentStatusesList
+              }
+              dataStatusList={dataStatusList}
+              isAllowedToGetRecruitments={isAllowedToGetRecruitments}
+              isBulk={isBulk}
+              setSelectedRecruitments={setSelectedRecruitments}
+              setSelectedRecruitmentIds={setSelectedRecruitmentIds}
+              setPreviewDrawerShown={setPreviewDrawerShown}
+              tempIdClicked={tempIdClicked}
+              dataRoleOptions={dataRoleOptions}
+              dataJalurDaftarOptions={dataJalurDaftarOptions}
+              dataStageOptions={dataStageOptions}
+              dataStatusOptions={dataStatusOptions}
+              onKeyPressHandler={onKeyPressHandler}
+              initProps={initProps}
+            />
           )}
         </div>
       </div>
