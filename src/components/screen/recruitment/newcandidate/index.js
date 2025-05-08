@@ -15,6 +15,7 @@ import {
   useQueryParams,
   withDefault,
 } from "next-query-params";
+import { useRouter } from "next/router";
 import QueryString from "qs";
 import React, { useEffect, useState } from "react";
 import { ReactSpreadsheetImport } from "react-spreadsheet-import";
@@ -62,6 +63,7 @@ const RecruitmentNewCandidate = ({
   onKeyPressHandler,
   initProps,
 }) => {
+  const rt = useRouter();
   const [modalSheetImport, setModalSheetImport] = useState(false);
   const columnRecruitmentNew = [
     {
