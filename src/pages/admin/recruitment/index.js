@@ -298,7 +298,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataJalurDaftarOptions, setDataJalurDaftarOptions] = useState([]);
   const [dataStageOptions, setDataStageOptions] = useState([]);
   const [dataStatusOptions, setDataStatusOptions] = useState([]);
-  const [tabActive, setTabActive] = useState("new");
+  const [tabActive, setTabActive] = useState("done");
   // 3. UseEffect
   // 3.1. Get Recruitment Count
   useEffect(() => {
@@ -1636,20 +1636,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               }
             >
               <div
-                onClick={() => setTabActive("new")}
-                className={`${
-                  tabActive == "new" ? "bg-white" : "bg-primary100"
-                } p-2 rounded-md hover:cursor-pointer`}
-              >
-                <p
-                  className={`${
-                    tabActive == "new" ? "text-black" : "text-white"
-                  } text-sm font-semibold`}
-                >
-                  New Candidates
-                </p>
-              </div>
-              <div
                 onClick={() => setTabActive("done")}
                 className={`${
                   tabActive == "done" ? "bg-white" : "bg-primary100"
@@ -1660,7 +1646,21 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     tabActive == "done" ? "text-black" : "text-white"
                   } text-sm font-semibold `}
                 >
-                  Done Validation
+                  Validated Candidates
+                </p>
+              </div>
+              <div
+                onClick={() => setTabActive("new")}
+                className={`${
+                  tabActive == "new" ? "bg-white" : "bg-primary100"
+                } p-2 rounded-md hover:cursor-pointer`}
+              >
+                <p
+                  className={`${
+                    tabActive == "new" ? "text-black" : "text-white"
+                  } text-sm font-semibold`}
+                >
+                  Unvalidated Candidates
                 </p>
               </div>
             </div>
