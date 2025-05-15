@@ -58,6 +58,10 @@ import {
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard-management.module.css";
+import TaskAdminTable from "../../../components/screen/task/taskadmintable";
+import TaskDeadline from "../../../components/screen/task/taskdeadline";
+import TaskStatus from "../../../components/screen/task/taskstatus";
+import TaskType from "../../../components/screen/task/tasktype";
 import {
   TableCustomAdminTask,
   TableCustomStaffTask,
@@ -880,302 +884,24 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             id="wrapper1"
           >
             {/* DEADLINE TASK */}
-            <div className="md:col-span-5 lg:col-span-3 flex flex-col shadow-md rounded-md p-5 bg-white">
-              <div className="flex items-center justify-between mb-4">
-                <H1>Deadline Task</H1>
-                <div className="flex items-center">
-                  <div className=" dropdown">
-                    <div
-                      tabIndex={`2`}
-                      className="mx-1 cursor-pointer"
-                      onClick={() => {
-                        if (!isAllowedToGetTaskDeadlineList) {
-                          permissionWarningNotification(
-                            "Mendapatkan",
-                            "Informasi Deadline Task"
-                          );
-                          return;
-                        }
-
-                        if (canOpenLocationTreeDropdown()) {
-                          setdtloctoggle((prev) => !prev);
-                        }
-                      }}
-                    >
-                      <MappinIconSvg color={`#000000`} size={25} />
-                    </div>
-                    {dtloctoggle ? (
-                      <div
-                        tabIndex={`2`}
-                        className="p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll"
-                      >
-                        <div
-                          className=" flex justify-end mb-1 cursor-pointer"
-                          onClick={() => {
-                            setdtloctoggle(false);
-                            setloadingdtdata(true);
-                            fetch(
-                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks?location=`,
-                              {
-                                method: `GET`,
-                                headers: {
-                                  Authorization: JSON.parse(initProps),
-                                },
-                              }
-                            )
-                              .then((res) => res.json())
-                              .then((res2) => {
-                                setdtlocstate("");
-                                setdtdata(res2.data);
-                                setloadingdtdata(false);
-                              });
-                          }}
-                        >
-                          <p className=" text-xs text-gray-500 mr-1">Reset</p>
-                          <CircleXIconSvg size={15} color={`#BF4A40`} />
-                        </div>
-                        <Tree
-                          className="treeTaskStatusList"
-                          defaultExpandAll
-                          treeData={dtloc}
-                          switcherIcon={<DownOutlined />}
-                          showIcon
-                          blockNode={true}
-                          titleRender={(nodeData) => (
-                            <div
-                              className="flex items-start w-full py-3 rounded-md px-2"
-                              onClick={() => {
-                                setdtloctoggle(false);
-                                setloadingdtdata(true);
-                                fetch(
-                                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks?location=${nodeData.key}`,
-                                  {
-                                    method: `GET`,
-                                    headers: {
-                                      Authorization: JSON.parse(initProps),
-                                    },
-                                  }
-                                )
-                                  .then((res) => res.json())
-                                  .then((res2) => {
-                                    if (res2.success) {
-                                      setdtlocstate(nodeData.key);
-                                      setdtdata(res2.data);
-                                      setloadingdtdata(false);
-                                    } else {
-                                      notification["error"]({
-                                        message: res2.message,
-                                        duration: 3,
-                                      });
-                                      setloadingdtdata(false);
-                                    }
-                                  });
-                              }}
-                            >
-                              <div className="mr-3 flex items-start">
-                                <LocationIconSvg
-                                  id={`icon${nodeData.key}`}
-                                  size={15}
-                                  color={`#808080`}
-                                />
-                              </div>
-                              <div className="mr-3">
-                                <p
-                                  className=" text-gray-500 mb-0"
-                                  id={`text${nodeData.key}`}
-                                >
-                                  {nodeData.title}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                        />
-                      </div>
-                    ) : null}
-                  </div>
-                  <div
-                    className="mx-1 cursor-pointer"
-                    onClick={() => {
-                      if (!isAllowedToGetTaskDeadlineList) {
-                        permissionWarningNotification(
-                          "Mendapatkan",
-                          "Informasi Deadline Task"
-                        );
-                        return;
-                      }
-                      setdtdatefilter((prev) => !prev);
-                    }}
-                  >
-                    <CalendartimeIconSvg color={`#000000`} size={25} />
-                  </div>
-                  <DatePicker.RangePicker
-                    value={
-                      dtdatestate.from === ""
-                        ? ["", ""]
-                        : [moment(dtdatestate.from), moment(dtdatestate.to)]
-                    }
-                    allowEmpty
-                    style={{ visibility: `hidden`, width: `0`, padding: `0` }}
-                    className="datepickerStatus"
-                    open={dtdatefilter}
-                    onChange={(dates, datestrings) => {
-                      setdtdatefilter((prev) => !prev);
-                      setloadingdtdata(true);
-                      fetch(
-                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks?from=${datestrings[0]}&to=${datestrings[1]}&location=${dtlocstate}`,
-                        {
-                          method: `GET`,
-                          headers: {
-                            Authorization: JSON.parse(initProps),
-                          },
-                        }
-                      )
-                        .then((res) => res.json())
-                        .then((res2) => {
-                          if (res2.success) {
-                            setdtdatestate({
-                              from: datestrings[0],
-                              to: datestrings[1],
-                            });
-                            setdtdata(res2.data);
-                            setloadingdtdata(false);
-                          } else {
-                            notification["error"]({
-                              message: res2.message,
-                              duration: 3,
-                            });
-                            setloadingdtdata(false);
-                          }
-                        });
-                    }}
-                    renderExtraFooter={() => (
-                      <div className=" flex items-center">
-                        <p
-                          className=" mb-0 text-primary100 hover:text-primary75 cursor-pointer"
-                          onClick={() => {
-                            setdtdatefilter((prev) => !prev);
-                            setloadingdtdata(true);
-                            fetch(
-                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks?from=&to=&location=${dtlocstate}`,
-                              {
-                                method: `GET`,
-                                headers: {
-                                  Authorization: JSON.parse(initProps),
-                                },
-                              }
-                            )
-                              .then((res) => res.json())
-                              .then((res2) => {
-                                if (res2.success) {
-                                  setdtdatestate({ from: "", to: "" });
-                                  setdtdata(res2.data);
-                                  setloadingdtdata(false);
-                                } else {
-                                  notification["error"]({
-                                    message: res2.message,
-                                    duration: 3,
-                                  });
-                                  setloadingdtdata(false);
-                                }
-                              });
-                          }}
-                        >
-                          Reset
-                        </p>
-                      </div>
-                    )}
-                  />
-                </div>
-              </div>
-              {loadingdtdata ? (
-                <>
-                  <Spin />
-                </>
-              ) : (
-                <>
-                  <div className="flex justify-center mb-4 h-56">
-                    <Line
-                      data={{
-                        labels: [
-                          `${moment(dtdata.date.first_start_date)
-                            .locale("id")
-                            .format("Do MMM")}-${moment(
-                            dtdata.date.first_end_date
-                          )
-                            .locale("id")
-                            .format("Do MMM")}`,
-                          `${moment(dtdata.date.second_start_date)
-                            .locale("id")
-                            .format("Do MMM")}-${moment(
-                            dtdata.date.second_end_date
-                          )
-                            .locale("id")
-                            .format("Do MMM")}`,
-                          `${moment(dtdata.date.third_start_date)
-                            .locale("id")
-                            .format("Do MMM")}-${moment(
-                            dtdata.date.third_end_date
-                          )
-                            .locale("id")
-                            .format("Do MMM")}`,
-                        ],
-                        datasets: [
-                          {
-                            data: [
-                              dtdata.deadline.first_range_deadline,
-                              dtdata.deadline.second_range_deadline,
-                              dtdata.deadline.third_range_deadline,
-                            ],
-                            borderColor: "#35763B",
-                            tension: 0.5,
-                            fill: false,
-                          },
-                        ],
-                      }}
-                      options={{
-                        title: {
-                          display: false,
-                        },
-                        legend: {
-                          display: false,
-                        },
-                        maintainAspectRatio: false,
-                        scales: {
-                          x: {
-                            grid: {
-                              display: false,
-                            },
-                          },
-                          y: {
-                            grid: {
-                              display: false,
-                            },
-                          },
-                        },
-                      }}
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex">
-                        <Text>Berakhir hari ini</Text>
-                      </div>
-                      <div className="flex">
-                        <H2>{dtdata.deadline.today_deadline}</H2>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex">
-                        <Text>Berakhir besok</Text>
-                      </div>
-                      <div className="flex">
-                        <H2>{dtdata.deadline.tomorrow_deadline}</H2>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
+            <TaskDeadline
+              isAllowedToGetTaskDeadlineList={isAllowedToGetTaskDeadlineList}
+              canOpenLocationTreeDropdown={canOpenLocationTreeDropdown}
+              setdtloctoggle={setdtloctoggle}
+              dtloctoggle={dtloctoggle}
+              setdtlocstate={setdtlocstate}
+              setdtdata={setdtdata}
+              setloadingdtdata={setloadingdtdata}
+              dtdatefilter={dtdatefilter}
+              setdtdatefilter={setdtdatefilter}
+              dtdatestate={dtdatestate}
+              dtlocstate={dtlocstate}
+              dtloc={dtloc}
+              setdtdatestate={setdtdatestate}
+              loadingdtdata={loadingdtdata}
+              dtdata={dtdata}
+              initProps={initProps}
+            />
             {/* STAFF TASK */}
             <div className="md:col-span-5 lg:col-span-3 flex flex-col shadow-md rounded-md p-5 bg-white">
               <div className="flex items-center justify-between mb-4">
@@ -1336,686 +1062,73 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               </div>
             </div>
             {/* STATUS TASK */}
-            <div className="md:col-span-5 flex flex-col shadow-md rounded-md p-5 bg-white">
-              <div className="flex items-center justify-between mb-4">
-                <H1>Status Task</H1>
-                <div className="flex items-center">
-                  <div className=" dropdown">
-                    <div
-                      tabIndex={`0`}
-                      className="mx-1 cursor-pointer"
-                      onClick={() => {
-                        if (!isAllowedToGetStatusTaskList) {
-                          permissionWarningNotification(
-                            "Mendapatkan",
-                            "Informasi Status Task"
-                          );
-                          return;
-                        }
-
-                        if (canOpenLocationTreeDropdown()) {
-                          setstatusloctoggle((prev) => !prev);
-                        }
-                      }}
-                    >
-                      <MappinIconSvg color={`#000000`} size={25} />
-                    </div>
-                    {statusloctoggle ? (
-                      <div
-                        tabIndex={`0`}
-                        className="p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll"
-                      >
-                        <div
-                          className=" flex justify-end mb-1 cursor-pointer"
-                          onClick={() => {
-                            setstatusloctoggle(false);
-                            setloadingstatustaskdata(true);
-                            fetch(
-                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=`,
-                              {
-                                method: `GET`,
-                                headers: {
-                                  Authorization: JSON.parse(initProps),
-                                },
-                              }
-                            )
-                              .then((res) => res.json())
-                              .then((res2) => {
-                                setstatustasklocstate("");
-                                setstatustaskdata(res2.data);
-                                setloadingstatustaskdata(false);
-                              });
-                          }}
-                        >
-                          <p className=" text-xs text-gray-500 mr-1">Reset</p>
-                          <CircleXIconSvg size={15} color={`#BF4A40`} />
-                        </div>
-                        <Tree
-                          className="treeTaskStatusList"
-                          defaultExpandAll
-                          treeData={statustaskloc}
-                          switcherIcon={<DownOutlined />}
-                          showIcon
-                          blockNode={true}
-                          titleRender={(nodeData) => (
-                            <div
-                              className="flex items-start w-full py-3 rounded-md px-2"
-                              onClick={() => {
-                                setstatusloctoggle(false);
-                                setloadingstatustaskdata(true);
-                                fetch(
-                                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStatusTaskList?from=${statustaskdatestate.from}&to=${statustaskdatestate.to}&location=${nodeData.key}`,
-                                  {
-                                    method: `GET`,
-                                    headers: {
-                                      Authorization: JSON.parse(initProps),
-                                    },
-                                  }
-                                )
-                                  .then((res) => res.json())
-                                  .then((res2) => {
-                                    setstatustasklocstate(nodeData.key);
-                                    setstatustaskdata(res2.data);
-                                    setloadingstatustaskdata(false);
-                                  });
-                              }}
-                            >
-                              <div className="mr-3 flex items-start">
-                                <LocationIconSvg
-                                  id={`icon${nodeData.key}`}
-                                  size={15}
-                                  color={`#808080`}
-                                />
-                              </div>
-                              <div className="mr-3">
-                                <p
-                                  className=" text-gray-500 mb-0"
-                                  id={`text${nodeData.key}`}
-                                >
-                                  {nodeData.title}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                        />
-                      </div>
-                    ) : null}
-                  </div>
-                  <div
-                    className="mx-1 cursor-pointer"
-                    onClick={() => {
-                      if (!isAllowedToGetStatusTaskList) {
-                        permissionWarningNotification(
-                          "Mendapatkan",
-                          "Informasi Status Task"
-                        );
-                        return;
-                      }
-
-                      setstatustaskdatefilter((prev) => !prev);
-                    }}
-                  >
-                    <CalendartimeIconSvg color={`#000000`} size={25} />
-                  </div>
-                  <DatePicker.RangePicker
-                    value={
-                      statustaskdatestate.from === ""
-                        ? ["", ""]
-                        : [
-                            moment(statustaskdatestate.from),
-                            moment(statustaskdatestate.to),
-                          ]
-                    }
-                    allowEmpty
-                    style={{ visibility: `hidden`, width: `0`, padding: `0` }}
-                    className="datepickerStatus"
-                    open={statustaskdatefilter}
-                    onChange={(dates, datestrings) => {
-                      setstatustaskdatefilter((prev) => !prev);
-                      setloadingstatustaskdata(true);
-                      fetch(
-                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStatusTaskList?from=${datestrings[0]}&to=${datestrings[1]}&location=${statustasklocstate}`,
-                        {
-                          method: `GET`,
-                          headers: {
-                            Authorization: JSON.parse(initProps),
-                          },
-                        }
-                      )
-                        .then((res) => res.json())
-                        .then((res2) => {
-                          setstatustaskdatestate({
-                            from: datestrings[0],
-                            to: datestrings[1],
-                          });
-                          setstatustaskdata(res2.data);
-                          setloadingstatustaskdata(false);
-                        });
-                    }}
-                    renderExtraFooter={() => (
-                      <div className=" flex items-center">
-                        <p
-                          className=" mb-0 text-primary100 hover:text-primary75 cursor-pointer"
-                          onClick={() => {
-                            setstatustaskdatefilter((prev) => !prev);
-                            setloadingstatustaskdata(true);
-                            fetch(
-                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getStatusTaskList?from=&to=&location=${statustasklocstate}`,
-                              {
-                                method: `GET`,
-                                headers: {
-                                  Authorization: JSON.parse(initProps),
-                                },
-                              }
-                            )
-                              .then((res) => res.json())
-                              .then((res2) => {
-                                setstatustaskdatestate({ from: "", to: "" });
-                                setstatustaskdata(res2.data);
-                                setloadingstatustaskdata(false);
-                              });
-                          }}
-                        >
-                          Reset
-                        </p>
-                      </div>
-                    )}
-                  />
-                </div>
-              </div>
-              {loadingstatustaskdata ? (
-                <>
-                  <Spin />
-                </>
-              ) : statustaskdata.every(
-                  (docevery) => docevery.status_count === 0
-                ) ? (
-                <>
-                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                </>
-              ) : (
-                <div className=" flex items-center">
-                  <div className=" w-6/12 flex justify-center mr-2">
-                    <Doughnut
-                      data={{
-                        labels: statustaskdata.map((doc) => doc.status_name),
-                        datasets: [
-                          {
-                            data: statustaskdata.map((doc) => doc.status_count),
-                            backgroundColor: [
-                              "#BF4A40",
-                              "#2F80ED",
-                              "#ED962F",
-                              "#E5C471",
-                              "#6AAA70",
-                              "#808080",
-                            ],
-                            borderColor: [
-                              "#BF4A40",
-                              "#2F80ED",
-                              "#ED962F",
-                              "#E5C471",
-                              "#6AAA70",
-                              "#808080",
-                            ],
-                            borderWidth: 1,
-                          },
-                        ],
-                      }}
-                      options={{
-                        title: {
-                          display: false,
-                        },
-                        legend: {
-                          display: false,
-                        },
-                        maintainAspectRatio: false,
-                        cutout: 55,
-                        spacing: 5,
-                      }}
-                    />
-                  </div>
-                  <div className="flex flex-col w-6/12 ml-2">
-                    {statustaskdata.map((doc, idx) => {
-                      if (doc.status === 1) {
-                        return (
-                          <div className="flex justify-between items-center mb-1">
-                            <div className="flex">
-                              <div className=" w-1 bg-overdue mr-1"></div>
-                              <div className="mr-1">
-                                <Text>{doc.status_name}</Text>
-                              </div>
-                              <AlerttriangleIconSvg
-                                size={15}
-                                color={`#BF4A40`}
-                              />
-                            </div>
-                            <div className="flex">
-                              <H2>{doc.status_count}</H2>
-                            </div>
-                          </div>
-                        );
-                      } else {
-                        return (
-                          <div className="flex justify-between items-center mb-1">
-                            <div className="flex">
-                              <div
-                                className={`w-1 mr-1 ${
-                                  doc.status === 1 && `bg-overdue`
-                                } ${doc.status === 2 && `bg-open`} ${
-                                  doc.status === 3 && `bg-onprogress`
-                                } ${doc.status === 4 && `bg-onhold`} ${
-                                  doc.status === 5 && `bg-completed`
-                                } ${doc.status === 6 && `bg-closed`}`}
-                              ></div>
-                              <Text>{doc.status_name}</Text>
-                            </div>
-                            <div className="flex">
-                              <H2>{doc.status_count}</H2>
-                            </div>
-                          </div>
-                        );
-                      }
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
+            <TaskStatus
+              isAllowedToGetStatusTaskList={isAllowedToGetStatusTaskList}
+              canOpenLocationTreeDropdown={canOpenLocationTreeDropdown}
+              setstatusloctoggle={setstatusloctoggle}
+              statusloctoggle={statusloctoggle}
+              setloadingstatustaskdata={setloadingstatustaskdata}
+              setstatustaskdata={setstatustaskdata}
+              setstatustasklocstate={setstatustasklocstate}
+              statustaskloc={statustaskloc}
+              setstatustaskdatefilter={setstatustaskdatefilter}
+              statustaskdatestate={statustaskdatestate}
+              statustaskdatefilter={statustaskdatefilter}
+              loadingstatustaskdata={loadingstatustaskdata}
+              setstatustaskdatestate={setstatustaskdatestate}
+              statustaskdata={statustaskdata}
+              statustasklocstate={statustasklocstate}
+              initProps={initProps}
+            />
             {/* TIPE TASK */}
-            <div className="md:col-span-5 flex flex-col shadow-md rounded-md p-5 bg-white">
-              <div className="flex items-center justify-between mb-4">
-                <H1>Tipe Task Terbanyak</H1>
-                <div className="flex items-center">
-                  <div className="dropdown dropdown-left">
-                    <div
-                      tabIndex={`1`}
-                      className="mx-1 cursor-pointer"
-                      onClick={() => {
-                        if (!isAllowedToGetTaskTypeCount) {
-                          permissionWarningNotification(
-                            "Mendapatkan",
-                            "Informasi Tipe Task Terbanyak"
-                          );
-                          return;
-                        }
-
-                        if (canOpenLocationTreeDropdown()) {
-                          setttloctoggle((prev) => !prev);
-                        }
-                      }}
-                    >
-                      <MappinIconSvg color={`#000000`} size={25} />
-                    </div>
-                    {ttloctoggle ? (
-                      <div
-                        tabIndex={`1`}
-                        className="p-5 shadow menu dropdown-content bg-white rounded-box w-72 flex flex-col max-h-72 overflow-scroll"
-                      >
-                        <div
-                          className=" flex justify-end mb-1 cursor-pointer"
-                          onClick={() => {
-                            setttloctoggle(false);
-                            setloadingttcdata(true);
-                            fetch(
-                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypeCounts?location=`,
-                              {
-                                method: `GET`,
-                                headers: {
-                                  Authorization: JSON.parse(initProps),
-                                },
-                              }
-                            )
-                              .then((res) => res.json())
-                              .then((res2) => {
-                                setttcdata(res2.data);
-                                setloadingttcdata(false);
-                              });
-                          }}
-                        >
-                          <p className=" text-xs text-gray-500 mr-1">Reset</p>
-                          <CircleXIconSvg size={15} color={`#BF4A40`} />
-                        </div>
-                        <Tree
-                          className="treeTaskStatusList"
-                          defaultExpandAll
-                          treeData={ttcloc}
-                          switcherIcon={<DownOutlined />}
-                          showIcon
-                          blockNode={true}
-                          titleRender={(nodeData) => (
-                            <div
-                              className="flex items-start w-full py-3 rounded-md px-2"
-                              onClick={() => {
-                                setttloctoggle(false);
-                                setloadingttcdata(true);
-                                fetch(
-                                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypeCounts?location=${nodeData.key}`,
-                                  {
-                                    method: `GET`,
-                                    headers: {
-                                      Authorization: JSON.parse(initProps),
-                                    },
-                                  }
-                                )
-                                  .then((res) => res.json())
-                                  .then((res2) => {
-                                    setttcdata(res2.data);
-                                    setloadingttcdata(false);
-                                  });
-                              }}
-                            >
-                              <div className="mr-3 flex items-start">
-                                <LocationIconSvg
-                                  id={`icon${nodeData.key}`}
-                                  size={15}
-                                  color={`#808080`}
-                                />
-                              </div>
-                              <div className="mr-3">
-                                <p
-                                  className=" text-gray-500 mb-0"
-                                  id={`text${nodeData.key}`}
-                                >
-                                  {nodeData.title}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                        />
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
-              {loadingttcdata ? (
-                <>
-                  <Spin />
-                </>
-              ) : (
-                <div className=" flex items-center h-full">
-                  <div className=" w-7/12 flex justify-center mr-2 h-full">
-                    <Bar
-                      data={{
-                        labels: ttcdata.map((doc) => doc.name),
-                        datasets: [
-                          {
-                            data: ttcdata.map((doc) => doc.tasks_count),
-                            backgroundColor: ttcdata.map(
-                              (doc, idx) =>
-                                ttccolorbar[idx + (1 % ttccolorbar.length) - 1]
-                            ),
-                            borderColor: ttcdata.map(
-                              (doc, idx) =>
-                                ttccolorbar[idx + (1 % ttccolorbar.length) - 1]
-                            ),
-                            barPercentage: 1.0,
-                            barThickness: 18,
-                            maxBarThickness: 15,
-                            minBarLength: 2,
-                            borderRadius: 3,
-                          },
-                        ],
-                      }}
-                      options={{
-                        title: {
-                          display: false,
-                        },
-                        legend: {
-                          display: false,
-                        },
-                        maintainAspectRatio: false,
-                        scales: {
-                          x: {
-                            grid: {
-                              display: false,
-                            },
-                          },
-                          y: {
-                            grid: {
-                              display: false,
-                            },
-                          },
-                        },
-                      }}
-                    />
-                  </div>
-                  <div className="flex flex-col w-5/12 ml-2">
-                    {ttcdata.map((doc, idx) => (
-                      <div
-                        key={idx}
-                        className="flex justify-between items-center mb-1"
-                      >
-                        <div className="flex">
-                          <div
-                            className=" w-1 mr-2"
-                            style={{
-                              backgroundColor: `${
-                                ttccolorbar[idx + (1 % ttccolorbar.length) - 1]
-                              }`,
-                            }}
-                          ></div>
-                          <Text>{doc.name}</Text>
-                        </div>
-                        <div className="flex">
-                          <H2>{doc.tasks_count}</H2>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            <TaskType
+              isAllowedToGetTaskTypeCount={isAllowedToGetTaskTypeCount}
+              canOpenLocationTreeDropdown={canOpenLocationTreeDropdown}
+              setttloctoggle={setttloctoggle}
+              ttloctoggle={ttloctoggle}
+              setloadingttcdata={setloadingttcdata}
+              setttcdata={setttcdata}
+              ttcloc={ttcloc}
+              loadingttcdata={loadingttcdata}
+              ttcdata={ttcdata}
+              ttccolorbar={ttccolorbar}
+              initProps={initProps}
+            />
             {/* TABLE DAFTAR TASK */}
-            <div className="md:col-span-10 flex flex-col shadow-md rounded-md bg-white p-5">
-              <div className="flex items-center justify-between mb-4">
-                <H1>Semua Task</H1>
-              </div>
-              <div className="grid grid-cols-3 xl:flex xl:flex-row items-center mb-4 gap-2">
-                <div className="xl:w-2/12">
-                  <Input
-                    value={searchstate}
-                    style={{ width: `100%` }}
-                    placeholder="Judul atau ID.."
-                    disabled={!isAllowedToGetTaskList}
-                    allowClear
-                    onChange={(e) => {
-                      if (e.target.value === "") {
-                        setsearchstate("");
-                      } else {
-                        setQueryParams({ page: 1 });
-                        setsearchstate(e.target.value);
-                      }
-                    }}
-                    onKeyPress={onKeyPressHandler}
-                  />
-                </div>
-                <div className="xl:w-2/12">
-                  <Select
-                    value={
-                      tasktypefilterstate === "" ? null : tasktypefilterstate
-                    }
-                    placeholder="Semua Tipe Task"
-                    disabled={
-                      !isAllowedToGetTaskList || !isAllowedToSearchTaskType
-                    }
-                    style={{ width: `100%` }}
-                    allowClear
-                    showSearch
-                    optionFilterProp="children"
-                    notFoundContent={
-                      fetchingtasktypes ? <Spin size="small" /> : null
-                    }
-                    onSearch={(value) => {
-                      setfetchingtasktypes(true);
-                      fetch(
-                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes?name=${value}`,
-                        {
-                          method: `GET`,
-                          headers: {
-                            Authorization: JSON.parse(initProps),
-                          },
-                        }
-                      )
-                        .then((res) => res.json())
-                        .then((res2) => {
-                          setdatafiltertipetasks(res2.data);
-                          setfetchingtasktypes(false);
-                        });
-                    }}
-                    filterOption={(input, opt) =>
-                      opt.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                      0
-                    }
-                    name={`task_type_id`}
-                    onChange={(value) => {
-                      typeof value === "undefined"
-                        ? settasktypefilterstate("")
-                        : settasktypefilterstate(value),
-                        setQueryParams({ page: 1 });
-                    }}
-                  >
-                    {datafiltertipetasks.map((doc, idx) => (
-                      <Select.Option key={idx} value={doc.id}>
-                        {doc.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="xl:w-3/12">
-                  <DatePicker.RangePicker
-                    showTime
-                    allowEmpty
-                    className="datepickerStatus"
-                    style={{ width: `100%` }}
-                    disabled={!isAllowedToGetTaskList}
-                    value={
-                      fromdatefilterstate === ""
-                        ? [null, null]
-                        : [
-                            moment(fromdatefilterstate),
-                            moment(todatefilterstate),
-                          ]
-                    }
-                    onChange={(dates, datestrings) => {
-                      setQueryParams({ page: 1 });
-                      setfromdatefilterstate(datestrings[0]);
-                      settodatefilterstate(datestrings[1]);
-                      setloadingstaff(true);
-                    }}
-                  />
-                </div>
-                <div className="xl:w-2/12">
-                  <TreeSelect
-                    style={{ width: `100%` }}
-                    allowClear
-                    placeholder="Semua Lokasi"
-                    disabled={
-                      !isAllowedToGetTaskList ||
-                      !isAllowedToGetCompanyLocationList
-                    }
-                    showSearch
-                    suffixIcon={<SearchOutlined />}
-                    showArrow
-                    name={`locations_id`}
-                    onChange={(value) => {
-                      typeof value === "undefined"
-                        ? setlokasifilterstate("")
-                        : setlokasifilterstate(value),
-                        setQueryParams({ page: 1 });
-                    }}
-                    treeData={datafilterlokasi}
-                    treeDefaultExpandAll
-                    value={lokasifilterstate === "" ? null : lokasifilterstate}
-                    treeNodeFilterProp="title"
-                    filterTreeNode={(search, item) => {
-                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
-                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
-                      return (
-                        item.title
-                          .toLowerCase()
-                          .indexOf(search.toLowerCase()) >= 0
-                      );
-                    }}
-                  ></TreeSelect>
-                </div>
-                <div className="xl:w-2/12">
-                  <Select
-                    style={{ width: `100%` }}
-                    value={statusfilterstate === "" ? null : statusfilterstate}
-                    placeholder="Semua Status"
-                    disabled={!isAllowedToGetTaskList}
-                    allowClear
-                    name={`status`}
-                    onChange={(value) => {
-                      typeof value === "undefined"
-                        ? setstatusfilterstate("")
-                        : setstatusfilterstate(value),
-                        setQueryParams({ page: 1 });
-                    }}
-                  >
-                    <Select.Option value={1}>
-                      <div className=" flex items-center">
-                        <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-overdue border border-overdue"></div>
-                        Overdue
-                      </div>
-                    </Select.Option>
-                    <Select.Option value={2}>
-                      <div className=" flex items-center">
-                        <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-open border border-open"></div>
-                        Open
-                      </div>
-                    </Select.Option>
-                    <Select.Option value={3}>
-                      <div className=" flex items-center">
-                        <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-onprogress border border-onprogress"></div>
-                        On Progress
-                      </div>
-                    </Select.Option>
-                    <Select.Option value={4}>
-                      <div className=" flex items-center">
-                        <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-onhold border border-onhold"></div>
-                        On Hold
-                      </div>
-                    </Select.Option>
-                    <Select.Option value={5}>
-                      <div className=" flex items-center">
-                        <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-completed border border-completed"></div>
-                        Completed
-                      </div>
-                    </Select.Option>
-                    <Select.Option value={6}>
-                      <div className=" flex items-center">
-                        <div className="rounded-md h-auto px-1 mr-1 text-center py-1 bg-closed border border-closed"></div>
-                        Closed
-                      </div>
-                    </Select.Option>
-                  </Select>
-                </div>
-                <div>
-                  <Buttonsys
-                    type={`primary`}
-                    disabled={!isAllowedToGetTaskList}
-                    onClick={onFilterTask}
-                  >
-                    <div className="flex space-x-1">
-                      <SearchIconSvg size={15} color={`#ffffff`} />
-                      <p>Cari</p>
-                    </div>
-                  </Buttonsys>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <TableCustomAdminTask
-                  dataSource={datatasks}
-                  columns={columnsTask}
-                  loading={loadingtasks}
-                  total={datarawtask.total}
-                  prevpath={"admin"}
-                  queryParams={queryParams}
-                  setQueryParams={setQueryParams}
-                />
-              </div>
-            </div>
+            <TaskAdminTable
+              setfetchingtasktypes={setfetchingtasktypes}
+              setdatafiltertipetasks={setdatafiltertipetasks}
+              searchstate={searchstate}
+              setsearchstate={setsearchstate}
+              isAllowedToGetTaskList={isAllowedToGetTaskList}
+              isAllowedToGetCompanyLocationList={
+                isAllowedToGetCompanyLocationList
+              }
+              isAllowedToSearchTaskType={isAllowedToSearchTaskType}
+              tasktypefilterstate={tasktypefilterstate}
+              setQueryParams={setQueryParams}
+              onKeyPressHandler={onKeyPressHandler}
+              queryParams={queryParams}
+              fetchingtasktypes={fetchingtasktypes}
+              settasktypefilterstate={settasktypefilterstate}
+              datafiltertipetasks={datafiltertipetasks}
+              todatefilterstate={todatefilterstate}
+              fromdatefilterstate={fromdatefilterstate}
+              setfromdatefilterstate={setfromdatefilterstate}
+              settodatefilterstate={settodatefilterstate}
+              setloadingstaff={setloadingstaff}
+              setlokasifilterstate={setlokasifilterstate}
+              datafilterlokasi={datafilterlokasi}
+              lokasifilterstate={lokasifilterstate}
+              statusfilterstate={statusfilterstate}
+              setstatusfilterstate={setstatusfilterstate}
+              onFilterTask={onFilterTask}
+              datatasks={datatasks}
+              columnsTask={columnsTask}
+              loadingtasks={loadingtasks}
+              datarawtask={datarawtask}
+              initProps={initProps}
+            />
           </div>
         )}
       </div>
@@ -2095,18 +1208,3 @@ export async function getServerSideProps({ req, res }) {
 }
 
 export default TaskIndex;
-
-// setsearchstate("")
-// setloadingtasks(true)
-// fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=&status=${statusfilterstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}`, {
-//     method: `GET`,
-//     headers: {
-//         'Authorization': JSON.parse(initProps),
-//     },
-// })
-//     .then(res => res.json())
-//     .then(res2 => {
-//         setdatarawtask(res2.data)
-//         setdatatasks(res2.data.data)
-//         setloadingtasks(false)
-//     })
