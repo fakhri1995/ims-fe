@@ -67,6 +67,9 @@ import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard-management.module.css";
 import ModalCore from "../../../components/modal/modalCore";
 import { ModalEdit, ModalHapus } from "../../../components/modal/modalCustom";
+import ActivityCompany from "../../../components/screen/company/activitycompany";
+import BankCompany from "../../../components/screen/company/bankcompany";
+import RelationView from "../../../components/screen/company/relationview";
 import {
   TableCustom,
   TableCustomRelasi,
@@ -1259,583 +1262,76 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             </div>
           </div>
           {viewrelasi ? (
-            <div className="flex flex-col shadow-md rounded-md bg-white p-8 mx-6 md:mx-0 h-screen">
-              <div className="flex justify-between items-center mb-5">
-                <div className="flex">
-                  <div
-                    className="mr-2 cursor-pointer"
-                    onClick={() => {
-                      setviewrelasi(false);
-                    }}
-                  >
-                    <BackIconSvg size={15} color={`#000000`} />
-                  </div>
-                  <H1>Relasi</H1>
-                </div>
-                <div>
-                  <Buttonsys
-                    type="primary"
-                    onClick={() => {
-                      setdrawerelasi(true);
-                    }}
-                  >
-                    + Tambah Relasi
-                  </Buttonsys>
-                </div>
-              </div>
-              <div>
-                <TableCustomRelasi
-                  dataSource={datarelasi}
-                  setDataSource={setdatarelasi}
-                  columns={columnrelasi}
-                  loading={loadingrelasi}
-                  setpraloading={setloadingrelasi}
-                  pageSize={rowsrelasi}
-                  total={datarawrelasi.total}
-                  initProps={initProps}
-                  setpage={setpagerelasi}
-                  id={dataProfile.data.company.id}
-                  setdataraw={setdatarawrelasi}
-                />
-              </div>
-              <DrawerAddRelasi
-                title={"Tambah Relasi"}
-                visible={drawerelasi}
-                onClose={() => {
-                  setdrawerelasi(false);
-                }}
-                buttonOkText={"Simpan Relasi"}
-                initProps={initProps}
-                onvisible={setdrawerelasi}
-                id={dataProfile.data.company.id}
-              />
-              <DrawerCore
-                title={"Edit Relasi"}
-                visible={drawerupdaterelasi}
-                onClose={() => {
-                  setdrawerupdaterelasi(false);
-                }}
-                buttonOkText={"Simpan Relasi"}
-                onClick={handleUpdateRelationshipItem}
-              >
-                <Spin spinning={loadingupdate}>
-                  <div className="flex flex-col mb-3">
-                    <div className="flex flex-col mb-3">
-                      <p className="mb-0">
-                        Relationship Type <span className="namapart"></span>
-                      </p>
-                      <div
-                        className="w-full border p-2 hover:border-primary100 rounded-sm flex items-center justify-between cursor-pointer"
-                        onClick={() => {
-                          setrelationnameddupdate((prev) => !prev);
-                        }}
-                      >
-                        <p className="mb-0">{relationnameupdate}</p>
-                        {relationnameddupdate ? (
-                          <UpOutlined style={{ color: `rgb(229,231,235)` }} />
-                        ) : (
-                          <DownOutlined style={{ color: `rgb(229,231,235)` }} />
-                        )}
-                      </div>
-                      {relationnameddupdate ? (
-                        <div className="flex flex-col">
-                          <div className="flex">
-                            <div className="bg-gray-200 font-semibold p-3 w-6/12">
-                              Relationship Type
-                            </div>
-                            <div className="bg-gray-200 font-semibold p-3 w-6/12">
-                              Inverse Relationship Type
-                            </div>
-                          </div>
-                          {displaydatarelations.map((doc, idx) => {
-                            return (
-                              <div className="flex">
-                                <div
-                                  className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${
-                                    relationselectedidxupdate === idx &&
-                                    relationselectedisinverseupdate === false
-                                      ? " bg-primary50"
-                                      : "bg-white"
-                                  }`}
-                                  onClick={(e) => {
-                                    setrelationnameddupdate(false);
-                                    setrelationnameupdate(
-                                      doc.relationship_type
-                                    );
-                                    setdataApiupdate({
-                                      ...dataApiupdate,
-                                      relationship_id: doc.id,
-                                      is_inverse: false,
-                                    });
-                                    doc.id === null ||
-                                    dataApiupdate.type_id === null
-                                      ? setdisabledadd(true)
-                                      : setdisabledadd(false);
-                                    setrelationselectedidxupdate(idx);
-                                    setrelationselectedisinverseupdate(false);
-                                  }}
-                                >
-                                  {doc.relationship_type}
-                                </div>
-                                <div
-                                  className={` hover:bg-primary10 cursor-pointer hover:text-black p-3 w-6/12 ${
-                                    relationselectedidxupdate === idx &&
-                                    relationselectedisinverseupdate === true
-                                      ? " bg-primary50"
-                                      : "bg-white"
-                                  }`}
-                                  onClick={(e) => {
-                                    setrelationnameddupdate(false);
-                                    setrelationnameupdate(
-                                      doc.inverse_relationship_type
-                                    );
-                                    setdataApiupdate({
-                                      ...dataApiupdate,
-                                      relationship_id: doc.id,
-                                      is_inverse: true,
-                                    });
-                                    doc.id === null ||
-                                    dataApiupdate.type_id === null
-                                      ? setdisabledadd(true)
-                                      : setdisabledadd(false);
-                                    setrelationselectedidxupdate(idx);
-                                    setrelationselectedisinverseupdate(true);
-                                  }}
-                                >
-                                  {doc.inverse_relationship_type}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      ) : null}
-                      <style jsx>
-                        {`
-                                                        .namapart::before{
-                                                            content: '*';
-                                                            color: red;
-                                                        }
-                                                    `}
-                      </style>
-                    </div>
-                    <div className="flex flex-col mb-3">
-                      <p className="mb-0">Item</p>
-                      <Select
-                        allowClear
-                        value={dataApiupdate.connected_id}
-                        showSearch
-                        optionFilterProp="children"
-                        notFoundContent={
-                          fetchingmodel ? <Spin size="small" /> : null
-                        }
-                        onSearch={(value) => {
-                          setfetchingmodel(true);
-                          fetch(
-                            `${
-                              process.env.NEXT_PUBLIC_BACKEND_URL
-                            }/getFilterInventories?keyword=${
-                              value !== "" ? value : ""
-                            }`,
-                            {
-                              method: `GET`,
-                              headers: {
-                                Authorization: JSON.parse(initProps),
-                              },
-                            }
-                          )
-                            .then((res) => res.json())
-                            .then((res2) => {
-                              setdetailtipedataupdate(res2.data);
-                              setfetchingmodel(false);
-                            });
-                        }}
-                        // filterOption={(input, opt) => (
-                        //     opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        // )}
-                        onChange={(value) => {
-                          setdataApiupdate({
-                            ...dataApiupdate,
-                            connected_id: value,
-                            backup_connected_id: value,
-                          });
-                        }}
-                      >
-                        {detailtipedataupdate.map((doc, idx) => {
-                          return (
-                            <Select.Option value={doc.id}>
-                              {doc.mig_id} - {doc.model_name} - {doc.asset_name}
-                            </Select.Option>
-                          );
-                        })}
-                      </Select>
-                    </div>
-                    {/* <div className="flex flex-col mb-3">
-                                                <p className="mb-0">Tipe <span className="tipepart"></span></p>
-                                                <Select disabled value={dataApiupdate.type_id} onChange={(value) => {
-                                                    setdataApiupdate({ ...dataApiupdate, type_id: value })
-                                                    dataApiupdate.relationship_id === null || value === null ? setdisabledadd(true) : setdisabledadd(false)
-                                                    setdetailtipeupdate(value)
-                                                }}>
-                                                    <Select.Option value={-1}>Agent</Select.Option>
-                                                    <Select.Option value={-2}>Requester</Select.Option>
-                                                    <Select.Option value={-3}>Company</Select.Option>
-                                                    <Select.Option value={-4}>Asset Type</Select.Option>
-                                                </Select>
-                                                <style jsx>
-                                                    {`
-                                                        .tipepart::before{
-                                                            content: '*';
-                                                            color: red;
-                                                        }
-                                                    `}
-                                                </style>
-                                            </div> */}
-                    {/* {
-                                                dataApiupdate.type_id !== null ?
-                                                    <>
-                                                        {
-                                                            dataApiupdate.type_id === -3 &&
-                                                            <div className="flex flex-col mb-3">
-                                                                <p className="mb-0">Detail Tipe</p>
-                                                                <TreeSelect value={dataApiupdate.backup_connected_id === null ? null : dataApiupdate.backup_connected_id} treeDefaultExpandedKeys={[1]} treeData={detailtipedataupdate} onChange={(value, label, extra) => {
-                                                                    setdataApiupdate({ ...dataApiupdate, connected_id: value, backup_connected_id: value })
-                                                                    setsubloctrig(value)
-                                                                }}></TreeSelect>
-                                                            </div>
-                                                        }
-                                                    </>
-                                                    :
-                                                    null
-
-                                            } */}
-                    {/* {
-                                                sublocdata !== null &&
-                                                <div className="flex flex-col mb-3">
-                                                    <p className="mb-0">Detail Tipe (Sublokasi)</p>
-                                                    <TreeSelect multiple allowClear treeData={sublocdata} onChange={(value, label, extra) => {
-                                                        if (value.length === 0) {
-                                                            setdataApiupdate({ ...dataApiupdate, connected_id: dataApiupdate.backup_connected_id })
-                                                        }
-                                                        else {
-                                                            setdataApiupdate({ ...dataApiupdate, connected_id: value })
-                                                        }
-                                                    }}></TreeSelect>
-                                                </div>
-                                            } */}
-                  </div>
-                </Spin>
-              </DrawerCore>
-              <ModalCore
-                title={"Konfirmasi Hapus Relasi"}
-                visible={modaldeleterelasi}
-                onCancel={() => {
-                  setmodaldeleterelasi(false);
-                }}
-                footer={
-                  <Spin spinning={loadingdeleterelasi}>
-                    <div className="flex justify-between items-center">
-                      <Buttonsys
-                        type="default"
-                        color="danger"
-                        onClick={() => {
-                          setmodaldeleterelasi(false);
-                        }}
-                      >
-                        Batalkan
-                      </Buttonsys>
-                      <Buttonsys
-                        type="primary"
-                        color="danger"
-                        onClick={handleDeleteRelationshipItem}
-                      >
-                        <TrashIconSvg size={15} color={`#ffffff`} />
-                        Ya, saya yakin dan hapus relasi
-                      </Buttonsys>
-                    </div>
-                  </Spin>
-                }
-                loading={loadingdeleterelasi}
-              >
-                Apakah Anda yakin ingin melanjutkan penghapusan relasi{" "}
-                <strong>{datadeleterelasi.relationship_name}</strong>?
-              </ModalCore>
-            </div>
+            <RelationView
+              setviewrelasi={setviewrelasi}
+              setdrawerelasi={setdrawerelasi}
+              datarelasi={datarelasi}
+              setdatarelasi={setdatarelasi}
+              columnrelasi={columnrelasi}
+              loadingrelasi={loadingrelasi}
+              setloadingrelasi={setloadingrelasi}
+              rowsrelasi={rowsrelasi}
+              datarawrelasi={datarawrelasi}
+              initProps={initProps}
+              setpagerelasi={setpagerelasi}
+              dataProfile={dataProfile}
+              setdatarawrelasi={setdatarawrelasi}
+              drawerelasi={drawerelasi}
+              drawerupdaterelasi={drawerupdaterelasi}
+              setdrawerupdaterelasi={setdrawerupdaterelasi}
+              handleUpdateRelationshipItem={handleUpdateRelationshipItem}
+              loadingupdate={loadingupdate}
+              setrelationnameddupdate={setrelationnameddupdate}
+              relationnameddupdate={relationnameddupdate}
+              relationnameupdate={relationnameupdate}
+              displaydatarelations={displaydatarelations}
+              // setdisabledadd={setdis}
+              relationselectedidxupdate={relationselectedidxupdate}
+              relationselectedisinverseupdate={relationselectedisinverseupdate}
+              setrelationnameupdate={setrelationnameupdate}
+              dataApiupdate={dataApiupdate}
+              setdataApiupdate={setdataApiupdate}
+              setrelationselectedidxupdate={setrelationselectedidxupdate}
+              setrelationselectedisinverseupdate={
+                setrelationselectedisinverseupdate
+              }
+              fetchingmodel={fetchingmodel}
+              setfetchingmodel={setfetchingmodel}
+              setdetailtipedataupdate={setdetailtipedataupdate}
+              detailtipedataupdate={detailtipedataupdate}
+              modaldeleterelasi={modaldeleterelasi}
+              setmodaldeleterelasi={setmodaldeleterelasi}
+              loadingdeleterelasi={loadingdeleterelasi}
+              handleDeleteRelationshipItem={handleDeleteRelationshipItem}
+              datadeleterelasi={datadeleterelasi}
+            />
           ) : (
             <div className="flex flex-col md:flex-row gap-5">
               <div className="md:w-6/12 flex flex-col mx-6 md:mx-0 gap-5">
                 {/* Bank */}
-                <div className="flex flex-col shadow-md rounded-md bg-white p-8 ">
-                  <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center">
-                    <H1>Akun Bank</H1>
-                    <Buttonsys
-                      type="primary"
-                      disabled={!isAllowedToAddMainBank}
-                      onClick={() => {
-                        if (!isAllowedToAddMainBank) {
-                          permissionWarningNotification("Menambahkan", "Bank");
-                          return;
-                        }
-
-                        setbankdrawer(true);
-                      }}
-                    >
-                      + Tambah Akun Bank
-                    </Buttonsys>
-                  </div>
-                  <AccessControl hasPermission={COMPANY_MAIN_BANKS_GET}>
-                    {banks.map((doc, idx) => {
-                      return (
-                        <div className="flex mt-5">
-                          {/* <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain> */}
-                          <div
-                            style={
-                              doc.color_first == "from-state1" &&
-                              doc.color_second == "to-state2"
-                                ? {
-                                    backgroundImage:
-                                      "linear-gradient(to top left, #799F0C, #FFE000)",
-                                  }
-                                : doc.color_first == "from-state3" &&
-                                  doc.color_second == "to-state4"
-                                ? {
-                                    backgroundImage:
-                                      "linear-gradient(to top left, #6DD5ED, #2193B0)",
-                                  }
-                                : doc.color_first == "from-red-200" &&
-                                  doc.color_second == "to-red-600"
-                                ? {
-                                    backgroundImage:
-                                      "linear-gradient(to top left, #fecaca, #dc2626)",
-                                  }
-                                : {
-                                    backgroundImage:
-                                      "linear-gradient(to top left, #9333ea, #db2777)",
-                                  }
-                            }
-                            className={`w-5/12 h-28 rounded-md relative mr-3`}
-                          >
-                            <div className="absolute bottom-0 right-2">
-                              <img
-                                src="/image/visa.png"
-                                className="object-contain"
-                              />
-                            </div>
-                          </div>
-                          <div className="w-7/12 flex flex-col justify-between">
-                            <div className="flex justify-between w-full items-center">
-                              <H2>{doc.name ?? "-"}</H2>
-                              <div className="flex">
-                                <div
-                                  className="mx-1 cursor-pointer"
-                                  onClick={() => {
-                                    if (!isAllowedToUpdateMainBank) {
-                                      permissionWarningNotification(
-                                        "Memperbarui",
-                                        "Bank"
-                                      );
-                                      return;
-                                    }
-
-                                    seteditbankdata({ ...doc });
-                                    setbankdraweredit(true);
-                                  }}
-                                >
-                                  <EditIconSvg size={15} color={`#35763B`} />
-                                </div>
-                                <div
-                                  className="mx-1 cursor-pointer"
-                                  onClick={() => {
-                                    if (!isAllowedToDeleteMainBank) {
-                                      permissionWarningNotification(
-                                        "Menghapus",
-                                        "Bank"
-                                      );
-                                      return;
-                                    }
-
-                                    sethapusbankdata({
-                                      ...hapusbankdata,
-                                      id: doc.id,
-                                    });
-                                    setbankmodalhapus(true);
-                                  }}
-                                >
-                                  <TrashIconSvg size={15} color={`#BF4A40`} />
-                                </div>
-                              </div>
-                            </div>
-                            <div className=" flex flex-col">
-                              <Label>
-                                ***
-                                {doc.account_number.slice(
-                                  doc.account_number.length - 4,
-                                  doc.account_number.length
-                                )}{" "}
-                                - {doc.owner}
-                              </Label>
-                              <Label>{doc.currency ?? "-"}</Label>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </AccessControl>
-                  <DrawerBank
-                    title={"Tambah Bank"}
-                    visible={bankdrawer}
-                    onClose={() => {
-                      setbankdrawer(false);
-                    }}
-                    buttonOkText={"Simpan Bank"}
-                    initProps={initProps}
-                    onvisible={setbankdrawer}
-                  ></DrawerBank>
-                  <DrawerCore
-                    title={`Edit Bank`}
-                    visible={bankdraweredit}
-                    onClose={() => {
-                      setbankdraweredit(false);
-                    }}
-                    buttonOkText={`Simpan Bank`}
-                    onClick={handleEditBank}
-                  >
-                    <Spin spinning={bankloadingedit}>
-                      <div className="flex flex-col">
-                        <div className="flex justify-center items-center mb-5">
-                          {/* <AtmBank from={editbankdata.color_first} to={editbankdata.color_second}></AtmBank> */}
-                          <div
-                            className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${editbankdata.color_first} ${editbankdata.color_second} relative mr-3`}
-                          >
-                            <div className="absolute bottom-0 right-2">
-                              <img
-                                src="/image/visa.png"
-                                className="object-contain"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex justify-center mb-10">
-                          <div
-                            className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${
-                              editbankdata.color_first === "from-state1" &&
-                              "border-primary100"
-                            } mx-2`}
-                            onClick={() => {
-                              seteditbankdata({
-                                ...editbankdata,
-                                color_first: "from-state1",
-                                color_second: "to-state2",
-                              });
-                            }}
-                          ></div>
-                          <div
-                            className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${
-                              editbankdata.color_first === "from-state3" &&
-                              "border-primary100"
-                            } mx-2`}
-                            onClick={() => {
-                              seteditbankdata({
-                                ...editbankdata,
-                                color_first: "from-state3",
-                                color_second: "to-state4",
-                              });
-                            }}
-                          ></div>
-                          <div
-                            className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${
-                              editbankdata.color_first === "from-red-200" &&
-                              "border-primary100"
-                            } mx-2`}
-                            onClick={() => {
-                              seteditbankdata({
-                                ...editbankdata,
-                                color_first: "from-red-200",
-                                color_second: "to-red-600",
-                              });
-                            }}
-                          ></div>
-                          <div
-                            className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-600 to-pink-600 border cursor-pointer ${
-                              editbankdata.color_first === "from-purple-600" &&
-                              "border-primary100"
-                            } mx-2`}
-                            onClick={() => {
-                              seteditbankdata({
-                                ...editbankdata,
-                                color_first: "from-purple-600",
-                                color_second: "to-pink-600",
-                              });
-                            }}
-                          ></div>
-                        </div>
-                        <div className="flex flex-col ">
-                          <InputRequired
-                            name="name"
-                            defaultValue={editbankdata.name}
-                            onChangeInput={onChangeInputBankEdit}
-                            label="Nama Bank"
-                          ></InputRequired>
-                          <InputRequired
-                            name="account_number"
-                            defaultValue={editbankdata.account_number}
-                            onChangeInput={onChangeInputBankEdit}
-                            label="Nomor Rekening"
-                          ></InputRequired>
-                          <InputRequired
-                            name="owner"
-                            defaultValue={editbankdata.owner}
-                            onChangeInput={onChangeInputBankEdit}
-                            label="Nama Pemegang Rekening"
-                          ></InputRequired>
-                          <RadioRequired
-                            name="currency"
-                            label="Mata Uang"
-                            defaultValue={editbankdata.currency}
-                            onChangeRadio={onChangeRadioBankEdit}
-                            options={[
-                              {
-                                value: "IDR",
-                                title: "IDR",
-                              },
-                              {
-                                value: "USD",
-                                title: "USD",
-                              },
-                            ]}
-                          ></RadioRequired>
-                        </div>
-                      </div>
-                    </Spin>
-                  </DrawerCore>
-                  <ModalHapus
-                    title={`Konfirmasi Hapus Bank`}
-                    visible={bankmodalhapus}
-                    onCancel={() => {
-                      setbankmodalhapus(false);
-                    }}
-                    footer={
-                      <div className="flex justify-between items-center">
-                        <Buttonsys
-                          type="default"
-                          color="danger"
-                          onClick={() => {
-                            setbankmodalhapus(false);
-                          }}
-                        >
-                          Batalkan
-                        </Buttonsys>
-                        <Buttonsys
-                          type="primary"
-                          color="danger"
-                          onClick={handleDeleteBank}
-                        >
-                          <TrashIconSvg size={15} color={`#ffffff`} />
-                          Ya, saya yakin dan hapus bank
-                        </Buttonsys>
-                      </div>
-                    }
-                  ></ModalHapus>
-                </div>
+                <BankCompany
+                  COMPANY_MAIN_BANKS_GET={COMPANY_MAIN_BANKS_GET}
+                  banks={banks}
+                  isAllowedToUpdateMainBank={isAllowedToUpdateMainBank}
+                  seteditbankdata={seteditbankdata}
+                  setbankdraweredit={setbankdraweredit}
+                  isAllowedToAddMainBank={isAllowedToAddMainBank}
+                  isAllowedToDeleteMainBank={isAllowedToDeleteMainBank}
+                  sethapusbankdata={sethapusbankdata}
+                  setbankmodalhapus={setbankmodalhapus}
+                  bankdrawer={bankdrawer}
+                  setbankdrawer={setbankdrawer}
+                  bankdraweredit={bankdraweredit}
+                  initProps={initProps}
+                  handleEditBank={handleEditBank}
+                  bankloadingedit={bankloadingedit}
+                  editbankdata={editbankdata}
+                  onChangeInputBankEdit={onChangeInputBankEdit}
+                  onChangeRadioBankEdit={onChangeRadioBankEdit}
+                  bankmodalhapus={bankmodalhapus}
+                  hapusbankdata={hapusbankdata}
+                  handleDeleteBank={handleDeleteBank}
+                />
                 {/* Relationship */}
                 <div className="flex flex-col shadow-md rounded-md bg-white p-8 h-full">
                   <div className="flex justify-between items-center">
@@ -1866,173 +1362,12 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 </div>
               </div>
               {/* Aktivitas */}
-              <div className="md:w-6/12 flex flex-col shadow-md rounded-md bg-white p-8 mx-6 md:mx-0">
-                <div className="mb-8">
-                  <H1>Aktivitas</H1>
-                </div>
-                <div className="h-screen overflow-auto">
-                  {praloadingedit ? (
-                    <>
-                      <Spin />
-                    </>
-                  ) : logs.length === 0 ? (
-                    <>
-                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                    </>
-                  ) : (
-                    <InfiniteScroll
-                      dataLength={logs.length}
-                      next={fetchDataMoreLogs}
-                      hasMore={hasmore}
-                      loader={
-                        <>
-                          <Spin />
-                        </>
-                      }
-                      endMessage={
-                        <div className="flex justify-center text-center">
-                          <Label>Sudah Semua</Label>
-                        </div>
-                      }
-                    >
-                      {logs.map((doc, idx) => {
-                        var tanggalan =
-                          (new Date() - new Date(doc.created_at)) /
-                          (1000 * 60 * 60 * 24);
-                        var aksi = "";
-                        const type = doc.subjectable_type.split("\\");
-                        if (type[1] === "Company") {
-                          if (doc.log_name === "Created") {
-                            return (
-                              <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                  {doc.causer.name} <strong>menambahkan</strong>{" "}
-                                  lokasi <strong>{doc.subjectable.name}</strong>
-                                </p>
-                                <Label>
-                                  {tanggalan < 1
-                                    ? `Hari ini, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`
-                                    : `${moment(doc.created_at)
-                                        .locale("id")
-                                        .format("dddd")} ${moment(
-                                        doc.created_at
-                                      )
-                                        .locale("id")
-                                        .format("LL")}, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`}
-                                </Label>
-                              </div>
-                            );
-                          }
-                          if (doc.log_name === "Updated") {
-                            return (
-                              <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                  {doc.causer.name} <strong>mengubah</strong>{" "}
-                                  informasi profil perusahaan
-                                </p>
-                                <Label>
-                                  {tanggalan < 1
-                                    ? `Hari ini, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`
-                                    : `${moment(doc.created_at)
-                                        .locale("id")
-                                        .format("dddd")} ${moment(
-                                        doc.created_at
-                                      )
-                                        .locale("id")
-                                        .format("LL")}, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`}
-                                </Label>
-                              </div>
-                            );
-                          }
-                        } else if (type[1] === "Bank") {
-                          if (doc.log_name === "Created") {
-                            return (
-                              <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                  {doc.causer.name} <strong>menambahkan</strong>{" "}
-                                  akun <strong>{doc.subjectable.name}</strong>
-                                </p>
-                                <Label>
-                                  {tanggalan < 1
-                                    ? `Hari ini, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`
-                                    : `${moment(doc.created_at)
-                                        .locale("id")
-                                        .format("dddd")} ${moment(
-                                        doc.created_at
-                                      )
-                                        .locale("id")
-                                        .format("LL")}, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`}
-                                </Label>
-                              </div>
-                            );
-                          } else if (doc.log_name === "Updated") {
-                            return (
-                              <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                  {doc.causer.name} <strong>mengubah</strong>{" "}
-                                  informasi akun{" "}
-                                  <strong>{doc.subjectable.name}</strong>
-                                </p>
-                                <Label>
-                                  {tanggalan < 1
-                                    ? `Hari ini, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`
-                                    : `${moment(doc.created_at)
-                                        .locale("id")
-                                        .format("dddd")} ${moment(
-                                        doc.created_at
-                                      )
-                                        .locale("id")
-                                        .format("LL")}, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`}
-                                </Label>
-                              </div>
-                            );
-                          } else if (doc.log_name === "Deleted") {
-                            return (
-                              <div className="flex flex-col mb-5">
-                                <p className="mb-0">
-                                  {doc.causer.name} <strong>menghapus</strong>{" "}
-                                  akun <strong>{doc.subjectable.name}</strong>
-                                </p>
-                                <Label>
-                                  {tanggalan < 1
-                                    ? `Hari ini, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`
-                                    : `${moment(doc.created_at)
-                                        .locale("id")
-                                        .format("dddd")} ${moment(
-                                        doc.created_at
-                                      )
-                                        .locale("id")
-                                        .format("LL")}, ${moment(doc.created_at)
-                                        .locale("id")
-                                        .format(`LT`)}`}
-                                </Label>
-                              </div>
-                            );
-                          }
-                        }
-                      })}
-                    </InfiniteScroll>
-                  )}
-                </div>
-              </div>
+              <ActivityCompany
+                praloadingedit={praloadingedit}
+                logs={logs}
+                fetchDataMoreLogs={fetchDataMoreLogs}
+                hasmore={hasmore}
+              />
             </div>
           )}
         </div>

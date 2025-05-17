@@ -58,8 +58,10 @@ import {
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard-management.module.css";
+import ManageTask from "../../../components/screen/task/managetask";
 import TaskAdminTable from "../../../components/screen/task/taskadmintable";
 import TaskDeadline from "../../../components/screen/task/taskdeadline";
+import TaskStaff from "../../../components/screen/task/taskstaff";
 import TaskStatus from "../../../components/screen/task/taskstatus";
 import TaskType from "../../../components/screen/task/tasktype";
 import {
@@ -903,164 +905,19 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               initProps={initProps}
             />
             {/* STAFF TASK */}
-            <div className="md:col-span-5 lg:col-span-3 flex flex-col shadow-md rounded-md p-5 bg-white">
-              <div className="flex items-center justify-between mb-4">
-                <H1>Staff</H1>
-                <div className="flex items-center">
-                  <div
-                    className=" cursor-pointer"
-                    onClick={() => {
-                      if (!isAllowedToGetTaskStaffList) {
-                        permissionWarningNotification(
-                          "Melihat",
-                          "Daftar Staff"
-                        );
-                        return;
-                      }
-
-                      setviewdetailstaff(true);
-                    }}
-                  >
-                    <Label color="green" cursor="pointer">
-                      Lihat Semua
-                    </Label>
-                  </div>
-                </div>
-              </div>
-              {loadingscdata ? (
-                <>
-                  <Spin />
-                </>
-              ) : (
-                <>
-                  <div className="flex justify-center mb-4 h-40">
-                    <Progress
-                      type="dashboard"
-                      percent={scdata.percentage}
-                      strokeColor={{
-                        from: `#65976a`,
-                        to: `#35763B`,
-                      }}
-                      strokeWidth={8}
-                      width={170}
-                      format={(percent) => (
-                        <div className=" flex flex-col items-center">
-                          <div>
-                            <p className=" mb-0 font-bold text-3xl">
-                              {percent}%
-                            </p>
-                          </div>
-                          {/* <div>
-                                                                <p className=' mb-0 text-xs text-gray-500'>
-                                                                    Persentase staff tidak memiliki task
-                                                                </p>
-                                                            </div> */}
-                        </div>
-                      )}
-                    />
-                  </div>
-                  <div className=" mb-4 flex flex-col items-center">
-                    <div className=" flex items-center">
-                      <div className=" mb-1 mr-1">
-                        <UserIconSvg />
-                      </div>
-                      <div>
-                        <H2>
-                          {scdata.total_staff_without_task} /{" "}
-                          {scdata.total_staff}
-                        </H2>
-                      </div>
-                    </div>
-                    <div>
-                      <Label>Staff tidak memiliki task</Label>
-                    </div>
-                  </div>
-                  <div className="flex flex-col">
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex">
-                        <Text>Total Staff</Text>
-                      </div>
-                      <div className="flex">
-                        <H2>{scdata.total_staff}</H2>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex">
-                        <Text>Staff tidak memiliki task</Text>
-                      </div>
-                      <div className="flex">
-                        <H2>{scdata.total_staff_without_task}</H2>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
+            <TaskStaff
+              isAllowedToGetTaskStaffList={isAllowedToGetTaskStaffList}
+              setviewdetailstaff={setviewdetailstaff}
+              loadingscdata={loadingscdata}
+              scdata={scdata}
+            />
             {/* KELOLA TASK */}
-            <div className="md:col-span-10 lg:col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 ">
-              <div className="flex items-center justify-between mb-4">
-                <H1>Kelola Task</H1>
-              </div>
-              <div className="flex flex-col justify-center h-full">
-                <div
-                  className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
-                  onClick={() => {
-                    if (!canAddNewTask) {
-                      permissionWarningNotification("Menambahkan", "Task Baru");
-                      return;
-                    }
-
-                    setdrawertaskcreate(true);
-                  }}
-                >
-                  <div className="flex p-1 bg-primary10 rounded mr-3">
-                    <ClipboardcheckIconSvg size={35} color={`#35763B`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <H2>Tambah Task</H2>
-                    <Label>
-                      Error, PM, Instalasi, Perbaikan, Upgrade Sistem, dll.{" "}
-                    </Label>
-                  </div>
-                </div>
-                <div
-                  className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
-                  onClick={() => {
-                    if (!canAddNewTaskType) {
-                      permissionWarningNotification(
-                        "Menambahkan",
-                        "Tipe Task Baru"
-                      );
-                      return;
-                    }
-
-                    setdrawertasktypecreate(true);
-                  }}
-                >
-                  <div className="flex p-1 bg-primary10 rounded mr-3">
-                    <ListcheckIconSvg size={35} color={`#35763B`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <H2>Tambah Tipe Task</H2>
-                    <Label>Tambah tipe task baru</Label>
-                  </div>
-                </div>
-                <div
-                  className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
-                  onClick={() => {
-                    rt.push(`/tasks/tasktypes`);
-                  }}
-                >
-                  <div className="flex p-1 bg-primary10 rounded mr-3">
-                    <EditIconSvg size={35} color={`#35763B`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <H2>Kelola Tipe Task</H2>
-                    <Label>Hapus, ubah, lihat daftar tipe task</Label>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ManageTask
+              canAddNewTask={canAddNewTask}
+              setdrawertaskcreate={setdrawertaskcreate}
+              setdrawertasktypecreate={setdrawertasktypecreate}
+              canAddNewTaskType={canAddNewTaskType}
+            />
             {/* STATUS TASK */}
             <TaskStatus
               isAllowedToGetStatusTaskList={isAllowedToGetStatusTaskList}
