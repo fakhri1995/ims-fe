@@ -191,11 +191,6 @@ const Product = ({ initProps, dataProfile, sidemenu }) => {
       .then((res2) => {
         if (res2.success) {
           setDataProductAll(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
         }
       })
       .catch((err) => {
@@ -257,26 +252,19 @@ const Product = ({ initProps, dataProfile, sidemenu }) => {
       st={st}
     >
       <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">
-        <div className=" col-span-1 md:col-span-4">
-          <Sticky containerSelectorFocus="#formAgentsWrapper">
-            <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-              <h1 className="font-semibold text-base w-auto pt-2">Product</h1>
-              {
-                // [176].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                <div className="flex space-x-2">
-                  <Link href="/admin/product/create" legacyBehavior>
-                    <Button
-                      type="primary"
-                      size="large"
-                      // disabled={!isAllowedToAddRole}
-                    >
-                      Tambah
-                    </Button>
-                  </Link>
-                </div>
-              }
-            </div>
-          </Sticky>
+        <div className="col-span-5 border-b border-opacity-30 border-gray-400 flex items-center justify-between px-0 py-4 md:p-4 mb-5">
+          <h1 className="font-bold">Product</h1>
+          <div className="flex space-x-2">
+            <Link href="/admin/product/create" legacyBehavior>
+              <Button
+                type="primary"
+                size="large"
+                // disabled={!isAllowedToAddRole}
+              >
+                Tambah
+              </Button>
+            </Link>
+          </div>
         </div>
         <div className="col-span-5 p-0 md:p-5 flex flex-col">
           <AccessControl hasPermission={MESSAGES_GET}>
