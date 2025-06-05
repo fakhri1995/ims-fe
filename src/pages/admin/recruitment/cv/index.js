@@ -1,5 +1,12 @@
 import { Button, notification } from "antd";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -7,16 +14,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  RESUME_ASSESSMENT_LIST,
-  RESUME_ASSESSMENT_UPDATE,
-  RESUME_DELETE,
-  RESUME_GET,
-  RESUME_SECTION_ADD,
-  RESUME_SECTION_DELETE,
-  RESUME_SKILL_LISTS,
-  RESUME_UPDATE,
-} from "lib/features";
+import { RECRUITMENTS_GET } from "lib/features";
 
 import EducationInfoCard from "../../../../components/cards/resume/educationinfo/EducationInfoCard";
 import EvaluationCard from "../../../../components/cards/resume/evaluation/EvaluationCard";
@@ -61,19 +59,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     return null;
   }
 
-  const isAllowedToGetCandidateDetail = hasPermission(RESUME_GET);
-  const isAllowedToUpdateCandidate = hasPermission(RESUME_UPDATE);
-  const isAllowedToDeleteCandidate = hasPermission(RESUME_DELETE);
-
-  const isAllowedToAddSection = hasPermission(RESUME_SECTION_ADD);
-  const isAllowedToDeleteSection = hasPermission(RESUME_SECTION_DELETE);
-
-  const isAllowedToUpdateResumeAssessment = hasPermission(
-    RESUME_ASSESSMENT_UPDATE
-  );
-
-  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
-  const isAllowedToGetSkillLists = hasPermission(RESUME_SKILL_LISTS);
+  const isAllowedToGetRecruitments = hasPermission(RECRUITMENTS_GET);
 
   //INIT
   const rt = useRouter();
@@ -92,6 +78,12 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
 
   pathTitleArr[pathTitleArr.length - 1] = "Detail CV";
   const [idChoose, setIdChoose] = useState(null);
+  const [dataChoose, setDataChoose] = useState({
+    id: null,
+    name: null,
+    cv_path: null,
+    skill_set: null,
+  });
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [formEdit, setFormEdit] = useState({
@@ -145,9 +137,105 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       skills: ["Embedded Systems", "C", "Python", "MATLAB"],
     },
   ];
+  const [refresh, setRefresh] = useState(-1);
+  // table data
+  const [loadingRecruitments, setLoadingRecruitments] = useState(true);
+  const [dataRecruitments, setDataRecruitments] = useState([]);
+  const [dataRawRecruitments, setDataRawRecruitments] = useState({
+    current_page: "",
+    data: [],
+    first_page_url: "",
+    from: null,
+    last_page: null,
+    last_page_url: "",
+    next_page_url: "",
+    path: "",
+    per_page: null,
+    prev_page_url: null,
+    to: null,
+    total: null,
+  });
 
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 5),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+  });
+
+  useEffect(() => {
+    if (!isAllowedToGetRecruitments) {
+      permissionWarningNotification("Mendapatkan", "Daftar Recruitment");
+      setLoadingRecruitments(false);
+      return;
+    }
+
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
+    const fetchData = async () => {
+      setLoadingRecruitments(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getPendingRecruitmentsAI${payload}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          // console.log("get api ai bro ", res2);
+          if (res2.success) {
+            setDataRawRecruitments(res2.data);
+            setDataRecruitments(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+          setLoadingRecruitments(false);
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+          setLoadingRecruitments(false);
+        });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
+  }, [
+    isAllowedToGetRecruitments,
+    refresh,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+  ]);
+
+  const onChooseData = (doc) => {
+    let skillset = null;
+    let path = null;
+    if (doc.lampiran.length > 0) {
+      path = "https://cdn.mig.id/" + doc.lampiran[0].isi_lampiran;
+    }
+    if (doc.resume) {
+      skillset = doc.resume?.skills;
+    }
+    setDataChoose({
+      id: doc.id,
+      name: doc.name,
+      cv_path: path,
+      skill_set: skillset,
+    });
+  };
   function onDocumentLoadSuccess({ numPages }) {
-    console.log("numpage  ", numPages);
     setNumPages(numPages);
   }
 
@@ -181,57 +269,102 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       <div className="grid grid-cols-1">
         <div className={"flex justify-between"}>
           <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>
-            Need to Review (6)
+            Need to Review ({dataRawRecruitments.total ?? "0"})
           </p>
           <div className={"p-1.5 flex gap-1.5 "}>
-            <LeftIconSvg size={16} color={"#E6E6E6"} />
+            {dataRawRecruitments?.from == 1 ? (
+              <LeftIconSvg size={16} color={"#E6E6E6"} />
+            ) : (
+              <div
+                className={"hover:cursor-pointer"}
+                onClick={() =>
+                  setQueryParams({
+                    ...queryParams,
+                    page: dataRawRecruitments?.current_page - 1,
+                  })
+                }
+              >
+                <LeftIconSvg size={16} color={"#35763B"} />
+              </div>
+            )}
             <p className={"text-[#808080] text-xs leading-5 font-medium"}>
-              1 of 5
+              {dataRawRecruitments?.from} of {dataRawRecruitments?.to}
             </p>
-            <RightIconSvg size={16} color={"#35763B"} />
+            {dataRawRecruitments?.current_page ==
+            dataRawRecruitments?.last_page ? (
+              <RightIconSvg size={16} color={"#E6E6E6"} />
+            ) : (
+              <div
+                className={"hover:cursor-pointer"}
+                onClick={() =>
+                  setQueryParams({
+                    ...queryParams,
+                    page: dataRawRecruitments?.from + 1,
+                  })
+                }
+              >
+                <RightIconSvg size={16} color={"#35763B"} />
+              </div>
+            )}
           </div>
         </div>
         <div className={"mt-6 flex gap-[10px]"}>
-          {dataExample.map((doc, idx) => (
+          {dataRecruitments?.map((doc, idx) => (
             <div
-              onClick={() => setIdChoose(doc.id)}
+              onClick={() => onChooseData(doc)}
               className={`w-1/5 px-3 py-2.5 rounded-[5px] ${
-                doc.id == idChoose ? "bg-primary100" : "bg-white"
+                doc.id == dataChoose?.id ? "bg-primary100" : "bg-white"
               } border-1.5 ${
-                doc.id == idChoose ? "border-primary100" : "border-[#E6E6E6]"
+                doc.id == dataChoose?.id
+                  ? "border-primary100"
+                  : "border-[#E6E6E6]"
               } hover:cursor-pointer`}
             >
               <div className={"flex flex-col gap-2"}>
                 <p
                   className={`${
-                    doc.id == idChoose ? "text-white" : "text-mono30"
+                    doc.id == dataChoose?.id ? "text-white" : "text-mono30"
                   } text-sm leading-6 font-bold`}
                 >
-                  {doc.nama}
+                  {doc.name}
                 </p>
                 <div className={"flex flex-col gap-1"}>
                   <div className={"flex gap-1 items-start"}>
                     <StarFillIconSvg color={"#E9C600"} />
                     <p className={"text-[#E9C600] text-[10px] font-medium"}>
-                      {doc.jurusan} {doc.kampus} {doc.tahun_lulus}
+                      {doc?.university}
                     </p>
                   </div>
                   <div className={"flex gap-1 items-start"}>
                     <RocketIconSvg
-                      color={doc.id == idChoose ? "white" : "#4D4D4D"}
+                      color={doc.id == dataChoose?.id ? "white" : "#4D4D4D"}
                     />
-                    <p
-                      className={`${
-                        doc.id == idChoose ? "text-white" : "text-mono30"
-                      } text-[10px] font-medium`}
-                    >
-                      {doc.skills.map((skill, index) => (
-                        <span key={index}>
-                          {skill}
-                          {index < doc.skills.length - 1 && ", "}
-                        </span>
-                      ))}
-                    </p>
+                    {doc?.resume?.skills ? (
+                      <p
+                        className={`${
+                          doc.id == dataChoose?.id
+                            ? "text-white"
+                            : "text-mono30"
+                        } text-[10px] font-medium`}
+                      >
+                        {doc?.resume?.skills.map((skill, index) => (
+                          <span key={index}>
+                            {skill.name}
+                            {index < doc?.resume?.skills.length - 1 && ", "}
+                          </span>
+                        ))}
+                      </p>
+                    ) : (
+                      <p
+                        className={`${
+                          doc.id == dataChoose?.id
+                            ? "text-white"
+                            : "text-mono30"
+                        } text-[10px] font-medium`}
+                      >
+                        -
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -240,37 +373,44 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
         </div>
         <div className={"mt-6"}>
           <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>
-            Lulu Agustin
+            {dataChoose?.name}
           </p>
         </div>
         <div className={"mt-2 flex gap-4"}>
           <div
-            className={
-              "border border-[#E6E6E6] rounded-[10px] bg-white max-w-2/5 p-4"
-            }
+            className={`border border-[#E6E6E6] rounded-[10px] bg-white ${
+              dataChoose?.cv_path ? "max-w-2/5" : "w-3/5"
+            } p-4`}
           >
-            <Document
-              re
-              file={{
-                url: "https://cdn.mig.id/staging/EmployeeContract/CV-Frontend-Developer-Yasmin-(1)_1687169077285.pdf",
-              }}
-              onLoadError={(error) => console.log("Inside Error", error)}
-              onLoadSuccess={onLoadSuccess}
-            >
-              <Page
-                pageNumber={pageNumber}
-                renderAnnotationLayer={false}
-                renderTextLayer={false}
-              />
-            </Document>
-            <div className={"flex justify-center gap-2"}>
-              <Button onClick={goToPrevPage} disabled={pageNumber === 1}>
-                Previous
-              </Button>
-              <Button onClick={goToNextPage} disabled={pageNumber === numPages}>
-                Next
-              </Button>
-            </div>
+            {dataChoose?.cv_path && (
+              <Document
+                re
+                file={{
+                  url: dataChoose?.cv_path,
+                }}
+                onLoadError={(error) => console.log("Inside Error", error)}
+                onLoadSuccess={onLoadSuccess}
+              >
+                <Page
+                  pageNumber={pageNumber}
+                  renderAnnotationLayer={false}
+                  renderTextLayer={false}
+                />
+              </Document>
+            )}
+            {dataChoose?.cv_path && (
+              <div className={"flex justify-center gap-2"}>
+                <Button onClick={goToPrevPage} disabled={pageNumber === 1}>
+                  Previous
+                </Button>
+                <Button
+                  onClick={goToNextPage}
+                  disabled={pageNumber === numPages}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
           </div>
           <div className={"flex flex-col w-3/5"}>
             <PersonalInfoCard
@@ -280,7 +420,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             />
             <ExperienceInfoCard />
             <EducationInfoCard />
-            <SkillCard />
+            <SkillCard skillSet={dataChoose?.skill_set} />
             <LanguageCard />
             <ToolsCard />
             <EvaluationCard />
