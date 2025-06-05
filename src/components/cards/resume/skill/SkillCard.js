@@ -10,7 +10,7 @@ import { EditCvIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const SkillCard = ({}) => {
+const SkillCard = ({ skillSet }) => {
   const [showMore, setShowMore] = useState(true);
   const [dataSkills, setDataSkills] = useState([
     { id: 1, skill: "Python" },
@@ -47,17 +47,17 @@ const SkillCard = ({}) => {
         <EditCvIconSvg />
       </div>
       {showMore && (
-        <div className={"flex gap-1 mt-4"}>
-          {dataSkills.map((skill, index) => (
+        <div className={"flex flex-wrap gap-1 mt-4"}>
+          {skillSet?.map((skill, index) => (
             <div
               className={
-                "rounded-[5px] glex gap-1 items-center h-[26px] bg-[#35763B1A] px-2"
+                "rounded-[5px] flex items-center px-2 py-1   bg-[#35763B1A]"
               }
             >
               <p
                 className={"text-primary100 text-[10px] leading-6 font-normal"}
               >
-                {skill.skill}
+                {skill.name}
               </p>
             </div>
           ))}
