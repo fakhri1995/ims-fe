@@ -187,7 +187,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       )
         .then((res) => res.json())
         .then((res2) => {
-          // console.log("get api ai bro ", res2);
+          console.log("get api ai bro ", res2);
           if (res2.success) {
             setDataRawRecruitments(res2.data);
             setDataRecruitments(res2.data.data);
@@ -332,7 +332,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
                   <div className={"flex gap-1 items-start"}>
                     <StarFillIconSvg color={"#E9C600"} />
                     <p className={"text-[#E9C600] text-[10px] font-medium"}>
-                      {doc?.university}
+                      {doc?.resume?.last_education?.university}
                     </p>
                   </div>
                   <div className={"flex gap-1 items-start"}>
