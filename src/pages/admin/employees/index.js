@@ -878,7 +878,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div>
             <TableCustomEmployeeList
               rt={rt}
-              dataSource={dataEmployees}
+              dataSource={dataEmployees?.data}
               columns={columnEmployee}
               loading={loadingEmployees}
               total={dataRawEmployees?.total}
