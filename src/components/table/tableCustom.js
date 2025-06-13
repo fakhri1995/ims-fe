@@ -1692,12 +1692,12 @@ const TableCustomEmployeeList = ({
       onRow={(record, rowIndex) => {
         return {
           onMouseOver: () => {
-            setrowstate(record.id);
+            setrowstate(record?.id);
           },
           onClick: () => {
             record?.is_posted === 1
-              ? rt.push(`/admin/employees/${record.id}`)
-              : rt.push(`/admin/employees/create?id=${record.id}`);
+              ? rt.push(`/admin/employees/${record?.id}`)
+              : rt.push(`/admin/employees/create?id=${record?.id}`);
           },
         };
       }}
