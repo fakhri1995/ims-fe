@@ -10,7 +10,7 @@ import { EditCvIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit }) => {
+const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
   const [showMore, setShowMore] = useState(true);
 
   useEffect(() => {
@@ -55,26 +55,22 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit }) => {
       {showMore && (
         <div className={"flex flex-col gap-2 mt-4"}>
           <div className={"flex gap-2"}>
-            <InformationColumn
-              label={"Name"}
-              value={"Lulu Agustin"}
-              bold={true}
-            />
+            <InformationColumn label={"Name"} value={data?.name} bold={true} />
             <InformationColumn
               label={"Email"}
-              value={"lulu@gmail.com"}
+              value={data?.email}
               bold={false}
             />
           </div>
           <div className={"flex gap-2"}>
             <InformationColumn
               label={"Phone"}
-              value={"+62 858 2215 2334"}
+              value={data?.phone}
               bold={false}
             />
             <InformationColumn
               label={"Location"}
-              value={"Indonesia"}
+              value={data?.location}
               bold={false}
             />
           </div>

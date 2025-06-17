@@ -10,7 +10,7 @@ import { EditCvIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const EducationInfoCard = ({}) => {
+const EducationInfoCard = ({ data }) => {
   const [showMore, setShowMore] = useState(true);
   return (
     <div
@@ -39,7 +39,7 @@ const EducationInfoCard = ({}) => {
           <div className={"flex gap-2"}>
             <InformationColumn
               label={"School"}
-              value={"Altera Boyz"}
+              value={data?.name}
               bold={false}
             />
             <InformationColumn
@@ -51,10 +51,14 @@ const EducationInfoCard = ({}) => {
           <div className={"flex gap-2"}>
             <InformationColumn
               label={"Field"}
-              value={"Computer Science"}
+              value={data?.field}
               bold={false}
             />
-            <InformationColumn label={"GPA"} value={"3.75"} bold={false} />
+            <InformationColumn
+              label={"GPA"}
+              value={data?.gpa ? data?.gpa : "-"}
+              bold={false}
+            />
           </div>
           <InformationColumn
             label={"Location"}
