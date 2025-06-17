@@ -84,6 +84,23 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     cv_path: null,
     skill_set: null,
   });
+  const [personalInfo, setDataPersonalInfo] = useState({
+    name: null,
+    email: null,
+    location: null,
+    phone: null,
+    linkedin: null,
+    summary: null,
+  });
+  const [educationInfo, setDataEducationInfo] = useState({
+    name: null,
+    degree: null,
+    field: null,
+    gpa: null,
+    location: null,
+    honors: null,
+    relevant_coursework: null,
+  });
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [formEdit, setFormEdit] = useState({
@@ -187,10 +204,14 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       )
         .then((res) => res.json())
         .then((res2) => {
-          console.log("get api ai bro ", res2);
+          // console.log("get api ai bro ", res2);
           if (res2.success) {
             setDataRawRecruitments(res2.data);
             setDataRecruitments(res2.data.data);
+            if (res2.data.data.length > 0) {
+              let doc = res2.data.data[0];
+              onChooseData(doc);
+            }
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -227,6 +248,21 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     }
     if (doc.resume) {
       skillset = doc.resume?.skills;
+      setDataPersonalInfo({
+        ...personalInfo,
+        name: doc.resume?.name,
+        email: doc.resume?.email,
+        phone: doc.resume?.telp,
+        location: doc.resume?.city,
+      });
+      if (doc.resume.last_education) {
+        setDataEducationInfo({
+          ...educationInfo,
+          name: doc.resume.last_education.university,
+          field: doc.resume.last_education.major,
+          gpa: doc.resume.last_education.gpa,
+        });
+      }
     }
     setDataChoose({
       id: doc.id,
@@ -417,9 +453,10 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
               formEdit={formEdit}
               setFormEdit={setFormEdit}
               statusEdit={formEdit.personal}
+              data={personalInfo}
             />
             <ExperienceInfoCard />
-            <EducationInfoCard />
+            <EducationInfoCard data={educationInfo} />
             <SkillCard skillSet={dataChoose?.skill_set} />
             <LanguageCard />
             <ToolsCard />

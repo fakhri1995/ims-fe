@@ -5,7 +5,12 @@ import { Notification } from "components/features/Notification";
 
 import { generateStaticAssetUrl } from "lib/helper";
 
-import { LogoutIconSvg, RightIconSvg, UsercircleIconSvg } from "./icon";
+import {
+  LogoutIconSvg,
+  RightIconSvg,
+  SettingsIconSvg,
+  UsercircleIconSvg,
+} from "./icon";
 
 function LayoutMenuHeader({
   dataProfile,
@@ -55,6 +60,16 @@ function LayoutMenuHeader({
           </div>
         </button>
         <div className="space-y-2">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => rt.push("/admin/change-password")}
+            className="flex flex-row items-center space-x-2 hover:opacity-70 
+            py-2 px-3 bg-danger bg-opacity-5 hover:bg-opacity-20 rounded-md"
+          >
+            <SettingsIconSvg size={20} color={"#BF4A40"} />
+            <p className="text-danger font-medium">Change Password</p>
+          </a>
           <a
             target="_blank"
             rel="noopener noreferrer"
