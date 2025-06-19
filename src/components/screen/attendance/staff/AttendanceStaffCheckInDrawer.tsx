@@ -156,45 +156,45 @@ export const AttendanceStaffCheckInDrawer: FC<
       evidence_image?: string;
       subcompany: number;
     }) => {
-      console.log("upload evidence picture ", uploadedEvidencePicture);
-      // toggleCheckInCheckOut(
-      //   {
-      //     evidence: uploadedEvidencePicture,
-      //     geo_loc: locationDisplayName || "",
-      //     lat: position?.coords.latitude.toString(),
-      //     long: position?.coords.longitude.toString(),
-      //     wfo: value?.work_from === "WFO" ? 1 : 0,
-      //     company_id: value?.subcompany,
-      //   },
-      //   {
-      //     onSuccess: (response) => {
-      //       if (response.data.success) {
-      //         setUploadedEvidencePicture(null);
-      //         setPreviewEvidencePictureData("");
-      //         setFileList([]);
+      // console.log("upload evidence picture ", uploadedEvidencePicture);
+      toggleCheckInCheckOut(
+        {
+          evidence: uploadedEvidencePicture,
+          geo_loc: locationDisplayName || "",
+          lat: position?.coords.latitude.toString(),
+          long: position?.coords.longitude.toString(),
+          wfo: value?.work_from === "WFO" ? 1 : 0,
+          company_id: value?.subcompany,
+        },
+        {
+          onSuccess: (response) => {
+            if (response.data.success) {
+              setUploadedEvidencePicture(null);
+              setPreviewEvidencePictureData("");
+              setFileList([]);
 
-      //         form.resetFields();
-      //         onClose();
+              form.resetFields();
+              onClose();
 
-      //         notificationSuccess({ message: response.data.message });
-      //       } else {
-      //         notificationWarning({
-      //           message: response.data.message,
-      //           duration: 2,
-      //         });
-      //       }
-      //     },
-      //     onError: (error: AxiosError<any, any>) => {
-      //       const errorMessage = error.response.data.message;
-      //       const actualErrorMessage =
-      //         "errorInfo" in errorMessage
-      //           ? errorMessage["errorInfo"].pop()
-      //           : errorMessage;
+              notificationSuccess({ message: response.data.message });
+            } else {
+              notificationWarning({
+                message: response.data.message,
+                duration: 2,
+              });
+            }
+          },
+          onError: (error: AxiosError<any, any>) => {
+            const errorMessage = error.response.data.message;
+            const actualErrorMessage =
+              "errorInfo" in errorMessage
+                ? errorMessage["errorInfo"].pop()
+                : errorMessage;
 
-      //       notificationError({ message: actualErrorMessage });
-      //     },
-      //   }
-      // );
+            notificationError({ message: actualErrorMessage });
+          },
+        }
+      );
     },
     [uploadedEvidencePicture]
   );
