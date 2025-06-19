@@ -1629,7 +1629,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               <ListSearchIconSvg size={24} />
             </div>
           </div> */}
-          {/* <div className={"lg:col-span-3 flex justify-center"}>
+          <div className={"lg:col-span-3 flex justify-center"}>
             <div
               className={
                 "bg-primary100 rounded-md flex gap-3 self-center p-1 my-4"
@@ -1664,7 +1664,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </p>
               </div>
             </div>
-          </div> */}
+          </div>
 
           {/* Table Kandidat */}
           {tabActive == "done" ? (

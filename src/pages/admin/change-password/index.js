@@ -43,9 +43,14 @@ function ChangePassword({ initProps, dataProfile, sidemenu, userid }) {
   const [praloading, setpraloading] = useState(false);
   //handlePasswordUbahButton
   const handleUbahPassword = () => {
-    if (datapass.new_password !== konfirmpass) {
+    if (datapass.new_password == datapass.old_password) {
       notification["error"]({
-        message: "Konfirmasi password tidak sama dengan password",
+        message: "Password baru tidak boleh sama dengan password lama",
+        duration: 2,
+      });
+    } else if (datapass.new_password !== konfirmpass) {
+      notification["error"]({
+        message: "Konfirmasi password tidak sama dengan password baru",
         duration: 2,
       });
     } else {
@@ -144,10 +149,10 @@ function ChangePassword({ initProps, dataProfile, sidemenu, userid }) {
                       required: true,
                       message: "Password Lama wajib diisi",
                     },
-                    {
-                      pattern: /([A-z0-9]{8})/,
-                      message: "Password minimal 8 karakter",
-                    },
+                    // {
+                    //   pattern: /([A-z0-9]{8})/,
+                    //   message: "Password minimal 8 karakter",
+                    // },
                   ]}
                 >
                   <Input.Password
