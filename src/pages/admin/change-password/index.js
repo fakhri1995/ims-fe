@@ -32,6 +32,7 @@ function ChangePassword({ initProps, dataProfile, sidemenu, userid }) {
   //data payload
   const [datapass, setdatapass] = useState({
     id: Number(userid),
+    old_password: "",
     new_password: "",
   });
   //loading ubah password button
@@ -135,6 +136,30 @@ function ChangePassword({ initProps, dataProfile, sidemenu, userid }) {
                 onFinish={handleUbahPassword}
                 form={instanceForm}
               >
+                <Form.Item
+                  label="Password Lama"
+                  name="old_password"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Password Lama wajib diisi",
+                    },
+                    {
+                      pattern: /([A-z0-9]{8})/,
+                      message: "Password minimal 8 karakter",
+                    },
+                  ]}
+                >
+                  <Input.Password
+                    name={`old_password`}
+                    onChange={(e) => {
+                      setdatapass({
+                        ...datapass,
+                        old_password: e.target.value,
+                      });
+                    }}
+                  />
+                </Form.Item>
                 <Form.Item
                   label="Password Baru"
                   name="new_password"

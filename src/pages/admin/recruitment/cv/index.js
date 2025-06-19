@@ -241,6 +241,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
   ]);
 
   const onChooseData = (doc) => {
+    console.log("on choose ", doc);
     let skillset = null;
     let path = null;
     if (doc.lampiran.length > 0) {
@@ -263,6 +264,20 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
           gpa: doc.resume.last_education.gpa,
         });
       }
+    } else {
+      setDataPersonalInfo({
+        ...personalInfo,
+        name: null,
+        email: null,
+        phone: null,
+        location: null,
+      });
+      setDataEducationInfo({
+        ...educationInfo,
+        name: null,
+        field: null,
+        gpa: null,
+      });
     }
     setDataChoose({
       id: doc.id,
@@ -407,10 +422,17 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             </div>
           ))}
         </div>
-        <div className={"mt-6"}>
+        <div className={"mt-6 flex justify-between mb-2"}>
           <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>
             {dataChoose?.name}
           </p>
+          <div
+            className={
+              "hover:cursor-pointer btn btn-sm text-white font-semibold px-6 border bg-primary100 hover:bg-primary75 border-primary100 hover:border-primary75 focus:bg-primary100 focus:border-primary100 flex-nowrap w-full md:w-fit"
+            }
+          >
+            Validate
+          </div>
         </div>
         <div className={"mt-2 flex gap-4"}>
           <div
