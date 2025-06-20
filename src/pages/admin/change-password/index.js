@@ -74,7 +74,7 @@ function ChangePassword({ initProps, dataProfile, sidemenu, userid }) {
             handleLogout();
           } else if (!res2.success) {
             notification["error"]({
-              message: res2.message,
+              message: res2.data,
               duration: 3,
             });
           }
