@@ -22,7 +22,7 @@ const DrawerRoleCreate = ({
   // USESTATE
   const [dataRole, setDataRole] = useState({
     id: null,
-    name: "",
+    role: "",
     alias: "",
     client: "",
     recruitment_role_type_id: null,
@@ -33,7 +33,7 @@ const DrawerRoleCreate = ({
   // Validate input field
   useEffect(() => {
     if (
-      dataRole.name !== "" &&
+      dataRole.role !== "" &&
       dataRole.client !== "" &&
       dataRole.recruitment_role_type_id !== null
     ) {
@@ -54,7 +54,7 @@ const DrawerRoleCreate = ({
   const clearData = () => {
     setDataRole({
       id: null,
-      name: "",
+      role: "",
       alias: "",
       recruitment_role_type_id: null,
     });
@@ -127,7 +127,7 @@ const DrawerRoleCreate = ({
           >
             <Form.Item
               label="Role"
-              name={"name"}
+              name={"role"}
               rules={[
                 {
                   required: true,
@@ -138,8 +138,8 @@ const DrawerRoleCreate = ({
             >
               <div>
                 <Input
-                  value={dataRole.name}
-                  name={"name"}
+                  value={dataRole.role}
+                  name={"role"}
                   onChange={onChangeInput}
                 />
               </div>

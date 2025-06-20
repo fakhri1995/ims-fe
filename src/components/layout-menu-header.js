@@ -60,7 +60,7 @@ function LayoutMenuHeader({
           </div>
         </button>
         <div className="space-y-2">
-          {/* <a
+          <a
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => rt.push("/admin/change-password")}
@@ -69,7 +69,7 @@ function LayoutMenuHeader({
           >
             <SettingsIconSvg size={20} color={"#BF4A40"} />
             <p className="text-danger font-medium">Change Password</p>
-          </a> */}
+          </a>
           <a
             target="_blank"
             rel="noopener noreferrer"
