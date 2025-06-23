@@ -285,6 +285,16 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       cv_path: path,
       skill_set: skillset,
     });
+    setFormEdit({
+      ...formEdit,
+      personal: false,
+      experience: false,
+      education: false,
+      skill: false,
+      languages: false,
+      tools: false,
+      evaluation: false,
+    });
   };
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
