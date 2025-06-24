@@ -29,7 +29,7 @@ const DrawerRoleUpdate = ({
   // USESTATE
   const [dataRole, setDataRole] = useState({
     id: null,
-    role: "",
+    name: "",
     alias: "",
     client: "",
     recruitments_count: 0,
@@ -179,7 +179,7 @@ const DrawerRoleUpdate = ({
           >
             <Form.Item
               label="Role"
-              name={"role"}
+              name={"name"}
               rules={[
                 {
                   required: true,
@@ -190,8 +190,8 @@ const DrawerRoleUpdate = ({
             >
               <div>
                 <Input
-                  value={dataRole.role}
-                  name={"role"}
+                  value={dataRole.name}
+                  name={"name"}
                   onChange={onChangeInput}
                 />
               </div>

@@ -14,6 +14,14 @@ import InformationColumn from "../InformationColumn";
 const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
   const [showMore, setShowMore] = useState(true);
   const [instanceForm] = Form.useForm();
+  const [dataEdit, setDataEdit] = useState({
+    name: null,
+    email: null,
+    location: null,
+    phone: null,
+    linkedin: null,
+    summary: null,
+  });
   const { TextArea } = Input;
   useEffect(() => {
     if (statusEdit) {
@@ -21,6 +29,34 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
     } else {
     }
   }, [statusEdit]);
+
+  useEffect(() => {
+    if (formEdit?.personal) {
+      console.log("isi data yang akan diedit ", data);
+      setDataEdit({
+        ...dataEdit,
+        name: data?.name,
+        email: data?.email,
+        location: data?.location,
+        phone: data?.phone,
+        linkedin: data?.linkedin,
+        summary: data?.summary,
+      });
+      instanceForm.setFieldsValue({
+        name: data?.name,
+        email: data?.email,
+        location: data?.location,
+        phone: data?.phone,
+        linkedin: data?.linkedin,
+        summary: data?.summary,
+      });
+    } else {
+    }
+  }, [formEdit]);
+
+  const onFinish = (values) => {
+    console.log("Form submitted:", values);
+  };
 
   return (
     <div
@@ -59,16 +95,13 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
       {showMore &&
         (formEdit?.personal ? (
           <div className={"flex flex-col gap-2 mt-4"}>
-            <Form
-              layout="vertical"
-              form={instanceForm}
-              // onFinish={dataDefault?.id ? handleSubmitUpdate : handleSubmitAdd}
-            >
+            <Form layout="vertical" form={instanceForm} onFinish={onFinish}>
               <div className={"flex gap-2"}>
                 <div className={"flex flex-col gap-2 w-1/2"}>
                   <Form.Item
                     label="Name"
                     name={"name"}
+                    initialValue={dataEdit?.name}
                     className="col-span-2"
                     rules={[
                       {
@@ -77,7 +110,10 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                       },
                     ]}
                   >
-                    <Input placeholder="ex: Sick Leave" />
+                    <Input
+                      defaultValue={dataEdit?.name}
+                      placeholder="Input name"
+                    />
                   </Form.Item>
                 </div>
                 <div className={"flex flex-col gap-2 w-1/2"}>
@@ -92,7 +128,7 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                       },
                     ]}
                   >
-                    <Input placeholder="ex: Sick Leave" />
+                    <Input placeholder="Input email" />
                   </Form.Item>
                 </div>
               </div>
@@ -109,7 +145,7 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                       },
                     ]}
                   >
-                    <Input placeholder="ex: Sick Leave" />
+                    <Input placeholder="Input Phone" />
                   </Form.Item>
                 </div>
                 <div className={"flex flex-col gap-2 w-1/2"}>
@@ -124,7 +160,7 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                       },
                     ]}
                   >
-                    <Input placeholder="ex: Sick Leave" />
+                    <Input placeholder="Input location" />
                   </Form.Item>
                 </div>
               </div>
@@ -141,7 +177,7 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                       },
                     ]}
                   >
-                    <Input placeholder="ex: Sick Leave" />
+                    <Input placeholder="Input linkedIn" />
                   </Form.Item>
                 </div>
               </div>
@@ -158,28 +194,30 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                       },
                     ]}
                   >
-                    <TextArea rows={5} placeholder="ex: Sick Leave" />
+                    <TextArea rows={5} placeholder="Input Summary" />
                   </Form.Item>
                 </div>
               </div>
+              {formEdit?.personal && (
+                <div className={"flex justify-end"}>
+                  <Space>
+                    <Button
+                      onClick={() =>
+                        setFormEdit({
+                          ...formEdit,
+                          personal: false,
+                        })
+                      }
+                    >
+                      Cancel
+                    </Button>
+                    <Button htmlType="submit" type="primary">
+                      Save
+                    </Button>
+                  </Space>
+                </div>
+              )}
             </Form>
-            {formEdit?.personal && (
-              <div className={"flex justify-end"}>
-                <Space>
-                  <Button
-                    onClick={() =>
-                      setFormEdit({
-                        ...formEdit,
-                        personal: false,
-                      })
-                    }
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="primary">Save</Button>
-                </Space>
-              </div>
-            )}
           </div>
         ) : (
           <div className={"flex flex-col gap-2 mt-4"}>
