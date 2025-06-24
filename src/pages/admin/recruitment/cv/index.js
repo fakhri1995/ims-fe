@@ -492,7 +492,11 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             <SkillCard skillSet={dataChoose?.skill_set} />
             <LanguageCard />
             <ToolsCard />
-            <EvaluationCard />
+            <EvaluationCard
+              formEdit={formEdit}
+              setFormEdit={setFormEdit}
+              statusEdit={formEdit.evaluation}
+            />
           </div>
         </div>
       </div>
