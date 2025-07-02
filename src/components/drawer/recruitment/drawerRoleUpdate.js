@@ -41,7 +41,7 @@ const DrawerRoleUpdate = ({
   // USEEFFECT
   // Validate input field
   useEffect(() => {
-    if (dataRole.name !== "" && dataRole.recruitment_role_type_id !== null) {
+    if (dataRole.role !== "" && dataRole.recruitment_role_type_id !== null) {
       setDisabledUpdate(false);
     } else {
       setDisabledUpdate(true);
@@ -94,7 +94,7 @@ const DrawerRoleUpdate = ({
   const clearData = () => {
     setDataRole({
       id: null,
-      name: "",
+      role: "",
       alias: "",
       recruitment_role_type_id: null,
     });
@@ -179,7 +179,7 @@ const DrawerRoleUpdate = ({
           >
             <Form.Item
               label="Role"
-              name={"name"}
+              name={"role"}
               rules={[
                 {
                   required: true,
@@ -190,8 +190,8 @@ const DrawerRoleUpdate = ({
             >
               <div>
                 <Input
-                  value={dataRole.name}
-                  name={"name"}
+                  value={dataRole.role}
+                  name={"role"}
                   onChange={onChangeInput}
                 />
               </div>

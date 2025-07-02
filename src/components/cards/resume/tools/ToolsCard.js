@@ -1,3 +1,4 @@
+import { Button, Form, Input, Space } from "antd";
 import moment from "moment";
 import React from "react";
 import { useState } from "react";
@@ -10,8 +11,15 @@ import { EditCvIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const ToolsCard = ({}) => {
+const ToolsCard = ({ data, formEdit, statusEdit, setFormEdit }) => {
   const [showMore, setShowMore] = useState(true);
+  const [instanceForm] = Form.useForm();
+  const { TextArea } = Input;
+
+  const onFinish = (values) => {
+    console.log("Form submitted:", values);
+  };
+
   return (
     <div
       className={
@@ -24,50 +32,166 @@ const ToolsCard = ({}) => {
           className={"flex gap-1.5 items-center hover:cursor-pointer"}
         >
           <p className={"text-[#4D4D4D] text-[16px] leading-6 font-bold"}>
-            Tools (6/7)
+            Tools (3/7)
           </p>
           {showMore ? (
             <MdChevronDown className="w-[14px] h-[14px]" />
           ) : (
-            <MdChevronUp className="w-[14px] h-[14px] font-bold" />
+            <MdChevronUp className="w-[14px] h-[14px]" />
           )}
         </div>
-        <EditCvIconSvg />
+        {statusEdit == false && (
+          <div
+            className={"hover:cursor-pointer"}
+            onClick={() =>
+              setFormEdit({
+                ...formEdit,
+                tools: true,
+              })
+            }
+          >
+            <EditCvIconSvg />
+          </div>
+        )}
       </div>
-      {showMore && (
-        <div className={"flex flex-col gap-2 mt-4"}>
-          <div className={"flex gap-2"}>
+      {showMore &&
+        (statusEdit ? (
+          <div className={"flex flex-col gap-2 mt-4"}>
+            <Form layout="vertical" form={instanceForm} onFinish={onFinish}>
+              <div className={"flex gap-2"}>
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <Form.Item
+                    label="Tool Name"
+                    name={"toolname"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Tool Name is required",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Input Tool Name" />
+                  </Form.Item>
+                </div>
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <Form.Item
+                    label="Category"
+                    name={"category"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Category is required",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Input Category" />
+                  </Form.Item>
+                </div>
+              </div>
+              <div className={"flex flex-col gap-2 w-1/2"}>
+                <Form.Item
+                  label="Profiency"
+                  name={"proficiency"}
+                  className="col-span-2"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Proficiency is required",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Input Proficiency" />
+                </Form.Item>
+              </div>
+              <div className={"flex flex-col gap-2 w-1/2"}>
+                <Form.Item
+                  label="Details"
+                  name={"details"}
+                  className="col-span-2"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Details is required",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Input Details" />
+                </Form.Item>
+              </div>
+              <div className={"flex gap-2"}>
+                <div className={"w-full"}>
+                  <Form.Item
+                    label="Certification"
+                    name={"certification"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Certification is required",
+                      },
+                    ]}
+                  >
+                    <TextArea rows={5} placeholder="Input Certification" />
+                  </Form.Item>
+                </div>
+              </div>
+              {statusEdit && (
+                <div className={"flex justify-end"}>
+                  <Space>
+                    <Button
+                      onClick={() =>
+                        setFormEdit({
+                          ...formEdit,
+                          tools: false,
+                        })
+                      }
+                    >
+                      Cancel
+                    </Button>
+                    <Button htmlType="submit" type="primary">
+                      Save
+                    </Button>
+                  </Space>
+                </div>
+              )}
+            </Form>
+          </div>
+        ) : (
+          <div className={"flex flex-col gap-2 mt-4"}>
+            <div className={"flex gap-2"}>
+              <InformationColumn
+                label={"Tool Name"}
+                value={"Laravel"}
+                bold={false}
+              />
+              <InformationColumn
+                label={"Category"}
+                value={"Development"}
+                bold={false}
+              />
+            </div>
             <InformationColumn
-              label={"Tool Name"}
-              value={"Laravel"}
+              label={"Proficiency"}
+              full={true}
+              value={"Advanced"}
               bold={false}
             />
             <InformationColumn
-              label={"Category"}
-              value={"Development"}
+              label={"Details"}
+              full={true}
+              value={"Control System"}
+              bold={false}
+            />
+            <InformationColumn
+              label={"Certifications"}
+              full={true}
+              value={"Indonesia Laravel Volume 1 2025"}
               bold={false}
             />
           </div>
-          <InformationColumn
-            label={"Proficiency"}
-            full={true}
-            value={"Advanced"}
-            bold={false}
-          />
-          <InformationColumn
-            label={"Details"}
-            full={true}
-            value={"Control System"}
-            bold={false}
-          />
-          <InformationColumn
-            label={"Certifications"}
-            full={true}
-            value={"Indonesia Laravel Volume 1 2025"}
-            bold={false}
-          />
-        </div>
-      )}
+        ))}
     </div>
   );
 };
