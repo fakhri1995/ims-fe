@@ -92,6 +92,8 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     linkedin: null,
     summary: null,
   });
+  const [toolData, setToolData] = useState([]);
+  const [experienceData, setExperienceData] = useState([]);
   const [educationInfo, setDataEducationInfo] = useState({
     name: null,
     degree: null,
@@ -265,6 +267,16 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
           field: doc.resume.last_education.major,
           gpa: doc.resume.last_education.gpa,
         });
+      }
+      if (doc.resume.tools) {
+        setToolData(doc.resume.tools);
+      } else {
+        setToolData([]);
+      }
+      if (doc.resume.experiences) {
+        setExperienceData(doc.resume.experiences);
+      } else {
+        setExperienceData([]);
       }
     } else {
       setDataPersonalInfo({
@@ -491,7 +503,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
               statusEdit={formEdit.personal}
               data={personalInfo}
             />
-            <ExperienceInfoCard />
+            <ExperienceInfoCard data={experienceData} />
             <EducationInfoCard
               data={educationInfo}
               formEdit={formEdit}
@@ -501,7 +513,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             <SkillCard skillSet={dataChoose?.skill_set} />
             <LanguageCard />
             <ToolsCard
-              data={educationInfo}
+              data={toolData}
               formEdit={formEdit}
               setFormEdit={setFormEdit}
               statusEdit={formEdit.tools}

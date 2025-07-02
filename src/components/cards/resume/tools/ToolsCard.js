@@ -32,7 +32,7 @@ const ToolsCard = ({ data, formEdit, statusEdit, setFormEdit }) => {
           className={"flex gap-1.5 items-center hover:cursor-pointer"}
         >
           <p className={"text-[#4D4D4D] text-[16px] leading-6 font-bold"}>
-            Tools (3/7)
+            Tools (6/7)
           </p>
           {showMore ? (
             <MdChevronDown className="w-[14px] h-[14px]" />
@@ -159,37 +159,42 @@ const ToolsCard = ({ data, formEdit, statusEdit, setFormEdit }) => {
             </Form>
           </div>
         ) : (
-          <div className={"flex flex-col gap-2 mt-4"}>
-            <div className={"flex gap-2"}>
-              <InformationColumn
-                label={"Tool Name"}
-                value={"Laravel"}
-                bold={false}
-              />
-              <InformationColumn
-                label={"Category"}
-                value={"Development"}
-                bold={false}
-              />
-            </div>
-            <InformationColumn
-              label={"Proficiency"}
-              full={true}
-              value={"Advanced"}
-              bold={false}
-            />
-            <InformationColumn
-              label={"Details"}
-              full={true}
-              value={"Control System"}
-              bold={false}
-            />
-            <InformationColumn
-              label={"Certifications"}
-              full={true}
-              value={"Indonesia Laravel Volume 1 2025"}
-              bold={false}
-            />
+          <div>
+            {data.length > 0 &&
+              data.map((item, index) => (
+                <div className={"flex flex-col gap-2 mt-4"}>
+                  <div className={"flex gap-2"}>
+                    <InformationColumn
+                      label={"Tool Name"}
+                      value={item?.name ?? "-"}
+                      bold={false}
+                    />
+                    <InformationColumn
+                      label={"Category"}
+                      value={item?.category ?? "-"}
+                      bold={false}
+                    />
+                  </div>
+                  <InformationColumn
+                    label={"Proficiency"}
+                    full={true}
+                    value={item?.profiency ?? "-"}
+                    bold={false}
+                  />
+                  <InformationColumn
+                    label={"Details"}
+                    full={true}
+                    value={item?.details ?? "-"}
+                    bold={false}
+                  />
+                  <InformationColumn
+                    label={"Certifications"}
+                    full={true}
+                    value={item?.certifications ?? "-"}
+                    bold={false}
+                  />
+                </div>
+              ))}
           </div>
         ))}
     </div>
