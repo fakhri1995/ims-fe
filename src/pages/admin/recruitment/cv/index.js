@@ -255,6 +255,8 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
         email: doc.resume?.email,
         phone: doc.resume?.telp,
         location: doc.resume?.city,
+        linkedin: doc.resume?.linkedin,
+        summary: doc.resume?.summary,
       });
       if (doc.resume.last_education) {
         setDataEducationInfo({
@@ -271,6 +273,8 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
         email: null,
         phone: null,
         location: null,
+        linkedin: null,
+        summary: null,
       });
       setDataEducationInfo({
         ...educationInfo,
@@ -488,10 +492,20 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
               data={personalInfo}
             />
             <ExperienceInfoCard />
-            <EducationInfoCard data={educationInfo} />
+            <EducationInfoCard
+              data={educationInfo}
+              formEdit={formEdit}
+              setFormEdit={setFormEdit}
+              statusEdit={formEdit.education}
+            />
             <SkillCard skillSet={dataChoose?.skill_set} />
             <LanguageCard />
-            <ToolsCard />
+            <ToolsCard
+              data={educationInfo}
+              formEdit={formEdit}
+              setFormEdit={setFormEdit}
+              statusEdit={formEdit.tools}
+            />
             <EvaluationCard
               formEdit={formEdit}
               setFormEdit={setFormEdit}

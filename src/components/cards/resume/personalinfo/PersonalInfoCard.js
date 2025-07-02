@@ -248,15 +248,13 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
             <InformationColumn
               label={"LinkedIn"}
               full={true}
-              value={"linkedin.com/id/lulu-id/"}
+              value={"linkedin.com/" + data?.linkedin}
               bold={false}
             />
             <InformationColumn
               label={"Summary"}
               full={true}
-              value={
-                "Basic Programming (variable and conditional types (if/else, nested condition), looping (for, while), function)"
-              }
+              value={data?.summary}
               bold={false}
             />
           </div>
