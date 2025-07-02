@@ -10,7 +10,7 @@ import { EditCvIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const ExperienceInfoCard = ({}) => {
+const ExperienceInfoCard = ({ data }) => {
   const [showMore, setShowMore] = useState(true);
   return (
     <div
@@ -34,63 +34,60 @@ const ExperienceInfoCard = ({}) => {
         </div>
         <EditCvIconSvg />
       </div>
-      {showMore && (
-        <div className={"flex flex-col gap-2 mt-4"}>
-          <div className={"flex gap-2"}>
+      {showMore &&
+        data.length > 0 &&
+        data.map((item, index) => (
+          <div className={"flex flex-col gap-2 mt-4"}>
+            <div className={"flex gap-2"}>
+              <InformationColumn
+                label={"Company"}
+                value={item?.name ?? "-"}
+                bold={false}
+              />
+              <InformationColumn
+                label={"position"}
+                value={item?.role ?? "-"}
+                bold={false}
+              />
+            </div>
+            <div className={"flex gap-2"}>
+              <InformationColumn
+                label={"Industry"}
+                value={"Media"}
+                bold={false}
+              />
+              <InformationColumn
+                label={"Location"}
+                value={"Indonesia"}
+                bold={false}
+              />
+            </div>
+            <div className={"flex gap-2"}>
+              <InformationColumn
+                label={"Start Date"}
+                value={"12 Maret 2020"}
+                bold={false}
+              />
+              <InformationColumn
+                label={"End Date"}
+                value={"20 Mei 2024"}
+                bold={false}
+              />
+            </div>
             <InformationColumn
-              label={"Company"}
-              value={"PT. MNC Group"}
+              label={"Achievements"}
+              full={true}
+              value={item?.achievements ?? "-"}
               bold={false}
             />
             <InformationColumn
-              label={"position"}
-              value={"Backend Engineer"}
+              label={"Technologies"}
+              full={true}
+              value={item?.technologies ?? "-"}
               bold={false}
             />
           </div>
-          <div className={"flex gap-2"}>
-            <InformationColumn
-              label={"Industry"}
-              value={"Media"}
-              bold={false}
-            />
-            <InformationColumn
-              label={"Location"}
-              value={"Indonesia"}
-              bold={false}
-            />
-          </div>
-          <div className={"flex gap-2"}>
-            <InformationColumn
-              label={"Start Date"}
-              value={"12 Maret 2020"}
-              bold={false}
-            />
-            <InformationColumn
-              label={"End Date"}
-              value={"20 Mei 2024"}
-              bold={false}
-            />
-          </div>
-          <InformationColumn
-            label={"Achievements"}
-            full={true}
-            value={`Basic Programming (variable and
-                    conditional types (if/else, nested
-                    condition), looping (for, while),
-                    function`}
-            bold={false}
-          />
-          <InformationColumn
-            label={"Technologies"}
-            full={true}
-            value={
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt."
-            }
-            bold={false}
-          />
-        </div>
-      )}
+        ))}
     </div>
   );
 };

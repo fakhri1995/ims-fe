@@ -17,11 +17,7 @@ const EvaluationCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
   const { TextArea } = Input;
 
   return (
-    <div
-      className={
-        "border border-b-0 border-[#E6E6E6] bg-white w-full py-4 px-5 "
-      }
-    >
+    <div className={"border border-[#E6E6E6] bg-white w-full py-4 px-5 "}>
       <div className={"flex justify-between"}>
         <div
           onClick={() => setShowMore(!showMore)}
