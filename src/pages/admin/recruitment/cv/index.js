@@ -1,4 +1,4 @@
-import { Button, notification } from "antd";
+import { Button, Modal, notification } from "antd";
 import {
   NumberParam,
   StringParam,
@@ -78,6 +78,8 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
 
   pathTitleArr[pathTitleArr.length - 1] = "Detail CV";
   const [idChoose, setIdChoose] = useState(null);
+  const [modalValidate, setModalValidate] = useState(false);
+  const [loadingValidate, setLoadingValidate] = useState(false);
   const [dataChoose, setDataChoose] = useState({
     id: null,
     name: null,
@@ -334,6 +336,8 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     }
   };
 
+  const handleValidate = () => {};
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -453,6 +457,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             {dataChoose?.name}
           </p>
           <div
+            onClick={() => setModalValidate(true)}
             className={
               "hover:cursor-pointer btn btn-sm text-white font-semibold px-6 border bg-primary100 hover:bg-primary75 border-primary100 hover:border-primary75 focus:bg-primary100 focus:border-primary100 flex-nowrap w-full md:w-fit"
             }
@@ -524,6 +529,38 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
               statusEdit={formEdit.evaluation}
             />
           </div>
+          <Modal
+            title={
+              <h1 className="font-semibold">
+                Apakah anda yakin ingin validate data dengan nama "
+                <span className={"font-bold"}>{dataChoose?.name}</span>"?
+              </h1>
+            }
+            visible={modalValidate}
+            onCancel={() => {
+              setModalValidate(false);
+            }}
+            okText="Ya"
+            cancelText="Tidak"
+            onOk={handleValidate}
+            okButtonProps={{ loading: loadingValidate }}
+          >
+            {/* <div className="flex flex-col">
+              <div className="flex flex-col">
+                <p className="mb-0">Notes</p>
+                <Input
+                  placeholder="Masukkan Notes"
+                  onChange={(e) => {
+                    setupdatedata((prev) => {
+                      var temp = prev;
+                      temp.notes = e.target.value;
+                      return temp;
+                    });
+                  }}
+                ></Input>
+              </div>
+            </div> */}
+          </Modal>
         </div>
       </div>
     </LayoutDashboard>
