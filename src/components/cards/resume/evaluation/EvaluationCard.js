@@ -1,4 +1,4 @@
-import { Button, Form, Input, Space } from "antd";
+import { Button, Form, Input, Space, notification } from "antd";
 import moment from "moment";
 import React from "react";
 import { useState } from "react";
@@ -11,10 +11,74 @@ import { EditCvIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const EvaluationCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
+const EvaluationCard = ({
+  formEdit,
+  statusEdit,
+  initProps,
+  setFormEdit,
+  data,
+  setEvaluationData,
+}) => {
   const [showMore, setShowMore] = useState(true);
   const [instanceForm] = Form.useForm();
   const { TextArea } = Input;
+  const [loading, setLoading] = useState(false);
+
+  const onFinish = (values) => {
+    let dataSend = {
+      resume_id: data.id,
+      grammar_and_spelling: values.grammar,
+      content_validity: values.content,
+      skill_alignment: values.skill,
+      flags: values.flags,
+      improvement_points: values.improvement,
+    };
+    setLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResumeEvaluation`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataSend),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        console.log("response ", response);
+        if (response.success) {
+          setEvaluationData({
+            ...data,
+            resume_id: data.id,
+            grammar_and_spelling: values.grammar,
+            content_validity: values.content,
+            skill_alignment: values.skill,
+            flags: values.flags,
+            improvement_points: values.improvement,
+          });
+          setFormEdit({
+            ...formEdit,
+            evaluation: false,
+          });
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log("error apa ", err);
+        notification.error({
+          message: `Gagal update Evaluation. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
 
   return (
     <div className={"border border-[#E6E6E6] bg-white w-full py-4 px-5 "}>
@@ -49,11 +113,7 @@ const EvaluationCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
       {showMore &&
         (statusEdit ? (
           <div className={"flex flex-col gap-2 mt-4"}>
-            <Form
-              layout="vertical"
-              form={instanceForm}
-              // onFinish={onFinish}
-            >
+            <Form layout="vertical" form={instanceForm} onFinish={onFinish}>
               <div className={"flex gap-2"}>
                 <div className={"flex flex-col gap-2 w-1/2"}>
                   <Form.Item
@@ -64,6 +124,10 @@ const EvaluationCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                       {
                         required: true,
                         message: "Grammar & Spelling is required",
+                      },
+                      {
+                        pattern: /^\d+$/,
+                        message: "Grammar & Spelling must be numeric",
                       },
                     ]}
                   >
@@ -79,6 +143,10 @@ const EvaluationCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                       {
                         required: true,
                         message: "Content Validity is required",
+                      },
+                      {
+                        pattern: /^\d+$/,
+                        message: "Content Validity must be numeric",
                       },
                     ]}
                   >
@@ -111,6 +179,10 @@ const EvaluationCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                       {
                         required: true,
                         message: "Skill Alignment is required",
+                      },
+                      {
+                        pattern: /^\d+$/,
+                        message: "Skill ALignment must be numeric",
                       },
                     ]}
                   >
@@ -182,7 +254,7 @@ const EvaluationCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                     >
                       Cancel
                     </Button>
-                    <Button htmlType="submit" type="primary">
+                    <Button loading={loading} htmlType="submit" type="primary">
                       Save
                     </Button>
                   </Space>
@@ -204,7 +276,7 @@ const EvaluationCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                   <p
                     className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
                   >
-                    9
+                    {data?.grammar_and_spelling}
                   </p>
                 </div>
                 <div className={"w-1/3 flex flex-col"}>
@@ -214,7 +286,7 @@ const EvaluationCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                   <p
                     className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
                   >
-                    9
+                    {data?.content_validity}
                   </p>
                 </div>
                 <div className={"w-1/3 flex flex-col"}>
@@ -224,7 +296,7 @@ const EvaluationCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                   <p
                     className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
                   >
-                    9
+                    {data?.skill_alignment}
                   </p>
                 </div>
               </div>
@@ -233,17 +305,22 @@ const EvaluationCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
               <p className={"text-sm leading-6 font-medium text-mono30"}>
                 Flags
               </p>
+              <p className={"text-sm leading-6 font-medium text-mono30"}>
+                {data?.flags}
+              </p>
             </div>
             <div className={"flex flex-col gap-1"}>
               <p className={"text-sm leading-6 font-medium text-mono30"}>
                 Suggestions
               </p>
+              <p className={"text-sm leading-6 font-medium text-mono30"}>
+                {data?.suggestions}
+              </p>
               <p className={`text-xs leading-6 font-normal text-[#808080]`}>
                 Improvement Points
               </p>
               <p className={"text-sm leading-6 font-medium text-mono30"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt.
+                {data?.improvement_points}
               </p>
             </div>
           </div>

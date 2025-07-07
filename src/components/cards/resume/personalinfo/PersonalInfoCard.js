@@ -1,8 +1,12 @@
-import { Button, Form, Input, Space } from "antd";
+import { Button, Form, Input, Space, notification } from "antd";
 import moment from "moment";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { RESUME_PERSONAL_INFO_UPDATE } from "lib/features";
 
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
@@ -11,9 +15,19 @@ import { EditCvIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
+const PersonalInfoCard = ({
+  idResume,
+  initProps,
+  formEdit,
+  statusEdit,
+  setFormEdit,
+  data,
+  dataPersonalInfo,
+  setDataPersonalInfo,
+}) => {
   const [showMore, setShowMore] = useState(true);
   const [instanceForm] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const [dataEdit, setDataEdit] = useState({
     name: null,
     email: null,
@@ -29,6 +43,11 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
     } else {
     }
   }, [statusEdit]);
+
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdatePersonalInfo = hasPermission(
+    RESUME_PERSONAL_INFO_UPDATE
+  );
 
   useEffect(() => {
     if (formEdit?.personal) {
@@ -55,7 +74,60 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
   }, [formEdit]);
 
   const onFinish = (values) => {
-    console.log("Form submitted:", values);
+    let dataSend = {
+      resume_id: data.id,
+      name: values.name,
+      telp: values.phone,
+      email: values.email,
+      location: "Universitas Indonesia",
+      summary: values.summary,
+      linkedin: values.linkedin,
+    };
+    setLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateResumePersonalInfo`, {
+      method: `PUT`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataSend),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        console.log("response ", response);
+        if (response.success) {
+          setDataPersonalInfo({
+            ...dataPersonalInfo,
+            name: values.name,
+            phone: values.phone,
+            email: values.email,
+            location: "Universitas Indonesia",
+            summary: values.summary,
+            linkedin: values.linkedin,
+          });
+          setFormEdit({
+            ...formEdit,
+            personal: false,
+          });
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log("error apa ", err);
+        notification.error({
+          message: `Gagal update Personal Info. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -78,7 +150,7 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
             <MdChevronUp className="w-[14px] h-[14px]" />
           )}
         </div>
-        {formEdit?.personal == false && (
+        {formEdit?.personal == false && isAllowedToUpdatePersonalInfo && (
           <div
             className={"hover:cursor-pointer"}
             onClick={() =>
@@ -143,6 +215,10 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                         required: true,
                         message: "Phone is required",
                       },
+                      {
+                        pattern: /^\d+$/,
+                        message: "Phone must be numeric",
+                      },
                     ]}
                   >
                     <Input placeholder="Input Phone" />
@@ -198,7 +274,7 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                   </Form.Item>
                 </div>
               </div>
-              {formEdit?.personal && (
+              {formEdit?.personal && isAllowedToUpdatePersonalInfo && (
                 <div className={"flex justify-end"}>
                   <Space>
                     <Button
@@ -211,7 +287,7 @@ const PersonalInfoCard = ({ formEdit, statusEdit, setFormEdit, data }) => {
                     >
                       Cancel
                     </Button>
-                    <Button htmlType="submit" type="primary">
+                    <Button loading={loading} htmlType="submit" type="primary">
                       Save
                     </Button>
                   </Space>

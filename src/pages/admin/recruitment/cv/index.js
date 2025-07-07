@@ -85,6 +85,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     skill_set: null,
   });
   const [personalInfo, setDataPersonalInfo] = useState({
+    id: null,
     name: null,
     email: null,
     location: null,
@@ -102,6 +103,14 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     location: null,
     honors: null,
     relevant_coursework: null,
+  });
+  const [evaluationData, setEvaluationData] = useState({
+    id: null,
+    grammar_and_spelling: null,
+    content_validity: null,
+    skill_alignment: null,
+    flags: null,
+    improvement_points: null,
   });
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -253,6 +262,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       skillset = doc.resume?.skills;
       setDataPersonalInfo({
         ...personalInfo,
+        id: doc.resume?.id,
         name: doc.resume?.name,
         email: doc.resume?.email,
         phone: doc.resume?.telp,
@@ -278,9 +288,32 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       } else {
         setExperienceData([]);
       }
+      if (doc.resume.evaluation) {
+        let evaluation = doc.resume.evaluation;
+        setEvaluationData({
+          ...evaluationData,
+          id: doc.resume.id,
+          grammar_and_spelling: evaluation.grammar_and_spelling,
+          content_validity: evaluation.content_validity,
+          skill_alignment: evaluation.skill_alignment,
+          flags: evaluation.flags,
+          improvement_points: evaluation.improvement_points,
+        });
+      } else {
+        setEvaluationData({
+          ...evaluationData,
+          id: doc.resume.id,
+          grammar_and_spelling: null,
+          content_validity: null,
+          skill_alignment: null,
+          flags: null,
+          improvement_points: null,
+        });
+      }
     } else {
       setDataPersonalInfo({
         ...personalInfo,
+        id: null,
         name: null,
         email: null,
         phone: null,
@@ -498,6 +531,10 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
           </div>
           <div className={"flex flex-col w-3/5"}>
             <PersonalInfoCard
+              dataPersonalInfo={personalInfo}
+              setDataPersonalInfo={setDataPersonalInfo}
+              initProps={initProps}
+              idResume={dataChoose?.id}
               formEdit={formEdit}
               setFormEdit={setFormEdit}
               statusEdit={formEdit.personal}
@@ -522,6 +559,9 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
               formEdit={formEdit}
               setFormEdit={setFormEdit}
               statusEdit={formEdit.evaluation}
+              data={evaluationData}
+              setEvaluationData={setEvaluationData}
+              initProps={initProps}
             />
           </div>
         </div>
