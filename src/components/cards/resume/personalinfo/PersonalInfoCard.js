@@ -79,7 +79,7 @@ const PersonalInfoCard = ({
       name: values.name,
       telp: values.phone,
       email: values.email,
-      location: "Universitas Indonesia",
+      location: values.location,
       summary: values.summary,
       linkedin: values.linkedin,
     };
@@ -101,7 +101,7 @@ const PersonalInfoCard = ({
             name: values.name,
             phone: values.phone,
             email: values.email,
-            location: "Universitas Indonesia",
+            location: values.location,
             summary: values.summary,
             linkedin: values.linkedin,
           });
