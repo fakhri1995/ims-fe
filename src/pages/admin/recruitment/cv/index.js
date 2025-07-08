@@ -268,7 +268,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
         name: doc.resume?.name,
         email: doc.resume?.email,
         phone: doc.resume?.telp,
-        location: doc.resume?.city,
+        location: doc.resume?.location,
         linkedin: doc.resume?.linkedin,
         summary: doc.resume?.summary,
       });
