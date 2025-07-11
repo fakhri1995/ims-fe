@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
+import ButtonSys from "../../../button";
 import { EditCvIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
 
@@ -174,8 +175,20 @@ const EducationInfoCard = ({ data, formEdit, statusEdit, setFormEdit }) => {
                   </Form.Item>
                 </div>
               </div>
+              <ButtonSys
+                size={"small"}
+                type={"dashed"}
+                onClick={() => {
+                  // clearDataUpdate();
+                  // setIsAdd(true);
+                }}
+              >
+                <p className="text-primary100 font-bold hover:text-primary75">
+                  + Add Another Educations
+                </p>
+              </ButtonSys>
               {statusEdit && (
-                <div className={"flex justify-end"}>
+                <div className={"flex justify-end mt-5"}>
                   <Space>
                     <Button
                       onClick={() =>

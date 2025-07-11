@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
+import ButtonSys from "../../../button";
 import { EditCvIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
 
@@ -90,35 +91,37 @@ const ToolsCard = ({ data, formEdit, statusEdit, setFormEdit }) => {
                   </Form.Item>
                 </div>
               </div>
-              <div className={"flex flex-col gap-2 w-1/2"}>
-                <Form.Item
-                  label="Profiency"
-                  name={"proficiency"}
-                  className="col-span-2"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Proficiency is required",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Input Proficiency" />
-                </Form.Item>
-              </div>
-              <div className={"flex flex-col gap-2 w-1/2"}>
-                <Form.Item
-                  label="Details"
-                  name={"details"}
-                  className="col-span-2"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Details is required",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Input Details" />
-                </Form.Item>
+              <div className={"flex gap-2"}>
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <Form.Item
+                    label="Profiency"
+                    name={"proficiency"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Proficiency is required",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Input Proficiency" />
+                  </Form.Item>
+                </div>
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <Form.Item
+                    label="Details"
+                    name={"details"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Details is required",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Input Details" />
+                  </Form.Item>
+                </div>
               </div>
               <div className={"flex gap-2"}>
                 <div className={"w-full"}>
@@ -137,8 +140,20 @@ const ToolsCard = ({ data, formEdit, statusEdit, setFormEdit }) => {
                   </Form.Item>
                 </div>
               </div>
+              <ButtonSys
+                size={"small"}
+                type={"dashed"}
+                onClick={() => {
+                  // clearDataUpdate();
+                  // setIsAdd(true);
+                }}
+              >
+                <p className="text-primary100 font-bold hover:text-primary75">
+                  + Add Another Tools
+                </p>
+              </ButtonSys>
               {statusEdit && (
-                <div className={"flex justify-end"}>
+                <div className={"flex justify-end mt-5"}>
                   <Space>
                     <Button
                       onClick={() =>

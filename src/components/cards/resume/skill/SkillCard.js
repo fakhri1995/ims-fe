@@ -1,18 +1,22 @@
 import { CloseCircleOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Tag } from "antd";
+import { Button, Input, Space, Tag, notification } from "antd";
 import moment from "moment";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { RESUME_SKILL_ADD, RESUME_SKILL_DELETE } from "lib/features";
+
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
 import { EditCvIconSvg } from "../../../icon";
-import InformationColumn from "../InformationColumn";
 
 // Currently use for Training, Certifications, and Achievements section in resume
 const SkillCard = ({
+  resumeId,
   skillSet,
   initProps,
   formEdit,
@@ -23,6 +27,9 @@ const SkillCard = ({
   const [showMore, setShowMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState("");
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddSkill = hasPermission(RESUME_SKILL_ADD);
+  const isAllowedToDeleteSkill = hasPermission(RESUME_SKILL_DELETE);
   const [dataSkills, setDataSkills] = useState([
     { id: 1, skill: "Python" },
     { id: 2, skill: "JavaScript" },
@@ -40,10 +47,10 @@ const SkillCard = ({
     <Tag
       closable
       onClose={(e) => {
-        // if (isAllowedToDeleteSection) {
-        //   e.stopPropagation();
-        //   handleDeleteSection("skill", data.id);
-        // }
+        if (isAllowedToDeleteSkill) {
+          e.stopPropagation();
+          handleDeleteSkill(data.id, data.name);
+        }
       }}
       color="#35763B1A"
       closeIcon={<CloseCircleOutlined className={"cursor-pointer"} rev={""} />}
@@ -53,18 +60,89 @@ const SkillCard = ({
     </Tag>
   );
 
+  const handleDeleteSkill = (id, name) => {
+    const payload = {
+      id: Number(id),
+    };
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteResumeSkill`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          const updatedData = skillSet.filter((item) => item.id !== id);
+          setData(updatedData);
+          notification.success({
+            message: `Berhasil menghapus skill ${name}.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Gagal menghapus skill ${name}.. ${response2.message}`,
+            duration: 3,
+          });
+        }
+        // setLoadingDelete(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus ${sectionName}. ${err.response}`,
+          duration: 3,
+        });
+        // setLoadingDelete(false);
+      });
+  };
+
   const handleSave = () => {
     // Simpan data, misalnya kirim ke API atau update state
-    console.log("isi skill set ", skillSet);
-    let dataNew = {
-      id: skillSet[skillSet.length - 1].id + 1,
-      name: value,
-      resume_id: skillSet[skillSet.length - 1].resume_id,
-      display_order: skillSet[skillSet.length - 1].display_order,
-    };
-    // setData(prev => [...prev, ...dataNew]);
-    setData((prev) => [...prev, dataNew]);
-    setValue("");
+    if (value) {
+      let dataSend = {
+        resume_id: resumeId,
+        skill_name: value,
+      };
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResumeSkill`, {
+        method: `POST`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataSend),
+      })
+        .then((res) => res.json())
+        .then((response) => {
+          if (response.success) {
+            let dataNew = {
+              id: response.data.id,
+              name: value,
+              resume_id: resumeId,
+              display_order: 1,
+            };
+            setData((prev) => [...prev, dataNew]);
+            setValue("");
+            notification.success({
+              message: response.message,
+              duration: 3,
+            });
+          } else {
+            notification.error({
+              message: response.message,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `Gagal tambah skill. ${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => setLoading(false));
+    }
   };
 
   return (
@@ -109,29 +187,38 @@ const SkillCard = ({
                 <SkillTag data={skill} />
               ))}
             </div>
-            <Input
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              onPressEnter={handleSave}
-              className={"w-full mt-5"}
-            />
-            {statusEdit && (
-              <div className={"flex justify-end mt-4"}>
-                <Space>
-                  <Button
-                    onClick={() =>
-                      setFormEdit({
-                        ...formEdit,
-                        skill: false,
-                      })
-                    }
-                  >
-                    Cancel
-                  </Button>
-                  <Button loading={loading} htmlType="submit" type="primary">
-                    Save
-                  </Button>
-                </Space>
+            {isAllowedToAddSkill && (
+              <div>
+                <Input
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  onPressEnter={handleSave}
+                  className={"w-full mt-5"}
+                />
+                {statusEdit && (
+                  <div className={"flex justify-end mt-4"}>
+                    <Space>
+                      <Button
+                        onClick={() =>
+                          setFormEdit({
+                            ...formEdit,
+                            skill: false,
+                          })
+                        }
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={() => handleSave()}
+                        loading={loading}
+                        htmlType="submit"
+                        type="primary"
+                      >
+                        Save
+                      </Button>
+                    </Space>
+                  </div>
+                )}
               </div>
             )}
           </div>

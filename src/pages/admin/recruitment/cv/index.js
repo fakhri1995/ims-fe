@@ -86,6 +86,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     cv_path: null,
     skill_set: null,
   });
+  const [resumeId, setResumeId] = useState(null);
   const [dataSkillSet, setDataSkillSet] = useState([]);
   const [personalInfo, setDataPersonalInfo] = useState({
     id: null,
@@ -262,6 +263,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       path = "https://cdn.mig.id/" + doc.lampiran[0].isi_lampiran;
     }
     if (doc.resume) {
+      setResumeId(doc.resume.id);
       skillset = doc.resume?.skills;
       setDataPersonalInfo({
         ...personalInfo,
@@ -319,6 +321,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
         });
       }
     } else {
+      setResumeId(null);
       setDataPersonalInfo({
         ...personalInfo,
         id: null,
@@ -560,13 +563,19 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             />
             <SkillCard
               skillSet={dataSkillSet}
+              resumeId={resumeId}
               initProps={initProps}
               formEdit={formEdit}
               statusEdit={formEdit.skill}
               setFormEdit={setFormEdit}
               setData={setDataSkillSet}
             />
-            <LanguageCard />
+            <LanguageCard
+              initProps={initProps}
+              formEdit={formEdit}
+              statusEdit={formEdit.languages}
+              setFormEdit={setFormEdit}
+            />
             <ToolsCard
               data={toolData}
               formEdit={formEdit}
