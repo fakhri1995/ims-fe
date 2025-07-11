@@ -6,12 +6,40 @@ import { useEffect } from "react";
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
+import ButtonSys from "../../../button";
 import { EditCvIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
+import ExperienceInfoBlock from "./ExperienceInfoBlock";
 
 // Currently use for Training, Certifications, and Achievements section in resume
 const ExperienceInfoCard = ({ data }) => {
   const [showMore, setShowMore] = useState(true);
+  const [editData, setEditData] = useState({
+    id: null,
+    company: null,
+    position: null,
+    industry: null,
+    location: null,
+    start_date: null,
+    end_date: null,
+    achievement: null,
+    technologies: null,
+  });
+
+  const cancelData = () => {
+    setEditData({
+      ...editData,
+      id: null,
+      company: null,
+      position: null,
+      industry: null,
+      location: null,
+      start_date: null,
+      end_date: null,
+      achievement: null,
+      technologies: null,
+    });
+  };
   return (
     <div
       className={
@@ -32,62 +60,36 @@ const ExperienceInfoCard = ({ data }) => {
             <MdChevronUp className="w-[14px] h-[14px]" />
           )}
         </div>
-        <EditCvIconSvg />
       </div>
-      {showMore &&
-        data.length > 0 &&
-        data.map((item, index) => (
-          <div className={"flex flex-col gap-2 mt-4"}>
-            <div className={"flex gap-2"}>
-              <InformationColumn
-                label={"Company"}
-                value={item?.name ?? "-"}
-                bold={false}
-              />
-              <InformationColumn
-                label={"position"}
-                value={item?.role ?? "-"}
-                bold={false}
-              />
-            </div>
-            <div className={"flex gap-2"}>
-              <InformationColumn
-                label={"Industry"}
-                value={"Media"}
-                bold={false}
-              />
-              <InformationColumn
-                label={"Location"}
-                value={"Indonesia"}
-                bold={false}
-              />
-            </div>
-            <div className={"flex gap-2"}>
-              <InformationColumn
-                label={"Start Date"}
-                value={"12 Maret 2020"}
-                bold={false}
-              />
-              <InformationColumn
-                label={"End Date"}
-                value={"20 Mei 2024"}
-                bold={false}
-              />
-            </div>
-            <InformationColumn
-              label={"Achievements"}
-              full={true}
-              value={item?.achievements ?? "-"}
-              bold={false}
-            />
-            <InformationColumn
-              label={"Technologies"}
-              full={true}
-              value={item?.technologies ?? "-"}
-              bold={false}
-            />
+      {showMore && (
+        <div>
+          <div className={"mb-4"}>
+            {data.length > 0 &&
+              data.map((item, index) => (
+                <ExperienceInfoBlock
+                  cancelData={cancelData}
+                  editData={editData}
+                  setEditData={setEditData}
+                  jumlah_data={data.length}
+                  data={item}
+                  index={index}
+                />
+              ))}
           </div>
-        ))}
+          <ButtonSys
+            size={"small"}
+            type={"dashed"}
+            onClick={() => {
+              // clearDataUpdate();
+              // setIsAdd(true);
+            }}
+          >
+            <p className="text-primary100 font-bold hover:text-primary75">
+              + Add Another Experience
+            </p>
+          </ButtonSys>
+        </div>
+      )}
     </div>
   );
 };
