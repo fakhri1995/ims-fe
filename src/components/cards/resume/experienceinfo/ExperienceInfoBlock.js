@@ -1,4 +1,4 @@
-import { Button, Form, Input, Space } from "antd";
+import { Button, DatePicker, Form, Input, Space } from "antd";
 import moment from "moment";
 import React from "react";
 import { useState } from "react";
@@ -25,6 +25,7 @@ const ExperienceInfoBlock = ({
   const { TextArea } = Input;
 
   const onFinish = (values) => {
+    console.log("values ", values);
     // let dataSend = {
     //   resume_id: data.id,
     //   name: values.name,
@@ -166,7 +167,18 @@ const ExperienceInfoBlock = ({
                     },
                   ]}
                 >
-                  <Input placeholder="Input Start Date" />
+                  <DatePicker
+                    allowClear={true}
+                    placeholder="Start Date"
+                    className="w-full"
+                    // onChange={(date) => {
+                    //   let input = date ? date.format("YYYY-MM-DD") : null;
+                    //   setDataUpdate((prev) => ({
+                    //     ...prev,
+                    //     year: input,
+                    //   }));
+                    // }}
+                  />
                 </Form.Item>
               </div>
               <div className={"flex flex-col gap-2 w-1/2"}>
@@ -181,7 +193,18 @@ const ExperienceInfoBlock = ({
                     },
                   ]}
                 >
-                  <Input placeholder="Input End Date" />
+                  <DatePicker
+                    allowClear={true}
+                    placeholder="End Date"
+                    className="w-full"
+                    // onChange={(date) => {
+                    //   let input = date ? date.format("YYYY-MM-DD") : null;
+                    //   setDataUpdate((prev) => ({
+                    //     ...prev,
+                    //     year: input,
+                    //   }));
+                    // }}
+                  />
                 </Form.Item>
               </div>
             </div>
