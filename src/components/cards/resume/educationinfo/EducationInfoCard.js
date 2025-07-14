@@ -16,9 +16,35 @@ const EducationInfoCard = ({ data, formEdit, statusEdit, setFormEdit }) => {
   const [showMore, setShowMore] = useState(true);
   const [instanceForm] = Form.useForm();
   const { TextArea } = Input;
+  const [dataEdit, setDataEdit] = useState({
+    id: null,
+    school: null,
+    degree: null,
+    gpa: null,
+    field: null,
+    location: null,
+    honors: null,
+    relevant_coursework: null,
+  });
+  const [isAdd, setIsAdd] = useState(false);
 
   const onFinish = (values) => {
     console.log("Form submitted:", values);
+  };
+
+  const resetValue = () => {
+    setDataEdit({
+      ...dataEdit,
+      id: null,
+      school: null,
+      degree: null,
+      gpa: null,
+      field: null,
+      location: null,
+      honors: null,
+      relevant_coursework: null,
+    });
+    instanceForm.resetFields();
   };
 
   return (
@@ -175,18 +201,7 @@ const EducationInfoCard = ({ data, formEdit, statusEdit, setFormEdit }) => {
                   </Form.Item>
                 </div>
               </div>
-              <ButtonSys
-                size={"small"}
-                type={"dashed"}
-                onClick={() => {
-                  // clearDataUpdate();
-                  // setIsAdd(true);
-                }}
-              >
-                <p className="text-primary100 font-bold hover:text-primary75">
-                  + Add Another Educations
-                </p>
-              </ButtonSys>
+
               {statusEdit && (
                 <div className={"flex justify-end mt-5"}>
                   <Space>
@@ -257,6 +272,160 @@ const EducationInfoCard = ({ data, formEdit, statusEdit, setFormEdit }) => {
               }
               bold={false}
             />
+            {isAdd ? (
+              <div className={"flex flex-col gap-2 mt-4"}>
+                <Form layout="vertical" form={instanceForm} onFinish={onFinish}>
+                  <div className={"flex gap-2"}>
+                    <div className={"flex flex-col gap-2 w-1/2"}>
+                      <Form.Item
+                        label="School"
+                        name={"school"}
+                        className="col-span-2"
+                        rules={[
+                          {
+                            required: true,
+                            message: "School is required",
+                          },
+                        ]}
+                      >
+                        <Input placeholder="Input School Name" />
+                      </Form.Item>
+                    </div>
+                    <div className={"flex flex-col gap-2 w-1/2"}>
+                      <Form.Item
+                        label="Degree"
+                        name={"degree"}
+                        className="col-span-2"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Degree is required",
+                          },
+                        ]}
+                      >
+                        <Input placeholder="Input Degree" />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={"flex gap-2"}>
+                    <div className={"flex flex-col gap-2 w-1/2"}>
+                      <Form.Item
+                        label="Field"
+                        name={"field"}
+                        className="col-span-2"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Field is required",
+                          },
+                        ]}
+                      >
+                        <Input placeholder="Input Field Name" />
+                      </Form.Item>
+                    </div>
+                    <div className={"flex flex-col gap-2 w-1/2"}>
+                      <Form.Item
+                        label="GPA"
+                        name={"gpa"}
+                        className="col-span-2"
+                        rules={[
+                          {
+                            required: true,
+                            message: "GPA is required",
+                          },
+                        ]}
+                      >
+                        <Input placeholder="Input GPA" />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={"flex flex-col gap-2 w-1/2"}>
+                    <Form.Item
+                      label="Location"
+                      name={"location"}
+                      className="col-span-2"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Location is required",
+                        },
+                      ]}
+                    >
+                      <Input placeholder="Input Location" />
+                    </Form.Item>
+                  </div>
+                  <div className={"flex gap-2"}>
+                    <div className={"w-full"}>
+                      <Form.Item
+                        label="Honors"
+                        name={"honors"}
+                        className="col-span-2"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Honors is required",
+                          },
+                        ]}
+                      >
+                        <TextArea rows={5} placeholder="Input Honors" />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={"flex gap-2"}>
+                    <div className={"w-full"}>
+                      <Form.Item
+                        label="Relevant Coursework"
+                        name={"coursework"}
+                        className="col-span-2"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Relevant Coursework is required",
+                          },
+                        ]}
+                      >
+                        <TextArea
+                          rows={5}
+                          placeholder="Input Relevant Coursework"
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
+
+                  <div className={"flex justify-end mt-5"}>
+                    <Space>
+                      <Button
+                        onClick={() =>
+                          // setFormEdit({
+                          //   ...formEdit,
+                          //   education: false,
+                          // })
+                          setIsAdd(false)
+                        }
+                      >
+                        Cancel
+                      </Button>
+                      <Button htmlType="submit" type="primary">
+                        Save
+                      </Button>
+                    </Space>
+                  </div>
+                </Form>
+              </div>
+            ) : (
+              <ButtonSys
+                size={"small"}
+                type={"dashed"}
+                onClick={() => {
+                  resetValue();
+                  setIsAdd(true);
+                }}
+              >
+                <p className="text-primary100 font-bold hover:text-primary75">
+                  + Add Another Educations
+                </p>
+              </ButtonSys>
+            )}
           </div>
         ))}
     </div>
