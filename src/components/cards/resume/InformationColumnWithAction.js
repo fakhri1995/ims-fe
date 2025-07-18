@@ -13,6 +13,7 @@ const InformationColumnWithAction = ({
   id,
   editData,
   setEditData,
+  changeData,
 }) => {
   const handleEdit = (id) => {
     setEditData({
@@ -36,7 +37,7 @@ const InformationColumnWithAction = ({
         </p>
       </div>
       <div
-        onClick={() => handleEdit(id)}
+        onClick={() => changeData()}
         className={"flex w-1/12 items-start hover:cursor-pointer"}
       >
         <EditCvIconSvg />

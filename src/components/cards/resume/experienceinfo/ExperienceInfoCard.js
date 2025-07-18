@@ -13,7 +13,7 @@ import InformationColumn from "../InformationColumn";
 import ExperienceInfoBlock from "./ExperienceInfoBlock";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const ExperienceInfoCard = ({ data }) => {
+const ExperienceInfoCard = ({ data, formAdd, setFormAdd }) => {
   const [showMore, setShowMore] = useState(true);
   const [isAdd, setIsAdd] = useState(false);
   const [instanceForm] = Form.useForm();
@@ -32,7 +32,10 @@ const ExperienceInfoCard = ({ data }) => {
 
   const cancelData = () => {
     clearUpdate();
-    setIsAdd(false);
+    setFormAdd({
+      ...formAdd,
+      experience: false,
+    });
   };
 
   const onFinish = (values) => {
@@ -89,7 +92,7 @@ const ExperienceInfoCard = ({ data }) => {
                 />
               ))}
           </div>
-          {isAdd ? (
+          {formAdd.experience ? (
             <div className={"flex flex-col gap-2 mt-4"}>
               <Form layout="vertical" form={instanceForm} onFinish={onFinish}>
                 <div className={"flex gap-2"}>
@@ -256,7 +259,10 @@ const ExperienceInfoCard = ({ data }) => {
               type={"dashed"}
               onClick={() => {
                 clearUpdate();
-                setIsAdd(true);
+                setFormAdd({
+                  ...formAdd,
+                  experience: true,
+                });
               }}
             >
               <p className="text-primary100 font-bold hover:text-primary75">

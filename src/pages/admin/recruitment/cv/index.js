@@ -99,6 +99,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
   });
   const [toolData, setToolData] = useState([]);
   const [experienceData, setExperienceData] = useState([]);
+  const [educationData, setEducationData] = useState([]);
   const [educationInfo, setDataEducationInfo] = useState({
     name: null,
     degree: null,
@@ -127,48 +128,12 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     tools: false,
     evaluation: false,
   });
-  const dataExample = [
-    {
-      id: 1,
-      nama: "Andi Pratama",
-      jurusan: "Informatika",
-      kampus: "Universitas Indonesia",
-      tahun_lulus: 2022,
-      skills: ["Java", "Python", "HTML", "CSS"],
-    },
-    {
-      id: 2,
-      nama: "Siti Aisyah",
-      jurusan: "Sistem Informasi",
-      kampus: "Institut Teknologi Bandung",
-      tahun_lulus: 2021,
-      skills: ["JavaScript", "React", "Node.js", "SQL"],
-    },
-    {
-      id: 3,
-      nama: "Budi Santoso",
-      jurusan: "Teknik Komputer",
-      kampus: "Universitas Gadjah Mada",
-      tahun_lulus: 2023,
-      skills: ["C", "C++", "Java", "Git"],
-    },
-    {
-      id: 4,
-      nama: "Rina Melati",
-      jurusan: "Desain Komunikasi Visual",
-      kampus: "Institut Seni Indonesia",
-      tahun_lulus: 2020,
-      skills: ["Adobe Photoshop", "Illustrator", "HTML", "JavaScript"],
-    },
-    {
-      id: 5,
-      nama: "Hendra Wijaya",
-      jurusan: "Teknik Elektro",
-      kampus: "Universitas Diponegoro",
-      tahun_lulus: 2022,
-      skills: ["Embedded Systems", "C", "Python", "MATLAB"],
-    },
-  ];
+  const [formAdd, setFormAdd] = useState({
+    experience: false,
+    education: false,
+    languages: false,
+    tools: false,
+  });
   const [refresh, setRefresh] = useState(-1);
   // table data
   const [loadingRecruitments, setLoadingRecruitments] = useState(true);
@@ -280,13 +245,11 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       } else {
         setDataSkillSet([]);
       }
-      if (doc.resume.last_education) {
-        setDataEducationInfo({
-          ...educationInfo,
-          name: doc.resume.last_education.university,
-          field: doc.resume.last_education.major,
-          gpa: doc.resume.last_education.gpa,
-        });
+      if (doc.resume.educations) {
+        setEducationData(doc.resume.educations);
+      } else {
+        console.log("masuk else education");
+        setEducationData([]);
       }
       if (doc.resume.tools) {
         setToolData(doc.resume.tools);
@@ -332,12 +295,10 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
         linkedin: null,
         summary: null,
       });
-      setDataEducationInfo({
-        ...educationInfo,
-        name: null,
-        field: null,
-        gpa: null,
-      });
+      setDataSkillSet([]);
+      setEducationData([]);
+      setToolData([]);
+      setExperienceData([]);
     }
     setDataChoose({
       id: doc.id,
@@ -355,6 +316,34 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       tools: false,
       evaluation: false,
     });
+    changeStatusAdd();
+  };
+
+  const changeStatusAdd = () => {
+    if (formAdd.education) {
+      setFormAdd({
+        ...formAdd,
+        education: false,
+      });
+    }
+    if (formAdd.experience) {
+      setFormAdd({
+        ...formAdd,
+        experience: false,
+      });
+    }
+    if (formAdd.tools) {
+      setFormAdd({
+        ...formAdd,
+        tools: false,
+      });
+    }
+    if (formAdd.languages) {
+      setFormAdd({
+        ...formAdd,
+        languages: false,
+      });
+    }
   };
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -455,7 +444,11 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
                   <div className={"flex gap-1 items-start"}>
                     <StarFillIconSvg color={"#E9C600"} />
                     <p className={"text-[#E9C600] text-[10px] font-medium"}>
-                      {doc?.resume?.last_education?.university}
+                      {doc?.resume?.educations
+                        ? doc?.resume?.educations[
+                            doc?.resume?.educations.length - 1
+                          ].university
+                        : "-"}
                     </p>
                   </div>
                   <div className={"flex gap-1 items-start"}>
@@ -554,12 +547,18 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
               statusEdit={formEdit.personal}
               data={personalInfo}
             />
-            <ExperienceInfoCard data={experienceData} />
+            <ExperienceInfoCard
+              data={experienceData}
+              formAdd={formAdd}
+              setFormAdd={setFormAdd}
+            />
             <EducationInfoCard
-              data={educationInfo}
-              formEdit={formEdit}
-              setFormEdit={setFormEdit}
-              statusEdit={formEdit.education}
+              data={educationData}
+              initProps={initProps}
+              setEducationData={setEducationData}
+              resumeId={resumeId}
+              formAdd={formAdd}
+              setFormAdd={setFormAdd}
             />
             <SkillCard
               skillSet={dataSkillSet}
