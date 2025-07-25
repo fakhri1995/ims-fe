@@ -100,6 +100,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
   const [toolData, setToolData] = useState([]);
   const [experienceData, setExperienceData] = useState([]);
   const [educationData, setEducationData] = useState([]);
+  const [languageData, setLanguageData] = useState([]);
   const [educationInfo, setDataEducationInfo] = useState({
     name: null,
     degree: null,
@@ -167,46 +168,8 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       return;
     }
 
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
-
     const fetchData = async () => {
-      setLoadingRecruitments(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getPendingRecruitmentsAI${payload}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          // console.log("get api ai bro ", res2);
-          if (res2.success) {
-            setDataRawRecruitments(res2.data);
-            setDataRecruitments(res2.data.data);
-            if (res2.data.data.length > 0) {
-              let doc = res2.data.data[0];
-              onChooseData(doc);
-            }
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-          setLoadingRecruitments(false);
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-          setLoadingRecruitments(false);
-        });
+      getData();
     };
 
     const timer = setTimeout(() => fetchData(), 500);
@@ -219,9 +182,48 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     queryParams.sort_by,
     queryParams.sort_type,
   ]);
+  const getData = () => {
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
+    setLoadingRecruitments(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getPendingRecruitmentsAI${payload}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRawRecruitments(res2.data);
+          setDataRecruitments(res2.data.data);
+          if (res2.data.data.length > 0) {
+            let doc = res2.data.data[0];
+            onChooseData(doc);
+          }
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingRecruitments(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingRecruitments(false);
+      });
+  };
 
   const onChooseData = (doc) => {
-    console.log("on choose ", doc);
     let skillset = null;
     let path = null;
     if (doc.lampiran.length > 0) {
@@ -248,7 +250,6 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
       if (doc.resume.educations) {
         setEducationData(doc.resume.educations);
       } else {
-        console.log("masuk else education");
         setEducationData([]);
       }
       if (doc.resume.tools) {
@@ -260,6 +261,11 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
         setExperienceData(doc.resume.experiences);
       } else {
         setExperienceData([]);
+      }
+      if (doc.resume.languages) {
+        setLanguageData(doc.resume.languages);
+      } else {
+        setLanguageData([]);
       }
       if (doc.resume.evaluation) {
         let evaluation = doc.resume.evaluation;
@@ -367,7 +373,48 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     }
   };
 
-  const handleValidate = () => {};
+  const handleValidate = () => {
+    const payload = {
+      id: Number(dataChoose?.id),
+      approve: 1,
+    };
+    setLoadingValidate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/approveRecruitment`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: `Berhasil approve data ${dataChoose?.name}.`,
+            duration: 3,
+          });
+          setLoadingValidate(false);
+          setModalValidate(false);
+          getData();
+        } else {
+          notification.error({
+            message: `Gagal approve data ${dataChoose?.name} ${response2.message}`,
+            duration: 3,
+          });
+          setLoadingValidate(false);
+        }
+        // setLoadingDelete(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal Approve Data ${err}`,
+          duration: 3,
+        });
+        setLoadingValidate(false);
+        // setLoadingDelete(false);
+      });
+  };
 
   return (
     <LayoutDashboard
@@ -551,6 +598,9 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
               data={experienceData}
               formAdd={formAdd}
               setFormAdd={setFormAdd}
+              setExperienceData={setExperienceData}
+              initProps={initProps}
+              resumeId={resumeId}
             />
             <EducationInfoCard
               data={educationData}
@@ -574,12 +624,22 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
               formEdit={formEdit}
               statusEdit={formEdit.languages}
               setFormEdit={setFormEdit}
+              data={languageData}
+              setLanguageData={setLanguageData}
+              resumeId={resumeId}
+              formAdd={formAdd}
+              setFormAdd={setFormAdd}
             />
             <ToolsCard
+              initProps={initProps}
               data={toolData}
               formEdit={formEdit}
               setFormEdit={setFormEdit}
               statusEdit={formEdit.tools}
+              resumeId={resumeId}
+              formAdd={formAdd}
+              setFormAdd={setFormAdd}
+              setToolData={setToolData}
             />
             <EvaluationCard
               formEdit={formEdit}

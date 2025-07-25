@@ -3,7 +3,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
-import { EditCvIconSvg } from "../../icon";
+import { DeleteTablerIconSvg, EditCvIconSvg, TrashIconSvg } from "../../icon";
 
 // Currently use for Training, Certifications, and Achievements section in resume
 const InformationColumnWithAction = ({
@@ -14,6 +14,7 @@ const InformationColumnWithAction = ({
   editData,
   setEditData,
   changeData,
+  deleteData,
 }) => {
   const handleEdit = (id) => {
     setEditData({
@@ -24,7 +25,7 @@ const InformationColumnWithAction = ({
 
   return (
     <div className={`flex w-1/2`}>
-      <div className={"flex-col w-11/12"}>
+      <div className={"flex-col w-10/12"}>
         <p className={`text-xs leading-6 font-normal text-[#808080]`}>
           {label}
         </p>
@@ -36,11 +37,13 @@ const InformationColumnWithAction = ({
           {value}
         </p>
       </div>
-      <div
-        onClick={() => changeData()}
-        className={"flex w-1/12 items-start hover:cursor-pointer"}
-      >
-        <EditCvIconSvg />
+      <div className={"flex w-2/12 gap-2 items-start"}>
+        <div onClick={() => changeData()} className={"hover:cursor-pointer"}>
+          <EditCvIconSvg size={18} />
+        </div>
+        <div onClick={() => deleteData()} className={"hover:cursor-pointer"}>
+          <TrashIconSvg size={18} color="#4D4D4D" />
+        </div>
       </div>
     </div>
   );
