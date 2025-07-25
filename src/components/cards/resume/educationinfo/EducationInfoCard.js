@@ -32,13 +32,14 @@ const EducationInfoCard = ({
     gpa: null,
     field: null,
     location: null,
+    start_date: null,
+    end_date: null,
     honors: null,
     relevant_coursework: null,
   });
   const [isAdd, setIsAdd] = useState(false);
 
   const onFinish = (values) => {
-    console.log("Form submitted:", values);
     let dataSend = {
       resume_id: resumeId,
       university: values.school,
@@ -62,7 +63,6 @@ const EducationInfoCard = ({
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log("response ", response);
         if (response.success) {
           instanceForm.resetFields();
 
@@ -80,7 +80,6 @@ const EducationInfoCard = ({
         }
       })
       .catch((err) => {
-        console.log("error apa ", err);
         notification.error({
           message: `Gagal update Education. ${err.response}`,
           duration: 3,
@@ -130,6 +129,8 @@ const EducationInfoCard = ({
       gpa: null,
       field: null,
       location: null,
+      start_date: null,
+      end_date: null,
       honors: null,
       relevant_coursework: null,
     });

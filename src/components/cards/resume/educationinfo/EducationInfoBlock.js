@@ -1,4 +1,12 @@
-import { Button, DatePicker, Form, Input, Space, notification } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Space,
+  notification,
+} from "antd";
 import moment from "moment";
 import React from "react";
 import { useState } from "react";
@@ -24,9 +32,38 @@ const EducationInfoBlock = ({
   setEducationData,
 }) => {
   const [showMore, setShowMore] = useState(true);
-  const [instanceForm] = Form.useForm();
+  const [educationForm] = Form.useForm();
   const { TextArea } = Input;
   const [loading, setLoading] = useState(false);
+  const [modalConfirm, setModalConfirm] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [dataDelete, setDataDelete] = useState({
+    id: null,
+    name: null,
+  });
+
+  useEffect(() => {
+    if (showMore && editData.id != null) {
+      educationForm.setFieldsValue({
+        school: editData.school,
+        start_date: editData.start_date ? moment(editData.start_date) : null,
+        end_date: editData.end_date ? moment(editData.end_date) : null,
+        degree: editData.degree,
+        gpa: editData.gpa,
+        field: editData.field,
+        location: editData.location,
+        honors: editData.honors,
+        coursework: editData.relevant_coursework,
+      });
+    }
+  }, [showMore]);
+
+  const onChangeData = (field, value) => {
+    setEditData({
+      ...editData,
+      [field]: value.target.value,
+    });
+  };
 
   const onFinish = (values) => {
     let dataSend = {
@@ -52,9 +89,8 @@ const EducationInfoBlock = ({
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log("response ", response);
         if (response.success) {
-          instanceForm.resetFields();
+          educationForm.resetFields();
 
           let data_server = response.data;
           updateDataFromServer(data_server);
@@ -70,7 +106,6 @@ const EducationInfoBlock = ({
         }
       })
       .catch((err) => {
-        console.log("error apa ", err);
         notification.error({
           message: `Gagal update Education. ${err.response}`,
           duration: 3,
@@ -101,7 +136,6 @@ const EducationInfoBlock = ({
   };
 
   const changeData = (data) => {
-    console.log("change data ", data);
     setEditData({
       ...editData,
       id: data.id,
@@ -110,10 +144,12 @@ const EducationInfoBlock = ({
       gpa: data.gpa,
       field: data.major,
       location: data.location,
+      start_date: data.start_date,
+      end_date: data.end_date,
       honors: data.honors,
       relevant_coursework: data.relevant_coursework,
     });
-    instanceForm.setFieldsValue({
+    educationForm.setFieldsValue({
       school: data.university,
       start_date: data.start_date ? moment(data.start_date) : null,
       end_date: data.end_date ? moment(data.end_date) : null,
@@ -125,6 +161,58 @@ const EducationInfoBlock = ({
       coursework: data.relevant_coursework,
     });
   };
+
+  const deleteData = (data) => {
+    setDataDelete({
+      ...dataDelete,
+      id: data.id,
+      name: data.university,
+    });
+    setModalConfirm(true);
+  };
+
+  const handleDelete = () => {
+    setLoadingDelete(true);
+    const payload = {
+      id: Number(dataDelete?.id),
+    };
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteResumeEducation`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          const updatedData = all_data.filter(
+            (item) => item.id !== dataDelete?.id
+          );
+          setEducationData(updatedData);
+          notification.success({
+            message: `Berhasil menghapus education ${dataDelete.name}.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Gagal menghapus education ${dataDelete.name}.. ${response2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingDelete(false);
+        setModalConfirm(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus education. ${err.response}`,
+          duration: 3,
+        });
+        setLoadingDelete(false);
+      });
+  };
+
   return (
     <div
       className={`flex flex-col gap-2 mt-4 ${
@@ -133,7 +221,7 @@ const EducationInfoBlock = ({
     >
       {data.id == editData.id ? (
         <div className={"flex flex-col gap-2 mt-4"}>
-          <Form layout="vertical" form={instanceForm} onFinish={onFinish}>
+          <Form layout="vertical" form={educationForm} onFinish={onFinish}>
             <div className={"flex gap-2"}>
               <div className={"flex flex-col gap-2 w-1/2"}>
                 <Form.Item
@@ -147,7 +235,10 @@ const EducationInfoBlock = ({
                     },
                   ]}
                 >
-                  <Input placeholder="Input School Name" />
+                  <Input
+                    onChange={(e) => onChangeData("school", e)}
+                    placeholder="Input School Name"
+                  />
                 </Form.Item>
               </div>
               <div className={"flex flex-col gap-2 w-1/2"}>
@@ -162,7 +253,10 @@ const EducationInfoBlock = ({
                     },
                   ]}
                 >
-                  <Input placeholder="Input Degree" />
+                  <Input
+                    onChange={(e) => onChangeData("degree", e)}
+                    placeholder="Input Degree"
+                  />
                 </Form.Item>
               </div>
             </div>
@@ -179,7 +273,10 @@ const EducationInfoBlock = ({
                     },
                   ]}
                 >
-                  <Input placeholder="Input Field Name" />
+                  <Input
+                    onChange={(e) => onChangeData("field", e)}
+                    placeholder="Input Field Name"
+                  />
                 </Form.Item>
               </div>
 
@@ -195,7 +292,10 @@ const EducationInfoBlock = ({
                     },
                   ]}
                 >
-                  <Input placeholder="Input GPA" />
+                  <Input
+                    onChange={(e) => onChangeData("gpa", e)}
+                    placeholder="Input GPA"
+                  />
                 </Form.Item>
               </div>
             </div>
@@ -216,13 +316,13 @@ const EducationInfoBlock = ({
                     allowClear={true}
                     placeholder="Start Date"
                     className="w-full"
-                    // onChange={(date) => {
-                    //   let input = date ? date.format("YYYY-MM-DD") : null;
-                    //   setDataUpdate((prev) => ({
-                    //     ...prev,
-                    //     year: input,
-                    //   }));
-                    // }}
+                    onChange={(date) => {
+                      let input = date ? date.format("YYYY-MM-DD") : null;
+                      setEditData({
+                        ...editData,
+                        start_date: input,
+                      });
+                    }}
                   />
                 </Form.Item>
               </div>
@@ -242,13 +342,13 @@ const EducationInfoBlock = ({
                     allowClear={true}
                     placeholder="End Date"
                     className="w-full"
-                    // onChange={(date) => {
-                    //   let input = date ? date.format("YYYY-MM-DD") : null;
-                    //   setDataUpdate((prev) => ({
-                    //     ...prev,
-                    //     year: input,
-                    //   }));
-                    // }}
+                    onChange={(date) => {
+                      let input = date ? date.format("YYYY-MM-DD") : null;
+                      setEditData({
+                        ...editData,
+                        end_date: input,
+                      });
+                    }}
                   />
                 </Form.Item>
               </div>
@@ -265,7 +365,10 @@ const EducationInfoBlock = ({
                   },
                 ]}
               >
-                <Input placeholder="Input Location" />
+                <Input
+                  onChange={(e) => onChangeData("location", e)}
+                  placeholder="Input Location"
+                />
               </Form.Item>
             </div>
             <div className={"flex gap-2"}>
@@ -281,7 +384,11 @@ const EducationInfoBlock = ({
                     },
                   ]}
                 >
-                  <TextArea rows={5} placeholder="Input Honors" />
+                  <TextArea
+                    onChange={(e) => onChangeData("honors", e)}
+                    rows={5}
+                    placeholder="Input Honors"
+                  />
                 </Form.Item>
               </div>
             </div>
@@ -298,7 +405,11 @@ const EducationInfoBlock = ({
                     },
                   ]}
                 >
-                  <TextArea rows={5} placeholder="Input Relevant Coursework" />
+                  <TextArea
+                    onChange={(e) => onChangeData("relevant_coursework", e)}
+                    rows={5}
+                    placeholder="Input Relevant Coursework"
+                  />
                 </Form.Item>
               </div>
             </div>
@@ -329,6 +440,7 @@ const EducationInfoBlock = ({
               value={data?.degree}
               bold={false}
               changeData={() => changeData(data)}
+              deleteData={() => deleteData(data)}
             />
           </div>
           <div className={"flex gap-2"}>
@@ -381,6 +493,22 @@ const EducationInfoBlock = ({
             value={data?.relevant_coursework}
             bold={false}
           />
+          <Modal
+            title={
+              <h1 className="font-semibold">
+                Apakah anda yakin ingin hapus data education dengan nama "
+                <span className={"font-bold"}>{dataDelete?.name}</span>"?
+              </h1>
+            }
+            visible={modalConfirm}
+            onCancel={() => {
+              setModalConfirm(false);
+            }}
+            okText="Ya"
+            cancelText="Tidak"
+            onOk={handleDelete}
+            okButtonProps={{ loading: loadingDelete }}
+          ></Modal>
         </div>
       )}
     </div>

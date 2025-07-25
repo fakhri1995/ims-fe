@@ -1,4 +1,4 @@
-import { Button, DatePicker, Form, Input, Space } from "antd";
+import { Button, DatePicker, Form, Input, Space, notification } from "antd";
 import moment from "moment";
 import React from "react";
 import { useState } from "react";
@@ -13,10 +13,18 @@ import InformationColumn from "../InformationColumn";
 import ExperienceInfoBlock from "./ExperienceInfoBlock";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const ExperienceInfoCard = ({ data, formAdd, setFormAdd }) => {
+const ExperienceInfoCard = ({
+  resumeId,
+  data,
+  formAdd,
+  setFormAdd,
+  setExperienceData,
+  initProps,
+}) => {
   const [showMore, setShowMore] = useState(true);
   const [isAdd, setIsAdd] = useState(false);
   const [instanceForm] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const { TextArea } = Input;
   const [editData, setEditData] = useState({
     id: null,
@@ -39,7 +47,75 @@ const ExperienceInfoCard = ({ data, formAdd, setFormAdd }) => {
   };
 
   const onFinish = (values) => {
-    console.log("Form submitted:", values);
+    let dataSend = {
+      resume_id: resumeId,
+      role: values.position,
+      company: values.company,
+      start_date: moment(values.start_date).format("YYYY-MM-DD"),
+      end_date: moment(values.end_date).format("YYYY-MM-DD"),
+      achievements: values.achievements,
+      technologies: values.technologies,
+      industry: values.industry,
+      location: values.location,
+      description: values.responsibility,
+    };
+    setLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResumeExperience`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataSend),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          instanceForm.resetFields();
+          let data_server = response.data;
+          updateDataFromServer(data_server);
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: "Tambah Data Experience Gagal",
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal update Education. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const updateDataFromServer = (data_server) => {
+    let dataTemp = data;
+    let datasave = {
+      id: data_server.id,
+      company: data_server.company,
+      display_order: data_server.display_order,
+      role: data_server.role,
+      start_date: data_server.start_date,
+      end_date: data_server.end_date,
+      resume_id: data_server.resume_id,
+      location: data_server.location,
+      industry: data_server.industry,
+      achievements: data_server.achievements,
+      technologies: data_server.technologies,
+      description: data_server.description,
+    };
+    dataTemp.push(datasave);
+    setExperienceData(dataTemp);
+    setFormAdd({
+      ...formAdd,
+      experience: false,
+    });
   };
 
   const clearUpdate = () => {
@@ -88,7 +164,10 @@ const ExperienceInfoCard = ({ data, formAdd, setFormAdd }) => {
                   setEditData={setEditData}
                   jumlah_data={data.length}
                   data={item}
+                  all_data={data}
                   index={index}
+                  setExperienceData={setExperienceData}
+                  initProps={initProps}
                 />
               ))}
           </div>
@@ -215,6 +294,21 @@ const ExperienceInfoCard = ({ data, formAdd, setFormAdd }) => {
                 </div>
                 <div className={"flex gap-2"}>
                   <Form.Item
+                    label="Responsibility"
+                    name={"responsibility"}
+                    className="col-span-2 w-full"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Responsibility is required",
+                      },
+                    ]}
+                  >
+                    <TextArea rows={5} placeholder="Input Responsibility" />
+                  </Form.Item>
+                </div>
+                <div className={"flex gap-2"}>
+                  <Form.Item
                     label="Achievements"
                     name={"achievements"}
                     className="col-span-2 w-full"
@@ -246,7 +340,7 @@ const ExperienceInfoCard = ({ data, formAdd, setFormAdd }) => {
                 <div className={"flex justify-end"}>
                   <Space>
                     <Button onClick={() => cancelData()}>Cancel</Button>
-                    <Button htmlType="submit" type="primary">
+                    <Button loading={loading} htmlType="submit" type="primary">
                       Save
                     </Button>
                   </Space>
