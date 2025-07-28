@@ -20,9 +20,22 @@ const EvaluationCard = ({
   setEvaluationData,
 }) => {
   const [showMore, setShowMore] = useState(true);
-  const [instanceForm] = Form.useForm();
+  const [evaluationForm] = Form.useForm();
   const { TextArea } = Input;
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (formEdit.evaluation) {
+      evaluationForm.setFieldsValue({
+        content: data.content_validity,
+        grammar: data.grammar_and_spelling,
+        improvement: data.improvement_points,
+        mismatched: data.mismatched_skills,
+        questionable: data.questionable_claims,
+        skill: data.skill_alignment,
+      });
+    }
+  }, [formEdit]);
 
   const onFinish = (values) => {
     let dataSend = {
@@ -30,7 +43,8 @@ const EvaluationCard = ({
       grammar_and_spelling: values.grammar,
       content_validity: values.content,
       skill_alignment: values.skill,
-      flags: values.flags,
+      questionable_claims: values.questionable,
+      mismatched_skills: values.mismatched,
       improvement_points: values.improvement,
     };
     setLoading(true);
@@ -52,7 +66,8 @@ const EvaluationCard = ({
             grammar_and_spelling: values.grammar,
             content_validity: values.content,
             skill_alignment: values.skill,
-            flags: values.flags,
+            questionable_claims: values.questionable,
+            mismatched_skills: values.mismatched,
             improvement_points: values.improvement,
           });
           setFormEdit({
@@ -113,7 +128,7 @@ const EvaluationCard = ({
       {showMore &&
         (statusEdit ? (
           <div className={"flex flex-col gap-2 mt-4"}>
-            <Form layout="vertical" form={instanceForm} onFinish={onFinish}>
+            <Form layout="vertical" form={evaluationForm} onFinish={onFinish}>
               <div className={"flex gap-2"}>
                 <div className={"flex flex-col gap-2 w-1/2"}>
                   <Form.Item
@@ -193,34 +208,32 @@ const EvaluationCard = ({
               <div className={"flex gap-2"}>
                 <div className={"flex flex-col gap-2 w-1/2"}>
                   <Form.Item
-                    label="Flags"
-                    name={"flags"}
+                    label="Missmatched Skills"
+                    name={"mismatched"}
                     className="col-span-2"
                     rules={[
                       {
                         required: true,
-                        message: "Flags is required",
+                        message: "Missmatched Skills is required",
                       },
                     ]}
                   >
                     <Input placeholder="Input Flags" />
                   </Form.Item>
                 </div>
-              </div>
-              <div className={"flex gap-2"}>
-                <div className={"flex flex-col gap-2 w-full"}>
+                <div className={"flex flex-col gap-2 w-1/2"}>
                   <Form.Item
-                    label="Suggestions"
-                    name={"suggestions"}
+                    label="Questionable Claims"
+                    name={"questionable"}
                     className="col-span-2"
                     rules={[
                       {
                         required: true,
-                        message: "Suggestions is required",
+                        message: "Questionable Claims is required",
                       },
                     ]}
                   >
-                    <Input placeholder="Input Suggestions" />
+                    <Input placeholder="Input Questionable Claims" />
                   </Form.Item>
                 </div>
               </div>
@@ -305,9 +318,22 @@ const EvaluationCard = ({
               <p className={"text-sm leading-6 font-medium text-mono30"}>
                 Flags
               </p>
-              <p className={"text-sm leading-6 font-medium text-mono30"}>
-                {data?.flags}
-              </p>
+              <div className={"flex flex-col gap-1 mb-2"}>
+                <p className={`text-xs leading-6 font-normal text-[#808080]`}>
+                  Missmatched Skills
+                </p>
+                <p className={"text-sm leading-6 font-medium text-mono30"}>
+                  {data?.mismatched_skills}
+                </p>
+              </div>
+              <div className={"flex flex-col gap-1 mb-2"}>
+                <p className={`text-xs leading-6 font-normal text-[#808080]`}>
+                  Questionable Claims
+                </p>
+                <p className={"text-sm leading-6 font-medium text-mono30"}>
+                  {data?.questionable_claims}
+                </p>
+              </div>
             </div>
             <div className={"flex flex-col gap-1"}>
               <p className={"text-sm leading-6 font-medium text-mono30"}>

@@ -115,7 +115,8 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     grammar_and_spelling: null,
     content_validity: null,
     skill_alignment: null,
-    flags: null,
+    mismatched_skills: null,
+    questionable_claims: null,
     improvement_points: null,
   });
   const [numPages, setNumPages] = useState(null);
@@ -275,7 +276,8 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
           grammar_and_spelling: evaluation.grammar_and_spelling,
           content_validity: evaluation.content_validity,
           skill_alignment: evaluation.skill_alignment,
-          flags: evaluation.flags,
+          mismatched_skills: evaluation.mismatched_skills,
+          questionable_claims: evaluation.questionable_claims,
           improvement_points: evaluation.improvement_points,
         });
       } else {
