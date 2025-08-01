@@ -30,18 +30,6 @@ const SkillCard = ({
   const { hasPermission } = useAccessControl();
   const isAllowedToAddSkill = hasPermission(RESUME_SKILL_ADD);
   const isAllowedToDeleteSkill = hasPermission(RESUME_SKILL_DELETE);
-  const [dataSkills, setDataSkills] = useState([
-    { id: 1, skill: "Python" },
-    { id: 2, skill: "JavaScript" },
-    { id: 3, skill: "Java" },
-    { id: 4, skill: "C++" },
-    { id: 5, skill: "Ruby" },
-    { id: 6, skill: "Go" },
-    { id: 7, skill: "Swift" },
-    { id: 8, skill: "PHP" },
-    { id: 9, skill: "Kotlin" },
-    { id: 10, skill: "Rust" },
-  ]);
 
   const SkillTag = ({ data }) => (
     <Tag

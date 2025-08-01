@@ -8,14 +8,16 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
-import MdChevronDown from "assets/vectors/md-chevron-down.svg";
-import MdChevronUp from "assets/vectors/md-chevron-up.svg";
+import { useAccessControl } from "contexts/access-control";
 
-import { EditCvIconSvg } from "../../../icon";
+import {
+  RESUME_EXPERIENCE_DELETE,
+  RESUME_EXPERIENCE_UPDATE,
+} from "lib/features";
+
 import InformationColumn from "../InformationColumn";
 import InformationColumnWithAction from "../InformationColumnWithAction";
 
@@ -41,6 +43,9 @@ const ExperienceInfoBlock = ({
   });
   const [modalConfirm, setModalConfirm] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateExperience = hasPermission(RESUME_EXPERIENCE_UPDATE);
+  const isAllowedToDeleteExperience = hasPermission(RESUME_EXPERIENCE_DELETE);
 
   useEffect(() => {
     if (showMore && editData.id != null) {
@@ -438,6 +443,8 @@ const ExperienceInfoBlock = ({
               bold={false}
               changeData={() => changeData(data)}
               deleteData={() => deleteData(data)}
+              permissionDelete={isAllowedToDeleteExperience}
+              permissionEdit={isAllowedToUpdateExperience}
             />
           </div>
           <div className={"flex gap-2"}>

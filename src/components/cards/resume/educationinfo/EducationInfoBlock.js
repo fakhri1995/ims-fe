@@ -8,14 +8,12 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-import MdChevronDown from "assets/vectors/md-chevron-down.svg";
-import MdChevronUp from "assets/vectors/md-chevron-up.svg";
+import { useAccessControl } from "contexts/access-control";
 
-import { EditCvIconSvg } from "../../../icon";
+import { RESUME_EDUCATION_DELETE, RESUME_EDUCATION_UPDATE } from "lib/features";
+
 import InformationColumn from "../InformationColumn";
 import InformationColumnWithAction from "../InformationColumnWithAction";
 
@@ -41,6 +39,9 @@ const EducationInfoBlock = ({
     id: null,
     name: null,
   });
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateEducation = hasPermission(RESUME_EDUCATION_UPDATE);
+  const isAllowedToDeleteEducation = hasPermission(RESUME_EDUCATION_DELETE);
 
   useEffect(() => {
     if (showMore && editData.id != null) {
@@ -441,6 +442,8 @@ const EducationInfoBlock = ({
               bold={false}
               changeData={() => changeData(data)}
               deleteData={() => deleteData(data)}
+              permissionDelete={isAllowedToDeleteEducation}
+              permissionEdit={isAllowedToUpdateEducation}
             />
           </div>
           <div className={"flex gap-2"}>

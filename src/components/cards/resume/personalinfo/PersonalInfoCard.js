@@ -1,6 +1,4 @@
 import { Button, Form, Input, Space, notification } from "antd";
-import moment from "moment";
-import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -51,7 +49,6 @@ const PersonalInfoCard = ({
 
   useEffect(() => {
     if (formEdit?.personal) {
-      console.log("isi data yang akan diedit ", data);
       setDataEdit({
         ...dataEdit,
         name: data?.name,
@@ -94,7 +91,6 @@ const PersonalInfoCard = ({
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log("response ", response);
         if (response.success) {
           setDataPersonalInfo({
             ...dataPersonalInfo,
@@ -121,7 +117,6 @@ const PersonalInfoCard = ({
         }
       })
       .catch((err) => {
-        console.log("error apa ", err);
         notification.error({
           message: `Gagal update Personal Info. ${err.response}`,
           duration: 3,

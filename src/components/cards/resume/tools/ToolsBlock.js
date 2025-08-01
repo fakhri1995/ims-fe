@@ -8,16 +8,12 @@ import {
   Space,
   notification,
 } from "antd";
-import moment from "moment";
-import React from "react";
 import { useState } from "react";
-import { useEffect } from "react";
 
-import MdChevronDown from "assets/vectors/md-chevron-down.svg";
-import MdChevronUp from "assets/vectors/md-chevron-up.svg";
+import { useAccessControl } from "contexts/access-control";
 
-import ButtonSys from "../../../button";
-import { EditCvIconSvg } from "../../../icon";
+import { RESUME_TOOL_DELETE, RESUME_TOOL_UPDATE } from "lib/features";
+
 import InformationColumn from "../InformationColumn";
 import InformationColumnWithAction from "../InformationColumnWithAction";
 
@@ -32,10 +28,7 @@ const ToolsBlock = ({
   initProps,
   all_data,
   setToolData,
-  setFormAdd,
-  formAdd,
 }) => {
-  const [showMore, setShowMore] = useState(true);
   const [toolForm] = Form.useForm();
   const { TextArea } = Input;
   const [loading, setLoading] = useState(false);
@@ -45,7 +38,9 @@ const ToolsBlock = ({
     id: null,
     name: null,
   });
-  const levels = ["basic", "intermediate", "fluent", "native"];
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateTool = hasPermission(RESUME_TOOL_UPDATE);
+  const isAllowedToDeleteTool = hasPermission(RESUME_TOOL_DELETE);
 
   const onFinish = (values) => {
     let dataSend = {
@@ -295,6 +290,8 @@ const ToolsBlock = ({
               bold={false}
               changeData={() => changeData(data)}
               deleteData={() => deleteData(data)}
+              permissionDelete={isAllowedToDeleteTool}
+              permissionEdit={isAllowedToUpdateTool}
             />
           </div>
           <InformationColumn

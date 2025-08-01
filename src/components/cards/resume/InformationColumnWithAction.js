@@ -15,6 +15,8 @@ const InformationColumnWithAction = ({
   setEditData,
   changeData,
   deleteData,
+  permissionEdit,
+  permissionDelete,
 }) => {
   const handleEdit = (id) => {
     setEditData({
@@ -38,12 +40,16 @@ const InformationColumnWithAction = ({
         </p>
       </div>
       <div className={"flex w-2/12 gap-2 items-start"}>
-        <div onClick={() => changeData()} className={"hover:cursor-pointer"}>
-          <EditCvIconSvg size={18} />
-        </div>
-        <div onClick={() => deleteData()} className={"hover:cursor-pointer"}>
-          <TrashIconSvg size={18} color="#4D4D4D" />
-        </div>
+        {permissionEdit && (
+          <div onClick={() => changeData()} className={"hover:cursor-pointer"}>
+            <EditCvIconSvg size={18} />
+          </div>
+        )}
+        {permissionDelete && (
+          <div onClick={() => deleteData()} className={"hover:cursor-pointer"}>
+            <TrashIconSvg size={18} color="#4D4D4D" />
+          </div>
+        )}
       </div>
     </div>
   );

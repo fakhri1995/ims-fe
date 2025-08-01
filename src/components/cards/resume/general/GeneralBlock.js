@@ -1,6 +1,5 @@
 import { DatePicker, Input, Timeline } from "antd";
 import moment from "moment";
-import React from "react";
 
 import {
   CheckIconSvg,

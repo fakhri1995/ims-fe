@@ -1,15 +1,14 @@
-import { Button, Form, Input, Select, Space, notification } from "antd";
-import moment from "moment";
-import React from "react";
+import { Button, Form, Input, Space, notification } from "antd";
 import { useState } from "react";
-import { useEffect } from "react";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { RESUME_TOOL_ADD } from "lib/features";
 
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
 import ButtonSys from "../../../button";
-import { EditCvIconSvg } from "../../../icon";
-import InformationColumn from "../InformationColumn";
 import ToolsBlock from "./ToolsBlock";
 
 // Currently use for Training, Certifications, and Achievements section in resume
@@ -20,9 +19,6 @@ const ToolsCard = ({
   formAdd,
   setFormAdd,
   initProps,
-  formEdit,
-  statusEdit,
-  setFormEdit,
 }) => {
   const [showMore, setShowMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -35,7 +31,8 @@ const ToolsCard = ({
     category: null,
   });
   const [instanceForm] = Form.useForm();
-  const levels = ["basic", "intermediate", "fluent", "native"];
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddTool = hasPermission(RESUME_TOOL_ADD);
 
   const onFinish = (values) => {
     let dataSend = {
@@ -257,7 +254,12 @@ const ToolsCard = ({
                     >
                       Cancel
                     </Button>
-                    <Button loading={loading} htmlType="submit" type="primary">
+                    <Button
+                      disabled={!isAllowedToAddTool}
+                      loading={loading}
+                      htmlType="submit"
+                      type="primary"
+                    >
                       Save
                     </Button>
                   </Space>
@@ -266,6 +268,7 @@ const ToolsCard = ({
             </div>
           ) : (
             <ButtonSys
+              disabled={!isAllowedToAddTool}
               size={"small"}
               type={"dashed"}
               onClick={() => {

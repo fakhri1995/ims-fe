@@ -1,15 +1,15 @@
 import { Button, DatePicker, Form, Input, Space, notification } from "antd";
 import moment from "moment";
-import React from "react";
 import { useState } from "react";
-import { useEffect } from "react";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { RESUME_EDUCATION_ADD } from "lib/features";
 
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
 import ButtonSys from "../../../button";
-import { EditCvIconSvg } from "../../../icon";
-import InformationColumn from "../InformationColumn";
 import EducationInfoBlock from "./EducationInfoBlock";
 
 // Currently use for Training, Certifications, and Achievements section in resume
@@ -37,8 +37,8 @@ const EducationInfoCard = ({
     honors: null,
     relevant_coursework: null,
   });
-  const [isAdd, setIsAdd] = useState(false);
-
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddEducation = hasPermission(RESUME_EDUCATION_ADD);
   const onFinish = (values) => {
     let dataSend = {
       resume_id: resumeId,
@@ -362,7 +362,12 @@ const EducationInfoCard = ({
                     >
                       Cancel
                     </Button>
-                    <Button loading={loading} htmlType="submit" type="primary">
+                    <Button
+                      disabled={!isAllowedToAddEducation}
+                      loading={loading}
+                      htmlType="submit"
+                      type="primary"
+                    >
                       Save
                     </Button>
                   </Space>
@@ -373,6 +378,7 @@ const EducationInfoCard = ({
             <ButtonSys
               size={"small"}
               type={"dashed"}
+              disabled={!isAllowedToAddEducation}
               onClick={() => {
                 resetValue();
                 setFormAdd({
