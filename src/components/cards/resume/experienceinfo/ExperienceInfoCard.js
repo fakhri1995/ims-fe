@@ -1,15 +1,15 @@
 import { Button, DatePicker, Form, Input, Space, notification } from "antd";
 import moment from "moment";
-import React from "react";
 import { useState } from "react";
-import { useEffect } from "react";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { RESUME_EXPERIENCE_ADD } from "lib/features";
 
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
 import ButtonSys from "../../../button";
-import { EditCvIconSvg } from "../../../icon";
-import InformationColumn from "../InformationColumn";
 import ExperienceInfoBlock from "./ExperienceInfoBlock";
 
 // Currently use for Training, Certifications, and Achievements section in resume
@@ -22,7 +22,6 @@ const ExperienceInfoCard = ({
   initProps,
 }) => {
   const [showMore, setShowMore] = useState(true);
-  const [isAdd, setIsAdd] = useState(false);
   const [instanceForm] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const { TextArea } = Input;
@@ -37,6 +36,8 @@ const ExperienceInfoCard = ({
     achievement: null,
     technologies: null,
   });
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddExperience = hasPermission(RESUME_EXPERIENCE_ADD);
 
   const cancelData = () => {
     clearUpdate();
@@ -340,7 +341,12 @@ const ExperienceInfoCard = ({
                 <div className={"flex justify-end"}>
                   <Space>
                     <Button onClick={() => cancelData()}>Cancel</Button>
-                    <Button loading={loading} htmlType="submit" type="primary">
+                    <Button
+                      disabled={!isAllowedToAddExperience}
+                      loading={loading}
+                      htmlType="submit"
+                      type="primary"
+                    >
                       Save
                     </Button>
                   </Space>
@@ -350,6 +356,7 @@ const ExperienceInfoCard = ({
           ) : (
             <ButtonSys
               size={"small"}
+              disabled={!isAllowedToAddExperience}
               type={"dashed"}
               onClick={() => {
                 clearUpdate();

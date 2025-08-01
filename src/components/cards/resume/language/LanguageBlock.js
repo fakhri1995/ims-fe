@@ -1,23 +1,10 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Select,
-  Space,
-  notification,
-} from "antd";
-import moment from "moment";
-import React from "react";
+import { Button, Form, Input, Modal, Select, Space, notification } from "antd";
 import { useState } from "react";
-import { useEffect } from "react";
 
-import MdChevronDown from "assets/vectors/md-chevron-down.svg";
-import MdChevronUp from "assets/vectors/md-chevron-up.svg";
+import { useAccessControl } from "contexts/access-control";
 
-import ButtonSys from "../../../button";
-import { EditCvIconSvg } from "../../../icon";
+import { RESUME_LANGUAGE_DELETE, RESUME_LANGUAGE_UPDATE } from "lib/features";
+
 import InformationColumn from "../InformationColumn";
 import InformationColumnWithAction from "../InformationColumnWithAction";
 
@@ -33,9 +20,7 @@ const LanguageBlock = ({
   all_data,
   setEducationData,
 }) => {
-  const [showMore, setShowMore] = useState(true);
   const [instanceForm] = Form.useForm();
-  const { TextArea } = Input;
   const [loading, setLoading] = useState(false);
   const [modalConfirm, setModalConfirm] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -44,6 +29,9 @@ const LanguageBlock = ({
     name: null,
   });
   const levels = ["basic", "intermediate", "fluent", "native"];
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateLanguage = hasPermission(RESUME_LANGUAGE_UPDATE);
+  const isAllowedToDeleteLanguage = hasPermission(RESUME_LANGUAGE_UPDATE);
 
   const onFinish = (values) => {
     let dataSend = {
@@ -254,11 +242,6 @@ const LanguageBlock = ({
               value={data?.language ?? "-"}
               bold={false}
             />
-            {/* <InformationColumn
-                            label={"Profiency"}
-                            value={"Fluent"}
-                            bold={false}
-                        /> */}
             <InformationColumnWithAction
               label={"Profiency"}
               id={data?.id}
@@ -268,6 +251,8 @@ const LanguageBlock = ({
               bold={false}
               changeData={() => changeData(data)}
               deleteData={() => deleteData(data)}
+              permissionDelete={isAllowedToDeleteLanguage}
+              permissionEdit={isAllowedToUpdateLanguage}
             />
           </div>
           <InformationColumn

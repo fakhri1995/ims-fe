@@ -1,14 +1,14 @@
 import { Button, Form, Input, Space, notification } from "antd";
-import moment from "moment";
-import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { RESUME_EVALUATION_UPDATE } from "lib/features";
 
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
 import { EditCvIconSvg } from "../../../icon";
-import InformationColumn from "../InformationColumn";
 
 // Currently use for Training, Certifications, and Achievements section in resume
 const EvaluationCard = ({
@@ -23,6 +23,8 @@ const EvaluationCard = ({
   const [evaluationForm] = Form.useForm();
   const { TextArea } = Input;
   const [loading, setLoading] = useState(false);
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateEvaluation = hasPermission(RESUME_EVALUATION_UPDATE);
 
   useEffect(() => {
     if (formEdit.evaluation) {
@@ -111,7 +113,7 @@ const EvaluationCard = ({
             <MdChevronUp className="w-[14px] h-[14px]" />
           )}
         </div>
-        {statusEdit == false && (
+        {statusEdit == false && isAllowedToUpdateEvaluation && (
           <div
             className={"hover:cursor-pointer"}
             onClick={() =>
@@ -267,7 +269,12 @@ const EvaluationCard = ({
                     >
                       Cancel
                     </Button>
-                    <Button loading={loading} htmlType="submit" type="primary">
+                    <Button
+                      disabled={!isAllowedToUpdateEvaluation}
+                      loading={loading}
+                      htmlType="submit"
+                      type="primary"
+                    >
                       Save
                     </Button>
                   </Space>

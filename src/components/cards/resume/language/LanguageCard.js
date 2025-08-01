@@ -2,14 +2,15 @@ import { Button, Form, Input, Select, Space, notification } from "antd";
 import moment from "moment";
 import React from "react";
 import { useState } from "react";
-import { useEffect } from "react";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { RESUME_LANGUAGE_ADD } from "lib/features";
 
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
 import ButtonSys from "../../../button";
-import { EditCvIconSvg } from "../../../icon";
-import InformationColumn from "../InformationColumn";
 import LanguageBlock from "./LanguageBlock";
 
 // Currently use for Training, Certifications, and Achievements section in resume
@@ -34,6 +35,8 @@ const LanguageCard = ({
   });
   const [instanceForm] = Form.useForm();
   const levels = ["basic", "intermediate", "fluent", "native"];
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddLanguage = hasPermission(RESUME_LANGUAGE_ADD);
 
   const onFinish = (values) => {
     let dataSend = {
@@ -229,7 +232,12 @@ const LanguageCard = ({
                     >
                       Cancel
                     </Button>
-                    <Button loading={loading} htmlType="submit" type="primary">
+                    <Button
+                      disabled={!isAllowedToAddLanguage}
+                      loading={loading}
+                      htmlType="submit"
+                      type="primary"
+                    >
                       Save
                     </Button>
                   </Space>
@@ -239,6 +247,7 @@ const LanguageCard = ({
           ) : (
             <ButtonSys
               size={"small"}
+              disabled={!isAllowedToAddLanguage}
               type={"dashed"}
               onClick={() => {
                 resetValue();

@@ -7,14 +7,13 @@ import {
 } from "next-query-params";
 import { useRouter } from "next/router";
 import QueryString from "qs";
-import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RECRUITMENTS_GET } from "lib/features";
+import { RECRUITMENTS_AI_PENDING_GET } from "lib/features";
 
 import EducationInfoCard from "../../../../components/cards/resume/educationinfo/EducationInfoCard";
 import EvaluationCard from "../../../../components/cards/resume/evaluation/EvaluationCard";
@@ -59,7 +58,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     return null;
   }
 
-  const isAllowedToGetRecruitments = hasPermission(RECRUITMENTS_GET);
+  const isAllowedToGetRecruitments = hasPermission(RECRUITMENTS_AI_PENDING_GET);
 
   //INIT
   const rt = useRouter();
@@ -77,7 +76,6 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
   }
 
   pathTitleArr[pathTitleArr.length - 1] = "Detail CV";
-  const [idChoose, setIdChoose] = useState(null);
   const [modalValidate, setModalValidate] = useState(false);
   const [loadingValidate, setLoadingValidate] = useState(false);
   const [dataChoose, setDataChoose] = useState({
@@ -101,15 +99,6 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
   const [experienceData, setExperienceData] = useState([]);
   const [educationData, setEducationData] = useState([]);
   const [languageData, setLanguageData] = useState([]);
-  const [educationInfo, setDataEducationInfo] = useState({
-    name: null,
-    degree: null,
-    field: null,
-    gpa: null,
-    location: null,
-    honors: null,
-    relevant_coursework: null,
-  });
   const [evaluationData, setEvaluationData] = useState({
     id: null,
     grammar_and_spelling: null,
