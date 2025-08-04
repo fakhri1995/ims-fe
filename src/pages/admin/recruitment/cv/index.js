@@ -13,7 +13,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RECRUITMENTS_AI_PENDING_GET } from "lib/features";
+import { RECRUITMENTS_AI_PENDING_GET, RECRUITMENT_APPROVE } from "lib/features";
 
 import EducationInfoCard from "../../../../components/cards/resume/educationinfo/EducationInfoCard";
 import EvaluationCard from "../../../../components/cards/resume/evaluation/EvaluationCard";
@@ -23,22 +23,14 @@ import PersonalInfoCard from "../../../../components/cards/resume/personalinfo/P
 import SkillCard from "../../../../components/cards/resume/skill/SkillCard";
 import ToolsCard from "../../../../components/cards/resume/tools/ToolsCard";
 import {
-  DownIconSvg,
-  EditCvIconSvg,
   LeftIconSvg,
-  LineDownIconSvg,
   RightIconSvg,
   RocketIconSvg,
   StarFillIconSvg,
 } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard-management";
 import st from "../../../../components/layout-dashboard-management.module.css";
-import {
-  momentFormatDate,
-  objectToFormData,
-  objectToFormDataNew,
-  permissionWarningNotification,
-} from "../../../../lib/helper";
+import { permissionWarningNotification } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
@@ -59,6 +51,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
   }
 
   const isAllowedToGetRecruitments = hasPermission(RECRUITMENTS_AI_PENDING_GET);
+  const isAllowedToApproveRecruitment = hasPermission(RECRUITMENT_APPROVE);
 
   //INIT
   const rt = useRouter();
@@ -529,14 +522,16 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
           <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>
             {dataChoose?.name}
           </p>
-          <div
-            onClick={() => setModalValidate(true)}
-            className={
-              "hover:cursor-pointer btn btn-sm text-white font-semibold px-6 border bg-primary100 hover:bg-primary75 border-primary100 hover:border-primary75 focus:bg-primary100 focus:border-primary100 flex-nowrap w-full md:w-fit"
-            }
-          >
-            Validate
-          </div>
+          {isAllowedToApproveRecruitment && (
+            <div
+              onClick={() => setModalValidate(true)}
+              className={
+                "hover:cursor-pointer btn btn-sm text-white font-semibold px-6 border bg-primary100 hover:bg-primary75 border-primary100 hover:border-primary75 focus:bg-primary100 focus:border-primary100 flex-nowrap w-full md:w-fit"
+              }
+            >
+              Validate
+            </div>
+          )}
         </div>
         <div className={"mt-2 flex gap-4"}>
           <div
@@ -716,7 +711,7 @@ export async function getServerSideProps({ req, res, params }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "102",
+      sidemenu: "111",
     },
   };
 }
