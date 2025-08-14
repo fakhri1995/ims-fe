@@ -52,7 +52,6 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
 
   const isAllowedToGetRecruitments = hasPermission(RECRUITMENTS_AI_PENDING_GET);
   const isAllowedToApproveRecruitment = hasPermission(RECRUITMENT_APPROVE);
-
   //INIT
   const rt = useRouter();
 
@@ -651,23 +650,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             cancelText="Tidak"
             onOk={handleValidate}
             okButtonProps={{ loading: loadingValidate }}
-          >
-            {/* <div className="flex flex-col">
-              <div className="flex flex-col">
-                <p className="mb-0">Notes</p>
-                <Input
-                  placeholder="Masukkan Notes"
-                  onChange={(e) => {
-                    setupdatedata((prev) => {
-                      var temp = prev;
-                      temp.notes = e.target.value;
-                      return temp;
-                    });
-                  }}
-                ></Input>
-              </div>
-            </div> */}
-          </Modal>
+          ></Modal>
         </div>
       </div>
     </LayoutDashboard>
