@@ -39,8 +39,7 @@ const RecruitmentNewCandidate = ({
   setSelectedStatus,
   onFilterRecruitments,
   handleCreateRecruitments,
-  menuProps,
-  setCreateDrawerShown,
+  refresh,
   setSelectedRoleId,
   dataRoleList,
   isAllowedToGetRecruitmentRolesList,
@@ -61,6 +60,12 @@ const RecruitmentNewCandidate = ({
   dataStageOptions,
   dataStatusOptions,
   onKeyPressHandler,
+  setDataUpdateStatus,
+  dataUpdateStatus,
+  setModalUpdateStatus,
+  setModalUpdateStage,
+  setDataUpdateStage,
+  dataUpdateStage,
   initProps,
 }) => {
   const rt = useRouter();
@@ -101,7 +106,7 @@ const RecruitmentNewCandidate = ({
       dataIndex: "role",
       render: (text, record, index) => {
         return {
-          children: <>{record.role?.name}</>,
+          children: <>{record.role?.role}</>,
         };
       },
       sorter: isAllowedToGetRecruitments
@@ -215,13 +220,13 @@ const RecruitmentNewCandidate = ({
         return {
           children: (
             <div className="grid grid-rows-3 xl:grid-rows-1 grid-cols-1 xl:grid-cols-3 gap-2">
-              <div
+              {/* <div
                 className={
                   "hover:cursor-pointer flex justify-center items-center"
                 }
               >
                 <DownloadIconSvg size={20} color={"#808080"} />
-              </div>
+              </div> */}
               <div
                 onClick={(event) => {
                   event.stopPropagation();
@@ -239,7 +244,7 @@ const RecruitmentNewCandidate = ({
       },
     },
   ];
-  const [refresh, setRefresh] = useState(-1);
+  // const [refresh, setRefresh] = useState(-1);
   // table data
   const [loadingRecruitments, setLoadingRecruitments] = useState(true);
   const [dataRecruitments, setDataRecruitments] = useState([]);
@@ -332,7 +337,7 @@ const RecruitmentNewCandidate = ({
     <div className="lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
       <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between mb-6">
         <h4 className="mig-heading--4 mb-2 md:mb-0">Semua Kandidat</h4>
-        <div
+        {/* <div
           className={
             "flex flex-col lg:flex-row md:space-x-6 space-y-2 lg:space-y-0 w-full md:w-fit"
           }
@@ -355,7 +360,7 @@ const RecruitmentNewCandidate = ({
           >
             Input CV
           </Dropdown.Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Import excel */}
