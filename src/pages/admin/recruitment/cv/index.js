@@ -414,7 +414,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
           <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>
             Need to Review ({dataRawRecruitments.total ?? "0"})
           </p>
-          {dataRawRecruitments.total > 0 && (
+          {dataRawRecruitments.total > 0 && dataRecruitments.length > 0 && (
             <div className={"p-1.5 flex gap-1.5 "}>
               {dataRawRecruitments?.from == 1 ? (
                 <LeftIconSvg size={16} color={"#E6E6E6"} />
@@ -452,6 +452,22 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
               )}
             </div>
           )}
+          {dataRawRecruitments.total > 0 && dataRecruitments.length == 0 && (
+            <div className={"p-1.5 flex gap-1.5 "}>
+              <div
+                className={"hover:cursor-pointer"}
+                onClick={() =>
+                  setQueryParams({
+                    ...queryParams,
+                    page: dataRawRecruitments?.current_page - 1,
+                  })
+                }
+              >
+                <LeftIconSvg size={16} color={"#35763B"} />
+              </div>
+              <RightIconSvg size={16} color={"#E6E6E6"} />
+            </div>
+          )}
         </div>
         <div className={"mt-6 flex gap-[10px]"}>
           {dataRecruitments?.map((doc, idx) => (
@@ -466,18 +482,20 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
           <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>
             {dataChoose?.name}
           </p>
-          {isAllowedToApproveRecruitment && dataRawRecruitments.total > 0 && (
-            <div
-              onClick={() => setModalValidate(true)}
-              className={
-                "hover:cursor-pointer btn btn-sm text-white font-semibold px-6 border bg-primary100 hover:bg-primary75 border-primary100 hover:border-primary75 focus:bg-primary100 focus:border-primary100 flex-nowrap w-full md:w-fit"
-              }
-            >
-              Validate
-            </div>
-          )}
+          {isAllowedToApproveRecruitment &&
+            dataRawRecruitments.total > 0 &&
+            dataRecruitments.length > 0 && (
+              <div
+                onClick={() => setModalValidate(true)}
+                className={
+                  "hover:cursor-pointer btn btn-sm text-white font-semibold px-6 border bg-primary100 hover:bg-primary75 border-primary100 hover:border-primary75 focus:bg-primary100 focus:border-primary100 flex-nowrap w-full md:w-fit"
+                }
+              >
+                Validate
+              </div>
+            )}
         </div>
-        {dataRawRecruitments.total > 0 && (
+        {dataRawRecruitments.total > 0 && dataRecruitments.length > 0 && (
           <div className={"mt-2 flex gap-4"}>
             <div
               className={`border border-[#E6E6E6] rounded-[10px] bg-white ${
