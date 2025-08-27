@@ -414,42 +414,44 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
           <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>
             Need to Review ({dataRawRecruitments.total ?? "0"})
           </p>
-          <div className={"p-1.5 flex gap-1.5 "}>
-            {dataRawRecruitments?.from == 1 ? (
-              <LeftIconSvg size={16} color={"#E6E6E6"} />
-            ) : (
-              <div
-                className={"hover:cursor-pointer"}
-                onClick={() =>
-                  setQueryParams({
-                    ...queryParams,
-                    page: dataRawRecruitments?.current_page - 1,
-                  })
-                }
-              >
-                <LeftIconSvg size={16} color={"#35763B"} />
-              </div>
-            )}
-            <p className={"text-[#808080] text-xs leading-5 font-medium"}>
-              {dataRawRecruitments?.from} of {dataRawRecruitments?.to}
-            </p>
-            {dataRawRecruitments?.current_page ==
-            dataRawRecruitments?.last_page ? (
-              <RightIconSvg size={16} color={"#E6E6E6"} />
-            ) : (
-              <div
-                className={"hover:cursor-pointer"}
-                onClick={() =>
-                  setQueryParams({
-                    ...queryParams,
-                    page: dataRawRecruitments?.from + 1,
-                  })
-                }
-              >
-                <RightIconSvg size={16} color={"#35763B"} />
-              </div>
-            )}
-          </div>
+          {dataRawRecruitments.total > 0 && (
+            <div className={"p-1.5 flex gap-1.5 "}>
+              {dataRawRecruitments?.from == 1 ? (
+                <LeftIconSvg size={16} color={"#E6E6E6"} />
+              ) : (
+                <div
+                  className={"hover:cursor-pointer"}
+                  onClick={() =>
+                    setQueryParams({
+                      ...queryParams,
+                      page: dataRawRecruitments?.current_page - 1,
+                    })
+                  }
+                >
+                  <LeftIconSvg size={16} color={"#35763B"} />
+                </div>
+              )}
+              <p className={"text-[#808080] text-xs leading-5 font-medium"}>
+                {dataRawRecruitments?.from} of {dataRawRecruitments?.to}
+              </p>
+              {dataRawRecruitments?.current_page ==
+              dataRawRecruitments?.last_page ? (
+                <RightIconSvg size={16} color={"#E6E6E6"} />
+              ) : (
+                <div
+                  className={"hover:cursor-pointer"}
+                  onClick={() =>
+                    setQueryParams({
+                      ...queryParams,
+                      page: dataRawRecruitments?.from + 1,
+                    })
+                  }
+                >
+                  <RightIconSvg size={16} color={"#35763B"} />
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <div className={"mt-6 flex gap-[10px]"}>
           {dataRecruitments?.map((doc, idx) => (
@@ -464,7 +466,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
           <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>
             {dataChoose?.name}
           </p>
-          {isAllowedToApproveRecruitment && (
+          {isAllowedToApproveRecruitment && dataRawRecruitments.total > 0 && (
             <div
               onClick={() => setModalValidate(true)}
               className={
@@ -475,126 +477,128 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             </div>
           )}
         </div>
-        <div className={"mt-2 flex gap-4"}>
-          <div
-            className={`border border-[#E6E6E6] rounded-[10px] bg-white ${
-              dataChoose?.cv_path ? "max-w-2/5" : "w-3/5"
-            } p-4`}
-          >
-            {dataChoose?.cv_path && (
-              <Document
-                re
-                file={{
-                  url: dataChoose?.cv_path,
-                }}
-                onLoadError={(error) => console.log("Inside Error", error)}
-                onLoadSuccess={onLoadSuccess}
-              >
-                <Page
-                  pageNumber={pageNumber}
-                  renderAnnotationLayer={false}
-                  renderTextLayer={false}
-                />
-              </Document>
-            )}
-            {dataChoose?.cv_path && (
-              <div className={"flex justify-center gap-2"}>
-                <Button onClick={goToPrevPage} disabled={pageNumber === 1}>
-                  Previous
-                </Button>
-                <Button
-                  onClick={goToNextPage}
-                  disabled={pageNumber === numPages}
+        {dataRawRecruitments.total > 0 && (
+          <div className={"mt-2 flex gap-4"}>
+            <div
+              className={`border border-[#E6E6E6] rounded-[10px] bg-white ${
+                dataChoose?.cv_path ? "max-w-2/5" : "w-3/5"
+              } p-4`}
+            >
+              {dataChoose?.cv_path && (
+                <Document
+                  re
+                  file={{
+                    url: dataChoose?.cv_path,
+                  }}
+                  onLoadError={(error) => console.log("Inside Error", error)}
+                  onLoadSuccess={onLoadSuccess}
                 >
-                  Next
-                </Button>
-              </div>
-            )}
+                  <Page
+                    pageNumber={pageNumber}
+                    renderAnnotationLayer={false}
+                    renderTextLayer={false}
+                  />
+                </Document>
+              )}
+              {dataChoose?.cv_path && (
+                <div className={"flex justify-center gap-2"}>
+                  <Button onClick={goToPrevPage} disabled={pageNumber === 1}>
+                    Previous
+                  </Button>
+                  <Button
+                    onClick={goToNextPage}
+                    disabled={pageNumber === numPages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
+            </div>
+            <div className={"flex flex-col w-3/5"}>
+              <PersonalInfoCard
+                dataPersonalInfo={personalInfo}
+                setDataPersonalInfo={setDataPersonalInfo}
+                initProps={initProps}
+                idResume={dataChoose?.id}
+                formEdit={formEdit}
+                setFormEdit={setFormEdit}
+                statusEdit={formEdit.personal}
+                data={personalInfo}
+              />
+              <ExperienceInfoCard
+                data={experienceData}
+                formAdd={formAdd}
+                setFormAdd={setFormAdd}
+                setExperienceData={setExperienceData}
+                initProps={initProps}
+                resumeId={resumeId}
+              />
+              <EducationInfoCard
+                data={educationData}
+                initProps={initProps}
+                setEducationData={setEducationData}
+                resumeId={resumeId}
+                formAdd={formAdd}
+                setFormAdd={setFormAdd}
+              />
+              <SkillCard
+                skillSet={dataSkillSet}
+                resumeId={resumeId}
+                initProps={initProps}
+                formEdit={formEdit}
+                statusEdit={formEdit.skill}
+                setFormEdit={setFormEdit}
+                setData={setDataSkillSet}
+              />
+              <LanguageCard
+                initProps={initProps}
+                formEdit={formEdit}
+                statusEdit={formEdit.languages}
+                setFormEdit={setFormEdit}
+                data={languageData}
+                setLanguageData={setLanguageData}
+                resumeId={resumeId}
+                formAdd={formAdd}
+                setFormAdd={setFormAdd}
+              />
+              <ToolsCard
+                initProps={initProps}
+                data={toolData}
+                formEdit={formEdit}
+                setFormEdit={setFormEdit}
+                statusEdit={formEdit.tools}
+                resumeId={resumeId}
+                formAdd={formAdd}
+                setFormAdd={setFormAdd}
+                setToolData={setToolData}
+              />
+              <EvaluationCard
+                formEdit={formEdit}
+                setFormEdit={setFormEdit}
+                statusEdit={formEdit.evaluation}
+                data={evaluationData}
+                setEvaluationData={setEvaluationData}
+                initProps={initProps}
+              />
+            </div>
+            <Modal
+              title={
+                <h1 className="font-semibold">
+                  Apakah anda yakin ingin validate data dengan nama "
+                  <span className={"font-bold"}>{dataChoose?.name}</span>"?
+                </h1>
+              }
+              visible={modalValidate}
+              onCancel={() => {
+                setModalValidate(false);
+              }}
+              okText="Ya"
+              cancelText="Tidak"
+              onOk={handleValidate}
+              okButtonProps={{ loading: loadingValidate }}
+            ></Modal>
           </div>
-          <div className={"flex flex-col w-3/5"}>
-            <PersonalInfoCard
-              dataPersonalInfo={personalInfo}
-              setDataPersonalInfo={setDataPersonalInfo}
-              initProps={initProps}
-              idResume={dataChoose?.id}
-              formEdit={formEdit}
-              setFormEdit={setFormEdit}
-              statusEdit={formEdit.personal}
-              data={personalInfo}
-            />
-            <ExperienceInfoCard
-              data={experienceData}
-              formAdd={formAdd}
-              setFormAdd={setFormAdd}
-              setExperienceData={setExperienceData}
-              initProps={initProps}
-              resumeId={resumeId}
-            />
-            <EducationInfoCard
-              data={educationData}
-              initProps={initProps}
-              setEducationData={setEducationData}
-              resumeId={resumeId}
-              formAdd={formAdd}
-              setFormAdd={setFormAdd}
-            />
-            <SkillCard
-              skillSet={dataSkillSet}
-              resumeId={resumeId}
-              initProps={initProps}
-              formEdit={formEdit}
-              statusEdit={formEdit.skill}
-              setFormEdit={setFormEdit}
-              setData={setDataSkillSet}
-            />
-            <LanguageCard
-              initProps={initProps}
-              formEdit={formEdit}
-              statusEdit={formEdit.languages}
-              setFormEdit={setFormEdit}
-              data={languageData}
-              setLanguageData={setLanguageData}
-              resumeId={resumeId}
-              formAdd={formAdd}
-              setFormAdd={setFormAdd}
-            />
-            <ToolsCard
-              initProps={initProps}
-              data={toolData}
-              formEdit={formEdit}
-              setFormEdit={setFormEdit}
-              statusEdit={formEdit.tools}
-              resumeId={resumeId}
-              formAdd={formAdd}
-              setFormAdd={setFormAdd}
-              setToolData={setToolData}
-            />
-            <EvaluationCard
-              formEdit={formEdit}
-              setFormEdit={setFormEdit}
-              statusEdit={formEdit.evaluation}
-              data={evaluationData}
-              setEvaluationData={setEvaluationData}
-              initProps={initProps}
-            />
-          </div>
-          <Modal
-            title={
-              <h1 className="font-semibold">
-                Apakah anda yakin ingin validate data dengan nama "
-                <span className={"font-bold"}>{dataChoose?.name}</span>"?
-              </h1>
-            }
-            visible={modalValidate}
-            onCancel={() => {
-              setModalValidate(false);
-            }}
-            okText="Ya"
-            cancelText="Tidak"
-            onOk={handleValidate}
-            okButtonProps={{ loading: loadingValidate }}
-          ></Modal>
-        </div>
+        )}
       </div>
     </LayoutDashboard>
   );
