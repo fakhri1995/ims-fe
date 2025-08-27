@@ -443,7 +443,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
                   onClick={() =>
                     setQueryParams({
                       ...queryParams,
-                      page: dataRawRecruitments?.from + 1,
+                      page: dataRawRecruitments?.current_page + 1,
                     })
                   }
                 >
