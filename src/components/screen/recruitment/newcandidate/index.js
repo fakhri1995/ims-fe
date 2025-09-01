@@ -34,6 +34,7 @@ import {
 import ModalCore from "../../../modal/modalCore";
 import { TableCustomRecruitmentCandidate } from "../../../table/tableCustom";
 import ResumePDFTemplate from "../../resume/ResumePDFTemplate";
+import TabCandidate from "../tabcandidate";
 
 const RecruitmentNewCandidate = ({
   setSelectedStatus,
@@ -67,6 +68,8 @@ const RecruitmentNewCandidate = ({
   setDataUpdateStage,
   dataUpdateStage,
   initProps,
+  tabActive,
+  setTabActive,
 }) => {
   const rt = useRouter();
   const [modalSheetImport, setModalSheetImport] = useState(false);
@@ -362,7 +365,7 @@ const RecruitmentNewCandidate = ({
           </Dropdown.Button>
         </div> */}
       </div>
-
+      <TabCandidate activeTab={tabActive} setActiveTab={setTabActive} />
       {/* Import excel */}
       <ReactSpreadsheetImport
         isOpen={modalSheetImport}
