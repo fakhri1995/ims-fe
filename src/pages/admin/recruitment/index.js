@@ -95,6 +95,7 @@ import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
 import HeaderCandidate from "../../../components/screen/recruitment/headercandidate";
 import RecruitmentNewCandidate from "../../../components/screen/recruitment/newcandidate";
 import SearchCandidate from "../../../components/screen/recruitment/searchcandidate";
+import TabCandidate from "../../../components/screen/recruitment/tabcandidate";
 import { TableCustomRecruitmentCandidate } from "../../../components/table/tableCustom";
 import { createKeyPressHandler } from "../../../lib/helper";
 import {
@@ -1432,7 +1433,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             onButtonClicked={onManageRecruitmentButtonClicked}
             disabled={!isAllowedToSetupRecruitment}
           />
-          <div className={"lg:col-span-3 flex justify-center"}>
+          {/* <div className={"lg:col-span-3 flex justify-center"}>
             <div
               className={
                 "bg-primary100 rounded-md flex gap-3 self-center p-1 my-4"
@@ -1467,7 +1468,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Table Kandidat */}
           {tabActive == "done" ? (
@@ -1628,7 +1629,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   },
                 ]}
               />
-
+              <TabCandidate activeTab={tabActive} setActiveTab={setTabActive} />
               {/* Start: Search criteria */}
               <SearchCandidate
                 searchingFilterRecruitments={searchingFilterRecruitments}
@@ -1713,6 +1714,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               dataUpdateStatus={dataUpdateStatus}
               setModalUpdateStatus={setModalUpdateStatus}
               setModalUpdateStage={setModalUpdateStage}
+              tabActive={tabActive}
+              setTabActive={setTabActive}
             />
           )}
         </div>
