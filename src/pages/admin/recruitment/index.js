@@ -92,7 +92,10 @@ import Layout from "../../../components/layout-dashboard-management";
 import st from "../../../components/layout-dashboard-management.module.css";
 import ModalCore from "../../../components/modal/modalCore";
 import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
+import HeaderCandidate from "../../../components/screen/recruitment/headercandidate";
 import RecruitmentNewCandidate from "../../../components/screen/recruitment/newcandidate";
+import SearchCandidate from "../../../components/screen/recruitment/searchcandidate";
+import TabCandidate from "../../../components/screen/recruitment/tabcandidate";
 import { TableCustomRecruitmentCandidate } from "../../../components/table/tableCustom";
 import { createKeyPressHandler } from "../../../lib/helper";
 import {
@@ -1368,181 +1371,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
-  const columnRecruitmentNew = [
-    {
-      title: "No",
-      key: "number",
-      dataIndex: "num",
-      render: (text, record, index) => {
-        return {
-          children: (
-            <div className="flex justify-center">
-              {dataRawRecruitments?.from + index}
-            </div>
-          ),
-        };
-      },
-    },
-    {
-      title: "Nama",
-      key: "name",
-      dataIndex: "name",
-      render: (text, record, index) => {
-        return {
-          children: (
-            <div className="xl:w-40">{record.name ? record.name : ""}</div>
-          ),
-        };
-      },
-      sorter: isAllowedToGetRecruitments
-        ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
-        : false,
-    },
-    {
-      title: "Role",
-      key: "role",
-      dataIndex: "role",
-      render: (text, record, index) => {
-        return {
-          children: <>{record.role?.name}</>,
-        };
-      },
-      sorter: isAllowedToGetRecruitments
-        ? (a, b) =>
-            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
-        : false,
-    },
-    {
-      title: "Stage",
-      key: "stage",
-      dataIndex: "stage",
-      render: (text, record, index) => {
-        return {
-          children: (
-            <div>
-              <select
-                disabled={!isAllowedToGetRecruitmentStagesList || isBulk}
-                className="rounded-md py-1 hover:cursor-pointer"
-                value={record.recruitment_stage_id}
-                style={{ width: `100%` }}
-                onClick={(e) => e.stopPropagation()}
-                onChange={(event) => {
-                  setDataUpdateStage({
-                    ...dataUpdateStage,
-                    id: record.id,
-                    name: record.name,
-                    prev_recruitment_stage_name: record.stage?.name,
-                    recruitment_stage_name:
-                      event.target?.selectedOptions[0]?.text,
-                    recruitment_stage_id: Number(event.target?.value),
-                  });
-                  setModalUpdateStage(true);
-                }}
-              >
-                {dataStageList.map((stage) => (
-                  <option key={stage.id} value={stage.id}>
-                    {stage.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ),
-        };
-      },
-      sorter: isAllowedToGetRecruitments
-        ? (a, b) =>
-            a.stage?.name
-              .toLowerCase()
-              .localeCompare(b.stage?.name.toLowerCase())
-        : false,
-    },
-    {
-      title: "Status",
-      key: "status",
-      dataIndex: "status",
-      render: (text, record, index) => {
-        return {
-          children: (
-            <>
-              <select
-                disabled={!isAllowedToGetRecruitmentStatusesList || isBulk}
-                value={record.recruitment_status_id}
-                className="rounded-md py-1 hover:cursor-pointer"
-                style={{
-                  width: `100%`,
-                  backgroundColor: `${record.status?.color}10`,
-                  color: `${record.status?.color}`,
-                }}
-                onClick={(e) => e.stopPropagation()}
-                onChange={(event) => {
-                  setDataUpdateStatus({
-                    ...dataUpdateStatus,
-                    id: record.id,
-                    name: record.name,
-                    prev_recruitment_status_name: record.status?.name,
-                    recruitment_status_name:
-                      event.target?.selectedOptions[0]?.text,
-                    recruitment_status_id: Number(event.target?.value),
-                  });
-                  setModalUpdateStatus(true);
-                }}
-              >
-                {dataStatusList.map((status) => (
-                  <option
-                    key={status.id}
-                    value={status.id}
-                    style={{
-                      backgroundColor: `${status?.color}20`,
-                      color: `${status?.color}`,
-                    }}
-                  >
-                    {status?.name}
-                  </option>
-                ))}
-              </select>
-            </>
-          ),
-        };
-      },
-      sorter: isAllowedToGetRecruitments
-        ? (a, b) =>
-            a.status?.name
-              .toLowerCase()
-              .localeCompare(b.status?.name.toLowerCase())
-        : false,
-    },
-    {
-      title: "Aksi",
-      key: "button_action",
-      render: (text, record) => {
-        return {
-          children: (
-            <div className="grid grid-rows-3 xl:grid-rows-1 grid-cols-1 xl:grid-cols-3 gap-2">
-              <div
-                className={
-                  "hover:cursor-pointer flex justify-center items-center"
-                }
-              >
-                <DownloadIconSvg size={20} color={"#808080"} />
-              </div>
-              <div
-                onClick={(event) => {
-                  event.stopPropagation();
-                  rt.push(`/admin/recruitment/cv`);
-                }}
-                className={
-                  "hover:cursor-pointer flex justify-center items-center"
-                }
-              >
-                <EyeIconSvg size={20} color={"#808080"} />
-              </div>
-            </div>
-          ),
-        };
-      },
-    },
-  ];
-
   const handleMenuClick = (e) => {
     message.info("Click on menu item.");
     // console.log("click", e);
@@ -1605,31 +1433,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             onButtonClicked={onManageRecruitmentButtonClicked}
             disabled={!isAllowedToSetupRecruitment}
           />
-
-          {/* Card Jalur Daftar */}
-          {/* <div className="col-span-1 flex flex-col shadow-md rounded-md bg-white p-6">
-            <div className="flex flex-row justify-between items-center w-full">
-              <h4 className="mig-heading--4">Jalur Daftar</h4>
-              <ListSearchIconSvg size={24} />
-            </div>
-          </div> */}
-
-          {/* Card Stage */}
-          {/* <div className="col-span-1 flex flex-col shadow-md rounded-md bg-white p-6">
-            <div className="flex flex-row justify-between items-center w-full">
-              <h4 className="mig-heading--4">Stage</h4>
-              <ListSearchIconSvg size={24} />
-            </div>
-          </div> */}
-
-          {/* Card Status */}
-          {/* <div className="col-span-1 flex flex-col shadow-md rounded-md bg-white p-6">
-            <div className="flex flex-row justify-between items-center w-full">
-              <h4 className="mig-heading--4">Status</h4>
-              <ListSearchIconSvg size={24} />
-            </div>
-          </div> */}
-          <div className={"lg:col-span-3 flex justify-center"}>
+          {/* <div className={"lg:col-span-3 flex justify-center"}>
             <div
               className={
                 "bg-primary100 rounded-md flex gap-3 self-center p-1 my-4"
@@ -1664,84 +1468,23 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Table Kandidat */}
           {tabActive == "done" ? (
             <div className="lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-              <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between mb-6">
-                <h4 className="mig-heading--4 mb-2 md:mb-0">Semua Kandidat</h4>
-                {isBulk === false ? (
-                  <div className="flex flex-col lg:flex-row md:space-x-6 space-y-2 lg:space-y-0 w-full md:w-fit">
-                    <ButtonSys type={"default"} onClick={() => setBulk(true)}>
-                      <div className="flex flex-row space-x-2.5 items-center">
-                        <AppstoreOutlined />
-                        <p>Bulk Action</p>
-                      </div>
-                    </ButtonSys>
-
-                    {/* Dropdown Tambah Kandidat */}
-                    <Dropdown
-                      overlay={dropdownMenu}
-                      trigger={["click"]}
-                      placement="bottomRight"
-                      className="z-0"
-                      disabled={!isAllowedToAddRecruitment}
-                    >
-                      <Button
-                        type={"primary"}
-                        className="btn btn-sm text-white font-semibold px-6 border 
-                        bg-primary100 hover:bg-primary75 border-primary100 
-                        hover:border-primary75 focus:bg-primary100 focus:border-primary100 
-                        flex-nowrap w-full md:w-fit"
-                        icon={<UserPlusIconSvg size={16} color="#FFFFFF" />}
-                      >
-                        Tambah Kandidat
-                      </Button>
-                    </Dropdown>
-                  </div>
-                ) : (
-                  <div className="flex flex-row space-x-6 w-full md:w-fit justify-between md:justify-normal">
-                    <ButtonSys
-                      type={"default"}
-                      color={"danger"}
-                      onClick={() => {
-                        setBulk(false);
-                        setSelectedRecruitments([]);
-                        setSelectedRecruitmentIds([]);
-                        setDataUpdateStage([]);
-                        setDataUpdateStatus([]);
-                      }}
-                    >
-                      <div className="flex flex-row space-x-1 items-center">
-                        <CloseOutlined />
-                        <p>Batal</p>
-                      </div>
-                    </ButtonSys>
-
-                    {/* Dropdown Aksi */}
-                    <Dropdown
-                      overlay={bulkMenu}
-                      trigger={["click"]}
-                      placement="bottomRight"
-                      disabled={selectedRecruitments.length === 0}
-                    >
-                      <Button
-                        type={"default"}
-                        className="btn btn-sm font-semibold px-6 border border-primary100
-                        hover:border-primary75  hover:bg-primary75 focus:bg-white
-                        focus:border-primary100 text-primary100 hover:text-white focus:text-primary100"
-                      >
-                        <div className="flex flex-row items-center space-x-3.5">
-                          <p>Aksi</p>
-                          <DownOutlined />
-                        </div>
-                      </Button>
-                    </Dropdown>
-                  </div>
-                  // <div></div>
-                )}
-              </div>
+              <HeaderCandidate
+                isBulk={isBulk}
+                dropdownMenu={dropdownMenu}
+                isAllowedToAddRecruitment={isAllowedToAddRecruitment}
+                setBulk={setBulk}
+                setSelectedRecruitments={setSelectedRecruitments}
+                setSelectedRecruitmentIds={setSelectedRecruitmentIds}
+                setDataUpdateStage={setDataUpdateStage}
+                setDataUpdateStatus={setDataUpdateStatus}
+                bulkMenu={bulkMenu}
+                selectedRecruitments={selectedRecruitments}
+              />
 
               {/* Import excel */}
               <ReactSpreadsheetImport
@@ -1886,110 +1629,32 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   },
                 ]}
               />
-
+              <TabCandidate activeTab={tabActive} setActiveTab={setTabActive} />
               {/* Start: Search criteria */}
-              <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
-                {/* Search by keyword (kata kunci) */}
-                <div className="w-full md:w-4/12">
-                  <Input
-                    defaultValue={searchingFilterRecruitments}
-                    style={{ width: `100%` }}
-                    placeholder="Kata Kunci.."
-                    allowClear
-                    onChange={(e) => {
-                      setSearchingFilterRecruitments(e.target.value);
-                      setQueryParams({ page: 1 });
-                    }}
-                    onKeyPress={onKeyPressHandler}
-                    disabled={!isAllowedToGetRecruitments}
-                  />
-                </div>
-
-                {/* Filter by role (dropdown) */}
-                <div className="w-full md:w-2/12">
-                  <Select
-                    defaultValue={queryParams.recruitment_role_id}
-                    allowClear
-                    name={`role`}
-                    disabled={!isAllowedToGetRecruitmentRolesList}
-                    placeholder="Semua Role"
-                    style={{ width: `100%` }}
-                    onChange={(value) => {
-                      setQueryParams({ recruitment_role_id: value, page: 1 });
-                      setSelectedRoleId(value);
-                    }}
-                  >
-                    {dataRoleList.map((role) => (
-                      <Select.Option key={role.id} value={role.id}>
-                        {role.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-
-                {/* Filter by stage */}
-                <div className="w-full md:w-2/12">
-                  <Select
-                    defaultValue={queryParams.recruitment_stage_id}
-                    allowClear
-                    name={`stage`}
-                    disabled={!isAllowedToGetRecruitmentStagesList}
-                    placeholder="Semua Stage"
-                    style={{ width: `100%` }}
-                    onChange={(value) => {
-                      setQueryParams({ recruitment_stage_id: value, page: 1 });
-                      setSelectedStage(value);
-                    }}
-                  >
-                    {dataStageList.map((stage) => (
-                      <Select.Option key={stage.id} value={stage.id}>
-                        {stage.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-
-                {/* Search by status (dropdown) */}
-                <div className="w-full md:w-2/12">
-                  <Select
-                    defaultValue={queryParams.recruitment_status_id}
-                    allowClear
-                    name={`status`}
-                    disabled={!isAllowedToGetRecruitmentStatusesList}
-                    placeholder="Semua Status"
-                    style={{ width: `100%` }}
-                    onChange={(value) => {
-                      setQueryParams({ recruitment_status_id: value, page: 1 });
-                      setSelectedStatus(value);
-                    }}
-                  >
-                    {dataStatusList.map((status) => (
-                      <Select.Option key={status.id} value={status.id}>
-                        <div className="flex items-center">
-                          <div
-                            className="rounded-full w-4 h-4 mr-2"
-                            style={{ backgroundColor: `${status.color}` }}
-                          />
-                          <p className="truncate">{status.name}</p>
-                        </div>
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-
-                <div className="flex justify-end">
-                  <ButtonSys
-                    type={`primary`}
-                    onClick={onFilterRecruitments}
-                    disabled={!isAllowedToGetRecruitments}
-                  >
-                    <div className="flex flex-row space-x-2.5 w-full items-center">
-                      <SearchIconSvg size={15} color={`#ffffff`} />
-                      <p>Cari</p>
-                    </div>
-                  </ButtonSys>
-                </div>
-              </div>
+              <SearchCandidate
+                searchingFilterRecruitments={searchingFilterRecruitments}
+                setSearchingFilterRecruitments={setSearchingFilterRecruitments}
+                setQueryParams={setQueryParams}
+                onKeyPressHandler={onKeyPressHandler}
+                isAllowedToGetRecruitments={isAllowedToGetRecruitments}
+                queryParams={queryParams}
+                isAllowedToGetRecruitmentRolesList={
+                  isAllowedToGetRecruitmentRolesList
+                }
+                setSelectedRoleId={setSelectedRoleId}
+                dataRoleList={dataRoleList}
+                isAllowedToGetRecruitmentStagesList={
+                  isAllowedToGetRecruitmentStagesList
+                }
+                setSelectedStage={setSelectedStage}
+                dataStageList={dataStageList}
+                isAllowedToGetRecruitmentStatusesList={
+                  isAllowedToGetRecruitmentStatusesList
+                }
+                setSelectedStatus={setSelectedStatus}
+                dataStatusList={dataStatusList}
+                onFilterRecruitments={onFilterRecruitments}
+              />
               {/* End: Search criteria */}
 
               <div>
@@ -2018,6 +1683,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               setCreateDrawerShown={setCreateDrawerShown}
               setSelectedRoleId={setSelectedRoleId}
               dataRoleList={dataRoleList}
+              setDataUpdateStage={setDataUpdateStage}
+              dataUpdateStage={dataUpdateStage}
+              refresh={refresh}
               isAllowedToGetRecruitmentRolesList={
                 isAllowedToGetRecruitmentRolesList
               }
@@ -2042,6 +1710,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               dataStatusOptions={dataStatusOptions}
               onKeyPressHandler={onKeyPressHandler}
               initProps={initProps}
+              setDataUpdateStatus={setDataUpdateStatus}
+              dataUpdateStatus={dataUpdateStatus}
+              setModalUpdateStatus={setModalUpdateStatus}
+              setModalUpdateStage={setModalUpdateStage}
+              tabActive={tabActive}
+              setTabActive={setTabActive}
             />
           )}
         </div>

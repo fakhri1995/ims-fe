@@ -4049,9 +4049,11 @@ const StarFillIconSvg = (props) => {
 const EditCvIconSvg = (props) => {
   const editCvIconSvg = () => (
     <svg
-      width="24"
-      height="24"
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={props?.color ?? "currentColor"}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >

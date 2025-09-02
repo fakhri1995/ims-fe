@@ -1,23 +1,104 @@
-import moment from "moment";
-import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
+import { Button, Form, Input, Space, notification } from "antd";
+import { useEffect, useState } from "react";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { RESUME_EVALUATION_UPDATE } from "lib/features";
 
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
 import { EditCvIconSvg } from "../../../icon";
-import InformationColumn from "../InformationColumn";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const EvaluationCard = ({}) => {
+const EvaluationCard = ({
+  formEdit,
+  statusEdit,
+  initProps,
+  setFormEdit,
+  data,
+  setEvaluationData,
+}) => {
   const [showMore, setShowMore] = useState(true);
+  const [evaluationForm] = Form.useForm();
+  const { TextArea } = Input;
+  const [loading, setLoading] = useState(false);
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateEvaluation = hasPermission(RESUME_EVALUATION_UPDATE);
+
+  useEffect(() => {
+    if (formEdit.evaluation) {
+      evaluationForm.setFieldsValue({
+        content: data.content_validity,
+        grammar: data.grammar_and_spelling,
+        improvement: data.improvement_points,
+        mismatched: data.mismatched_skills,
+        questionable: data.questionable_claims,
+        skill: data.skill_alignment,
+      });
+    }
+  }, [formEdit]);
+
+  const onFinish = (values) => {
+    let dataSend = {
+      resume_id: data.id,
+      grammar_and_spelling: values.grammar,
+      content_validity: values.content,
+      skill_alignment: values.skill,
+      questionable_claims: values.questionable,
+      mismatched_skills: values.mismatched,
+      improvement_points: values.improvement,
+    };
+    setLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResumeEvaluation`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataSend),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        console.log("response ", response);
+        if (response.success) {
+          setEvaluationData({
+            ...data,
+            resume_id: data.id,
+            grammar_and_spelling: values.grammar,
+            content_validity: values.content,
+            skill_alignment: values.skill,
+            questionable_claims: values.questionable,
+            mismatched_skills: values.mismatched,
+            improvement_points: values.improvement,
+          });
+          setFormEdit({
+            ...formEdit,
+            evaluation: false,
+          });
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log("error apa ", err);
+        notification.error({
+          message: `Gagal update Evaluation. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
   return (
-    <div
-      className={
-        "border border-b-0 border-[#E6E6E6] bg-white w-full py-4 px-5 "
-      }
-    >
+    <div className={"border border-[#E6E6E6] bg-white w-full py-4 px-5 "}>
       <div className={"flex justify-between"}>
         <div
           onClick={() => setShowMore(!showMore)}
@@ -32,64 +113,251 @@ const EvaluationCard = ({}) => {
             <MdChevronUp className="w-[14px] h-[14px]" />
           )}
         </div>
-        <EditCvIconSvg />
+        {statusEdit == false && isAllowedToUpdateEvaluation && (
+          <div
+            className={"hover:cursor-pointer"}
+            onClick={() =>
+              setFormEdit({
+                ...formEdit,
+                evaluation: true,
+              })
+            }
+          >
+            <EditCvIconSvg />
+          </div>
+        )}
       </div>
-      {showMore && (
-        <div className={"flex flex-col gap-3 mt-4"}>
-          <div className={"flex flex-col gap-1"}>
-            <p className={"text-sm leading-6 font-medium text-mono30"}>
-              Scores
-            </p>
-            <div className={"flex gap-1"}>
-              <div className={"w-1/3 flex flex-col"}>
+      {showMore &&
+        (statusEdit ? (
+          <div className={"flex flex-col gap-2 mt-4"}>
+            <Form layout="vertical" form={evaluationForm} onFinish={onFinish}>
+              <div className={"flex gap-2"}>
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <Form.Item
+                    label="Grammar & Spelling"
+                    name={"grammar"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Grammar & Spelling is required",
+                      },
+                      {
+                        pattern: /^\d+$/,
+                        message: "Grammar & Spelling must be numeric",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Input Score Grammar & Spelling" />
+                  </Form.Item>
+                </div>
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <Form.Item
+                    label="Content Validity"
+                    name={"content"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Content Validity is required",
+                      },
+                      {
+                        pattern: /^\d+$/,
+                        message: "Content Validity must be numeric",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Input Content Validity" />
+                  </Form.Item>
+                </div>
+                {/* <div className={"flex flex-col gap-2 w-1/3"}>
+                  <Form.Item
+                    label="Skill Alignment"
+                    name={"skill"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Skill Alignment is required",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Input Score Skill Alignment" />
+                  </Form.Item>
+                </div> */}
+              </div>
+              <div className={"flex gap-2"}>
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <Form.Item
+                    label="Skill Alignment"
+                    name={"skill"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Skill Alignment is required",
+                      },
+                      {
+                        pattern: /^\d+$/,
+                        message: "Skill ALignment must be numeric",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Input Score Skill Alignment" />
+                  </Form.Item>
+                </div>
+              </div>
+              <div className={"flex gap-2"}>
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <Form.Item
+                    label="Missmatched Skills"
+                    name={"mismatched"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Missmatched Skills is required",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Input Flags" />
+                  </Form.Item>
+                </div>
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <Form.Item
+                    label="Questionable Claims"
+                    name={"questionable"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Questionable Claims is required",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Input Questionable Claims" />
+                  </Form.Item>
+                </div>
+              </div>
+              <div className={"flex gap-2"}>
+                <div className={"flex flex-col gap-2 w-full"}>
+                  <Form.Item
+                    label="Improvement Points"
+                    name={"improvement"}
+                    className="col-span-2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Improvement Points is required",
+                      },
+                    ]}
+                  >
+                    <TextArea rows={5} placeholder="Input Improvement Points" />
+                  </Form.Item>
+                </div>
+              </div>
+              {statusEdit && (
+                <div className={"flex justify-end"}>
+                  <Space>
+                    <Button
+                      onClick={() =>
+                        setFormEdit({
+                          ...formEdit,
+                          evaluation: false,
+                        })
+                      }
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      disabled={!isAllowedToUpdateEvaluation}
+                      loading={loading}
+                      htmlType="submit"
+                      type="primary"
+                    >
+                      Save
+                    </Button>
+                  </Space>
+                </div>
+              )}
+            </Form>
+          </div>
+        ) : (
+          <div className={"flex flex-col gap-3 mt-4"}>
+            <div className={"flex flex-col gap-1"}>
+              <p className={"text-sm leading-6 font-medium text-mono30"}>
+                Scores
+              </p>
+              <div className={"flex gap-1"}>
+                <div className={"w-1/3 flex flex-col"}>
+                  <p className={`text-xs leading-6 font-normal text-[#808080]`}>
+                    Grammar & Spelling
+                  </p>
+                  <p
+                    className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
+                  >
+                    {data?.grammar_and_spelling}
+                  </p>
+                </div>
+                <div className={"w-1/3 flex flex-col"}>
+                  <p className={`text-xs leading-6 font-normal text-[#808080]`}>
+                    Content Validity
+                  </p>
+                  <p
+                    className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
+                  >
+                    {data?.content_validity}
+                  </p>
+                </div>
+                <div className={"w-1/3 flex flex-col"}>
+                  <p className={`text-xs leading-6 font-normal text-[#808080]`}>
+                    Skill Alignment
+                  </p>
+                  <p
+                    className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
+                  >
+                    {data?.skill_alignment}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className={"flex flex-col gap-1"}>
+              <p className={"text-sm leading-6 font-medium text-mono30"}>
+                Flags
+              </p>
+              <div className={"flex flex-col gap-1 mb-2"}>
                 <p className={`text-xs leading-6 font-normal text-[#808080]`}>
-                  Grammar & Spelling
+                  Missmatched Skills
                 </p>
-                <p
-                  className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
-                >
-                  9
+                <p className={"text-sm leading-6 font-medium text-mono30"}>
+                  {data?.mismatched_skills}
                 </p>
               </div>
-              <div className={"w-1/3 flex flex-col"}>
+              <div className={"flex flex-col gap-1 mb-2"}>
                 <p className={`text-xs leading-6 font-normal text-[#808080]`}>
-                  Content Validity
+                  Questionable Claims
                 </p>
-                <p
-                  className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
-                >
-                  9
-                </p>
-              </div>
-              <div className={"w-1/3 flex flex-col"}>
-                <p className={`text-xs leading-6 font-normal text-[#808080]`}>
-                  Skill Alignment
-                </p>
-                <p
-                  className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
-                >
-                  9
+                <p className={"text-sm leading-6 font-medium text-mono30"}>
+                  {data?.questionable_claims}
                 </p>
               </div>
             </div>
+            <div className={"flex flex-col gap-1"}>
+              <p className={"text-sm leading-6 font-medium text-mono30"}>
+                Suggestions
+              </p>
+              <p className={"text-sm leading-6 font-medium text-mono30"}>
+                {data?.suggestions}
+              </p>
+              <p className={`text-xs leading-6 font-normal text-[#808080]`}>
+                Improvement Points
+              </p>
+              <p className={"text-sm leading-6 font-medium text-mono30"}>
+                {data?.improvement_points}
+              </p>
+            </div>
           </div>
-          <div className={"flex flex-col gap-1"}>
-            <p className={"text-sm leading-6 font-medium text-mono30"}>Flags</p>
-          </div>
-          <div className={"flex flex-col gap-1"}>
-            <p className={"text-sm leading-6 font-medium text-mono30"}>
-              Suggestions
-            </p>
-            <p className={`text-xs leading-6 font-normal text-[#808080]`}>
-              Improvement Points
-            </p>
-            <p className={"text-sm leading-6 font-medium text-mono30"}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt.
-            </p>
-          </div>
-        </div>
-      )}
+        ))}
     </div>
   );
 };

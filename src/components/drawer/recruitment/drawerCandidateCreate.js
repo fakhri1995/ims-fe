@@ -296,7 +296,7 @@ const DrawerCandidateCreate = ({
                 >
                   {dataRoleList?.map((role) => (
                     <Select.Option key={role.id} value={role.id}>
-                      {role.name}
+                      {role.role}
                     </Select.Option>
                   ))}
                 </Select>

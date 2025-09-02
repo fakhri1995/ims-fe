@@ -1023,11 +1023,11 @@ const TableCustomRecruitmentCandidate = ({
           onMouseOver: () => {
             setrowstate(record.id);
           },
-          onClick: () => {
-            !isBulk && setDrawerShown(true);
-            tempIdClicked.current = record.id;
-            setTriggerRowClicked((prev) => prev + 1);
-          },
+          // onClick: () => {
+          //   !isBulk && setDrawerShown(true);
+          //   tempIdClicked.current = record.id;
+          //   setTriggerRowClicked((prev) => prev + 1);
+          // },
         };
       }}
       rowClassName={(record, idx) => {

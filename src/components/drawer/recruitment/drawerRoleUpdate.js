@@ -29,7 +29,7 @@ const DrawerRoleUpdate = ({
   // USESTATE
   const [dataRole, setDataRole] = useState({
     id: null,
-    role: "",
+    name: "",
     alias: "",
     client: "",
     recruitments_count: 0,
@@ -41,7 +41,7 @@ const DrawerRoleUpdate = ({
   // USEEFFECT
   // Validate input field
   useEffect(() => {
-    if (dataRole.name !== "" && dataRole.recruitment_role_type_id !== null) {
+    if (dataRole.role !== "" && dataRole.recruitment_role_type_id !== null) {
       setDisabledUpdate(false);
     } else {
       setDisabledUpdate(true);
@@ -94,7 +94,7 @@ const DrawerRoleUpdate = ({
   const clearData = () => {
     setDataRole({
       id: null,
-      name: "",
+      role: "",
       alias: "",
       recruitment_role_type_id: null,
     });
