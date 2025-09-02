@@ -65,10 +65,10 @@ function LayoutMenuHeader({
             rel="noopener noreferrer"
             onClick={() => rt.push("/admin/change-password")}
             className="flex flex-row items-center space-x-2 hover:opacity-70 
-            py-2 px-3 bg-danger bg-opacity-5 hover:bg-opacity-20 rounded-md"
+            py-2 px-3 bg-[#FAFAFA] rounded-md"
           >
-            <SettingsIconSvg size={20} color={"#BF4A40"} />
-            <p className="text-danger font-medium">Change Password</p>
+            <SettingsIconSvg size={20} color={"#4D4D4D"} />
+            <p className="text-[#4D4D4D] font-medium">Change Password</p>
           </a>
           <a
             target="_blank"
