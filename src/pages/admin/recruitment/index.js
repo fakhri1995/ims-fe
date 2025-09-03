@@ -1206,7 +1206,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "role",
       render: (text, record, index) => {
         return {
-          children: <>{record.role?.name}</>,
+          children: <>{record.role?.role}</>,
         };
       },
       sorter: isAllowedToGetRecruitments
