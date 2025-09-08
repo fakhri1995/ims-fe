@@ -35,6 +35,7 @@ import { TableCustomCandidate } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
 import {
   createKeyPressHandler,
+  nameResume,
   permissionWarningNotification,
 } from "../../../lib/helper";
 import {
@@ -568,7 +569,9 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
                         logoStatus={showLogoStatus}
                       />
                     }
-                    fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
+                    fileName={`CV-${dataResume?.assessment?.name}-${nameResume(
+                      dataResume?.name
+                    )}.pdf`}
                   >
                     <ButtonSys
                       type={"primary"}

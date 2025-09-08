@@ -577,3 +577,21 @@ export const onMutationSucceed = (
 export const trimText = (text, charLimit) => {
   return text.length > charLimit ? text.slice(0, charLimit) + "..." : text;
 };
+
+export const nameResume = (namaLengkap: string) => {
+  // Ubah ke huruf kecil dan pisahkan berdasarkan spasi
+  const namaArray = namaLengkap.trim().split(/\s+/);
+
+  // Ambil nama depan dan kapitalisasi
+  const namaDepan =
+    namaArray[0].charAt(0).toUpperCase() + namaArray[0].slice(1).toLowerCase();
+
+  // Ambil inisial dari sisa nama dan kapitalisasi
+  const inisial = namaArray
+    .slice(1)
+    .map((n) => n[0].toUpperCase())
+    .join(" ");
+
+  // Gabungkan hasilnya
+  return `${namaDepan} ${inisial}`;
+};

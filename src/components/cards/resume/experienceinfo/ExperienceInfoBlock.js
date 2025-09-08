@@ -463,7 +463,7 @@ const ExperienceInfoBlock = ({
             <InformationColumn
               label={"Start Date"}
               value={
-                data?.start_date
+                data?.start_date && data?.start_date != "0000-00-00"
                   ? moment(data?.start_date).format("DD MMMM YYYY")
                   : "-"
               }
@@ -472,7 +472,7 @@ const ExperienceInfoBlock = ({
             <InformationColumn
               label={"End Date"}
               value={
-                data?.end_date
+                data?.end_date && data?.end_date != "0000-00-00"
                   ? moment(data?.end_date).format("DD MMMM YYYY")
                   : "-"
               }

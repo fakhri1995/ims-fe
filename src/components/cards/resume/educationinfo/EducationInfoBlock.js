@@ -47,8 +47,12 @@ const EducationInfoBlock = ({
     if (showMore && editData.id != null) {
       educationForm.setFieldsValue({
         school: editData.school,
-        start_date: editData.start_date ? moment(editData.start_date) : null,
-        end_date: editData.end_date ? moment(editData.end_date) : null,
+        start_date:
+          editData.start_date != "0000-00-00"
+            ? moment(editData.start_date)
+            : null,
+        end_date:
+          editData.end_date != "0000-00-00" ? moment(editData.end_date) : null,
         degree: editData.degree,
         gpa: editData.gpa,
         field: editData.field,
@@ -462,7 +466,7 @@ const EducationInfoBlock = ({
             <InformationColumn
               label={"Start Date"}
               value={
-                data?.start_date
+                data?.start_date && data?.start_date != "0000-00-00"
                   ? moment(data?.start_date).format("DD MMMM YYYY")
                   : "-"
               }
@@ -471,7 +475,7 @@ const EducationInfoBlock = ({
             <InformationColumn
               label={"End Date"}
               value={
-                data?.end_date
+                data?.end_date && data?.end_date != "0000-00-00"
                   ? moment(data?.end_date).format("DD MMMM YYYY")
                   : "-"
               }
