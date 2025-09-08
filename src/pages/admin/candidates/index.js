@@ -35,7 +35,6 @@ import { TableCustomCandidate } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
 import {
   createKeyPressHandler,
-  nameResume,
   permissionWarningNotification,
 } from "../../../lib/helper";
 import {
@@ -317,6 +316,23 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
     });
   };
 
+  const buatSingkatan = (namaLengkap) => {
+    // Ubah ke huruf kecil dan pisahkan berdasarkan spasi
+    const namaArray = namaLengkap.toLowerCase().trim().split(/\s+/);
+
+    // Ambil nama depan
+    const namaDepan = namaArray[0];
+
+    // Ambil inisial dari sisa nama
+    const inisial = namaArray
+      .slice(1)
+      .map((n) => n[0])
+      .join(" ");
+
+    // Gabungkan nama depan dan inisial
+    return `${namaDepan} ${inisial}`;
+  };
+
   const { onKeyPressHandler } = createKeyPressHandler(onFilterResume, "Enter");
 
   // 5. Candidate Table's Columns
@@ -569,9 +585,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
                         logoStatus={showLogoStatus}
                       />
                     }
-                    fileName={`CV-${dataResume?.assessment?.name}-${nameResume(
-                      dataResume?.name
-                    )}.pdf`}
+                    fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
                   >
                     <ButtonSys
                       type={"primary"}

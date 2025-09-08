@@ -580,11 +580,10 @@ export const trimText = (text, charLimit) => {
 
 export const nameResume = (namaLengkap: string) => {
   // Ubah ke huruf kecil dan pisahkan berdasarkan spasi
-  const namaArray = namaLengkap.trim().split(/\s+/);
+  const namaArray = namaLengkap.trim().toUpperCase().split(/\s+/);
 
   // Ambil nama depan dan kapitalisasi
-  const namaDepan =
-    namaArray[0].charAt(0).toUpperCase() + namaArray[0].slice(1).toLowerCase();
+  const namaDepan = namaArray[0];
 
   // Ambil inisial dari sisa nama dan kapitalisasi
   const inisial = namaArray

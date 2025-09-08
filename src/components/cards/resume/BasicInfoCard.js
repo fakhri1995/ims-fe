@@ -14,7 +14,7 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { RESUME_DELETE, RESUME_GET } from "lib/features";
 
-import { generateStaticAssetUrl, nameResume } from "../../../lib/helper";
+import { generateStaticAssetUrl } from "../../../lib/helper";
 import UploadImage from "../../UploadImage";
 import ButtonSys from "../../button";
 import {
@@ -432,9 +432,7 @@ const BasicInfoCard = ({
                     logoStatus={showLogoStatus}
                   />
                 }
-                fileName={`CV-${dataDisplay?.assessment?.name}-${nameResume(
-                  dataDisplay?.name
-                )}.pdf`}
+                fileName={`CV-${dataDisplay?.assessment?.name}-${dataDisplay?.name}.pdf`}
               >
                 <ButtonSys type={"primary"}>
                   <div className={"flex flex-row"}>
