@@ -75,7 +75,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
                     color: "#808080",
                   }}
                 >
-                  {dataResume?.name}
+                  {getFormattedCandidateName(dataResume?.name)}
                 </Text>
                 <Text style={{ fontSize: 10, color: "#808080" }}>
                   &nbsp;-&nbsp;
