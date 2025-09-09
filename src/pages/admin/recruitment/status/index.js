@@ -28,7 +28,12 @@ import { permissionWarningNotification } from "lib/helper";
 import ButtonSys from "../../../../components/button";
 import DrawerCore from "../../../../components/drawer/drawerCore";
 import DrawerStatusUpdate from "../../../../components/drawer/recruitment/drawerStatusUpdate";
-import { SearchIconSvg } from "../../../../components/icon";
+import {
+  DeleteTablerIconSvg,
+  EditTablerIconSvg,
+  PlusIconSvg,
+  SearchIconSvg,
+} from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard-management";
 import st from "../../../../components/layout-dashboard-management.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
@@ -301,7 +306,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Nama",
+      title: "Name",
       dataIndex: "name",
       render: (text, record, index) => {
         return {
@@ -323,7 +328,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
     {
-      title: "Warna",
+      title: "Color",
       dataIndex: "color",
       render: (text, record, index) => {
         return {
@@ -337,7 +342,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Deskripsi",
+      title: "Description",
       dataIndex: "description",
       render: (text, record, index) => {
         return {
@@ -346,7 +351,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Jumlah Kandidat",
+      title: "Total Candidate",
       dataIndex: "recruitments_count",
       render: (text, record, index) => {
         return {
@@ -358,15 +363,14 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
     {
-      title: "Aksi",
+      title: "Action",
       key: "button_action",
       render: (text, record, index) => {
         return {
           children: (
             <div className="flex items-center space-x-2">
-              <ButtonSys
-                type={canUpdateStatus ? "default" : "primary"}
-                disabled={!canUpdateStatus}
+              <div
+                className={"hover:cursor-pointer"}
                 onClick={(event) => {
                   event.stopPropagation();
                   tempIdUpdate.current = record.id;
@@ -374,20 +378,17 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setUpdateDrawerShown(true);
                 }}
               >
-                <EditOutlined />
-              </ButtonSys>
-              <ButtonSys
-                type={StatusisAllowedToDeleteStatus ? "default" : "primary"}
-                color="danger"
-                disabled={!StatusisAllowedToDeleteStatus}
+                <EditTablerIconSvg size={20} color={"#808080"} />
+              </div>
+              <div
+                className={"hover:cursor-pointer"}
                 onClick={(event) => {
                   event.stopPropagation();
                   onOpenDeleteModal(record);
-                  // setModalDelete(true);
                 }}
               >
-                <DeleteOutlined />
-              </ButtonSys>
+                <DeleteTablerIconSvg size={20} color={"#BF4A40"} />
+              </div>
             </div>
           ),
         };
@@ -404,79 +405,73 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-5 gap-6">
+      <div
+        className="flex flex-col lg:flex-row w-full 
+          space-y-6 lg:space-y-0 lg:space-x-6"
+      >
+        <div className="w-full lg:w-[258px] space-y-5">
           <SetupMenu menu={"4"} />
-
-          {/* Table Semua Status */}
-          <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <h4 className="mig-heading--4 ">
-                Semua Status ({dataRawStatus?.total})
-              </h4>
-
-              <ButtonSys
-                type={isAllowedToAddStatus ? "default" : "primary"}
-                onClick={() => setCreateDrawerShown(true)}
-                disabled={!isAllowedToAddStatus}
-              >
-                <div className="flex flex-row space-x-2.5 items-center">
-                  <AppstoreAddOutlined />
-                  <p>Tambah Status</p>
-                </div>
-              </ButtonSys>
-            </div>
-
-            {/* Start: Search criteria */}
-            <div className="flex flex-row justify-between w-full space-x-4 items-center mb-4">
-              {/* Search by keyword (kata kunci) */}
-              <div className="w-11/12">
-                <Input
-                  value={
-                    searchingFilterStatus === "" ? null : searchingFilterStatus
-                  }
-                  style={{ width: `100%` }}
-                  placeholder="Kata Kunci.."
-                  allowClear
-                  onChange={(e) => {
-                    setSearchingFilterStatus(e.target.value);
-                    setPageStatus(1);
-                  }}
-                  onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetStatuses}
-                />
+        </div>
+        <div className="flex-1">
+          <div className="grid grid-cols-12 space-y-6 mig-platform--p-0">
+            <div className="col-span-full">
+              <div className="flex items-center justify-between border-b py-3 px-4">
+                <p className="mig-body--bold">
+                  Status ({dataRawStatus?.total})
+                </p>
+                <ButtonSys
+                  type={isAllowedToAddStatus ? "primary" : "default"}
+                  onClick={() => setCreateDrawerShown(true)}
+                  disabled={!isAllowedToAddStatus}
+                >
+                  <div className="flex items-center gap-2 whitespace-nowrap">
+                    <PlusIconSvg size={16} />
+                    <p>Add Status</p>
+                  </div>
+                </ButtonSys>
               </div>
-
-              <ButtonSys
-                type={`primary`}
-                onClick={onFilterStatus}
-                disabled={!isAllowedToGetStatuses}
-              >
-                <div className="flex flex-row space-x-2.5 w-full items-center">
-                  <SearchIconSvg size={15} color={`#ffffff`} />
-                  <p>Cari</p>
+              {/* Start: Search criteria */}
+              <div className="flex flex-row justify-between w-full  gap-3 items-center py-3 px-4">
+                {/* Search by keyword (kata kunci) */}
+                <div className="w-2/3">
+                  <Input
+                    value={
+                      searchingFilterStatus === ""
+                        ? null
+                        : searchingFilterStatus
+                    }
+                    style={{ width: `100%` }}
+                    placeholder="Search Status.."
+                    allowClear
+                    onChange={(e) => {
+                      setSearchingFilterStatus(e.target.value);
+                      setPageStatus(1);
+                    }}
+                    onKeyPress={onKeyPressHandler}
+                    disabled={!isAllowedToGetStatuses}
+                  />
                 </div>
-              </ButtonSys>
-            </div>
-            {/* End: Search criteria */}
+              </div>
+              {/* End: Search criteria */}
 
-            <TableCustomRecruitmentStatus
-              dataSource={dataStatuses}
-              setDataSource={setdataStatuses}
-              columns={columnsStatus}
-              loading={loadingStatus}
-              setpraloading={setLoadingStatus}
-              pageSize={rowsStatus}
-              total={dataRawStatus?.total}
-              initProps={initProps}
-              setpage={setPageStatus}
-              pagefromsearch={pageStatus}
-              setdataraw={setDataRawStatus}
-              setsorting={setSortingStatus}
-              sorting={sortingStatus}
-              searching={searchingFilterStatus}
-              onOpenReadDrawer={onOpenReadDrawer}
-            />
+              <TableCustomRecruitmentStatus
+                dataSource={dataStatuses}
+                setDataSource={setdataStatuses}
+                columns={columnsStatus}
+                loading={loadingStatus}
+                setpraloading={setLoadingStatus}
+                pageSize={rowsStatus}
+                total={dataRawStatus?.total}
+                initProps={initProps}
+                setpage={setPageStatus}
+                pagefromsearch={pageStatus}
+                setdataraw={setDataRawStatus}
+                setsorting={setSortingStatus}
+                sorting={sortingStatus}
+                searching={searchingFilterStatus}
+                onOpenReadDrawer={onOpenReadDrawer}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -569,6 +564,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         <ModalHapus2
           title={`Peringatan`}
           visible={modalDelete}
+          okCancelText={"Cancel"}
           onvisible={setModalDelete}
           onOk={handleDelete}
           onCancel={() => {
@@ -576,13 +572,28 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           }}
           itemName={"status"}
           loading={loadingDelete}
+          okButtonText={
+            <div className="flex flex-row space-x-2">
+              <DeleteTablerIconSvg size={16} rev={""} />
+              <p>Delete Status</p>
+            </div>
+          }
+          buttonCancel={
+            <ButtonSys
+              type={"default"}
+              color="mono50"
+              onClick={() => setModalDelete(false)}
+            >
+              Cancel
+            </ButtonSys>
+          }
           // disabled={candidateCount > 0}
         >
-          Ada <strong>{dataDelete.recruitments_count} kandidat</strong> yang
-          berada pada status
+          There are <strong>{dataDelete.recruitments_count} candidates</strong>{" "}
+          in the
           {"\n"}
-          <strong>{dataDelete.name}</strong>. Apakah Anda yakin ingin
-          melanjutkan penghapusan?
+          <strong>{dataDelete.name}</strong>. Are you sure you want to continue
+          with the deletion?
         </ModalHapus2>
       </AccessControl>
     </Layout>

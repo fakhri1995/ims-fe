@@ -142,32 +142,27 @@ const DrawerRegistrationUpdate = ({
   // console.log(dataCandidate);
   return (
     <DrawerCore
-      title={"Ubah Jalur Daftar"}
+      title={"Edit Recruitment Path"}
       visible={visible}
       onClose={() => {
         clearData();
         onvisible(false);
       }}
-      buttonOkText={"Simpan Jalur Daftar"}
+      buttonOkText={"Save Change"}
       onClick={handleUpdateRegistration}
       disabled={disabledUpdate}
       buttonSpace="space-x-2"
-      buttonCancelText={
-        <div className="flex flex-row space-x-1 items-center">
-          <DeleteOutlined rev={""} />
-          <p>Hapus Jalur Daftar</p>
-        </div>
-      }
+      width={380}
+      buttonCancelText={"Cancel"}
       onButtonCancelClicked={() => {
-        onClickDelete(dataRegistration);
+        clearData();
         onvisible(false);
       }}
-      width={380}
     >
       <Spin spinning={loadingUpdate}>
         <div className="flex flex-col">
           <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
+            *This information is required to filled
           </p>
           <Form
             layout="vertical"

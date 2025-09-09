@@ -148,20 +148,25 @@ const DrawerEmailTemplateUpdate = ({
 
   return (
     <DrawerCore
-      title={"Ubah Template"}
+      title={"Edit Template"}
       visible={visible}
       onClose={() => {
         clearData();
         onvisible(false);
       }}
-      buttonOkText={"Simpan Template"}
+      buttonOkText={"Save Change"}
       onClick={handleUpdateTemplate}
       disabled={disabledUpdate}
+      buttonCancelText={"Cancel"}
+      onButtonCancelClicked={() => {
+        clearData();
+        onvisible(false);
+      }}
     >
       <Spin spinning={loadingUpdate}>
         <div className="flex flex-col">
           <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
+            *This information is required to filled
           </p>
           <Form
             layout="vertical"
@@ -169,12 +174,12 @@ const DrawerEmailTemplateUpdate = ({
             className="grid grid-cols-2 gap-x-6"
           >
             <Form.Item
-              label="Nama"
+              label="Template Name"
               name={"name"}
               rules={[
                 {
                   required: true,
-                  message: "Nama template wajib diisi",
+                  message: "Template Name is required",
                 },
               ]}
               className="col-span-2"
@@ -189,12 +194,12 @@ const DrawerEmailTemplateUpdate = ({
             </Form.Item>
 
             <Form.Item
-              label="Subyek"
+              label="Subject"
               name={"subject"}
               rules={[
                 {
                   required: true,
-                  message: "Subyek wajib diisi",
+                  message: "Subject is required",
                 },
               ]}
               className="col-span-2"
@@ -213,7 +218,7 @@ const DrawerEmailTemplateUpdate = ({
               rules={[
                 {
                   required: true,
-                  message: "Body wajib diisi",
+                  message: "Body is required",
                 },
               ]}
               className="col-span-2"

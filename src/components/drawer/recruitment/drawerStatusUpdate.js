@@ -140,30 +140,25 @@ const DrawerStatusUpdate = ({
   // console.log(dataCandidate);
   return (
     <DrawerCore
-      title={"Ubah Status"}
+      title={"Edit Status"}
       visible={visible}
       onClose={() => {
         clearData();
         onvisible(false);
       }}
-      buttonOkText={"Simpan Status"}
+      buttonOkText={"Save Change"}
       onClick={handleUpdateStatus}
       disabled={disabledUpdate}
-      buttonCancelText={
-        <div className="flex flex-row space-x-2 items-center">
-          <DeleteOutlined rev={""} />
-          <p>Hapus Status</p>
-        </div>
-      }
+      buttonCancelText={"Cancel"}
       onButtonCancelClicked={() => {
-        onClickDelete(dataStatus);
+        clearData();
         onvisible(false);
       }}
     >
       <Spin spinning={loadingUpdate}>
         <div className="flex flex-col">
           <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
+            *This information is required to filled
           </p>
           <Form
             layout="vertical"
@@ -172,12 +167,12 @@ const DrawerStatusUpdate = ({
           >
             <div className="flex flex-row justify-between w-full space-x-8">
               <Form.Item
-                label="Nama"
+                label="Status Name"
                 name={"name"}
                 rules={[
                   {
                     required: true,
-                    message: "Nama role wajib diisi",
+                    message: "Status Name is required",
                   },
                 ]}
                 className="col-span-2 w-full"
@@ -196,7 +191,7 @@ const DrawerStatusUpdate = ({
                 rules={[
                   {
                     required: true,
-                    message: "Color wajib diisi",
+                    message: "Color is required",
                   },
                 ]}
                 className="col-span-2 w-full"
@@ -217,12 +212,12 @@ const DrawerStatusUpdate = ({
               </Form.Item>
             </div>
             <Form.Item
-              label="Deskripsi"
+              label="Description"
               name={"description"}
               rules={[
                 {
                   required: true,
-                  message: "Deskripsi wajib diisi",
+                  message: "Description is required",
                 },
               ]}
               className="col-span-2 w-full"

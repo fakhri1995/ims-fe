@@ -106,20 +106,25 @@ const DrawerStageCreate = ({
   // console.log(dataCandidate);
   return (
     <DrawerCore
-      title={"Tambah Stage"}
+      title={"Add Stage"}
       visible={visible}
       onClose={() => {
         clearData();
         onvisible(false);
       }}
-      buttonOkText={"Simpan Stage"}
+      buttonOkText={"Save Stage"}
       onClick={handleCreateStage}
       disabled={disabledCreate}
+      buttonCancelText={"Cancel"}
+      onButtonCancelClicked={() => {
+        clearData();
+        onvisible(false);
+      }}
     >
       <Spin spinning={loadingCreate}>
         <div className="flex flex-col">
           <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
+            *This information is required to filled
           </p>
           <Form
             layout="vertical"
@@ -127,12 +132,12 @@ const DrawerStageCreate = ({
             className="grid grid-cols-2 gap-x-6"
           >
             <Form.Item
-              label="Nama"
+              label="Stage Name"
               name={"name"}
               rules={[
                 {
                   required: true,
-                  message: "Nama role wajib diisi",
+                  message: "Stage Name is required",
                 },
               ]}
               className="col-span-2"
@@ -147,12 +152,12 @@ const DrawerStageCreate = ({
             </Form.Item>
 
             <Form.Item
-              label="Deskripsi"
+              label="Description"
               name={"description"}
               rules={[
                 {
                   required: true,
-                  message: "Deskripsi stage wajib diisi",
+                  message: "Description is required",
                 },
               ]}
               className="col-span-2"

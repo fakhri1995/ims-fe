@@ -114,20 +114,20 @@ const DrawerEmailTemplateCreate = ({
 
   return (
     <DrawerCore
-      title={"Tambah Template"}
+      title={"Add Template Email"}
       visible={visible}
       onClose={() => {
         clearData();
         onvisible(false);
       }}
-      buttonOkText={"Simpan Template"}
+      buttonOkText={"Save Template"}
       onClick={handleCreateTemplate}
       disabled={disabledCreate}
     >
       <Spin spinning={loadingCreate}>
         <div className="flex flex-col">
           <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
+            *This information is required to filled
           </p>
           <Form
             layout="vertical"
@@ -135,12 +135,12 @@ const DrawerEmailTemplateCreate = ({
             className="grid grid-cols-2 gap-x-6"
           >
             <Form.Item
-              label="Nama"
+              label="Template Name"
               name={"name"}
               rules={[
                 {
                   required: true,
-                  message: "Nama template wajib diisi",
+                  message: "Template Name is required",
                 },
               ]}
               className="col-span-2"
@@ -155,12 +155,12 @@ const DrawerEmailTemplateCreate = ({
             </Form.Item>
 
             <Form.Item
-              label="Subyek"
+              label="Subject"
               name={"subject"}
               rules={[
                 {
                   required: true,
-                  message: "Subyek wajib diisi",
+                  message: "Subject is required",
                 },
               ]}
               className="col-span-2"
@@ -179,7 +179,7 @@ const DrawerEmailTemplateCreate = ({
               rules={[
                 {
                   required: true,
-                  message: "Body wajib diisi",
+                  message: "Body is required",
                 },
               ]}
               className="col-span-2"
