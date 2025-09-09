@@ -103,22 +103,29 @@ const DrawerRoleCreate = ({
       });
   };
 
+  const cancelClick = () => {
+    clearData();
+    onvisible(false);
+  };
+
   return (
     <DrawerCore
-      title={"Tambah Role"}
+      title={"Add Role"}
       visible={visible}
       onClose={() => {
         clearData();
         onvisible(false);
       }}
-      buttonOkText={"Simpan Role"}
+      buttonOkText={"Save Role"}
+      buttonCancelText={"Cancel"}
       onClick={handleCreateRole}
       disabled={disabledCreate}
+      onButtonCancelClicked={cancelClick}
     >
       <Spin spinning={loadingCreate}>
         <div className="flex flex-col">
           <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
+            *This information is required to filled
           </p>
           <Form
             layout="vertical"
@@ -126,12 +133,12 @@ const DrawerRoleCreate = ({
             className="grid grid-cols-2 gap-x-6"
           >
             <Form.Item
-              label="role"
+              label="Role Name"
               name={"role"}
               rules={[
                 {
                   required: true,
-                  message: "Nama role wajib diisi",
+                  message: "Role Name is required",
                 },
               ]}
               className="col-span-2"
@@ -150,7 +157,7 @@ const DrawerRoleCreate = ({
               rules={[
                 {
                   required: true,
-                  message: "Nama Client wajib diisi",
+                  message: "Client Name is required",
                 },
               ]}
               className="col-span-2"
@@ -164,12 +171,12 @@ const DrawerRoleCreate = ({
               </div>
             </Form.Item>
             <Form.Item
-              label="Alias"
+              label="Alias/Role ID"
               name={"alias"}
               rules={[
                 {
                   required: true,
-                  message: "Alias wajib diisi",
+                  message: "Role ID is required",
                 },
               ]}
               className="col-span-2"
@@ -184,19 +191,19 @@ const DrawerRoleCreate = ({
             </Form.Item>
 
             <Form.Item
-              label="Tipe Kontrak"
+              label="Contract Type"
               name={"recruitment_role_type_id"}
               rules={[
                 {
                   required: true,
-                  message: "Tipe Kontrak wajib diisi",
+                  message: "Contract Type is required",
                 },
               ]}
               className="col-span-2"
             >
               <div>
                 <Select
-                  placeholder="Pilih Status Kontrak"
+                  placeholder="Choose Contract Type"
                   style={{ width: `100%` }}
                   value={dataRole.recruitment_role_type_id}
                   onChange={(value) => {

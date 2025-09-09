@@ -99,20 +99,25 @@ const DrawerRegistrationCreate = ({
   // console.log(dataCandidate);
   return (
     <DrawerCore
-      title={"Tambah Jalur Daftar"}
+      title={"Add Recruitment Path"}
       visible={visible}
       onClose={() => {
         clearData();
         onvisible(false);
       }}
-      buttonOkText={"Simpan Jalur Daftar"}
+      buttonOkText={"Save Recruitment Path"}
       onClick={handleCreateRegistration}
       disabled={disabledCreate}
+      buttonCancelText={"Cancel"}
+      onButtonCancelClicked={() => {
+        clearData();
+        onvisible(false);
+      }}
     >
       <Spin spinning={loadingCreate}>
         <div className="flex flex-col">
           <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
+            *This information is required to filled
           </p>
           <Form
             layout="vertical"
@@ -120,12 +125,12 @@ const DrawerRegistrationCreate = ({
             className="grid grid-cols-2 gap-x-6"
           >
             <Form.Item
-              label="Nama"
+              label="Recruitment Path Name"
               name={"name"}
               rules={[
                 {
                   required: true,
-                  message: "Nama role wajib diisi",
+                  message: "Recruitment Path Name is required",
                 },
               ]}
               className="col-span-2"

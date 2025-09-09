@@ -27,7 +27,13 @@ import { permissionWarningNotification } from "lib/helper";
 import ButtonSys from "../../../../components/button";
 import DrawerCore from "../../../../components/drawer/drawerCore";
 import DrawerRegistrationUpdate from "../../../../components/drawer/recruitment/drawerRegistrationUpdate";
-import { EditIconSvg, SearchIconSvg } from "../../../../components/icon";
+import {
+  DeleteTablerIconSvg,
+  EditIconSvg,
+  EditTablerIconSvg,
+  PlusIconSvg,
+  SearchIconSvg,
+} from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard-management";
 import st from "../../../../components/layout-dashboard-management.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
@@ -308,7 +314,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Nama",
+      title: "Name",
       dataIndex: "name",
       render: (text, record, index) => {
         return {
@@ -330,7 +336,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
     {
-      title: "Jumlah Kandidat",
+      title: "Total Candidate",
       dataIndex: "recruitments_count",
       render: (text, record, index) => {
         return {
@@ -342,15 +348,14 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
     {
-      title: "Aksi",
+      title: "Action",
       key: "button_action",
       render: (text, record, index) => {
         return {
           children: (
             <div className="flex items-center space-x-2">
-              <ButtonSys
-                type={canUpdateRegistration ? "default" : "primary"}
-                disabled={!canUpdateRegistration}
+              <div
+                className={"hover:cursor-pointer"}
                 onClick={(event) => {
                   event.stopPropagation();
                   tempIdUpdate.current = record.id;
@@ -358,19 +363,17 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setUpdateDrawerShown(true);
                 }}
               >
-                <EditOutlined />
-              </ButtonSys>
-              <ButtonSys
-                type={isAllowedToDeleteRegistration ? "default" : "primary"}
-                color="danger"
-                disabled={!isAllowedToDeleteRegistration}
+                <EditTablerIconSvg size={20} color={"#808080"} />
+              </div>
+              <div
+                className={"hover:cursor-pointer"}
                 onClick={(event) => {
                   event.stopPropagation();
                   onOpenDeleteModal(record);
                 }}
               >
-                <DeleteOutlined />
-              </ButtonSys>
+                <DeleteTablerIconSvg size={20} color={"#BF4A40"} />
+              </div>
             </div>
           ),
         };
@@ -387,82 +390,86 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-5 gap-6">
+      <div
+        className="flex flex-col lg:flex-row w-full 
+          space-y-6 lg:space-y-0 lg:space-x-6"
+      >
+        <div className="w-full lg:w-[258px] space-y-5">
           <SetupMenu menu={"2"} />
-
-          {/* Table Semua Registration */}
-          <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <h4 className="mig-heading--4 ">
-                Semua Jalur Daftar ({dataRawRegistrations?.total})
-              </h4>
-
-              <ButtonSys
-                type={isAllowedToAddRegistration ? "default" : "primary"}
-                onClick={() => setCreateDrawerShown(true)}
-                disabled={!isAllowedToAddRegistration}
-              >
-                <div className="flex flex-row space-x-2.5 items-center">
-                  <AppstoreAddOutlined />
-                  <p>Tambah Jalur Daftar</p>
-                </div>
-              </ButtonSys>
-            </div>
-
-            {/* Start: Search criteria */}
-            <div className="flex flex-row justify-between w-full space-x-4 items-center mb-4">
-              {/* Search by keyword (kata kunci) */}
-              <div className="w-11/12">
-                <Input
-                  value={
-                    searchingFilterRegistrations === ""
-                      ? null
-                      : searchingFilterRegistrations
-                  }
-                  style={{ width: `100%` }}
-                  placeholder="Kata Kunci.."
-                  allowClear
-                  onChange={(e) => {
-                    setSearchingFilterRegistrations(e.target.value);
-                    setPageRegistrations(1);
-                  }}
-                  onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetRegistrations}
-                />
+        </div>
+        <div className="flex-1">
+          <div className="grid grid-cols-12 space-y-6 mig-platform--p-0">
+            <div className="col-span-full">
+              <div className="flex items-center justify-between border-b py-3 px-4">
+                <p className="mig-body--bold">
+                  Recruitment Path ({dataRawRegistrations?.total})
+                </p>
+                <ButtonSys
+                  type={isAllowedToAddRegistration ? "primary" : "default"}
+                  onClick={() => setCreateDrawerShown(true)}
+                  disabled={!isAllowedToAddRegistration}
+                >
+                  <div className="flex items-center gap-2 whitespace-nowrap">
+                    <PlusIconSvg size={16} />
+                    <p>Add Recruitment Path</p>
+                  </div>
+                </ButtonSys>
               </div>
-
-              <ButtonSys
-                type={`primary`}
-                onClick={onFilterRegistration}
-                disabled={!isAllowedToGetRegistrations}
-              >
-                <div className="flex flex-row space-x-2.5 w-full items-center">
-                  <SearchIconSvg size={15} color={`#ffffff`} />
-                  <p>Cari</p>
+              {/* Start: Search criteria */}
+              <div className="flex flex-row justify-between w-full py-3 px-4 items-center">
+                {/* Search by keyword (kata kunci) */}
+                <div className="w-2/3">
+                  <Input
+                    value={
+                      searchingFilterRegistrations === ""
+                        ? null
+                        : searchingFilterRegistrations
+                    }
+                    style={{ width: `100%` }}
+                    placeholder="Search recruitment path name"
+                    allowClear
+                    onChange={(e) => {
+                      setSearchingFilterRegistrations(e.target.value);
+                      setPageRegistrations(1);
+                    }}
+                    onKeyPress={onKeyPressHandler}
+                    disabled={!isAllowedToGetRegistrations}
+                  />
                 </div>
-              </ButtonSys>
-            </div>
-            {/* End: Search criteria */}
 
-            <TableCustomRecruitmentRegistration
-              dataSource={dataRegistrations}
-              setDataSource={setDataRegistrations}
-              columns={columnsRegistration}
-              loading={loadingRegistrations}
-              setpraloading={setLoadingRegistrations}
-              pageSize={rowsRegistrations}
-              total={dataRawRegistrations?.total}
-              initProps={initProps}
-              setpage={setPageRegistrations}
-              pagefromsearch={pageRegistrations}
-              setdataraw={setDataRawRegistrations}
-              setsorting={setSortingRegistrations}
-              sorting={sortingRegistrations}
-              searching={searchingFilterRegistrations}
-            />
+                {/* <ButtonSys
+                  type={`primary`}
+                  onClick={onFilterRegistration}
+                  disabled={!isAllowedToGetRegistrations}
+                >
+                  <div className="flex flex-row space-x-2.5 w-full items-center">
+                    <SearchIconSvg size={15} color={`#ffffff`} />
+                    <p>Cari</p>
+                  </div>
+                </ButtonSys> */}
+              </div>
+              {/* End: Search criteria */}
+
+              <TableCustomRecruitmentRegistration
+                dataSource={dataRegistrations}
+                setDataSource={setDataRegistrations}
+                columns={columnsRegistration}
+                loading={loadingRegistrations}
+                setpraloading={setLoadingRegistrations}
+                pageSize={rowsRegistrations}
+                total={dataRawRegistrations?.total}
+                initProps={initProps}
+                setpage={setPageRegistrations}
+                pagefromsearch={pageRegistrations}
+                setdataraw={setDataRawRegistrations}
+                setsorting={setSortingRegistrations}
+                sorting={sortingRegistrations}
+                searching={searchingFilterRegistrations}
+              />
+            </div>
           </div>
         </div>
+        {/* Table Semua Registration */}
       </div>
 
       <AccessControl hasPermission={RECRUITMENT_JALUR_DAFTAR_ADD}>
@@ -555,14 +562,30 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
             setModalDelete(false);
           }}
           itemName={"jalur daftar"}
+          buttonCancel={
+            <ButtonSys
+              type={"default"}
+              color="mono50"
+              onClick={() => setModalDelete(false)}
+            >
+              Cancel
+            </ButtonSys>
+          }
           loading={loadingDelete}
+          okButtonText={
+            <div className="flex flex-row space-x-2">
+              <DeleteTablerIconSvg size={16} rev={""} />
+              <p>Delete Recruitment Path</p>
+            </div>
+          }
+          okCancelText={"Cancel"}
           // disabled={candidateCount > 0}
         >
-          Ada <strong>{dataDelete.recruitments_count} kandidat</strong> yang
-          berada pada jalur daftar
+          Ada <strong>{dataDelete.recruitments_count} candidates</strong> using
+          the
           {"\n"}
-          <strong>{dataDelete.name}</strong>. Apakah Anda yakin ingin
-          melanjutkan penghapusan?
+          <strong>{dataDelete.name}</strong>. Are you sure want to proceed with
+          the deletion?
         </ModalHapus2>
       </AccessControl>
     </Layout>

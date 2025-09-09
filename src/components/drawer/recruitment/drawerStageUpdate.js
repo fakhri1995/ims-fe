@@ -138,30 +138,25 @@ const DrawerStageUpdate = ({
   // console.log(dataCandidate);
   return (
     <DrawerCore
-      title={"Ubah Stage"}
+      title={"Edit Stage"}
       visible={visible}
       onClose={() => {
         clearData();
         onvisible(false);
       }}
-      buttonOkText={"Simpan Stage"}
+      buttonOkText={"Save Change"}
       onClick={handleUpdateStage}
       disabled={disabledUpdate}
-      buttonCancelText={
-        <div className="flex flex-row space-x-2 items-center">
-          <DeleteOutlined rev={""} />
-          <p>Hapus Stage</p>
-        </div>
-      }
+      buttonCancelText={"Cancel"}
       onButtonCancelClicked={() => {
-        onClickDelete(dataStage);
+        clearData();
         onvisible(false);
       }}
     >
       <Spin spinning={loadingUpdate}>
         <div className="flex flex-col">
           <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
+            *This information is required to filled
           </p>
           <Form
             layout="vertical"
@@ -169,12 +164,12 @@ const DrawerStageUpdate = ({
             className="grid grid-cols-2 gap-x-6"
           >
             <Form.Item
-              label="Nama"
+              label="Stage Name"
               name={"name"}
               rules={[
                 {
                   required: true,
-                  message: "Nama role wajib diisi",
+                  message: "Stage Name is required",
                 },
               ]}
               className="col-span-2"
@@ -189,12 +184,12 @@ const DrawerStageUpdate = ({
             </Form.Item>
 
             <Form.Item
-              label="Deskripsi"
+              label="Description"
               name={"description"}
               rules={[
                 {
                   required: true,
-                  message: "Deskripsi wajib diisi",
+                  message: "Description is required",
                 },
               ]}
               className="col-span-2"

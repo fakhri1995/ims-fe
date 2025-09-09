@@ -819,6 +819,8 @@ const ModalHapus2 = ({
   disabled,
   children,
   okButtonText,
+  okCancelText,
+  buttonCancel,
 }) => {
   return (
     <ModalCore
@@ -828,15 +830,19 @@ const ModalHapus2 = ({
       footer={
         <Spin spinning={loading}>
           <div className="flex gap-4 items-center justify-end">
-            <ButtonSys
-              type={"primary"}
-              color={"mono100"}
-              onClick={() => {
-                onvisible(false);
-              }}
-            >
-              Batalkan
-            </ButtonSys>
+            {buttonCancel ? (
+              buttonCancel
+            ) : (
+              <ButtonSys
+                type={"primary"}
+                color={"mono100"}
+                onClick={() => {
+                  onvisible(false);
+                }}
+              >
+                {okCancelText ? okCancelText : "Batalkan"}
+              </ButtonSys>
+            )}
             <div className="col-span-2 hover:opacity-75">
               <ButtonSys
                 type={"primary"}

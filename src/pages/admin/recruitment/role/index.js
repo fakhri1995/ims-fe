@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
+import { event } from "react-ga";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -26,7 +27,15 @@ import { permissionWarningNotification } from "lib/helper";
 import ButtonSys from "../../../../components/button";
 import DrawerRoleCreate from "../../../../components/drawer/recruitment/drawerRoleCreate";
 import DrawerRoleUpdate from "../../../../components/drawer/recruitment/drawerRoleUpdate";
-import { SearchIconSvg } from "../../../../components/icon";
+import {
+  AddCareerIconSvg,
+  AddNoteSvg,
+  DeleteTablerIconSvg,
+  EditIconSvg,
+  EditTablerIconSvg,
+  PlusIconSvg,
+  SearchIconSvg,
+} from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard-management";
 import st from "../../../../components/layout-dashboard-management.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
@@ -305,7 +314,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Role",
+      title: "Role Name",
       dataIndex: "role",
       render: (text, record, index) => {
         return {
@@ -348,15 +357,14 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       sorter: isAllowedToGetRoles ? (a, b) => a.client > b.client : false,
     },
     {
-      title: "Aksi",
+      title: "Action",
       key: "button_action",
       render: (text, record, index) => {
         return {
           children: (
             <div className="flex items-center space-x-2">
-              <ButtonSys
-                type={canUpdateRole ? "default" : "primary"}
-                disabled={!canUpdateRole}
+              <div
+                className={"hover:cursor-pointer"}
                 onClick={(event) => {
                   event.stopPropagation();
                   tempIdUpdate.current = record.id;
@@ -364,20 +372,17 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setUpdateDrawerShown(true);
                 }}
               >
-                <EditOutlined />
-              </ButtonSys>
-              <ButtonSys
-                type={isAllowedToDeleteRole ? "default" : "primary"}
-                color="danger"
-                disabled={!isAllowedToDeleteRole}
+                <EditTablerIconSvg size={20} color={"#808080"} />
+              </div>
+              <div
+                className={"hover:cursor-pointer"}
                 onClick={(event) => {
                   event.stopPropagation();
                   onOpenDeleteModal(record);
-                  // setModalDelete(true);
                 }}
               >
-                <DeleteOutlined />
-              </ButtonSys>
+                <DeleteTablerIconSvg size={20} color={"#BF4A40"} />
+              </div>
             </div>
           ),
         };
@@ -394,76 +399,79 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-5 gap-6">
+      <div
+        className="flex flex-col lg:flex-row w-full 
+          space-y-6 lg:space-y-0 lg:space-x-6"
+      >
+        <div className="w-full lg:w-[258px] space-y-5">
           <SetupMenu menu={"1"} />
-
-          {/* Table Semua Role */}
-          <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <h4 className="mig-heading--4 ">
-                Semua Role ({dataRawRoles?.total})
-              </h4>
-
-              <ButtonSys
-                type={isAllowedToAddRole ? "default" : "primary"}
-                onClick={() => setCreateDrawerShown(true)}
-                disabled={!isAllowedToAddRole}
-              >
-                <div className="flex flex-row space-x-2.5 items-center">
-                  <AppstoreAddOutlined />
-                  <p>Tambah Role</p>
-                </div>
-              </ButtonSys>
-            </div>
-
-            {/* Start: Search criteria */}
-            <div className="flex flex-row justify-between w-full space-x-2 items-center mb-4">
-              {/* Search by keyword (kata kunci) */}
-              <div className="w-7/12">
-                <Input
-                  value={
-                    searchingFilterRoles === "" ? null : searchingFilterRoles
-                  }
-                  style={{ width: `100%` }}
-                  placeholder="Kata Kunci.."
-                  allowClear
-                  onChange={(e) => {
-                    setSearchingFilterRoles(e.target.value);
-                    setPageRoles(1);
-                  }}
-                  onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetRoles}
-                />
-              </div>
-
-              {/* Filter by role type (dropdown) */}
-              <div className="w-3/12">
-                <Select
-                  value={roleTypeId === 0 ? null : roleTypeId}
-                  allowClear
-                  name={`role_type`}
-                  disabled={!isAllowedToGetRoleTypes}
-                  defaultValue={0}
-                  placeholder="Semua Tipe"
-                  style={{ width: `100%` }}
-                  onChange={(value) => {
-                    typeof value === "undefined"
-                      ? setRoleTypeId(0)
-                      : setRoleTypeId(value),
-                      setPageRoles(1);
-                  }}
+        </div>
+        <div className="flex-1">
+          <div className="grid grid-cols-12 space-y-6 mig-platform--p-0">
+            <div className="col-span-full">
+              <div className="flex items-center justify-between border-b py-3 px-4">
+                <p className="mig-body--bold">
+                  Role List ({dataRawRoles?.total})
+                </p>
+                <ButtonSys
+                  type={isAllowedToAddRole ? "primary" : "default"}
+                  onClick={() => setCreateDrawerShown(true)}
+                  disabled={!isAllowedToAddRole}
                 >
-                  <Select.Option value={0}>Semua Tipe</Select.Option>
-                  {dataRoleTypes.map((type) => (
-                    <Select.Option key={type.id} value={type.id}>
-                      {type.name}
-                    </Select.Option>
-                  ))}
-                </Select>
+                  <div className="flex items-center gap-2 whitespace-nowrap">
+                    <PlusIconSvg size={16} />
+                    <p>Add Role</p>
+                  </div>
+                </ButtonSys>
               </div>
 
-              <ButtonSys
+              {/* Start: Search criteria */}
+              <div className="flex flex-row justify-between w-full gap-3 items-center py-3 px-4">
+                {/* Search by keyword (kata kunci) */}
+                <div className="w-2/3">
+                  <Input
+                    value={
+                      searchingFilterRoles === "" ? null : searchingFilterRoles
+                    }
+                    style={{ width: `100%` }}
+                    placeholder="Search Role Name"
+                    allowClear
+                    onChange={(e) => {
+                      setSearchingFilterRoles(e.target.value);
+                      setPageRoles(1);
+                    }}
+                    onKeyPress={onKeyPressHandler}
+                    disabled={!isAllowedToGetRoles}
+                  />
+                </div>
+
+                {/* Filter by role type (dropdown) */}
+                <div className="w-1/3">
+                  <Select
+                    value={roleTypeId === 0 ? null : roleTypeId}
+                    allowClear
+                    name={`role_type`}
+                    disabled={!isAllowedToGetRoleTypes}
+                    defaultValue={0}
+                    placeholder="All Type"
+                    style={{ width: `100%` }}
+                    onChange={(value) => {
+                      typeof value === "undefined"
+                        ? setRoleTypeId(0)
+                        : setRoleTypeId(value),
+                        setPageRoles(1);
+                    }}
+                  >
+                    <Select.Option value={0}>Semua Tipe</Select.Option>
+                    {dataRoleTypes.map((type) => (
+                      <Select.Option key={type.id} value={type.id}>
+                        {type.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                {/* <ButtonSys
                 type={`primary`}
                 onClick={onFilterRoles}
                 disabled={!isAllowedToGetRoles}
@@ -472,28 +480,31 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <SearchIconSvg size={15} color={`#ffffff`} />
                   <p>Cari</p>
                 </div>
-              </ButtonSys>
-            </div>
-            {/* End: Search criteria */}
+              </ButtonSys> */}
+              </div>
+              {/* End: Search criteria */}
 
-            <TableCustomRecruitmentRole
-              dataSource={dataRoles}
-              setDataSource={setDataRoles}
-              columns={columnsRole}
-              loading={loadingRoles}
-              setpraloading={setLoadingRoles}
-              pageSize={rowsRoles}
-              total={dataRawRoles?.total}
-              initProps={initProps}
-              setpage={setPageRoles}
-              pagefromsearch={pageRoles}
-              setdataraw={setDataRawRoles}
-              setsorting={setSortingRoles}
-              sorting={sortingRoles}
-              searching={searchingFilterRoles}
-              roleTypeId={roleTypeId}
-              // onOpenReadDrawer={onOpenReadDrawer}
-            />
+              <div className={"px-4"}>
+                <TableCustomRecruitmentRole
+                  dataSource={dataRoles}
+                  setDataSource={setDataRoles}
+                  columns={columnsRole}
+                  loading={loadingRoles}
+                  setpraloading={setLoadingRoles}
+                  pageSize={rowsRoles}
+                  total={dataRawRoles?.total}
+                  initProps={initProps}
+                  setpage={setPageRoles}
+                  pagefromsearch={pageRoles}
+                  setdataraw={setDataRawRoles}
+                  setsorting={setSortingRoles}
+                  sorting={sortingRoles}
+                  searching={searchingFilterRoles}
+                  roleTypeId={roleTypeId}
+                  // onOpenReadDrawer={onOpenReadDrawer}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -534,21 +545,36 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       <AccessControl hasPermission={RECRUITMENT_ROLE_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
+          okCancelText={"Cancel"}
           visible={modalDelete}
           onvisible={setModalDelete}
           onOk={handleDelete}
           onCancel={() => {
             setModalDelete(false);
           }}
+          buttonCancel={
+            <ButtonSys
+              type={"default"}
+              color="mono50"
+              onClick={() => setModalDelete(false)}
+            >
+              Cancel
+            </ButtonSys>
+          }
+          okButtonText={
+            <div className="flex flex-row space-x-2">
+              <DeleteTablerIconSvg size={16} rev={""} />
+              <p>Delete Role</p>
+            </div>
+          }
           itemName={"role"}
           loading={loadingDelete}
           // disabled={candidateCount > 0}
         >
-          Ada <strong>{dataDelete.recruitments_count} kandidat</strong> yang
-          melamar role
+          There are <strong>{dataDelete.recruitments_count} candidates</strong>{" "}
+          who apply this role
           {"\n"}
-          <strong>{dataDelete.name}</strong>. Apakah Anda yakin ingin
-          melanjutkan penghapusan?
+          <strong>{dataDelete.name}</strong>. Are you sure want to delete?
         </ModalHapus2>
       </AccessControl>
     </Layout>

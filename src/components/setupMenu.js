@@ -30,7 +30,7 @@ const SetupMenu = ({ menu }) => {
   return (
     <div>
       <Menu
-        className="miniMenu"
+        className="miniMenu rounded-[10px] border border-neutrals70 px-4 py-3"
         theme="light"
         mode="inline"
         defaultSelectedKeys={[menu]}
@@ -58,7 +58,7 @@ const SetupMenu = ({ menu }) => {
             title="Registration"
           >
             <Link href="/admin/recruitment/registration" legacyBehavior>
-              <p>Jalur Daftar</p>
+              <p>Recruitment Path</p>
             </Link>
           </Menu.Item>
         )}

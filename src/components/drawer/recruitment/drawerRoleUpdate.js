@@ -145,32 +145,25 @@ const DrawerRoleUpdate = ({
   // console.log(dataCandidate);
   return (
     <DrawerCore
-      title={"Ubah Role"}
+      title={"Edit Role"}
       visible={visible}
       onClose={() => {
         clearData();
         onvisible(false);
       }}
-      buttonOkText={"Simpan Role"}
+      buttonOkText={"Save Change"}
       onClick={handleUpdateRole}
       disabled={disabledUpdate}
-      buttonCancelText={
-        isAllowedToDeleteRole && (
-          <div className="flex flex-row space-x-2 items-center">
-            <DeleteOutlined rev={""} />
-            <p>Hapus Role</p>
-          </div>
-        )
-      }
+      buttonCancelText={"Cancel"}
       onButtonCancelClicked={() => {
-        onClickDelete(dataRole);
+        clearData();
         onvisible(false);
       }}
     >
       <Spin spinning={loadingUpdate}>
         <div className="flex flex-col">
           <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
+            *This information is required to filled
           </p>
           <Form
             layout="vertical"
@@ -178,12 +171,12 @@ const DrawerRoleUpdate = ({
             className="grid grid-cols-2 gap-x-6"
           >
             <Form.Item
-              label="Role"
+              label="Role Name"
               name={"role"}
               rules={[
                 {
                   required: true,
-                  message: "Nama role wajib diisi",
+                  message: "Role Name is required",
                 },
               ]}
               className="col-span-2"
@@ -202,7 +195,7 @@ const DrawerRoleUpdate = ({
               rules={[
                 {
                   required: true,
-                  message: "Nama Client wajib diisi",
+                  message: "Client Name is required",
                 },
               ]}
               className="col-span-2"
@@ -216,11 +209,11 @@ const DrawerRoleUpdate = ({
               </div>
             </Form.Item>
             <Form.Item
-              label="Alias"
+              label="Alias/Role ID"
               rules={[
                 {
                   required: true,
-                  message: "Alias wajib diisi",
+                  message: "Role ID is required",
                 },
               ]}
               name={"alias"}
@@ -236,19 +229,19 @@ const DrawerRoleUpdate = ({
             </Form.Item>
 
             <Form.Item
-              label="Tipe Kontrak"
+              label="Contract Type"
               name={"recruitment_role_type_id"}
               rules={[
                 {
                   required: true,
-                  message: "Tipe kontrak wajib diisi",
+                  message: "Contract Type is required",
                 },
               ]}
               className="col-span-2"
             >
               <div>
                 <Select
-                  placeholder="Pilih tipe.."
+                  placeholder="Choose Contract Type.."
                   style={{ width: `100%` }}
                   value={dataRole.recruitment_role_type_id}
                   onChange={(value) => {

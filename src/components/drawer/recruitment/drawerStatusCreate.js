@@ -101,20 +101,25 @@ const DrawerStatusCreate = ({
   // console.log(dataCandidate);
   return (
     <DrawerCore
-      title={"Tambah Status"}
+      title={"Add Status"}
       visible={visible}
       onClose={() => {
         clearData();
         onvisible(false);
       }}
-      buttonOkText={"Simpan Status"}
+      buttonOkText={"Save Status"}
       onClick={handleCreateStatus}
+      buttonCancelText={"Cancel"}
+      onButtonCancelClicked={() => {
+        clearData();
+        onvisible(false);
+      }}
       disabled={disabledCreate}
     >
       <Spin spinning={loadingCreate}>
         <div className="flex flex-col">
           <p className="mb-6 text-red-500 text-xs italic">
-            *Informasi ini harus diisi
+            *This information is required to filled
           </p>
           <Form
             layout="vertical"
@@ -123,12 +128,12 @@ const DrawerStatusCreate = ({
           >
             <div className="flex flex-row justify-between w-full space-x-8">
               <Form.Item
-                label="Nama"
+                label="Status Name"
                 name={"name"}
                 rules={[
                   {
                     required: true,
-                    message: "Nama role wajib diisi",
+                    message: "Status Name is required",
                   },
                 ]}
                 className="col-span-2 w-full"
@@ -147,7 +152,7 @@ const DrawerStatusCreate = ({
                 rules={[
                   {
                     required: true,
-                    message: "Color wajib diisi",
+                    message: "Color is required",
                   },
                 ]}
                 className="col-span-2 w-full"
@@ -168,12 +173,12 @@ const DrawerStatusCreate = ({
               </Form.Item>
             </div>
             <Form.Item
-              label="Deskripsi"
+              label="Description"
               name={"description"}
               rules={[
                 {
                   required: true,
-                  message: "Deskripsi wajib diisi",
+                  message: "Description is required",
                 },
               ]}
               className="col-span-2 w-full"

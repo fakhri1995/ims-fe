@@ -21,6 +21,8 @@ const DrawerCore = ({
   width = 360,
   form,
   submit,
+  newbuttonCancelText,
+  newbuttonUpdateText,
 }: {
   title: string | ReactNode;
   visible: boolean;
@@ -38,6 +40,8 @@ const DrawerCore = ({
   width?: number;
   form?: string;
   submit?: boolean;
+  newbuttonCancelText?: string | ReactNode;
+  newbuttonUpdateText?: string | ReactNode;
 }) => {
   return (
     <Drawer
@@ -92,6 +96,28 @@ const DrawerCore = ({
               onClick={onClick}
             >
               {buttonUpdateText}
+            </ButtonSys>
+          )}
+
+          {newbuttonCancelText && (onClick || (submit && form)) && (
+            <div
+              onClick={onButtonCancelClicked}
+              className={
+                "bg-white rounded-[5px] border border-[#BF4A40] hover:cursor-pointer px-4 py-2"
+              }
+            >
+              {newbuttonCancelText}
+            </div>
+          )}
+
+          {newbuttonUpdateText && onClick && (
+            <ButtonSys
+              disabled={disabled}
+              loading={loading}
+              type={disabled ? "default" : "primary"}
+              onClick={onClick}
+            >
+              {newbuttonUpdateText}
             </ButtonSys>
           )}
         </div>

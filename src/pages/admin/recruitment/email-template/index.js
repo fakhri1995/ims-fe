@@ -29,7 +29,12 @@ import ButtonSys from "../../../../components/button";
 import DrawerCore from "../../../../components/drawer/drawerCore";
 import DrawerEmailTemplateCreate from "../../../../components/drawer/recruitment/drawerEmailTemplateCreate";
 import DrawerEmailTemplateUpdate from "../../../../components/drawer/recruitment/drawerEmailTemplateUpdate";
-import { SearchIconSvg } from "../../../../components/icon";
+import {
+  DeleteTablerIconSvg,
+  EditTablerIconSvg,
+  PlusIconSvg,
+  SearchIconSvg,
+} from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard-management";
 import st from "../../../../components/layout-dashboard-management.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
@@ -310,7 +315,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Nama",
+      title: "Name",
       dataIndex: "name",
       render: (text, record, index) => {
         return {
@@ -322,15 +327,14 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
     {
-      title: "Aksi",
+      title: "Action",
       key: "button_action",
       render: (text, record, index) => {
         return {
           children: (
             <div className="flex items-center space-x-2">
-              <ButtonSys
-                type={canUpdateEmailTemplate ? "default" : "primary"}
-                disabled={!canUpdateEmailTemplate}
+              <div
+                className={"hover:cursor-pointer"}
                 onClick={(event) => {
                   event.stopPropagation();
                   tempIdUpdate.current = record.id;
@@ -338,19 +342,17 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setUpdateDrawerShown(true);
                 }}
               >
-                <EditOutlined />
-              </ButtonSys>
-              <ButtonSys
-                type={isAllowedToDeleteEmailTemplate ? "default" : "primary"}
-                color="danger"
-                disabled={!isAllowedToDeleteEmailTemplate}
+                <EditTablerIconSvg size={20} color={"#808080"} />
+              </div>
+              <div
+                className={"hover:cursor-pointer"}
                 onClick={(event) => {
                   event.stopPropagation();
                   onOpenDeleteModal(record);
                 }}
               >
-                <DeleteOutlined />
-              </ButtonSys>
+                <DeleteTablerIconSvg size={20} color={"#BF4A40"} />
+              </div>
             </div>
           ),
         };
@@ -367,81 +369,73 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-5 gap-6">
+      <div
+        className="flex flex-col lg:flex-row w-full 
+          space-y-6 lg:space-y-0 lg:space-x-6"
+      >
+        <div className="w-full lg:w-[258px] space-y-5">
           <SetupMenu menu={"5"} />
-
-          {/* Table Semua Template Email */}
-          <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <h4 className="mig-heading--4 ">
-                Semua Template Email ({dataRawEmailTemplates?.total})
-              </h4>
-
-              <ButtonSys
-                type={isAllowedToAddEmailTemplate ? "default" : "primary"}
-                onClick={() => setCreateDrawerShown(true)}
-                disabled={!isAllowedToAddEmailTemplate}
-              >
-                <div className="flex flex-row space-x-2.5 items-center">
-                  <AppstoreAddOutlined />
-                  <p>Tambah Template</p>
-                </div>
-              </ButtonSys>
-            </div>
-
-            {/* Start: Search criteria */}
-            <div className="flex flex-row justify-between w-full space-x-4 items-center mb-4">
-              {/* Search by keyword (kata kunci) */}
-              <div className="w-11/12">
-                <Input
-                  value={
-                    searchingFilterEmailTemplates === ""
-                      ? null
-                      : searchingFilterEmailTemplates
-                  }
-                  style={{ width: `100%` }}
-                  placeholder="Kata Kunci.."
-                  allowClear
-                  onChange={(e) => {
-                    setSearchingFilterEmailTemplates(e.target.value);
-                    setPageEmailTemplates(1);
-                  }}
-                  onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetEmailTemplates}
-                />
+        </div>
+        <div className="flex-1">
+          <div className="grid grid-cols-12 space-y-6 mig-platform--p-0">
+            <div className="col-span-full">
+              <div className="flex items-center justify-between border-b py-3 px-4">
+                <p className="mig-body--bold">
+                  Semua Template Email ({dataRawEmailTemplates?.total})
+                </p>
+                <ButtonSys
+                  type={isAllowedToAddEmailTemplate ? "primary" : "default"}
+                  onClick={() => setCreateDrawerShown(true)}
+                  disabled={!isAllowedToAddEmailTemplate}
+                >
+                  <div className="flex items-center gap-2 whitespace-nowrap">
+                    <PlusIconSvg size={16} />
+                    <p>Add Template Email</p>
+                  </div>
+                </ButtonSys>
               </div>
-
-              <ButtonSys
-                type={`primary`}
-                onClick={onFilterEmailTemplate}
-                disabled={!isAllowedToGetEmailTemplates}
-              >
-                <div className="flex flex-row space-x-2.5 w-full items-center">
-                  <SearchIconSvg size={15} color={`#ffffff`} />
-                  <p>Cari</p>
+              {/* Start: Search criteria */}
+              <div className="flex flex-row justify-between w-full gap-3 items-center py-3 px-4">
+                {/* Search by keyword (kata kunci) */}
+                <div className="w-2/3">
+                  <Input
+                    value={
+                      searchingFilterEmailTemplates === ""
+                        ? null
+                        : searchingFilterEmailTemplates
+                    }
+                    style={{ width: `100%` }}
+                    placeholder="Search Email Template.."
+                    allowClear
+                    onChange={(e) => {
+                      setSearchingFilterEmailTemplates(e.target.value);
+                      setPageEmailTemplates(1);
+                    }}
+                    onKeyPress={onKeyPressHandler}
+                    disabled={!isAllowedToGetEmailTemplates}
+                  />
                 </div>
-              </ButtonSys>
-            </div>
-            {/* End: Search criteria */}
+              </div>
+              {/* End: Search criteria */}
 
-            <TableCustomRecruitmentTemplateEmail
-              dataSource={dataEmailTemplates}
-              setDataSource={setDataEmailTemplates}
-              columns={columnsTemplateEmail}
-              loading={loadingEmailTemplates}
-              setpraloading={setLoadingEmailTemplates}
-              pageSize={rowsEmailTemplates}
-              total={dataRawEmailTemplates?.total}
-              initProps={initProps}
-              setpage={setPageEmailTemplates}
-              pagefromsearch={pageEmailTemplates}
-              setdataraw={setDataRawEmailTemplates}
-              setsorting={setSortingEmailTemplates}
-              sorting={sortingEmailTemplates}
-              searching={searchingFilterEmailTemplates}
-              onOpenReadDrawer={onOpenReadDrawer}
-            />
+              <TableCustomRecruitmentTemplateEmail
+                dataSource={dataEmailTemplates}
+                setDataSource={setDataEmailTemplates}
+                columns={columnsTemplateEmail}
+                loading={loadingEmailTemplates}
+                setpraloading={setLoadingEmailTemplates}
+                pageSize={rowsEmailTemplates}
+                total={dataRawEmailTemplates?.total}
+                initProps={initProps}
+                setpage={setPageEmailTemplates}
+                pagefromsearch={pageEmailTemplates}
+                setdataraw={setDataRawEmailTemplates}
+                setsorting={setSortingEmailTemplates}
+                sorting={sortingEmailTemplates}
+                searching={searchingFilterEmailTemplates}
+                onOpenReadDrawer={onOpenReadDrawer}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -456,10 +450,10 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
             clearData();
           }}
           width={380}
-          buttonUpdateText={
+          newbuttonUpdateText={
             <div className="flex flex-row space-x-2 items-center">
-              <EditOutlined />
-              <p>Ubah Template</p>
+              <EditTablerIconSvg size={16} />
+              <p>Change Template</p>
             </div>
           }
           onClick={() => {
@@ -468,10 +462,12 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
             setUpdateDrawerShown(true);
             setReadDrawerShown(false);
           }}
-          buttonCancelText={
+          newbuttonCancelText={
             <div className="flex flex-row space-x-2 items-center">
-              <DeleteOutlined />
-              <p>Hapus Template</p>
+              <DeleteTablerIconSvg size={16} color={"#BF4A40"} />
+              <p className={"text-[#BF4A40] font-roboto text-sm/4 font-medium"}>
+                Delete Template
+              </p>
             </div>
           }
           onButtonCancelClicked={() => {
@@ -536,9 +532,23 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           }}
           itemName={"template"}
           loading={loadingDelete}
+          okButtonText={
+            <div className="flex flex-row space-x-2">
+              <DeleteTablerIconSvg size={16} rev={""} />
+              <p>Delete Template</p>
+            </div>
+          }
+          buttonCancel={
+            <ButtonSys
+              type={"default"}
+              color="mono50"
+              onClick={() => setModalDelete(false)}
+            >
+              Cancel
+            </ButtonSys>
+          }
         >
-          Apakah Anda yakin ingin menghapus template email{" "}
-          <strong>{dataDelete.name}</strong>?
+          Are you sure want to delete <strong>{dataDelete.name}</strong>?
         </ModalHapus2>
       </AccessControl>
     </Layout>
