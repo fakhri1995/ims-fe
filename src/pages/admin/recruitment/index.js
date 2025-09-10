@@ -18,6 +18,7 @@ import {
   Spin,
   Switch,
   Table,
+  Tooltip as TooltipNew,
   notification,
 } from "antd";
 import {
@@ -78,9 +79,11 @@ import {
   CopyIconSvg,
   DownloadIconSvg,
   EyeIconSvg,
+  FileExcelSvg,
   FileExportIconSvg,
   FilePlusIconSvg,
   InfoSquareIconSvg,
+  LinkIconSvg,
   MailForwardIconSvg,
   PlusIconSvg,
   SearchIconSvg,
@@ -1050,7 +1053,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // Dropdown Menu "Tambah Kandidat"
   const dropdownMenu = (
-    <Menu>
+    <Menu style={{ minWidth: 200 }}>
       <Menu.Item key={"insert_candidate"}>
         <button
           className="flex flex-row space-x-2 items-center 
@@ -1061,7 +1064,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           disabled={!isAllowedToAddRecruitment}
         >
           <PlusIconSvg size={20} color="#4D4D4D" />
-          <p className="mig-caption--medium text-mono30">Tambah Perorangan</p>
+          <p
+            className="mig-caption--medium text-mono30"
+            style={{ whiteSpace: "nowrap" }}
+          >
+            Tambah Perorangan
+          </p>
         </button>
       </Menu.Item>
 
@@ -1072,12 +1080,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           onClick={() => setModalSheetImport(true)}
           disabled={!isAllowedToAddRecruitments}
         >
-          <FilePlusIconSvg size={20} color="#4D4D4D" />
-          <p className="mig-caption--medium text-mono30">Masukkan dari Excel</p>
+          <img className={"h-4 w-4"} src={"/image/file-excel-2-line.svg"} />
+          <p
+            className="mig-caption--medium text-mono30 text-nowrap"
+            style={{ whiteSpace: "nowrap" }}
+          >
+            Masukkan dari Excel
+          </p>
         </button>
       </Menu.Item>
 
-      <Menu.Item key={"download_template"}>
+      {/* <Menu.Item key={"download_template"}>
         <button
           className="flex flex-row space-x-2 items-center 
 					bg-transparent w-full px-2.5 py-2"
@@ -1085,11 +1098,11 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           disabled={!isAllowedToDownloadTemplate}
         >
           <DownloadIconSvg size={20} color="#4D4D4D" />
-          <p className="mig-caption--medium text-mono30">
+          <p className="mig-caption--medium text-mono30" style={{ whiteSpace: 'nowrap' }}>
             Unduh Template Excel
           </p>
         </button>
-      </Menu.Item>
+      </Menu.Item> */}
     </Menu>
   );
 
@@ -1159,6 +1172,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 ? `mig-caption--medium text-mono30`
                 : `mig-caption--medium text-gray-300`
             }
+            style={{ whiteSpace: "nowrap" }}
           >
             Hapus Kandidat
           </p>
@@ -1314,55 +1328,67 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
     {
-      title: "Aksi",
+      title: "Action",
       key: "button_action",
       render: (text, record) => {
         return {
           children: (
-            <div className="grid grid-rows-3 xl:grid-rows-1 grid-cols-1 xl:grid-cols-3 gap-3">
-              <ButtonSys
-                type={"default"}
-                disabled={!isAllowedToGetRecruitment}
+            <div className="flex flex-row gap-1">
+              <div
+                className={`flex w-7 h-7 justify-center ${
+                  !isAllowedToGetRecruitment
+                    ? "cursor-not-allowed opacity-50"
+                    : "hover:cursor-pointer"
+                }`}
                 onClick={(event) => {
                   event.stopPropagation();
                   rt.push(`/admin/recruitment/${record.id}`);
                 }}
-                color={"mono30"}
               >
-                <SearchOutlined />
-              </ButtonSys>
-              <ButtonSys
-                type={"default"}
-                disabled={!isAllowedToSendEmailRecruitment}
+                <SearchIconSvg size={20} color={"#808080"} />
+              </div>
+              <div
+                className={`flex w-7 h-7 justify-center ${
+                  !isAllowedToSendEmailRecruitment
+                    ? "cursor-not-allowed opacity-50"
+                    : "hover:cursor-pointer"
+                }`}
                 onClick={(event) => {
                   event.stopPropagation();
                   setDataRowClicked(record);
                   setEmailDrawerShown(true);
                 }}
               >
-                <MailOutlined />
-              </ButtonSys>
+                <MailForwardIconSvg size={20} color={"#35763B"} />
+              </div>
 
               {record.user?.is_enabled === 0 ? (
                 <></>
               ) : (
-                <ButtonTooltip
-                  disabled={!isAllowedToGenerateRecruitmentAccount}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setDataRowClicked(record);
-                    setModalSendAccess(true);
-                  }}
-                  color={record.owner_id ? "state2" : "secondary100"}
-                  tooltipTitle={
+                <TooltipNew
+                  placement="bottom"
+                  title={
                     record.owner_id
                       ? "Sudah diberi akses"
                       : "Belum diberi akses"
                   }
-                  tooltipColor={record.owner_id ? "#DDB44A" : "#00589F"}
+                  color={record.owner_id ? "#DDB44A" : "#00589F"}
                 >
-                  <FileExportIconSvg size={16} />
-                </ButtonTooltip>
+                  <div
+                    className={`flex w-7 h-7 justify-center ${
+                      !isAllowedToGenerateRecruitmentAccount
+                        ? "cursor-not-allowed opacity-50"
+                        : "hover:cursor-pointer"
+                    }`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setDataRowClicked(record);
+                      setModalSendAccess(true);
+                    }}
+                  >
+                    <LinkIconSvg size={20} color={"#00589F"} />
+                  </div>
+                </TooltipNew>
               )}
             </div>
           ),
@@ -1403,7 +1429,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       <div className="flex flex-col" id="mainWrapper">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div
-            className="lg:col-span-2 flex flex-row items-center w-full 
+            className="lg:col-span-3 flex flex-row items-center w-full 
 						justify-between px-6 py-2 shadow-md rounded-md bg-white
 						divide-x divide-gray-300"
           >
@@ -1427,12 +1453,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               </Spin>
             </div>
           </div>
-          <AddNewFormButton
+          {/* <AddNewFormButton
             icon={<SettingsIcon />}
             title="Kelola Rekrutmen"
             onButtonClicked={onManageRecruitmentButtonClicked}
             disabled={!isAllowedToSetupRecruitment}
-          />
+          /> */}
           {/* <div className={"lg:col-span-3 flex justify-center"}>
             <div
               className={
@@ -1484,6 +1510,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 setDataUpdateStatus={setDataUpdateStatus}
                 bulkMenu={bulkMenu}
                 selectedRecruitments={selectedRecruitments}
+                onButtonClicked={onManageRecruitmentButtonClicked}
+                downloadClicked={() => handleDownloadExcelTemplate()}
               />
 
               {/* Import excel */}

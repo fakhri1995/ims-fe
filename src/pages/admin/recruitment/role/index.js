@@ -403,7 +403,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         className="flex flex-col lg:flex-row w-full 
           space-y-6 lg:space-y-0 lg:space-x-6"
       >
-        <div className="w-full lg:w-[258px] space-y-5">
+        <div className="w-full lg:w-[258px] space-y-5 rounded-[10px] border border-neutrals70 shadow-desktopCard h-max">
           <SetupMenu menu={"1"} />
         </div>
         <div className="flex-1">

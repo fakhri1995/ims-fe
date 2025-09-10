@@ -2394,6 +2394,62 @@ const MailForwardIconSvg = (props) => {
   return <Icon rev={""} component={mailForwardIconSvg} {...props}></Icon>;
 };
 
+const CopyLinkIconSvg = (props) => {
+  const copyLinkIconSvg = () => (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M8.33301 11.6667C8.8816 12.2266 9.63247 12.5421 10.4163 12.5421C11.2002 12.5421 11.9511 12.2266 12.4997 11.6667L15.833 8.33332C16.9836 7.18273 16.9836 5.31725 15.833 4.16666C14.6824 3.01606 12.8169 3.01606 11.6663 4.16666L11.2497 4.58332"
+        stroke="#00589F"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M11.6667 8.33343C11.1181 7.77353 10.3672 7.45801 9.58332 7.45801C8.79946 7.45801 8.04858 7.77353 7.49999 8.33343L4.16666 11.6668C3.01606 12.8174 3.01606 14.6828 4.16666 15.8334C5.31725 16.984 7.18273 16.984 8.33332 15.8334L8.74999 15.4168"
+        stroke="#00589F"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13.3337 17.5002V15.8335"
+        stroke="#00589F"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15.833 13.3332H17.4997"
+        stroke="#00589F"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M2.5 6.66667H4.16667"
+        stroke="#00589F"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M6.66667 2.5V4.16667"
+        stroke="#00589F"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={copyLinkIconSvg} {...props}></Icon>;
+};
+
 const TrendingUpIconSvg = (props) => {
   const trendingUpIconSvg = () => (
     <svg
@@ -4090,6 +4146,31 @@ const LineDownIconSvg = (props) => {
   return <Icon rev={""} component={lineDownIconSvg} {...props}></Icon>;
 };
 
+const FileExcelSvg = (props) => {
+  const fileExcelSvg = () => {
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clipPath="url(#clip0_24064_8713)">
+        <path
+          d="M1.90634 1.91782L10.2863 0.721151C10.3336 0.714367 10.3818 0.717828 10.4277 0.731301C10.4735 0.744774 10.5159 0.767944 10.552 0.79924C10.5881 0.830535 10.6171 0.869226 10.6369 0.91269C10.6568 0.956153 10.667 1.00337 10.667 1.05115V14.9485C10.667 14.9962 10.6568 15.0434 10.637 15.0868C10.6172 15.1302 10.5883 15.1688 10.5522 15.2001C10.5162 15.2314 10.4739 15.2546 10.4281 15.2681C10.3824 15.2816 10.3343 15.2852 10.287 15.2785L1.90567 14.0818C1.74675 14.0592 1.60134 13.98 1.49613 13.8587C1.39093 13.7375 1.33301 13.5823 1.33301 13.4218V2.57782C1.33301 2.41729 1.39093 2.26216 1.49613 2.14091C1.60134 2.01967 1.74675 1.94045 1.90567 1.91782H1.90634ZM2.66701 3.15648V12.8432L9.33367 13.7958V2.20382L2.66701 3.15648ZM11.3337 12.6665H13.3337V3.33315H11.3337V1.99982H14.0003C14.1772 1.99982 14.3467 2.07006 14.4717 2.19508C14.5968 2.3201 14.667 2.48967 14.667 2.66648V13.3332C14.667 13.51 14.5968 13.6795 14.4717 13.8046C14.3467 13.9296 14.1772 13.9998 14.0003 13.9998H11.3337V12.6665ZM6.80034 7.99982L8.66701 10.6665H7.06701L6.00034 9.14248L4.93367 10.6665H3.33367L5.20034 7.99982L3.33367 5.33315H4.93367L6.00034 6.85715L7.06701 5.33315H8.66701L6.80034 7.99982Z"
+          fill="#4D4D4D"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_24064_8713">
+          <rect width="16" height="16" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>;
+  };
+  return <Icon rev={""} component={fileExcelSvg} {...props}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -4262,4 +4343,6 @@ export {
   StarFillIconSvg,
   LineDownIconSvg,
   EditCvIconSvg,
+  FileExcelSvg,
+  CopyLinkIconSvg,
 };
