@@ -1330,6 +1330,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     {
       title: "Action",
       key: "button_action",
+      width: 80,
       render: (text, record) => {
         return {
           children: (
@@ -1433,7 +1434,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 						justify-between px-4 py-2 bg-white
 						divide-x divide-gray-300 rounded-[10px] border border-neutrals70 shadow-desktopCard"
           >
-            <div className="flex flex-col md:flex-row items-center md:justify-between w-full pr-8 ">
+            <div className="flex flex-col md:flex-row items-center md:justify-between w-full pr-8 py-3 ">
               <h5 className="font-semibold lg:mig-title-card">Jumlah Role</h5>
               <Spin spinning={loadingDataCount}>
                 <p className="text-2xl lg:text-[32px] font-bold font-inter text-primary100 pl-2">

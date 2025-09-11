@@ -29,8 +29,10 @@ const HeaderCandidate = ({
 }) => {
   const rt = useRouter();
   return (
-    <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between p-4">
-      <h4 className="mig-heading--4 mb-2 md:mb-0">Candidate List</h4>
+    <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between px-4 pt-4 pb-3">
+      <h4 className="text-[16px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
+        Candidate List
+      </h4>
       {isBulk === false ? (
         <div className="flex flex-col lg:flex-row md:space-x-2.5 space-y-2 lg:space-y-0 w-full md:w-fit">
           <div className={"flex flex-col lg:flex-row md:space-x-2.5"}>

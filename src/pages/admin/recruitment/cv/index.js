@@ -215,7 +215,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     let skillset = null;
     let path = null;
     if (doc.lampiran.length > 0) {
-      path = "https://cdn.mig.id/" + doc.lampiran[0].isi_lampiran;
+      path = doc.lampiran[0].isi_lampiran;
     }
     if (doc.resume) {
       setResumeId(doc.resume.id);
@@ -511,7 +511,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
                 <Document
                   re
                   file={{
-                    url: "https://dekstop-app-mighty-ai.sgp1.digitaloceanspaces.com/uploads/20250910060003783_9cc1e58d2661f3f11e289a8292bb807d8f847e8d855d7d4f57f3561caa12a94f_CV-SEGO-Ridwan.pdf",
+                    url: dataChoose?.cv_path,
                   }}
                   onLoadError={(error) => console.log("Inside Error", error)}
                   onLoadSuccess={onLoadSuccess}
