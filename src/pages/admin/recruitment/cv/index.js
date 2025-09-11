@@ -11,10 +11,13 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 
+import { ModalDelete } from "components/modal/modalConfirmation";
+
 import { useAccessControl } from "contexts/access-control";
 
 import { RECRUITMENTS_AI_PENDING_GET, RECRUITMENT_APPROVE } from "lib/features";
 
+import ButtonSys from "../../../../components/button";
 import EducationInfoCard from "../../../../components/cards/resume/educationinfo/EducationInfoCard";
 import EvaluationCard from "../../../../components/cards/resume/evaluation/EvaluationCard";
 import ExperienceInfoCard from "../../../../components/cards/resume/experienceinfo/ExperienceInfoCard";
@@ -24,6 +27,8 @@ import PersonalInfoCard from "../../../../components/cards/resume/personalinfo/P
 import SkillCard from "../../../../components/cards/resume/skill/SkillCard";
 import ToolsCard from "../../../../components/cards/resume/tools/ToolsCard";
 import {
+  AlertCircleFilledIconSvg,
+  CheckIconSvg,
   LeftIconSvg,
   RightIconSvg,
   RocketIconSvg,
@@ -506,7 +511,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
                 <Document
                   re
                   file={{
-                    url: dataChoose?.cv_path,
+                    url: "https://dekstop-app-mighty-ai.sgp1.digitaloceanspaces.com/uploads/20250910060003783_9cc1e58d2661f3f11e289a8292bb807d8f847e8d855d7d4f57f3561caa12a94f_CV-SEGO-Ridwan.pdf",
                   }}
                   onLoadError={(error) => console.log("Inside Error", error)}
                   onLoadSuccess={onLoadSuccess}
@@ -601,20 +606,45 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             </div>
             <Modal
               title={
-                <h1 className="font-semibold">
-                  Apakah anda yakin ingin validate data dengan nama "
-                  <span className={"font-bold"}>{dataChoose?.name}</span>"?
-                </h1>
+                <div className="text-danger flex items-center gap-3">
+                  <AlertCircleFilledIconSvg size={24} />
+                  <p> Validate Candidate</p>
+                </div>
               }
               visible={modalValidate}
-              onCancel={() => {
-                setModalValidate(false);
-              }}
-              okText="Ya"
-              cancelText="Tidak"
-              onOk={handleValidate}
-              okButtonProps={{ loading: loadingValidate }}
-            ></Modal>
+              onCancel={() => setModalValidate(false)}
+              className="mig-body--medium"
+              footer={
+                <div className="flex gap-4 items-center justify-end">
+                  <ButtonSys
+                    type={"default"}
+                    color={"mono50"}
+                    onClick={() => setModalValidate(false)}
+                  >
+                    Cancel
+                  </ButtonSys>
+                  <div className="col-span-2 hover:opacity-75">
+                    <ButtonSys
+                      type={"primary"}
+                      color={"danger"}
+                      onClick={() => handleValidate()}
+                      loading={loadingValidate}
+                      // disabled={disabled}
+                    >
+                      <div className="flex items-center gap-2">
+                        <CheckIconSvg size={16} />
+                        <p> Yes, Validate</p>
+                      </div>
+                    </ButtonSys>
+                  </div>
+                </div>
+              }
+            >
+              <p>
+                Are you sure you want to validate{" "}
+                <span className={"font-bold"}>{dataChoose?.name}</span> ?
+              </p>
+            </Modal>
           </div>
         )}
       </div>

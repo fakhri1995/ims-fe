@@ -1430,24 +1430,24 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div
             className="lg:col-span-3 flex flex-row items-center w-full 
-						justify-between px-6 py-2 shadow-md rounded-md bg-white
-						divide-x divide-gray-300"
+						justify-between px-4 py-2 bg-white
+						divide-x divide-gray-300 rounded-[10px] border border-neutrals70 shadow-desktopCard"
           >
             <div className="flex flex-col md:flex-row items-center md:justify-between w-full pr-8 ">
-              <h4 className="font-semibold lg:mig-heading--4">Jumlah Role</h4>
+              <h5 className="font-semibold lg:mig-title-card">Jumlah Role</h5>
               <Spin spinning={loadingDataCount}>
-                <p className="text-4xl lg:text-5xl text-primary100 pl-2">
+                <p className="text-2xl lg:text-[32px] font-bold font-inter text-primary100 pl-2">
                   {dataCount.recruitment_roles_count}
                 </p>
               </Spin>
             </div>
 
             <div className="flex flex-col md:flex-row items-center justify-between w-full pl-8">
-              <h4 className="font-semibold lg:mig-heading--4">
+              <h5 className="font-semibold lg:mig-title-card">
                 Total Kandidat
-              </h4>
+              </h5>
               <Spin spinning={loadingDataCount}>
-                <p className="text-4xl lg:text-5xl text-secondary100 pl-2">
+                <p className="text-2xl lg:text-[32px] font-bold font-inter text-secondary100 pl-2">
                   {dataCount.recruitments_count}
                 </p>
               </Spin>
@@ -1498,7 +1498,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
           {/* Table Kandidat */}
           {tabActive == "done" ? (
-            <div className="lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
+            <div className="lg:col-span-3 flex flex-col rounded-[10px] border border-neutrals70 shadow-desktopCard bg-white mb-6">
               <HeaderCandidate
                 isBulk={isBulk}
                 dropdownMenu={dropdownMenu}
@@ -1685,7 +1685,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               />
               {/* End: Search criteria */}
 
-              <div>
+              <div className={"px-4"}>
                 <TableCustomRecruitmentCandidate
                   dataSource={dataRecruitments}
                   columns={columnRecruitment}

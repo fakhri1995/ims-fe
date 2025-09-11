@@ -28,9 +28,9 @@ const SearchCandidate = ({
   onFilterRecruitments,
 }) => {
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
+    <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full px-4 md:items-center mb-4">
       {/* Search by keyword (kata kunci) */}
-      <div className="w-full md:w-4/12">
+      <div className="w-full md:w-6/12">
         <Input
           defaultValue={searchingFilterRecruitments}
           style={{ width: `100%` }}
@@ -117,7 +117,7 @@ const SearchCandidate = ({
         </Select>
       </div>
 
-      <div className="flex justify-end">
+      {/* <div className="flex justify-end">
         <ButtonSys
           type={`primary`}
           onClick={onFilterRecruitments}
@@ -128,7 +128,7 @@ const SearchCandidate = ({
             <p>Cari</p>
           </div>
         </ButtonSys>
-      </div>
+      </div> */}
     </div>
   );
 };
