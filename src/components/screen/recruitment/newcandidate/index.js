@@ -106,6 +106,7 @@ const RecruitmentNewCandidate = ({
     {
       title: "Role",
       key: "role",
+      width: 200,
       dataIndex: "role",
       render: (text, record, index) => {
         return {
@@ -337,9 +338,9 @@ const RecruitmentNewCandidate = ({
     queryParams.recruitment_status_id,
   ]);
   return (
-    <div className="lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-      <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between mb-6">
-        <h4 className="mig-heading--4 mb-2 md:mb-0">Semua Kandidat</h4>
+    <div className="lg:col-span-3 flex flex-col rounded-[10px] border border-neutrals70 shadow-desktopCard bg-white mb-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between p-4">
+        <h4 className="mig-heading--4 mb-2 md:mb-0">Candidate List</h4>
         {/* <div
           className={
             "flex flex-col lg:flex-row md:space-x-6 space-y-2 lg:space-y-0 w-full md:w-fit"
@@ -511,9 +512,9 @@ const RecruitmentNewCandidate = ({
       />
 
       {/* Start: Search criteria */}
-      <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
+      <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full px-4 md:items-center mb-4">
         {/* Search by keyword (kata kunci) */}
-        <div className="w-full md:w-4/12">
+        <div className="w-full md:w-6/12">
           <Input
             defaultValue={searchingFilterRecruitments}
             style={{ width: `100%` }}
@@ -600,7 +601,7 @@ const RecruitmentNewCandidate = ({
           </Select>
         </div>
 
-        <div className="flex justify-end">
+        {/* <div className="flex justify-end">
           <ButtonSys
             type={`primary`}
             onClick={onFilterRecruitments}
@@ -611,11 +612,11 @@ const RecruitmentNewCandidate = ({
               <p>Cari</p>
             </div>
           </ButtonSys>
-        </div>
+        </div> */}
       </div>
       {/* End: Search criteria */}
 
-      <div>
+      <div className={"px-4"}>
         <TableCustomRecruitmentCandidate
           dataSource={dataRecruitments}
           columns={columnRecruitmentNew}

@@ -177,3 +177,7 @@
   line-height: 1;
   content: "*";
 }
+
+.mig-title-card {
+  @apply text-[16px] leading-6 text-mono30 font-bold font-inter;
+}
