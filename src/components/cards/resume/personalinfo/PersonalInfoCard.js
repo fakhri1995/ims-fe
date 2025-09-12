@@ -9,8 +9,9 @@ import { RESUME_PERSONAL_INFO_UPDATE } from "lib/features";
 import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
-import { EditCvIconSvg } from "../../../icon";
+import { CheckIconSvg, EditCvIconSvg, XIconSvg } from "../../../icon";
 import InformationColumn from "../InformationColumn";
+import InformationColumnEdit from "../InformationColumnEdit";
 
 // Currently use for Training, Certifications, and Achievements section in resume
 const PersonalInfoCard = ({
@@ -25,6 +26,7 @@ const PersonalInfoCard = ({
 }) => {
   const [showMore, setShowMore] = useState(true);
   const [instanceForm] = Form.useForm();
+  const [editForm] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [dataEdit, setDataEdit] = useState({
     name: null,
@@ -34,6 +36,22 @@ const PersonalInfoCard = ({
     linkedin: null,
     summary: null,
   });
+  const [dataEditDouble, setDataEditDouble] = useState({
+    name: null,
+    email: null,
+    location: null,
+    phone: null,
+    linkedin: null,
+    summary: null,
+  });
+  const [dataEditClick, setDataEditClick] = useState({
+    name: false,
+    email: false,
+    location: false,
+    phone: false,
+    linkedin: false,
+    summary: false,
+  });
   const { TextArea } = Input;
   useEffect(() => {
     if (statusEdit) {
@@ -41,6 +59,18 @@ const PersonalInfoCard = ({
     } else {
     }
   }, [statusEdit]);
+
+  useEffect(() => {
+    setDataEditDouble({
+      ...dataEditDouble,
+      name: dataPersonalInfo.name,
+      email: dataPersonalInfo.email,
+      location: dataPersonalInfo.location,
+      phone: dataPersonalInfo.phone,
+      linkedin: dataPersonalInfo.linkedin,
+      summary: dataPersonalInfo.summary,
+    });
+  }, [dataEditClick]);
 
   const { hasPermission } = useAccessControl();
   const isAllowedToUpdatePersonalInfo = hasPermission(
@@ -125,6 +155,45 @@ const PersonalInfoCard = ({
       .finally(() => setLoading(false));
   };
 
+  const onFinishEdit = (values) => {
+    console.log("values ", values);
+  };
+
+  const handleUpdateSection = () => {
+    onFinish(dataEditDouble);
+    clearEdit();
+  };
+
+  const clearEdit = () => {
+    setDataEditDouble({
+      ...dataEditDouble,
+      name: null,
+      email: null,
+      location: null,
+      phone: null,
+      linkedin: null,
+      summary: null,
+    });
+
+    setDataEditClick({
+      ...dataEditClick,
+      name: false,
+      email: false,
+      location: false,
+      phone: false,
+      linkedin: false,
+      summary: false,
+    });
+  };
+
+  const handleEdit = () => {
+    setFormEdit({
+      ...formEdit,
+      personal: true,
+    });
+    clearEdit();
+  };
+
   return (
     <div
       className={
@@ -146,15 +215,7 @@ const PersonalInfoCard = ({
           )}
         </div>
         {formEdit?.personal == false && isAllowedToUpdatePersonalInfo && (
-          <div
-            className={"hover:cursor-pointer"}
-            onClick={() =>
-              setFormEdit({
-                ...formEdit,
-                personal: true,
-              })
-            }
-          >
+          <div className={"hover:cursor-pointer"} onClick={() => handleEdit()}>
             <EditCvIconSvg />
           </div>
         )}
@@ -293,41 +354,314 @@ const PersonalInfoCard = ({
         ) : (
           <div className={"flex flex-col gap-2 mt-4"}>
             <div className={"flex gap-2"}>
-              <InformationColumn
-                label={"Name"}
-                value={data?.name}
-                bold={true}
-              />
-              <InformationColumn
-                label={"Email"}
-                value={data?.email}
-                bold={false}
-              />
+              {dataEditClick.name ? (
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <p
+                    className={`text-[#4D4D4D] text-[13px] leading-6 "font-normal"
+                    } `}
+                  >
+                    Name
+                  </p>
+                  <div className="flex flex-row space-x-4">
+                    <Input
+                      placeholder="Input Name"
+                      value={dataEditDouble.name}
+                      onChange={(e) => {
+                        let input = e.target.value;
+                        setDataEditDouble((prev) => ({
+                          ...prev,
+                          name: input,
+                        }));
+                      }}
+                    ></Input>
+                    <button
+                      onClick={() => {
+                        if (data.id) {
+                          handleUpdateSection();
+                        }
+                        // clearDataUpdate();
+                      }}
+                      className="bg-transparent hover:opacity-75"
+                    >
+                      <CheckIconSvg size={24} color={"#35763B"} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        clearEdit();
+                      }}
+                      className="bg-transparent hover:opacity-75"
+                    >
+                      <XIconSvg size={24} color={"#BF4A40"} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <InformationColumnEdit
+                  label={"Name"}
+                  value={data?.name}
+                  bold={true}
+                  dataEdit={dataEditClick}
+                  setDataEdit={setDataEditClick}
+                />
+              )}
+              {dataEditClick.email ? (
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <p
+                    className={`text-[#4D4D4D] text-[13px] leading-6 "font-normal"
+                    } `}
+                  >
+                    Email
+                  </p>
+                  <div className="flex flex-row space-x-4">
+                    <Input
+                      placeholder="Input Email"
+                      value={dataEditDouble.email}
+                      onChange={(e) => {
+                        let input = e.target.value;
+                        setDataEditDouble((prev) => ({
+                          ...prev,
+                          email: input,
+                        }));
+                      }}
+                    ></Input>
+                    <button
+                      onClick={() => {
+                        if (data.id) {
+                          handleUpdateSection();
+                        }
+                        // clearDataUpdate();
+                      }}
+                      className="bg-transparent hover:opacity-75"
+                    >
+                      <CheckIconSvg size={24} color={"#35763B"} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        clearEdit();
+                      }}
+                      className="bg-transparent hover:opacity-75"
+                    >
+                      <XIconSvg size={24} color={"#BF4A40"} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <InformationColumnEdit
+                  label={"Email"}
+                  value={data?.email}
+                  bold={false}
+                  dataEdit={dataEditClick}
+                  setDataEdit={setDataEditClick}
+                />
+              )}
             </div>
             <div className={"flex gap-2"}>
-              <InformationColumn
-                label={"Phone"}
-                value={data?.phone}
-                bold={false}
-              />
-              <InformationColumn
-                label={"Location"}
-                value={data?.location}
-                bold={false}
-              />
+              {dataEditClick.phone ? (
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <p
+                    className={`text-[#4D4D4D] text-[13px] leading-6 "font-normal"
+                    } `}
+                  >
+                    Phone
+                  </p>
+                  <div className="flex flex-row space-x-4">
+                    <Input
+                      placeholder="Input Phone"
+                      value={dataEditDouble.phone}
+                      onChange={(e) => {
+                        let input = e.target.value;
+                        setDataEditDouble((prev) => ({
+                          ...prev,
+                          phone: input,
+                        }));
+                      }}
+                    ></Input>
+                    <button
+                      onClick={() => {
+                        if (data.id) {
+                          handleUpdateSection();
+                        }
+                        // clearDataUpdate();
+                      }}
+                      className="bg-transparent hover:opacity-75"
+                    >
+                      <CheckIconSvg size={24} color={"#35763B"} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        clearEdit();
+                      }}
+                      className="bg-transparent hover:opacity-75"
+                    >
+                      <XIconSvg size={24} color={"#BF4A40"} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <InformationColumnEdit
+                  label={"Phone"}
+                  value={data?.phone}
+                  bold={false}
+                  dataEdit={dataEditClick}
+                  setDataEdit={setDataEditClick}
+                />
+              )}
+              {dataEditClick.location ? (
+                <div className={"flex flex-col gap-2 w-1/2"}>
+                  <p
+                    className={`text-[#4D4D4D] text-[13px] leading-6 "font-normal"
+                    } `}
+                  >
+                    Location
+                  </p>
+                  <div className="flex flex-row space-x-4">
+                    <Input
+                      placeholder="Input Location"
+                      value={dataEditDouble.location}
+                      onChange={(e) => {
+                        let input = e.target.value;
+                        setDataEditDouble((prev) => ({
+                          ...prev,
+                          location: input,
+                        }));
+                      }}
+                    ></Input>
+                    <button
+                      onClick={() => {
+                        if (data.id) {
+                          handleUpdateSection();
+                        }
+                        // clearDataUpdate();
+                      }}
+                      className="bg-transparent hover:opacity-75"
+                    >
+                      <CheckIconSvg size={24} color={"#35763B"} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        clearEdit();
+                      }}
+                      className="bg-transparent hover:opacity-75"
+                    >
+                      <XIconSvg size={24} color={"#BF4A40"} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <InformationColumnEdit
+                  label={"Location"}
+                  value={data?.location}
+                  bold={false}
+                  dataEdit={dataEditClick}
+                  setDataEdit={setDataEditClick}
+                />
+              )}
             </div>
-            <InformationColumn
-              label={"LinkedIn"}
-              full={true}
-              value={"linkedin.com/" + data?.linkedin}
-              bold={false}
-            />
-            <InformationColumn
-              label={"Summary"}
-              full={true}
-              value={data?.summary}
-              bold={false}
-            />
+            {dataEditClick.linkedin ? (
+              <div className={"flex flex-col gap-2 w-full"}>
+                <p
+                  className={`text-[#4D4D4D] text-[13px] leading-6 "font-normal"
+                    } `}
+                >
+                  LinkedIn
+                </p>
+                <div className="flex flex-row space-x-4">
+                  <Input
+                    placeholder="Input LinkedIn"
+                    value={dataEditDouble.linkedin}
+                    onChange={(e) => {
+                      let input = e.target.value;
+                      setDataEditDouble((prev) => ({
+                        ...prev,
+                        linkedin: input,
+                      }));
+                    }}
+                  ></Input>
+                  <button
+                    onClick={() => {
+                      if (data.id) {
+                        handleUpdateSection();
+                      }
+                      // clearDataUpdate();
+                    }}
+                    className="bg-transparent hover:opacity-75"
+                  >
+                    <CheckIconSvg size={24} color={"#35763B"} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      clearEdit();
+                    }}
+                    className="bg-transparent hover:opacity-75"
+                  >
+                    <XIconSvg size={24} color={"#BF4A40"} />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <InformationColumnEdit
+                label={"LinkedIn"}
+                full={true}
+                value={"linkedin.com/" + data?.linkedin}
+                bold={false}
+                dataEdit={dataEditClick}
+                setDataEdit={setDataEditClick}
+              />
+            )}
+            {dataEditClick.summary ? (
+              <div className={"flex flex-col gap-2 w-full"}>
+                <p
+                  className={`text-[#4D4D4D] text-[13px] leading-6 "font-normal"
+                    } `}
+                >
+                  Summary
+                </p>
+                <div className="flex">
+                  <TextArea
+                    rows={5}
+                    placeholder="Input Summary"
+                    value={dataEditDouble.summary}
+                    onChange={(e) => {
+                      let input = e.target.value;
+                      setDataEditDouble((prev) => ({
+                        ...prev,
+                        summary: input,
+                      }));
+                    }}
+                  ></TextArea>
+                </div>
+                <div className={"flex flex-row justify-end"}>
+                  <button
+                    onClick={() => {
+                      if (data.id) {
+                        handleUpdateSection();
+                      }
+                      // clearDataUpdate();
+                    }}
+                    className="bg-transparent hover:opacity-75"
+                  >
+                    <CheckIconSvg size={24} color={"#35763B"} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      clearEdit();
+                    }}
+                    className="bg-transparent hover:opacity-75"
+                  >
+                    <XIconSvg size={24} color={"#BF4A40"} />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <InformationColumnEdit
+                label={"Summary"}
+                full={true}
+                value={data?.summary}
+                bold={false}
+                dataEdit={dataEditClick}
+                setDataEdit={setDataEditClick}
+              />
+            )}
           </div>
         ))}
     </div>
