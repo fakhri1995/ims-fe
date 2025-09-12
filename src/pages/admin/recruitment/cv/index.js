@@ -474,7 +474,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             </div>
           )}
         </div>
-        <div className={"mt-6 flex gap-[10px]"}>
+        <div className={"mt-5 flex gap-[10px]"}>
           {dataRecruitments?.map((doc, idx) => (
             <NeedToReviewCard
               onChooseData={onChooseData}
@@ -483,7 +483,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             />
           ))}
         </div>
-        <div className={"mt-6 flex justify-between mb-2"}>
+        <div className={"mt-5 flex justify-between mb-2"}>
           <p className={"text-[#4D4D4D] text-lg leading-6 font-bold"}>
             {dataChoose?.name}
           </p>
@@ -505,7 +505,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
             <div
               className={`border border-[#E6E6E6] rounded-[10px] bg-white ${
                 dataChoose?.cv_path ? "w-3/5" : "w-3/5"
-              } p-4 h-max`}
+              } p-[2px] h-max`}
             >
               {dataChoose?.cv_path && (
                 <Document
@@ -536,7 +536,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
                 </div>
               )}
             </div>
-            <div className={"flex flex-col w-3/5"}>
+            <div className={"flex flex-col w-2/5"}>
               <PersonalInfoCard
                 dataPersonalInfo={personalInfo}
                 setDataPersonalInfo={setDataPersonalInfo}
