@@ -5,11 +5,11 @@ const NeedToReviewCard = ({ onChooseData, doc, dataChoose }) => {
   return (
     <div
       onClick={() => onChooseData(doc)}
-      className={`w-1/5 px-3 py-2.5 rounded-[5px] ${
+      className={`w-1/5 px-3 py-3 rounded-[5px] ${
         doc.id == dataChoose?.id ? "bg-primary100" : "bg-white"
       } border-1.5 ${
         doc.id == dataChoose?.id ? "border-primary100" : "border-[#E6E6E6]"
-      } hover:cursor-pointer`}
+      } hover:cursor-pointer]`}
     >
       <div className={"flex flex-col gap-2"}>
         <p
@@ -19,7 +19,6 @@ const NeedToReviewCard = ({ onChooseData, doc, dataChoose }) => {
         >
           {doc.name}
         </p>
-        {console.log("doc?.resume ", doc?.resume)}
         <div className={"flex flex-col gap-1"}>
           <div className={"flex gap-1 items-start"}>
             <StarFillIconSvg color={"#E9C600"} />
@@ -38,7 +37,7 @@ const NeedToReviewCard = ({ onChooseData, doc, dataChoose }) => {
               <p
                 className={`${
                   doc.id == dataChoose?.id ? "text-white" : "text-mono30"
-                } text-[10px] font-medium`}
+                } text-[10px] font-medium line-clamp-2`}
               >
                 {doc?.resume?.skills.map((skill, index) => (
                   <span key={index}>

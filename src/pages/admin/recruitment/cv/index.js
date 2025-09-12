@@ -504,12 +504,11 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
           <div className={"mt-2 flex gap-4"}>
             <div
               className={`border border-[#E6E6E6] rounded-[10px] bg-white ${
-                dataChoose?.cv_path ? "max-w-2/5" : "w-3/5"
-              } p-4`}
+                dataChoose?.cv_path ? "w-3/5" : "w-3/5"
+              } p-4 h-max`}
             >
               {dataChoose?.cv_path && (
                 <Document
-                  re
                   file={{
                     url: dataChoose?.cv_path,
                   }}
