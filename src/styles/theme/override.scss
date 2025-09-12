@@ -1295,6 +1295,8 @@ a:hover {
 }
 .react-pdf__Page__canvas {
   margin: 0 auto;
-  width: 70% !important;
-  height: 100% !important;
+  width: 100% !important;
+  max-width: 650px; /* Batasi lebar maksimum */
+  height: auto !important; /* Biarkan tinggi menyesuaikan */
+  display: block;
 }
