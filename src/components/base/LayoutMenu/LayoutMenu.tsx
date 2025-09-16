@@ -390,6 +390,13 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
+          {/* {hasPermission(EMPLOYEE_LEAVE_QUOTAS_GET) && (
+            <Menu.Item key="attendance/report" className="text-mono50">
+              <Link href="/attendance/report" legacyBehavior>
+                <p>Attendance Report</p>
+              </Link>
+            </Menu.Item>
+          )} */}
           {/* {hasPermission(ATTENDANCE_RECAP_GET) && (
             <Menu.Item key="attendance/recapitulation" className="text-mono50">
               <Link href="/attendance/recapitulation" legacyBehavior>
