@@ -203,6 +203,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataCount, setDataCount] = useState({
     recruitments_count: 0,
     recruitment_roles_count: 0,
+    recruitment_unvalidated_count: 0,
   });
 
   // 2.2. Table Candidate Recruitment
@@ -1658,7 +1659,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   },
                 ]}
               />
-              <TabCandidate activeTab={tabActive} setActiveTab={setTabActive} />
+              <TabCandidate
+                activeTab={tabActive}
+                setActiveTab={setTabActive}
+                validatedCount={dataCount.recruitments_count}
+                unvalidatedCount={dataCount.recruitment_unvalidated_count}
+              />
               {/* Start: Search criteria */}
               <SearchCandidate
                 searchingFilterRecruitments={searchingFilterRecruitments}
@@ -1706,6 +1712,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           ) : (
             <RecruitmentNewCandidate
               setSelectedStatus={setSelectedStatus}
+              validatedCount={dataCount.recruitments_count}
+              unvalidatedCount={dataCount.recruitment_unvalidated_count}
               onFilterRecruitments={onFilterRecruitments}
               handleCreateRecruitments={handleCreateRecruitments}
               menuProps={menuProps}
