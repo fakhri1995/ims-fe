@@ -38,7 +38,8 @@ import TabCandidate from "../tabcandidate";
 
 const RecruitmentNewCandidate = ({
   setSelectedStatus,
-  onFilterRecruitments,
+  validatedCount,
+  unvalidatedCount,
   handleCreateRecruitments,
   refresh,
   setSelectedRoleId,
@@ -369,7 +370,12 @@ const RecruitmentNewCandidate = ({
           </Dropdown.Button>
         </div> */}
       </div>
-      <TabCandidate activeTab={tabActive} setActiveTab={setTabActive} />
+      <TabCandidate
+        activeTab={tabActive}
+        setActiveTab={setTabActive}
+        validatedCount={validatedCount}
+        unvalidatedCount={unvalidatedCount}
+      />
       {/* Import excel */}
       <ReactSpreadsheetImport
         isOpen={modalSheetImport}
