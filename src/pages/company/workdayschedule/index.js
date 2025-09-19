@@ -6,13 +6,17 @@ import {
   withDefault,
 } from "next-query-params";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { COMPANY_CLIENTS_GET, COMPANY_CLIENT_ADD } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import DrawerCompanyAdd from "../../../components/drawer/companies/workdayschedule/drawerCompanyAdd";
+import DrawerCompanyUpdate from "../../../components/drawer/companies/workdayschedule/drawerCompanyUpdate";
 import {
   EditTablerIconSvg,
   EyeIconSvg,
@@ -21,18 +25,6 @@ import {
 import Layout from "../../../components/layout-dashboard-management";
 import st from "../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
-
-// function modifData(dataa) {
-//   for (var i = 0; i < dataa.length; i++) {
-//     dataa[i]["key"] = dataa[i].id;
-//     dataa[i]["value"] = dataa[i].id;
-//     dataa[i]["title"] = dataa[i].name;
-//     dataa[i]["children"] = dataa[i].members;
-//     delete dataa[i].members;
-//     if (dataa[i].children) [modifData(dataa[i].children)];
-//   }
-//   return dataa;
-// }
 
 function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
   /**
@@ -44,7 +36,6 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
     return null;
   }
   const isAllowedToGetCompanyClientList = hasPermission(COMPANY_CLIENTS_GET);
-  const isAllowedToAddCompanyClient = hasPermission(COMPANY_CLIENT_ADD);
 
   const rt = useRouter();
 
@@ -80,6 +71,14 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
     recruitment_stage_id: withDefault(NumberParam, undefined),
     recruitment_status_id: withDefault(NumberParam, undefined),
   });
+  const [refresh, setRefresh] = useState(-1);
+  const tempIdUpdate = useRef(-1);
+  const [triggerUpdate, setTriggerUpdate] = useState(-1);
+  // 2.2. Create Role
+  const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
+  const [isUpdateDrawerShown, setIsUpdateDrawerShown] = useState(false);
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
   const dataSource = [
     {
       key: "1",
@@ -108,6 +107,18 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
       name: "Sarah Connor",
       type: "Shift",
       total: 15,
+    },
+  ];
+  const dataWorkDayTypes = [
+    {
+      key: "1",
+      id: 1,
+      name: "Cuti Bersama dihitung kerja",
+    },
+    {
+      key: "2",
+      id: 2,
+      name: "Mengikuti Peraturan Pemerintah",
     },
   ];
   const [loading, setLoading] = useState(false);
@@ -167,6 +178,12 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
                 className={
                   "hover:cursor-pointer flex justify-center items-center"
                 }
+                onClick={(event) => {
+                  event.stopPropagation();
+                  tempIdUpdate.current = record.id;
+                  setTriggerUpdate((prev) => prev + 1);
+                  setIsUpdateDrawerShown(true);
+                }}
               >
                 <EditTablerIconSvg size={20} color={"#808080"} />
               </div>
@@ -295,6 +312,7 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
           </h4>
           <Button
             type={"primary"}
+            onClick={() => setCreateDrawerShown(true)}
             className="btn btn-sm text-white font-semibold px-2 py-2 border 
                         bg-primary100 hover:bg-primary75 border-primary100 
                         hover:border-primary75 focus:bg-primary100 focus:border-primary100 
@@ -387,6 +405,33 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
             }}
           />
         </div>
+        <AccessControl hasPermission={true}>
+          <DrawerCompanyAdd
+            visible={isCreateDrawerShown}
+            initProps={initProps}
+            onvisible={setCreateDrawerShown}
+            setRefresh={setRefresh}
+            isAllowedToAddCompany={true}
+            dataWorkDayTypes={dataWorkDayTypes}
+            setLoadingCreate={setLoadingCreate}
+            loadingCreate={loadingCreate}
+          />
+        </AccessControl>
+        <AccessControl hasPermission={true}>
+          <DrawerCompanyUpdate
+            id={tempIdUpdate}
+            visible={isUpdateDrawerShown}
+            initProps={initProps}
+            onvisible={setIsUpdateDrawerShown}
+            setRefresh={setRefresh}
+            trigger={triggerUpdate}
+            isAllowedToAddCompany={true}
+            isAllowedToUpdateCompany={true}
+            dataWorkDayTypes={dataWorkDayTypes}
+            setLoadingUpdate={setLoadingUpdate}
+            loadingUpdate={loadingUpdate}
+          />
+        </AccessControl>
       </div>
     </Layout>
   );
@@ -422,31 +467,6 @@ export async function getServerSideProps({ req, res }) {
   );
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
-
-  // if (![155, 156, 157, 158, 159, 160, 161, 162, 163].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-  //     res.writeHead(302, { Location: '/dashboard/admin' })
-  //     res.end()
-  // }
-
-  // const resourcesGCL = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientCompanyList`, {
-  //     method: `POST`,
-  //     headers: {
-  //         'Authorization': JSON.parse(initProps),
-  //         'Content-Type': 'application/json'
-  //     },
-  // })
-  // const resjsonGCL = await resourcesGCL.json()
-  // const dataCompanyList = resjsonGCL
-
-  // const resourcesGL = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations`, {
-  //     method: `POST`,
-  //     headers: {
-  //         'Authorization': JSON.parse(initProps),
-  //     },
-  // })
-  // const resjsonGL = await resourcesGL.json()
-  // const dataLocations = resjsonGL
-
   return {
     props: {
       initProps,
