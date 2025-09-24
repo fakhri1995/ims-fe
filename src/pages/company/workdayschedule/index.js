@@ -1,10 +1,13 @@
 import { Button, Calendar, Input, Select, Table } from "antd";
+import axios from "axios";
+import moment from "moment";
 import {
   NumberParam,
   StringParam,
   useQueryParams,
   withDefault,
 } from "next-query-params";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
@@ -79,6 +82,7 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
   const [isUpdateDrawerShown, setIsUpdateDrawerShown] = useState(false);
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [holidaysArray, setHolidaysArray] = useState([]);
   const dataSource = [
     {
       key: "1",
@@ -187,17 +191,9 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
               >
                 <EditTablerIconSvg size={20} color={"#808080"} />
               </div>
-              <div
-                onClick={(event) => {
-                  event.stopPropagation();
-                  rt.push(`/admin/recruitment/cv`);
-                }}
-                className={
-                  "hover:cursor-pointer flex justify-center items-center"
-                }
-              >
+              <Link href={`/company/workdayschedule/${record.id}`}>
                 <EyeIconSvg size={20} color={"#808080"} />
-              </div>
+              </Link>
             </div>
           ),
         };
@@ -208,16 +204,37 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
   // const [datatable2, setdatatable2] = useState([]);
   const [loaddatatable, setloaddatatable] = useState(false);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // setLoading(true);
+        const res = await axios.get("https://dayoffapi.vercel.app/api");
+        setHolidaysArray(res.data); // data dari API
+      } catch (err) {
+        // setError(err.message || "Something went wrong");
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const holidays = holidaysArray.reduce((acc, item) => {
+    acc[item.tanggal] = item;
+    return acc;
+  }, {});
+
   const dateFullCellRender = (value) => {
     const dateStr = value.format("YYYY-MM-DD");
     const day = value.date();
     const isSunday = value.day() === 0;
-
-    const special = specialDates[dateStr];
+    const holiday = holidaysArray.find(
+      (item) => moment(item.tanggal).format("YYYY-MM-DD") === dateStr
+    );
 
     let style = {
-      //   borderRadius: 6,
-      borderTop: "1px solid #E6E6E6", // ✅ Garis bawah
+      borderTop: "1px solid #E6E6E6",
       boxSizing: "border-box",
       height: "100%",
       backgroundColor: isSunday ? "#F5851E19" : "inherit",
@@ -231,8 +248,8 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
       paddingTop: 1,
     };
 
-    if (special) {
-      style.backgroundColor = special.bgColor;
+    if (holiday) {
+      style.backgroundColor = holiday.is_cuti ? "#FFEBEE" : "#E3F2FD";
       style.color = "#4D4D4D";
     }
 
@@ -241,9 +258,9 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
         <div style={{ fontWeight: "bold", marginBottom: 4, textAlign: "left" }}>
           {day}
         </div>
-        {special && (
+        {holiday && (
           <div className="px-1" style={{ fontSize: 11, textAlign: "center" }}>
-            {special.label}
+            {holiday.keterangan}
           </div>
         )}
       </div>
