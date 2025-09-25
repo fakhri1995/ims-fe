@@ -315,29 +315,31 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
       pathArr={pathArr}
       st={st}
     >
-      <div className="lg:col-span-3 flex flex-col px-4 pt-3 pb-0 border-neutrals70 bg-white">
+      {/* <div className="lg:col-span-3 flex flex-col px-4 pt-3 pb-0 border-neutrals70 bg-white">
         <Calendar
           fullscreen={true}
           // headerRender={headerRender}
           dateFullCellRender={dateFullCellRender}
         />
-      </div>
+      </div> */}
       <div className="lg:col-span-3 flex flex-col rounded-[10px] border border-neutrals70 shadow-desktopCard bg-white mt-5">
         <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between px-4 pt-4 pb-3 ">
           <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
             Company List
           </h4>
-          <Button
-            type={"primary"}
-            onClick={() => setCreateDrawerShown(true)}
-            className="btn btn-sm text-white font-semibold px-2 py-2 border 
+          <Link href={`/company/workdayschedule/create`}>
+            <Button
+              type={"primary"}
+              // onClick={() => setCreateDrawerShown(true)}
+              className="btn btn-sm text-white font-semibold px-2 py-2 border 
                         bg-primary100 hover:bg-primary75 border-primary100 
                         hover:border-primary75 focus:bg-primary100 focus:border-primary100 
                         flex-nowrap w-full md:w-fit"
-            icon={<PlusIconSvg size={16} color="#FFFFFF" />}
-          >
-            Add Company
-          </Button>
+              icon={<PlusIconSvg size={16} color="#FFFFFF" />}
+            >
+              Create Work Schedule
+            </Button>
+          </Link>
         </div>
         <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full px-4 md:items-center mb-4 border-b pb-3">
           <div className="w-full md:w-9/12">
