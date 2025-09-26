@@ -80,6 +80,8 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   const [holidaysArray, setHolidaysArray] = useState([]);
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const [defaultHeaders, setDefaultHeaders] = useState([]);
+  const [workHours, setWorkHours] = useState([]);
   const dateFullCellRender = (value) => {
     const dateStr = value.format("YYYY-MM-DD");
     const day = value.date();
@@ -132,6 +134,56 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   const cancelDelete = () => {
     setModalDelete(false);
   };
+  const dayMap = {
+    Sunday: "Su",
+    Monday: "Mo",
+    Tuesday: "Tu",
+    Wednesday: "We",
+    Thursday: "Th",
+    Friday: "Fr",
+    Saturday: "Sa",
+  };
+  const getWorkhourText = (day) => {
+    const d = workHours.find((w) => w.day === day);
+    if (!d) return "";
+    if (d.range.length == 0) return "";
+    return `${d.range[0]} - ${d.range[1]}`;
+  };
+  useEffect(() => {
+    // ambil text default cuma sekali
+    if (defaultHeaders.length === 0) {
+      const ths = document.querySelectorAll(
+        ".ant-picker-calendar .ant-picker-content th"
+      );
+      const headers = Array.from(ths).map((th) => th.innerText);
+      setDefaultHeaders(headers);
+    }
+  }, [defaultHeaders]);
+
+  useEffect(() => {
+    if (defaultHeaders.length === 0) return;
+
+    const ths = document.querySelectorAll(
+      ".ant-picker-calendar .ant-picker-content th"
+    );
+
+    ths.forEach((th, idx) => {
+      const dayName = Object.keys(dayMap)[idx]; // Sunday, Monday, dst
+      const shortName = dayMap[dayName]; // Su, Mo, dst
+      const workText = getWorkhourText(dayName);
+
+      th.innerHTML = `
+        <div style="display:flex; flex-direction:column;">
+      <span>${shortName}</span>
+      <span style="font-size: 12px;
+  line-height: 20px;
+  color: rgba(0, 0, 0, 0.45); /* sama kayak teks secondary Antd */
+  font-weight: normal;">${workText}</span>
+    </div>
+        
+      `;
+    });
+  }, [active, defaultHeaders]);
   const handleDeleteSchedule = () => {
     setLoadingDelete(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteWorkday`, {
@@ -210,6 +262,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
               id: datatemp[0].id,
               name: datatemp[0].name,
             });
+            setWorkHours(datatemp[0].schedule);
           }
           // let dataholidays = res2.data
           // setCutiBersamaOptions(dataholidays.filter(item => item.is_cuti === 1))
@@ -224,6 +277,11 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
 
   useEffect(() => {
     if (!active.id) return;
+    // fetchDataDetail()
+    getStatistic();
+  }, [active]);
+
+  const getStatistic = () => {
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdayStatistics?id=${
         active?.id
@@ -251,7 +309,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
         // setCutiBersamaOptions(dataholidays.filter(item => item.is_cuti === 1))
         // setLiburNasionalOptions(dataholidays.filter(item => item.is_cuti === 0))
       });
-  }, [active]);
+  };
   const breadcrumbValues = useMemo(() => {
     const pageBreadcrumbValue = [
       { name: "Company", hrefValue: "/company/clients" },
@@ -265,40 +323,26 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     return pageBreadcrumbValue;
   }, [companyName]);
   const handleActive = (w) => {
-    // console.log('isi w ', w)
     setActive({
       ...active,
       id: w.id,
       name: w.name,
     });
+    if (w.schedule.length > 0) {
+      setWorkHours(w.schedule);
+    } else {
+      setWorkHours([]);
+    }
   };
-  const workHours = {
-    0: "08:00-17:00", // Sunday
-    1: "08:00-17:00", // Monday
-    2: "08:00-17:00", // Tuesday
-    3: "08:00-17:00",
-    4: "09:00-18:00",
-    5: "Libur",
-    6: "Libur",
-  };
-  // useEffect(() => {
-  //    const ths = document.querySelectorAll(
-  //   ".ant-picker-calendar .ant-picker-content th"
-  // );
-
-  // ths.forEach((th, idx) => {
-  //   const defaultText = th.innerText; // Su, Mo, Tu...
-  //   const extraText = active[idx] || ""; // data API
-
-  //   // reset biar gak double
-  //   th.innerHTML = `
-  //     <div style="display:flex; flex-direction:column; align-items:center">
-  //       <span>${defaultText}</span>
-  //       <span style="font-size:11px; color:#999">${extraText}</span>
-  //     </div>
-  //   `;
-  // });
-  // }, []);
+  // const workHours = {
+  //   0: "08:00-17:00", // Sunday
+  //   1: "08:00-17:00", // Monday
+  //   2: "08:00-17:00", // Tuesday
+  //   3: "08:00-17:00",
+  //   4: "09:00-18:00",
+  //   5: "Libur",
+  //   6: "Libur",
+  // };
   return (
     <Layout
       tok={initProps}
