@@ -573,6 +573,7 @@ const TrashIconSvg = (props) => {
   );
   return <Icon rev={""} component={trashIconSvg} {...props}></Icon>;
 };
+
 const CheckIconSvg = (props) => {
   const checkIconSvg = () => (
     <svg
@@ -4170,6 +4171,44 @@ const FileExcelSvg = (props) => {
   };
   return <Icon rev={""} component={fileExcelSvg} {...props}></Icon>;
 };
+const TrashXIconSvg = (props) => {
+  const trashXIconSvg = () => (
+    <svg
+      width={props.size ?? 20}
+      height={props.size ?? 20}
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M2.66797 4.66671H13.3346"
+        stroke={props.color ?? "#BF4A40"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M3.33203 4.66663L3.9987 12.6666C3.9987 13.403 4.59565 14 5.33203 14H10.6654C11.4017 14 11.9987 13.403 11.9987 12.6666L12.6654 4.66663"
+        stroke="#BF4A40"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M6 4.66667V2.66667C6 2.29848 6.29848 2 6.66667 2H9.33333C9.70152 2 10 2.29848 10 2.66667V4.66667"
+        stroke="#BF4A40"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7.1983 7.46967C6.90541 7.17678 6.43053 7.17678 6.13764 7.46967C5.84475 7.76256 5.84475 8.23744 6.13764 8.53033L6.66797 8L7.1983 7.46967ZM8.80431 11.197C9.0972 11.4899 9.57207 11.4899 9.86497 11.197C10.1579 10.9041 10.1579 10.4292 9.86497 10.1363L9.33464 10.6667L8.80431 11.197ZM9.86497 8.53033C10.1579 8.23744 10.1579 7.76256 9.86497 7.46967C9.57207 7.17678 9.0972 7.17678 8.80431 7.46967L9.33464 8L9.86497 8.53033ZM6.13764 10.1363C5.84475 10.4292 5.84475 10.9041 6.13764 11.197C6.43053 11.4899 6.90541 11.4899 7.1983 11.197L6.66797 10.6667L6.13764 10.1363ZM6.66797 8L6.13764 8.53033L8.80431 11.197L9.33464 10.6667L9.86497 10.1363L7.1983 7.46967L6.66797 8ZM9.33464 8L8.80431 7.46967L6.13764 10.1363L6.66797 10.6667L7.1983 11.197L9.86497 8.53033L9.33464 8Z"
+        fill="#BF4A40"
+      />
+    </svg>
+  );
+  return <Icon rev={""} component={trashXIconSvg} {...props}></Icon>;
+};
 
 export {
   DashboardIconSvg,
@@ -4345,4 +4384,5 @@ export {
   EditCvIconSvg,
   FileExcelSvg,
   CopyLinkIconSvg,
+  TrashXIconSvg,
 };

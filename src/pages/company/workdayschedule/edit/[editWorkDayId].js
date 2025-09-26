@@ -49,10 +49,7 @@ import httpcookie from "cookie";
 const { RangePicker } = TimePicker;
 const { Text } = Typography;
 
-function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
-  /**
-   * Dependencies
-   */
+const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
   if (isAccessControlPending) {
@@ -224,7 +221,7 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
   const pageBreadcrumbValue = [
     { name: "Company", hrefValue: "/company/clients" },
     { name: "Workday Schedule", hrefValue: "/company/workdayschedule" },
-    { name: "Create" },
+    { name: "Edit Workday Schedule" },
   ];
   // const handleToggle = (day, checked) => {
   //   setActiveDays((prev) => ({ ...prev, [day]: checked }));
@@ -324,23 +321,16 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
         });
       });
   };
-
   return (
     <Layout
-      tok={tok}
+      tok={initProps}
       dataProfile={dataProfile}
       sidemenu={sidemenu}
-      pathArr={pathArr}
+      pathArr={pathTitleArr}
       st={st}
+      idpage={workdayId}
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
-      {/* <div className="lg:col-span-3 flex flex-col px-4 pt-3 pb-0 border-neutrals70 bg-white">
-        <Calendar
-          fullscreen={true}
-          // headerRender={headerRender}
-          dateFullCellRender={dateFullCellRender}
-        />
-      </div> */}
       <div className="lg:col-span-3 flex flex-col rounded-[10px] border border-neutrals70 shadow-desktopCard bg-white pb-4">
         <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between px-4 pt-4 pb-3 border-b ">
           <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
@@ -451,80 +441,6 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
                   />
                 </div>
               </Form.Item>
-              {/* <Form.Item
-                label="Year"
-                name={"Year"}
-                className="w-full"
-              >
-                <div>
-                  <Select
-                    disabled={true}
-                    // showSearch
-                    optionFilterProp="children"
-                    placeholder="Select Year"
-                    // filterOption={(input, option) =>
-                    //     (option?.children ?? "")
-                    //         .toLowerCase()
-                    //         .includes(input.toLowerCase())
-                    // }
-                    loading={loadingGetCompany}
-                    style={{ width: `100%` }}
-                    value={dataCompany.year}
-                    onChange={(value) => {
-                      setDataCompany({
-                        ...dataCompany,
-                        year: value,
-                      });
-                    }}
-                  >
-                    {years.map((year) => (
-                      <Option key={year} value={year}>
-                        {year}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-              </Form.Item>
-              <Form.Item
-                label="Month"
-                name={"month"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Month is required",
-                  },
-                ]}
-                className="w-full"
-              >
-                <div>
-                  <Select
-                    // showSearch
-                    optionFilterProp="children"
-                    placeholder="Select Month"
-                    // filterOption={(input, option) =>
-                    //     (option?.children ?? "")
-                    //         .toLowerCase()
-                    //         .includes(input.toLowerCase())
-                    // }
-                    loading={loadingGetCompany}
-                    style={{ width: `100%` }}
-                    value={dataCompany.month}
-                    onChange={(value) => {
-                      setDataCompany({
-                        ...dataCompany,
-                        month: value,
-                      });
-                      instanceForm.setFieldsValue({ month: value })
-                    }}
-                  >
-                    {months.map((month, index) => (
-                      <Option key={index + 1} value={index + 1}>
-                        {month}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-              </Form.Item> */}
             </Form>
             <div className={"pt-2"}>
               <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-4">
@@ -702,47 +618,49 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
       </div>
     </Layout>
   );
-}
+};
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, params }) {
+  const workdayId = params.editWorkDayId;
   var initProps = {};
-  const reqBody = {
-    page: 1,
-    rows: 50,
-    order_by: "asc",
-  };
-  if (req && req.headers) {
-    const cookies = req.headers.cookie;
-    if (!cookies) {
-      res.writeHead(302, { Location: "/login" });
-      res.end();
-    }
-    if (typeof cookies === "string") {
-      const cookiesJSON = httpcookie.parse(cookies);
-      initProps = cookiesJSON.token;
-    }
+  if (!req.headers.cookie) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
   }
+  const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+  if (!cookiesJSON1.token) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+  initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
       },
     }
   );
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
+
   return {
     props: {
       initProps,
       dataProfile,
-      // dataCompanyList,
-      // dataLocations,
       sidemenu: "workdayschedule",
+      workdayId,
     },
   };
 }
 
-export default WorkdayScheduleCreate;
+export default EditWorkDay;
