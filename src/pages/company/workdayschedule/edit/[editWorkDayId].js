@@ -204,8 +204,11 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("res2 work day detail ", res2.data);
+        // console.log("res2 work day detail ", res2.data);
         setDataSchedule(res2.data.schedule);
+        updateWorkForm.setFieldsValue({
+          schedule_name: res2.data.name,
+        });
         setDataCompany({
           ...dataCompany,
           id: res2.data.id,
@@ -234,9 +237,10 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
       )
         .then((res) => res.json())
         .then((res2) => {
-          console.log("res2 work day ", res2.data);
+          // console.log("res2 work day ", res2.data);
           // setCompanyName(res2.data.company_name);
           let datatemp = res2.data.workdays;
+          // console.log('isi datatemp[0] ',datatemp[0])
           setDataCompany({
             ...dataCompany,
             company_name: res2.data.company_name,
@@ -370,23 +374,23 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   };
 
   const handleTimeChange = (index, times) => {
-    const newSchedule = [...workingDays];
+    const newSchedule = [...workingDaysMap];
     if (times) {
       newSchedule[index].range = times.map((t) => t.format("HH:mm"));
     } else {
       newSchedule[index].range = [];
     }
-    setWorkingDays(newSchedule);
+    setWorkingDaysMap(newSchedule);
   };
 
   const handleCreateSchedule = () => {
-    console.log("handle create schedule");
     // console.log('isi dataCompany ', dataCompany)
     // console.log('isi working days ', workingDays)
     // console.log('isi cuti bersama ', selectedCuti)
     // console.log('isi libur ', selectedLibur)
     const payload = {
       // year: dataCompany.year,
+      company_id: Number(workdayId),
       id: Number(dataCompany.id),
       // month: dataCompany.month,
       name: dataCompany.name,
@@ -405,7 +409,6 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     })
       .then((response) => response.json())
       .then((response2) => {
-        console.log("response 2 ", response2);
         setLoadingCreate(false);
         if (response2.success) {
           notification.success({
@@ -513,7 +516,6 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
             ))}
           </div>
         </div>
-
         <div className={"px-4 flex"}>
           <div className={"border-r w-1/2 pt-4 pr-4"}>
             <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-4">
@@ -664,7 +666,6 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
               >
                 Cuti Bersama
               </p>
-              {console.log("selected cuti ", selectedCuti)}
               <Button
                 type="link"
                 disabled={!enabled}
