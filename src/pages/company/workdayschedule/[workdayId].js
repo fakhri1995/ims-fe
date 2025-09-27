@@ -7,15 +7,11 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 
 // import enUS from 'antd/es/calendar/locale/en_US';
-import { AccessControl } from "components/features/AccessControl";
-
 import { useAccessControl } from "contexts/access-control";
 
 import {
   CalendarEventIconSvg,
   CloseIconSvg,
-  EditCvIconSvg,
-  EditIconSvg,
   EditSquareIconSvg,
   LayoutGridSvg,
   PlusIconSvg,
@@ -53,6 +49,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   const [active, setActive] = useState({
     id: null,
     name: null,
+    company_id: null,
   });
   const workdays = [
     { id: 1, name: "Engineer Workday" },
@@ -261,6 +258,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
             setActive({
               id: datatemp[0].id,
               name: datatemp[0].name,
+              company_id: datatemp[0].company_id,
             });
             setWorkHours(datatemp[0].schedule);
           }
@@ -323,10 +321,12 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     return pageBreadcrumbValue;
   }, [companyName]);
   const handleActive = (w) => {
+    console.log("nilai w ", w);
     setActive({
       ...active,
       id: w.id,
       name: w.name,
+      company_id: w.company_id,
     });
     if (w.schedule.length > 0) {
       setWorkHours(w.schedule);
@@ -450,8 +450,12 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
             {dataWorkDay.map((w) => (
               <div
                 key={w.id}
-                onClick={() => handleActive(w)}
-                className={`flex items-center gap-1 hover:cursor-pointer h-8 py-1 px-4 rounded-[48px] ${
+                onClick={() => (active.id === w.id ? "" : handleActive(w))}
+                className={`flex items-center gap-1 ${
+                  active.id === w.id
+                    ? "hover:cursor-none"
+                    : "hover:cursor-pointer"
+                } h-8 py-1 px-4 rounded-[48px] ${
                   active.id === w.id
                     ? "bg-[#35763B]"
                     : " border border-[#808080]"
@@ -465,7 +469,11 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
                   {w.name}
                 </p>
                 {active.id === w.id && (
-                  <EditSquareIconSvg size={18} color={"white"} />
+                  <Link
+                    href={`/company/workdayschedule/edit/${active.company_id}`}
+                  >
+                    <EditSquareIconSvg size={18} color={"white"} />
+                  </Link>
                 )}
               </div>
             ))}
