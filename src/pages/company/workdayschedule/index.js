@@ -199,19 +199,9 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
         return {
           children: (
             <div className="flex flex-row gap-2">
-              <div
-                className={
-                  "hover:cursor-pointer flex justify-center items-center"
-                }
-                onClick={(event) => {
-                  event.stopPropagation();
-                  tempIdUpdate.current = record.id;
-                  setTriggerUpdate((prev) => prev + 1);
-                  setIsUpdateDrawerShown(true);
-                }}
-              >
+              <Link href={`/company/workdayschedule/edit/${record.id}`}>
                 <EditTablerIconSvg size={20} color={"#808080"} />
-              </div>
+              </Link>
               <Link href={`/company/workdayschedule/${record.id}`}>
                 <EyeIconSvg size={20} color={"#808080"} />
               </Link>
