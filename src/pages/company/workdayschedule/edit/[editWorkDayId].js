@@ -99,6 +99,7 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   const [loading, setLoading] = useState(false);
   const [datatable, setdatatable] = useState([]);
   const [dataSchedule, setDataSchedule] = useState([]);
+  const [warningWorkingDay, setWarningWorkingDay] = useState(false);
   // const [datatable2, setdatatable2] = useState([]);
   const [loaddatatable, setloaddatatable] = useState(false);
   const [daysData, setDaysData] = useState([]);
@@ -156,6 +157,14 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
 
     fetchData();
   }, []);
+
+  const handleSetJoint = () => {
+    if (enabled) {
+      setSelectedCuti([]);
+      setSelectedLibur([]);
+    }
+    setEnabled(!enabled);
+  };
 
   const [refreshCompanyClientList, triggerRefreshCompanyClientList] =
     useState(0);
@@ -388,47 +397,49 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     // console.log('isi working days ', workingDays)
     // console.log('isi cuti bersama ', selectedCuti)
     // console.log('isi libur ', selectedLibur)
-    const payload = {
-      // year: dataCompany.year,
-      company_id: Number(workdayId),
-      id: Number(dataCompany.id),
-      // month: dataCompany.month,
-      name: dataCompany.name,
-      schedule: workingDaysMap,
-      holidays: [...selectedCuti, ...selectedLibur],
-    };
-    // console.log('Json stringify ', JSON.stringify(payload))
-    setLoadingCreate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateWorkday`, {
-      method: "PUT",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        setLoadingCreate(false);
-        if (response2.success) {
-          notification.success({
-            message: `Engineer Workday Schedule successfully updated`,
-            duration: 3,
-          });
-        } else {
-          notification.error({
-            message: `Update Engineer Workday Schedule failed. ${response2.message}`,
-            duration: 3,
-          });
-        }
+    if (checkWorkingDay()) {
+      const payload = {
+        // year: dataCompany.year,
+        company_id: Number(workdayId),
+        id: Number(dataCompany.id),
+        // month: dataCompany.month,
+        name: dataCompany.name,
+        schedule: workingDaysMap,
+        holidays: [...selectedCuti, ...selectedLibur],
+      };
+      // console.log('Json stringify ', JSON.stringify(payload))
+      setLoadingCreate(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateWorkday`, {
+        method: "PUT",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       })
-      .catch((err) => {
-        setLoadingCreate(false);
-        notification.error({
-          message: `Update Engineer Workday Schedule failed. ${err.response}`,
-          duration: 3,
+        .then((response) => response.json())
+        .then((response2) => {
+          setLoadingCreate(false);
+          if (response2.success) {
+            notification.success({
+              message: `Engineer Workday Schedule successfully updated`,
+              duration: 3,
+            });
+          } else {
+            notification.error({
+              message: `Update Engineer Workday Schedule failed. ${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          setLoadingCreate(false);
+          notification.error({
+            message: `Update Engineer Workday Schedule failed. ${err.response}`,
+            duration: 3,
+          });
         });
-      });
+    }
   };
 
   const handleActive = (w) => {
@@ -443,6 +454,21 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
       setWorkHours([]);
     }
   };
+  useEffect(() => {
+    // ambil text default cuma sekali
+    checkWorkingDay();
+  }, [workingDaysMap]);
+
+  function checkWorkingDay() {
+    const allEmpty = workingDaysMap.every((item) => item.range.length === 0);
+    if (allEmpty) {
+      setWarningWorkingDay(true);
+      return false;
+    } else {
+      setWarningWorkingDay(false);
+      return true;
+    }
+  }
 
   return (
     <Layout
@@ -638,6 +664,11 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
                   </div>
                 </div>
               ))}
+              {warningWorkingDay && (
+                <p class="text-[#ff4d4f] text-sm font-medium">
+                  Working day is must filled
+                </p>
+              )}
             </div>
           </div>
           <div className={"w-1/2 pt-4 pl-4"}>
@@ -645,7 +676,7 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
               <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-4">
                 Set Joint Holiday
               </h4>
-              <Switch checked={enabled} onChange={setEnabled} />
+              <Switch checked={enabled} onChange={() => handleSetJoint()} />
             </div>
             <div
               className={
