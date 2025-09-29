@@ -182,9 +182,24 @@ const DrawerCreateClient = ({
               });
             }
           })
-          .catch(() => {
+          .catch((error) => {
+            setlokasiloading(false);
+            let errorMessage = "Terjadi kesalahan";
+
+            if (error.response) {
+              // kalau server balikin pesan
+              errorMessage =
+                error.response.data?.message ||
+                `Error ${error.response.status}`;
+            } else if (error.request) {
+              // request terkirim tapi gak ada response
+              errorMessage = "Tidak ada response dari server";
+            } else {
+              // error di konfigurasi axios / JS
+              errorMessage = error.message;
+            }
             notification["error"]({
-              message: "Terjadi kesalahan saat menambahkan lokasi company",
+              message: errorMessage,
               duration: 3,
             });
           });
@@ -249,9 +264,23 @@ const DrawerCreateClient = ({
             });
           }
         })
-        .catch(() => {
+        .catch((error) => {
+          setlokasiloading(false);
+          let errorMessage = "Terjadi kesalahan";
+
+          if (error.response) {
+            // kalau server balikin pesan
+            errorMessage =
+              error.response.data?.message || `Error ${error.response.status}`;
+          } else if (error.request) {
+            // request terkirim tapi gak ada response
+            errorMessage = "Tidak ada response dari server";
+          } else {
+            // error di konfigurasi axios / JS
+            errorMessage = error.message;
+          }
           notification["error"]({
-            message: "Terjadi kesalahan saat menambahkan lokasi company",
+            message: errorMessage,
             duration: 3,
           });
         });

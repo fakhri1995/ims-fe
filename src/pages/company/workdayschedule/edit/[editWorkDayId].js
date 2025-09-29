@@ -418,7 +418,7 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
         .then((response) => response.json())
         .then((response2) => {
           setLoadingCreate(false);
-          if (response2.success) {
+          if (response2.status == 200) {
             notification.success({
               message: `Workday Schedule has successfully updated`,
               duration: 3,
