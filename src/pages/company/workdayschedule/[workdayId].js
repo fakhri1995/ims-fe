@@ -43,6 +43,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 1);
   pathTitleArr.splice(1, 1, "Detail Company");
+  const [monthActive, setMonthActive] = useState(moment().format("MM"));
   const [rawdata, setrawdata] = useState({
     id: "",
     name: "",
@@ -81,18 +82,18 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   const [defaultHeaders, setDefaultHeaders] = useState([]);
   const [workHours, setWorkHours] = useState([]);
   const dateFullCellRender = (value) => {
-    const dateStr = value.format("YYYY-MM-DD");
+    const dateStr = moment(value).format("YYYY-MM-DD");
     const day = value.date();
     const isSunday = value.day() === 0;
-    const holiday = holidaysArray.find(
-      (item) => moment(item.tanggal).format("YYYY-MM-DD") === dateStr
-    );
 
+    const holiday = holidaysArray.find(
+      (item) => moment(item.date).format("YYYY-MM-DD") === dateStr
+    );
     let style = {
       borderTop: "1px solid #E6E6E6",
       boxSizing: "border-box",
       height: "100%",
-      backgroundColor: isSunday ? "#F5851E19" : "inherit",
+      backgroundColor: isSunday ? "#FFEBEE" : "inherit",
       color: isSunday ? "#4D4D4D" : "inherit",
       display: "flex",
       flexDirection: "column",
@@ -104,10 +105,12 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     };
 
     if (holiday) {
-      style.backgroundColor = holiday.is_cuti ? "#FFEBEE" : "#E3F2FD";
+      style.backgroundColor = holiday.is_cuti ? "#F5851E19" : "#E3F2FD";
       style.color = "#4D4D4D";
     }
-
+    const text = `${holiday?.name}${
+      holiday?.is_libur == 1 ? "\n(Libur Kerja)" : ""
+    }`;
     return (
       <div style={style}>
         <div
@@ -121,8 +124,17 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
           {day}
         </div>
         {holiday && (
-          <div className="px-1" style={{ fontSize: 11, textAlign: "center" }}>
-            {holiday.keterangan}
+          <div className="px-1">
+            <p
+              style={{
+                fontSize: 11,
+                textAlign: "center",
+                textAlign: "center",
+                whiteSpace: "pre-line",
+              }}
+            >
+              {text.length > 45 ? text.slice(0, 45) + "…" : text}
+            </p>
           </div>
         )}
       </div>
@@ -215,22 +227,22 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
       });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // setLoading(true);
-        const res = await axios.get("https://dayoffapi.vercel.app/api");
-        // console.log('res api ', res.data)
-        setHolidaysArray(res.data); // data dari API
-      } catch (err) {
-        // setError(err.message || "Something went wrong");
-      } finally {
-        // setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       // setLoading(true);
+  //       const res = await axios.get("https://dayoffapi.vercel.app/api");
+  //       // console.log('res api ', res.data)
+  //       setHolidaysArray(res.data); // data dari API
+  //     } catch (err) {
+  //       // setError(err.message || "Something went wrong");
+  //     } finally {
+  //       // setLoading(false);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   useEffect(() => {
     fetchDataDetail();
@@ -263,6 +275,15 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
               company_id: datatemp[0].company_id,
             });
             setWorkHours(datatemp[0].schedule);
+          } else {
+            setDataWorkDay([]);
+            setActive({
+              ...active,
+              id: null,
+              name: null,
+              company_id: null,
+            });
+            setWorkHours([]);
           }
           // let dataholidays = res2.data
           // setCutiBersamaOptions(dataholidays.filter(item => item.is_cuti === 1))
@@ -277,15 +298,20 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
 
   useEffect(() => {
     if (!active.id) return;
+    getStatistic();
+    getHolidaysData();
+  }, [active]);
+
+  useEffect(() => {
+    if (!monthActive) return;
     // fetchDataDetail()
     getStatistic();
-  }, [active]);
+    // getHolidaysData();
+  }, [monthActive]);
 
   const getStatistic = () => {
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdayStatistics?id=${
-        active?.id
-      }&year=2025&month=${moment().format("MM")}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdayStatistics?id=${active?.id}&year=2025&month=${monthActive}`,
       {
         method: `GET`,
         headers: {
@@ -308,6 +334,23 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
         // let dataholidays = res2.data
         // setCutiBersamaOptions(dataholidays.filter(item => item.is_cuti === 1))
         // setLiburNasionalOptions(dataholidays.filter(item => item.is_cuti === 0))
+      });
+  };
+
+  const getHolidaysData = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getPublicHolidaysWorkday?id=${active?.id}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setHolidaysArray(res2.data);
       });
   };
   const breadcrumbValues = useMemo(() => {
@@ -493,17 +536,19 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
               </div>
             </Link>
             <div className="flex-1" />
-            <div
-              onClick={() => setModalDelete(true)}
-              className={
-                "hover:cursor-pointer py-2 px-4 border border-[#BF4A40] rounded-[5px] flex gap-1.5"
-              }
-            >
-              <TrashXIconSvg size={16} color={"#BF4A40"} />
-              <p className={"text-[#BF4A40] text-sm/4 font-roboto"}>
-                Delete Schedule
-              </p>
-            </div>
+            {dataWorkDay.length > 0 && (
+              <div
+                onClick={() => setModalDelete(true)}
+                className={
+                  "hover:cursor-pointer py-2 px-4 border border-[#BF4A40] rounded-[5px] flex gap-1.5"
+                }
+              >
+                <TrashXIconSvg size={16} color={"#BF4A40"} />
+                <p className={"text-[#BF4A40] text-sm/4 font-roboto"}>
+                  Delete Schedule
+                </p>
+              </div>
+            )}
           </div>
           <div className={"px-4"}>
             <Calendar
@@ -538,10 +583,14 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
                         value={value.format("MMMM")}
                         onChange={(newMonthName) => {
                           // cari index bulan dari namanya
+
                           const newMonthIndex = moment
                             .months()
                             .indexOf(newMonthName);
                           const now = value.clone().month(newMonthIndex);
+                          setMonthActive(
+                            moment(newMonthName, "MMMM").format("MM")
+                          );
                           onChange(now);
                         }}
                         style={{ width: 137 }}
