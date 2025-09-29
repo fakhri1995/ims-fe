@@ -34,6 +34,7 @@ import ButtonSys from "../../../../components/button";
 import {
   ArrowLeftIconSvg,
   ArrowRightIconSvg,
+  CheckIconSvg,
   CirclePlusIconSvg,
   InfoCircleIconSvg,
 } from "../../../../components/icon";
@@ -520,7 +521,7 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
                         bg-primary100 hover:bg-primary75 border-primary100 
                         hover:border-primary75 focus:bg-primary100 focus:border-primary100 
                         flex-nowrap w-full md:w-fit"
-                icon={<CirclePlusIconSvg size={16} color="#FFFFFF" />}
+                icon={<CheckIconSvg size={16} color="#FFFFFF" />}
               >
                 Save Change
               </Button>
