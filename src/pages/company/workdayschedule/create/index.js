@@ -307,7 +307,7 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
         .then((response) => response.json())
         .then((response2) => {
           setLoadingCreate(false);
-          if (response2.success) {
+          if (response2.status == 200) {
             notification.success({
               message: `Workday Schedule has successfully created`,
               duration: 3,
