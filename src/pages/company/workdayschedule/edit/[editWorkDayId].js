@@ -32,15 +32,10 @@ import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
 import {
+  ArrowLeftIconSvg,
   ArrowRightIconSvg,
   CirclePlusIconSvg,
-  CloseIconSvg,
-  EditTablerIconSvg,
-  EyeIconSvg,
   InfoCircleIconSvg,
-  PlusIconSvg,
-  RightIconSvg,
-  WarningIconSvg,
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard-management.module.css";
@@ -178,13 +173,16 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     }
 
     setloaddatatable(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=true`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         setdatatable(res2.data);
@@ -295,13 +293,16 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
 
   useEffect(() => {
     setLoadingGetCompany(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=true`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         // console.log("hasilnya ", res2);
@@ -393,10 +394,6 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   };
 
   const handleCreateSchedule = () => {
-    // console.log('isi dataCompany ', dataCompany)
-    // console.log('isi working days ', workingDays)
-    // console.log('isi cuti bersama ', selectedCuti)
-    // console.log('isi libur ', selectedLibur)
     if (checkWorkingDay()) {
       const payload = {
         // year: dataCompany.year,
@@ -422,12 +419,15 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
           setLoadingCreate(false);
           if (response2.success) {
             notification.success({
-              message: `Engineer Workday Schedule successfully updated`,
+              message: `Workday Schedule has successfully updated`,
               duration: 3,
+              onClose: () => {
+                rt.push(`/company/workdayschedule/${workdayId}`);
+              },
             });
           } else {
             notification.error({
-              message: `Update Engineer Workday Schedule failed. ${response2.message}`,
+              message: `Update Workday Schedule has failed. ${response2.message}`,
               duration: 3,
             });
           }
@@ -435,7 +435,7 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
         .catch((err) => {
           setLoadingCreate(false);
           notification.error({
-            message: `Update Engineer Workday Schedule failed. ${err.response}`,
+            message: `Update Workday Schedule has failed. ${err.response}`,
             duration: 3,
           });
         });
@@ -487,9 +487,15 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
               "flex flex-col md:flex-row items-start md:items-center md:justify-between"
             }
           >
-            <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
-              {moment().format("YYYY")} Workday Schedule
-            </h4>
+            <div className={"flex gap-2"}>
+              <div className={"hover:cursor-pointer"} onClick={() => rt.back()}>
+                <ArrowLeftIconSvg />
+              </div>
+              <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
+                {moment().format("YYYY")} Workday Schedule
+              </h4>
+            </div>
+
             <div className={"flex gap-3"}>
               <Link href={`/company/workdayschedule/`}>
                 <div

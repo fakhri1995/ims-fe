@@ -36,8 +36,14 @@ import ButtonSys from "../../../../components/button";
 import {
   ArrowLeftIconSvg,
   ArrowRightIconSvg,
+  BackIconSvg,
   CirclePlusIconSvg,
+  CloseIconSvg,
+  EditTablerIconSvg,
+  EyeIconSvg,
   InfoCircleIconSvg,
+  PlusIconSvg,
+  RightIconSvg,
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard-management.module.css";
@@ -46,7 +52,12 @@ import httpcookie from "cookie";
 const { RangePicker } = TimePicker;
 const { Text } = Typography;
 
-function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
+function WorkdayScheduleCreateCompany({
+  initProps,
+  dataProfile,
+  sidemenu,
+  companyId,
+}) {
   /**
    * Dependencies
    */
@@ -122,40 +133,6 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
     fetchData();
   }, []);
 
-  const [refreshCompanyClientList, triggerRefreshCompanyClientList] =
-    useState(0);
-
-  //useEffect
-  useEffect(() => {
-    if (!isAllowedToGetCompanyClientList && !isAccessControlPending) {
-      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
-      setloaddatatable(false);
-      return;
-    }
-
-    setloaddatatable(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=true`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatatable(res2.data);
-        // setdatatable2(res2.data);
-        setloaddatatable(false);
-      });
-  }, [
-    refreshCompanyClientList,
-    isAllowedToGetCompanyClientList,
-    isAccessControlPending,
-  ]);
-
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getPublicHolidays`, {
       method: `GET`,
@@ -179,17 +156,24 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
 
   useEffect(() => {
     setLoadingGetCompany(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=true`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
-        // console.log("hasilnya ", res2);
+        const item = res2.data.find((d) => String(d.id) === String(companyId));
         setCompanyList(res2.data);
+        setDataCompany({
+          ...dataCompany,
+          company_name: item.name,
+        });
         setLoadingGetCompany(false);
       });
   }, []);
@@ -201,6 +185,7 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
   const [dataCompany, setDataCompany] = useState({
     id: null,
     name: "",
+    company_name: null,
     year: 2025,
     month: null,
   });
@@ -242,21 +227,6 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
     checkWorkingDay();
   }, [workingDays]);
 
-  const handleSelectAll = (type) => {
-    if (type === "cuti") {
-      setSelectedCuti(
-        selectedCuti.length === cutiBersamaOptions.length
-          ? []
-          : cutiBersamaOptions
-      );
-    } else {
-      setSelectedLibur(
-        selectedLibur.length === liburNasionalOptions.length
-          ? []
-          : liburNasionalOptions
-      );
-    }
-  };
   const handleCutiChange = (values) => {
     setSelectedCuti(values);
   };
@@ -288,7 +258,7 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
     if (checkWorkingDay()) {
       const payload = {
         // year: dataCompany.year,
-        company_id: Number(dataCompany.id),
+        company_id: Number(companyId),
         // month: dataCompany.month,
         name: dataCompany.name,
         schedule: workingDays,
@@ -312,7 +282,7 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
               message: `Workday Schedule has successfully created`,
               duration: 3,
               onClose: () => {
-                rt.push("/company/workdayschedule/");
+                rt.push(`/company/workdayschedule/${companyId}`);
               },
             });
           } else {
@@ -378,7 +348,6 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
               Set Up {moment().format("YYYY")} Workday Schedule
             </h4>
           </div>
-
           <div className={"flex gap-3"}>
             <Link href={`/company/workdayschedule/`}>
               <div
@@ -423,17 +392,18 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
               <Form.Item
                 label="Company"
                 name={"company"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Company is required",
-                  },
-                ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: "Company is required",
+                //   },
+                // ]}
                 className="w-full"
               >
                 <div>
                   <Select
                     showSearch
+                    disabled
                     optionFilterProp="children"
                     placeholder="Select Company"
                     filterOption={(input, option) =>
@@ -443,7 +413,7 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
                     }
                     loading={loadingGetCompany}
                     style={{ width: `100%` }}
-                    value={dataCompany.id}
+                    value={dataCompany.company_name}
                     onChange={(value) => {
                       setDataCompany({
                         ...dataCompany,
@@ -484,80 +454,6 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
                   />
                 </div>
               </Form.Item>
-              {/* <Form.Item
-                label="Year"
-                name={"Year"}
-                className="w-full"
-              >
-                <div>
-                  <Select
-                    disabled={true}
-                    // showSearch
-                    optionFilterProp="children"
-                    placeholder="Select Year"
-                    // filterOption={(input, option) =>
-                    //     (option?.children ?? "")
-                    //         .toLowerCase()
-                    //         .includes(input.toLowerCase())
-                    // }
-                    loading={loadingGetCompany}
-                    style={{ width: `100%` }}
-                    value={dataCompany.year}
-                    onChange={(value) => {
-                      setDataCompany({
-                        ...dataCompany,
-                        year: value,
-                      });
-                    }}
-                  >
-                    {years.map((year) => (
-                      <Option key={year} value={year}>
-                        {year}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-              </Form.Item>
-              <Form.Item
-                label="Month"
-                name={"month"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Month is required",
-                  },
-                ]}
-                className="w-full"
-              >
-                <div>
-                  <Select
-                    // showSearch
-                    optionFilterProp="children"
-                    placeholder="Select Month"
-                    // filterOption={(input, option) =>
-                    //     (option?.children ?? "")
-                    //         .toLowerCase()
-                    //         .includes(input.toLowerCase())
-                    // }
-                    loading={loadingGetCompany}
-                    style={{ width: `100%` }}
-                    value={dataCompany.month}
-                    onChange={(value) => {
-                      setDataCompany({
-                        ...dataCompany,
-                        month: value,
-                      });
-                      instanceForm.setFieldsValue({ month: value })
-                    }}
-                  >
-                    {months.map((month, index) => (
-                      <Option key={index + 1} value={index + 1}>
-                        {month}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-              </Form.Item> */}
             </Form>
             <div className={"pt-2"}>
               <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-4">
@@ -753,7 +649,8 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
   );
 }
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, params }) {
+  const companyId = params.createCompanyId;
   var initProps = {};
   const reqBody = {
     page: 1,
@@ -790,8 +687,9 @@ export async function getServerSideProps({ req, res }) {
       // dataCompanyList,
       // dataLocations,
       sidemenu: "workdayschedule",
+      companyId,
     },
   };
 }
 
-export default WorkdayScheduleCreate;
+export default WorkdayScheduleCreateCompany;

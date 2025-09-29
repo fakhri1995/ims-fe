@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  ArrowLeftIconSvg,
   CalendarEventIconSvg,
   CloseIconSvg,
   EditSquareIconSvg,
@@ -198,11 +199,11 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
         if (res2.success) {
           setLoadingDelete(false);
           setModalDelete(false);
+          fetchDataDetail();
           notification["success"]({
-            message: "Engineer Workday Schedule successfully deleted",
+            message: `${active?.name} Schedule successfully deleted`,
             duration: 3,
           });
-          fetchDataDetail();
         } else if (!res2.success) {
           setLoadingDelete(false);
           setModalDelete(false);
@@ -234,6 +235,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   useEffect(() => {
     fetchDataDetail();
   }, []);
+
   const fetchDataDetail = async () => {
     try {
       // setLoading(true);
@@ -321,7 +323,6 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     return pageBreadcrumbValue;
   }, [companyName]);
   const handleActive = (w) => {
-    console.log("nilai w ", w);
     setActive({
       ...active,
       id: w.id,
@@ -442,9 +443,14 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
         </div>
         <div className="lg:col-span-3 flex flex-col rounded-[10px] pb-4 border border-neutrals70 shadow-desktopCard bg-white mt-5">
           <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between px-4 pt-4 pb-3 ">
-            <p className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-4">
-              {companyName} Workday Calendar
-            </p>
+            <div className={"flex gap-2"}>
+              <div className={"hover:cursor-pointer"} onClick={() => rt.back()}>
+                <ArrowLeftIconSvg />
+              </div>
+              <p className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-4">
+                {companyName} Workday Calendar
+              </p>
+            </div>
           </div>
           <div className={"flex items-center gap-3 px-4 pb-4 border-b"}>
             {dataWorkDay.map((w) => (
@@ -477,7 +483,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
                 )}
               </div>
             ))}
-            <Link href={`/company/workdayschedule/create`}>
+            <Link href={`/company/workdayschedule/create/${active.company_id}`}>
               <div
                 className={
                   "h-8 w-8 rounded-[48px] bg-[#35763B] flex justify-center items-center"
