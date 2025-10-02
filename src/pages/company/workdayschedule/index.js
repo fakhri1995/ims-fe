@@ -1,6 +1,5 @@
-import { Button, Calendar, Input, Select, Table, notification } from "antd";
+import { Button, Input, Table, notification } from "antd";
 import axios from "axios";
-import moment from "moment";
 import {
   NumberParam,
   StringParam,
@@ -16,7 +15,11 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { COMPANY_CLIENTS_GET, COMPANY_CLIENT_ADD } from "lib/features";
+import {
+  COMPANY_CLIENTS_GET,
+  WORKDAY_ADD,
+  WORKDAY_COMPANIES_GET,
+} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import DrawerCompanyAdd from "../../../components/drawer/companies/workdayschedule/drawerCompanyAdd";
@@ -39,8 +42,8 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetCompanyClientList = hasPermission(COMPANY_CLIENTS_GET);
-
+  const isAllowedToGetCompanyWorkday = hasPermission(WORKDAY_COMPANIES_GET);
+  const isAllowedToAddCompanyWorkday = hasPermission(WORKDAY_ADD);
   const rt = useRouter();
 
   const tok = initProps;
@@ -50,36 +53,12 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 1);
   pathTitleArr.splice(1, 1, "Workday Schedule");
-  // const pathArr = rt.pathname.split("/").slice(1);
-  // pathArr.splice(1, 1);
-  const specialDates = {
-    "2025-08-17": {
-      label: "HUT Kemerdekaan RI",
-      bgColor: "#fde3cf",
-    },
-    "2025-08-18": {
-      label: "Cuti Bersama\nKemerdekaan RI",
-      bgColor: "#00589F19",
-    },
-    "2025-09-05": {
-      label: "Maulid Nabi",
-      bgColor: "#00589F19",
-    },
-  };
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
   });
-  const [refresh, setRefresh] = useState(-1);
-  const tempIdUpdate = useRef(-1);
-  const [triggerUpdate, setTriggerUpdate] = useState(-1);
-  // 2.2. Create Role
-  const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
-  const [isUpdateDrawerShown, setIsUpdateDrawerShown] = useState(false);
-  const [loadingCreate, setLoadingCreate] = useState(false);
-  const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [dataRawWorkDay, setDataRawWorkDay] = useState({
     current_page: "",
     data: [],
@@ -94,49 +73,6 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
     to: null,
     total: null,
   });
-  const [holidaysArray, setHolidaysArray] = useState([]);
-  const dataSource = [
-    {
-      key: "1",
-      num: 1,
-      name: "PT jaya Bersama",
-      type: 2,
-      total: 20,
-    },
-    {
-      key: "2",
-      num: 2,
-      name: "PT Maju Berkah",
-      type: 1,
-      total: 12,
-    },
-    {
-      key: "3",
-      num: 3,
-      name: "PT Dongkrak Jaya",
-      type: 4,
-      total: 8,
-    },
-    {
-      key: "4",
-      num: 4,
-      name: "PT Sumber makmur",
-      type: 2,
-      total: 15,
-    },
-  ];
-  const dataWorkDayTypes = [
-    {
-      key: "1",
-      id: 1,
-      name: "Cuti Bersama dihitung kerja",
-    },
-    {
-      key: "2",
-      id: 2,
-      name: "Mengikuti Peraturan Pemerintah",
-    },
-  ];
   const [searchingFilterWorkingDays, setSearchingFilterWorkingDays] =
     useState("");
   const [loading, setLoading] = useState(false);
@@ -212,27 +148,10 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
     },
   ];
   const [datatable, setdatatable] = useState([]);
-  // const [datatable2, setdatatable2] = useState([]);
-  const [loaddatatable, setloaddatatable] = useState(false);
   const pageBreadcrumbValue = [
     { name: "Company", hrefValue: "/company/clients" },
     { name: "Workday Schedule" },
   ];
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // setLoading(true);
-        const res = await axios.get("https://dayoffapi.vercel.app/api");
-        setHolidaysArray(res.data); // data dari API
-      } catch (err) {
-        // setError(err.message || "Something went wrong");
-      } finally {
-        // setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   useEffect(() => {
     const payload = QueryString.stringify(queryParams, {
@@ -240,6 +159,11 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
     });
 
     const fetchData = async () => {
+      if (!isAllowedToGetCompanyWorkday) {
+        permissionWarningNotification("Mendapatkan", "Daftar Company Workday");
+        // setloaddatatable(false);
+        return;
+      }
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdayCompanies${payload}&keyword=${searchingFilterWorkingDays}`,
         {
@@ -276,42 +200,12 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
     return () => clearTimeout(timer);
   }, [
     queryParams.page,
+    isAllowedToGetCompanyWorkday,
     searchingFilterWorkingDays,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
   ]);
-
-  const [refreshCompanyClientList, triggerRefreshCompanyClientList] =
-    useState(0);
-
-  //useEffect
-  // useEffect(() => {
-  //   if (!isAllowedToGetCompanyClientList && !isAccessControlPending) {
-  //     permissionWarningNotification("Mendapatkan", "Daftar Company Client");
-  //     setloaddatatable(false);
-  //     return;
-  //   }
-
-  //   setloaddatatable(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
-  //     method: `GET`,
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //       "Content-Type": "application/json",
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       setdatatable(res2.data);
-  //       // setdatatable2(res2.data);
-  //       setloaddatatable(false);
-  //     });
-  // }, [
-  //   refreshCompanyClientList,
-  //   isAllowedToGetCompanyClientList,
-  //   isAccessControlPending,
-  // ]);
 
   const [rowstate, setrowstate] = useState(0);
 
@@ -336,19 +230,21 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
           <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
             Company List
           </h4>
-          <Link href={`/company/workdayschedule/create`}>
-            <Button
-              type={"primary"}
-              // onClick={() => setCreateDrawerShown(true)}
-              className="btn btn-sm text-white font-semibold px-2 py-2 border 
+          {isAllowedToAddCompanyWorkday && (
+            <Link href={`/company/workdayschedule/create`}>
+              <Button
+                type={"primary"}
+                // onClick={() => setCreateDrawerShown(true)}
+                className="btn btn-sm text-white font-semibold px-2 py-2 border 
                         bg-primary100 hover:bg-primary75 border-primary100 
                         hover:border-primary75 focus:bg-primary100 focus:border-primary100 
                         flex-nowrap w-full md:w-fit"
-              icon={<PlusIconSvg size={16} color="#FFFFFF" />}
-            >
-              Add Work Schedule
-            </Button>
-          </Link>
+                icon={<PlusIconSvg size={16} color="#FFFFFF" />}
+              >
+                Add Work Schedule
+              </Button>
+            </Link>
+          )}
         </div>
         <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full px-4 md:items-center mb-4 border-b pb-3">
           <div className="w-full md:w-full">
@@ -437,33 +333,6 @@ function WorkdayScheduleIndex({ initProps, dataProfile, sidemenu }) {
             }}
           />
         </div>
-        <AccessControl hasPermission={true}>
-          <DrawerCompanyAdd
-            visible={isCreateDrawerShown}
-            initProps={initProps}
-            onvisible={setCreateDrawerShown}
-            setRefresh={setRefresh}
-            isAllowedToAddCompany={true}
-            dataWorkDayTypes={dataWorkDayTypes}
-            setLoadingCreate={setLoadingCreate}
-            loadingCreate={loadingCreate}
-          />
-        </AccessControl>
-        <AccessControl hasPermission={true}>
-          <DrawerCompanyUpdate
-            id={tempIdUpdate}
-            visible={isUpdateDrawerShown}
-            initProps={initProps}
-            onvisible={setIsUpdateDrawerShown}
-            setRefresh={setRefresh}
-            trigger={triggerUpdate}
-            isAllowedToAddCompany={true}
-            isAllowedToUpdateCompany={true}
-            dataWorkDayTypes={dataWorkDayTypes}
-            setLoadingUpdate={setLoadingUpdate}
-            loadingUpdate={loadingUpdate}
-          />
-        </AccessControl>
       </div>
     </Layout>
   );

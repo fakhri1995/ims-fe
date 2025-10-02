@@ -1,56 +1,36 @@
 import { CloseOutlined } from "@ant-design/icons";
 import {
   Button,
-  Calendar,
   Checkbox,
   Form,
   Input,
   Row,
   Select,
   Switch,
-  Table,
   TimePicker,
-  Typography,
   notification,
 } from "antd";
-import axios from "axios";
 import moment from "moment";
-import {
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from "next-query-params";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
-import { AccessControl } from "components/features/AccessControl";
-
 import { useAccessControl } from "contexts/access-control";
 
-import { COMPANY_CLIENTS_GET, COMPANY_CLIENT_ADD } from "lib/features";
+import { PUBLIC_HOLIDAYS_GET, WORKDAY_ADD } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import ButtonSys from "../../../../components/button";
 import {
   ArrowLeftIconSvg,
   ArrowRightIconSvg,
-  BackIconSvg,
   CirclePlusIconSvg,
-  CloseIconSvg,
-  EditTablerIconSvg,
-  EyeIconSvg,
   InfoCircleIconSvg,
-  PlusIconSvg,
-  RightIconSvg,
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 const { RangePicker } = TimePicker;
-const { Text } = Typography;
 
 function WorkdayScheduleCreateCompany({
   initProps,
@@ -66,8 +46,9 @@ function WorkdayScheduleCreateCompany({
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetCompanyClientList = hasPermission(COMPANY_CLIENTS_GET);
 
+  const isAllowedToGetPublicHolidays = hasPermission(PUBLIC_HOLIDAYS_GET);
+  const isAllowedToAddWorkday = hasPermission(WORKDAY_ADD);
   const rt = useRouter();
 
   const tok = initProps;
@@ -88,28 +69,8 @@ function WorkdayScheduleCreateCompany({
     "Saturday",
     "Sunday",
   ];
-  const [queryParams, setQueryParams] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
-    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    recruitment_role_id: withDefault(NumberParam, undefined),
-    recruitment_stage_id: withDefault(NumberParam, undefined),
-    recruitment_status_id: withDefault(NumberParam, undefined),
-  });
-  const [refresh, setRefresh] = useState(-1);
-  const tempIdUpdate = useRef(-1);
-  const [triggerUpdate, setTriggerUpdate] = useState(-1);
-  // 2.2. Create Role
-  const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
-  const [isUpdateDrawerShown, setIsUpdateDrawerShown] = useState(false);
-  const [holidaysArray, setHolidaysArray] = useState([]);
   const [cutiBersamaOptions, setCutiBersamaOptions] = useState([]);
   const [liburNasionalOptions, setLiburNasionalOptions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [datatable, setdatatable] = useState([]);
-  // const [datatable2, setdatatable2] = useState([]);
-  const [loaddatatable, setloaddatatable] = useState(false);
   const [workingDays, setWorkingDays] = useState(
     days.map((day) => ({
       day,
@@ -117,23 +78,35 @@ function WorkdayScheduleCreateCompany({
       range: [],
     }))
   );
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // setLoading(true);
-        const res = await axios.get("https://dayoffapi.vercel.app/api");
-        setHolidaysArray(res.data); // data dari API
-      } catch (err) {
-        // setError(err.message || "Something went wrong");
-      } finally {
-        // setLoading(false);
-      }
-    };
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [loadingGetCompany, setLoadingGetCompany] = useState(false);
+  const [instanceForm] = Form.useForm();
+  const [companyList, setCompanyList] = useState([]);
+  const [dataCompany, setDataCompany] = useState({
+    id: null,
+    name: "",
+    company_name: null,
+    year: 2025,
+    month: null,
+  });
+  const pageBreadcrumbValue = [
+    { name: "Company", hrefValue: "/company/clients" },
+    { name: "Workday Schedule", hrefValue: "/company/workdayschedule" },
+    { name: "Create" },
+  ];
+  const [enabled, setEnabled] = useState(false);
 
-    fetchData();
-  }, []);
+  const [selectedCuti, setSelectedCuti] = useState([]);
+  const [selectedLibur, setSelectedLibur] = useState([]);
+  const [warningWorkingDay, setWarningWorkingDay] = useState(false);
+  const [isInteracted, setIsInteracted] = useState(false);
 
   useEffect(() => {
+    if (!isAllowedToGetPublicHolidays) {
+      permissionWarningNotification("Get", "Public Holidays");
+      // setloaddatatable(false);
+      return;
+    }
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getPublicHolidays`, {
       method: `GET`,
       headers: {
@@ -152,7 +125,7 @@ function WorkdayScheduleCreateCompany({
           dataholidays.filter((item) => item.is_cuti === 0)
         );
       });
-  }, []);
+  }, [isAllowedToGetPublicHolidays]);
 
   useEffect(() => {
     setLoadingGetCompany(true);
@@ -177,50 +150,6 @@ function WorkdayScheduleCreateCompany({
         setLoadingGetCompany(false);
       });
   }, []);
-
-  const [loadingCreate, setLoadingCreate] = useState(false);
-  const [loadingGetCompany, setLoadingGetCompany] = useState(false);
-  const [instanceForm] = Form.useForm();
-  const [companyList, setCompanyList] = useState([]);
-  const [dataCompany, setDataCompany] = useState({
-    id: null,
-    name: "",
-    company_name: null,
-    year: 2025,
-    month: null,
-  });
-  const years = Array.from({ length: 2030 - 2025 + 1 }, (_, i) => 2025 + i);
-  const months = [
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ];
-
-  const [activeDays, setActiveDays] = useState({});
-  const pageBreadcrumbValue = [
-    { name: "Company", hrefValue: "/company/clients" },
-    { name: "Workday Schedule", hrefValue: "/company/workdayschedule" },
-    { name: "Create" },
-  ];
-  // const handleToggle = (day, checked) => {
-  //   setActiveDays((prev) => ({ ...prev, [day]: checked }));
-  // };
-
-  const [enabled, setEnabled] = useState(false);
-
-  const [selectedCuti, setSelectedCuti] = useState([]);
-  const [selectedLibur, setSelectedLibur] = useState([]);
-  const [warningWorkingDay, setWarningWorkingDay] = useState(false);
-  const [isInteracted, setIsInteracted] = useState(false);
 
   useEffect(() => {
     if (!isInteracted) return;
@@ -331,13 +260,6 @@ function WorkdayScheduleCreateCompany({
       st={st}
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
-      {/* <div className="lg:col-span-3 flex flex-col px-4 pt-3 pb-0 border-neutrals70 bg-white">
-        <Calendar
-          fullscreen={true}
-          // headerRender={headerRender}
-          dateFullCellRender={dateFullCellRender}
-        />
-      </div> */}
       <div className="lg:col-span-3 flex flex-col rounded-[10px] border border-neutrals70 shadow-desktopCard bg-white pb-4">
         <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between px-4 pt-4 pb-3 border-b ">
           <div className={"flex gap-2"}>
@@ -363,19 +285,20 @@ function WorkdayScheduleCreateCompany({
                 <p className={"text-[#808080] text-sm/4 "}>Cancel</p>
               </div>
             </Link>
-
-            <Button
-              type={"primary"}
-              loading={loadingCreate}
-              onClick={() => instanceForm.submit()}
-              className="btn btn-sm text-white font-semibold px-2 py-2 border 
+            {isAllowedToAddWorkday && (
+              <Button
+                type={"primary"}
+                loading={loadingCreate}
+                onClick={() => instanceForm.submit()}
+                className="btn btn-sm text-white font-semibold px-2 py-2 border 
                         bg-primary100 hover:bg-primary75 border-primary100 
                         hover:border-primary75 focus:bg-primary100 focus:border-primary100 
                         flex-nowrap w-full md:w-fit"
-              icon={<CirclePlusIconSvg size={16} color="#FFFFFF" />}
-            >
-              Create Schedule
-            </Button>
+                icon={<CirclePlusIconSvg size={16} color="#FFFFFF" />}
+              >
+                Create Schedule
+              </Button>
+            )}
           </div>
         </div>
         <div className={"px-4 flex"}>

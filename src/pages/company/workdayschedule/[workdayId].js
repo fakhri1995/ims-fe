@@ -1,6 +1,5 @@
 import { LoadingOutlined } from "@ant-design/icons";
 import { Calendar, Modal, Radio, Select, Spin, notification } from "antd";
-import axios from "axios";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -8,6 +7,15 @@ import { useEffect, useMemo, useState } from "react";
 
 // import enUS from 'antd/es/calendar/locale/en_US';
 import { useAccessControl } from "contexts/access-control";
+
+import {
+  PUBLIC_HOLIDAYS_WORKDAY_GET,
+  WORKDAYS_GET,
+  WORKDAY_ADD,
+  WORKDAY_DELETE,
+  WORKDAY_STATISTICS_GET,
+  WORKDAY_UPDATE,
+} from "lib/features";
 
 import {
   ArrowLeftIconSvg,
@@ -34,30 +42,28 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   if (isAccessControlPending) {
     return null;
   }
+  const isAllowedToGetWorkdayStatistics = hasPermission(WORKDAY_STATISTICS_GET);
+  const isAllowedToGetPublicHolidays = hasPermission(
+    PUBLIC_HOLIDAYS_WORKDAY_GET
+  );
+  const isAllowedToGetWorkdays = hasPermission(WORKDAYS_GET);
+  const isAllowedToDeleteWorkdays = hasPermission(WORKDAY_DELETE);
+  const isAllowedToAddWorkDays = hasPermission(WORKDAY_ADD);
+  const isAllowedToUpdateWorkdays = hasPermission(WORKDAY_UPDATE);
   const tok = initProps;
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
-  const [loading, setLoading] = useState(false);
   const [companyName, setCompanyName] = useState(null);
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 1);
   pathTitleArr.splice(1, 1, "Detail Company");
   const [monthActive, setMonthActive] = useState(moment().format("MM"));
-  const [rawdata, setrawdata] = useState({
-    id: "",
-    name: "",
-  });
   const [active, setActive] = useState({
     id: null,
     name: null,
     company_id: null,
   });
-  const workdays = [
-    { id: 1, name: "Engineer Workday" },
-    { id: 2, name: "Marketing Workday" },
-    { id: 3, name: "Technician Workday" },
-  ];
   const [dataStatistics, setDataStatistics] = useState({
     total_employees: 0,
     total_workday_schedules: 0,
@@ -65,16 +71,6 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   });
 
   const [dataWorkDay, setDataWorkDay] = useState([]);
-
-  const [selectedIdWorkDays, setSelectedIdWorkDays] = useState(null);
-  // const customLocale = {
-  //   ...enUS, // Spread the default locale to keep other settings
-  //   lang: {
-  //     ...enUS.lang,
-  //     shortMonths: [
-  //       'January', 'February', 'March', 'April', '          May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
-  //     ],
-  //   },
   // };
   const [holidaysArray, setHolidaysArray] = useState([]);
   const [modalDelete, setModalDelete] = useState(false);
@@ -227,30 +223,17 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
       });
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       // setLoading(true);
-  //       const res = await axios.get("https://dayoffapi.vercel.app/api");
-  //       // console.log('res api ', res.data)
-  //       setHolidaysArray(res.data); // data dari API
-  //     } catch (err) {
-  //       // setError(err.message || "Something went wrong");
-  //     } finally {
-  //       // setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
   useEffect(() => {
     fetchDataDetail();
-  }, []);
+  }, [isAllowedToGetWorkdays]);
 
   const fetchDataDetail = async () => {
     try {
       // setLoading(true);
+      if (!isAllowedToGetWorkdays) {
+        permissionWarningNotification("Mendapatkan", "Get Work Days Data");
+        return;
+      }
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdays?company_id=${workdayId}`,
         {
@@ -310,6 +293,10 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   }, [monthActive]);
 
   const getStatistic = () => {
+    if (!isAllowedToGetWorkdayStatistics) {
+      permissionWarningNotification("Get", "Workday Statistics");
+      return;
+    }
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdayStatistics?id=${active?.id}&year=2025&month=${monthActive}`,
       {
@@ -338,6 +325,10 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   };
 
   const getHolidaysData = () => {
+    if (!isAllowedToGetPublicHolidays) {
+      permissionWarningNotification("Get", "Public Holidays Workday");
+      return;
+    }
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getPublicHolidaysWorkday?id=${active?.id}`,
       {
@@ -378,15 +369,6 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
       setWorkHours([]);
     }
   };
-  // const workHours = {
-  //   0: "08:00-17:00", // Sunday
-  //   1: "08:00-17:00", // Monday
-  //   2: "08:00-17:00", // Tuesday
-  //   3: "08:00-17:00",
-  //   4: "09:00-18:00",
-  //   5: "Libur",
-  //   6: "Libur",
-  // };
   return (
     <Layout
       tok={initProps}
@@ -517,7 +499,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
                 >
                   {w.name}
                 </p>
-                {active.id === w.id && (
+                {active.id === w.id && isAllowedToUpdateWorkdays && (
                   <Link
                     href={`/company/workdayschedule/edit/${active.company_id}`}
                   >
@@ -526,17 +508,21 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
                 )}
               </div>
             ))}
-            <Link href={`/company/workdayschedule/create/${active.company_id}`}>
-              <div
-                className={
-                  "h-8 w-8 rounded-[48px] bg-[#35763B] flex justify-center items-center"
-                }
+            {isAllowedToAddWorkDays && (
+              <Link
+                href={`/company/workdayschedule/create/${active.company_id}`}
               >
-                <PlusIconSvg size={20} color={"white"} />
-              </div>
-            </Link>
+                <div
+                  className={
+                    "h-8 w-8 rounded-[48px] bg-[#35763B] flex justify-center items-center"
+                  }
+                >
+                  <PlusIconSvg size={20} color={"white"} />
+                </div>
+              </Link>
+            )}
             <div className="flex-1" />
-            {dataWorkDay.length > 0 && (
+            {dataWorkDay.length > 0 && isAllowedToDeleteWorkdays && (
               <div
                 onClick={() => setModalDelete(true)}
                 className={
