@@ -92,6 +92,7 @@ import {
   SIDEBAR_USER_GROUP,
   SIDEBAR_USER_GUEST,
   SIDEBAR_USER_REQUESTER,
+  SIDEBAR_WORKDAY,
 } from "lib/features";
 
 import CmsNavIcon from "assets/vectors/icon-cms-nav.svg";
@@ -296,7 +297,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
-          {hasPermission(SIDEBAR_COMPANY_PROFILE) && (
+          {hasPermission(SIDEBAR_WORKDAY) && (
             <Menu.Item key="workdayschedule" className="text-mono50">
               <Link href="/company/workdayschedule" legacyBehavior>
                 <p>Workday Schedule</p>

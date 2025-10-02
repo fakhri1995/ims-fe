@@ -1,38 +1,30 @@
 import { CloseOutlined } from "@ant-design/icons";
 import {
   Button,
-  Calendar,
   Checkbox,
   Form,
   Input,
   Row,
   Select,
   Switch,
-  Table,
   TimePicker,
-  Typography,
   notification,
 } from "antd";
 import axios from "axios";
 import moment from "moment";
-import {
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from "next-query-params";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
-import { AccessControl } from "components/features/AccessControl";
-
 import { useAccessControl } from "contexts/access-control";
 
-import { COMPANY_CLIENTS_GET, COMPANY_CLIENT_ADD } from "lib/features";
+import {
+  COMPANY_CLIENTS_GET,
+  PUBLIC_HOLIDAYS_GET,
+  WORKDAY_ADD,
+} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import ButtonSys from "../../../../components/button";
 import {
   ArrowLeftIconSvg,
   ArrowRightIconSvg,
@@ -44,7 +36,6 @@ import st from "../../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 const { RangePicker } = TimePicker;
-const { Text } = Typography;
 
 function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
   /**
@@ -56,7 +47,8 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
     return null;
   }
   const isAllowedToGetCompanyClientList = hasPermission(COMPANY_CLIENTS_GET);
-
+  const isAllowedToGetPublicHolidays = hasPermission(PUBLIC_HOLIDAYS_GET);
+  const isAllowedToAddWorkday = hasPermission(WORKDAY_ADD);
   const rt = useRouter();
 
   const tok = initProps;
@@ -77,28 +69,29 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
     "Saturday",
     "Sunday",
   ];
-  const [queryParams, setQueryParams] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
-    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    recruitment_role_id: withDefault(NumberParam, undefined),
-    recruitment_stage_id: withDefault(NumberParam, undefined),
-    recruitment_status_id: withDefault(NumberParam, undefined),
-  });
-  const [refresh, setRefresh] = useState(-1);
-  const tempIdUpdate = useRef(-1);
-  const [triggerUpdate, setTriggerUpdate] = useState(-1);
-  // 2.2. Create Role
-  const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
-  const [isUpdateDrawerShown, setIsUpdateDrawerShown] = useState(false);
   const [holidaysArray, setHolidaysArray] = useState([]);
   const [cutiBersamaOptions, setCutiBersamaOptions] = useState([]);
   const [liburNasionalOptions, setLiburNasionalOptions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [datatable, setdatatable] = useState([]);
-  // const [datatable2, setdatatable2] = useState([]);
-  const [loaddatatable, setloaddatatable] = useState(false);
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [loadingGetCompany, setLoadingGetCompany] = useState(false);
+  const [instanceForm] = Form.useForm();
+  const [companyList, setCompanyList] = useState([]);
+  const [dataCompany, setDataCompany] = useState({
+    id: null,
+    name: "",
+    year: 2025,
+    month: null,
+  });
+  const [enabled, setEnabled] = useState(false);
+  const [selectedCuti, setSelectedCuti] = useState([]);
+  const [selectedLibur, setSelectedLibur] = useState([]);
+  const [warningWorkingDay, setWarningWorkingDay] = useState(false);
+  const [isInteracted, setIsInteracted] = useState(false);
+  const pageBreadcrumbValue = [
+    { name: "Company", hrefValue: "/company/clients" },
+    { name: "Workday Schedule", hrefValue: "/company/workdayschedule" },
+    { name: "Create" },
+  ];
   const [workingDays, setWorkingDays] = useState(
     days.map((day) => ({
       day,
@@ -122,41 +115,12 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
     fetchData();
   }, []);
 
-  const [refreshCompanyClientList, triggerRefreshCompanyClientList] =
-    useState(0);
-
-  //useEffect
   useEffect(() => {
-    if (!isAllowedToGetCompanyClientList && !isAccessControlPending) {
-      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
-      setloaddatatable(false);
+    if (!isAllowedToGetPublicHolidays) {
+      permissionWarningNotification("Mendapatkan", "Get Public Holidays");
+      // setloaddatatable(false);
       return;
     }
-
-    setloaddatatable(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=true`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatatable(res2.data);
-        // setdatatable2(res2.data);
-        setloaddatatable(false);
-      });
-  }, [
-    refreshCompanyClientList,
-    isAllowedToGetCompanyClientList,
-    isAccessControlPending,
-  ]);
-
-  useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getPublicHolidays`, {
       method: `GET`,
       headers: {
@@ -175,9 +139,14 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
           dataholidays.filter((item) => item.is_cuti === 0)
         );
       });
-  }, []);
+  }, [isAllowedToGetPublicHolidays]);
 
   useEffect(() => {
+    if (!isAllowedToGetCompanyClientList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
+      setLoadingGetCompany(false);
+      return;
+    }
     setLoadingGetCompany(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
       method: `GET`,
@@ -192,50 +161,7 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
         setCompanyList(res2.data);
         setLoadingGetCompany(false);
       });
-  }, []);
-
-  const [loadingCreate, setLoadingCreate] = useState(false);
-  const [loadingGetCompany, setLoadingGetCompany] = useState(false);
-  const [instanceForm] = Form.useForm();
-  const [companyList, setCompanyList] = useState([]);
-  const [dataCompany, setDataCompany] = useState({
-    id: null,
-    name: "",
-    year: 2025,
-    month: null,
-  });
-  const years = Array.from({ length: 2030 - 2025 + 1 }, (_, i) => 2025 + i);
-  const months = [
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ];
-
-  const [activeDays, setActiveDays] = useState({});
-  const pageBreadcrumbValue = [
-    { name: "Company", hrefValue: "/company/clients" },
-    { name: "Workday Schedule", hrefValue: "/company/workdayschedule" },
-    { name: "Create" },
-  ];
-  // const handleToggle = (day, checked) => {
-  //   setActiveDays((prev) => ({ ...prev, [day]: checked }));
-  // };
-
-  const [enabled, setEnabled] = useState(false);
-
-  const [selectedCuti, setSelectedCuti] = useState([]);
-  const [selectedLibur, setSelectedLibur] = useState([]);
-  const [warningWorkingDay, setWarningWorkingDay] = useState(false);
-  const [isInteracted, setIsInteracted] = useState(false);
+  }, [isAllowedToGetCompanyClientList]);
 
   useEffect(() => {
     if (!isInteracted) return;
@@ -378,7 +304,6 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
               Set Up {moment().format("YYYY")} Workday Schedule
             </h4>
           </div>
-
           <div className={"flex gap-3"}>
             <Link href={`/company/workdayschedule/`}>
               <div
@@ -394,19 +319,20 @@ function WorkdayScheduleCreate({ initProps, dataProfile, sidemenu }) {
                 <p className={"text-[#808080] text-sm/4 "}>Cancel</p>
               </div>
             </Link>
-
-            <Button
-              type={"primary"}
-              loading={loadingCreate}
-              onClick={() => instanceForm.submit()}
-              className="btn btn-sm text-white font-semibold px-2 py-2 border 
+            {isAllowedToAddWorkday && (
+              <Button
+                type={"primary"}
+                loading={loadingCreate}
+                onClick={() => instanceForm.submit()}
+                className="btn btn-sm text-white font-semibold px-2 py-2 border 
                         bg-primary100 hover:bg-primary75 border-primary100 
                         hover:border-primary75 focus:bg-primary100 focus:border-primary100 
                         flex-nowrap w-full md:w-fit"
-              icon={<CirclePlusIconSvg size={16} color="#FFFFFF" />}
-            >
-              Create Schedule
-            </Button>
+                icon={<CirclePlusIconSvg size={16} color="#FFFFFF" />}
+              >
+                Create Schedule
+              </Button>
+            )}
           </div>
         </div>
         <div className={"px-4 flex"}>

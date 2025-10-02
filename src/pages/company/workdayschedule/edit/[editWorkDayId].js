@@ -8,34 +8,28 @@ import {
   Select,
   Switch,
   TimePicker,
-  Typography,
   notification,
 } from "antd";
-import axios from "axios";
 import moment from "moment";
-import {
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from "next-query-params";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
-
-import { AccessControl } from "components/features/AccessControl";
+import { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { COMPANY_CLIENTS_GET, COMPANY_CLIENT_ADD } from "lib/features";
+import {
+  COMPANY_CLIENTS_GET,
+  PUBLIC_HOLIDAYS_GET,
+  WORKDAYS_GET,
+  WORKDAY_GET,
+  WORKDAY_UPDATE,
+} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import ButtonSys from "../../../../components/button";
 import {
   ArrowLeftIconSvg,
   ArrowRightIconSvg,
   CheckIconSvg,
-  CirclePlusIconSvg,
   InfoCircleIconSvg,
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
@@ -43,8 +37,6 @@ import st from "../../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
 const { RangePicker } = TimePicker;
-const { Text } = Typography;
-
 const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
@@ -52,7 +44,10 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     return null;
   }
   const isAllowedToGetCompanyClientList = hasPermission(COMPANY_CLIENTS_GET);
-
+  const isAllowedToGetPublicHolidays = hasPermission(PUBLIC_HOLIDAYS_GET);
+  const isAllowedToGetWorkdays = hasPermission(WORKDAYS_GET);
+  const isAllowedToGetWorkday = hasPermission(WORKDAY_GET);
+  const isAllowedToUpdateWorkday = hasPermission(WORKDAY_UPDATE);
   const rt = useRouter();
 
   const tok = initProps;
@@ -73,31 +68,17 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     "Saturday",
     "Sunday",
   ];
-  const [queryParams, setQueryParams] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
-    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    recruitment_role_id: withDefault(NumberParam, undefined),
-    recruitment_stage_id: withDefault(NumberParam, undefined),
-    recruitment_status_id: withDefault(NumberParam, undefined),
-  });
-  const [refresh, setRefresh] = useState(-1);
   const [active, setActive] = useState({
     id: null,
     name: null,
   });
   const [workHours, setWorkHours] = useState([]);
-  const [holidaysArray, setHolidaysArray] = useState([]);
   const [cutiBersamaOptions, setCutiBersamaOptions] = useState([]);
   const [liburNasionalOptions, setLiburNasionalOptions] = useState([]);
   const [dataWorkDay, setDataWorkDay] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [datatable, setdatatable] = useState([]);
   const [dataSchedule, setDataSchedule] = useState([]);
   const [warningWorkingDay, setWarningWorkingDay] = useState(false);
   // const [datatable2, setdatatable2] = useState([]);
-  const [loaddatatable, setloaddatatable] = useState(false);
   const [daysData, setDaysData] = useState([]);
   const [holidaysData, setHolidaysData] = useState([]);
   const [workingDays, setWorkingDays] = useState(
@@ -108,6 +89,31 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     }))
   );
   const [workingDaysMap, setWorkingDaysMap] = useState([]);
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [loadingGetCompany, setLoadingGetCompany] = useState(false);
+  const [updateWorkForm] = Form.useForm();
+  const [companyList, setCompanyList] = useState([]);
+  const [dataCompany, setDataCompany] = useState({
+    id: null,
+    name: "",
+    company_name: null,
+    year: 2025,
+    month: null,
+  });
+
+  const pageBreadcrumbValue = [
+    { name: "Company", hrefValue: "/company/clients" },
+    { name: "Workday Schedule", hrefValue: "/company/workdayschedule" },
+    { name: "Edit Workday Schedule" },
+  ];
+  // const handleToggle = (day, checked) => {
+  //   setActiveDays((prev) => ({ ...prev, [day]: checked }));
+  // };
+
+  const [enabled, setEnabled] = useState(false);
+
+  const [selectedCuti, setSelectedCuti] = useState([]);
+  const [selectedLibur, setSelectedLibur] = useState([]);
 
   useEffect(() => {
     if (!daysData) return;
@@ -138,22 +144,6 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     }
   }, [holidaysData]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // setLoading(true);
-        const res = await axios.get("https://dayoffapi.vercel.app/api");
-        setHolidaysArray(res.data); // data dari API
-      } catch (err) {
-        // setError(err.message || "Something went wrong");
-      } finally {
-        // setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   const handleSetJoint = () => {
     if (enabled) {
       setSelectedCuti([]);
@@ -162,40 +152,6 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     setEnabled(!enabled);
   };
 
-  const [refreshCompanyClientList, triggerRefreshCompanyClientList] =
-    useState(0);
-
-  //useEffect
-  useEffect(() => {
-    if (!isAllowedToGetCompanyClientList && !isAccessControlPending) {
-      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
-      setloaddatatable(false);
-      return;
-    }
-
-    setloaddatatable(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=true`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatatable(res2.data);
-        // setdatatable2(res2.data);
-        setloaddatatable(false);
-      });
-  }, [
-    refreshCompanyClientList,
-    isAllowedToGetCompanyClientList,
-    isAccessControlPending,
-  ]);
-
   useEffect(() => {
     if (!active.id) return;
     // fetchDataDetail()
@@ -203,6 +159,11 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   }, [active]);
 
   const getWorkDay = () => {
+    if (!isAllowedToGetWorkday) {
+      permissionWarningNotification("Get", "Workday Schedule");
+      // setloaddatatable(false);
+      return;
+    }
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkday?id=${active.id}`, {
       method: `GET`,
       headers: {
@@ -233,6 +194,12 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   const fetchDataDetail = async () => {
     try {
       // setLoading(true);
+      if (!isAllowedToGetWorkdays) {
+        permissionWarningNotification("Get", "Workdays Schedule");
+        // setloaddatatable(false);
+        return;
+      }
+
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdays?company_id=${workdayId}`,
         {
@@ -272,6 +239,11 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   };
 
   useEffect(() => {
+    if (!isAllowedToGetPublicHolidays) {
+      permissionWarningNotification("Get", "Public Holidays");
+      // setloaddatatable(false);
+      return;
+    }
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getPublicHolidays`, {
       method: `GET`,
       headers: {
@@ -293,6 +265,11 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   }, []);
 
   useEffect(() => {
+    if (!isAllowedToGetCompanyClientList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
+      setLoadingGetCompany(false);
+      return;
+    }
     setLoadingGetCompany(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=true`,
@@ -310,64 +287,8 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
         setCompanyList(res2.data);
         setLoadingGetCompany(false);
       });
-  }, []);
+  }, [isAllowedToGetCompanyClientList]);
 
-  const [loadingCreate, setLoadingCreate] = useState(false);
-  const [loadingGetCompany, setLoadingGetCompany] = useState(false);
-  const [updateWorkForm] = Form.useForm();
-  const [companyList, setCompanyList] = useState([]);
-  const [dataCompany, setDataCompany] = useState({
-    id: null,
-    name: "",
-    company_name: null,
-    year: 2025,
-    month: null,
-  });
-  const years = Array.from({ length: 2030 - 2025 + 1 }, (_, i) => 2025 + i);
-  const months = [
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ];
-
-  const [activeDays, setActiveDays] = useState({});
-  const pageBreadcrumbValue = [
-    { name: "Company", hrefValue: "/company/clients" },
-    { name: "Workday Schedule", hrefValue: "/company/workdayschedule" },
-    { name: "Edit Workday Schedule" },
-  ];
-  // const handleToggle = (day, checked) => {
-  //   setActiveDays((prev) => ({ ...prev, [day]: checked }));
-  // };
-
-  const [enabled, setEnabled] = useState(false);
-
-  const [selectedCuti, setSelectedCuti] = useState([]);
-  const [selectedLibur, setSelectedLibur] = useState([]);
-  const handleSelectAll = (type) => {
-    if (type === "cuti") {
-      setSelectedCuti(
-        selectedCuti.length === cutiBersamaOptions.length
-          ? []
-          : cutiBersamaOptions
-      );
-    } else {
-      setSelectedLibur(
-        selectedLibur.length === liburNasionalOptions.length
-          ? []
-          : liburNasionalOptions
-      );
-    }
-  };
   const handleCutiChange = (values) => {
     setSelectedCuti(values);
   };
@@ -512,19 +433,20 @@ const EditWorkDay = ({ initProps, dataProfile, sidemenu, workdayId }) => {
                   <p className={"text-[#808080] text-sm/4 "}>Cancel</p>
                 </div>
               </Link>
-
-              <Button
-                type={"primary"}
-                loading={loadingCreate}
-                onClick={() => updateWorkForm.submit()}
-                className="btn btn-sm text-white font-semibold px-2 py-2 border 
+              {isAllowedToUpdateWorkday && (
+                <Button
+                  type={"primary"}
+                  loading={loadingCreate}
+                  onClick={() => updateWorkForm.submit()}
+                  className="btn btn-sm text-white font-semibold px-2 py-2 border 
                         bg-primary100 hover:bg-primary75 border-primary100 
                         hover:border-primary75 focus:bg-primary100 focus:border-primary100 
                         flex-nowrap w-full md:w-fit"
-                icon={<CheckIconSvg size={16} color="#FFFFFF" />}
-              >
-                Save Change
-              </Button>
+                  icon={<CheckIconSvg size={16} color="#FFFFFF" />}
+                >
+                  Save Change
+                </Button>
+              )}
             </div>
           </div>
           <div className={"flex items-center gap-3 pt-4"}>
