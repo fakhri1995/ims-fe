@@ -71,6 +71,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
   });
 
   const [dataWorkDay, setDataWorkDay] = useState([]);
+  const [dataSchedule, setDataSchedule] = useState([]);
   // };
   const [holidaysArray, setHolidaysArray] = useState([]);
   const [modalDelete, setModalDelete] = useState(false);
@@ -103,6 +104,18 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     if (holiday) {
       style.backgroundColor = holiday.is_cuti ? "#F5851E19" : "#E3F2FD";
       style.color = "#4D4D4D";
+    } else {
+      // console.log('day ', moment(value).format('dddd'))
+      const checkday = dataSchedule.find(
+        (item) => item.day === moment(value).format("dddd")
+      );
+      const isActive = checkday ? checkday.active : null;
+      style.backgroundColor = isSunday
+        ? "#FFEBEE"
+        : isActive
+        ? "inherit"
+        : "#FFEBEE";
+      style.color = isSunday ? "#4D4D4D" : "inherit";
     }
     const text = `${holiday?.name}${
       holiday?.is_libur == 1 ? "\n(Libur Kerja)" : ""
@@ -257,6 +270,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
               name: datatemp[0].name,
               company_id: datatemp[0].company_id,
             });
+            setDataSchedule(datatemp[0].schedule);
             setWorkHours(datatemp[0].schedule);
           } else {
             setDataWorkDay([]);
@@ -365,10 +379,18 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
     });
     if (w.schedule.length > 0) {
       setWorkHours(w.schedule);
+      setDataSchedule(w.schedule);
     } else {
       setWorkHours([]);
+      setDataSchedule([]);
     }
   };
+
+  const onSelect = (value) => {
+    setMonthActive(moment(value, "MMMM").format("MM"));
+    // setSelectedDate(value);
+  };
+
   return (
     <Layout
       tok={initProps}
@@ -538,6 +560,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
           </div>
           <div className={"px-4"}>
             <Calendar
+              onSelect={onSelect}
               // locale={customLocale}
               headerRender={({ value, type, onChange, onTypeChange }) => {
                 const monthOptions = moment.months().map((month, index) => ({
@@ -574,9 +597,7 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
                             .months()
                             .indexOf(newMonthName);
                           const now = value.clone().month(newMonthIndex);
-                          setMonthActive(
-                            moment(newMonthName, "MMMM").format("MM")
-                          );
+
                           onChange(now);
                         }}
                         style={{ width: 137 }}
