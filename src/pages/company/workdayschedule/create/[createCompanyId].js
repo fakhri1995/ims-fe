@@ -1,11 +1,13 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
+  DatePicker,
   Form,
   Input,
   Row,
   Select,
+  Space,
   Switch,
   TimePicker,
   notification,
@@ -24,13 +26,16 @@ import {
   ArrowLeftIconSvg,
   ArrowRightIconSvg,
   CirclePlusIconSvg,
+  CopyIconSvg,
   InfoCircleIconSvg,
+  TrashIconSvg,
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
-const { RangePicker } = TimePicker;
+const { RangePicker: DateRangePicker } = DatePicker;
+const { RangePicker: TimeRangePicker } = TimePicker;
 
 function WorkdayScheduleCreateCompany({
   initProps,
@@ -99,6 +104,9 @@ function WorkdayScheduleCreateCompany({
   const [selectedCuti, setSelectedCuti] = useState([]);
   const [selectedLibur, setSelectedLibur] = useState([]);
   const [warningWorkingDay, setWarningWorkingDay] = useState(false);
+  const [warningCustomLibur, setWarningCustomLibur] = useState(false);
+  const [holidays, setHolidays] = useState([]);
+
   const [isInteracted, setIsInteracted] = useState(false);
 
   useEffect(() => {
@@ -156,6 +164,10 @@ function WorkdayScheduleCreateCompany({
     checkWorkingDay();
   }, [workingDays]);
 
+  useEffect(() => {
+    validateCustomHolidays();
+  }, [holidays]);
+
   const handleCutiChange = (values) => {
     setSelectedCuti(values);
   };
@@ -184,10 +196,17 @@ function WorkdayScheduleCreateCompany({
   };
 
   const handleCreateSchedule = () => {
-    if (checkWorkingDay()) {
+    const custom_holidays = (holidays || []).map((h) => ({
+      name: h.name,
+      from: h.range?.[0]?.format("YYYY-MM-DD"),
+      to: h.range?.[1]?.format("YYYY-MM-DD"),
+    }));
+    const isValid = validateCustomHolidays();
+    if (checkWorkingDay() && isValid) {
       const payload = {
         // year: dataCompany.year,
         company_id: Number(companyId),
+        custom_holidays: custom_holidays,
         // month: dataCompany.month,
         name: dataCompany.name,
         schedule: workingDays,
@@ -231,6 +250,22 @@ function WorkdayScheduleCreateCompany({
     }
   };
 
+  const validateCustomHolidays = () => {
+    const custom_holidays = (holidays || []).map((h) => ({
+      name: h.name,
+      from: h.range?.[0]?.format("YYYY-MM-DD"),
+      to: h.range?.[1]?.format("YYYY-MM-DD"),
+    }));
+    for (const h of custom_holidays) {
+      if (!h.name || !h.from || !h.to) {
+        setWarningCustomLibur(true);
+        return false;
+      }
+    }
+    setWarningCustomLibur(false);
+    return true;
+  };
+
   function checkWorkingDay() {
     const allEmpty = workingDays.every((item) => item.range.length === 0);
 
@@ -249,6 +284,33 @@ function WorkdayScheduleCreateCompany({
       setSelectedLibur([]);
     }
     setEnabled(!enabled);
+  };
+
+  const handleChangeName = (index, value) => {
+    const newData = [...holidays];
+    newData[index].name = value;
+    setHolidays(newData);
+  };
+
+  const handleChangeRange = (index, dates) => {
+    const newData = [...holidays];
+    newData[index].range = dates;
+    setHolidays(newData);
+  };
+
+  const handleAdd = () => {
+    setHolidays([...holidays, { name: "", range: [] }]);
+  };
+
+  const handleDelete = (index) => {
+    const newData = holidays.filter((_, i) => i !== index);
+    setHolidays(newData);
+  };
+
+  const handleDuplicate = (index) => {
+    const newData = [...holidays];
+    newData.splice(index + 1, 0, { ...holidays[index] });
+    setHolidays(newData);
   };
 
   return (
@@ -310,7 +372,7 @@ function WorkdayScheduleCreateCompany({
               layout="vertical"
               form={instanceForm}
               onFinish={handleCreateSchedule}
-              className="grid grid-cols-2 gap-x-4"
+              className="grid grid-cols-2 gap-x-4 border-b"
             >
               <Form.Item
                 label="Company"
@@ -378,7 +440,7 @@ function WorkdayScheduleCreateCompany({
                 </div>
               </Form.Item>
             </Form>
-            <div className={"pt-2"}>
+            <div className={"py-2 border-b"}>
               <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-4">
                 Set Working Day
               </h4>
@@ -404,7 +466,7 @@ function WorkdayScheduleCreateCompany({
                     />
                   </div>
                   <div className={"w-3/5"}>
-                    <RangePicker
+                    <TimeRangePicker
                       format="HH:mm"
                       separator={
                         <ArrowRightIconSvg size={16} color={"#4D4D4D"} />
@@ -426,6 +488,113 @@ function WorkdayScheduleCreateCompany({
               {warningWorkingDay && (
                 <p class="text-[#ff4d4f] text-sm font-medium">
                   Working day is must filled
+                </p>
+              )}
+            </div>
+            <div className={"py-4"}>
+              <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-4">
+                Customize Holidays
+              </h4>
+              <Space direction="vertical" style={{ width: "100%" }}>
+                {holidays.map((item, index) => (
+                  <div
+                    key={index}
+                    className={"p-4 rounded-[10px] border border-[#E6E6E6]"}
+                  >
+                    <p
+                      className={
+                        "text-xs/5 font-bold font-inter text-mono30 mb-4"
+                      }
+                    >
+                      Holiday {index + 1}
+                    </p>
+
+                    <Form layout="vertical">
+                      <Form.Item
+                        label="Holiday Name"
+                        name={"holiday_name"}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Holiday Name is required",
+                          },
+                        ]}
+                        className="w-full"
+                      >
+                        <div>
+                          <Input
+                            className={"w-full"}
+                            placeholder="e.g. HUT KEMERDEKAAN RI"
+                            name={"holiday_name"}
+                            value={item.name}
+                            onChange={(e) =>
+                              handleChangeName(index, e.target.value)
+                            }
+                          />
+                        </div>
+                      </Form.Item>
+                      <Form.Item
+                        label="Holiday Period"
+                        name={"holiday_period"}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Holiday Period is required",
+                          },
+                        ]}
+                        className="w-full"
+                      >
+                        <div>
+                          <DateRangePicker
+                            value={item.range}
+                            onChange={(dates) =>
+                              handleChangeRange(index, dates)
+                            }
+                            format="DD MMM YYYY"
+                            style={{ width: "100%" }}
+                          />
+                        </div>
+                      </Form.Item>
+                    </Form>
+                    <div className={"flex gap-4 justify-end mt-1"}>
+                      <div
+                        onClick={() => handleDuplicate(index)}
+                        className={"hover:cursor-pointer"}
+                      >
+                        <CopyIconSvg size={24} color={"#4D4D4D"} />
+                      </div>
+                      {/* <Button
+                                      danger
+                                      icon={<DeleteOutlined />}
+                                      onClick={() => handleDelete(index)}
+                                    /> */}
+                      <div
+                        onClick={() => handleDelete(index)}
+                        className={"hover:cursor-pointer"}
+                      >
+                        <TrashIconSvg size={24} color={"#4D4D4D"} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <Button
+                  type="dashed"
+                  block
+                  style={{
+                    borderColor: "#35763B",
+                    color: "#35763B",
+                    height: 32,
+                  }}
+                  className="flex justify-center items-center"
+                  icon={<PlusCircleOutlined />}
+                  onClick={handleAdd}
+                >
+                  Add Custom Holiday
+                </Button>
+              </Space>
+              {warningCustomLibur && (
+                <p class="text-[#ff4d4f] text-sm font-medium mt-1">
+                  Customize Holidays is must filled All
                 </p>
               )}
             </div>
@@ -486,23 +655,26 @@ function WorkdayScheduleCreateCompany({
                 )}
               </Button>
             </Row>
-            <Checkbox.Group
-              disabled={!enabled}
-              // options={cutiBersamaOptions}
-              className="grid grid-cols-2 gap-x-6 gap-y-2"
-              value={selectedCuti}
-              onChange={handleCutiChange}
-            >
-              {cutiBersamaOptions?.map((item) => (
-                <Checkbox
-                  className="flex items-start !whitespace-normal !leading-snug !ml-0"
-                  key={item.id}
-                  value={item.id}
-                >
-                  {item.name}
-                </Checkbox>
-              ))}
-            </Checkbox.Group>
+            <div className={"border-b pb-4"}>
+              <Checkbox.Group
+                disabled={!enabled}
+                // options={cutiBersamaOptions}
+                className="grid grid-cols-2 gap-x-6 gap-y-2"
+                value={selectedCuti}
+                onChange={handleCutiChange}
+              >
+                {cutiBersamaOptions?.map((item) => (
+                  <Checkbox
+                    className="flex items-start !whitespace-normal !leading-snug !ml-0"
+                    key={item.id}
+                    value={item.id}
+                  >
+                    {item.name}
+                  </Checkbox>
+                ))}
+              </Checkbox.Group>
+            </div>
+
             <br />
 
             {/* Libur Nasional */}
