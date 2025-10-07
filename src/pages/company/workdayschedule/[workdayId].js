@@ -110,12 +110,12 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
         (item) => item.day === moment(value).format("dddd")
       );
       const isActive = checkday ? checkday.active : null;
-      style.backgroundColor = isSunday
-        ? "#FFEBEE"
-        : isActive
+      style.backgroundColor = isActive
         ? "inherit"
+        : isSunday
+        ? "#FFEBEE"
         : "#FFEBEE";
-      style.color = isSunday ? "#4D4D4D" : "inherit";
+      style.color = isActive ? "inherit" : isSunday ? "#4D4D4D" : "inherit";
     }
     const text = `${holiday?.name}${
       holiday?.is_libur == 1 ? "\n(Libur Kerja)" : ""
