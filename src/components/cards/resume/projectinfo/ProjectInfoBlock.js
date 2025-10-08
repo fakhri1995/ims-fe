@@ -46,19 +46,14 @@ const ProjectInfoBlock = ({
   useEffect(() => {
     if (showMore && editData.id != null) {
       projectForm.setFieldsValue({
-        school: editData.school,
-        start_date:
-          editData.start_date != "0000-00-00"
-            ? moment(editData.start_date)
+        name: editData.name,
+        year:
+          editData.year && editData.year != "0000-00-00"
+            ? moment(editData?.year)
             : null,
-        end_date:
-          editData.end_date != "0000-00-00" ? moment(editData.end_date) : null,
-        degree: editData.degree,
-        gpa: editData.gpa,
-        field: editData.field,
-        location: editData.location,
-        honors: editData.honors,
-        coursework: editData.relevant_coursework,
+        technologies_skills: editData.technologies_skills,
+        client: editData.client,
+        description: editData.description,
       });
     }
   }, [showMore]);
@@ -136,14 +131,14 @@ const ProjectInfoBlock = ({
       ...editData,
       id: data.id,
       name: data.name,
-      year: data.year ? moment(data?.year) : null,
+      year: data.year && data.year != "0000-00-00" ? moment(data?.year) : null,
       technologies_skills: data.technologies_skills,
       client: data.client,
       description: data.description,
     });
     projectForm.setFieldsValue({
       name: data.name,
-      year: data.year ? moment(data?.year) : null,
+      year: data.year && data.year != "0000-00-00" ? moment(data?.year) : null,
       technologies_skills: data.technologies_skills,
       client: data.client,
       description: data.description,
@@ -264,7 +259,7 @@ const ProjectInfoBlock = ({
                   <DatePicker
                     allowClear={true}
                     picker="year"
-                    placeholder="Start Date"
+                    placeholder="Year"
                     className="w-full"
                     onChange={(date) => {
                       let input = date ? date.format("YYYY-MM-DD") : null;
@@ -351,7 +346,11 @@ const ProjectInfoBlock = ({
           <div className={"flex gap-2"}>
             <InformationColumn
               label={"Year"}
-              value={data?.year ? moment(data?.year).format("YYYY") : "-"}
+              value={
+                data?.year && data?.year != "0000-00-00"
+                  ? moment(data?.year).format("YYYY")
+                  : "-"
+              }
               bold={false}
             />
             <InformationColumn

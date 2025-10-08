@@ -334,7 +334,7 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
                       style={styles.title}
                       hyphenationCallback={(e) => breakText(e)}
                     >
-                      {proj?.name}
+                      {proj?.name} {proj?.client ? "| " + proj?.client : ""}
                     </Text>
                     <Html
                       // hyphenationCallback={e => breakText(e)}
@@ -343,6 +343,9 @@ const ResumePDFTemplate = ({ dataResume, logoStatus = true }) => {
                     >
                       {proj?.description}
                     </Html>
+                    <View style={styles.skillTagNew} key={proj?.id}>
+                      <Text>{proj?.technologies_skills}</Text>
+                    </View>
                   </View>
                 </View>
               ))}
@@ -654,6 +657,17 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginBottom: 10,
     borderRadius: 5,
+  },
+  skillTagNew: {
+    color: `#35763B`,
+    fontSize: 10,
+    backgroundColor: `rgba(53, 118, 59, 0.1)`,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    marginRight: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+    alignSelf: "flex-start",
   },
 
   htmlStyle: {
