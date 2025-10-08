@@ -10,10 +10,10 @@ import MdChevronDown from "assets/vectors/md-chevron-down.svg";
 import MdChevronUp from "assets/vectors/md-chevron-up.svg";
 
 import ButtonSys from "../../../button";
-import EducationInfoBlock from "./EducationInfoBlock";
+import ProjectInfoBlock from "./ProjectInfoBlock";
 
 // Currently use for Training, Certifications, and Achievements section in resume
-const EducationInfoCard = ({
+const ProjectInfoCard = ({
   data,
   resumeId,
   initProps,
@@ -27,33 +27,25 @@ const EducationInfoCard = ({
   const { TextArea } = Input;
   const [dataEdit, setDataEdit] = useState({
     id: null,
-    school: null,
-    degree: null,
-    gpa: null,
-    field: null,
-    location: null,
-    start_date: null,
-    end_date: null,
-    honors: null,
-    relevant_coursework: null,
+    name: null,
+    technologies_skills: null,
+    year: null,
+    client: null,
+    description: null,
   });
   const { hasPermission } = useAccessControl();
   const isAllowedToAddEducation = hasPermission(RESUME_EDUCATION_ADD);
   const onFinish = (values) => {
     let dataSend = {
       resume_id: resumeId,
-      university: values.school,
-      major: values.field,
-      degree: values.degree,
-      gpa: values.gpa,
-      start_date: moment(values.start_date).format("YYYY-MM-DD"),
-      end_date: moment(values.end_date).format("YYYY-MM-DD"),
-      location: values.location,
-      honors: values.honors,
-      relevant_coursework: values.coursework,
+      name: values.name,
+      year: moment(values.year),
+      description: values.description,
+      technologies_skills: values.technologies_skills,
+      client: values.client,
     };
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResumeEducation`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResumeProject`, {
       method: `POST`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -63,6 +55,7 @@ const EducationInfoCard = ({
     })
       .then((res) => res.json())
       .then((response) => {
+        console.log("response ", response);
         if (response.success) {
           instanceForm.resetFields();
 
@@ -80,8 +73,9 @@ const EducationInfoCard = ({
         }
       })
       .catch((err) => {
+        console.log("err ", err);
         notification.error({
-          message: `Gagal update Education. ${err.response}`,
+          message: `Gagal add Project. ${err.response}`,
           duration: 3,
         });
       })
@@ -92,23 +86,17 @@ const EducationInfoCard = ({
     let dataTemp = data;
     let datasave = {
       id: data_server.id,
-      university: data_server.university,
-      major: data_server.major,
-      degree: data_server.degree,
-      gpa: data_server.gpa,
-      start_date: data_server.start_date,
-      end_date: data_server.end_date,
-      resume_id: data_server.resume_id,
-      display_order: data_server.display_order,
-      location: data_server.location,
-      honors: data_server.honors,
-      relevant_coursework: data_server.relevant_coursework,
+      name: data_server.name,
+      year: data_server.year,
+      description: data_server.description,
+      technologies_skills: data_server.technologies_skills,
+      client: data_server.client,
     };
     dataTemp.push(datasave);
     setEducationData(dataTemp);
     setFormAdd({
       ...formAdd,
-      education: false,
+      projects: false,
     });
   };
 
@@ -116,7 +104,7 @@ const EducationInfoCard = ({
     resetValue();
     setFormAdd({
       ...formAdd,
-      education: false,
+      projects: false,
     });
   };
 
@@ -124,15 +112,11 @@ const EducationInfoCard = ({
     setDataEdit({
       ...dataEdit,
       id: null,
-      school: null,
-      degree: null,
-      gpa: null,
-      field: null,
-      location: null,
-      start_date: null,
-      end_date: null,
-      honors: null,
-      relevant_coursework: null,
+      name: null,
+      technologies_skills: null,
+      year: null,
+      client: null,
+      description: null,
     });
     instanceForm.resetFields();
   };
@@ -149,7 +133,7 @@ const EducationInfoCard = ({
           className={"flex gap-1.5 items-center hover:cursor-pointer"}
         >
           <p className={"text-[#4D4D4D] text-[16px] leading-6 font-bold"}>
-            Education (3/8)
+            Projects (4/8)
           </p>
           {showMore ? (
             <MdChevronDown className="w-[14px] h-[14px]" />
@@ -163,7 +147,7 @@ const EducationInfoCard = ({
           <div className={"mb-4"}>
             {data.length > 0 &&
               data.map((item, index) => (
-                <EducationInfoBlock
+                <ProjectInfoBlock
                   cancelData={cancelData}
                   editData={dataEdit}
                   setEditData={setDataEdit}
@@ -176,61 +160,74 @@ const EducationInfoCard = ({
                 />
               ))}
           </div>
-          {formAdd.education ? (
+          {formAdd.projects ? (
             <div className={"flex flex-col gap-2 mt-4"}>
               <Form layout="vertical" form={instanceForm} onFinish={onFinish}>
                 <div className={"flex gap-2"}>
                   <div className={"flex flex-col gap-2 w-1/2"}>
                     <Form.Item
-                      label="School"
-                      name={"school"}
+                      label="Project Name"
+                      name={"name"}
                       className="col-span-2"
                       rules={[
                         {
                           required: true,
-                          message: "School is required",
+                          message: "Project Name is required",
                         },
                       ]}
                     >
-                      <Input placeholder="Input School Name" />
+                      <Input placeholder="Input Project Name" />
                     </Form.Item>
                   </div>
                   <div className={"flex flex-col gap-2 w-1/2"}>
                     <Form.Item
-                      label="Degree"
-                      name={"degree"}
+                      label="Technologies/Skills"
+                      name={"technologies_skills"}
                       className="col-span-2"
                       rules={[
                         {
                           required: true,
-                          message: "Degree is required",
+                          message: "Technologies/Skills is required",
                         },
                       ]}
                     >
-                      <Input placeholder="Input Degree" />
+                      <Input placeholder="Input Technologies/Skills" />
                     </Form.Item>
                   </div>
                 </div>
                 <div className={"flex gap-2"}>
                   <div className={"flex flex-col gap-2 w-1/2"}>
                     <Form.Item
-                      label="Field"
-                      name={"field"}
+                      label="Year"
+                      name={"year"}
                       className="col-span-2"
                       rules={[
                         {
                           required: true,
-                          message: "Field is required",
+                          message: "Year is required",
                         },
                       ]}
                     >
-                      <Input placeholder="Input Field Name" />
+                      <DatePicker
+                        allowClear={true}
+                        picker="year"
+                        placeholder="Year"
+                        className="w-full"
+                        // value={dataUpdateProj?.year ? moment(dataUpdateProj?.year) : null}
+                        // onChange={(date) => {
+                        //   let input = date?.format("YYYY-MM-DD");
+                        //   setDataUpdateProj((prev) => ({
+                        //     ...prev,
+                        //     year: input,
+                        //   }));
+                        // }}
+                      />
                     </Form.Item>
                   </div>
                   <div className={"flex flex-col gap-2 w-1/2"}>
                     <Form.Item
-                      label="GPA"
-                      name={"gpa"}
+                      label="Client"
+                      name={"client"}
                       className="col-span-2"
                       // rules={[
                       //   {
@@ -239,113 +236,24 @@ const EducationInfoCard = ({
                       //   },
                       // ]}
                     >
-                      <Input placeholder="Input GPA" />
-                    </Form.Item>
-                  </div>
-                </div>
-                <div className={"flex gap-2"}>
-                  <div className={"flex flex-col gap-2 w-1/2"}>
-                    <Form.Item
-                      label="Start Date"
-                      name={"start_date"}
-                      className="col-span-2"
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Start Date is required",
-                      //   },
-                      // ]}
-                    >
-                      <DatePicker
-                        allowClear={true}
-                        placeholder="Start Date"
-                        className="w-full"
-                        // onChange={(date) => {
-                        //   let input = date ? date.format("YYYY-MM-DD") : null;
-                        //   setDataUpdate((prev) => ({
-                        //     ...prev,
-                        //     year: input,
-                        //   }));
-                        // }}
-                      />
-                    </Form.Item>
-                  </div>
-                  <div className={"flex flex-col gap-2 w-1/2"}>
-                    <Form.Item
-                      label="End Date"
-                      name={"end_date"}
-                      className="col-span-2"
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "End Date is required",
-                      //   },
-                      // ]}
-                    >
-                      <DatePicker
-                        allowClear={true}
-                        placeholder="End Date"
-                        className="w-full"
-                        // onChange={(date) => {
-                        //   let input = date ? date.format("YYYY-MM-DD") : null;
-                        //   setDataUpdate((prev) => ({
-                        //     ...prev,
-                        //     year: input,
-                        //   }));
-                        // }}
-                      />
-                    </Form.Item>
-                  </div>
-                </div>
-                <div className={"flex flex-col gap-2 w-1/2"}>
-                  <Form.Item
-                    label="Location"
-                    name={"location"}
-                    className="col-span-2"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Location is required",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Input Location" />
-                  </Form.Item>
-                </div>
-                <div className={"flex gap-2"}>
-                  <div className={"w-full"}>
-                    <Form.Item
-                      label="Honors"
-                      name={"honors"}
-                      className="col-span-2"
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Honors is required",
-                      //   },
-                      // ]}
-                    >
-                      <TextArea rows={5} placeholder="Input Honors" />
+                      <Input placeholder="Input Client" />
                     </Form.Item>
                   </div>
                 </div>
                 <div className={"flex gap-2"}>
                   <div className={"w-full"}>
                     <Form.Item
-                      label="Relevant Coursework"
-                      name={"coursework"}
+                      label="Description"
+                      name={"description"}
                       className="col-span-2"
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Relevant Coursework is required",
-                      //   },
-                      // ]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Description is required",
+                        },
+                      ]}
                     >
-                      <TextArea
-                        rows={5}
-                        placeholder="Input Relevant Coursework"
-                      />
+                      <TextArea rows={5} placeholder="Input Description" />
                     </Form.Item>
                   </div>
                 </div>
@@ -356,7 +264,7 @@ const EducationInfoCard = ({
                       onClick={() =>
                         setFormAdd({
                           ...formAdd,
-                          education: false,
+                          projects: false,
                         })
                       }
                     >
@@ -383,12 +291,12 @@ const EducationInfoCard = ({
                 resetValue();
                 setFormAdd({
                   ...formAdd,
-                  education: true,
+                  projects: true,
                 });
               }}
             >
               <p className="text-primary100 font-bold hover:text-primary75">
-                + Add Another Educations
+                + Add Another Projects
               </p>
             </ButtonSys>
           )}
@@ -398,4 +306,4 @@ const EducationInfoCard = ({
   );
 };
 
-export default EducationInfoCard;
+export default ProjectInfoCard;

@@ -155,10 +155,6 @@ const PersonalInfoCard = ({
       .finally(() => setLoading(false));
   };
 
-  const onFinishEdit = (values) => {
-    console.log("values ", values);
-  };
-
   const handleUpdateSection = () => {
     onFinish(dataEditDouble);
     clearEdit();
@@ -206,7 +202,7 @@ const PersonalInfoCard = ({
           className={"flex gap-1.5 items-center hover:cursor-pointer"}
         >
           <p className={"text-[#4D4D4D] text-[16px] leading-6 font-bold"}>
-            Personal Info (1/7)
+            Personal Info (1/8)
           </p>
           {showMore ? (
             <MdChevronDown className="w-[14px] h-[14px]" />

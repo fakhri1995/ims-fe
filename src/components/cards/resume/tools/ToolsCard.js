@@ -129,7 +129,7 @@ const ToolsCard = ({
           className={"flex gap-1.5 items-center hover:cursor-pointer"}
         >
           <p className={"text-[#4D4D4D] text-[16px] leading-6 font-bold"}>
-            Skill & Tools (6/7)
+            Tools (6/8)
           </p>
           {showMore ? (
             <MdChevronDown className="w-[14px] h-[14px]" />
@@ -164,7 +164,7 @@ const ToolsCard = ({
                 <div className={"flex gap-2"}>
                   <div className={"flex flex-col gap-2 w-1/2"}>
                     <Form.Item
-                      label="Skill / Tool Name"
+                      label="Tool Name"
                       name={"toolname"}
                       className="col-span-2"
                       rules={[
