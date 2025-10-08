@@ -100,22 +100,32 @@ const WorkDayDetail = ({ initProps, dataProfile, sidemenu, workdayId }) => {
       marginRight: 8,
       paddingTop: 1,
     };
-
+    const checkday = dataSchedule.find(
+      (item) => item.day === moment(value).format("dddd")
+    );
+    const isActive = checkday ? checkday.active : null;
     if (holiday) {
-      style.backgroundColor = holiday.is_cuti ? "#F5851E19" : "#E3F2FD";
-      style.color = "#4D4D4D";
+      style.backgroundColor = !isActive
+        ? "#FBD4D0"
+        : holiday.is_cuti
+        ? "#FCDBBC"
+        : "#B3CDE3";
+      style.color = !isActive ? "inherit" : "#4D4D4D";
     } else {
       // console.log('day ', moment(value).format('dddd'))
-      const checkday = dataSchedule.find(
-        (item) => item.day === moment(value).format("dddd")
-      );
-      const isActive = checkday ? checkday.active : null;
+
       style.backgroundColor = isActive
         ? "inherit"
-        : isSunday
-        ? "#FFEBEE"
+        : !isActive
+        ? "#FBD4D0"
         : "#FFEBEE";
-      style.color = isActive ? "inherit" : isSunday ? "#4D4D4D" : "inherit";
+      style.color = isActive
+        ? "inherit"
+        : !isActive
+        ? "inherit"
+        : isSunday
+        ? "#4D4D4D"
+        : "inherit";
     }
     const text = `${holiday?.name}${
       holiday?.is_libur == 1 ? "\n(Libur Kerja)" : ""

@@ -24,6 +24,7 @@ import ExperienceInfoCard from "../../../../components/cards/resume/experiencein
 import LanguageCard from "../../../../components/cards/resume/language/LanguageCard";
 import NeedToReviewCard from "../../../../components/cards/resume/needtoreview/NeedToReviewCard";
 import PersonalInfoCard from "../../../../components/cards/resume/personalinfo/PersonalInfoCard";
+import ProjectInfoCard from "../../../../components/cards/resume/projectinfo/ProjectInfoCard";
 import SkillCard from "../../../../components/cards/resume/skill/SkillCard";
 import ToolsCard from "../../../../components/cards/resume/tools/ToolsCard";
 import {
@@ -96,6 +97,7 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
   const [toolData, setToolData] = useState([]);
   const [experienceData, setExperienceData] = useState([]);
   const [educationData, setEducationData] = useState([]);
+  const [projectsData, setProjectData] = useState([]);
   const [languageData, setLanguageData] = useState([]);
   const [evaluationData, setEvaluationData] = useState({
     id: null,
@@ -116,8 +118,10 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     languages: false,
     tools: false,
     evaluation: false,
+    projects: false,
   });
   const [formAdd, setFormAdd] = useState({
+    projects: false,
     experience: false,
     education: false,
     languages: false,
@@ -239,6 +243,11 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
         setEducationData(doc.resume.educations);
       } else {
         setEducationData([]);
+      }
+      if (doc.resume.projects) {
+        setProjectData(doc.resume.projects);
+      } else {
+        setProjectData([]);
       }
       if (doc.resume.tools) {
         setToolData(doc.resume.tools);
@@ -563,6 +572,14 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
                 formAdd={formAdd}
                 setFormAdd={setFormAdd}
               />
+              <ProjectInfoCard
+                data={projectsData}
+                initProps={initProps}
+                setEducationData={setProjectData}
+                resumeId={resumeId}
+                formAdd={formAdd}
+                setFormAdd={setFormAdd}
+              />
               <SkillCard
                 skillSet={dataSkillSet}
                 resumeId={resumeId}
@@ -571,17 +588,6 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
                 statusEdit={formEdit.skill}
                 setFormEdit={setFormEdit}
                 setData={setDataSkillSet}
-              />
-              <LanguageCard
-                initProps={initProps}
-                formEdit={formEdit}
-                statusEdit={formEdit.languages}
-                setFormEdit={setFormEdit}
-                data={languageData}
-                setLanguageData={setLanguageData}
-                resumeId={resumeId}
-                formAdd={formAdd}
-                setFormAdd={setFormAdd}
               />
               <ToolsCard
                 initProps={initProps}
@@ -594,6 +600,19 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
                 setFormAdd={setFormAdd}
                 setToolData={setToolData}
               />
+
+              <LanguageCard
+                initProps={initProps}
+                formEdit={formEdit}
+                statusEdit={formEdit.languages}
+                setFormEdit={setFormEdit}
+                data={languageData}
+                setLanguageData={setLanguageData}
+                resumeId={resumeId}
+                formAdd={formAdd}
+                setFormAdd={setFormAdd}
+              />
+
               <EvaluationCard
                 formEdit={formEdit}
                 setFormEdit={setFormEdit}

@@ -145,7 +145,7 @@ const ExperienceInfoCard = ({
           className={"flex gap-1.5 items-center hover:cursor-pointer"}
         >
           <p className={"text-[#4D4D4D] text-[16px] leading-6 font-bold"}>
-            Experiences (2/7)
+            Experiences (2/8)
           </p>
           {showMore ? (
             <MdChevronDown className="w-[14px] h-[14px]" />
@@ -213,12 +213,12 @@ const ExperienceInfoCard = ({
                       label="Industry"
                       name={"industry"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Industry is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Industry is required",
+                      //   },
+                      // ]}
                     >
                       <Input placeholder="Input Industry" />
                     </Form.Item>
@@ -228,12 +228,12 @@ const ExperienceInfoCard = ({
                       label="Location"
                       name={"location"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Location is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Location is required",
+                      //   },
+                      // ]}
                     >
                       <Input placeholder="Input Location" />
                     </Form.Item>
@@ -313,12 +313,12 @@ const ExperienceInfoCard = ({
                     label="Achievements"
                     name={"achievements"}
                     className="col-span-2 w-full"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Achievements is required",
-                      },
-                    ]}
+                    // rules={[
+                    //   {
+                    //     required: true,
+                    //     message: "Achievements is required",
+                    //   },
+                    // ]}
                   >
                     <TextArea rows={5} placeholder="Input Achievements" />
                   </Form.Item>

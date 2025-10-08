@@ -129,7 +129,7 @@ const LanguageCard = ({
           className={"flex gap-1.5 items-center hover:cursor-pointer"}
         >
           <p className={"text-[#4D4D4D] text-[16px] leading-6 font-bold"}>
-            Languages (5/7)
+            Languages (7/8)
           </p>
           {showMore ? (
             <MdChevronDown className="w-[14px] h-[14px]" />

@@ -129,7 +129,7 @@ const ToolsCard = ({
           className={"flex gap-1.5 items-center hover:cursor-pointer"}
         >
           <p className={"text-[#4D4D4D] text-[16px] leading-6 font-bold"}>
-            Tools (6/7)
+            Tools (6/8)
           </p>
           {showMore ? (
             <MdChevronDown className="w-[14px] h-[14px]" />
@@ -199,12 +199,12 @@ const ToolsCard = ({
                       label="Profiency"
                       name={"proficiency"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Proficiency is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Proficiency is required",
+                      //   },
+                      // ]}
                     >
                       <Input placeholder="Input Proficiency" />
                     </Form.Item>
@@ -214,12 +214,12 @@ const ToolsCard = ({
                       label="Details"
                       name={"details"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Details is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Details is required",
+                      //   },
+                      // ]}
                     >
                       <Input placeholder="Input Details" />
                     </Form.Item>
@@ -231,12 +231,12 @@ const ToolsCard = ({
                       label="Certification"
                       name={"certification"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Certification is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Certification is required",
+                      //   },
+                      // ]}
                     >
                       <TextArea rows={5} placeholder="Input Certification" />
                     </Form.Item>

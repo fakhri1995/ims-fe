@@ -105,7 +105,7 @@ const EvaluationCard = ({
           className={"flex gap-1.5 items-center hover:cursor-pointer"}
         >
           <p className={"text-[#4D4D4D] text-[16px] leading-6 font-bold"}>
-            CV Evaluation (7/7)
+            CV Evaluation (8/8)
           </p>
           {showMore ? (
             <MdChevronDown className="w-[14px] h-[14px]" />

@@ -44,6 +44,8 @@ const ProjectCard = ({
     name: "",
     year: "",
     description: "",
+    client: "",
+    technologies_skills: "",
     resume_id: null,
     after_id: null,
   });
@@ -165,31 +167,98 @@ const ProjectCard = ({
       {editIdx === -1 ? (
         <div className="flex flex-col space-y-4 mt-8 mb-4">
           <div className="flex flex-row space-x-4">
-            <Input
-              placeholder="Project name"
-              value={dataUpdateProj?.name}
-              onChange={(e) => {
-                let input = e.target.value;
+            <div className={"flex flex-col w-1/2 gap-1"}>
+              <p className={"text-xs/5 text-mono30 font-medium font-inter"}>
+                Project Name <span className="text-state1"> *</span>
+              </p>
+              <Input
+                placeholder="Project name"
+                value={dataUpdateProj?.name}
+                onChange={(e) => {
+                  let input = e.target.value;
+                  setDataUpdateProj((prev) => ({
+                    ...prev,
+                    name: input,
+                  }));
+                }}
+              ></Input>
+            </div>
+            <div className={"flex flex-col w-1/2 gap-1"}>
+              <p className={"text-xs/5 text-mono30 font-medium font-inter"}>
+                Technologies/Skills<span className="text-state1"> *</span>
+              </p>
+              <Input
+                placeholder="Technologies/Skills"
+                value={dataUpdateProj?.technologies_skills}
+                onChange={(e) => {
+                  let input = e.target.value;
+                  setDataUpdateProj((prev) => ({
+                    ...prev,
+                    technologies_skills: input,
+                  }));
+                }}
+              ></Input>
+            </div>
+          </div>
+          <div className="flex flex-row space-x-4">
+            <div className={"flex flex-col w-1/2 gap-1"}>
+              <p className={"text-xs/5 text-mono30 font-medium font-inter"}>
+                Year <span className="text-state1"> *</span>
+              </p>
+              <DatePicker
+                allowClear={true}
+                picker="year"
+                placeholder="Year"
+                className="w-full"
+                value={
+                  dataUpdateProj?.year ? moment(dataUpdateProj?.year) : null
+                }
+                onChange={(date) => {
+                  let input = date?.format("YYYY-MM-DD");
+                  setDataUpdateProj((prev) => ({
+                    ...prev,
+                    year: input,
+                  }));
+                }}
+              />
+            </div>
+            <div className={"flex flex-col w-1/2 gap-1"}>
+              <p className={"text-xs/5 text-mono30 font-medium font-inter"}>
+                Klien
+              </p>
+              <Input
+                placeholder="Klien"
+                value={dataUpdateProj?.client}
+                onChange={(e) => {
+                  let input = e.target.value;
+                  setDataUpdateProj((prev) => ({
+                    ...prev,
+                    client: input,
+                  }));
+                }}
+              ></Input>
+            </div>
+          </div>
+          <div className={"flex flex-col gap-1"}>
+            <p className={"text-xs/5 text-mono30 font-medium font-inter"}>
+              Description<span className="text-state1"> *</span>
+            </p>
+            <ReactQuill
+              theme="snow"
+              placeholder="Job Description"
+              value={dataUpdateProj.description}
+              modules={modules}
+              formats={formats}
+              className="h-44 pb-10"
+              onChange={(value) => {
                 setDataUpdateProj((prev) => ({
                   ...prev,
-                  name: input,
-                }));
-              }}
-            ></Input>
-            <DatePicker
-              allowClear={true}
-              picker="year"
-              placeholder="Year"
-              className="w-1/3"
-              value={dataUpdateProj?.year ? moment(dataUpdateProj?.year) : null}
-              onChange={(date) => {
-                let input = date?.format("YYYY-MM-DD");
-                setDataUpdateProj((prev) => ({
-                  ...prev,
-                  year: input,
+                  description: value,
                 }));
               }}
             />
+          </div>
+          <div className={"flex gap-4 justify-end"}>
             <button
               onClick={() => {
                 handleAddSection("project", {
@@ -211,19 +280,6 @@ const ProjectCard = ({
               <XIconSvg size={24} color={"#BF4A40"} />
             </button>
           </div>
-          <ReactQuill
-            theme="snow"
-            value={dataUpdateProj.description}
-            modules={modules}
-            formats={formats}
-            className="h-44 pb-10"
-            onChange={(value) => {
-              setDataUpdateProj((prev) => ({
-                ...prev,
-                description: value,
-              }));
-            }}
-          />
         </div>
       ) : (
         isAllowedToAddSection && (
