@@ -213,12 +213,12 @@ const ExperienceInfoCard = ({
                       label="Industry"
                       name={"industry"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Industry is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Industry is required",
+                      //   },
+                      // ]}
                     >
                       <Input placeholder="Input Industry" />
                     </Form.Item>
@@ -228,12 +228,12 @@ const ExperienceInfoCard = ({
                       label="Location"
                       name={"location"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Location is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Location is required",
+                      //   },
+                      // ]}
                     >
                       <Input placeholder="Input Location" />
                     </Form.Item>
@@ -313,12 +313,12 @@ const ExperienceInfoCard = ({
                     label="Achievements"
                     name={"achievements"}
                     className="col-span-2 w-full"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Achievements is required",
-                      },
-                    ]}
+                    // rules={[
+                    //   {
+                    //     required: true,
+                    //     message: "Achievements is required",
+                    //   },
+                    // ]}
                   >
                     <TextArea rows={5} placeholder="Input Achievements" />
                   </Form.Item>

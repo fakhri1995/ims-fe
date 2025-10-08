@@ -302,12 +302,12 @@ const PersonalInfoCard = ({
                     label="LinkedIn"
                     name={"linkedin"}
                     className="col-span-2"
-                    rules={[
-                      {
-                        required: true,
-                        message: "LinkedIn is required",
-                      },
-                    ]}
+                    // rules={[
+                    //   {
+                    //     required: true,
+                    //     message: "LinkedIn is required",
+                    //   },
+                    // ]}
                   >
                     <Input placeholder="Input linkedIn" />
                   </Form.Item>
@@ -319,12 +319,12 @@ const PersonalInfoCard = ({
                     label="Summary"
                     name={"summary"}
                     className="col-span-2"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Summary is required",
-                      },
-                    ]}
+                    // rules={[
+                    //   {
+                    //     required: true,
+                    //     message: "Summary is required",
+                    //   },
+                    // ]}
                   >
                     <TextArea rows={5} placeholder="Input Summary" />
                   </Form.Item>

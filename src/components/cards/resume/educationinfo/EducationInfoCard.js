@@ -232,12 +232,12 @@ const EducationInfoCard = ({
                       label="GPA"
                       name={"gpa"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "GPA is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "GPA is required",
+                      //   },
+                      // ]}
                     >
                       <Input placeholder="Input GPA" />
                     </Form.Item>
@@ -249,12 +249,12 @@ const EducationInfoCard = ({
                       label="Start Date"
                       name={"start_date"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Start Date is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Start Date is required",
+                      //   },
+                      // ]}
                     >
                       <DatePicker
                         allowClear={true}
@@ -275,12 +275,12 @@ const EducationInfoCard = ({
                       label="End Date"
                       name={"end_date"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "End Date is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "End Date is required",
+                      //   },
+                      // ]}
                     >
                       <DatePicker
                         allowClear={true}
@@ -318,12 +318,12 @@ const EducationInfoCard = ({
                       label="Honors"
                       name={"honors"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Honors is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Honors is required",
+                      //   },
+                      // ]}
                     >
                       <TextArea rows={5} placeholder="Input Honors" />
                     </Form.Item>
@@ -335,12 +335,12 @@ const EducationInfoCard = ({
                       label="Relevant Coursework"
                       name={"coursework"}
                       className="col-span-2"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Relevant Coursework is required",
-                        },
-                      ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Relevant Coursework is required",
+                      //   },
+                      // ]}
                     >
                       <TextArea
                         rows={5}
