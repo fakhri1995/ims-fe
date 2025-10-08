@@ -1015,6 +1015,7 @@ const RecruitmentDetailIndex = ({
             <div className="shadow-lg rounded-md bg-white p-4 divide-y-2">
               <div className="flex flex-row justify-between items-center mb-4">
                 <h4 className="mig-heading--4">Profil Kandidat</h4>
+                {console.log("dataResume ", dataResume)}
                 <div
                   className="space-x-0 xl:space-x-2 flex flex-col xl:flex-row  
                 space-y-2 xl:space-y-0"
