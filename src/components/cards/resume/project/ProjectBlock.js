@@ -79,7 +79,9 @@ const ProjectBlock = ({
                 placeholder="Year"
                 className="w-full"
                 value={
-                  dataUpdateProj?.year ? moment(dataUpdateProj?.year) : null
+                  dataUpdateProj?.year && dataUpdateProj?.year != "0000-00-00"
+                    ? moment(dataUpdateProj?.year)
+                    : null
                 }
                 onChange={(date) => {
                   let input = date?.format("YYYY-MM-DD");
