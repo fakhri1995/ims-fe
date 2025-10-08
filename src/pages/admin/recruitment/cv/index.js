@@ -221,7 +221,6 @@ const CVDetail = ({ initProps, dataProfile, sidemenu }) => {
     if (doc.lampiran.length > 0) {
       path = doc.lampiran[0].isi_lampiran;
     }
-    console.log("choose data ", doc);
     if (doc.resume) {
       setResumeId(doc.resume.id);
       skillset = doc.resume?.skills;
