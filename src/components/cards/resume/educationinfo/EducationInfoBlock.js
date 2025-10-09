@@ -434,7 +434,7 @@ const EducationInfoBlock = ({
           <div className={"flex gap-2"}>
             <InformationColumn
               label={"School"}
-              value={data?.university}
+              value={data?.university || "-"}
               bold={false}
             />
             <InformationColumnWithAction
@@ -453,7 +453,7 @@ const EducationInfoBlock = ({
           <div className={"flex gap-2"}>
             <InformationColumn
               label={"Field"}
-              value={data?.major}
+              value={data?.major || "-"}
               bold={false}
             />
             <InformationColumn
@@ -485,19 +485,19 @@ const EducationInfoBlock = ({
           <InformationColumn
             label={"Location"}
             full={true}
-            value={data?.location}
+            value={data?.location || "-"}
             bold={false}
           />
           <InformationColumn
             label={"Honors"}
             full={true}
-            value={data?.honors}
+            value={data?.honors || "-"}
             bold={false}
           />
           <InformationColumn
             label={"Relevant Coursework"}
             full={true}
-            value={data?.relevant_coursework}
+            value={data?.relevant_coursework || "-"}
             bold={false}
           />
           <Modal

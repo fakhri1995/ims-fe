@@ -327,7 +327,7 @@ const ProjectInfoBlock = ({
           <div className={"flex gap-2"}>
             <InformationColumn
               label={"Project Name"}
-              value={data?.name}
+              value={data?.name || "-"}
               bold={false}
             />
             <InformationColumnWithAction
@@ -335,7 +335,7 @@ const ProjectInfoBlock = ({
               id={data?.id}
               setEditData={setEditData}
               editData={editData}
-              value={data?.technologies_skills}
+              value={data?.technologies_skills || "-"}
               bold={false}
               changeData={() => changeData(data)}
               deleteData={() => deleteData(data)}
@@ -362,7 +362,7 @@ const ProjectInfoBlock = ({
           <InformationColumn
             label={"Description"}
             full={true}
-            value={data?.description}
+            value={data?.description || "-"}
             bold={false}
           />
           <Modal
