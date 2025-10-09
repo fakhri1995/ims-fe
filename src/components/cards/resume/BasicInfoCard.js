@@ -316,7 +316,7 @@ const BasicInfoCard = ({
 
               {!isGuest && (
                 <div
-                  className="flex flex-row w-full gap-6 justify-end
+                  className="flex flex-row gap-6 justify-end
                 items-end lg:items-center"
                 >
                   <div
