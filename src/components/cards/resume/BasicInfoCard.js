@@ -69,7 +69,7 @@ const BasicInfoCard = ({
   return (
     <>
       {isShowInput || isCreateForm ? (
-        <div className=" shadow-lg rounded-md bg-white p-5">
+        <div className=" border-neutrals70 shadow-desktopCard rounded-[10px] bg-white p-4">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center justify-between mb-4 ">
             <h3 className="col-span-6 mig-heading--3">Basic Information</h3>
             <div className="col-span-6 grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-6 items-end md:items-center">
@@ -93,7 +93,7 @@ const BasicInfoCard = ({
               >
                 <div className="flex flex-row space-x-2">
                   <CloseOutlined rev={""} />
-                  <p>Batalkan</p>
+                  <p>Discard Changes</p>
                 </div>
               </ButtonSys>
               <ButtonSys
@@ -112,7 +112,7 @@ const BasicInfoCard = ({
                   {isCreateForm ? (
                     <p className="whitespace-nowrap">Tambah Kandidat</p>
                   ) : (
-                    <p className="whitespace-nowrap">Simpan Kandidat</p>
+                    <p className="whitespace-nowrap">Save Changes</p>
                   )}
                 </div>
               </ButtonSys>

@@ -35,7 +35,7 @@ const AssessmentResultCard = ({
   // console.log("data display", dataDisplay);
   // console.log("data update", dataUpdate);
   return (
-    <div className="shadow-lg rounded-md bg-white p-5">
+    <div className="border-neutrals70 shadow-desktopCard rounded-[10px] bg-white p-4">
       <div className="flex flex-row justify-between ">
         <h4 className="mig-heading--4">Technical Assessment Results</h4>
         {isShowInput ? (

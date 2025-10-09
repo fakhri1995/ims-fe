@@ -285,7 +285,7 @@ export async function getServerSideProps({ req, res, params }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "4",
+      sidemenu: "93",
       formSolutionId,
     },
   };
