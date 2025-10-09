@@ -278,7 +278,7 @@ const ToolsBlock = ({
           <div className={"flex gap-2"}>
             <InformationColumn
               label={"Tool Name"}
-              value={data?.name ?? "-"}
+              value={data?.name || "-"}
               bold={false}
             />
             <InformationColumnWithAction

@@ -239,7 +239,7 @@ const LanguageBlock = ({
           <div className={"flex gap-2"}>
             <InformationColumn
               label={"Language"}
-              value={data?.language ?? "-"}
+              value={data?.language || "-"}
               bold={false}
             />
             <InformationColumnWithAction
@@ -247,7 +247,7 @@ const LanguageBlock = ({
               id={data?.id}
               setEditData={setEditData}
               editData={editData}
-              value={data?.proficiency}
+              value={data?.proficiency || "-"}
               bold={false}
               changeData={() => changeData(data)}
               deleteData={() => deleteData(data)}
@@ -258,7 +258,7 @@ const LanguageBlock = ({
           <InformationColumn
             label={"Certifications"}
             full={true}
-            value={data?.certifications}
+            value={data?.certifications || "-"}
             bold={false}
           />
           <Modal

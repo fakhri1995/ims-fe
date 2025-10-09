@@ -431,7 +431,7 @@ const ExperienceInfoBlock = ({
           <div className={"flex gap-2"}>
             <InformationColumn
               label={"Company"}
-              value={data?.company ?? "-"}
+              value={data?.company || "-"}
               bold={false}
             />
             <InformationColumnWithAction
@@ -450,12 +450,12 @@ const ExperienceInfoBlock = ({
           <div className={"flex gap-2"}>
             <InformationColumn
               label={"Industry"}
-              value={data?.industry ?? "-"}
+              value={data?.industry || "-"}
               bold={false}
             />
             <InformationColumn
               label={"Location"}
-              value={data?.location ?? "-"}
+              value={data?.location || "-"}
               bold={false}
             />
           </div>
@@ -488,13 +488,13 @@ const ExperienceInfoBlock = ({
           <InformationColumn
             label={"Achievements"}
             full={true}
-            value={data?.achievements ?? "-"}
+            value={data?.achievements || "-"}
             bold={false}
           />
           <InformationColumn
             label={"Technologies"}
             full={true}
-            value={data?.technologies ?? "-"}
+            value={data?.technologies || "-"}
             bold={false}
           />
           <Modal

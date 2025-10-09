@@ -296,7 +296,7 @@ const EvaluationCard = ({
                   <p
                     className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
                   >
-                    {data?.grammar_and_spelling}
+                    {data?.grammar_and_spelling || "-"}
                   </p>
                 </div>
                 <div className={"w-1/3 flex flex-col"}>
@@ -306,7 +306,7 @@ const EvaluationCard = ({
                   <p
                     className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
                   >
-                    {data?.content_validity}
+                    {data?.content_validity || "-"}
                   </p>
                 </div>
                 <div className={"w-1/3 flex flex-col"}>
@@ -316,7 +316,7 @@ const EvaluationCard = ({
                   <p
                     className={`text-[#4D4D4D] text-[13px] leading-6 font-normal `}
                   >
-                    {data?.skill_alignment}
+                    {data?.skill_alignment || "-"}
                   </p>
                 </div>
               </div>
@@ -330,7 +330,7 @@ const EvaluationCard = ({
                   Missmatched Skills
                 </p>
                 <p className={"text-sm leading-6 font-medium text-mono30"}>
-                  {data?.mismatched_skills}
+                  {data?.mismatched_skills || "-"}
                 </p>
               </div>
               <div className={"flex flex-col gap-1 mb-2"}>
@@ -338,7 +338,7 @@ const EvaluationCard = ({
                   Questionable Claims
                 </p>
                 <p className={"text-sm leading-6 font-medium text-mono30"}>
-                  {data?.questionable_claims}
+                  {data?.questionable_claims || "-"}
                 </p>
               </div>
             </div>
@@ -347,13 +347,13 @@ const EvaluationCard = ({
                 Suggestions
               </p>
               <p className={"text-sm leading-6 font-medium text-mono30"}>
-                {data?.suggestions}
+                {data?.suggestions || "-"}
               </p>
               <p className={`text-xs leading-6 font-normal text-[#808080]`}>
                 Improvement Points
               </p>
               <p className={"text-sm leading-6 font-medium text-mono30"}>
-                {data?.improvement_points}
+                {data?.improvement_points || "-"}
               </p>
             </div>
           </div>

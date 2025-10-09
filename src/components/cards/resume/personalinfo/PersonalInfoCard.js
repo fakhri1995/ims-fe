@@ -444,7 +444,7 @@ const PersonalInfoCard = ({
               ) : (
                 <InformationColumnEdit
                   label={"Email"}
-                  value={data?.email}
+                  value={data?.email || "-"}
                   bold={false}
                   dataEdit={dataEditClick}
                   setDataEdit={setDataEditClick}
@@ -496,7 +496,7 @@ const PersonalInfoCard = ({
               ) : (
                 <InformationColumnEdit
                   label={"Phone"}
-                  value={data?.phone}
+                  value={data?.phone || "-"}
                   bold={false}
                   dataEdit={dataEditClick}
                   setDataEdit={setDataEditClick}
@@ -546,7 +546,7 @@ const PersonalInfoCard = ({
               ) : (
                 <InformationColumnEdit
                   label={"Location"}
-                  value={data?.location}
+                  value={data?.location || "-"}
                   bold={false}
                   dataEdit={dataEditClick}
                   setDataEdit={setDataEditClick}
@@ -652,7 +652,7 @@ const PersonalInfoCard = ({
               <InformationColumnEdit
                 label={"Summary"}
                 full={true}
-                value={data?.summary}
+                value={data?.summary || "-"}
                 bold={false}
                 dataEdit={dataEditClick}
                 setDataEdit={setDataEditClick}
