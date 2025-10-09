@@ -19,7 +19,9 @@ import UploadImage from "../../UploadImage";
 import ButtonSys from "../../button";
 import {
   CheckIconSvg,
+  DeleteTablerIconSvg,
   DownloadIcon2Svg,
+  DownloadIconSvg,
   EditIconSvg,
   EmailIconSvg,
   InfoCircleIconSvg,
@@ -70,13 +72,12 @@ const BasicInfoCard = ({
     <>
       {isShowInput || isCreateForm ? (
         <div className=" border-neutrals70 shadow-desktopCard rounded-[10px] bg-white p-4">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center justify-between mb-4 ">
+          <div className="flex flex-row items-center justify-between mb-4 ">
             <h3 className="col-span-6 mig-heading--3">Basic Information</h3>
-            <div className="col-span-6 grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-6 items-end md:items-center">
-              <ButtonSys
-                type={"default"}
-                color={"danger"}
-                fullWidth={true}
+            <div className="flex flex-row gap-6 justify-end items-end md:items-center">
+              <div
+                className={`hover:cursor-pointer bg-white text-[#BF4A40] border-[#BF4A40] 
+       px-4 py-2 flex gap-2 justify-center items-center border rounded-[5px]`}
                 onClick={() => {
                   isCreateForm
                     ? rt.back()
@@ -91,31 +92,37 @@ const BasicInfoCard = ({
                   setIsShowInput(false);
                 }}
               >
-                <div className="flex flex-row space-x-2">
-                  <CloseOutlined rev={""} />
-                  <p>Discard Changes</p>
-                </div>
-              </ButtonSys>
-              <ButtonSys
-                type={"primary"}
-                className="flex flex-row"
+                <CloseOutlined rev={""} />
+                <p className="text-xs/4 font-medium font-inter">
+                  Discard Changes
+                </p>
+              </div>
+              <div
+                className={` ${
+                  loadingUpdate
+                    ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                    : "bg-[#35763B] hover:cursor-pointer border-[#35763B]"
+                } px-6 py-2  flex gap-2 justify-center items-center border  rounded-[5px]`}
                 onClick={() => {
-                  isCreateForm
+                  loadingUpdate
+                    ? ""
+                    : isCreateForm
                     ? handleUpdate()
                     : handleUpdate("basic_information", dataUpdateBasic);
                   setIsShowInput(false);
                 }}
-                disabled={loadingUpdate}
               >
-                <div className="flex flex-row space-x-2 items-center">
-                  <CheckIconSvg size={16} color={`white`} />
-                  {isCreateForm ? (
-                    <p className="whitespace-nowrap">Tambah Kandidat</p>
-                  ) : (
-                    <p className="whitespace-nowrap">Save Changes</p>
-                  )}
-                </div>
-              </ButtonSys>
+                <CheckIconSvg size={16} color={`white`} />
+                {isCreateForm ? (
+                  <p className="whitespace-nowrap text-sm/4 text-white font-regular font-roboto">
+                    Tambah Kandidat
+                  </p>
+                ) : (
+                  <p className="whitespace-nowrap text-sm/4 text-white font-regular font-roboto">
+                    Save Changes
+                  </p>
+                )}
+              </div>
             </div>
           </div>
           <hr />
@@ -267,7 +274,7 @@ const BasicInfoCard = ({
           </Form>
         </div>
       ) : (
-        <div className="w-full flex flex-col lg:flex-row gap-6 shadow-lg rounded-md bg-white p-5">
+        <div className="w-full flex flex-col lg:flex-row gap-6 border-neutrals70 shadow-desktopCard rounded-[10px] bg-white p-4">
           <div className="lg:w-1/12 flex justify-center">
             {dataDisplay?.profile_image?.id ? (
               <img
@@ -283,8 +290,8 @@ const BasicInfoCard = ({
           </div>
 
           <div className="lg:w-11/12 flex flex-col justify-between">
-            <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-between mb-4 gap-2 ">
-              <div className="flex flex-row space-x-2 justify-between md:justify-start">
+            <div className="flex flex-row items-center justify-between mb-4 gap-2 ">
+              <div className="flex flex-row space-x-2 justify-between">
                 <h3 className="mig-heading--3">{dataDisplay?.name}</h3>
                 {isAllowedToUpdateCandidate && (
                   <button
@@ -309,32 +316,34 @@ const BasicInfoCard = ({
 
               {!isGuest && (
                 <div
-                  className="grid md:grid-cols-2 w-full gap-2
+                  className="flex flex-row w-full gap-6 justify-end
                 items-end lg:items-center"
                 >
-                  <ButtonSys
-                    type={isAllowedToDeleteCandidate ? "default" : "primary"}
-                    color="danger"
-                    fullWidth={true}
-                    disabled={!isAllowedToDeleteCandidate}
-                    onClick={() => setModalDelete(true)}
+                  <div
+                    className={`${
+                      isAllowedToDeleteCandidate
+                        ? "bg-white text-[#BF4A40] border-[#BF4A40] hover:cursor-pointer"
+                        : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                    } px-4 py-2 flex gap-2 justify-center items-center border rounded-[5px]`}
+                    onClick={() =>
+                      isAllowedToDeleteCandidate ? setModalDelete(true) : ""
+                    }
                   >
-                    <div className="flex flex-row space-x-2 items-center">
-                      <DeleteOutlined rev={""} />
-                      <p className="whitespace-nowrap">Remove Candidate</p>
-                    </div>
-                  </ButtonSys>
+                    <DeleteTablerIconSvg size={20} color={"#BF4A40"} />
+                    <p className="whitespace-nowrap text-xs/4 font-medium font-inter">
+                      Remove Candidate
+                    </p>
+                  </div>
                   {isOnClient && (
-                    <ButtonSys
-                      type={"default"}
-                      fullWidth={true}
+                    <div
+                      className={`hover:cursor-pointer px-6 py-2 bg-white flex gap-2 justify-center items-center border border-[#35763B] rounded-[5px]`}
                       onClick={() => setOpenDownloadModal(true)}
                     >
-                      <div className="flex flex-row space-x-2 items-center">
-                        <DownloadOutlined rev={""} />
-                        <p className="whitespace-nowrap">Download Resume</p>
-                      </div>
-                    </ButtonSys>
+                      <DownloadIconSvg size={20} color={"#35763B"} />
+                      <p className="whitespace-nowrap text-xs/4 text-[#35763B] font-regular font-roboto">
+                        Download Resume
+                      </p>
+                    </div>
                   )}
                 </div>
               )}
