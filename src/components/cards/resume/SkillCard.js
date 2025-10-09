@@ -168,7 +168,7 @@ const SkillCard = ({
   };
 
   return (
-    <div className="shadow-lg rounded-md bg-white p-5 row-span-1">
+    <div className="border-neutrals70 shadow-desktopCard rounded-[10px] bg-white p-4 row-span-1">
       <h4 className="mig-heading--4">Skills</h4>
       <hr className="my-4" />
       <div className="mb-5">

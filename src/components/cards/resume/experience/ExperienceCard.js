@@ -138,7 +138,7 @@ const ExperienceCard = ({
   };
 
   return (
-    <div className="shadow-lg rounded-md bg-white p-5">
+    <div className="border-neutrals70 shadow-desktopCard rounded-[10px] bg-white p-4">
       <h4 className="mig-heading--4">Experience</h4>
       <hr className="my-4" />
       <Timeline>

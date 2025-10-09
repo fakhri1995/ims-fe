@@ -104,7 +104,7 @@ const SummaryCard = ({
   }
 
   return (
-    <div className="col-span-2 shadow-lg rounded-md bg-white p-5 mt-6">
+    <div className="col-span-2 border-neutrals70 shadow-desktopCard rounded-[10px] bg-white p-4 mt-6">
       <div className="flex flex-row items-center justify-between mb-4 ">
         <div className="flex flex-row space-x-2">
           <h3 className="mig-heading--3">Summary</h3>
