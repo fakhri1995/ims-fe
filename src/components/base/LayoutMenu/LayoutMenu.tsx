@@ -304,6 +304,13 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
+          {hasPermission(SIDEBAR_WORKDAY) && (
+            <Menu.Item key="chargecodes" className="text-mono50">
+              <Link href="/company/chargecode" legacyBehavior>
+                <p>Charge Codes</p>
+              </Link>
+            </Menu.Item>
+          )}
         </SubMenu>
       )}
 
