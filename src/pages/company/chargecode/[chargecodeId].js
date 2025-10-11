@@ -1,5 +1,4 @@
 import { Button, Input, Table, notification } from "antd";
-import axios from "axios";
 import {
   NumberParam,
   StringParam,
@@ -9,30 +8,32 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import QueryString from "qs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { AccessControl } from "components/features/AccessControl";
+import ModalAttendanceCode from "components/modal/company/modalAttendanceCode";
 
+// import enUS from 'antd/es/calendar/locale/en_US';
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  COMPANY_CLIENTS_GET,
-  WORKDAY_ADD,
-  WORKDAY_COMPANIES_GET,
-} from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import { WORKDAYS_GET } from "lib/features";
 
-import DrawerCompanyAddChargeCode from "../../../components/drawer/companies/chargecode/drawerCompanyAddChargeCode";
+import DrawerAddChargeCode from "../../../components/drawer/companies/chargecode/drawerAddChargeCode";
 import {
   EditTablerIconSvg,
   EyeIconSvg,
   PlusIconSvg,
+  TrashIconSvg,
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
 
-function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
+const ChargeCodeDetail = ({
+  initProps,
+  dataProfile,
+  sidemenu,
+  chargeCodeId,
+}) => {
   /**
    * Dependencies
    */
@@ -41,25 +42,12 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetCompanyWorkday = hasPermission(WORKDAY_COMPANIES_GET);
-  const isAllowedToAddCompanyWorkday = hasPermission(WORKDAY_ADD);
-  const rt = useRouter();
-
-  const tok = initProps;
-  const pathArr = rt.pathname.split("/").slice(1);
-
-  // Breadcrumb title
-  const pathTitleArr = [...pathArr];
-  pathTitleArr.splice(1, 1);
-  pathTitleArr.splice(1, 1, "Workday Schedule");
-  const [queryParams, setQueryParams] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
-    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-  });
-  const [loadingCreate, setLoadingCreate] = useState(false);
   const [showDrawerAdd, setShowDrawerAdd] = useState(false);
+  const [searchingFilterWorkingDays, setSearchingFilterWorkingDays] =
+    useState("");
+  const isAllowedToGetWorkdays = hasPermission(WORKDAYS_GET);
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [companyName, setCompanyName] = useState(null);
   const [dataRawWorkDay, setDataRawWorkDay] = useState({
     current_page: "",
     data: [],
@@ -74,10 +62,20 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
     to: null,
     total: null,
   });
-  const [searchingFilterWorkingDays, setSearchingFilterWorkingDays] =
-    useState("");
+  const tok = initProps;
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+  });
+  const rt = useRouter();
+  const pathArr = rt.pathname.split("/").slice(1);
+  const [datatable, setdatatable] = useState([]);
   const [loading, setLoading] = useState(false);
-  const columnWorkDay = [
+  const [rowstate, setrowstate] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const columnChargeCode = [
     {
       title: "No",
       key: "num",
@@ -93,7 +91,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
       },
     },
     {
-      title: "Company Name",
+      title: "Code Name",
       key: "name",
       dataIndex: "name",
       sorter: true,
@@ -106,10 +104,10 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
       },
     },
     {
-      title: "Total Code",
+      title: "Description",
       key: "workdays_count",
       width: 200,
-      sorter: true,
+      //   sorter: true,
       dataIndex: "workdays_count",
       render: (text, record, index) => {
         return {
@@ -118,13 +116,36 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
       },
     },
     {
-      title: "Employees Total",
+      title: "Attendance Code",
       key: "employees_count",
       dataIndex: "employees_count",
       sorter: true,
       render: (text, record, index) => {
         return {
-          children: <>{text} employees</>,
+          children: (
+            <div className={"flex flex-row gap-3"}>
+              <div className={"bg-[#35763B1A] px-2.5 py-0.5 rounded-[100px]"}>
+                <p className={"text-[#35763B] text-xs/5 font-bold font-inter"}>
+                  Present
+                </p>
+              </div>
+              <div className={"bg-[#00589F1A] px-2.5 py-0.5 rounded-[100px]"}>
+                <p className={"text-[#00589F] text-xs/5 font-bold font-inter"}>
+                  Overtime
+                </p>
+              </div>
+              <div className={"bg-[#F5851E1A] px-2.5 py-0.5 rounded-[100px]"}>
+                <p className={"text-[#F5851E] text-xs/5 font-bold font-inter"}>
+                  Paid Leave
+                </p>
+              </div>
+              <div className={"bg-[#BF4A401A] px-2.5 py-0.5 rounded-[100px]"}>
+                <p className={"text-[#BF4A40] text-xs/5 font-bold font-inter"}>
+                  Unpaid Leave
+                </p>
+              </div>
+            </div>
+          ),
         };
       },
     },
@@ -136,11 +157,18 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
         return {
           children: (
             <div className="flex flex-row gap-2">
+              <div
+                className={"hover:cursor-pointer"}
+                onClick={() => setShowModal(true)}
+              >
+                <EyeIconSvg size={20} color={"#808080"} />
+              </div>
               <Link href={`/company/workdayschedule/edit/${record.id}`}>
                 <EditTablerIconSvg size={20} color={"#808080"} />
               </Link>
+
               <Link href={`/company/chargecode/${record.id}`}>
-                <EyeIconSvg size={20} color={"#808080"} />
+                <TrashIconSvg size={20} color={"#BF4A40"} />
               </Link>
             </div>
           ),
@@ -148,11 +176,78 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
       },
     },
   ];
-  const [datatable, setdatatable] = useState([]);
-  const pageBreadcrumbValue = [
-    // { name: "Company", hrefValue: "/company/clients" },
-    { name: "Charge Codes" },
-  ];
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 1);
+  pathTitleArr.splice(1, 1, "Detail Company");
+  const breadcrumbValues = useMemo(() => {
+    const pageBreadcrumbValue = [
+      { name: "Charge Code", hrefValue: "/company/chargecode" },
+      { name: "Manage Charge Code" },
+    ];
+
+    // if (companyName) {
+    //   pageBreadcrumbValue.push({ name: companyName });
+    // }
+
+    return pageBreadcrumbValue;
+  }, [companyName]);
+
+  useEffect(() => {
+    fetchDataDetail();
+  }, [isAllowedToGetWorkdays]);
+
+  const fetchDataDetail = async () => {
+    try {
+      // setLoading(true);
+      if (!isAllowedToGetWorkdays) {
+        permissionWarningNotification("Mendapatkan", "Get Work Days Data");
+        return;
+      }
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdays?company_id=${chargeCodeId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          // console.log('res2 work day ', res2)
+          setCompanyName(res2.data.company_name);
+          // let datatemp = res2.data.workdays;
+          // if (datatemp.length > 0) {
+          //   // fetchDataDetailStatistic(datatemp[0].id)
+          //   setDataWorkDay(datatemp);
+          //   setActive({
+          //     id: datatemp[0].id,
+          //     name: datatemp[0].name,
+          //     company_id: datatemp[0].company_id,
+          //   });
+          //   setDataSchedule(datatemp[0].schedule);
+          //   setWorkHours(datatemp[0].schedule);
+          // } else {
+          //   setDataWorkDay([]);
+          //   setActive({
+          //     ...active,
+          //     id: null,
+          //     name: null,
+          //     company_id: null,
+          //   });
+          //   setWorkHours([]);
+          // }
+          // let dataholidays = res2.data
+          // setCutiBersamaOptions(dataholidays.filter(item => item.is_cuti === 1))
+          // setLiburNasionalOptions(dataholidays.filter(item => item.is_cuti === 0))
+        });
+    } catch (err) {
+      // setError(err.message || "Something went wrong");
+    } finally {
+      // setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const payload = QueryString.stringify(queryParams, {
@@ -160,11 +255,11 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
     });
 
     const fetchData = async () => {
-      if (!isAllowedToGetCompanyWorkday) {
-        permissionWarningNotification("Mendapatkan", "Daftar Company Workday");
-        // setloaddatatable(false);
-        return;
-      }
+      //   if (!isAllowedToGetCompanyWorkday) {
+      //     permissionWarningNotification("Mendapatkan", "Daftar Company Workday");
+      //     // setloaddatatable(false);
+      //     return;
+      //   }
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdayCompanies${payload}&keyword=${searchingFilterWorkingDays}`,
         {
@@ -201,56 +296,46 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
     return () => clearTimeout(timer);
   }, [
     queryParams.page,
-    isAllowedToGetCompanyWorkday,
+    // isAllowedToGetCompanyWorkday,
     searchingFilterWorkingDays,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
   ]);
 
-  const [rowstate, setrowstate] = useState(0);
-
   return (
     <Layout
-      tok={tok}
+      tok={initProps}
       dataProfile={dataProfile}
       sidemenu={sidemenu}
-      pathArr={pathArr}
-      fixedBreadcrumbValues={pageBreadcrumbValue}
+      pathArr={pathTitleArr}
       st={st}
+      idpage={chargeCodeId}
+      fixedBreadcrumbValues={breadcrumbValues}
     >
-      {/* <div className="lg:col-span-3 flex flex-col px-4 pt-3 pb-0 border-neutrals70 bg-white">
-        <Calendar
-          fullscreen={true}
-          // headerRender={headerRender}
-          dateFullCellRender={dateFullCellRender}
-        />
-      </div> */}
       <div className="lg:col-span-3 flex flex-col rounded-[10px] border border-neutrals70 shadow-desktopCard bg-white">
         <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between px-4 pt-4 pb-3 ">
           <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
-            Company List
+            {companyName || "-"}
           </h4>
-          {isAllowedToAddCompanyWorkday && (
-            <Button
-              type={"primary"}
-              onClick={() => setShowDrawerAdd(true)}
-              className="btn btn-sm text-white font-semibold px-2 py-2 border 
+          <Button
+            type={"primary"}
+            onClick={() => setShowDrawerAdd(true)}
+            className="btn btn-sm text-white font-semibold px-2 py-2 border 
                         bg-primary100 hover:bg-primary75 border-primary100 
                         hover:border-primary75 focus:bg-primary100 focus:border-primary100 
                         flex-nowrap w-full md:w-fit"
-              icon={<PlusIconSvg size={16} color="#FFFFFF" />}
-            >
-              Add Company
-            </Button>
-          )}
+            icon={<PlusIconSvg size={16} color="#FFFFFF" />}
+          >
+            Create Charge Code
+          </Button>
         </div>
         <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full px-4 md:items-center mb-4 border-b pb-3">
           <div className="w-full md:w-full">
             <Input
               defaultValue={searchingFilterWorkingDays}
               style={{ width: `100%` }}
-              placeholder="Search Company's Name..."
+              placeholder="Search Code's Name..."
               allowClear
               onChange={(e) => {
                 setSearchingFilterWorkingDays(e.target.value);
@@ -264,31 +349,11 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
               //   disabled={!isAllowedToGetRecruitments}
             />
           </div>
-          {/* <div className="w-full md:w-3/12">
-            <Select
-              //   defaultValue={queryParams.recruitment_role_id}
-              allowClear
-              name={`role`}
-              //   disabled={!isAllowedToGetRecruitmentRolesList}
-              placeholder="All work day type"
-              style={{ width: `100%` }}
-              //   onChange={(value) => {
-              //     setQueryParams({ recruitment_role_id: value, page: 1 });
-              //     setSelectedRoleId(value);
-              //   }}
-            >
-              {dataWorkType.map((worktype) => (
-                <Select.Option key={worktype.id} value={worktype.id}>
-                  {worktype.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </div> */}
         </div>
         <div className={"px-4"}>
           <Table
             dataSource={datatable}
-            columns={columnWorkDay}
+            columns={columnChargeCode}
             rowKey={(record) => record.id}
             loading={loading}
             scroll={{ x: 200 }}
@@ -332,58 +397,66 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
             }}
           />
         </div>
-        <DrawerCompanyAddChargeCode
+        <DrawerAddChargeCode
           visible={showDrawerAdd}
           onvisible={setShowDrawerAdd}
           initProps={initProps}
-          isAllowedToAddCompany={isAllowedToAddCompanyWorkday}
+          isAllowedToAddCompany={true}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
+        />
+
+        <ModalAttendanceCode
+          visible={showModal}
+          onClose={() => setShowModal(false)}
+          initProps={initProps}
         />
       </div>
     </Layout>
   );
-}
+};
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, params }) {
+  const chargeCodeId = params.chargecodeId;
   var initProps = {};
-  const reqBody = {
-    page: 1,
-    rows: 50,
-    order_by: "asc",
-  };
-  if (req && req.headers) {
-    const cookies = req.headers.cookie;
-    if (!cookies) {
-      res.writeHead(302, { Location: "/login" });
-      res.end();
-    }
-    if (typeof cookies === "string") {
-      const cookiesJSON = httpcookie.parse(cookies);
-      initProps = cookiesJSON.token;
-    }
+  if (!req.headers.cookie) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
   }
+  const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+  if (!cookiesJSON1.token) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+  initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
       },
     }
   );
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
+
   return {
     props: {
       initProps,
       dataProfile,
-      // dataCompanyList,
-      // dataLocations,
-      sidemenu: "chargecodes",
+      sidemenu: "workdayschedule",
+      chargeCodeId,
     },
   };
 }
 
-export default ChargeCodeIndex;
+export default ChargeCodeDetail;

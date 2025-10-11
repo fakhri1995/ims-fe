@@ -3798,15 +3798,15 @@ const CloseOverlay = (props) => {
 const CheckBoldSvg = (props) => {
   const checkBoldSvg = () => (
     <svg
-      width="16"
-      height="16"
+      width={props.size ?? "16"}
+      height={props.size ?? "16"}
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         d="M3.33398 8.00033L6.66732 11.3337L13.334 4.66699"
-        stroke="white"
+        stroke={props.color ?? "currentColor"}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
