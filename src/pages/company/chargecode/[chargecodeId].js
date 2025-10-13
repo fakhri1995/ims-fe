@@ -1,4 +1,5 @@
-import { Button, Input, Table, notification } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Button, Input, Modal, Spin, Table, notification } from "antd";
 import {
   NumberParam,
   StringParam,
@@ -15,14 +16,17 @@ import ModalAttendanceCode from "components/modal/company/modalAttendanceCode";
 // import enUS from 'antd/es/calendar/locale/en_US';
 import { useAccessControl } from "contexts/access-control";
 
-import { WORKDAYS_GET } from "lib/features";
+import { CHARGE_CODES_GET } from "lib/features";
 
 import DrawerAddChargeCode from "../../../components/drawer/companies/chargecode/drawerAddChargeCode";
 import {
+  ArrowLeftIconSvg,
+  CloseIconSvg,
   EditTablerIconSvg,
   EyeIconSvg,
   PlusIconSvg,
   TrashIconSvg,
+  WarningIconSvg,
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard-management.module.css";
@@ -45,9 +49,15 @@ const ChargeCodeDetail = ({
   const [showDrawerAdd, setShowDrawerAdd] = useState(false);
   const [searchingFilterWorkingDays, setSearchingFilterWorkingDays] =
     useState("");
-  const isAllowedToGetWorkdays = hasPermission(WORKDAYS_GET);
+  const isAllowedToGetWorkdays = hasPermission(CHARGE_CODES_GET);
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [companyName, setCompanyName] = useState(null);
+  const [modalDelete, setModalDelete] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [active, setActive] = useState({
+    id: null,
+    name: null,
+  });
   const [dataRawWorkDay, setDataRawWorkDay] = useState({
     current_page: "",
     data: [],
@@ -75,6 +85,8 @@ const ChargeCodeDetail = ({
   const [loading, setLoading] = useState(false);
   const [rowstate, setrowstate] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [idChargeCode, setIdChargeCode] = useState(null);
+  const [isRefresh, setIsRefresh] = useState(-1);
   const columnChargeCode = [
     {
       title: "No",
@@ -105,47 +117,85 @@ const ChargeCodeDetail = ({
     },
     {
       title: "Description",
-      key: "workdays_count",
+      key: "description",
       width: 200,
       //   sorter: true,
-      dataIndex: "workdays_count",
+      dataIndex: "description",
       render: (text, record, index) => {
         return {
-          children: <>{text} schedules</>,
+          children: <>{text}</>,
         };
       },
     },
     {
       title: "Attendance Code",
-      key: "employees_count",
-      dataIndex: "employees_count",
+      key: "attendance_codes",
+      dataIndex: "attendance_codes",
       sorter: true,
       render: (text, record, index) => {
         return {
-          children: (
-            <div className={"flex flex-row gap-3"}>
-              <div className={"bg-[#35763B1A] px-2.5 py-0.5 rounded-[100px]"}>
-                <p className={"text-[#35763B] text-xs/5 font-bold font-inter"}>
-                  Present
-                </p>
+          children:
+            record.attendance_codes.length == 0 ? (
+              <p>-</p>
+            ) : (
+              <div className={"flex flex-row gap-3"}>
+                {record.attendance_codes.map((item, index) =>
+                  item.name == "Present" ? (
+                    <div
+                      className={"bg-[#35763B1A] px-2.5 py-0.5 rounded-[100px]"}
+                    >
+                      <p
+                        className={
+                          "text-[#35763B] text-xs/5 font-bold font-inter"
+                        }
+                      >
+                        Present
+                      </p>
+                    </div>
+                  ) : item.name == "Overtime" ? (
+                    <div
+                      className={"bg-[#00589F1A] px-2.5 py-0.5 rounded-[100px]"}
+                    >
+                      <p
+                        className={
+                          "text-[#00589F] text-xs/5 font-bold font-inter"
+                        }
+                      >
+                        Overtime
+                      </p>
+                    </div>
+                  ) : item.name == "Paid Leave" ? (
+                    <div
+                      className={"bg-[#F5851E1A] px-2.5 py-0.5 rounded-[100px]"}
+                    >
+                      <p
+                        className={
+                          "text-[#F5851E] text-xs/5 font-bold font-inter"
+                        }
+                      >
+                        Paid Leave
+                      </p>
+                    </div>
+                  ) : item.name == "Unpaid Leave" ? (
+                    <div
+                      className={"bg-[#BF4A401A] px-2.5 py-0.5 rounded-[100px]"}
+                    >
+                      <p
+                        className={
+                          "text-[#BF4A40] text-xs/5 font-bold font-inter"
+                        }
+                      >
+                        Unpaid Leave
+                      </p>
+                    </div>
+                  ) : (
+                    <p className={"text-xs/5 font-bold font-inter"}>
+                      {item.name}
+                    </p>
+                  )
+                )}
               </div>
-              <div className={"bg-[#00589F1A] px-2.5 py-0.5 rounded-[100px]"}>
-                <p className={"text-[#00589F] text-xs/5 font-bold font-inter"}>
-                  Overtime
-                </p>
-              </div>
-              <div className={"bg-[#F5851E1A] px-2.5 py-0.5 rounded-[100px]"}>
-                <p className={"text-[#F5851E] text-xs/5 font-bold font-inter"}>
-                  Paid Leave
-                </p>
-              </div>
-              <div className={"bg-[#BF4A401A] px-2.5 py-0.5 rounded-[100px]"}>
-                <p className={"text-[#BF4A40] text-xs/5 font-bold font-inter"}>
-                  Unpaid Leave
-                </p>
-              </div>
-            </div>
-          ),
+            ),
         };
       },
     },
@@ -159,7 +209,7 @@ const ChargeCodeDetail = ({
             <div className="flex flex-row gap-2">
               <div
                 className={"hover:cursor-pointer"}
-                onClick={() => setShowModal(true)}
+                onClick={() => showModalAttendance(record)}
               >
                 <EyeIconSvg size={20} color={"#808080"} />
               </div>
@@ -167,9 +217,12 @@ const ChargeCodeDetail = ({
                 <EditTablerIconSvg size={20} color={"#808080"} />
               </Link>
 
-              <Link href={`/company/chargecode/${record.id}`}>
+              <div
+                className={"hover:cursor-pointer"}
+                onClick={() => handleModalDelete(record)}
+              >
                 <TrashIconSvg size={20} color={"#BF4A40"} />
-              </Link>
+              </div>
             </div>
           ),
         };
@@ -192,19 +245,31 @@ const ChargeCodeDetail = ({
     return pageBreadcrumbValue;
   }, [companyName]);
 
+  const showModalAttendance = (record) => {
+    setShowModal(true);
+    setIdChargeCode(record.id);
+  };
+
   useEffect(() => {
     fetchDataDetail();
   }, [isAllowedToGetWorkdays]);
+
+  useEffect(() => {
+    if (isRefresh == -1) {
+      return;
+    }
+    fetchDataDetail();
+  }, [isRefresh]);
 
   const fetchDataDetail = async () => {
     try {
       // setLoading(true);
       if (!isAllowedToGetWorkdays) {
-        permissionWarningNotification("Mendapatkan", "Get Work Days Data");
+        permissionWarningNotification("Mendapatkan", "Get Charge Code Data");
         return;
       }
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdays?company_id=${chargeCodeId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getChargeCodes?company_id=${chargeCodeId}`,
         {
           method: `GET`,
           headers: {
@@ -215,8 +280,11 @@ const ChargeCodeDetail = ({
       )
         .then((res) => res.json())
         .then((res2) => {
-          // console.log('res2 work day ', res2)
           setCompanyName(res2.data.company_name);
+          if (res2.data.charge_codes) {
+            setdatatable(res2.data.charge_codes.data);
+            setDataRawWorkDay(res2.data.charge_codes);
+          }
           // let datatemp = res2.data.workdays;
           // if (datatemp.length > 0) {
           //   // fetchDataDetailStatistic(datatemp[0].id)
@@ -249,59 +317,51 @@ const ChargeCodeDetail = ({
     }
   };
 
-  useEffect(() => {
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
+  const cancelDelete = () => {
+    setModalDelete(false);
+  };
 
-    const fetchData = async () => {
-      //   if (!isAllowedToGetCompanyWorkday) {
-      //     permissionWarningNotification("Mendapatkan", "Daftar Company Workday");
-      //     // setloaddatatable(false);
-      //     return;
-      //   }
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdayCompanies${payload}&keyword=${searchingFilterWorkingDays}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            // console.log('isi datanya ',res2)
-            setDataRawWorkDay(res2.data);
-            setdatatable(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
+  const handleModalDelete = (record) => {
+    setActive({
+      ...active,
+      name: record.name,
+      id: record.id,
+    });
+    setModalDelete(true);
+  };
+
+  const handleDeleteChargeCode = () => {
+    setLoadingDelete(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteChargeCode`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: Number(active?.id),
+      }),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setLoadingDelete(false);
+          setModalDelete(false);
+          setIsRefresh(1);
+          notification["success"]({
+            message: `${active?.name} Charge Code successfully deleted`,
             duration: 3,
           });
-        })
-        .finally(() => setLoading(false));
-    };
-
-    const timer = setTimeout(() => fetchData(), 500);
-
-    return () => clearTimeout(timer);
-  }, [
-    queryParams.page,
-    // isAllowedToGetCompanyWorkday,
-    searchingFilterWorkingDays,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-  ]);
+        } else if (!res2.success) {
+          setLoadingDelete(false);
+          setModalDelete(false);
+          notification["error"]({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      });
+  };
 
   return (
     <Layout
@@ -315,9 +375,14 @@ const ChargeCodeDetail = ({
     >
       <div className="lg:col-span-3 flex flex-col rounded-[10px] border border-neutrals70 shadow-desktopCard bg-white">
         <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between px-4 pt-4 pb-3 ">
-          <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
-            {companyName || "-"}
-          </h4>
+          <div className={"flex flex-row gap-3"}>
+            <div className="hover:cursor-pointer" onClick={() => rt.back()}>
+              <ArrowLeftIconSvg />
+            </div>
+            <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
+              {companyName || "-"}
+            </h4>
+          </div>
           <Button
             type={"primary"}
             onClick={() => setShowDrawerAdd(true)}
@@ -404,13 +469,84 @@ const ChargeCodeDetail = ({
           isAllowedToAddCompany={true}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
+          setIsRefresh={setIsRefresh}
+          id_company={chargeCodeId}
         />
 
         <ModalAttendanceCode
           visible={showModal}
           onClose={() => setShowModal(false)}
+          idChargeCode={idChargeCode}
           initProps={initProps}
         />
+        <Modal
+          closeIcon={<CloseIconSvg size={20} color={"#808080"} />}
+          title={
+            <div className={"flex gap-2"}>
+              <WarningIconSvg />
+              <p
+                className={
+                  "font-medium text-sm leading-6 text-[#4D4D4D] font-inter"
+                }
+              >
+                Delete Charge Code?
+              </p>
+            </div>
+          }
+          open={modalDelete}
+          onCancel={() => {
+            // setmodaldelete(false);
+            cancelDelete();
+          }}
+          footer={
+            <div className={"flex gap-4 justify-end"}>
+              <div
+                onClick={() => cancelDelete()}
+                className={
+                  "bg-white border border-solid border-[#808080] py-2 px-4 rounded-md hover:cursor-pointer"
+                }
+              >
+                <p
+                  className={
+                    "text-sm leading-4 text-[#808080] font-medium font-roboto"
+                  }
+                >
+                  Cancel
+                </p>
+              </div>
+              <div
+                onClick={() => handleDeleteChargeCode()}
+                className={
+                  "bg-[#BF4A40] flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
+                }
+              >
+                {loadingDelete ? (
+                  <Spin
+                    spinning={loadingDelete}
+                    indicator={<LoadingOutlined />}
+                    size={"default"}
+                  />
+                ) : (
+                  <TrashIconSvg color={"white"} size={16} />
+                )}
+                <p className="text-white text-sm leading-4 font-medium font-roboto">
+                  Delete
+                </p>
+              </div>
+            </div>
+          }
+          // onOk={handleDelete}
+
+          maskClosable={true}
+          style={{ top: `3rem` }}
+          width={440}
+          destroyOnClose={true}
+        >
+          <p className={"text-[#4D4D4D] "}>
+            Are you sure you want to delete charge code name{" "}
+            <span className={"font-bold"}>{active?.name}</span>?
+          </p>
+        </Modal>
       </div>
     </Layout>
   );
@@ -453,7 +589,7 @@ export async function getServerSideProps({ req, res, params }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "workdayschedule",
+      sidemenu: "chargecodes",
       chargeCodeId,
     },
   };

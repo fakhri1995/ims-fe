@@ -23,6 +23,8 @@ const DrawerAddAttendanceCode = ({
   isAllowedToAddCompany,
   setLoadingCreate,
   loadingCreate,
+  idChargeCode,
+  setIsRefresh,
 }) => {
   /**
    * Dependencies
@@ -30,15 +32,27 @@ const DrawerAddAttendanceCode = ({
   const [instanceForm] = Form.useForm();
 
   // USESTATE
-  const [dataCompany, setDataCompany] = useState({
-    id: null,
-    name: "",
-    work_day_type: null,
-  });
   const [disabledCreate, setDisabledCreate] = useState(true);
   const [companyList, setCompanyList] = useState([]);
   const [loadingGetCompany, setLoadingGetCompany] = useState(false);
-  const [chargeCodes, setChargeCodes] = useState([]);
+  const attendanceCodeList = [
+    {
+      id: 1,
+      name: "Present",
+    },
+    {
+      id: 2,
+      name: "Overtime",
+    },
+    {
+      id: 3,
+      name: "Unpaid Leave",
+    },
+    {
+      id: 4,
+      name: "Paid Leave",
+    },
+  ];
   const [valuesCheckbox, setValuesCheckbox] = useState({
     hariMasuk: 0,
     hariPenggajian: 0,
@@ -46,27 +60,13 @@ const DrawerAddAttendanceCode = ({
   });
   // USEEFFECT
   // Validate input field
-  useEffect(() => {
-    if (dataCompany.name !== "" && dataCompany.work_day_type !== null) {
-      setDisabledCreate(false);
-    } else {
-      setDisabledCreate(true);
-    }
-  }, [dataCompany]);
-
-  //HANDLER
-  const onChangeInput = (e) => {
-    setDataRole({
-      ...dataRole,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   const clearData = () => {
-    setDataCompany({
-      id: null,
-      name: "",
-      work_day_type: null,
+    instanceForm.resetFields();
+    setValuesCheckbox({
+      hariMasuk: 0,
+      hariPenggajian: 0,
+      dapatDitagih: 0,
     });
   };
 
@@ -81,17 +81,59 @@ const DrawerAddAttendanceCode = ({
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("hasilnya ", res2);
         setCompanyList(res2.data);
         setLoadingGetCompany(false);
       });
   }, []);
 
-  const handleCreateChargeCode = () => {
-    if (!isAllowedToAddCompany) {
-      permissionWarningNotification("Add", "Company");
-      return;
-    }
+  const handleCreateChargeCode = (values) => {
+    const payload = {
+      // year: dataCompany.year,
+      charge_code_id: Number(idChargeCode),
+      name: values.attendance_code_name,
+      description: values.description,
+      // month: dataCompany.month,
+      hari_masuk: valuesCheckbox.hariMasuk,
+      hari_penggajian: valuesCheckbox.hariPenggajian,
+      dapat_ditagih: valuesCheckbox.dapatDitagih,
+    };
+    // console.log('Json stringify ', JSON.stringify(payload))
+    setLoadingCreate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addAttendanceCode`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        setLoadingCreate(false);
+        if (response2.status == 200) {
+          setIsRefresh(1);
+          cancelClick();
+          notification.success({
+            message: `Attendance Code has successfully created`,
+            duration: 3,
+            // onClose: () => {
+            //   rt.push("/company/workdayschedule/");
+            // },
+          });
+        } else {
+          notification.error({
+            message: `Create Attendance Code has failed. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        setLoadingCreate(false);
+        notification.error({
+          message: `Create Attendance Code has failed. ${err.response}`,
+          duration: 3,
+        });
+      });
   };
 
   const cancelClick = () => {
@@ -106,6 +148,22 @@ const DrawerAddAttendanceCode = ({
     }));
   };
 
+  const handleClickButton = () => {
+    // validasi dan ambil value form
+    if (!isAllowedToAddCompany) {
+      permissionWarningNotification("Add", "Attendance Code Company");
+      return;
+    }
+    instanceForm
+      .validateFields()
+      .then((values) => {
+        handleCreateChargeCode(values);
+      })
+      .catch((info) => {
+        console.log("Validasi gagal:", info);
+      });
+  };
+
   return (
     <DrawerCore
       title={"Create Attendance Code"}
@@ -116,7 +174,7 @@ const DrawerAddAttendanceCode = ({
       }}
       buttonOkText={"Save"}
       buttonCancelText={"Cancel"}
-      onClick={handleCreateChargeCode}
+      onClick={handleClickButton}
       disabled={false}
       onButtonCancelClicked={cancelClick}
     >
@@ -138,11 +196,30 @@ const DrawerAddAttendanceCode = ({
               className="w-full"
             >
               <div>
-                <Input
-                  className={"w-full"}
-                  placeholder="ex:Mighty"
-                  name={"charge_code_name"}
-                />
+                <Select
+                  showSearch
+                  optionFilterProp="children"
+                  placeholder="Select Attendance Code"
+                  filterOption={(input, option) =>
+                    (option?.children ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  loading={loadingGetCompany}
+                  style={{ width: `100%` }}
+                  // value={item?.name}
+                  onChange={(value) => {
+                    instanceForm.setFieldsValue({
+                      attendance_code_name: value,
+                    });
+                  }}
+                >
+                  {attendanceCodeList?.map((code) => (
+                    <Select.Option key={code.id} value={code.name}>
+                      {code.name}
+                    </Select.Option>
+                  ))}
+                </Select>
               </div>
             </Form.Item>
             <Form.Item

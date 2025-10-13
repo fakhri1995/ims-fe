@@ -1,5 +1,5 @@
-import { PlusCircleOutlined } from "@ant-design/icons";
-import { Modal, Table, notification } from "antd";
+import { LoadingOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { Modal, Spin, Table, notification } from "antd";
 import {
   NumberParam,
   StringParam,
@@ -18,13 +18,15 @@ import {
   EditTablerIconSvg,
   PlusIconSvg,
   TrashIconSvg,
+  WarningIconSvg,
 } from "../../icon";
 
-const ModalAttendanceCode = ({ visible, onClose, initProps }) => {
+const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
   const [statusActive, setStatusActive] = useState("1");
   const [datatable, setdatatable] = useState([]);
   const [loading, setLoading] = useState(false);
   const [rowstate, setrowstate] = useState(0);
+  const [attendanceName, setAttendanceName] = useState(null);
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
@@ -33,20 +35,27 @@ const ModalAttendanceCode = ({ visible, onClose, initProps }) => {
   });
   const [showDrawerAttendance, setShowDrawerAttendance] = useState(false);
   const [loadingCreate, setLoadingCreate] = useState(false);
-  const [dataRawWorkDay, setDataRawWorkDay] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
+  const [isRefresh, setIsRefresh] = useState(-1);
+  const [modalDelete, setModalDelete] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [active, setActive] = useState({
+    id: null,
+    name: null,
   });
+  // const [dataRawWorkDay, setDataRawWorkDay] = useState({
+  //   current_page: "",
+  //   data: [],
+  //   first_page_url: "",
+  //   from: 1,
+  //   last_page: 10,
+  //   last_page_url: "",
+  //   next_page_url: "",
+  //   path: "",
+  //   per_page: null,
+  //   prev_page_url: null,
+  //   to: null,
+  //   total: null,
+  // });
 
   const columnChargeCode = [
     {
@@ -55,11 +64,7 @@ const ModalAttendanceCode = ({ visible, onClose, initProps }) => {
       dataIndex: "num",
       render: (text, record, index) => {
         return {
-          children: (
-            <div className="flex justify-center">
-              {dataRawWorkDay?.from + index}
-            </div>
-          ),
+          children: <div className="flex justify-center">{index + 1}</div>,
         };
       },
     },
@@ -78,24 +83,24 @@ const ModalAttendanceCode = ({ visible, onClose, initProps }) => {
     },
     {
       title: "Description",
-      key: "workdays_count",
+      key: "description",
       width: 200,
       //   sorter: true,
-      dataIndex: "workdays_count",
+      dataIndex: "description",
       render: (text, record, index) => {
         return {
-          children: <>{text} schedules</>,
+          children: <>{text}</>,
         };
       },
     },
     {
       title: "Hari Masuk",
-      key: "name",
-      dataIndex: "name",
+      key: "hari_masuk",
+      dataIndex: "hari_masuk",
       render: (text, record, index) => {
         return {
           children:
-            (dataRawWorkDay?.from + index) % 2 == 0 ? (
+            text == 1 ? (
               <div className="flex gap-3">
                 <div className="flex justify-center items-center bg-[#35763B1A] w-6 h-6 rounded-[100px]">
                   <CheckBoldSvg color={"#35763B"} size={18} />
@@ -115,12 +120,12 @@ const ModalAttendanceCode = ({ visible, onClose, initProps }) => {
     },
     {
       title: "Penggajian",
-      key: "name",
-      dataIndex: "name",
+      key: "hari_penggajian",
+      dataIndex: "hari_penggajian",
       render: (text, record, index) => {
         return {
           children:
-            (dataRawWorkDay?.from + index) % 2 == 0 ? (
+            text == 1 ? (
               <div className="flex gap-3">
                 <div className="flex justify-center items-center bg-[#35763B1A] w-6 h-6 rounded-[100px]">
                   <CheckBoldSvg color={"#35763B"} size={18} />
@@ -140,12 +145,12 @@ const ModalAttendanceCode = ({ visible, onClose, initProps }) => {
     },
     {
       title: "Dapat Ditagih",
-      key: "name",
-      dataIndex: "name",
+      key: "dapat_ditagih",
+      dataIndex: "dapat_ditagih",
       render: (text, record, index) => {
         return {
           children:
-            (dataRawWorkDay?.from + index) % 2 == 0 ? (
+            text == 1 ? (
               <div className="flex gap-3">
                 <div className="flex justify-center items-center bg-[#35763B1A] w-6 h-6 rounded-[100px]">
                   <CheckBoldSvg color={"#35763B"} size={18} />
@@ -174,10 +179,12 @@ const ModalAttendanceCode = ({ visible, onClose, initProps }) => {
               <Link href={`/company/workdayschedule/edit/${record.id}`}>
                 <EditTablerIconSvg size={20} color={"#808080"} />
               </Link>
-
-              <Link href={`/company/chargecode/${record.id}`}>
+              <div
+                className={"hover:cursor-pointer"}
+                onClick={() => handleModalDelete(record)}
+              >
                 <TrashIconSvg size={20} color={"#BF4A40"} />
-              </Link>
+              </div>
             </div>
           ),
         };
@@ -186,67 +193,119 @@ const ModalAttendanceCode = ({ visible, onClose, initProps }) => {
   ];
 
   useEffect(() => {
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
-
     const fetchData = async () => {
-      //   if (!isAllowedToGetCompanyWorkday) {
-      //     permissionWarningNotification("Mendapatkan", "Daftar Company Workday");
-      //     // setloaddatatable(false);
-      //     return;
-      //   }
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdayCompanies${payload}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            // console.log('isi datanya ',res2)
-            setDataRawWorkDay(res2.data);
-            setdatatable(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setLoading(false));
+      if (!idChargeCode) {
+        return;
+      }
+      getDataModal();
     };
 
     const timer = setTimeout(() => fetchData(), 500);
 
     return () => clearTimeout(timer);
-  }, [
-    queryParams.page,
-    // isAllowedToGetCompanyWorkday,
-    // searchingFilterWorkingDays,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-  ]);
+  }, [idChargeCode]);
+
+  useEffect(() => {
+    if (isRefresh == -1) {
+      return;
+    }
+    getDataModal();
+  }, [isRefresh]);
+
+  const cancelDelete = () => {
+    setModalDelete(false);
+  };
+
+  const getDataModal = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getChargeCode?id=${idChargeCode}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          console.log("isi datanya modal ", res2.data.attendance_codes);
+          // setDataRawWorkDay(res2.data);
+          setdatatable(res2.data.attendance_codes);
+          setAttendanceName(res2.data.name);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const handleCancel = () => {
+    onClose();
+    setdatatable([]);
+    setAttendanceName(null);
+  };
+
+  const handleModalDelete = (record) => {
+    console.log("record ", record);
+    setActive({
+      ...active,
+      name: record.name,
+      id: record.id,
+    });
+    setModalDelete(true);
+  };
+
+  const handleDeleteAttendance = () => {
+    setLoadingDelete(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteAttendanceCode`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: Number(active?.id),
+      }),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setLoadingDelete(false);
+          setModalDelete(false);
+          setIsRefresh(1);
+          notification["success"]({
+            message: `${active?.name} Attendance Code successfully deleted`,
+            duration: 3,
+          });
+        } else if (!res2.success) {
+          setLoadingDelete(false);
+          setModalDelete(false);
+          notification["error"]({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      });
+  };
 
   return (
     <Modal
       open={visible}
-      onCancel={onClose}
+      onCancel={handleCancel}
       className="modalCore"
       title={
         <p className={"text-sm/6 font-bold font-inter text-mono30"}>
-          MIGHTY Attendance Code
+          {attendanceName ? attendanceName : "-"} Attendance Code
         </p>
       }
       footer={null}
@@ -318,7 +377,77 @@ const ModalAttendanceCode = ({ visible, onClose, initProps }) => {
         isAllowedToAddCompany={true}
         setLoadingCreate={setLoadingCreate}
         loadingCreate={loadingCreate}
+        idChargeCode={idChargeCode}
+        setIsRefresh={setIsRefresh}
       />
+      <Modal
+        closeIcon={<CloseIconSvg size={20} color={"#808080"} />}
+        title={
+          <div className={"flex gap-2"}>
+            <WarningIconSvg />
+            <p
+              className={
+                "font-medium text-sm leading-6 text-[#4D4D4D] font-inter"
+              }
+            >
+              Delete Attendance Code?
+            </p>
+          </div>
+        }
+        open={modalDelete}
+        onCancel={() => {
+          // setmodaldelete(false);
+          cancelDelete();
+        }}
+        footer={
+          <div className={"flex gap-4 justify-end"}>
+            <div
+              onClick={() => cancelDelete()}
+              className={
+                "bg-white border border-solid border-[#808080] py-2 px-4 rounded-md hover:cursor-pointer"
+              }
+            >
+              <p
+                className={
+                  "text-sm leading-4 text-[#808080] font-medium font-roboto"
+                }
+              >
+                Cancel
+              </p>
+            </div>
+            <div
+              onClick={() => handleDeleteAttendance()}
+              className={
+                "bg-[#BF4A40] flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
+              }
+            >
+              {loadingDelete ? (
+                <Spin
+                  spinning={loadingDelete}
+                  indicator={<LoadingOutlined />}
+                  size={"default"}
+                />
+              ) : (
+                <TrashIconSvg color={"white"} size={16} />
+              )}
+              <p className="text-white text-sm leading-4 font-medium font-roboto">
+                Delete
+              </p>
+            </div>
+          </div>
+        }
+        // onOk={handleDelete}
+
+        maskClosable={true}
+        style={{ top: `3rem` }}
+        width={440}
+        destroyOnClose={true}
+      >
+        <p className={"text-[#4D4D4D] "}>
+          Are you sure you want to delete attendance code name{" "}
+          <span className={"font-bold"}>{active?.name}</span>?
+        </p>
+      </Modal>
     </Modal>
   );
 };

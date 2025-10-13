@@ -16,9 +16,9 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  COMPANY_CLIENTS_GET,
+  CHARGE_CODES_COMPANY_ADD,
+  CHARGE_CODE_COMPANIES_GET,
   WORKDAY_ADD,
-  WORKDAY_COMPANIES_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
@@ -41,8 +41,8 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetCompanyWorkday = hasPermission(WORKDAY_COMPANIES_GET);
-  const isAllowedToAddCompanyWorkday = hasPermission(WORKDAY_ADD);
+  const isAllowedToGetCompanyWorkday = hasPermission(CHARGE_CODE_COMPANIES_GET);
+  const isAllowedToAddCompanyWorkday = hasPermission(CHARGE_CODES_COMPANY_ADD);
   const rt = useRouter();
 
   const tok = initProps;
@@ -77,6 +77,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
   const [searchingFilterWorkingDays, setSearchingFilterWorkingDays] =
     useState("");
   const [loading, setLoading] = useState(false);
+  const [isRefresh, setIsRefresh] = useState(-1);
   const columnWorkDay = [
     {
       title: "No",
@@ -107,13 +108,13 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
     },
     {
       title: "Total Code",
-      key: "workdays_count",
+      key: "charge_codes_count",
       width: 200,
       sorter: true,
-      dataIndex: "workdays_count",
+      dataIndex: "charge_codes_count",
       render: (text, record, index) => {
         return {
-          children: <>{text} schedules</>,
+          children: <>{text} Charge Code</>,
         };
       },
     },
@@ -161,12 +162,15 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
 
     const fetchData = async () => {
       if (!isAllowedToGetCompanyWorkday) {
-        permissionWarningNotification("Mendapatkan", "Daftar Company Workday");
+        permissionWarningNotification(
+          "Mendapatkan",
+          "Daftar Company Charge C0de"
+        );
         // setloaddatatable(false);
         return;
       }
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getWorkdayCompanies${payload}&keyword=${searchingFilterWorkingDays}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getChargeCodeCompanies${payload}&keyword=${searchingFilterWorkingDays}`,
         {
           method: `GET`,
           headers: {
@@ -177,7 +181,6 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
         .then((res) => res.json())
         .then((res2) => {
           if (res2.success) {
-            // console.log('isi datanya ',res2)
             setDataRawWorkDay(res2.data);
             setdatatable(res2.data.data);
           } else {
@@ -206,6 +209,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
+    isRefresh != -1,
   ]);
 
   const [rowstate, setrowstate] = useState(0);
@@ -339,6 +343,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
           isAllowedToAddCompany={isAllowedToAddCompanyWorkday}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
+          setIsRefresh={setIsRefresh}
         />
       </div>
     </Layout>
