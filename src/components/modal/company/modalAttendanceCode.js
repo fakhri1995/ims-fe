@@ -11,6 +11,7 @@ import QueryString from "qs";
 import React, { useEffect, useState } from "react";
 
 import DrawerAddAttendanceCode from "../../drawer/companies/chargecode/drawerAddAttendanceCode";
+import DrawerEditAttendanceCode from "../../drawer/companies/chargecode/drawerEditAttendanceCode";
 import {
   CheckBoldSvg,
   CheckIconSvg,
@@ -42,6 +43,9 @@ const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
     id: null,
     name: null,
   });
+  const [showEditDrawerAttendance, setShowEditDrawerAttendance] =
+    useState(false);
+  const [dataAttendanceCode, setDataAttendanceCode] = useState(null);
   // const [dataRawWorkDay, setDataRawWorkDay] = useState({
   //   current_page: "",
   //   data: [],
@@ -176,9 +180,12 @@ const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
         return {
           children: (
             <div className="flex flex-row gap-2">
-              <Link href={`/company/workdayschedule/edit/${record.id}`}>
+              <div
+                className={"hover:cursor-pointer"}
+                onClick={() => handleEdit(record)}
+              >
                 <EditTablerIconSvg size={20} color={"#808080"} />
-              </Link>
+              </div>
               <div
                 className={"hover:cursor-pointer"}
                 onClick={() => handleModalDelete(record)}
@@ -205,6 +212,11 @@ const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
     return () => clearTimeout(timer);
   }, [idChargeCode]);
 
+  const handleEdit = (record) => {
+    setShowEditDrawerAttendance(true);
+    setDataAttendanceCode(record);
+  };
+
   useEffect(() => {
     if (isRefresh == -1) {
       return;
@@ -229,7 +241,6 @@ const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log("isi datanya modal ", res2.data.attendance_codes);
           // setDataRawWorkDay(res2.data);
           setdatatable(res2.data.attendance_codes);
           setAttendanceName(res2.data.name);
@@ -256,7 +267,6 @@ const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
   };
 
   const handleModalDelete = (record) => {
-    console.log("record ", record);
     setActive({
       ...active,
       name: record.name,
@@ -379,6 +389,17 @@ const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
         loadingCreate={loadingCreate}
         idChargeCode={idChargeCode}
         setIsRefresh={setIsRefresh}
+      />
+      <DrawerEditAttendanceCode
+        visible={showEditDrawerAttendance}
+        onvisible={setShowEditDrawerAttendance}
+        initProps={initProps}
+        isAllowedToAddCompany={true}
+        setLoadingCreate={setLoadingCreate}
+        loadingCreate={loadingCreate}
+        idChargeCode={idChargeCode}
+        setIsRefresh={setIsRefresh}
+        dataAttendanceCode={dataAttendanceCode}
       />
       <Modal
         closeIcon={<CloseIconSvg size={20} color={"#808080"} />}

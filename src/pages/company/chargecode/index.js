@@ -23,6 +23,7 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import DrawerCompanyAddChargeCode from "../../../components/drawer/companies/chargecode/drawerCompanyAddChargeCode";
+import DrawerEditCompanyChargeCode from "../../../components/drawer/companies/chargecode/drawerEditCompanyChargeCode";
 import {
   EditTablerIconSvg,
   EyeIconSvg,
@@ -60,6 +61,8 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
   });
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [showDrawerAdd, setShowDrawerAdd] = useState(false);
+  const [showDrawerEdit, setShowDrawerEdit] = useState(false);
+  const [idCompany, setIdCompany] = useState(null);
   const [dataRawWorkDay, setDataRawWorkDay] = useState({
     current_page: "",
     data: [],
@@ -137,9 +140,12 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
         return {
           children: (
             <div className="flex flex-row gap-2">
-              <Link href={`/company/workdayschedule/edit/${record.id}`}>
+              <div
+                className={"hover:cursor-pointer"}
+                onClick={() => handleEdit(record)}
+              >
                 <EditTablerIconSvg size={20} color={"#808080"} />
-              </Link>
+              </div>
               <Link href={`/company/chargecode/${record.id}`}>
                 <EyeIconSvg size={20} color={"#808080"} />
               </Link>
@@ -155,6 +161,10 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
     { name: "Charge Codes" },
   ];
 
+  const handleEdit = (record) => {
+    setIdCompany(record.id);
+    setShowDrawerEdit(true);
+  };
   useEffect(() => {
     const payload = QueryString.stringify(queryParams, {
       addQueryPrefix: true,
@@ -344,6 +354,16 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
           setIsRefresh={setIsRefresh}
+        />
+        <DrawerEditCompanyChargeCode
+          visible={showDrawerEdit}
+          onvisible={setShowDrawerEdit}
+          initProps={initProps}
+          isAllowedToAddCompany={isAllowedToAddCompanyWorkday}
+          setLoadingCreate={setLoadingCreate}
+          loadingCreate={loadingCreate}
+          setIsRefresh={setIsRefresh}
+          id={idCompany}
         />
       </div>
     </Layout>
