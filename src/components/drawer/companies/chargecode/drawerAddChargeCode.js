@@ -23,6 +23,8 @@ const DrawerAddChargeCode = ({
   isAllowedToAddCompany,
   setLoadingCreate,
   loadingCreate,
+  id_company,
+  setIsRefresh,
 }) => {
   /**
    * Dependencies
@@ -39,6 +41,24 @@ const DrawerAddChargeCode = ({
   const [companyList, setCompanyList] = useState([]);
   const [loadingGetCompany, setLoadingGetCompany] = useState(false);
   const [chargeCodes, setChargeCodes] = useState([]);
+  const attendanceCodeList = [
+    {
+      id: 1,
+      name: "Present",
+    },
+    {
+      id: 2,
+      name: "Overtime",
+    },
+    {
+      id: 3,
+      name: "Unpaid Leave",
+    },
+    {
+      id: 4,
+      name: "Paid Leave",
+    },
+  ];
   // USEEFFECT
   // Validate input field
   useEffect(() => {
@@ -76,16 +96,67 @@ const DrawerAddChargeCode = ({
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("hasilnya ", res2);
         setCompanyList(res2.data);
         setLoadingGetCompany(false);
       });
   }, []);
 
-  const handleCreateChargeCode = () => {
-    if (!isAllowedToAddCompany) {
-      permissionWarningNotification("Add", "Company");
-      return;
+  const handleCreateChargeCode = (values) => {
+    const hasDuplicate = chargeCodes.some(
+      (item, index) =>
+        chargeCodes.findIndex((obj) => obj.name === item.name) !== index
+    );
+    if (hasDuplicate) {
+      notification.error({
+        message: `Attendance code name must be different`,
+        duration: 1,
+      });
+    } else {
+      const payload = {
+        // year: dataCompany.year,
+        company_id: Number(id_company),
+        name: values.charge_code_name,
+        description: values.description,
+        // month: dataCompany.month,
+        attendance_codes: chargeCodes,
+      };
+      // console.log('Json stringify ', JSON.stringify(payload))
+      setLoadingCreate(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addChargeCode`, {
+        method: "POST",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+        .then((response) => response.json())
+        .then((response2) => {
+          setLoadingCreate(false);
+          if (response2.status == 200) {
+            setIsRefresh(1);
+            cancelClick();
+            notification.success({
+              message: `Charge Codes has successfully created`,
+              duration: 3,
+              // onClose: () => {
+              //   rt.push("/company/workdayschedule/");
+              // },
+            });
+          } else {
+            notification.error({
+              message: `Create Charge Codes has failed. ${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          setLoadingCreate(false);
+          notification.error({
+            message: `Create Charge Codes has failed. ${err.response}`,
+            duration: 3,
+          });
+        });
     }
   };
 
@@ -106,18 +177,38 @@ const DrawerAddChargeCode = ({
     setChargeCodes(newData);
   };
   const handleAdd = () => {
-    setChargeCodes([...chargeCodes, { name: "", description: "" }]);
+    setChargeCodes([
+      ...chargeCodes,
+      {
+        name: "",
+        description: "",
+        hari_masuk: 0,
+        hari_penggajian: 0,
+        dapat_ditagih: 0,
+      },
+    ]);
   };
 
-  const handleDelete = (index) => {
-    const newData = chargeCodes.filter((_, i) => i !== index);
-    setChargeCodes(newData);
-  };
-
-  const handleDuplicate = (index) => {
+  const handleCheckboxChange = (index, key, checked) => {
+    let temp = "";
     const newData = [...chargeCodes];
-    newData.splice(index + 1, 0, { ...chargeCodes[index] });
+    newData[index][key] = checked ? 1 : 0;
     setChargeCodes(newData);
+  };
+  const handleClickButton = () => {
+    // validasi dan ambil value form
+    if (!isAllowedToAddCompany) {
+      permissionWarningNotification("Add", "Charge Code");
+      return;
+    }
+    instanceForm
+      .validateFields()
+      .then((values) => {
+        handleCreateChargeCode(values);
+      })
+      .catch((info) => {
+        console.log("Validasi gagal:", info);
+      });
   };
 
   return (
@@ -130,7 +221,7 @@ const DrawerAddChargeCode = ({
       }}
       buttonOkText={"Save"}
       buttonCancelText={"Cancel"}
-      onClick={handleCreateChargeCode}
+      onClick={handleClickButton}
       disabled={false}
       onButtonCancelClicked={cancelClick}
     >
@@ -178,68 +269,143 @@ const DrawerAddChargeCode = ({
                 />
               </div>
             </Form.Item>
-
-            <div className={"p-4 rounded-[10px] border border-[#E6E6E6]"}>
-              <p className={"text-xs/5 font-bold font-inter text-mono30 mb-4"}>
-                Attendance Code 1
-              </p>
-              <Form layout="vertical">
-                <Form.Item
-                  label="Attendance Code Name"
-                  name={"attendance_code_name"}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Attendance Code Name is required",
-                    },
-                  ]}
-                  className="w-full"
+            {chargeCodes.map((item, index) => (
+              <div
+                className={`p-4 rounded-[10px] border border-[#E6E6E6] ${
+                  index != 0 ? "mt-4" : "mt-0"
+                }`}
+              >
+                <p
+                  className={"text-xs/5 font-bold font-inter text-mono30 mb-4"}
                 >
-                  <div>
-                    <Input
-                      className={"w-full"}
-                      placeholder="ex : MIGHTY"
-                      name={"attendance_code_name"}
-                      // value={item.name}
-                      // onChange={(e) =>
-                      //     handleChangeName(index, e.target.value)
-                      // }
-                    />
+                  Attendance Code {index + 1}
+                </p>
+                <Form layout="vertical">
+                  <Form.Item
+                    label="Attendance Code Name"
+                    name={"attendance_code_name"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Attendance Code Name is required",
+                      },
+                    ]}
+                    className="w-full"
+                  >
+                    <div>
+                      <Select
+                        showSearch
+                        optionFilterProp="children"
+                        placeholder="Select Company"
+                        filterOption={(input, option) =>
+                          (option?.children ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                        loading={loadingGetCompany}
+                        style={{ width: `100%` }}
+                        value={item?.name}
+                        onChange={(value) => {
+                          handleChangeName(index, value);
+                        }}
+                      >
+                        {attendanceCodeList?.map((code) => (
+                          <Select.Option key={code.id} value={code.name}>
+                            {code.name}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+                  </Form.Item>
+                  <Form.Item
+                    label="Description"
+                    name={"description"}
+                    // rules={[
+                    //   {
+                    //     required: true,
+                    //     message: "Charge Code Name is required",
+                    //   },
+                    // ]}
+                    className="w-full"
+                  >
+                    <div>
+                      <Input
+                        className={"w-full"}
+                        placeholder="ex:Proyek Interna;"
+                        name={"description"}
+                        value={item?.description}
+                        onChange={(e) =>
+                          handleChangeDescription(index, e.target.value)
+                        }
+                      />
+                    </div>
+                  </Form.Item>
+                  <div className={"flex flex-row justify-between"}>
+                    <Checkbox
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          index,
+                          "hari_masuk",
+                          e.target.checked
+                        )
+                      }
+                    >
+                      Hari Masuk
+                    </Checkbox>
+                    <p className={"text-sm/6 font-inter text-mono30"}>
+                      {item?.hari_masuk ? "1" : "0"}
+                    </p>
                   </div>
-                </Form.Item>
-                <Form.Item
-                  label="Description"
-                  name={"description"}
-                  // rules={[
-                  //   {
-                  //     required: true,
-                  //     message: "Charge Code Name is required",
-                  //   },
-                  // ]}
-                  className="w-full"
-                >
-                  <div>
-                    <Input
-                      className={"w-full"}
-                      placeholder="ex:Proyek Interna;"
-                      name={"description"}
-                      // value={item.description}
-                      // onChange={(e) =>
-                      //     handleChangeDescription(index, e.target.value)
-                      // }
-                    />
+                  <div className={"flex flex-row justify-between mt-3"}>
+                    <Checkbox
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          index,
+                          "hari_penggajian",
+                          e.target.checked
+                        )
+                      }
+                    >
+                      Hari Penggajian
+                    </Checkbox>
+                    <p className={"text-sm/6 font-inter text-mono30"}>
+                      {item?.hari_penggajian ? "1" : "0"}
+                    </p>
                   </div>
-                </Form.Item>
-                <div className={"flex flex-row justify-between"}>
-                  <Checkbox>Hari Masuk</Checkbox>
-                  <InputNumber min={0} defaultValue={0} style={{ width: 60 }} />
-                </div>
-                <div className={"flex flex-row justify-between"}>
-                  <Checkbox>Hari Penggajian</Checkbox>
-                  <InputNumber min={0} defaultValue={0} style={{ width: 60 }} />
-                </div>
-              </Form>
-            </div>
+                  <div className={"flex flex-row justify-between mt-3"}>
+                    <Checkbox
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          index,
+                          "dapat_ditagih",
+                          e.target.checked
+                        )
+                      }
+                    >
+                      Dapat Ditagih
+                    </Checkbox>
+                    <p className={"text-sm/6 font-inter text-mono30"}>
+                      {item?.dapat_ditagih ? "1" : "0"}
+                    </p>
+                  </div>
+                </Form>
+              </div>
+            ))}
+            <Button
+              type="dashed"
+              block
+              style={{
+                borderColor: "#35763B",
+                color: "#35763B",
+                height: 32,
+                marginTop: 16,
+              }}
+              className="flex justify-center items-center"
+              icon={<PlusCircleOutlined />}
+              onClick={handleAdd}
+            >
+              Add More Charge Code
+            </Button>
           </Form>
         </div>
       </Spin>

@@ -13,6 +13,7 @@ const DrawerCompanyAddChargeCode = ({
   isAllowedToAddCompany,
   setLoadingCreate,
   loadingCreate,
+  setIsRefresh,
 }) => {
   /**
    * Dependencies
@@ -53,6 +54,8 @@ const DrawerCompanyAddChargeCode = ({
       name: "",
       work_day_type: null,
     });
+    instanceForm.resetFields();
+    setChargeCodes([]);
   };
 
   useEffect(() => {
@@ -72,11 +75,82 @@ const DrawerCompanyAddChargeCode = ({
       });
   }, []);
 
-  const handleCreateChargeCode = () => {
+  const handleCreateChargeCode = (values) => {
+    if (checkChargeCode) {
+      const payload = {
+        // year: dataCompany.year,
+        company_id: Number(dataCompany.id),
+        // month: dataCompany.month,
+        charge_codes: chargeCodes,
+      };
+      // console.log('Json stringify ', JSON.stringify(payload))
+      setLoadingCreate(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addChargeCodesCompany`, {
+        method: "POST",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+        .then((response) => response.json())
+        .then((response2) => {
+          setLoadingCreate(false);
+          if (response2.status == 200) {
+            setIsRefresh(1);
+            cancelClick();
+            notification.success({
+              message: `Charge Codes Company has successfully created`,
+              duration: 3,
+              // onClose: () => {
+              //   rt.push("/company/workdayschedule/");
+              // },
+            });
+          } else {
+            notification.error({
+              message: `Create Charge Codes Company has failed. ${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          setLoadingCreate(false);
+          notification.error({
+            message: `Create Charge Codes Company has failed. ${err.response}`,
+            duration: 3,
+          });
+        });
+    }
+  };
+
+  function checkChargeCode() {
+    const allEmpty = chargeCodes.every(
+      (item) => !item.name || item.name.trim() === ""
+    );
+
+    if (allEmpty) {
+      // setWarningWorkingDay(true);
+      return false;
+    } else {
+      // setWarningWorkingDay(false);
+      return true;
+    }
+  }
+
+  const handleClickButton = () => {
+    // validasi dan ambil value form
     if (!isAllowedToAddCompany) {
-      permissionWarningNotification("Add", "Company");
+      permissionWarningNotification("Add", "Charge Code Company");
       return;
     }
+    instanceForm
+      .validateFields()
+      .then((values) => {
+        handleCreateChargeCode(values);
+      })
+      .catch((info) => {
+        console.log("Validasi gagal:", info);
+      });
   };
 
   const cancelClick = () => {
@@ -120,7 +194,7 @@ const DrawerCompanyAddChargeCode = ({
       }}
       buttonOkText={"Add Company"}
       buttonCancelText={"Cancel"}
-      onClick={handleCreateChargeCode}
+      onClick={handleClickButton}
       disabled={false}
       onButtonCancelClicked={cancelClick}
     >
@@ -132,7 +206,7 @@ const DrawerCompanyAddChargeCode = ({
           <Form layout="vertical" form={instanceForm} className="">
             <Form.Item
               label="Company"
-              name={"recruitment_role_type_id"}
+              name={"company_id"}
               rules={[
                 {
                   required: true,
@@ -153,12 +227,13 @@ const DrawerCompanyAddChargeCode = ({
                   }
                   loading={loadingGetCompany}
                   style={{ width: `100%` }}
-                  value={dataCompany.recruitment_role_type_id}
+                  value={dataCompany.id}
                   onChange={(value) => {
                     setDataCompany({
                       ...dataCompany,
-                      name: value,
+                      id: value,
                     });
+                    instanceForm.setFieldsValue({ company_id: value });
                   }}
                 >
                   {companyList?.map((company) => (
