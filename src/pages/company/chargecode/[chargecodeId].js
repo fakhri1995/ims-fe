@@ -19,6 +19,7 @@ import { useAccessControl } from "contexts/access-control";
 import { CHARGE_CODES_GET } from "lib/features";
 
 import DrawerAddChargeCode from "../../../components/drawer/companies/chargecode/drawerAddChargeCode";
+import DrawerEditChargeCode from "../../../components/drawer/companies/chargecode/drawerEditChargeCode";
 import {
   ArrowLeftIconSvg,
   CloseIconSvg,
@@ -87,6 +88,9 @@ const ChargeCodeDetail = ({
   const [showModal, setShowModal] = useState(false);
   const [idChargeCode, setIdChargeCode] = useState(null);
   const [isRefresh, setIsRefresh] = useState(-1);
+  const [idEdit, setIdEdit] = useState(null);
+  const [showDrawerEdit, setShowDrawerEdit] = useState(false);
+
   const columnChargeCode = [
     {
       title: "No",
@@ -213,9 +217,12 @@ const ChargeCodeDetail = ({
               >
                 <EyeIconSvg size={20} color={"#808080"} />
               </div>
-              <Link href={`/company/workdayschedule/edit/${record.id}`}>
+              <div
+                className={"hover:cursor-pointer"}
+                onClick={() => handleEdit(record)}
+              >
                 <EditTablerIconSvg size={20} color={"#808080"} />
-              </Link>
+              </div>
 
               <div
                 className={"hover:cursor-pointer"}
@@ -260,6 +267,11 @@ const ChargeCodeDetail = ({
     }
     fetchDataDetail();
   }, [isRefresh]);
+
+  const handleEdit = (record) => {
+    setIdEdit(record.id);
+    setShowDrawerEdit(true);
+  };
 
   const fetchDataDetail = async () => {
     try {
@@ -471,6 +483,18 @@ const ChargeCodeDetail = ({
           loadingCreate={loadingCreate}
           setIsRefresh={setIsRefresh}
           id_company={chargeCodeId}
+        />
+
+        <DrawerEditChargeCode
+          visible={showDrawerEdit}
+          onvisible={setShowDrawerEdit}
+          initProps={initProps}
+          isAllowedToAddCompany={true}
+          setLoadingCreate={setLoadingCreate}
+          loadingCreate={loadingCreate}
+          setIsRefresh={setIsRefresh}
+          id_company={chargeCodeId}
+          id={idEdit}
         />
 
         <ModalAttendanceCode
