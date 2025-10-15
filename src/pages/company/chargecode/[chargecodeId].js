@@ -502,6 +502,7 @@ const ChargeCodeDetail = ({
           onClose={() => setShowModal(false)}
           idChargeCode={idChargeCode}
           initProps={initProps}
+          setIdChargeCode={setIdChargeCode}
         />
         <Modal
           closeIcon={<CloseIconSvg size={20} color={"#808080"} />}

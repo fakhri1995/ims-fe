@@ -8,6 +8,7 @@ import {
   Select,
   Space,
   Spin,
+  Switch,
   notification,
 } from "antd";
 import React, { useEffect, useState } from "react";
@@ -40,6 +41,7 @@ const DrawerEditAttendanceCode = ({
     description: null,
   });
   const [loadingGetCompany, setLoadingGetCompany] = useState(false);
+  const [isVerification, setIsVerification] = useState(0);
   const attendanceCodeList = [
     {
       id: 1,
@@ -90,6 +92,7 @@ const DrawerEditAttendanceCode = ({
       name: dataAttendanceCode?.name,
       description: dataAttendanceCode?.description,
     });
+    setIsVerification(dataAttendanceCode?.perlu_verifikasi);
     setValuesCheckbox({
       ...valuesCheckbox,
       dapatDitagih: dataAttendanceCode?.dapat_ditagih,
@@ -121,7 +124,7 @@ const DrawerEditAttendanceCode = ({
       charge_code_id: Number(idChargeCode),
       name: values.attendance_code_name,
       description: values.description,
-      // month: dataCompany.month,
+      perlu_verifikasi: isVerification,
       hari_masuk: valuesCheckbox.hariMasuk,
       hari_penggajian: valuesCheckbox.hariPenggajian,
       dapat_ditagih: valuesCheckbox.dapatDitagih,
@@ -282,6 +285,15 @@ const DrawerEditAttendanceCode = ({
                 />
               </div>
             </Form.Item>
+            <div className={"flex gap-2.5 items-center mb-3"}>
+              <p className={"text-sm/6 font-inter font-normal text-mono30"}>
+                Verifikasi Berkas
+              </p>
+              <Switch
+                checked={isVerification == 1 ? true : false}
+                onChange={(value) => setIsVerification(value ? 1 : 0)}
+              />
+            </div>
             <div className={"flex flex-col gap-3"}>
               <div className={"flex flex-row justify-between"}>
                 <Checkbox

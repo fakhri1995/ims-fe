@@ -151,7 +151,24 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
     notificationSuccess({ message: response.data.message });
   }, []);
-
+  const attendanceCodeList = [
+    {
+      id: 1,
+      name: "Present",
+    },
+    {
+      id: 2,
+      name: "Overtime",
+    },
+    {
+      id: 3,
+      name: "Unpaid Leave",
+    },
+    {
+      id: 4,
+      name: "Paid Leave",
+    },
+  ];
   const onMutationFailed = useCallback((error: AxiosError<any, any>) => {
     notificationError({ message: error.response.data.message });
   }, []);
@@ -283,6 +300,37 @@ export const AttendanceStaffAktivitasDrawer: FC<
                 required: "This field is required!",
               }}
             >
+              <Form.Item
+                label="Select Project"
+                name={"project_name"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Project is required",
+                  },
+                ]}
+                className="w-full"
+              >
+                <div>
+                  <Select
+                    showSearch
+                    optionFilterProp="children"
+                    placeholder="Select Project"
+                    // loading={loadingGetCompany}
+                    style={{ width: `100%` }}
+                    // value={item?.name}
+                    onChange={(value) => {
+                      form.setFieldsValue({ project_name: value });
+                    }}
+                  >
+                    {attendanceCodeList?.map((code) => (
+                      <Select.Option key={code.id} value={code.name}>
+                        {code.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+              </Form.Item>
               {userAttendanceForm.details.map(
                 ({ name, description, type, key, list, required }) => {
                   return (
