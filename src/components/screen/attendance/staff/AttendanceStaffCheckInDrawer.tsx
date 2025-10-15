@@ -81,6 +81,24 @@ export const AttendanceStaffCheckInDrawer: FC<
   );
 
   const [isWebcamModalShown, setIsWebcamModalShown] = useState(false);
+  const attendanceCodeList = [
+    {
+      id: 1,
+      name: "Present",
+    },
+    {
+      id: 2,
+      name: "Overtime",
+    },
+    {
+      id: 3,
+      name: "Unpaid Leave",
+    },
+    {
+      id: 4,
+      name: "Paid Leave",
+    },
+  ];
 
   /**
    * Validating uploaded file before finally attached to the paylaod.
@@ -323,6 +341,40 @@ export const AttendanceStaffCheckInDrawer: FC<
                 </div>
 
                 {/* Kerja Dari: hanya tampilkan ketika Check In */}
+                {attendeeStatus === "checkout" && (
+                  <Form.Item
+                    label="Select Attendance Code"
+                    name={"attendance_code_name"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Attendance Code is required",
+                      },
+                    ]}
+                    className="w-full"
+                  >
+                    <div>
+                      <Select
+                        showSearch
+                        optionFilterProp="children"
+                        placeholder="Select Attendance Code"
+                        // loading={loadingGetCompany}
+                        style={{ width: `100%` }}
+                        // value={item?.name}
+                        onChange={(value) => {
+                          form.setFieldsValue({ attendance_code_name: value });
+                        }}
+                      >
+                        {attendanceCodeList?.map((code) => (
+                          <Select.Option key={code.id} value={code.name}>
+                            {code.name}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+                  </Form.Item>
+                )}
+
                 {attendeeStatus === "checkout" && (
                   <Form.Item
                     name="work_from"

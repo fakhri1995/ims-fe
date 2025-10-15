@@ -69,7 +69,6 @@ const DrawerCompanyAddChargeCode = ({
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("hasilnya ", res2);
         setCompanyList(res2.data);
         setLoadingGetCompany(false);
       });

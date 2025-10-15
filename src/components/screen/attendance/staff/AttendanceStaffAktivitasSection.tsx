@@ -435,6 +435,14 @@ export const AttendanceStaffAktivitasSection: FC<
         width: 120,
         align: "center",
       },
+      {
+        key: "id",
+        title: "Project",
+        render: (_, __, index) =>
+          `${(currentPage - 1) * pageSize + index + 1}.`,
+        width: 51,
+        align: "center",
+      },
     ];
 
     const renderCell = (text: string) => {

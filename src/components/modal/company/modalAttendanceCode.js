@@ -22,7 +22,13 @@ import {
   WarningIconSvg,
 } from "../../icon";
 
-const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
+const ModalAttendanceCode = ({
+  visible,
+  onClose,
+  initProps,
+  idChargeCode,
+  setIdChargeCode,
+}) => {
   const [statusActive, setStatusActive] = useState("1");
   const [datatable, setdatatable] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -200,16 +206,12 @@ const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!idChargeCode) {
-        return;
-      }
+    // if (isRefresh == -1) {
+    //   return;
+    // }
+    if (idChargeCode) {
       getDataModal();
-    };
-
-    const timer = setTimeout(() => fetchData(), 500);
-
-    return () => clearTimeout(timer);
+    }
   }, [idChargeCode]);
 
   const handleEdit = (record) => {
@@ -218,10 +220,12 @@ const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
   };
 
   useEffect(() => {
-    if (isRefresh == -1) {
-      return;
+    // if (isRefresh == -1) {
+    //   return;
+    // }
+    if (idChargeCode) {
+      getDataModal();
     }
-    getDataModal();
   }, [isRefresh]);
 
   const cancelDelete = () => {
@@ -229,6 +233,7 @@ const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
   };
 
   const getDataModal = () => {
+    console.log("get data modal ");
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getChargeCode?id=${idChargeCode}`,
       {
@@ -263,6 +268,7 @@ const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
   const handleCancel = () => {
     onClose();
     setdatatable([]);
+    setIdChargeCode(null);
     setAttendanceName(null);
   };
 
@@ -366,6 +372,7 @@ const ModalAttendanceCode = ({ visible, onClose, initProps, idChargeCode }) => {
                                 }`;
           }}
         />
+        {console.log("id charge code ", idChargeCode)}
         <div className={"flex justify-center mt-4"}>
           <div
             onClick={() => setShowDrawerAttendance(true)}

@@ -8,6 +8,7 @@ import {
   Select,
   Space,
   Spin,
+  Switch,
   notification,
 } from "antd";
 import React, { useEffect, useState } from "react";
@@ -251,6 +252,13 @@ const DrawerEditChargeCode = ({
       });
   };
 
+  const handleSwitchVerification = (index, value) => {
+    // console.log('value ',value)
+    const newData = [...chargeCodes];
+    newData[index].perlu_verifikasi = value ? 1 : 0;
+    setChargeCodes(newData);
+  };
+
   return (
     <DrawerCore
       title={"Update Charge Code"}
@@ -396,6 +404,19 @@ const DrawerEditChargeCode = ({
                       />
                     </div>
                   </Form.Item>
+                  <div className={"flex gap-2.5 items-center mb-3"}>
+                    <p
+                      className={"text-sm/6 font-inter font-normal text-mono30"}
+                    >
+                      Verifikasi Berkas
+                    </p>
+                    <Switch
+                      checked={item.perlu_verifikasi == 1 ? true : false}
+                      onChange={(value) =>
+                        handleSwitchVerification(index, value)
+                      }
+                    />
+                  </div>
                   <div className={"flex flex-row justify-between"}>
                     <Checkbox
                       checked={item?.hari_masuk}

@@ -8,12 +8,13 @@ import {
   Select,
   Space,
   Spin,
+  Switch,
   notification,
 } from "antd";
 import React, { useEffect, useState } from "react";
 
 import { permissionWarningNotification } from "../../../../lib/helper";
-import { CopyIconSvg, TrashIconSvg } from "../../../icon";
+import { CopyIconSvg, InfoCircleIconSvg, TrashIconSvg } from "../../../icon";
 import DrawerCore from "../../drawerCore";
 
 const DrawerAddChargeCode = ({
@@ -182,6 +183,7 @@ const DrawerAddChargeCode = ({
       {
         name: "",
         description: "",
+        perlu_verifikasi: false,
         hari_masuk: 0,
         hari_penggajian: 0,
         dapat_ditagih: 0,
@@ -209,6 +211,24 @@ const DrawerAddChargeCode = ({
       .catch((info) => {
         console.log("Validasi gagal:", info);
       });
+  };
+
+  const handleSwitchVerification = (index, value) => {
+    // console.log('value ',value)
+    const newData = [...chargeCodes];
+    newData[index].perlu_verifikasi = value ? 1 : 0;
+    setChargeCodes(newData);
+  };
+
+  const handleDelete = (index) => {
+    const newData = chargeCodes.filter((_, i) => i !== index);
+    setChargeCodes(newData);
+  };
+
+  const handleDuplicate = (index) => {
+    const newData = [...chargeCodes];
+    newData.splice(index + 1, 0, { ...chargeCodes[index] });
+    setChargeCodes(newData);
   };
 
   return (
@@ -329,7 +349,8 @@ const DrawerAddChargeCode = ({
                     className="w-full"
                   >
                     <div>
-                      <Input
+                      <Input.TextArea
+                        rows={4}
                         className={"w-full"}
                         placeholder="ex:Proyek Interna;"
                         name={"description"}
@@ -340,6 +361,34 @@ const DrawerAddChargeCode = ({
                       />
                     </div>
                   </Form.Item>
+                  <div className={"flex gap-2.5 items-center mb-3"}>
+                    <p
+                      className={"text-sm/6 font-inter font-normal text-mono30"}
+                    >
+                      Verifikasi Berkas
+                    </p>
+                    <Switch
+                      checked={item?.perlu_verifikasi == 1 ? true : false}
+                      onChange={(value) =>
+                        handleSwitchVerification(index, value)
+                      }
+                    />
+                  </div>
+                  <div
+                    className={
+                      "flex items-center gap-2 px-3 py-2 mb-3 rounded-[4px] w-full bg-[#00589F1A]"
+                    }
+                  >
+                    <InfoCircleIconSvg size={16} color={"#00589F"} />
+                    <p
+                      className={
+                        "text-[#00589F] text-xs/5 font-inter font-normal"
+                      }
+                    >
+                      Jika verifikasi berkas menyala, akan muncul field untuk
+                      mengunggah berkas pendukung.
+                    </p>
+                  </div>
                   <div className={"flex flex-row justify-between"}>
                     <Checkbox
                       onChange={(e) =>
@@ -387,6 +436,25 @@ const DrawerAddChargeCode = ({
                     <p className={"text-sm/6 font-inter text-mono30"}>
                       {item?.dapat_ditagih ? "1" : "0"}
                     </p>
+                  </div>
+                  <div className={"flex gap-4 justify-end mt-3"}>
+                    <div
+                      onClick={() => handleDuplicate(index)}
+                      className={"hover:cursor-pointer"}
+                    >
+                      <CopyIconSvg size={24} color={"#4D4D4D"} />
+                    </div>
+                    {/* <Button
+                                                                                      danger
+                                                                                      icon={<DeleteOutlined />}
+                                                                                      onClick={() => handleDelete(index)}
+                                                                                    /> */}
+                    <div
+                      onClick={() => handleDelete(index)}
+                      className={"hover:cursor-pointer"}
+                    >
+                      <TrashIconSvg size={24} color={"#4D4D4D"} />
+                    </div>
                   </div>
                 </Form>
               </div>

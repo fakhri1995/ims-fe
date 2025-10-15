@@ -140,12 +140,12 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
         return {
           children: (
             <div className="flex flex-row gap-2">
-              <div
+              {/* <div
                 className={"hover:cursor-pointer"}
                 onClick={() => handleEdit(record)}
               >
                 <EditTablerIconSvg size={20} color={"#808080"} />
-              </div>
+              </div> */}
               <Link href={`/company/chargecode/${record.id}`}>
                 <EyeIconSvg size={20} color={"#808080"} />
               </Link>

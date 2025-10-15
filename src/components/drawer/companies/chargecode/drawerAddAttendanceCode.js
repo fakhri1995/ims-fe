@@ -8,6 +8,7 @@ import {
   Select,
   Space,
   Spin,
+  Switch,
   notification,
 } from "antd";
 import React, { useEffect, useState } from "react";
@@ -53,6 +54,7 @@ const DrawerAddAttendanceCode = ({
       name: "Paid Leave",
     },
   ];
+  const [isVerification, setIsVerification] = useState(0);
   const [valuesCheckbox, setValuesCheckbox] = useState({
     hariMasuk: 0,
     hariPenggajian: 0,
@@ -63,6 +65,7 @@ const DrawerAddAttendanceCode = ({
 
   const clearData = () => {
     instanceForm.resetFields();
+    setIsVerification(0);
     setValuesCheckbox({
       hariMasuk: 0,
       hariPenggajian: 0,
@@ -92,6 +95,7 @@ const DrawerAddAttendanceCode = ({
       charge_code_id: Number(idChargeCode),
       name: values.attendance_code_name,
       description: values.description,
+      perlu_verifikasi: isVerification,
       // month: dataCompany.month,
       hari_masuk: valuesCheckbox.hariMasuk,
       hari_penggajian: valuesCheckbox.hariPenggajian,
@@ -241,6 +245,15 @@ const DrawerAddAttendanceCode = ({
                 />
               </div>
             </Form.Item>
+            <div className={"flex gap-2.5 items-center mb-3"}>
+              <p className={"text-sm/6 font-inter font-normal text-mono30"}>
+                Verifikasi Berkas
+              </p>
+              <Switch
+                checked={isVerification == 1 ? true : false}
+                onChange={(value) => setIsVerification(value ? 1 : 0)}
+              />
+            </div>
             <div className={"flex flex-col gap-3"}>
               <div className={"flex flex-row justify-between"}>
                 <Checkbox
