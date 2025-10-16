@@ -21,10 +21,11 @@ const DrawerAddChargeCode = ({
   visible,
   onvisible,
   initProps,
-  isAllowedToAddCompany,
+  isAllowedToAddChargeCode,
   setLoadingCreate,
   loadingCreate,
   id_company,
+  companyName,
   setIsRefresh,
 }) => {
   /**
@@ -103,62 +104,51 @@ const DrawerAddChargeCode = ({
   }, []);
 
   const handleCreateChargeCode = (values) => {
-    const hasDuplicate = chargeCodes.some(
-      (item, index) =>
-        chargeCodes.findIndex((obj) => obj.name === item.name) !== index
-    );
-    if (hasDuplicate) {
-      notification.error({
-        message: `Attendance code name must be different`,
-        duration: 1,
-      });
-    } else {
-      const payload = {
-        // year: dataCompany.year,
-        company_id: Number(id_company),
-        name: values.charge_code_name,
-        description: values.description,
-        // month: dataCompany.month,
-        attendance_codes: chargeCodes,
-      };
-      // console.log('Json stringify ', JSON.stringify(payload))
-      setLoadingCreate(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addChargeCode`, {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
-        .then((response) => response.json())
-        .then((response2) => {
-          setLoadingCreate(false);
-          if (response2.status == 200) {
-            setIsRefresh(1);
-            cancelClick();
-            notification.success({
-              message: `Charge Codes has successfully created`,
-              duration: 3,
-              // onClose: () => {
-              //   rt.push("/company/workdayschedule/");
-              // },
-            });
-          } else {
-            notification.error({
-              message: `Create Charge Codes has failed. ${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          setLoadingCreate(false);
+    console.log("values ", values);
+    const payload = {
+      company_id: Number(id_company),
+      name: values.charge_code_name,
+      description: values.description,
+      color: values.color,
+      // month: dataCompany.month,
+    };
+    // console.log('Json stringify ', JSON.stringify(payload))
+    setLoadingCreate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addChargeCode`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        setLoadingCreate(false);
+        if (response2.status == 200) {
+          setIsRefresh(1);
+          cancelClick();
+          notification.success({
+            message: `Charge Codes has successfully created`,
+            duration: 3,
+            // onClose: () => {
+            //   rt.push("/company/workdayschedule/");
+            // },
+          });
+        } else {
           notification.error({
-            message: `Create Charge Codes has failed. ${err.response}`,
+            message: `Create Charge Codes has failed. ${response2.message}`,
             duration: 3,
           });
+        }
+      })
+      .catch((err) => {
+        setLoadingCreate(false);
+        notification.error({
+          message: `Create Charge Codes has failed. ${err.response}`,
+          duration: 3,
         });
-    }
+      });
   };
 
   const cancelClick = () => {
@@ -199,7 +189,7 @@ const DrawerAddChargeCode = ({
   };
   const handleClickButton = () => {
     // validasi dan ambil value form
-    if (!isAllowedToAddCompany) {
+    if (!isAllowedToAddChargeCode) {
       permissionWarningNotification("Add", "Charge Code");
       return;
     }
@@ -252,6 +242,19 @@ const DrawerAddChargeCode = ({
           </p>
           <Form layout="vertical" form={instanceForm} className="">
             <Form.Item
+              label="Company"
+              name={"company_id"}
+              className="col-span-2"
+            >
+              <div>
+                <Select
+                  disabled
+                  style={{ width: `100%` }}
+                  value={companyName}
+                />
+              </div>
+            </Form.Item>
+            <Form.Item
               label="Charge Code Name"
               name={"charge_code_name"}
               rules={[
@@ -268,6 +271,21 @@ const DrawerAddChargeCode = ({
                   placeholder="ex:Mighty"
                   name={"charge_code_name"}
                 />
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="Charge Code Color"
+              name={"color"}
+              rules={[
+                {
+                  required: true,
+                  message: "Charge Code Color is required",
+                },
+              ]}
+              className="w-full"
+            >
+              <div>
+                <Input type="color" style={{ width: 80 }} />
               </div>
             </Form.Item>
             <Form.Item
@@ -289,191 +307,6 @@ const DrawerAddChargeCode = ({
                 />
               </div>
             </Form.Item>
-            {chargeCodes.map((item, index) => (
-              <div
-                className={`p-4 rounded-[10px] border border-[#E6E6E6] ${
-                  index != 0 ? "mt-4" : "mt-0"
-                }`}
-              >
-                <p
-                  className={"text-xs/5 font-bold font-inter text-mono30 mb-4"}
-                >
-                  Attendance Code {index + 1}
-                </p>
-                <Form layout="vertical">
-                  <Form.Item
-                    label="Attendance Code Name"
-                    name={"attendance_code_name"}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Attendance Code Name is required",
-                      },
-                    ]}
-                    className="w-full"
-                  >
-                    <div>
-                      <Select
-                        showSearch
-                        optionFilterProp="children"
-                        placeholder="Select Company"
-                        filterOption={(input, option) =>
-                          (option?.children ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase())
-                        }
-                        loading={loadingGetCompany}
-                        style={{ width: `100%` }}
-                        value={item?.name}
-                        onChange={(value) => {
-                          handleChangeName(index, value);
-                        }}
-                      >
-                        {attendanceCodeList?.map((code) => (
-                          <Select.Option key={code.id} value={code.name}>
-                            {code.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </div>
-                  </Form.Item>
-                  <Form.Item
-                    label="Description"
-                    name={"description"}
-                    // rules={[
-                    //   {
-                    //     required: true,
-                    //     message: "Charge Code Name is required",
-                    //   },
-                    // ]}
-                    className="w-full"
-                  >
-                    <div>
-                      <Input.TextArea
-                        rows={4}
-                        className={"w-full"}
-                        placeholder="ex:Proyek Interna;"
-                        name={"description"}
-                        value={item?.description}
-                        onChange={(e) =>
-                          handleChangeDescription(index, e.target.value)
-                        }
-                      />
-                    </div>
-                  </Form.Item>
-                  <div className={"flex gap-2.5 items-center mb-3"}>
-                    <p
-                      className={"text-sm/6 font-inter font-normal text-mono30"}
-                    >
-                      Verifikasi Berkas
-                    </p>
-                    <Switch
-                      checked={item?.perlu_verifikasi == 1 ? true : false}
-                      onChange={(value) =>
-                        handleSwitchVerification(index, value)
-                      }
-                    />
-                  </div>
-                  <div
-                    className={
-                      "flex items-center gap-2 px-3 py-2 mb-3 rounded-[4px] w-full bg-[#00589F1A]"
-                    }
-                  >
-                    <InfoCircleIconSvg size={16} color={"#00589F"} />
-                    <p
-                      className={
-                        "text-[#00589F] text-xs/5 font-inter font-normal"
-                      }
-                    >
-                      Jika verifikasi berkas menyala, akan muncul field untuk
-                      mengunggah berkas pendukung.
-                    </p>
-                  </div>
-                  <div className={"flex flex-row justify-between"}>
-                    <Checkbox
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          index,
-                          "hari_masuk",
-                          e.target.checked
-                        )
-                      }
-                    >
-                      Hari Masuk
-                    </Checkbox>
-                    <p className={"text-sm/6 font-inter text-mono30"}>
-                      {item?.hari_masuk ? "1" : "0"}
-                    </p>
-                  </div>
-                  <div className={"flex flex-row justify-between mt-3"}>
-                    <Checkbox
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          index,
-                          "hari_penggajian",
-                          e.target.checked
-                        )
-                      }
-                    >
-                      Hari Penggajian
-                    </Checkbox>
-                    <p className={"text-sm/6 font-inter text-mono30"}>
-                      {item?.hari_penggajian ? "1" : "0"}
-                    </p>
-                  </div>
-                  <div className={"flex flex-row justify-between mt-3"}>
-                    <Checkbox
-                      onChange={(e) =>
-                        handleCheckboxChange(
-                          index,
-                          "dapat_ditagih",
-                          e.target.checked
-                        )
-                      }
-                    >
-                      Dapat Ditagih
-                    </Checkbox>
-                    <p className={"text-sm/6 font-inter text-mono30"}>
-                      {item?.dapat_ditagih ? "1" : "0"}
-                    </p>
-                  </div>
-                  <div className={"flex gap-4 justify-end mt-3"}>
-                    <div
-                      onClick={() => handleDuplicate(index)}
-                      className={"hover:cursor-pointer"}
-                    >
-                      <CopyIconSvg size={24} color={"#4D4D4D"} />
-                    </div>
-                    {/* <Button
-                                                                                      danger
-                                                                                      icon={<DeleteOutlined />}
-                                                                                      onClick={() => handleDelete(index)}
-                                                                                    /> */}
-                    <div
-                      onClick={() => handleDelete(index)}
-                      className={"hover:cursor-pointer"}
-                    >
-                      <TrashIconSvg size={24} color={"#4D4D4D"} />
-                    </div>
-                  </div>
-                </Form>
-              </div>
-            ))}
-            <Button
-              type="dashed"
-              block
-              style={{
-                borderColor: "#35763B",
-                color: "#35763B",
-                height: 32,
-                marginTop: 16,
-              }}
-              className="flex justify-center items-center"
-              icon={<PlusCircleOutlined />}
-              onClick={handleAdd}
-            >
-              Add More Charge Code
-            </Button>
           </Form>
         </div>
       </Spin>

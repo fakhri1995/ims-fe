@@ -14,18 +14,19 @@ import {
 import React, { useEffect, useState } from "react";
 
 import { permissionWarningNotification } from "../../../../lib/helper";
-import { CopyIconSvg, TrashIconSvg } from "../../../icon";
+import { CopyIconSvg, InfoCircleIconSvg, TrashIconSvg } from "../../../icon";
 import DrawerCore from "../../drawerCore";
 
 const DrawerAddAttendanceCode = ({
   visible,
   onvisible,
   initProps,
-  isAllowedToAddCompany,
+  isAllowedToAddAttendanceCode,
   setLoadingCreate,
   loadingCreate,
   idChargeCode,
   setIsRefresh,
+  companyName,
 }) => {
   /**
    * Dependencies
@@ -92,7 +93,7 @@ const DrawerAddAttendanceCode = ({
   const handleCreateChargeCode = (values) => {
     const payload = {
       // year: dataCompany.year,
-      charge_code_id: Number(idChargeCode),
+      company_id: Number(idChargeCode),
       name: values.attendance_code_name,
       description: values.description,
       perlu_verifikasi: isVerification,
@@ -154,7 +155,7 @@ const DrawerAddAttendanceCode = ({
 
   const handleClickButton = () => {
     // validasi dan ambil value form
-    if (!isAllowedToAddCompany) {
+    if (!isAllowedToAddAttendanceCode) {
       permissionWarningNotification("Add", "Attendance Code Company");
       return;
     }
@@ -188,6 +189,19 @@ const DrawerAddAttendanceCode = ({
             *This information is required to filled
           </p>
           <Form layout="vertical" form={instanceForm} className="">
+            <Form.Item
+              label="Company"
+              name={"company_id"}
+              className="col-span-2"
+            >
+              <div>
+                <Select
+                  disabled
+                  style={{ width: `100%` }}
+                  value={companyName}
+                />
+              </div>
+            </Form.Item>
             <Form.Item
               label="Attendance Code Name"
               name={"attendance_code_name"}
@@ -247,12 +261,23 @@ const DrawerAddAttendanceCode = ({
             </Form.Item>
             <div className={"flex gap-2.5 items-center mb-3"}>
               <p className={"text-sm/6 font-inter font-normal text-mono30"}>
-                Verifikasi Berkas
+                Perlu Verifikasi Berkas
               </p>
               <Switch
                 checked={isVerification == 1 ? true : false}
                 onChange={(value) => setIsVerification(value ? 1 : 0)}
               />
+            </div>
+            <div
+              className={
+                "flex items-center gap-2 px-3 py-2 mb-3 rounded-[4px] w-full bg-[#00589F1A]"
+              }
+            >
+              <InfoCircleIconSvg size={16} color={"#00589F"} />
+              <p className={"text-[#00589F] text-xs/5 font-inter font-normal"}>
+                Jika verifikasi berkas menyala, akan muncul field untuk
+                mengunggah berkas pendukung.
+              </p>
             </div>
             <div className={"flex flex-col gap-3"}>
               <div className={"flex flex-row justify-between"}>

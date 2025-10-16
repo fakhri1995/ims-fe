@@ -6,18 +6,22 @@ import {
   useQueryParams,
   withDefault,
 } from "next-query-params";
-import Link from "next/link";
-import QueryString from "qs";
 import React, { useEffect, useState } from "react";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  ATTENDANCE_CODE_ADD,
+  ATTENDANCE_CODE_DELETE,
+  ATTENDANCE_CODE_UPDATE,
+} from "lib/features";
 
 import DrawerAddAttendanceCode from "../../drawer/companies/chargecode/drawerAddAttendanceCode";
 import DrawerEditAttendanceCode from "../../drawer/companies/chargecode/drawerEditAttendanceCode";
 import {
   CheckBoldSvg,
-  CheckIconSvg,
   CloseIconSvg,
   EditTablerIconSvg,
-  PlusIconSvg,
   TrashIconSvg,
   WarningIconSvg,
 } from "../../icon";
@@ -29,6 +33,12 @@ const ModalAttendanceCode = ({
   idChargeCode,
   setIdChargeCode,
 }) => {
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+
   const [statusActive, setStatusActive] = useState("1");
   const [datatable, setdatatable] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -40,6 +50,9 @@ const ModalAttendanceCode = ({
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
   });
+  const isAllowedToAddAttendanceCode = hasPermission(ATTENDANCE_CODE_ADD);
+  const isAllowedToUpdateAttendanceCode = hasPermission(ATTENDANCE_CODE_UPDATE);
+  const isAllowedToDeleteAttendanceCode = hasPermission(ATTENDANCE_CODE_DELETE);
   const [showDrawerAttendance, setShowDrawerAttendance] = useState(false);
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [isRefresh, setIsRefresh] = useState(-1);
@@ -186,18 +199,22 @@ const ModalAttendanceCode = ({
         return {
           children: (
             <div className="flex flex-row gap-2">
-              <div
-                className={"hover:cursor-pointer"}
-                onClick={() => handleEdit(record)}
-              >
-                <EditTablerIconSvg size={20} color={"#808080"} />
-              </div>
-              <div
-                className={"hover:cursor-pointer"}
-                onClick={() => handleModalDelete(record)}
-              >
-                <TrashIconSvg size={20} color={"#BF4A40"} />
-              </div>
+              {isAllowedToUpdateAttendanceCode && (
+                <div
+                  className={"hover:cursor-pointer"}
+                  onClick={() => handleEdit(record)}
+                >
+                  <EditTablerIconSvg size={20} color={"#808080"} />
+                </div>
+              )}
+              {isAllowedToDeleteAttendanceCode && (
+                <div
+                  className={"hover:cursor-pointer"}
+                  onClick={() => handleModalDelete(record)}
+                >
+                  <TrashIconSvg size={20} color={"#BF4A40"} />
+                </div>
+              )}
             </div>
           ),
         };
@@ -372,26 +389,27 @@ const ModalAttendanceCode = ({
                                 }`;
           }}
         />
-        {console.log("id charge code ", idChargeCode)}
         <div className={"flex justify-center mt-4"}>
-          <div
-            onClick={() => setShowDrawerAttendance(true)}
-            className={
-              "hover:cursor-pointer flex gap-1.5 py-2 px-4 rounded-[5px] bg-[#35763B]"
-            }
-          >
-            <PlusCircleOutlined style={{ width: 16, color: "white" }} />
-            <p className={"text-white text-sm/4 font-roboto font-medium"}>
-              Add Charge Code
-            </p>
-          </div>
+          {isAllowedToAddAttendanceCode && (
+            <div
+              onClick={() => setShowDrawerAttendance(true)}
+              className={
+                "hover:cursor-pointer flex gap-1.5 py-2 px-4 rounded-[5px] bg-[#35763B]"
+              }
+            >
+              <PlusCircleOutlined style={{ width: 16, color: "white" }} />
+              <p className={"text-white text-sm/4 font-roboto font-medium"}>
+                Add Charge Code
+              </p>
+            </div>
+          )}
         </div>
       </div>
       <DrawerAddAttendanceCode
         visible={showDrawerAttendance}
         onvisible={setShowDrawerAttendance}
         initProps={initProps}
-        isAllowedToAddCompany={true}
+        isAllowedToAddAttendanceCode={isAllowedToAddAttendanceCode}
         setLoadingCreate={setLoadingCreate}
         loadingCreate={loadingCreate}
         idChargeCode={idChargeCode}
@@ -401,7 +419,7 @@ const ModalAttendanceCode = ({
         visible={showEditDrawerAttendance}
         onvisible={setShowEditDrawerAttendance}
         initProps={initProps}
-        isAllowedToAddCompany={true}
+        isAllowedToUpdateAttendanceCode={isAllowedToUpdateAttendanceCode}
         setLoadingCreate={setLoadingCreate}
         loadingCreate={loadingCreate}
         idChargeCode={idChargeCode}
