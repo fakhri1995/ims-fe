@@ -1,5 +1,5 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { Button, Input, Modal, Spin, Table, notification } from "antd";
+import { Button, Input, Modal, Spin, Table, Tag, notification } from "antd";
 import {
   NumberParam,
   StringParam,
@@ -16,12 +16,24 @@ import ModalAttendanceCode from "components/modal/company/modalAttendanceCode";
 // import enUS from 'antd/es/calendar/locale/en_US';
 import { useAccessControl } from "contexts/access-control";
 
-import { CHARGE_CODES_GET } from "lib/features";
+import {
+  ATTENDANCE_CODES_GET,
+  ATTENDANCE_CODE_ADD,
+  ATTENDANCE_CODE_DELETE,
+  ATTENDANCE_CODE_UPDATE,
+  CHARGE_CODES_GET,
+  CHARGE_CODE_ADD,
+  CHARGE_CODE_DELETE,
+  CHARGE_CODE_UPDATE,
+} from "lib/features";
 
+import DrawerAddAttendanceCode from "../../../components/drawer/companies/chargecode/drawerAddAttendanceCode";
 import DrawerAddChargeCode from "../../../components/drawer/companies/chargecode/drawerAddChargeCode";
+import DrawerEditAttendanceCode from "../../../components/drawer/companies/chargecode/drawerEditAttendanceCode";
 import DrawerEditChargeCode from "../../../components/drawer/companies/chargecode/drawerEditChargeCode";
 import {
   ArrowLeftIconSvg,
+  CheckBoldSvg,
   CloseIconSvg,
   EditTablerIconSvg,
   EyeIconSvg,
@@ -50,16 +62,47 @@ const ChargeCodeDetail = ({
   const [showDrawerAdd, setShowDrawerAdd] = useState(false);
   const [searchingFilterWorkingDays, setSearchingFilterWorkingDays] =
     useState("");
-  const isAllowedToGetWorkdays = hasPermission(CHARGE_CODES_GET);
+  const [searchingFilterChargeCode, setSearchingFilterChargeCode] =
+    useState("");
+
+  const isAllowedToGetAttendanceCodes = hasPermission(ATTENDANCE_CODES_GET);
+  const isAllowedToAddAttendanceCodes = hasPermission(ATTENDANCE_CODE_ADD);
+  const isAllowedToUpdateAttendanceCodes = hasPermission(
+    ATTENDANCE_CODE_UPDATE
+  );
+  const isAllowedToDeleteAttendanceCode = hasPermission(ATTENDANCE_CODE_DELETE);
+  const isAllowedToGetChargeCodes = hasPermission(CHARGE_CODES_GET);
+  const isAllowedToAddChargeCodes = hasPermission(CHARGE_CODE_ADD);
+  const isAllowedToUpdateChargeCodes = hasPermission(CHARGE_CODE_UPDATE);
+  const isAllowedToDeleteChargeCode = hasPermission(CHARGE_CODE_DELETE);
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [companyName, setCompanyName] = useState(null);
   const [modalDelete, setModalDelete] = useState(false);
+  const [modalDeleteAttendance, setModalDeleteAttendance] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [active, setActive] = useState({
     id: null,
     name: null,
   });
-  const [dataRawWorkDay, setDataRawWorkDay] = useState({
+  const [activeAttendance, setActiveAttendance] = useState({
+    id: null,
+    name: null,
+  });
+  const [dataRawAttendanceCode, setDataRawAttendanceCode] = useState({
+    current_page: "",
+    data: [],
+    first_page_url: "",
+    from: null,
+    last_page: null,
+    last_page_url: "",
+    next_page_url: "",
+    path: "",
+    per_page: null,
+    prev_page_url: null,
+    to: null,
+    total: null,
+  });
+  const [dataRawChargeCode, setDataRawChargeCode] = useState({
     current_page: "",
     data: [],
     first_page_url: "",
@@ -80,17 +123,30 @@ const ChargeCodeDetail = ({
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
   });
+
+  const [queryParamsAttendance, setQueryParamsAttendance] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+  });
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
+  const [datatableAttendance, setdatatableAttendance] = useState([]);
   const [datatable, setdatatable] = useState([]);
   const [loading, setLoading] = useState(false);
   const [rowstate, setrowstate] = useState(0);
+  const [rowstateAttendance, setrowstateAttendance] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [idChargeCode, setIdChargeCode] = useState(null);
   const [isRefresh, setIsRefresh] = useState(-1);
   const [idEdit, setIdEdit] = useState(null);
   const [showDrawerEdit, setShowDrawerEdit] = useState(false);
-
+  const [showDrawerAttendance, setShowDrawerAttendance] = useState(false);
+  const [showEditDrawerAttendance, setShowEditDrawerAttendance] =
+    useState(false);
+  const [dataAttendanceCode, setDataAttendanceCode] = useState(null);
+  const [activeTab, setActiveTab] = useState("attendance_code");
   const columnChargeCode = [
     {
       title: "No",
@@ -100,21 +156,137 @@ const ChargeCodeDetail = ({
         return {
           children: (
             <div className="flex justify-center">
-              {dataRawWorkDay?.from + index}
+              {dataRawChargeCode?.from + index}
             </div>
           ),
         };
       },
     },
     {
-      title: "Code Name",
+      title: "Charge Code",
       key: "name",
       dataIndex: "name",
       sorter: true,
       render: (text, record, index) => {
         return {
           children: (
-            <div className="xl:w-40">{record.name ? record.name : ""}</div>
+            <Tag
+              color={`${record?.color}1A`}
+              style={{
+                color: "#800080", // ungu tua untuk teks
+                borderRadius: "20px",
+                fontWeight: 600,
+                border: "none",
+                padding: "2px 10px",
+              }}
+            >
+              <p
+                className={`text-[${record?.color}] bg-[#165BB61A
+]`}
+              >
+                {record.name ? record.name : ""}
+              </p>
+            </Tag>
+          ),
+        };
+      },
+    },
+    {
+      title: "Description",
+      key: "description",
+      width: 700,
+      //   sorter: true,
+      dataIndex: "description",
+      render: (text, record, index) => {
+        return {
+          children: <>{text}</>,
+        };
+      },
+    },
+    {
+      title: "Action",
+      key: "button_action",
+      width: 50,
+      render: (text, record) => {
+        return {
+          children: (
+            <div className="flex flex-row gap-2">
+              {isAllowedToUpdateChargeCodes && (
+                <div
+                  className={"hover:cursor-pointer"}
+                  onClick={() => handleEdit(record)}
+                >
+                  <EditTablerIconSvg size={20} color={"#808080"} />
+                </div>
+              )}
+              {isAllowedToDeleteChargeCode && (
+                <div
+                  className={"hover:cursor-pointer"}
+                  onClick={() => handleModalDelete(record)}
+                >
+                  <TrashIconSvg size={20} color={"#BF4A40"} />
+                </div>
+              )}
+            </div>
+          ),
+        };
+      },
+    },
+  ];
+  const columnAttendanceCode = [
+    {
+      title: "No",
+      key: "num",
+      dataIndex: "num",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div className="flex justify-center">
+              {dataRawChargeCode?.from + index}
+            </div>
+          ),
+        };
+      },
+    },
+    {
+      title: "Attendance Code",
+      key: "name",
+      dataIndex: "name",
+      sorter: true,
+      render: (text, record, index) => {
+        return {
+          children: (
+            <Tag
+              color={`${
+                record?.name == "Present"
+                  ? "#35763B1A"
+                  : record?.name == "Overtime"
+                  ? "#00589F1A"
+                  : record?.name == "Paid Leave"
+                  ? "#F5851E1A"
+                  : "#F5851E1A"
+              }`}
+              style={{
+                borderRadius: "20px",
+                fontWeight: 600,
+                border: "none",
+                padding: "2px 10px",
+              }}
+            >
+              <p
+                className={`${
+                  record?.name == "Present"
+                    ? "text-primary100"
+                    : record?.name == "Overtime"
+                    ? "text-[#00589F]"
+                    : record?.name == "Paid Leave"
+                    ? "#F5851E"
+                    : "#BF4A40"
+                }`}
+              >
+                {record.name ? record.name : ""}
+              </p>
+            </Tag>
           ),
         };
       },
@@ -132,72 +304,75 @@ const ChargeCodeDetail = ({
       },
     },
     {
-      title: "Attendance Code",
-      key: "attendance_codes",
-      dataIndex: "attendance_codes",
-      sorter: true,
+      title: "Hari Masuk",
+      key: "hari_masuk",
+      dataIndex: "hari_masuk",
       render: (text, record, index) => {
         return {
           children:
-            record.attendance_codes.length == 0 ? (
-              <p>-</p>
+            text == 1 ? (
+              <div className="flex gap-3">
+                <div className="flex justify-center items-center bg-[#35763B1A] w-6 h-6 rounded-[100px]">
+                  <CheckBoldSvg color={"#35763B"} size={18} />
+                </div>
+                <p className="text-sm/6 font-inter text-mono30">1</p>
+              </div>
             ) : (
-              <div className={"flex flex-row gap-3"}>
-                {record.attendance_codes.map((item, index) =>
-                  item.name == "Present" ? (
-                    <div
-                      className={"bg-[#35763B1A] px-2.5 py-0.5 rounded-[100px]"}
-                    >
-                      <p
-                        className={
-                          "text-[#35763B] text-xs/5 font-bold font-inter"
-                        }
-                      >
-                        Present
-                      </p>
-                    </div>
-                  ) : item.name == "Overtime" ? (
-                    <div
-                      className={"bg-[#00589F1A] px-2.5 py-0.5 rounded-[100px]"}
-                    >
-                      <p
-                        className={
-                          "text-[#00589F] text-xs/5 font-bold font-inter"
-                        }
-                      >
-                        Overtime
-                      </p>
-                    </div>
-                  ) : item.name == "Paid Leave" ? (
-                    <div
-                      className={"bg-[#F5851E1A] px-2.5 py-0.5 rounded-[100px]"}
-                    >
-                      <p
-                        className={
-                          "text-[#F5851E] text-xs/5 font-bold font-inter"
-                        }
-                      >
-                        Paid Leave
-                      </p>
-                    </div>
-                  ) : item.name == "Unpaid Leave" ? (
-                    <div
-                      className={"bg-[#BF4A401A] px-2.5 py-0.5 rounded-[100px]"}
-                    >
-                      <p
-                        className={
-                          "text-[#BF4A40] text-xs/5 font-bold font-inter"
-                        }
-                      >
-                        Unpaid Leave
-                      </p>
-                    </div>
-                  ) : (
-                    <p className={"text-xs/5 font-bold font-inter"}>
-                      {item.name}
-                    </p>
-                  )
-                )}
+              <div className="flex gap-3">
+                <div className="flex justify-center items-center bg-[#BF4A401A] w-6 h-6 rounded-[100px]">
+                  <CloseIconSvg color={"#BF4A40"} size={18} />
+                </div>
+                <p className="text-sm/6 font-inter text-mono30">0</p>
+              </div>
+            ),
+        };
+      },
+    },
+    {
+      title: "Penggajian",
+      key: "hari_penggajian",
+      dataIndex: "hari_penggajian",
+      render: (text, record, index) => {
+        return {
+          children:
+            text == 1 ? (
+              <div className="flex gap-3">
+                <div className="flex justify-center items-center bg-[#35763B1A] w-6 h-6 rounded-[100px]">
+                  <CheckBoldSvg color={"#35763B"} size={18} />
+                </div>
+                <p className="text-sm/6 font-inter text-mono30">1</p>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <div className="flex justify-center items-center bg-[#BF4A401A] w-6 h-6 rounded-[100px]">
+                  <CloseIconSvg color={"#BF4A40"} size={18} />
+                </div>
+                <p className="text-sm/6 font-inter text-mono30">0</p>
+              </div>
+            ),
+        };
+      },
+    },
+    {
+      title: "Dapat Ditagih",
+      key: "dapat_ditagih",
+      dataIndex: "dapat_ditagih",
+      render: (text, record, index) => {
+        return {
+          children:
+            text == 1 ? (
+              <div className="flex gap-3">
+                <div className="flex justify-center items-center bg-[#35763B1A] w-6 h-6 rounded-[100px]">
+                  <CheckBoldSvg color={"#35763B"} size={18} />
+                </div>
+                <p className="text-sm/6 font-inter text-mono30">1</p>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <div className="flex justify-center items-center bg-[#BF4A401A] w-6 h-6 rounded-[100px]">
+                  <CloseIconSvg color={"#BF4A40"} size={18} />
+                </div>
+                <p className="text-sm/6 font-inter text-mono30">0</p>
               </div>
             ),
         };
@@ -211,25 +386,22 @@ const ChargeCodeDetail = ({
         return {
           children: (
             <div className="flex flex-row gap-2">
-              <div
-                className={"hover:cursor-pointer"}
-                onClick={() => showModalAttendance(record)}
-              >
-                <EyeIconSvg size={20} color={"#808080"} />
-              </div>
-              <div
-                className={"hover:cursor-pointer"}
-                onClick={() => handleEdit(record)}
-              >
-                <EditTablerIconSvg size={20} color={"#808080"} />
-              </div>
-
-              <div
-                className={"hover:cursor-pointer"}
-                onClick={() => handleModalDelete(record)}
-              >
-                <TrashIconSvg size={20} color={"#BF4A40"} />
-              </div>
+              {isAllowedToUpdateChargeCodes && (
+                <div
+                  className={"hover:cursor-pointer"}
+                  onClick={() => handleEditAttendance(record)}
+                >
+                  <EditTablerIconSvg size={20} color={"#808080"} />
+                </div>
+              )}
+              {isAllowedToDeleteAttendanceCode && (
+                <div
+                  className={"hover:cursor-pointer"}
+                  onClick={() => handleModalDeleteAttendance(record)}
+                >
+                  <TrashIconSvg size={20} color={"#BF4A40"} />
+                </div>
+              )}
             </div>
           ),
         };
@@ -241,7 +413,7 @@ const ChargeCodeDetail = ({
   pathTitleArr.splice(1, 1, "Detail Company");
   const breadcrumbValues = useMemo(() => {
     const pageBreadcrumbValue = [
-      { name: "Charge Code", hrefValue: "/company/chargecode" },
+      { name: "Attendance & Charge Code", hrefValue: "/company/chargecode" },
       { name: "Manage Charge Code" },
     ];
 
@@ -252,19 +424,19 @@ const ChargeCodeDetail = ({
     return pageBreadcrumbValue;
   }, [companyName]);
 
-  const showModalAttendance = (record) => {
-    setShowModal(true);
-    setIdChargeCode(record.id);
-  };
-
   useEffect(() => {
     fetchDataDetail();
-  }, [isAllowedToGetWorkdays]);
+  }, [isAllowedToGetChargeCodes, searchingFilterChargeCode]);
+
+  useEffect(() => {
+    fetchDataDetailAttendance();
+  }, [isAllowedToGetAttendanceCodes, searchingFilterWorkingDays]);
 
   useEffect(() => {
     if (isRefresh == -1) {
       return;
     }
+    fetchDataDetailAttendance();
     fetchDataDetail();
   }, [isRefresh]);
 
@@ -273,15 +445,46 @@ const ChargeCodeDetail = ({
     setShowDrawerEdit(true);
   };
 
-  const fetchDataDetail = async () => {
+  const fetchDataDetailAttendance = async () => {
     try {
       // setLoading(true);
-      if (!isAllowedToGetWorkdays) {
+      if (!isAllowedToGetChargeCodes) {
         permissionWarningNotification("Mendapatkan", "Get Charge Code Data");
         return;
       }
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getChargeCodes?company_id=${chargeCodeId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceCodes?company_id=${chargeCodeId}&keyword=${searchingFilterWorkingDays}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.data.charge_codes) {
+            setdatatableAttendance(res2.data.charge_codes.data);
+            setDataRawAttendanceCode(res2.data.charge_codes);
+          }
+        });
+    } catch (err) {
+      // setError(err.message || "Something went wrong");
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  const fetchDataDetail = async () => {
+    try {
+      // setLoading(true);
+      if (!isAllowedToGetChargeCodes) {
+        permissionWarningNotification("Mendapatkan", "Get Charge Code Data");
+        return;
+      }
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getChargeCodes?company_id=${chargeCodeId}&keyword=${searchingFilterChargeCode}`,
         {
           method: `GET`,
           headers: {
@@ -295,32 +498,8 @@ const ChargeCodeDetail = ({
           setCompanyName(res2.data.company_name);
           if (res2.data.charge_codes) {
             setdatatable(res2.data.charge_codes.data);
-            setDataRawWorkDay(res2.data.charge_codes);
+            setDataRawChargeCode(res2.data.charge_codes);
           }
-          // let datatemp = res2.data.workdays;
-          // if (datatemp.length > 0) {
-          //   // fetchDataDetailStatistic(datatemp[0].id)
-          //   setDataWorkDay(datatemp);
-          //   setActive({
-          //     id: datatemp[0].id,
-          //     name: datatemp[0].name,
-          //     company_id: datatemp[0].company_id,
-          //   });
-          //   setDataSchedule(datatemp[0].schedule);
-          //   setWorkHours(datatemp[0].schedule);
-          // } else {
-          //   setDataWorkDay([]);
-          //   setActive({
-          //     ...active,
-          //     id: null,
-          //     name: null,
-          //     company_id: null,
-          //   });
-          //   setWorkHours([]);
-          // }
-          // let dataholidays = res2.data
-          // setCutiBersamaOptions(dataholidays.filter(item => item.is_cuti === 1))
-          // setLiburNasionalOptions(dataholidays.filter(item => item.is_cuti === 0))
         });
     } catch (err) {
       // setError(err.message || "Something went wrong");
@@ -333,6 +512,15 @@ const ChargeCodeDetail = ({
     setModalDelete(false);
   };
 
+  const cancelDeleteAttendance = () => {
+    setModalDeleteAttendance(false);
+  };
+
+  const handleEditAttendance = (record) => {
+    setShowEditDrawerAttendance(true);
+    setDataAttendanceCode(record);
+  };
+
   const handleModalDelete = (record) => {
     setActive({
       ...active,
@@ -340,6 +528,15 @@ const ChargeCodeDetail = ({
       id: record.id,
     });
     setModalDelete(true);
+  };
+
+  const handleModalDeleteAttendance = (record) => {
+    setActiveAttendance({
+      ...activeAttendance,
+      name: record.name,
+      id: record.id,
+    });
+    setModalDeleteAttendance(true);
   };
 
   const handleDeleteChargeCode = () => {
@@ -375,6 +572,39 @@ const ChargeCodeDetail = ({
       });
   };
 
+  const handleDeleteAttendanceCode = () => {
+    setLoadingDelete(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteAttendanceCode`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: Number(activeAttendance?.id),
+      }),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setLoadingDelete(false);
+          setModalDeleteAttendance(false);
+          setIsRefresh(1);
+          notification["success"]({
+            message: `${activeAttendance?.name} Attendance Code successfully deleted`,
+            duration: 3,
+          });
+        } else if (!res2.success) {
+          setLoadingDelete(false);
+          setModalDeleteAttendance(false);
+          notification["error"]({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      });
+  };
+
   return (
     <Layout
       tok={initProps}
@@ -395,115 +625,308 @@ const ChargeCodeDetail = ({
               {companyName || "-"}
             </h4>
           </div>
-          <Button
-            type={"primary"}
-            onClick={() => setShowDrawerAdd(true)}
-            className="btn btn-sm text-white font-semibold px-2 py-2 border 
+          {activeTab == "attendance_code" && isAllowedToAddAttendanceCodes && (
+            <Button
+              type={"primary"}
+              onClick={() => setShowDrawerAttendance(true)}
+              className="btn btn-sm text-white font-semibold px-2 py-2 border 
                         bg-primary100 hover:bg-primary75 border-primary100 
                         hover:border-primary75 focus:bg-primary100 focus:border-primary100 
                         flex-nowrap w-full md:w-fit"
-            icon={<PlusIconSvg size={16} color="#FFFFFF" />}
+              icon={<PlusIconSvg size={16} color="#FFFFFF" />}
+            >
+              Create Attendance Code
+            </Button>
+          )}
+          {activeTab == "charge_code" && isAllowedToAddChargeCodes && (
+            <Button
+              type={"primary"}
+              onClick={() => setShowDrawerAdd(true)}
+              className="btn btn-sm text-white font-semibold px-2 py-2 border 
+                        bg-primary100 hover:bg-primary75 border-primary100 
+                        hover:border-primary75 focus:bg-primary100 focus:border-primary100 
+                        flex-nowrap w-full md:w-fit"
+              icon={<PlusIconSvg size={16} color="#FFFFFF" />}
+            >
+              Create Charge Code
+            </Button>
+          )}
+        </div>
+        <div className={"my-4 px-4 border-b flex"}>
+          <div
+            onClick={() => setActiveTab("attendance_code")}
+            className={`hover:cursor-pointer flex pb-2 justify-center px-6 ${
+              activeTab == "attendance_code"
+                ? "border-b-2 border-primary100"
+                : ""
+            }`}
           >
-            Create Charge Code
-          </Button>
+            <p
+              className={`text-sm/6 font-inter ${
+                activeTab == "attendance_code"
+                  ? "font-bold text-primary100"
+                  : "text-[#808080] font-normal"
+              }`}
+            >
+              Attendance Code
+            </p>
+          </div>
+          <div
+            onClick={() => setActiveTab("charge_code")}
+            className={`hover:cursor-pointer pb-2 flex justify-center px-6 ${
+              activeTab == "charge_code" ? "border-b-2 border-primary100" : ""
+            }`}
+          >
+            <p
+              className={`text-sm/6 font-inter ${
+                activeTab == "charge_code"
+                  ? "font-bold text-primary100"
+                  : "text-[#808080] font-normal"
+              }`}
+            >
+              Charge Code
+            </p>
+          </div>
         </div>
         <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full px-4 md:items-center mb-4 border-b pb-3">
           <div className="w-full md:w-full">
             <Input
-              defaultValue={searchingFilterWorkingDays}
+              value={
+                activeTab == "attendance_code"
+                  ? searchingFilterWorkingDays
+                  : searchingFilterChargeCode
+              }
               style={{ width: `100%` }}
               placeholder="Search Code's Name..."
               allowClear
               onChange={(e) => {
-                setSearchingFilterWorkingDays(e.target.value);
-                setQueryParams({ page: 1 });
+                if (activeTab == "attendance_code") {
+                  setSearchingFilterWorkingDays(e.target.value);
+                  setQueryParamsAttendance({ page: 1 });
+                } else {
+                  setSearchingFilterChargeCode(e.target.value);
+                  setQueryParams({ page: 1 });
+                }
               }}
-              //   onChange={(e) => {
-              //     setSearchingFilterRecruitments(e.target.value);
-              //     setQueryParams({ page: 1 });
-              //   }}
-              //   onKeyPress={onKeyPressHandler}
-              //   disabled={!isAllowedToGetRecruitments}
             />
           </div>
         </div>
         <div className={"px-4"}>
-          <Table
-            dataSource={datatable}
-            columns={columnChargeCode}
-            rowKey={(record) => record.id}
-            loading={loading}
-            scroll={{ x: 200 }}
-            pagination={{
-              current: queryParams.page,
-              pageSize: queryParams.rows,
-              total: 10,
-              showSizeChanger: true,
-            }}
-            onChange={(pagination, filters, sorter, extra) => {
-              const sortTypePayload =
-                sorter.order === "ascend"
-                  ? "asc"
-                  : sorter.order === "descend"
-                  ? "desc"
-                  : undefined;
+          {activeTab == "charge_code" ? (
+            <Table
+              dataSource={datatable}
+              columns={columnChargeCode}
+              rowKey={(record) => record.id}
+              loading={loading}
+              scroll={{ x: 200 }}
+              pagination={{
+                current: queryParams.page,
+                pageSize: queryParams.rows,
+                total: 10,
+                showSizeChanger: true,
+              }}
+              onChange={(pagination, filters, sorter, extra) => {
+                const sortTypePayload =
+                  sorter.order === "ascend"
+                    ? "asc"
+                    : sorter.order === "descend"
+                    ? "desc"
+                    : undefined;
 
-              setQueryParams({
-                sort_type: sortTypePayload,
-                sort_by:
-                  sortTypePayload === undefined ? undefined : sorter.field,
-                page: pagination.current,
-                rows: pagination.pageSize,
-              });
-            }}
-            onRow={(record, rowIndex) => {
-              return {
-                //   onMouseOver: () => {
-                //     setrowstate(record.id);
-                //   },
-                // onClick: () => {
-                //   !isBulk && setDrawerShown(true);
-                //   tempIdClicked.current = record.id;
-                //   setTriggerRowClicked((prev) => prev + 1);
-                // },
-              };
-            }}
-            rowClassName={(record, idx) => {
-              return `${record.id === rowstate && `cursor-pointer`}
+                setQueryParams({
+                  sort_type: sortTypePayload,
+                  sort_by:
+                    sortTypePayload === undefined ? undefined : sorter.field,
+                  page: pagination.current,
+                  rows: pagination.pageSize,
+                });
+              }}
+              onRow={(record, rowIndex) => {
+                return {
+                  //   onMouseOver: () => {
+                  //     setrowstate(record.id);
+                  //   },
+                  // onClick: () => {
+                  //   !isBulk && setDrawerShown(true);
+                  //   tempIdClicked.current = record.id;
+                  //   setTriggerRowClicked((prev) => prev + 1);
+                  // },
+                };
+              }}
+              rowClassName={(record, idx) => {
+                return `${record.id === rowstate && `cursor-pointer`}
                         }`;
-            }}
-          />
+              }}
+            />
+          ) : (
+            <Table
+              dataSource={datatableAttendance}
+              columns={columnAttendanceCode}
+              rowKey={(record) => record.id}
+              loading={loading}
+              scroll={{ x: 200 }}
+              pagination={{
+                current: queryParamsAttendance.page,
+                pageSize: queryParamsAttendance.rows,
+                total: 10,
+                showSizeChanger: true,
+              }}
+              onChange={(pagination, filters, sorter, extra) => {
+                const sortTypePayload =
+                  sorter.order === "ascend"
+                    ? "asc"
+                    : sorter.order === "descend"
+                    ? "desc"
+                    : undefined;
+
+                setQueryParams({
+                  sort_type: sortTypePayload,
+                  sort_by:
+                    sortTypePayload === undefined ? undefined : sorter.field,
+                  page: pagination.current,
+                  rows: pagination.pageSize,
+                });
+              }}
+              onRow={(record, rowIndex) => {
+                return {
+                  //   onMouseOver: () => {
+                  //     setrowstate(record.id);
+                  //   },
+                  // onClick: () => {
+                  //   !isBulk && setDrawerShown(true);
+                  //   tempIdClicked.current = record.id;
+                  //   setTriggerRowClicked((prev) => prev + 1);
+                  // },
+                };
+              }}
+              rowClassName={(record, idx) => {
+                return `${record.id === rowstateAttendance && `cursor-pointer`}
+                        }`;
+              }}
+            />
+          )}
         </div>
         <DrawerAddChargeCode
           visible={showDrawerAdd}
           onvisible={setShowDrawerAdd}
           initProps={initProps}
-          isAllowedToAddCompany={true}
+          isAllowedToAddChargeCode={isAllowedToAddChargeCodes}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
           setIsRefresh={setIsRefresh}
+          companyName={companyName}
           id_company={chargeCodeId}
+        />
+
+        <DrawerAddAttendanceCode
+          visible={showDrawerAttendance}
+          onvisible={setShowDrawerAttendance}
+          initProps={initProps}
+          isAllowedToAddAttendanceCode={isAllowedToAddAttendanceCodes}
+          setLoadingCreate={setLoadingCreate}
+          loadingCreate={loadingCreate}
+          idChargeCode={chargeCodeId}
+          setIsRefresh={setIsRefresh}
+          companyName={companyName}
         />
 
         <DrawerEditChargeCode
           visible={showDrawerEdit}
           onvisible={setShowDrawerEdit}
           initProps={initProps}
-          isAllowedToAddCompany={true}
+          isAllowedToAddCompany={isAllowedToUpdateChargeCodes}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
           setIsRefresh={setIsRefresh}
           id_company={chargeCodeId}
           id={idEdit}
         />
-
-        <ModalAttendanceCode
+        <DrawerEditAttendanceCode
+          visible={showEditDrawerAttendance}
+          onvisible={setShowEditDrawerAttendance}
+          initProps={initProps}
+          isAllowedToUpdateAttendanceCode={isAllowedToUpdateAttendanceCodes}
+          setLoadingCreate={setLoadingCreate}
+          loadingCreate={loadingCreate}
+          idChargeCode={idChargeCode}
+          setIsRefresh={setIsRefresh}
+          dataAttendanceCode={dataAttendanceCode}
+        />
+        {/* <ModalAttendanceCode
           visible={showModal}
           onClose={() => setShowModal(false)}
           idChargeCode={idChargeCode}
           initProps={initProps}
           setIdChargeCode={setIdChargeCode}
-        />
+        /> */}
+        <Modal
+          closeIcon={<CloseIconSvg size={20} color={"#808080"} />}
+          title={
+            <div className={"flex gap-2"}>
+              <WarningIconSvg />
+              <p
+                className={
+                  "font-medium text-sm leading-6 text-[#4D4D4D] font-inter"
+                }
+              >
+                Delete Attendance Code?
+              </p>
+            </div>
+          }
+          open={modalDeleteAttendance}
+          onCancel={() => {
+            // setmodaldelete(false);
+            cancelDeleteAttendance();
+          }}
+          footer={
+            <div className={"flex gap-4 justify-end"}>
+              <div
+                onClick={() => cancelDeleteAttendance()}
+                className={
+                  "bg-white border border-solid border-[#808080] py-2 px-4 rounded-md hover:cursor-pointer"
+                }
+              >
+                <p
+                  className={
+                    "text-sm leading-4 text-[#808080] font-medium font-roboto"
+                  }
+                >
+                  Cancel
+                </p>
+              </div>
+              <div
+                onClick={() => handleDeleteAttendanceCode()}
+                className={
+                  "bg-[#BF4A40] flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
+                }
+              >
+                {loadingDelete ? (
+                  <Spin
+                    spinning={loadingDelete}
+                    indicator={<LoadingOutlined />}
+                    size={"default"}
+                  />
+                ) : (
+                  <TrashIconSvg color={"white"} size={16} />
+                )}
+                <p className="text-white text-sm leading-4 font-medium font-roboto">
+                  Delete
+                </p>
+              </div>
+            </div>
+          }
+          // onOk={handleDelete}
+
+          maskClosable={true}
+          style={{ top: `3rem` }}
+          width={440}
+          destroyOnClose={true}
+        >
+          <p className={"text-[#4D4D4D] "}>
+            Are you sure you want to delete attendance code name{" "}
+            <span className={"font-bold"}>{activeAttendance?.name}</span>?
+          </p>
+        </Modal>
         <Modal
           closeIcon={<CloseIconSvg size={20} color={"#808080"} />}
           title={

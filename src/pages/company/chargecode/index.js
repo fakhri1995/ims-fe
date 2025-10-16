@@ -1,5 +1,4 @@
 import { Button, Input, Table, notification } from "antd";
-import axios from "axios";
 import {
   NumberParam,
   StringParam,
@@ -18,12 +17,10 @@ import { useAccessControl } from "contexts/access-control";
 import {
   CHARGE_CODES_COMPANY_ADD,
   CHARGE_CODE_COMPANIES_GET,
-  WORKDAY_ADD,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import DrawerCompanyAddChargeCode from "../../../components/drawer/companies/chargecode/drawerCompanyAddChargeCode";
-import DrawerEditCompanyChargeCode from "../../../components/drawer/companies/chargecode/drawerEditCompanyChargeCode";
 import {
   EditTablerIconSvg,
   EyeIconSvg,
@@ -42,8 +39,12 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetCompanyWorkday = hasPermission(CHARGE_CODE_COMPANIES_GET);
-  const isAllowedToAddCompanyWorkday = hasPermission(CHARGE_CODES_COMPANY_ADD);
+  const isAllowedToGetChargeCodeCompany = hasPermission(
+    CHARGE_CODE_COMPANIES_GET
+  );
+  const isAllowedToAddChargeCodeCompany = hasPermission(
+    CHARGE_CODES_COMPANY_ADD
+  );
   const rt = useRouter();
 
   const tok = initProps;
@@ -110,7 +111,19 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
       },
     },
     {
-      title: "Total Code",
+      title: "Total Attendance Code",
+      key: "attendance_codes_count",
+      // width: 200,
+      sorter: true,
+      dataIndex: "attendance_codes_count",
+      render: (text, record, index) => {
+        return {
+          children: <>{text} Attendance Code</>,
+        };
+      },
+    },
+    {
+      title: "Total Charge Code",
       key: "charge_codes_count",
       width: 200,
       sorter: true,
@@ -158,7 +171,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
   const [datatable, setdatatable] = useState([]);
   const pageBreadcrumbValue = [
     // { name: "Company", hrefValue: "/company/clients" },
-    { name: "Charge Codes" },
+    { name: "Attendance & Charge Code" },
   ];
 
   const handleEdit = (record) => {
@@ -171,7 +184,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
     });
 
     const fetchData = async () => {
-      if (!isAllowedToGetCompanyWorkday) {
+      if (!isAllowedToGetChargeCodeCompany) {
         permissionWarningNotification(
           "Mendapatkan",
           "Daftar Company Charge C0de"
@@ -214,7 +227,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
     return () => clearTimeout(timer);
   }, [
     queryParams.page,
-    isAllowedToGetCompanyWorkday,
+    isAllowedToGetChargeCodeCompany,
     searchingFilterWorkingDays,
     queryParams.rows,
     queryParams.sort_by,
@@ -245,7 +258,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
           <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
             Company List
           </h4>
-          {isAllowedToAddCompanyWorkday && (
+          {isAllowedToAddChargeCodeCompany && (
             <Button
               type={"primary"}
               onClick={() => setShowDrawerAdd(true)}
@@ -255,7 +268,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
                         flex-nowrap w-full md:w-fit"
               icon={<PlusIconSvg size={16} color="#FFFFFF" />}
             >
-              Add Company
+              Set Up Code
             </Button>
           )}
         </div>
@@ -350,20 +363,10 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
           visible={showDrawerAdd}
           onvisible={setShowDrawerAdd}
           initProps={initProps}
-          isAllowedToAddCompany={isAllowedToAddCompanyWorkday}
+          isAllowedToAddChargeCodeCompany={isAllowedToAddChargeCodeCompany}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
           setIsRefresh={setIsRefresh}
-        />
-        <DrawerEditCompanyChargeCode
-          visible={showDrawerEdit}
-          onvisible={setShowDrawerEdit}
-          initProps={initProps}
-          isAllowedToAddCompany={isAllowedToAddCompanyWorkday}
-          setLoadingCreate={setLoadingCreate}
-          loadingCreate={loadingCreate}
-          setIsRefresh={setIsRefresh}
-          id={idCompany}
         />
       </div>
     </Layout>

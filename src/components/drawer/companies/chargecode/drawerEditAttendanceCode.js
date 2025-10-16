@@ -14,7 +14,7 @@ import {
 import React, { useEffect, useState } from "react";
 
 import { permissionWarningNotification } from "../../../../lib/helper";
-import { CopyIconSvg, TrashIconSvg } from "../../../icon";
+import { CopyIconSvg, InfoCircleIconSvg, TrashIconSvg } from "../../../icon";
 import DrawerCore from "../../drawerCore";
 
 const DrawerEditAttendanceCode = ({
@@ -22,7 +22,7 @@ const DrawerEditAttendanceCode = ({
   visible,
   onvisible,
   initProps,
-  isAllowedToAddCompany,
+  isAllowedToUpdateAttendanceCode,
   setLoadingCreate,
   loadingCreate,
   idChargeCode,
@@ -182,7 +182,7 @@ const DrawerEditAttendanceCode = ({
 
   const handleClickButton = () => {
     // validasi dan ambil value form
-    if (!isAllowedToAddCompany) {
+    if (!isAllowedToUpdateAttendanceCode) {
       permissionWarningNotification("Add", "Attendance Code Company");
       return;
     }
@@ -287,12 +287,23 @@ const DrawerEditAttendanceCode = ({
             </Form.Item>
             <div className={"flex gap-2.5 items-center mb-3"}>
               <p className={"text-sm/6 font-inter font-normal text-mono30"}>
-                Verifikasi Berkas
+                Perlu Verifikasi Berkas
               </p>
               <Switch
                 checked={isVerification == 1 ? true : false}
                 onChange={(value) => setIsVerification(value ? 1 : 0)}
               />
+            </div>
+            <div
+              className={
+                "flex items-center gap-2 px-3 py-2 mb-3 rounded-[4px] w-full bg-[#00589F1A]"
+              }
+            >
+              <InfoCircleIconSvg size={16} color={"#00589F"} />
+              <p className={"text-[#00589F] text-xs/5 font-inter font-normal"}>
+                Jika verifikasi berkas menyala, akan muncul field untuk
+                mengunggah berkas pendukung.
+              </p>
             </div>
             <div className={"flex flex-col gap-3"}>
               <div className={"flex flex-row justify-between"}>
