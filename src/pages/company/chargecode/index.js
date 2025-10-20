@@ -17,6 +17,7 @@ import { useAccessControl } from "contexts/access-control";
 import {
   CHARGE_CODES_COMPANY_ADD,
   CHARGE_CODE_COMPANIES_GET,
+  COMPANY_CODES_ADD,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
@@ -45,6 +46,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
   const isAllowedToAddChargeCodeCompany = hasPermission(
     CHARGE_CODES_COMPANY_ADD
   );
+  const isAllowedToAddCompanyCode = hasPermission(COMPANY_CODES_ADD);
   const rt = useRouter();
 
   const tok = initProps;
@@ -258,7 +260,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
           <h4 className="text-[14px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
             Company List
           </h4>
-          {isAllowedToAddChargeCodeCompany && (
+          {isAllowedToAddCompanyCode && (
             <Button
               type={"primary"}
               onClick={() => setShowDrawerAdd(true)}
@@ -363,7 +365,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
           visible={showDrawerAdd}
           onvisible={setShowDrawerAdd}
           initProps={initProps}
-          isAllowedToAddChargeCodeCompany={isAllowedToAddChargeCodeCompany}
+          isAllowedToAddChargeCodeCompany={isAllowedToAddCompanyCode}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
           setIsRefresh={setIsRefresh}

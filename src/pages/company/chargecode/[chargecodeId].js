@@ -280,8 +280,8 @@ const ChargeCodeDetail = ({
                     : record?.name == "Overtime"
                     ? "text-[#00589F]"
                     : record?.name == "Paid Leave"
-                    ? "#F5851E"
-                    : "#BF4A40"
+                    ? "text-[#F5851E]"
+                    : "text-[#BF4A40]"
                 }`}
               >
                 {record.name ? record.name : ""}
@@ -300,6 +300,31 @@ const ChargeCodeDetail = ({
       render: (text, record, index) => {
         return {
           children: <>{text}</>,
+        };
+      },
+    },
+    {
+      title: "Verifikasi Berkas?",
+      key: "perlu_verifikasi",
+      dataIndex: "perlu_verifikasi",
+      render: (text, record, index) => {
+        return {
+          children:
+            text == 1 ? (
+              <div className="flex gap-3">
+                <div className="flex justify-center items-center bg-[#35763B1A] w-6 h-6 rounded-[100px]">
+                  <CheckBoldSvg color={"#35763B"} size={18} />
+                </div>
+                <p className="text-sm/6 font-inter text-mono30">YES</p>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <div className="flex justify-center items-center bg-[#BF4A401A] w-6 h-6 rounded-[100px]">
+                  <CloseIconSvg color={"#BF4A40"} size={18} />
+                </div>
+                <p className="text-sm/6 font-inter text-mono30">NO</p>
+              </div>
+            ),
         };
       },
     },

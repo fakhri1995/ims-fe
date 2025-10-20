@@ -61,13 +61,6 @@ const DrawerCompanyAddChargeCode = ({
   ];
   // USEEFFECT
   // Validate input field
-  useEffect(() => {
-    if (dataCompany.name !== "" && dataCompany.work_day_type !== null) {
-      setDisabledCreate(false);
-    } else {
-      setDisabledCreate(true);
-    }
-  }, [dataCompany]);
 
   //HANDLER
   const onChangeInput = (e) => {
@@ -89,13 +82,16 @@ const DrawerCompanyAddChargeCode = ({
 
   useEffect(() => {
     setLoadingGetCompany(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=true`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         setCompanyList(res2.data);
@@ -189,15 +185,15 @@ const DrawerCompanyAddChargeCode = ({
     instanceForm
       .validateFields()
       .then((values) => {
-        if (chargeCodes.length > 0 && attendanceCodes.length > 0) {
+        if (attendanceCodes.length > 0) {
           handleCreateChargeCode(values);
         } else {
-          if (chargeCodes.length == 0) {
-            notification.error({
-              message: `Charge Code must be filled`,
-              duration: 1,
-            });
-          }
+          // if (chargeCodes.length == 0) {
+          //   notification.error({
+          //     message: `Charge Code must be filled`,
+          //     duration: 1,
+          //   });
+          // }
           if (attendanceCodes.length == 0) {
             notification.error({
               message: `Attendances Code must be filled`,
