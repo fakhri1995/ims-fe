@@ -21,7 +21,13 @@ import Link from "next/link";
 import QueryString from "qs";
 import { useEffect, useState } from "react";
 
-import { CheckIconSvg, CloseIconSvg, EyeIconSvg } from "components/icon";
+import {
+  CheckIconSvg,
+  CloseIconSvg,
+  EditTablerIconSvg,
+  EyeIconSvg,
+  WarningIconSvg,
+} from "components/icon";
 import LayoutDashboard from "components/layout-dashboard";
 
 import { useAccessControl } from "contexts/access-control";
@@ -109,6 +115,19 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [searchingFilterEmployee, setSearchingFilterEmployee] = useState("");
   const [activeTab, setActiveTab] = useState("1");
   const [loading, setLoading] = useState(false);
+  const [modalApproveVerification, setModalApproveVerification] =
+    useState(false);
+  const [modalRejectVerification, setModalRejectVerification] = useState(false);
+  const [dataApprove, setDataApprove] = useState({
+    name: null,
+    attendance_code_name: null,
+  });
+  const [dataReject, setDataReject] = useState({
+    name: null,
+    attendance_code_name: null,
+  });
+  const [loadingApprove, setLoadingApprove] = useState(false);
+  const [loadingReject, setLoadingReject] = useState(false);
   const columns: typeof dataVerification = [
     {
       title: "No",
@@ -201,6 +220,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
           children: (
             <div className="flex flex-row gap-2">
               <div
+                onClick={() => handleApproveConfirm(record)}
                 className={
                   "flex justify-center items-center hover:cursor-pointer bg-primary100 rounded-[4px] h-7 w-7"
                 }
@@ -208,6 +228,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <CheckIconSvg size={20} color={"white"} />
               </div>
               <div
+                onClick={() => handleRejectConfirm(record)}
                 className={
                   "flex justify-center items-center hover:cursor-pointer bg-state1 rounded-[4px] h-7 w-7"
                 }
@@ -305,6 +326,28 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       },
     },
     {
+      title: "Status",
+      key: "employees_count",
+      dataIndex: "employees_count",
+      sorter: true,
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div
+              className={
+                "flex items-center gap-2 py-1 px-2.5 bg-[#35763B1A] rounded-[5px]"
+              }
+            >
+              <div className={"bg-[#35763B] w-1.5 h-1.5 rounded-[3px]"} />
+              <p className={"text-primary100 text-xs/5 font-medium font-inter"}>
+                Accepted
+              </p>
+            </div>
+          ),
+        };
+      },
+    },
+    {
       title: "Action",
       key: "button_action",
       width: 50,
@@ -313,32 +356,13 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
           children: (
             <div className="flex flex-row gap-2">
               <div
-                className={
-                  "flex justify-center items-center hover:cursor-pointer bg-primary100 rounded-[4px] h-7 w-7"
-                }
+                className={"hover:cursor-pointer"}
+                // onClick={() => handleEditAttendance(record)}
               >
-                <CheckIconSvg size={20} color={"white"} />
-              </div>
-              <div
-                className={
-                  "flex justify-center items-center hover:cursor-pointer bg-state1 rounded-[4px] h-7 w-7"
-                }
-              >
-                <CloseIconSvg size={20} color={"white"} />
+                <EditTablerIconSvg size={20} color={"#808080"} />
               </div>
             </div>
           ),
-        };
-      },
-    },
-    {
-      title: "Status",
-      key: "employees_count",
-      dataIndex: "employees_count",
-      sorter: true,
-      render: (text, record, index) => {
-        return {
-          children: <>{text} employees</>,
         };
       },
     },
@@ -391,6 +415,26 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     queryParams.sort_type,
   ]);
 
+  const handleApproveConfirm = (record) => {
+    setModalApproveVerification(true);
+    // setDataApprove
+  };
+
+  const handleRejectConfirm = (record) => {
+    setModalRejectVerification(true);
+    // setDataApprove
+  };
+
+  const cancelApproveVerification = () => {
+    setModalApproveVerification(false);
+  };
+
+  const cancelRejectVerification = () => {
+    setModalRejectVerification(false);
+  };
+
+  const handleApprove = () => {};
+
   return (
     <LayoutDashboard
       tok={initProps}
@@ -424,7 +468,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                   : "text-[#808080] font-normal"
               } font-inter text-sm/6`}
             >
-              <p>Riwayat</p>
+              <p>Riwayat Verifikasi</p>
             </div>
           </div>
         </div>
@@ -485,6 +529,144 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                 //   }}
               />
             </div>
+            <Modal
+              closeIcon={<CloseIconSvg size={20} color={"#808080"} />}
+              title={
+                <div className={"flex gap-2"}>
+                  <WarningIconSvg color={"#808080"} />
+                  <p
+                    className={
+                      "font-medium text-sm leading-6 text-[#4D4D4D] font-inter"
+                    }
+                  >
+                    Approve Verification
+                  </p>
+                </div>
+              }
+              open={modalApproveVerification}
+              onCancel={() => {
+                // setmodaldelete(false);
+                cancelApproveVerification();
+              }}
+              footer={
+                <div className={"flex gap-4 justify-end"}>
+                  <div
+                    onClick={() => cancelApproveVerification()}
+                    className={
+                      "bg-white border border-solid border-[#808080] py-2 px-4 rounded-md hover:cursor-pointer"
+                    }
+                  >
+                    <p
+                      className={
+                        "text-sm leading-4 text-[#808080] font-medium font-roboto"
+                      }
+                    >
+                      Cancel
+                    </p>
+                  </div>
+                  <div
+                    onClick={() => handleApprove()}
+                    className={
+                      "bg-[#BF4A40] flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
+                    }
+                  >
+                    {loadingApprove ? (
+                      <Spin
+                        spinning={loadingApprove}
+                        indicator={<LoadingOutlined />}
+                        size={"default"}
+                      />
+                    ) : (
+                      <CheckIconSvg color={"white"} size={16} />
+                    )}
+                    <p className="text-white text-sm leading-4 font-medium font-roboto">
+                      Yes, Approve
+                    </p>
+                  </div>
+                </div>
+              }
+              // onOk={handleDelete}
+
+              maskClosable={true}
+              style={{ top: `3rem` }}
+              width={440}
+              destroyOnClose={true}
+            >
+              <p className={"text-[#4D4D4D] "}>
+                Are you sure you want to approve the verification{" "}
+                <span className={"font-bold"}>Paid Leave</span> for{" "}
+                <span className={"font-bold"}>Alex</span> ?
+              </p>
+            </Modal>
+            <Modal
+              closeIcon={<CloseIconSvg size={20} color={"#808080"} />}
+              title={
+                <div className={"flex gap-2"}>
+                  <WarningIconSvg />
+                  <p
+                    className={
+                      "font-medium text-sm leading-6 text-[#4D4D4D] font-inter"
+                    }
+                  >
+                    Reject Verification
+                  </p>
+                </div>
+              }
+              open={modalRejectVerification}
+              onCancel={() => {
+                // setmodaldelete(false);
+                cancelRejectVerification();
+              }}
+              footer={
+                <div className={"flex gap-4 justify-end"}>
+                  <div
+                    onClick={() => cancelRejectVerification()}
+                    className={
+                      "bg-white border border-solid border-[#808080] py-2 px-4 rounded-md hover:cursor-pointer"
+                    }
+                  >
+                    <p
+                      className={
+                        "text-sm leading-4 text-[#808080] font-medium font-roboto"
+                      }
+                    >
+                      Cancel
+                    </p>
+                  </div>
+                  <div
+                    onClick={() => handleApprove()}
+                    className={
+                      "bg-[#BF4A40] flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
+                    }
+                  >
+                    {loadingReject ? (
+                      <Spin
+                        spinning={loadingReject}
+                        indicator={<LoadingOutlined />}
+                        size={"default"}
+                      />
+                    ) : (
+                      <CloseIconSvg color={"white"} size={16} />
+                    )}
+                    <p className="text-white text-sm leading-4 font-medium font-roboto">
+                      Yes, Reject
+                    </p>
+                  </div>
+                </div>
+              }
+              // onOk={handleDelete}
+
+              maskClosable={true}
+              style={{ top: `3rem` }}
+              width={440}
+              destroyOnClose={true}
+            >
+              <p className={"text-[#4D4D4D] "}>
+                Are you sure you want to reject the verification{" "}
+                <span className={"font-bold"}>Paid Leave</span> for{" "}
+                <span className={"font-bold"}>Alex</span> ?
+              </p>
+            </Modal>
           </div>
         ) : (
           <div>

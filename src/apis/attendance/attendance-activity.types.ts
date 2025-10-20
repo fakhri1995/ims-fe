@@ -19,6 +19,7 @@ export interface GetAttendanceActivitesData {
 }
 
 export interface Activity {
+  [x: string]: any;
   id: number;
   user_id: number;
   attendance_form_id: number;
@@ -29,6 +30,7 @@ export interface Activity {
 export interface ActivityDetail {
   value: number[] | string;
   key: string;
+  charge_code_name: string;
 }
 
 /**

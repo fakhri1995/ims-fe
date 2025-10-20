@@ -46,10 +46,10 @@ const DrawerAddAttendanceCode = ({
       id: 2,
       name: "Overtime",
     },
-    {
-      id: 3,
-      name: "Unpaid Leave",
-    },
+    // {
+    //   id: 3,
+    //   name: "Unpaid Leave",
+    // },
     {
       id: 4,
       name: "Paid Leave",

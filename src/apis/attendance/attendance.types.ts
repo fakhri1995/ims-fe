@@ -102,6 +102,7 @@ export interface ISetAttendanceTogglePayload<T extends File> {
   geo_loc: string | null;
   evidence: T;
   wfo: 1 | 0;
+  attendance_code_id: number;
   company_id: number;
 }
 
