@@ -314,7 +314,8 @@ export const useToggleCheckInCheckOut = () => {
 type DynamicTableTypes = {
   key: number;
   updated_at: string;
-
+  charge_code_name: string;
+  charge_code_id: number;
   [key: string]: string | number;
 };
 
@@ -439,9 +440,12 @@ export const useGetUserAttendanceActivities = (
 
     /** NOTE: iterasi di bawah ini cukup berat. Sangat mungkin menjadi performance issue. */
     rawDataSource.forEach((activity) => {
+      console.log("isi raw ", activity);
       const buffer: DynamicTableTypes = {
         key: activity.id,
         updated_at: activity.updated_at.toString(),
+        charge_code_name: activity.charge_code.name,
+        charge_code_id: activity.charge_code_id,
       };
 
       activity.details.forEach((activityDetail) => {
@@ -708,6 +712,8 @@ export const useGetAttendanceDetailDataSource = (attendanceId: number) => {
     rawDataSource.forEach((activity) => {
       const buffer: DynamicTableTypes = {
         key: activity.id,
+        charge_code_name: "",
+        charge_code_id: 0,
         updated_at: activity.updated_at.toString(),
       };
 

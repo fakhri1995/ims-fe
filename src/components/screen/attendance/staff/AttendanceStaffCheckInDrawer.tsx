@@ -47,7 +47,8 @@ export const AttendanceStaffCheckInDrawer: FC<
   const [placementDisable, setPlacementDisable] = useState(true);
   const [placement, setPlacement] = useState(null);
   const { position, isPermissionBlocked } = useGeolocationAPI();
-  const [dataListCompany, setDataListCompany] = useState(null);
+  const [attendanceCodeId, setAttendanceCodeId] = useState(null);
+  const [dataListAttendanceCode, setDataListAttendanceCode] = useState([]);
 
   /** Field: Lokasi saat ini */
   const { data: locationDisplayName, isLoading: locationDisplayNameLoading } =
@@ -107,9 +108,9 @@ export const AttendanceStaffCheckInDrawer: FC<
    * - File type should satisfy ["image/png", "image/jpeg"]
    */
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    fetchData();
+  }, []);
   // useEffect(() => {
   //   if (attendeeStatus == "checkin") {
   //     setPlacementDisable(false);
@@ -118,21 +119,22 @@ export const AttendanceStaffCheckInDrawer: FC<
   //   }
   // }, [attendeeStatus]);
 
-  // const fetchData = async () => {
-  //   fetch(
-  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocationsSubCompany?company_id=${idCompany}`,
-  //     {
-  //       method: `GET`,
-  //       headers: {
-  //         Authorization: JSON.parse(token),
-  //       },
-  //     }
-  //   )
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       setDataListCompany(res2.data);
-  //     });
-  // };
+  const fetchData = async () => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCodesUser`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(token),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2?.data?.attendance_codes.length > 0) {
+          setDataListAttendanceCode(res2.data.attendance_codes);
+        } else {
+          setDataListAttendanceCode([]);
+        }
+      });
+  };
   const beforeUploadEvidencePicture = useCallback<
     Pick<UploadProps, "beforeUpload">["beforeUpload"]
   >((uploadedFile) => {
@@ -177,6 +179,7 @@ export const AttendanceStaffCheckInDrawer: FC<
       // console.log("upload evidence picture ", uploadedEvidencePicture);
       toggleCheckInCheckOut(
         {
+          attendance_code_id: attendanceCodeId,
           evidence: uploadedEvidencePicture,
           geo_loc: locationDisplayName || "",
           lat: position?.coords.latitude.toString(),
@@ -363,10 +366,11 @@ export const AttendanceStaffCheckInDrawer: FC<
                         // value={item?.name}
                         onChange={(value) => {
                           form.setFieldsValue({ attendance_code_name: value });
+                          setAttendanceCodeId(value);
                         }}
                       >
-                        {attendanceCodeList?.map((code) => (
-                          <Select.Option key={code.id} value={code.name}>
+                        {dataListAttendanceCode?.map((code) => (
+                          <Select.Option key={code.id} value={code.id}>
                             {code.name}
                           </Select.Option>
                         ))}

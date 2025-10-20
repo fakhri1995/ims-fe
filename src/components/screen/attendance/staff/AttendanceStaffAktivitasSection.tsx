@@ -436,11 +436,14 @@ export const AttendanceStaffAktivitasSection: FC<
         align: "center",
       },
       {
-        key: "id",
+        key: "charge_code",
+        dataIndex: "charge_code_name",
         title: "Project",
-        render: (_, __, index) =>
-          `${(currentPage - 1) * pageSize + index + 1}.`,
-        width: 51,
+        render: (text, record, index) => {
+          return {
+            children: <>{text}</>,
+          };
+        },
         align: "center",
       },
     ];
@@ -526,7 +529,6 @@ export const AttendanceStaffAktivitasSection: FC<
       if (tabActiveKey === HISTORY && tabActiveKey2 == TASK) {
         return;
       }
-
       if (tabActiveKey === HISTORY && tabActiveKey2 == FORM) {
         setShowDrawerAktivitasDetail({
           visible: true,
@@ -542,10 +544,12 @@ export const AttendanceStaffAktivitasSection: FC<
       }
 
       /** datum.key adalah unique ID dari aktivitas tersebut. Hanya di map menjadi "key" */
+
       dispatch({
         type: "update",
         visible: true,
         selectedActivityFormId: datum.key,
+        chargeCodeIdData: datum.charge_code_id,
       });
     },
     [tabActiveKey, isAllowedToUpdateActivity, attendeeStatus]
@@ -1243,8 +1247,10 @@ export const AttendanceStaffAktivitasSection: FC<
         isAllowedToDeleteActivity) && (
         <AttendanceStaffAktivitasDrawer
           visible={activityDrawerState.visible}
+          token={dataToken}
           action={activityDrawerState.openDrawerAs}
           activityFormId={activityDrawerState.selectedActivityFormId}
+          chargeCodeIdData={activityDrawerState.chargeCodeIdData}
           onClose={() => dispatch({ type: "create", visible: false })}
         />
       )}
@@ -1299,7 +1305,6 @@ export const AttendanceStaffAktivitasSection: FC<
           </p>
         </ModalDelete>
       </AccessControl>
-
       <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITY_DELETE}>
         <ModalDelete
           visible={showModalRemoveTask?.visible}
@@ -1333,6 +1338,7 @@ interface IAktivitasDrawerState {
   visible: boolean;
   openDrawerAs?: AktivitasDrawerActionTypes;
   selectedActivityFormId?: number;
+  chargeCodeIdData?: number;
 }
 
 /**
@@ -1356,6 +1362,7 @@ const _aktivitasDrawerToggleReducer = (
         visible: payload.visible,
         openDrawerAs: payload.type,
         selectedActivityFormId: undefined,
+        chargeCodeIdData: undefined,
       };
 
     case "update":
@@ -1370,6 +1377,7 @@ const _aktivitasDrawerToggleReducer = (
         visible: payload.visible,
         openDrawerAs: payload.type,
         selectedActivityFormId: payload.selectedActivityFormId,
+        chargeCodeIdData: payload.chargeCodeIdData,
       };
 
     default:

@@ -69,7 +69,8 @@ export interface IAttendanceStaffAktivitasDrawer {
    * Arg ini diperlukan untuk `action === "update"`.
    */
   activityFormId?: number;
-
+  chargeCodeIdData?: number;
+  token: string;
   visible: boolean;
   onClose: () => void;
 }
@@ -79,7 +80,14 @@ export interface IAttendanceStaffAktivitasDrawer {
  */
 export const AttendanceStaffAktivitasDrawer: FC<
   IAttendanceStaffAktivitasDrawer
-> = ({ action = "create", visible, onClose, activityFormId }) => {
+> = ({
+  action = "create",
+  visible,
+  token,
+  onClose,
+  activityFormId,
+  chargeCodeIdData,
+}) => {
   const [form] = Form.useForm();
   const axiosClient = useAxiosClient();
   const { todayActivities, findTodayActivity } =
@@ -88,9 +96,9 @@ export const AttendanceStaffAktivitasDrawer: FC<
   const isAllowedToAddActivity = hasPermission(ATTENDANCE_ACTIVITY_ADD);
   const isAllowedToUpdateActivity = hasPermission(ATTENDANCE_ACTIVITY_UPDATE);
   const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
-
+  const [dataListChargeCode, setDataListChargeCode] = useState([]);
   const [isWebcamModalShown, setIsWebcamModalShown] = useState(false);
-
+  const [chargeCodeId, setChargeCodeId] = useState(null);
   const {
     addMutation: {
       mutate: addAttendanceActivity,
@@ -202,6 +210,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
         const payload = {
           attendance_form_id: userAttendanceForm.id,
+          charge_code_id: chargeCodeId,
           ...allDetailObject,
         };
 
@@ -219,6 +228,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
         const payload = {
           id: activityFormId,
+          charge_code_id: chargeCodeId,
           ...allDetailObject,
         };
 
@@ -244,6 +254,38 @@ export const AttendanceStaffAktivitasDrawer: FC<
       form.resetFields();
     }
   }, [visible]);
+
+  useEffect(() => {
+    /** Always clean up the form fields on close */
+    // setChargeCodeId(chargeCodeIdData)
+    if (chargeCodeIdData) {
+      setChargeCodeId(chargeCodeIdData);
+      form.setFieldsValue({ project_name: chargeCodeIdData });
+    }
+  }, []);
+
+  useEffect(() => {
+    /** Always clean up the form fields on close */
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCodesUser`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(token),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        // console.log('hasilnya ',res2?.data?.attendance_codes)
+        if (res2?.data?.charge_codes.length > 0) {
+          setDataListChargeCode(res2.data.charge_codes);
+        } else {
+          setDataListChargeCode([]);
+        }
+      });
+  };
 
   // display available data in drawer update
   useEffect(() => {
@@ -318,19 +360,22 @@ export const AttendanceStaffAktivitasDrawer: FC<
                     placeholder="Select Project"
                     // loading={loadingGetCompany}
                     style={{ width: `100%` }}
-                    // value={item?.name}
+                    // defaultValue={1}
+                    value={chargeCodeIdData}
                     onChange={(value) => {
                       form.setFieldsValue({ project_name: value });
+                      setChargeCodeId(value);
                     }}
                   >
-                    {attendanceCodeList?.map((code) => (
-                      <Select.Option key={code.id} value={code.name}>
+                    {dataListChargeCode?.map((code) => (
+                      <Select.Option key={code.id} value={code.id}>
                         {code.name}
                       </Select.Option>
                     ))}
                   </Select>
                 </div>
               </Form.Item>
+              {console.log("charge code id ", chargeCodeId)}
               {userAttendanceForm.details.map(
                 ({ name, description, type, key, list, required }) => {
                   return (

@@ -50,10 +50,10 @@ const DrawerCompanyAddChargeCode = ({
       id: 2,
       name: "Overtime",
     },
-    {
-      id: 3,
-      name: "Unpaid Leave",
-    },
+    // {
+    //   id: 3,
+    //   name: "Unpaid Leave",
+    // },
     {
       id: 4,
       name: "Paid Leave",
@@ -208,7 +208,6 @@ const DrawerCompanyAddChargeCode = ({
   };
 
   const handleChangeColor = (index, value) => {
-    console.log("value ", value);
     const newData = [...chargeCodes];
     newData[index].color = value;
     setChargeCodes(newData);
@@ -343,7 +342,6 @@ const DrawerCompanyAddChargeCode = ({
                   style={{ width: `100%` }}
                   value={dataCompany.id}
                   onChange={(value, option) => {
-                    console.log("option ", option.children);
                     setDataCompany({
                       ...dataCompany,
                       name: option.children,
