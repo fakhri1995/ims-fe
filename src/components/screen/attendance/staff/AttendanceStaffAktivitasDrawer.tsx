@@ -375,7 +375,6 @@ export const AttendanceStaffAktivitasDrawer: FC<
                   </Select>
                 </div>
               </Form.Item>
-              {console.log("charge code id ", chargeCodeId)}
               {userAttendanceForm.details.map(
                 ({ name, description, type, key, list, required }) => {
                   return (

@@ -161,6 +161,13 @@ export const AttendanceStaffKehadiranSection: FC<
         align: "center",
         width: 120,
       },
+      {
+        title: "Code",
+        dataIndex: "is_wfo",
+        // sorter: (a, b) => (b.is_wfo < a.is_wfo ? -1 : 1),
+        align: "center",
+        width: 120,
+      },
     ];
   }, [pageSize, currentPage]);
 
