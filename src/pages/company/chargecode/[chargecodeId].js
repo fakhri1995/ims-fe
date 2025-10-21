@@ -442,7 +442,6 @@ const ChargeCodeDetail = ({
     if (isRefresh == -1) {
       return;
     }
-    console.log("is refresh ", isRefresh);
     fetchDataDetailAttendance();
     fetchDataDetail();
   }, [isRefresh]);
@@ -597,7 +596,7 @@ const ChargeCodeDetail = ({
         if (res2.success) {
           setLoadingDelete(false);
           setModalDeleteAttendance(false);
-          setIsRefresh(1);
+          fetchDataDetailAttendance();
           notification["success"]({
             message: `${activeAttendance?.name} Attendance Code successfully deleted`,
             duration: 3,
@@ -839,6 +838,7 @@ const ChargeCodeDetail = ({
         />
 
         <DrawerEditChargeCode
+          getData={fetchDataDetail}
           visible={showDrawerEdit}
           data={editChargeCode}
           onvisible={setShowDrawerEdit}
@@ -851,6 +851,7 @@ const ChargeCodeDetail = ({
           id={idEdit}
         />
         <DrawerEditAttendanceCode
+          getData={fetchDataDetailAttendance}
           visible={showEditDrawerAttendance}
           onvisible={setShowEditDrawerAttendance}
           initProps={initProps}

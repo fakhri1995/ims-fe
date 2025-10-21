@@ -18,6 +18,7 @@ import { CopyIconSvg, InfoCircleIconSvg, TrashIconSvg } from "../../../icon";
 import DrawerCore from "../../drawerCore";
 
 const DrawerEditAttendanceCode = ({
+  getData,
   dataAttendanceCode,
   visible,
   onvisible,
@@ -145,7 +146,7 @@ const DrawerEditAttendanceCode = ({
       .then((response2) => {
         setLoadingCreate(false);
         if (response2.status == 200) {
-          setIsRefresh(1);
+          getData();
           cancelClick();
           notification.success({
             message: `Attendance Code has successfully updated`,
