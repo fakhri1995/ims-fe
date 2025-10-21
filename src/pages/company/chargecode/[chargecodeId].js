@@ -146,6 +146,7 @@ const ChargeCodeDetail = ({
   const [showEditDrawerAttendance, setShowEditDrawerAttendance] =
     useState(false);
   const [dataAttendanceCode, setDataAttendanceCode] = useState(null);
+  const [editChargeCode, setEditChargeCode] = useState(null);
   const [activeTab, setActiveTab] = useState("attendance_code");
   const columnChargeCode = [
     {
@@ -173,17 +174,14 @@ const ChargeCodeDetail = ({
             <Tag
               color={`${record?.color}1A`}
               style={{
-                color: "#800080", // ungu tua untuk teks
+                color: `${record?.color}`, // ungu tua untuk teks
                 borderRadius: "20px",
                 fontWeight: 600,
                 border: "none",
                 padding: "2px 10px",
               }}
             >
-              <p
-                className={`text-[${record?.color}] bg-[#165BB61A
-]`}
-              >
+              <p className={`text-[${record?.color}]`}>
                 {record.name ? record.name : ""}
               </p>
             </Tag>
@@ -257,33 +255,16 @@ const ChargeCodeDetail = ({
         return {
           children: (
             <Tag
-              color={`${
-                record?.name == "Present"
-                  ? "#35763B1A"
-                  : record?.name == "Overtime"
-                  ? "#00589F1A"
-                  : record?.name == "Paid Leave"
-                  ? "#F5851E1A"
-                  : "#F5851E1A"
-              }`}
+              color={`${record?.color}1A`}
               style={{
+                color: `${record?.color}`, // ungu tua untuk teks
                 borderRadius: "20px",
                 fontWeight: 600,
                 border: "none",
                 padding: "2px 10px",
               }}
             >
-              <p
-                className={`${
-                  record?.name == "Present"
-                    ? "text-primary100"
-                    : record?.name == "Overtime"
-                    ? "text-[#00589F]"
-                    : record?.name == "Paid Leave"
-                    ? "text-[#F5851E]"
-                    : "text-[#BF4A40]"
-                }`}
-              >
+              <p className={`text-[${record?.color}]`}>
                 {record.name ? record.name : ""}
               </p>
             </Tag>
@@ -461,12 +442,14 @@ const ChargeCodeDetail = ({
     if (isRefresh == -1) {
       return;
     }
+    console.log("is refresh ", isRefresh);
     fetchDataDetailAttendance();
     fetchDataDetail();
   }, [isRefresh]);
 
   const handleEdit = (record) => {
     setIdEdit(record.id);
+    setEditChargeCode(record);
     setShowDrawerEdit(true);
   };
 
@@ -857,6 +840,7 @@ const ChargeCodeDetail = ({
 
         <DrawerEditChargeCode
           visible={showDrawerEdit}
+          data={editChargeCode}
           onvisible={setShowDrawerEdit}
           initProps={initProps}
           isAllowedToAddCompany={isAllowedToUpdateChargeCodes}

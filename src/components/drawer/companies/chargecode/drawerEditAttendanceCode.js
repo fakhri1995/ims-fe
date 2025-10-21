@@ -38,6 +38,7 @@ const DrawerEditAttendanceCode = ({
   const [companyList, setCompanyList] = useState([]);
   const [dataEdit, setDataEdit] = useState({
     name: null,
+    color: null,
     description: null,
   });
   const [loadingGetCompany, setLoadingGetCompany] = useState(false);
@@ -81,16 +82,16 @@ const DrawerEditAttendanceCode = ({
     if (!dataAttendanceCode) {
       return;
     }
-    instanceForm.setFieldsValue(
-      {
-        attendance_code_name: dataAttendanceCode.name,
-      },
-      { description: dataAttendanceCode.description }
-    );
+    instanceForm.setFieldsValue({
+      attendance_code_name: dataAttendanceCode.name,
+      description: dataAttendanceCode.description,
+      color: dataAttendanceCode.color,
+    });
     setDataEdit({
       ...dataEdit,
       name: dataAttendanceCode?.name,
       description: dataAttendanceCode?.description,
+      color: dataAttendanceCode?.color,
     });
     setIsVerification(dataAttendanceCode?.perlu_verifikasi);
     setValuesCheckbox({
@@ -117,12 +118,13 @@ const DrawerEditAttendanceCode = ({
       });
   }, []);
 
-  const handleCreateChargeCode = (values) => {
+  const handleCreateAttendanceCode = (values) => {
     const payload = {
       // year: dataCompany.year,
       id: Number(dataAttendanceCode?.id),
-      charge_code_id: Number(idChargeCode),
+      attendance_code_id: Number(idChargeCode),
       name: values.attendance_code_name,
+      color: values.color,
       description: values.description,
       perlu_verifikasi: isVerification,
       hari_masuk: valuesCheckbox.hariMasuk,
@@ -189,7 +191,7 @@ const DrawerEditAttendanceCode = ({
     instanceForm
       .validateFields()
       .then((values) => {
-        handleCreateChargeCode(values);
+        handleCreateAttendanceCode(values);
       })
       .catch((info) => {
         console.log("Validasi gagal:", info);
@@ -228,34 +230,45 @@ const DrawerEditAttendanceCode = ({
               className="w-full"
             >
               <div>
-                <Select
-                  showSearch
-                  optionFilterProp="children"
-                  placeholder="Select Attendance Code"
-                  filterOption={(input, option) =>
-                    (option?.children ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  loading={loadingGetCompany}
-                  style={{ width: `100%` }}
-                  value={dataEdit?.name}
-                  onChange={(value) => {
-                    instanceForm.setFieldsValue({
-                      attendance_code_name: value,
-                    });
+                <div>
+                  <Input
+                    className={"w-full"}
+                    value={dataEdit?.name}
+                    onChange={(e) =>
+                      setDataEdit({
+                        ...dataEdit,
+                        name: e.target.value,
+                      })
+                    }
+                    placeholder="ex:Mighty"
+                    name={"attendance_code_name"}
+                  />
+                </div>
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="Attendance Code Color"
+              name={"color"}
+              rules={[
+                {
+                  required: true,
+                  message: "Attendance Code Color is required",
+                },
+              ]}
+              className="w-full"
+            >
+              <div>
+                <Input
+                  value={dataEdit?.color}
+                  onChange={(e) =>
                     setDataEdit({
                       ...dataEdit,
-                      name: value,
-                    });
-                  }}
-                >
-                  {attendanceCodeList?.map((code) => (
-                    <Select.Option key={code.id} value={code.name}>
-                      {code.name}
-                    </Select.Option>
-                  ))}
-                </Select>
+                      color: e.target.value,
+                    })
+                  }
+                  type="color"
+                  style={{ width: 80 }}
+                />
               </div>
             </Form.Item>
             <Form.Item

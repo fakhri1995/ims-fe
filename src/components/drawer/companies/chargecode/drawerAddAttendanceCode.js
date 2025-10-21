@@ -90,11 +90,12 @@ const DrawerAddAttendanceCode = ({
       });
   }, []);
 
-  const handleCreateChargeCode = (values) => {
+  const handleCreateAttendanceCode = (values) => {
     const payload = {
       // year: dataCompany.year,
       company_id: Number(idChargeCode),
-      name: values.attendance_code_name,
+      name: values.attandance_code_name,
+      color: values.color,
       description: values.description,
       perlu_verifikasi: isVerification,
       // month: dataCompany.month,
@@ -162,7 +163,7 @@ const DrawerAddAttendanceCode = ({
     instanceForm
       .validateFields()
       .then((values) => {
-        handleCreateChargeCode(values);
+        handleCreateAttendanceCode(values);
       })
       .catch((info) => {
         console.log("Validasi gagal:", info);
@@ -204,7 +205,7 @@ const DrawerAddAttendanceCode = ({
             </Form.Item>
             <Form.Item
               label="Attendance Code Name"
-              name={"attendance_code_name"}
+              name={"attandance_code_name"}
               rules={[
                 {
                   required: true,
@@ -214,30 +215,26 @@ const DrawerAddAttendanceCode = ({
               className="w-full"
             >
               <div>
-                <Select
-                  showSearch
-                  optionFilterProp="children"
-                  placeholder="Select Attendance Code"
-                  filterOption={(input, option) =>
-                    (option?.children ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  loading={loadingGetCompany}
-                  style={{ width: `100%` }}
-                  // value={item?.name}
-                  onChange={(value) => {
-                    instanceForm.setFieldsValue({
-                      attendance_code_name: value,
-                    });
-                  }}
-                >
-                  {attendanceCodeList?.map((code) => (
-                    <Select.Option key={code.id} value={code.name}>
-                      {code.name}
-                    </Select.Option>
-                  ))}
-                </Select>
+                <Input
+                  className={"w-full"}
+                  placeholder="ex:Present"
+                  name={"attandance_code_name"}
+                />
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="Attendance Code Color"
+              name={"color"}
+              rules={[
+                {
+                  required: true,
+                  message: "Attendance Code Color is required",
+                },
+              ]}
+              className="w-full"
+            >
+              <div>
+                <Input type="color" style={{ width: 80 }} />
               </div>
             </Form.Item>
             <Form.Item
