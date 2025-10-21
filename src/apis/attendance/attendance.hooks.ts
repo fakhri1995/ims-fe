@@ -440,12 +440,11 @@ export const useGetUserAttendanceActivities = (
 
     /** NOTE: iterasi di bawah ini cukup berat. Sangat mungkin menjadi performance issue. */
     rawDataSource.forEach((activity) => {
-      console.log("isi raw ", activity);
       const buffer: DynamicTableTypes = {
         key: activity.id,
         updated_at: activity.updated_at.toString(),
-        charge_code_name: activity.charge_code.name,
-        charge_code_id: activity.charge_code_id,
+        charge_code_name: activity?.charge_code?.name,
+        charge_code_id: activity?.charge_code_id,
       };
 
       activity.details.forEach((activityDetail) => {

@@ -186,7 +186,8 @@ export const AttendanceStaffAktivitasDrawer: FC<
       if (!userAttendanceForm) {
         return;
       }
-
+      console.log("charge code ", chargeCodeId);
+      console.log("charge code ", formValues);
       // format payload to needed form in FormData
       let allDetailObject = {};
       let formValuesArr = Object.entries(formValues);
@@ -210,7 +211,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
         const payload = {
           attendance_form_id: userAttendanceForm.id,
-          charge_code_id: chargeCodeId,
+          charge_code_id: formValues.charge_code_id,
           ...allDetailObject,
         };
 
@@ -228,7 +229,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
         const payload = {
           id: activityFormId,
-          charge_code_id: chargeCodeId,
+          charge_code_id: formValues.charge_code_id,
           ...allDetailObject,
         };
 
@@ -260,7 +261,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
     // setChargeCodeId(chargeCodeIdData)
     if (chargeCodeIdData) {
       setChargeCodeId(chargeCodeIdData);
-      form.setFieldsValue({ project_name: chargeCodeIdData });
+      form.setFieldsValue({ charge_code_id: chargeCodeIdData });
     }
   }, []);
 
@@ -344,7 +345,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
             >
               <Form.Item
                 label="Select Project"
-                name={"project_name"}
+                name={"charge_code_id"}
                 rules={[
                   {
                     required: true,
@@ -361,9 +362,9 @@ export const AttendanceStaffAktivitasDrawer: FC<
                     // loading={loadingGetCompany}
                     style={{ width: `100%` }}
                     // defaultValue={1}
-                    value={chargeCodeIdData}
+                    value={chargeCodeId}
                     onChange={(value) => {
-                      form.setFieldsValue({ project_name: value });
+                      form.setFieldsValue({ charge_code_id: value });
                       setChargeCodeId(value);
                     }}
                   >

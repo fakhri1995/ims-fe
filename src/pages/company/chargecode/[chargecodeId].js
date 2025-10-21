@@ -563,7 +563,8 @@ const ChargeCodeDetail = ({
         if (res2.success) {
           setLoadingDelete(false);
           setModalDelete(false);
-          setIsRefresh(1);
+          // setIsRefresh(1);
+          fetchDataDetail();
           notification["success"]({
             message: `${active?.name} Charge Code successfully deleted`,
             duration: 3,
