@@ -1,24 +1,11 @@
-import { PlusCircleOutlined } from "@ant-design/icons";
-import { color } from "@chakra-ui/react";
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Space,
-  Spin,
-  Switch,
-  notification,
-} from "antd";
+import { Form, Input, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
 
 import { permissionWarningNotification } from "../../../../lib/helper";
-import { CopyIconSvg, TrashIconSvg } from "../../../icon";
 import DrawerCore from "../../drawerCore";
 
 const DrawerEditChargeCode = ({
+  getData,
   id,
   data,
   visible,
@@ -143,7 +130,7 @@ const DrawerEditChargeCode = ({
       .then((response2) => {
         setLoadingCreate(false);
         if (response2.status == 200) {
-          setIsRefresh(1);
+          getData();
           cancelClick();
           notification.success({
             message: `Charge Codes has successfully updated`,
@@ -186,13 +173,6 @@ const DrawerEditChargeCode = ({
       .catch((info) => {
         console.log("Validasi gagal:", info);
       });
-  };
-
-  const handleSwitchVerification = (index, value) => {
-    // console.log('value ',value)
-    const newData = [...chargeCodes];
-    newData[index].perlu_verifikasi = value ? 1 : 0;
-    setChargeCodes(newData);
   };
 
   return (
