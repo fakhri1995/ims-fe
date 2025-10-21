@@ -213,6 +213,12 @@ const DrawerCompanyAddChargeCode = ({
     setChargeCodes(newData);
   };
 
+  const handleChangeColorAttendance = (index, value) => {
+    const newData = [...attendanceCodes];
+    newData[index].color = value;
+    setAttendanceCodes(newData);
+  };
+
   const cancelClick = () => {
     clearData();
     onvisible(false);
@@ -264,6 +270,7 @@ const DrawerCompanyAddChargeCode = ({
       {
         name: "",
         description: "",
+        color: null,
         perlu_verifikasi: false,
         hari_masuk: 0,
         hari_penggajian: 0,
@@ -435,6 +442,12 @@ const DrawerCompanyAddChargeCode = ({
                         label="Charge Code Color"
                         name={"charge_code_color"}
                         className="w-full"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Charge Code Color is required",
+                          },
+                        ]}
                       >
                         <div>
                           <Input
@@ -537,28 +550,37 @@ const DrawerCompanyAddChargeCode = ({
                         className="w-full"
                       >
                         <div>
-                          <Select
-                            showSearch
-                            optionFilterProp="children"
-                            placeholder="Select Company"
-                            filterOption={(input, option) =>
-                              (option?.children ?? "")
-                                .toLowerCase()
-                                .includes(input.toLowerCase())
+                          <Input
+                            className={"w-full"}
+                            placeholder="ex : MIGHTY"
+                            name={"attendance_code_name"}
+                            value={item.name}
+                            onChange={(e) =>
+                              handleChangeAttendanceName(index, e.target.value)
                             }
-                            loading={loadingGetCompany}
-                            style={{ width: `100%` }}
-                            value={item?.name}
-                            onChange={(value) => {
-                              handleChangeAttendanceName(index, value);
-                            }}
-                          >
-                            {attendanceCodeList?.map((code) => (
-                              <Select.Option key={code.id} value={code.name}>
-                                {code.name}
-                              </Select.Option>
-                            ))}
-                          </Select>
+                          />
+                        </div>
+                      </Form.Item>
+                      <Form.Item
+                        label="Attendance Code Color"
+                        name={"attendance_code_color"}
+                        className="w-full"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Attendance Color is required",
+                          },
+                        ]}
+                      >
+                        <div>
+                          <Input
+                            type="color"
+                            style={{ width: 80 }}
+                            value={item?.color}
+                            onChange={(e) =>
+                              handleChangeColorAttendance(index, e.target.value)
+                            }
+                          />
                         </div>
                       </Form.Item>
                       <Form.Item

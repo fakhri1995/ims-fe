@@ -104,7 +104,6 @@ const DrawerAddChargeCode = ({
   }, []);
 
   const handleCreateChargeCode = (values) => {
-    console.log("values ", values);
     const payload = {
       company_id: Number(id_company),
       name: values.charge_code_name,
@@ -156,37 +155,6 @@ const DrawerAddChargeCode = ({
     onvisible(false);
   };
 
-  const handleChangeName = (index, value) => {
-    const newData = [...chargeCodes];
-    newData[index].name = value;
-    setChargeCodes(newData);
-  };
-
-  const handleChangeDescription = (index, value) => {
-    const newData = [...chargeCodes];
-    newData[index].description = value;
-    setChargeCodes(newData);
-  };
-  const handleAdd = () => {
-    setChargeCodes([
-      ...chargeCodes,
-      {
-        name: "",
-        description: "",
-        perlu_verifikasi: false,
-        hari_masuk: 0,
-        hari_penggajian: 0,
-        dapat_ditagih: 0,
-      },
-    ]);
-  };
-
-  const handleCheckboxChange = (index, key, checked) => {
-    let temp = "";
-    const newData = [...chargeCodes];
-    newData[index][key] = checked ? 1 : 0;
-    setChargeCodes(newData);
-  };
   const handleClickButton = () => {
     // validasi dan ambil value form
     if (!isAllowedToAddChargeCode) {
@@ -201,24 +169,6 @@ const DrawerAddChargeCode = ({
       .catch((info) => {
         console.log("Validasi gagal:", info);
       });
-  };
-
-  const handleSwitchVerification = (index, value) => {
-    // console.log('value ',value)
-    const newData = [...chargeCodes];
-    newData[index].perlu_verifikasi = value ? 1 : 0;
-    setChargeCodes(newData);
-  };
-
-  const handleDelete = (index) => {
-    const newData = chargeCodes.filter((_, i) => i !== index);
-    setChargeCodes(newData);
-  };
-
-  const handleDuplicate = (index) => {
-    const newData = [...chargeCodes];
-    newData.splice(index + 1, 0, { ...chargeCodes[index] });
-    setChargeCodes(newData);
   };
 
   return (

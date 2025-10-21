@@ -20,6 +20,7 @@ import DrawerCore from "../../drawerCore";
 
 const DrawerEditChargeCode = ({
   id,
+  data,
   visible,
   onvisible,
   initProps,
@@ -78,51 +79,22 @@ const DrawerEditChargeCode = ({
     }
   }, [dataCompany]);
 
-  //HANDLER
-  const onChangeInput = (e) => {
-    setDataRole({
-      ...dataRole,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   useEffect(() => {
-    if (!id) {
+    if (!data) {
       return;
     }
-    getDataDetail();
-  }, [id]);
-
-  const getDataDetail = () => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getChargeCode?id=${id}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setDataChargeCode({
-          ...dataChargeCode,
-          name: res2.data.name,
-          description: res2.data.description,
-          color: res2.data.color,
-        });
-        instanceForm.setFieldsValue(
-          {
-            charge_code_name: res2.data.name,
-          },
-          { description: res2.data.description },
-          {
-            color: res2.data.color,
-          }
-        );
-        // setChargeCodes(res2.data.attendance_codes);
-        //   setCompanyList(res2.data);
-        //   setLoadingGetCompany(false);
-      });
-  };
+    setDataChargeCode({
+      ...dataChargeCode,
+      name: data.name,
+      description: data.description,
+      color: data.color,
+    });
+    instanceForm.setFieldsValue({
+      charge_code_name: data.name,
+      description: data.description,
+      color: data.color,
+    });
+  }, [data]);
 
   const clearData = () => {
     setDataChargeCode({
