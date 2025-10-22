@@ -73,7 +73,7 @@ export const AttendanceStaffCheckInDrawer: FC<
   const onUploadChange = useCallback(
     ({ file }: UploadChangeParam<UploadFile<RcFile>>) => {
       setUploadPictureLoading(file.status === "uploading");
-
+      console.log("file ", file);
       if (file.status !== "removed") {
         setFileList([file]);
       }
@@ -378,6 +378,31 @@ export const AttendanceStaffCheckInDrawer: FC<
                     </div>
                   </Form.Item>
                 )}
+
+                <Form.Item
+                  name="supporting_file"
+                  label={"Supporting File"}
+                  required
+                >
+                  <Upload
+                    capture
+                    listType="picture"
+                    name="file"
+                    accept="image/png, image/jpeg"
+                    maxCount={1}
+                    beforeUpload={beforeUploadEvidencePicture}
+                    onRemove={onRemoveEvidencePicture}
+                    onPreview={onPreviewEvidencePicture}
+                    disabled={uploadPictureLoading}
+                    fileList={fileList}
+                    onChange={onUploadChange}
+                  >
+                    <Button className="mig-button mig-button--outlined-primary">
+                      <UploadOutlined />
+                      Upload File
+                    </Button>
+                  </Upload>
+                </Form.Item>
 
                 {attendeeStatus === "checkout" && (
                   <Form.Item
