@@ -22,7 +22,7 @@ const DrawerCompanyAddChargeCode = ({
   isAllowedToAddChargeCodeCompany,
   setLoadingCreate,
   loadingCreate,
-  setIsRefresh,
+  getData,
 }) => {
   /**
    * Dependencies
@@ -77,6 +77,7 @@ const DrawerCompanyAddChargeCode = ({
       work_day_type: null,
     });
     instanceForm.resetFields();
+    setAttendanceCodes([]);
     setChargeCodes([]);
   };
 
@@ -122,7 +123,7 @@ const DrawerCompanyAddChargeCode = ({
         .then((response2) => {
           setLoadingCreate(false);
           if (response2.status == 200) {
-            setIsRefresh(1);
+            getData();
             cancelClick();
             notification.success({
               message: `Attendance & Charge code for ${dataCompany.name} successfully added`,
@@ -133,7 +134,8 @@ const DrawerCompanyAddChargeCode = ({
             });
           } else {
             notification.error({
-              message: `Attendance & Charge code has failed.`,
+              message:
+                `Attendance & Charge code has failed.` + response2.message,
               duration: 3,
             });
           }

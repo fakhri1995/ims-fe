@@ -132,6 +132,7 @@ export const AttendanceStaffCheckInDrawer: FC<
     })
       .then((res) => res.json())
       .then((res2) => {
+        console.log("hasilnya ", res2);
         if (res2?.data?.attendance_codes.length > 0) {
           setDataListAttendanceCode(res2.data.attendance_codes);
         } else {
@@ -181,8 +182,19 @@ export const AttendanceStaffCheckInDrawer: FC<
       subcompany: number;
     }) => {
       // console.log("upload evidence picture ", uploadedEvidencePicture);
-      toggleCheckInCheckOut(
-        {
+      let payload;
+      if (perluVerifikasi) {
+        payload = {
+          attendance_code_id: attendanceCodeId,
+          support_file: uploadedEvidencePicture,
+          geo_loc: locationDisplayName || "",
+          lat: position?.coords.latitude.toString(),
+          long: position?.coords.longitude.toString(),
+          wfo: value?.work_from === "WFO" ? 1 : 0,
+          company_id: value?.subcompany,
+        };
+      } else {
+        payload = {
           attendance_code_id: attendanceCodeId,
           evidence: uploadedEvidencePicture,
           geo_loc: locationDisplayName || "",
@@ -190,36 +202,36 @@ export const AttendanceStaffCheckInDrawer: FC<
           long: position?.coords.longitude.toString(),
           wfo: value?.work_from === "WFO" ? 1 : 0,
           company_id: value?.subcompany,
+        };
+      }
+      toggleCheckInCheckOut(payload, {
+        onSuccess: (response) => {
+          if (response.data.success) {
+            setUploadedEvidencePicture(null);
+            setPreviewEvidencePictureData("");
+            setFileList([]);
+
+            form.resetFields();
+            onClose();
+
+            notificationSuccess({ message: response.data.message });
+          } else {
+            notificationWarning({
+              message: response.data.message,
+              duration: 2,
+            });
+          }
         },
-        {
-          onSuccess: (response) => {
-            if (response.data.success) {
-              setUploadedEvidencePicture(null);
-              setPreviewEvidencePictureData("");
-              setFileList([]);
+        onError: (error: AxiosError<any, any>) => {
+          const errorMessage = error.response.data.message;
+          const actualErrorMessage =
+            "errorInfo" in errorMessage
+              ? errorMessage["errorInfo"].pop()
+              : errorMessage;
 
-              form.resetFields();
-              onClose();
-
-              notificationSuccess({ message: response.data.message });
-            } else {
-              notificationWarning({
-                message: response.data.message,
-                duration: 2,
-              });
-            }
-          },
-          onError: (error: AxiosError<any, any>) => {
-            const errorMessage = error.response.data.message;
-            const actualErrorMessage =
-              "errorInfo" in errorMessage
-                ? errorMessage["errorInfo"].pop()
-                : errorMessage;
-
-            notificationError({ message: actualErrorMessage });
-          },
-        }
-      );
+          notificationError({ message: actualErrorMessage });
+        },
+      });
     },
     [uploadedEvidencePicture]
   );
