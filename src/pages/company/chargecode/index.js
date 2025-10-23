@@ -181,49 +181,6 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
     setShowDrawerEdit(true);
   };
   useEffect(() => {
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
-
-    const fetchData = async () => {
-      if (!isAllowedToGetChargeCodeCompany) {
-        permissionWarningNotification(
-          "Mendapatkan",
-          "Daftar Company Charge C0de"
-        );
-        // setloaddatatable(false);
-        return;
-      }
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getChargeCodeCompanies${payload}&keyword=${searchingFilterWorkingDays}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawWorkDay(res2.data);
-            setdatatable(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setLoading(false));
-    };
-
     const timer = setTimeout(() => fetchData(), 500);
 
     return () => clearTimeout(timer);
@@ -236,6 +193,48 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
     queryParams.sort_type,
     isRefresh != -1,
   ]);
+
+  const fetchData = async () => {
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+    if (!isAllowedToGetChargeCodeCompany) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Daftar Company Charge C0de"
+      );
+      // setloaddatatable(false);
+      return;
+    }
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getChargeCodeCompanies${payload}&keyword=${searchingFilterWorkingDays}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRawWorkDay(res2.data);
+          setdatatable(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
 
   const [rowstate, setrowstate] = useState(0);
 
@@ -368,7 +367,7 @@ function ChargeCodeIndex({ initProps, dataProfile, sidemenu }) {
           isAllowedToAddChargeCodeCompany={isAllowedToAddCompanyCode}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
-          setIsRefresh={setIsRefresh}
+          getData={fetchData}
         />
       </div>
     </Layout>
