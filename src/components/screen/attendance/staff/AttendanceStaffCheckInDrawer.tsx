@@ -49,7 +49,7 @@ export const AttendanceStaffCheckInDrawer: FC<
   const { position, isPermissionBlocked } = useGeolocationAPI();
   const [attendanceCodeId, setAttendanceCodeId] = useState(null);
   const [dataListAttendanceCode, setDataListAttendanceCode] = useState([]);
-  const [perluVerifikasi, setPerluVerifikasi] = useState(false);
+  const [perluVerifikasi, setPerluVerifikasi] = useState(null);
   /** Field: Lokasi saat ini */
   const { data: locationDisplayName, isLoading: locationDisplayNameLoading } =
     useNominatimReverseGeocode(position);
@@ -132,7 +132,6 @@ export const AttendanceStaffCheckInDrawer: FC<
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("hasilnya ", res2);
         if (res2?.data?.attendance_codes.length > 0) {
           setDataListAttendanceCode(res2.data.attendance_codes);
         } else {
@@ -466,7 +465,7 @@ export const AttendanceStaffCheckInDrawer: FC<
                 )} */}
 
                 {/* Bukti Kehadran */}
-                {!perluVerifikasi && (
+                {perluVerifikasi != null && perluVerifikasi == false && (
                   <Form.Item
                     name="evidence_image"
                     label={evidencePictureLabel}
