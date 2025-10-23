@@ -8,9 +8,11 @@ import {
   Select,
   Spin,
   Table,
+  Tag,
   notification,
 } from "antd";
 import { SorterResult } from "antd/lib/table/interface";
+import moment from "moment";
 import {
   NumberParam,
   StringParam,
@@ -40,9 +42,10 @@ import {
   RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
 
-import { LeaveStatus } from "apis/attendance";
-
-import { permissionWarningNotification } from "../../../lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -93,6 +96,14 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     role_ids: withDefault(StringParam, undefined),
   });
 
+  const [queryParamsHistory, setQueryParamsHistory] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"status"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    role_ids: withDefault(StringParam, undefined),
+  });
+
   const [theForm] = Form.useForm();
 
   let timer: NodeJS.Timeout; // use for delay time in table's search
@@ -111,18 +122,38 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     to: null,
     total: null,
   });
+
+  const [displayDataHistoryVerification, setDisplayDataHistoryVerification] =
+    useState({
+      current_page: "",
+      data: [],
+      first_page_url: "",
+      from: null,
+      last_page: null,
+      last_page_url: "",
+      next_page_url: "",
+      path: "",
+      per_page: null,
+      prev_page_url: null,
+      to: null,
+      total: null,
+    });
   const [dataVerification, setDataVerification] = useState([]);
+  const [dataHistoryVerification, setDataHistoryVerification] = useState([]);
   const [searchingFilterEmployee, setSearchingFilterEmployee] = useState("");
+  const [searchingHistory, setSearchingHistory] = useState("");
   const [activeTab, setActiveTab] = useState("1");
   const [loading, setLoading] = useState(false);
   const [modalApproveVerification, setModalApproveVerification] =
     useState(false);
   const [modalRejectVerification, setModalRejectVerification] = useState(false);
   const [dataApprove, setDataApprove] = useState({
+    id: null,
     name: null,
     attendance_code_name: null,
   });
   const [dataReject, setDataReject] = useState({
+    id: null,
     name: null,
     attendance_code_name: null,
   });
@@ -151,60 +182,81 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       render: (text, record, index) => {
         return {
           children: (
-            <div className="xl:w-40">{record.name ? record.name : ""}</div>
+            <div className="xl:w-40">
+              {record?.attendance_user?.user?.name || ""}
+            </div>
           ),
         };
       },
     },
     {
       title: "Attendance Code",
-      key: "charge_codes_count",
+      key: "attendance_code",
       width: 200,
       sorter: true,
-      dataIndex: "charge_codes_count",
+      dataIndex: "attendance_code",
       render: (text, record, index) => {
         return {
-          children: <>{text} Charge Code</>,
+          children: (
+            <Tag
+              color={`${record?.attendance_user?.attendance_code?.color}1A`}
+              style={{
+                color: `${record?.attendance_user?.attendance_code?.color}`, // ungu tua untuk teks
+                borderRadius: "20px",
+                fontWeight: 600,
+                border: "none",
+                padding: "2px 10px",
+              }}
+            >
+              <p
+                className={`text-[${record?.attendance_user?.attendance_code?.color}]`}
+              >
+                {record?.attendance_user?.attendance_code?.name || ""}
+              </p>
+            </Tag>
+          ),
         };
       },
     },
     {
       title: "Company",
-      key: "employees_count",
-      dataIndex: "employees_count",
+      key: "company",
+      dataIndex: "company",
       render: (text, record, index) => {
         return {
-          children: <>{text} employees</>,
+          children: (
+            <>{record?.attendance_user?.attendance_code?.company?.name || ""}</>
+          ),
         };
       },
     },
     {
       title: "Issued Date",
-      key: "employees_count",
-      dataIndex: "employees_count",
+      key: "created_at",
+      dataIndex: "created_at",
       sorter: true,
       render: (text, record, index) => {
         return {
-          children: <>{text} employees</>,
+          children: <>{moment(text).format("DD MMMM YYYY")}</>,
         };
       },
     },
     {
       title: "Supporting File",
-      key: "employees_count",
-      dataIndex: "employees_count",
+      key: "supporting_file",
+      dataIndex: "supporting_file",
       render: (text, record, index) => {
         return {
           children: (
             <>
               <a
                 key={index}
-                href={"www.google.com"}
+                href={generateStaticAssetUrl(record?.supporting_file[0]?.link)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 h-11 flex items-center text-[#1D4ED8] hover:underline hover:text-[#2563EB]"
               >
-                filename.pdf
+                {record?.supporting_file[0]?.link.split("/").pop()}
               </a>
             </>
           ),
@@ -251,7 +303,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
         return {
           children: (
             <div className="flex justify-center">
-              {displayDataVerification?.from + index}
+              {displayDataHistoryVerification?.from + index}
             </div>
           ),
         };
@@ -265,30 +317,51 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       render: (text, record, index) => {
         return {
           children: (
-            <div className="xl:w-40">{record.name ? record.name : ""}</div>
+            <div className="xl:w-40">
+              {record?.attendance_user?.user?.name || ""}
+            </div>
           ),
         };
       },
     },
     {
       title: "Attendance Code",
-      key: "charge_codes_count",
+      key: "attendance_code",
       width: 200,
       sorter: true,
-      dataIndex: "charge_codes_count",
+      dataIndex: "attendance_code",
       render: (text, record, index) => {
         return {
-          children: <>{text} Charge Code</>,
+          children: (
+            <Tag
+              color={`${record?.attendance_user?.attendance_code?.color}1A`}
+              style={{
+                color: `${record?.attendance_user?.attendance_code?.color}`, // ungu tua untuk teks
+                borderRadius: "20px",
+                fontWeight: 600,
+                border: "none",
+                padding: "2px 10px",
+              }}
+            >
+              <p
+                className={`text-[${record?.attendance_user?.attendance_code?.color}]`}
+              >
+                {record?.attendance_user?.attendance_code?.name || ""}
+              </p>
+            </Tag>
+          ),
         };
       },
     },
     {
       title: "Company",
-      key: "employees_count",
-      dataIndex: "employees_count",
+      key: "company",
+      dataIndex: "company",
       render: (text, record, index) => {
         return {
-          children: <>{text} employees</>,
+          children: (
+            <>{record?.attendance_user?.attendance_code?.company?.name || ""}</>
+          ),
         };
       },
     },
@@ -299,26 +372,26 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       sorter: true,
       render: (text, record, index) => {
         return {
-          children: <>{text} employees</>,
+          children: <>{moment(text).format("DD MMMM YYYY")}</>,
         };
       },
     },
     {
       title: "Supporting File",
-      key: "employees_count",
-      dataIndex: "employees_count",
+      key: "supporting_file",
+      dataIndex: "supporting_file",
       render: (text, record, index) => {
         return {
           children: (
             <>
               <a
                 key={index}
-                href={"www.google.com"}
+                href={generateStaticAssetUrl(record?.supporting_file[0]?.link)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 h-11 flex items-center text-[#1D4ED8] hover:underline hover:text-[#2563EB]"
               >
-                filename.pdf
+                {record?.supporting_file[0]?.link.split("/").pop()}
               </a>
             </>
           ),
@@ -327,20 +400,28 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     },
     {
       title: "Status",
-      key: "employees_count",
-      dataIndex: "employees_count",
+      key: "status_verification",
+      dataIndex: "status_verification",
       sorter: true,
       render: (text, record, index) => {
         return {
           children: (
             <div
-              className={
-                "flex items-center gap-2 py-1 px-2.5 bg-[#35763B1A] rounded-[5px]"
-              }
+              className={`flex items-center gap-2 py-1 px-2.5 ${
+                text == "Approved" ? "bg-[#35763B1A]" : "bg-[#BF4A401A]"
+              } rounded-[5px]`}
             >
-              <div className={"bg-[#35763B] w-1.5 h-1.5 rounded-[3px]"} />
-              <p className={"text-primary100 text-xs/5 font-medium font-inter"}>
-                Accepted
+              <div
+                className={`${
+                  text == "Approved" ? "bg-[#35763B]" : "bg-[#BF4A40]"
+                } w-1.5 h-1.5 rounded-[3px]`}
+              />
+              <p
+                className={`${
+                  text == "Approved" ? "text-primary100" : "text-[#BF4A40]"
+                } text-xs/5 font-medium font-inter`}
+              >
+                {text}
               </p>
             </div>
           ),
@@ -373,38 +454,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       addQueryPrefix: true,
     });
 
-    const fetchData = async () => {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getChargeCodeCompanies${payload}&keyword=${searchingFilterEmployee}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDisplayDataVerification(res2.data);
-            setDataVerification(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setLoading(false));
-    };
-
-    const timer = setTimeout(() => fetchData(), 500);
+    const timer = setTimeout(() => fetchDataDetailVerification(), 500);
 
     return () => clearTimeout(timer);
   }, [
@@ -415,12 +465,104 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     queryParams.sort_type,
   ]);
 
+  const fetchDataDetailVerification = () => {
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceVerifications${payload}&keyword=${searchingFilterEmployee}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDisplayDataVerification(res2.data);
+          setDataVerification(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => fetchDataDetailHistory(), 500);
+
+    return () => clearTimeout(timer);
+  }, [
+    queryParamsHistory.page,
+    searchingHistory,
+    queryParamsHistory.rows,
+    queryParamsHistory.sort_by,
+    queryParamsHistory.sort_type,
+  ]);
+
+  const fetchDataDetailHistory = async () => {
+    const payload = QueryString.stringify(queryParamsHistory, {
+      addQueryPrefix: true,
+    });
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceHistoryVerifications${payload}&keyword=${searchingFilterEmployee}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDisplayDataHistoryVerification(res2.data);
+          setDataHistoryVerification(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
   const handleApproveConfirm = (record) => {
+    setDataApprove({
+      ...dataApprove,
+      id: record?.id,
+      name: record?.attendance_user?.user?.name,
+      attendance_code_name: record?.attendance_user?.attendance_code?.name,
+    });
     setModalApproveVerification(true);
     // setDataApprove
   };
 
   const handleRejectConfirm = (record) => {
+    setDataReject({
+      ...dataReject,
+      id: record?.id,
+      name: record?.attendance_user?.user?.name,
+      attendance_code_name: record?.attendance_user?.attendance_code?.name,
+    });
     setModalRejectVerification(true);
     // setDataApprove
   };
@@ -433,7 +575,79 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     setModalRejectVerification(false);
   };
 
-  const handleApprove = () => {};
+  const handleApprove = () => {
+    setLoadingApprove(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/approveAttendanceVerification`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: Number(dataApprove?.id),
+        }),
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setLoadingApprove(false);
+          setModalApproveVerification(false);
+          fetchDataDetailVerification();
+          fetchDataDetailHistory();
+          notification["success"]({
+            message: `${dataApprove?.name} Attendance Verification successfully approved`,
+            duration: 3,
+          });
+        } else if (!res2.success) {
+          setLoadingApprove(false);
+          setModalApproveVerification(false);
+          notification["error"]({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      });
+  };
+
+  const handleReject = () => {
+    setLoadingReject(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/rejectAttendanceVerification`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: Number(dataReject?.id),
+        }),
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setLoadingReject(false);
+          setModalRejectVerification(false);
+          fetchDataDetailHistory();
+          fetchDataDetailVerification();
+          notification["success"]({
+            message: `${dataReject?.name} Attendance Verification successfully rejected`,
+            duration: 3,
+          });
+        } else if (!res2.success) {
+          setLoadingReject(false);
+          setModalRejectVerification(false);
+          notification["error"]({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      });
+  };
 
   return (
     <LayoutDashboard
@@ -594,8 +808,12 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
             >
               <p className={"text-[#4D4D4D] "}>
                 Are you sure you want to approve the verification{" "}
-                <span className={"font-bold"}>Paid Leave</span> for{" "}
-                <span className={"font-bold"}>Alex</span> ?
+                <span className={"font-bold"}>{dataApprove?.name || ""}</span>{" "}
+                for{" "}
+                <span className={"font-bold"}>
+                  {dataApprove?.attendance_code_name || ""}
+                </span>{" "}
+                ?
               </p>
             </Modal>
             <Modal
@@ -634,7 +852,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                     </p>
                   </div>
                   <div
-                    onClick={() => handleApprove()}
+                    onClick={() => handleReject()}
                     className={
                       "bg-[#BF4A40] flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
                     }
@@ -663,8 +881,12 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
             >
               <p className={"text-[#4D4D4D] "}>
                 Are you sure you want to reject the verification{" "}
-                <span className={"font-bold"}>Paid Leave</span> for{" "}
-                <span className={"font-bold"}>Alex</span> ?
+                <span className={"font-bold"}>{dataReject?.name || ""}</span>{" "}
+                for{" "}
+                <span className={"font-bold"}>
+                  {dataReject?.attendance_code_name || ""}
+                </span>{" "}
+                ?
               </p>
             </Modal>
           </div>
@@ -673,31 +895,25 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
             <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full px-4 md:items-center mb-4 pb-3">
               <div className="w-full md:w-full">
                 <Input
-                  defaultValue={searchingFilterEmployee}
+                  defaultValue={searchingHistory}
                   style={{ width: `100%` }}
                   placeholder="Search Employee..."
                   allowClear
                   onChange={(e) => {
-                    setSearchingFilterEmployee(e.target.value);
+                    setSearchingHistory(e.target.value);
                     setQueryParams({ page: 1 });
                   }}
-                  //   onChange={(e) => {
-                  //     setSearchingFilterRecruitments(e.target.value);
-                  //     setQueryParams({ page: 1 });
-                  //   }}
-                  //   onKeyPress={onKeyPressHandler}
-                  //   disabled={!isAllowedToGetRecruitments}
                 />
               </div>
             </div>
             <div className={"px-4 "}>
               <Table
                 columns={columnsHistory}
-                dataSource={dataVerification}
+                dataSource={dataHistoryVerification}
                 pagination={{
-                  current: queryParams.page,
-                  pageSize: queryParams.rows,
-                  total: displayDataVerification?.total,
+                  current: queryParamsHistory.page,
+                  pageSize: queryParamsHistory.rows,
+                  total: displayDataHistoryVerification?.total,
                   showSizeChanger: true,
                 }}
                 scroll={{ x: "max-content" }}
@@ -709,7 +925,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                       ? "desc"
                       : undefined;
 
-                  setQueryParams({
+                  setQueryParamsHistory({
                     page: pagination.current,
                     rows: pagination.pageSize,
                     sort_type: sortTypePayload,
@@ -717,12 +933,6 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                       sortTypePayload === undefined ? undefined : sorter.field,
                   });
                 }}
-                //   onRow={(datum, rowIndex) => {
-                //     return {
-                //       className: "hover:cursor-pointer",
-                //       onClick: () => detailCuti(datum),
-                //     };
-                //   }}
               />
             </div>
           </div>
