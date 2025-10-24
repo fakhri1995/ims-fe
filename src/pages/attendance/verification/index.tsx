@@ -94,14 +94,17 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     sort_by: withDefault(StringParam, /** @type {"status"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     role_ids: withDefault(StringParam, undefined),
-  });
-
-  const [queryParamsHistory, setQueryParamsHistory] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"status"} */ undefined),
-    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    role_ids: withDefault(StringParam, undefined),
+    page_history: withDefault(NumberParam, 1),
+    rows_history: withDefault(NumberParam, 10),
+    sort_by_history: withDefault(
+      StringParam,
+      /** @type {"status"} */ undefined
+    ),
+    sort_type_history: withDefault(
+      StringParam,
+      /** @type {"asc"|"desc"} */ undefined
+    ),
+    role_ids_history: withDefault(StringParam, undefined),
   });
 
   const [theForm] = Form.useForm();
@@ -193,7 +196,6 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Attendance Code",
       key: "attendance_code",
       width: 200,
-      sorter: true,
       dataIndex: "attendance_code",
       render: (text, record, index) => {
         return {
@@ -222,6 +224,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Company",
       key: "company",
       dataIndex: "company",
+      sorter: true,
       render: (text, record, index) => {
         return {
           children: (
@@ -246,6 +249,10 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       key: "supporting_file",
       dataIndex: "supporting_file",
       render: (text, record, index) => {
+        const filename =
+          record?.supporting_file?.[0]?.link?.split("/").pop() ?? "";
+        const shortName =
+          filename.length > 15 ? filename.slice(0, 15) + "..." : filename;
         return {
           children: (
             <>
@@ -256,7 +263,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                 rel="noopener noreferrer"
                 className="px-4 h-11 flex items-center text-[#1D4ED8] hover:underline hover:text-[#2563EB]"
               >
-                {record?.supporting_file[0]?.link.split("/").pop()}
+                {shortName}
               </a>
             </>
           ),
@@ -328,7 +335,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Attendance Code",
       key: "attendance_code",
       width: 200,
-      sorter: true,
+      // sorter: true,
       dataIndex: "attendance_code",
       render: (text, record, index) => {
         return {
@@ -357,6 +364,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Company",
       key: "company",
       dataIndex: "company",
+      sorter: true,
       render: (text, record, index) => {
         return {
           children: (
@@ -381,6 +389,10 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       key: "supporting_file",
       dataIndex: "supporting_file",
       render: (text, record, index) => {
+        const filename =
+          record?.supporting_file?.[0]?.link?.split("/").pop() ?? "";
+        const shortName =
+          filename.length > 15 ? filename.slice(0, 15) + "..." : filename;
         return {
           children: (
             <>
@@ -391,7 +403,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                 rel="noopener noreferrer"
                 className="px-4 h-11 flex items-center text-[#1D4ED8] hover:underline hover:text-[#2563EB]"
               >
-                {record?.supporting_file[0]?.link.split("/").pop()}
+                {shortName}
               </a>
             </>
           ),
@@ -450,10 +462,6 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
   ];
 
   useEffect(() => {
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
-
     const timer = setTimeout(() => fetchDataDetailVerification(), 500);
 
     return () => clearTimeout(timer);
@@ -504,19 +512,26 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     return () => clearTimeout(timer);
   }, [
-    queryParamsHistory.page,
+    queryParams.page_history,
     searchingHistory,
-    queryParamsHistory.rows,
-    queryParamsHistory.sort_by,
-    queryParamsHistory.sort_type,
+    queryParams.rows_history,
+    queryParams.sort_by_history,
+    queryParams.sort_type_history,
   ]);
 
   const fetchDataDetailHistory = async () => {
-    const payload = QueryString.stringify(queryParamsHistory, {
-      addQueryPrefix: true,
-    });
+    const payload = QueryString.stringify(
+      {
+        page: queryParams.page_history,
+        rows: queryParams.rows_history,
+        sort_by: queryParams.sort_by_history,
+        sort_type: queryParams.sort_type_history,
+        role_ids: queryParams.role_ids_history,
+      },
+      { addQueryPrefix: true }
+    );
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceHistoryVerifications${payload}&keyword=${searchingFilterEmployee}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceHistoryVerifications${payload}&keyword=${searchingHistory}`,
       {
         method: `GET`,
         headers: {
@@ -911,8 +926,8 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                 columns={columnsHistory}
                 dataSource={dataHistoryVerification}
                 pagination={{
-                  current: queryParamsHistory.page,
-                  pageSize: queryParamsHistory.rows,
+                  current: queryParams.page_history,
+                  pageSize: queryParams.rows_history,
                   total: displayDataHistoryVerification?.total,
                   showSizeChanger: true,
                 }}
@@ -925,11 +940,11 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                       ? "desc"
                       : undefined;
 
-                  setQueryParamsHistory({
-                    page: pagination.current,
-                    rows: pagination.pageSize,
-                    sort_type: sortTypePayload,
-                    sort_by:
+                  setQueryParams({
+                    page_history: pagination.current,
+                    rows_history: pagination.pageSize,
+                    sort_type_history: sortTypePayload,
+                    sort_by_history:
                       sortTypePayload === undefined ? undefined : sorter.field,
                   });
                 }}
