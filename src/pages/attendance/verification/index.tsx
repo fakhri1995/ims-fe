@@ -375,8 +375,8 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     },
     {
       title: "Issued Date",
-      key: "employees_count",
-      dataIndex: "employees_count",
+      key: "created_at",
+      dataIndex: "created_at",
       sorter: true,
       render: (text, record, index) => {
         return {
@@ -414,7 +414,6 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Status",
       key: "status_verification",
       dataIndex: "status_verification",
-      sorter: true,
       render: (text, record, index) => {
         return {
           children: (
