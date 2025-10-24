@@ -55,9 +55,14 @@ export const AttendanceStaffCheckInDrawer: FC<
     useNominatimReverseGeocode(position);
 
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
-
+  const [uploadSupportingFileLoading, setUploadSupportingFileLoading] =
+    useState(false);
   /** Uploaded file object. Wrapped as RcFile. Used as payload. */
   const [uploadedEvidencePicture, setUploadedEvidencePicture] = useState<
+    RcFile | Blob | File
+  >(null);
+
+  const [uploadedSupportingFile, setUploadedSupportingFile] = useState<
     RcFile | Blob | File
   >(null);
 
@@ -70,11 +75,24 @@ export const AttendanceStaffCheckInDrawer: FC<
     useState("");
 
   const [fileList, setFileList] = useState<UploadFile<RcFile>[]>([]);
+  const [supportingfileList, setSupportingFileList] = useState<
+    UploadFile<RcFile>[]
+  >([]);
   const onUploadChange = useCallback(
     ({ file }: UploadChangeParam<UploadFile<RcFile>>) => {
       setUploadPictureLoading(file.status === "uploading");
       if (file.status !== "removed") {
         setFileList([file]);
+      }
+    },
+    []
+  );
+
+  const onUploadSupportFileChange = useCallback(
+    ({ file }: UploadChangeParam<UploadFile<RcFile>>) => {
+      setUploadSupportingFileLoading(file.status === "uploading");
+      if (file.status !== "removed") {
+        setSupportingFileList([file]);
       }
     },
     []
@@ -165,6 +183,31 @@ export const AttendanceStaffCheckInDrawer: FC<
     setUploadedEvidencePicture(null);
   }, []);
 
+  const beforeUploadSupportingFile = useCallback<
+    Pick<UploadProps, "beforeUpload">["beforeUpload"]
+  >((uploadedFile) => {
+    // const allowedFileTypes = ["image/png", "image/jpeg"];
+    // if (!allowedFileTypes.includes(uploadedFile.type)) {
+    //   return Upload.LIST_IGNORE;
+    // }
+    const fileSizeInMb = Number.parseFloat(
+      (uploadedFile.size / 1024 / 1024).toFixed(4)
+    );
+    if (fileSizeInMb > 5) {
+      notificationError({
+        message: "File size exceeds the requirement limit!",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    setUploadedSupportingFile(uploadedFile);
+  }, []);
+
+  const onRemoveSupportingFile = useCallback(() => {
+    setSupportingFileList([]);
+    setUploadedSupportingFile(null);
+  }, []);
+
   const onPreviewEvidencePicture = useCallback(async () => {
     const previewImageData = (await getBase64(
       uploadedEvidencePicture
@@ -185,7 +228,7 @@ export const AttendanceStaffCheckInDrawer: FC<
       if (perluVerifikasi) {
         payload = {
           attendance_code_id: attendanceCodeId,
-          support_file: uploadedEvidencePicture,
+          support_file: uploadedSupportingFile,
           geo_loc: locationDisplayName || "",
           lat: position?.coords.latitude.toString(),
           long: position?.coords.longitude.toString(),
@@ -209,6 +252,8 @@ export const AttendanceStaffCheckInDrawer: FC<
             setUploadedEvidencePicture(null);
             setPreviewEvidencePictureData("");
             setFileList([]);
+            setUploadedSupportingFile(null);
+            setSupportingFileList([]);
 
             form.resetFields();
             onClose();
@@ -322,10 +367,14 @@ export const AttendanceStaffCheckInDrawer: FC<
         onClose={onClose}
         onClick={() => form.submit()}
         disabled={
-          uploadPictureLoading ||
-          uploadedEvidencePicture === null ||
-          checkInOutLoading
-          // placementDisable
+          perluVerifikasi
+            ? uploadSupportingFileLoading ||
+              // uploadedEvidencePicture === null ||
+              uploadedSupportingFile === null ||
+              checkInOutLoading
+            : uploadedEvidencePicture === null ||
+              uploadedSupportingFile === null ||
+              checkInOutLoading
         }
       >
         <div className="space-y-6">
@@ -410,16 +459,16 @@ export const AttendanceStaffCheckInDrawer: FC<
                   >
                     <Upload
                       capture
-                      listType="picture"
-                      name="file"
-                      accept="image/png, image/jpeg"
+                      // listType="picture"
+                      name="supporting_file"
+                      // accept="image/png, image/jpeg,"
                       maxCount={1}
-                      beforeUpload={beforeUploadEvidencePicture}
-                      onRemove={onRemoveEvidencePicture}
-                      onPreview={onPreviewEvidencePicture}
-                      disabled={uploadPictureLoading}
-                      fileList={fileList}
-                      onChange={onUploadChange}
+                      beforeUpload={beforeUploadSupportingFile}
+                      onRemove={onRemoveSupportingFile}
+                      // onPreview={onPreviewEvidencePicture}
+                      disabled={uploadSupportingFileLoading}
+                      fileList={supportingfileList}
+                      onChange={onUploadSupportFileChange}
                     >
                       <Button className="mig-button mig-button--outlined-primary">
                         <UploadOutlined />
