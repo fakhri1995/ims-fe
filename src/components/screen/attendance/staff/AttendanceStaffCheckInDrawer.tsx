@@ -246,36 +246,36 @@ export const AttendanceStaffCheckInDrawer: FC<
           company_id: value?.subcompany,
         };
       }
-      // toggleCheckInCheckOut(payload, {
-      //   onSuccess: (response) => {
-      //     if (response.data.success) {
-      //       setUploadedEvidencePicture(null);
-      //       setPreviewEvidencePictureData("");
-      //       setFileList([]);
-      //       setUploadedSupportingFile(null);
-      //       setSupportingFileList([]);
+      toggleCheckInCheckOut(payload, {
+        onSuccess: (response) => {
+          if (response.data.success) {
+            setUploadedEvidencePicture(null);
+            setPreviewEvidencePictureData("");
+            setFileList([]);
+            setUploadedSupportingFile(null);
+            setSupportingFileList([]);
 
-      //       form.resetFields();
-      //       onClose();
+            form.resetFields();
+            onClose();
 
-      //       notificationSuccess({ message: response.data.message });
-      //     } else {
-      //       notificationWarning({
-      //         message: response.data.message,
-      //         duration: 2,
-      //       });
-      //     }
-      //   },
-      //   onError: (error: AxiosError<any, any>) => {
-      //     const errorMessage = error.response.data.message;
-      //     const actualErrorMessage =
-      //       "errorInfo" in errorMessage
-      //         ? errorMessage["errorInfo"].pop()
-      //         : errorMessage;
+            notificationSuccess({ message: response.data.message });
+          } else {
+            notificationWarning({
+              message: response.data.message,
+              duration: 2,
+            });
+          }
+        },
+        onError: (error: AxiosError<any, any>) => {
+          const errorMessage = error.response.data.message;
+          const actualErrorMessage =
+            "errorInfo" in errorMessage
+              ? errorMessage["errorInfo"].pop()
+              : errorMessage;
 
-      //     notificationError({ message: actualErrorMessage });
-      //   },
-      // });
+          notificationError({ message: actualErrorMessage });
+        },
+      });
     },
     [uploadedEvidencePicture, uploadedSupportingFile]
   );
