@@ -195,7 +195,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     {
       title: "Attendance Code",
       key: "attendance_code",
-      width: 200,
+      width: 150,
       dataIndex: "attendance_code",
       render: (text, record, index) => {
         return {
@@ -334,7 +334,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     {
       title: "Attendance Code",
       key: "attendance_code",
-      width: 200,
+      width: 150,
       // sorter: true,
       dataIndex: "attendance_code",
       render: (text, record, index) => {
