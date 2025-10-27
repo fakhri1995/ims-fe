@@ -224,6 +224,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Company",
       key: "company",
       dataIndex: "company",
+      width: 150,
       sorter: true,
       render: (text, record, index) => {
         return {
@@ -364,6 +365,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Company",
       key: "company",
       dataIndex: "company",
+      width: 150,
       sorter: true,
       render: (text, record, index) => {
         return {
@@ -795,7 +797,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                   <div
                     onClick={() => handleApprove()}
                     className={
-                      "bg-[#BF4A40] flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
+                      "bg-[#35763B]  flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
                     }
                   >
                     {loadingApprove ? (
