@@ -167,6 +167,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "No",
       key: "num",
       dataIndex: "num",
+      width: 20,
       render: (text, record, index) => {
         return {
           children: (
@@ -307,6 +308,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "No",
       key: "num",
       dataIndex: "num",
+      width: 20,
       render: (text, record, index) => {
         return {
           children: (
@@ -734,7 +736,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                   total: displayDataVerification?.total,
                   showSizeChanger: true,
                 }}
-                scroll={{ x: "max-content" }}
+                // scroll={{ x: "max-content" }}
                 onChange={(pagination, _, sorter: SorterResult<any>) => {
                   const sortTypePayload =
                     sorter.order === "ascend"
@@ -924,6 +926,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
             </div>
             <div className={"px-4 "}>
               <Table
+                style={{ width: "100%" }}
                 columns={columnsHistory}
                 dataSource={dataHistoryVerification}
                 pagination={{
@@ -932,7 +935,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                   total: displayDataHistoryVerification?.total,
                   showSizeChanger: true,
                 }}
-                scroll={{ x: "max-content" }}
+                // scroll={{ x: "max-content" }}
                 onChange={(pagination, _, sorter: SorterResult<any>) => {
                   const sortTypePayload =
                     sorter.order === "ascend"
