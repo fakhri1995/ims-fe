@@ -177,6 +177,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "No",
       key: "num",
       dataIndex: "num",
+      width: 20,
       render: (text, record, index) => {
         return {
           children: (
@@ -234,6 +235,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Company",
       key: "company",
       dataIndex: "company",
+      width: 150,
       sorter: true,
       render: (text, record, index) => {
         return {
@@ -320,6 +322,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "No",
       key: "num",
       dataIndex: "num",
+      width: 20,
       render: (text, record, index) => {
         return {
           children: (
@@ -378,6 +381,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Company",
       key: "company",
       dataIndex: "company",
+      width: 150,
       sorter: true,
       render: (text, record, index) => {
         return {
@@ -764,7 +768,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                   total: displayDataVerification?.total,
                   showSizeChanger: true,
                 }}
-                scroll={{ x: "max-content" }}
+                // scroll={{ x: "max-content" }}
                 onChange={(pagination, _, sorter: SorterResult<any>) => {
                   const sortTypePayload =
                     sorter.order === "ascend"
@@ -827,7 +831,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                   <div
                     onClick={() => handleApprove()}
                     className={
-                      "bg-[#BF4A40] flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
+                      "bg-[#35763B]  flex items-center gap-1.5 py-2 px-4 rounded-md hover:cursor-pointer"
                     }
                   >
                     {loadingApprove ? (
@@ -954,6 +958,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
             </div>
             <div className={"px-4 "}>
               <Table
+                style={{ width: "100%" }}
                 columns={columnsHistory}
                 dataSource={dataHistoryVerification}
                 pagination={{
@@ -962,7 +967,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                   total: displayDataHistoryVerification?.total,
                   showSizeChanger: true,
                 }}
-                scroll={{ x: "max-content" }}
+                // scroll={{ x: "max-content" }}
                 onChange={(pagination, _, sorter: SorterResult<any>) => {
                   const sortTypePayload =
                     sorter.order === "ascend"
