@@ -35,11 +35,10 @@ import LayoutDashboard from "components/layout-dashboard";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  EMPLOYEE_LEAVE_QUOTAS_GET,
-  EMPLOYEE_LEAVE_QUOTA_ADD,
-  EMPLOYEE_LEAVE_QUOTA_DELETE,
-  EMPLOYEE_LEAVE_QUOTA_UPDATE,
-  RECRUITMENT_ROLES_LIST_GET,
+  ATTENDANCE_HISTORY_VERIFICATIONS_GET,
+  ATTENDANCE_VERIFICATIONS_GET,
+  ATTENDANCE_VERIFICATION_APPROVE,
+  ATTENDANCE_VERIFICATION_REJECT,
 } from "lib/features";
 
 import {
@@ -87,6 +86,17 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       name: "Employee Attendance Verification",
     },
   ];
+
+  const isAllowedToGetAttendanceVerifications = hasPermission(
+    ATTENDANCE_VERIFICATIONS_GET
+  );
+  const isAllowedToGetAttendanceVerificationsHistory = hasPermission(
+    ATTENDANCE_HISTORY_VERIFICATIONS_GET
+  );
+
+  const isAllowedToApprove = hasPermission(ATTENDANCE_VERIFICATION_APPROVE);
+
+  const isAllowedToReject = hasPermission(ATTENDANCE_VERIFICATION_REJECT);
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -278,22 +288,26 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
         return {
           children: (
             <div className="flex flex-row gap-2">
-              <div
-                onClick={() => handleApproveConfirm(record)}
-                className={
-                  "flex justify-center items-center hover:cursor-pointer bg-primary100 rounded-[4px] h-7 w-7"
-                }
-              >
-                <CheckIconSvg size={20} color={"white"} />
-              </div>
-              <div
-                onClick={() => handleRejectConfirm(record)}
-                className={
-                  "flex justify-center items-center hover:cursor-pointer bg-state1 rounded-[4px] h-7 w-7"
-                }
-              >
-                <CloseIconSvg size={20} color={"white"} />
-              </div>
+              {isAllowedToApprove && (
+                <div
+                  onClick={() => handleApproveConfirm(record)}
+                  className={
+                    "flex justify-center items-center hover:cursor-pointer bg-primary100 rounded-[4px] h-7 w-7"
+                  }
+                >
+                  <CheckIconSvg size={20} color={"white"} />
+                </div>
+              )}
+              {isAllowedToReject && (
+                <div
+                  onClick={() => handleRejectConfirm(record)}
+                  className={
+                    "flex justify-center items-center hover:cursor-pointer bg-state1 rounded-[4px] h-7 w-7"
+                  }
+                >
+                  <CloseIconSvg size={20} color={"white"} />
+                </div>
+              )}
             </div>
           ),
         };
@@ -467,6 +481,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
   }, [
     queryParams.page,
     searchingFilterEmployee,
+    isAllowedToGetAttendanceVerifications,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
@@ -476,6 +491,14 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     const payload = QueryString.stringify(queryParams, {
       addQueryPrefix: true,
     });
+    if (!isAllowedToGetAttendanceVerifications) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Daftar Attendance Verification"
+      );
+      // setloaddatatable(false);
+      return;
+    }
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceVerifications${payload}&keyword=${searchingFilterEmployee}`,
       {
@@ -512,6 +535,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
     return () => clearTimeout(timer);
   }, [
     queryParams.page_history,
+    isAllowedToGetAttendanceVerificationsHistory,
     searchingHistory,
     queryParams.rows_history,
     queryParams.sort_by_history,
@@ -529,6 +553,14 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       },
       { addQueryPrefix: true }
     );
+    if (!isAllowedToGetAttendanceVerificationsHistory) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Daftar Attendance Verification History"
+      );
+      // setloaddatatable(false);
+      return;
+    }
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceHistoryVerifications${payload}&keyword=${searchingHistory}`,
       {

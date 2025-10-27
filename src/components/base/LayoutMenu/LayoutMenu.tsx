@@ -47,6 +47,7 @@ import {
   SIDEBAR_ATTENDANCE_MY,
   SIDEBAR_ATTENDANCE_SCHEDULE,
   SIDEBAR_ATTENDANCE_SHIFT,
+  SIDEBAR_ATTENDANCE_VERIFICATION,
   SIDEBAR_CLIENT_ATTENDANCE,
   SIDEBAR_CLIENT_DASHBOARD,
   SIDEBAR_CLIENT_PROJECT,
@@ -405,7 +406,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
-          {hasPermission(SIDEBAR_ATTENDANCE_SHIFT) && (
+          {hasPermission(SIDEBAR_ATTENDANCE_VERIFICATION) && (
             <Menu.Item key="attendance/verification" className="text-mono50">
               <Link href="/attendance/verification" legacyBehavior>
                 <p>Verification</p>
