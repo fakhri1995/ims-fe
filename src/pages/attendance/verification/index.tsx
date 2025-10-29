@@ -23,6 +23,7 @@ import Link from "next/link";
 import QueryString from "qs";
 import { useEffect, useState } from "react";
 
+import DrawerUpdateVerificationAttendance from "components/drawer/attendance/drawerUpdateVerificationAttendance";
 import {
   CheckIconSvg,
   CloseIconSvg,
@@ -172,6 +173,9 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
   });
   const [loadingApprove, setLoadingApprove] = useState(false);
   const [loadingReject, setLoadingReject] = useState(false);
+  const [showDrawerEdit, setShowDrawerEdit] = useState(false);
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [dataUpdate, setDataUpdate] = useState(null);
   const columns: typeof dataVerification = [
     {
       title: "No",
@@ -467,7 +471,7 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
             <div className="flex flex-row gap-2">
               <div
                 className={"hover:cursor-pointer"}
-                // onClick={() => handleEditAttendance(record)}
+                onClick={() => handleEditAttendance(record)}
               >
                 <EditTablerIconSvg size={20} color={"#808080"} />
               </div>
@@ -477,6 +481,11 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
       },
     },
   ];
+
+  const handleEditAttendance = (record) => {
+    setShowDrawerEdit(true);
+    setDataUpdate(record);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => fetchDataDetailVerification(), 500);
@@ -986,6 +995,17 @@ const AttendanceVerificationIndex = ({ initProps, dataProfile, sidemenu }) => {
                 }}
               />
             </div>
+            <DrawerUpdateVerificationAttendance
+              getData={fetchDataDetailHistory}
+              id={dataUpdate?.id}
+              data={dataUpdate}
+              visible={showDrawerEdit}
+              onvisible={setShowDrawerEdit}
+              initProps={initProps}
+              isAllowedToUpdateVerificationAttendance={true}
+              setLoadingCreate={setLoadingCreate}
+              loadingCreate={loadingCreate}
+            />
           </div>
         )}
       </div>
