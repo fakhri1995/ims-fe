@@ -372,9 +372,7 @@ export const AttendanceStaffCheckInDrawer: FC<
               // uploadedEvidencePicture === null ||
               uploadedSupportingFile === null ||
               checkInOutLoading
-            : uploadedEvidencePicture === null ||
-              uploadedSupportingFile === null ||
-              checkInOutLoading
+            : uploadedEvidencePicture === null || checkInOutLoading
         }
       >
         <div className="space-y-6">
@@ -564,6 +562,12 @@ export const AttendanceStaffCheckInDrawer: FC<
                         Upload JPEG File (Max. 5 MB)
                       </em>
                     </div>
+                    {previewEvidencePictureData && (
+                      <img
+                        alt="Preview Evidence Picture"
+                        src={previewEvidencePictureData}
+                      />
+                    )}
                   </Form.Item>
                 )}
               </Form>

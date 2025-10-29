@@ -1,3 +1,4 @@
+import { notification } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
 
@@ -49,7 +50,9 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
   ];
 
   const [isCheckInDrawerShown, setIsCheckInDrawerShown] = useState(false);
-
+  const [statusVerificationAttendance, setStatusVerificationAttendance] =
+    useState(null);
+  const [loading, setLoading] = useState(false);
   const toggleCheckInDrawer = useCallback(() => {
     return setIsCheckInDrawerShown((prev) => !prev);
   }, []);
@@ -58,11 +61,45 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
     setIsCheckInDrawerShown(true);
   }, []);
 
+  const fetchData = async () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceStatusVerifications`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(token),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setStatusVerificationAttendance(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
   useEffect(() => {
     if (!isAllowedToShowAttendanceData) {
       permissionWarningNotification("Mendapatkan", "Detail Absensi Saya");
     }
   }, [isAllowedToShowAttendanceData]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <LayoutDashboard
@@ -84,10 +121,20 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
               checkInTime={dataProfile.data.company.check_in_time}
             />
           </div>
-
           {/* Staff Shift Card */}
           <AccessControl hasPermission={ATTENDANCE_CURRENT_SCHEDULE_GET}>
-            <AttendanceStaffShiftCard userId={dataProfile?.data?.id} />
+            <AttendanceStaffShiftCard
+              userId={dataProfile?.data?.id}
+              attendance_code_color={
+                statusVerificationAttendance?.attendance_code_color
+              }
+              attendance_code_name={
+                statusVerificationAttendance?.attendance_code_name
+              }
+              status_verification={
+                statusVerificationAttendance?.status_verification
+              }
+            />
           </AccessControl>
 
           {/* Staff Detail Card */}

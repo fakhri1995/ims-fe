@@ -86,6 +86,17 @@ export const AttendanceDetailFormAttendanceSection: FC<
         width: 120,
         align: "center",
       },
+      {
+        key: "charge_code",
+        dataIndex: "charge_code_name",
+        title: "Project",
+        render: (text, record, index) => {
+          return {
+            children: <>{text}</>,
+          };
+        },
+        align: "center",
+      },
     ];
 
     dynamicNameFieldPairs.columnNames.forEach((column, index) => {

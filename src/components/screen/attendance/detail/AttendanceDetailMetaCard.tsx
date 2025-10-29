@@ -1,3 +1,4 @@
+import { Tag } from "antd";
 import { isAfter } from "date-fns";
 import { useRouter } from "next/router";
 import { FC, memo } from "react";
@@ -75,6 +76,30 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
                 attendanceCheckInDate,
                 "HH:mm:ss",
                 "-"
+              ),
+            },
+
+            {
+              label: "Code Status",
+              content: attendanceMeta?.attendance_code ? (
+                <Tag
+                  color={`${attendanceMeta?.attendance_code?.color}1A`}
+                  style={{
+                    color: `${attendanceMeta?.attendance_code?.color}`, // ungu tua untuk teks
+                    borderRadius: "20px",
+                    fontWeight: 600,
+                    border: "none",
+                    padding: "2px 10px",
+                  }}
+                >
+                  <p
+                    className={`text-[${attendanceMeta?.attendance_code?.color}]`}
+                  >
+                    {attendanceMeta?.attendance_code?.name || ""}
+                  </p>
+                </Tag>
+              ) : (
+                <p>-</p>
               ),
             },
             {
