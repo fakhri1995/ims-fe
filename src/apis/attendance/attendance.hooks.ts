@@ -711,8 +711,8 @@ export const useGetAttendanceDetailDataSource = (attendanceId: number) => {
     rawDataSource.forEach((activity) => {
       const buffer: DynamicTableTypes = {
         key: activity.id,
-        charge_code_name: "",
-        charge_code_id: 0,
+        charge_code_name: activity?.charge_code?.name,
+        charge_code_id: activity?.charge_code?.id,
         updated_at: activity.updated_at.toString(),
       };
 
