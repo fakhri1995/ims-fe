@@ -111,6 +111,7 @@ const DrawerCompanyAddChargeCode = ({
       };
       // console.log('Json stringify ', JSON.stringify(payload))
       setLoadingCreate(true);
+      // url company code : addCompanyCodes
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addCompanyCodes`, {
         method: "POST",
         headers: {
@@ -367,7 +368,7 @@ const DrawerCompanyAddChargeCode = ({
                 </Select>
               </div>
             </Form.Item>
-            <div className={"flex border-b"}>
+            {/* <div className={"flex border-b"}>
               <div
                 onClick={() => setActiveTab("attendance")}
                 className={`hover:cursor-pointer w-1/2 flex justify-center pb-1.5 ${
@@ -404,7 +405,7 @@ const DrawerCompanyAddChargeCode = ({
                   Charge Code
                 </p>
               </div>
-            </div>
+            </div> */}
             {activeTab == "charge_code" ? (
               <div className={"mt-4"}>
                 {chargeCodes.map((item, index) => (

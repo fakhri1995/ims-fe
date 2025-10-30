@@ -662,8 +662,8 @@ const ChargeCodeDetail = ({
         </div>
         <div className={"my-4 px-4 border-b flex"}>
           <div
-            onClick={() => setActiveTab("attendance_code")}
-            className={`hover:cursor-pointer flex pb-2 justify-center px-6 ${
+            // onClick={() => setActiveTab("attendance_code")}
+            className={`flex pb-2 justify-center px-6 ${
               activeTab == "attendance_code"
                 ? "border-b-2 border-primary100"
                 : ""
@@ -679,7 +679,7 @@ const ChargeCodeDetail = ({
               Attendance Code
             </p>
           </div>
-          <div
+          {/* <div
             onClick={() => setActiveTab("charge_code")}
             className={`hover:cursor-pointer pb-2 flex justify-center px-6 ${
               activeTab == "charge_code" ? "border-b-2 border-primary100" : ""
@@ -694,7 +694,7 @@ const ChargeCodeDetail = ({
             >
               Charge Code
             </p>
-          </div>
+          </div> */}
         </div>
         <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full px-4 md:items-center mb-4 border-b pb-3">
           <div className="w-full md:w-full">
