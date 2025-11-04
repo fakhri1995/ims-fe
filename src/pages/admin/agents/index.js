@@ -85,42 +85,38 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
 
   const columnsDD = [
     {
-      dataIndex: "profil_image",
-      key: `profil_image`,
+      title: "No",
+      key: "number",
+      dataIndex: "num",
       render: (text, record, index) => {
         return {
           children: (
-            <>
-              <img
-                src={record.profile_image}
-                alt="imageProfile"
-                className="object-cover w-10 h-10 rounded-full"
-              />
-            </>
+            <div className="flex justify-center">{rawdata?.from + index}</div>
           ),
         };
       },
     },
     {
-      title: "Nama",
+      title: "Name",
       dataIndex: "name",
+    },
+    {
+      title: "Company",
+      dataIndex: "company_name",
     },
     {
       title: "Email",
       dataIndex: "email",
     },
     {
-      title: "Posisi",
+      title: "Role",
       dataIndex: "position",
     },
     {
-      title: "No. Handphone",
+      title: "Phone Number",
       dataIndex: "phone_number",
     },
-    {
-      title: "Company",
-      dataIndex: "company_name",
-    },
+
     {
       title: "Status",
       dataIndex: "is_enabled",
@@ -129,12 +125,12 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
           children: (
             <>
               {record.is_enabled ? (
-                <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">
-                  Aktif
+                <div className="rounded-[5px] w-auto h-auto px-3 text-center py-0.5 bg-[#35763B1A] border border-[#35763B1A] text-[#35763B]">
+                  Active
                 </div>
               ) : (
-                <div className="rounded-md w-auto h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">
-                  {"Non-aktif"}
+                <div className="rounded-[5px] w-auto h-auto px-3 text-center py-0.5 bg-[#4D4D4D1A] border border-[#4D4D4D1S] text-[#4D4D4D]">
+                  Inactive
                 </div>
               )}
             </>
@@ -324,87 +320,75 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
               rt.push("/admin/agents/create");
             }}
           >
-            <UserPlusIconSvg />
-            <p className={"text-white"}>Add Agent</p>
+            <UserPlusIconSvg size={16} color={"white"} />
+            <p className={"text-white text-sm/4 font-medium font-roboto"}>
+              Add Agent
+            </p>
           </div>
         </div>
 
         {
           // [108].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-          <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
+          <div className="px-4 w-full grid grid-cols-1 md:grid-cols-5 bg-white rounded-md">
             <div className="md:col-span-5 col-span-1 flex flex-col py-3">
               {datarawloading ? null : (
-                <div className="flex mb-8">
-                  <div className=" w-10/12 mr-1 grid grid-cols-6">
-                    <div className="col-span-3 mr-1">
-                      <Input
-                        disabled={!isAllowedToGetAgentList}
-                        defaultValue={queryParams.name}
-                        // defaultValue={name1}
-                        style={{ width: `100%`, marginRight: `0.5rem` }}
-                        placeholder="Cari nama agent"
-                        onChange={onChangeSearch}
-                        allowClear
-                        onKeyPress={onKeyPressHandler}
-                      ></Input>
-                    </div>
-                    <div className="col-span-2 mr-1">
-                      <Select
-                        showSearch
-                        allowClear
-                        placeholder="Cari company agent"
-                        defaultValue={queryParams.company_id}
-                        options={dataCompany.map((company) => ({
-                          label: company.name,
-                          value: company.id,
-                        }))}
-                        filterOption={(input, option) => {
-                          return (option?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase());
-                        }}
-                        onChange={onChangeCompany}
-                        disabled={!isAllowedToGetCompanyClients}
-                        dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                        style={{ width: `100%`, marginRight: `0.5rem` }}
-                      />
-                    </div>
-
-                    <div className="col-span-1 mr-1">
-                      <Select
-                        disabled={!isAllowedToGetAgentList}
-                        defaultValue={
-                          queryParams.is_enabled !== undefined
-                            ? Boolean(queryParams.is_enabled)
-                            : undefined
-                        }
-                        // defaultValue={
-                        //   is_enabled1 === ""
-                        //     ? null
-                        //     : is_enabled1 === "true"
-                        //     ? true
-                        //     : false
-                        // }
-                        placeholder="Pilih status agent"
-                        style={{ width: `100%`, marginRight: `0.5rem` }}
-                        onChange={onChangeStatus}
-                        allowClear
-                      >
-                        <Select.Option value={true}>Aktif</Select.Option>
-                        <Select.Option value={false}>Non Aktif</Select.Option>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="w-2/12">
-                    <Button
-                      type="primary"
+                <div className="flex gap-2 mb-4">
+                  <div className={"w-3/5"}>
+                    <Input
                       disabled={!isAllowedToGetAgentList}
-                      style={{ width: `100%` }}
-                      onClick={onFinalClick}
+                      defaultValue={queryParams.name}
+                      // defaultValue={name1}
+                      style={{ width: `100%`, marginRight: `0.5rem` }}
+                      placeholder="Search agent"
+                      onChange={onChangeSearch}
+                      allowClear
+                      onKeyPress={onKeyPressHandler}
+                    ></Input>
+                  </div>
+                  <div className={"w-1/5"}>
+                    <Select
+                      showSearch
+                      allowClear
+                      placeholder="Select Company"
+                      defaultValue={queryParams.company_id}
+                      options={dataCompany.map((company) => ({
+                        label: company.name,
+                        value: company.id,
+                      }))}
+                      filterOption={(input, option) => {
+                        return (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase());
+                      }}
+                      onChange={onChangeCompany}
+                      disabled={!isAllowedToGetCompanyClients}
+                      dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                      style={{ width: `100%`, marginRight: `0.5rem` }}
+                    />
+                  </div>
+                  <div className={"w-1/5"}>
+                    <Select
+                      disabled={!isAllowedToGetAgentList}
+                      defaultValue={
+                        queryParams.is_enabled !== undefined
+                          ? Boolean(queryParams.is_enabled)
+                          : undefined
+                      }
+                      // defaultValue={
+                      //   is_enabled1 === ""
+                      //     ? null
+                      //     : is_enabled1 === "true"
+                      //     ? true
+                      //     : false
+                      // }
+                      placeholder="Select status"
+                      style={{ width: `100%`, marginRight: `0.5rem` }}
+                      onChange={onChangeStatus}
+                      allowClear
                     >
-                      <SearchOutlined />
-                    </Button>
-                    {/* <Button style={{ width: `40%` }} onClick={() => { setdataagents(dataraw) }}>Reset</Button> */}
+                      <Select.Option value={true}>Aktif</Select.Option>
+                      <Select.Option value={false}>Non Aktif</Select.Option>
+                    </Select>
                   </div>
                 </div>
               )}

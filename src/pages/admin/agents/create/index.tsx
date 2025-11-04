@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import Sticky from "wil-react-sticky";
 
+import { CheckIconSvg, UploadIconSvg } from "components/icon";
 import { ModalAccept } from "components/modal/modalConfirmation";
 
 import { useAccessControl } from "contexts/access-control";
@@ -27,6 +28,8 @@ import { getBase64, notificationError } from "lib/helper";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
 import { AgentService } from "apis/user";
+
+import UserPicturUploadIcon from "assets/vectors/user-picture-upload.svg";
 
 import Layout from "../../../../components/layout-dashboard-management";
 import st from "../../../../components/layout-dashboard-management.module.css";
@@ -114,6 +117,18 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   //is pra rendered loading
   const [praloading, setpraloading] = useState(true);
 
+  const handleExternalSubmit = async () => {
+    try {
+      const values = await instanceForm.validateFields();
+      if (values) {
+        setModalConfirm(true);
+        // Kirim ke API
+      }
+    } catch (errorInfo) {
+      console.log("❌ Form invalid:", errorInfo);
+    }
+  };
+
   //handle CreateAgent
   const handleCreateAgents = () => {
     setLoadingsave(true);
@@ -163,7 +178,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
     if (e.target.name === "role") {
       val = parseInt(e.target.value);
     }
-
     setNewuser((prev) => ({
       ...prev,
       [e.target.name]: val,
@@ -266,285 +280,331 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
       originPath={originPath}
       st={st}
     >
-      <div
-        className="w-full h-auto grid grid-cols-1 md:grid-cols-4"
-        id="createAgentsWrapper"
-      >
-        <div className=" col-span-1 md:col-span-4">
-          <Sticky containerSelectorFocus="#createAgentsWrapper">
-            <div className=" col-span-4 flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-              <h1 className="font-semibold py-2">Buat Akun Agent</h1>
-              <div className="flex space-x-2">
-                <Link href="/admin/agents" legacyBehavior>
-                  <Button type="default">Batal</Button>
-                </Link>
-                <Button
-                  disabled={
-                    praloading ||
-                    !isAllowedToAddAgent ||
-                    !isAllowedToGetCompanyClients
-                  }
-                  type="primary"
-                  loading={loadingsave}
-                  onClick={() => setModalConfirm(true)}
-                >
-                  Simpan
-                </Button>
+      <div className="w-full bg-white rounded-[10px] border border-neutrals70 shadow-desktopCard">
+        <div className={"border-b px-6 py-5 flex justify-between items-center"}>
+          <div className={"flex flex-col gap-1.5"}>
+            <p className={"text-[16px]/6 font-bold font-inter text-[#424242]"}>
+              Create Agent Account
+            </p>
+            <p className={"text-sm/6 font-inter font-normal text-[#757575]"}>
+              Please fill the required field
+            </p>
+          </div>
+          <div className={"flex flex-row gap-3"}>
+            <Link href="/admin/agents" legacyBehavior>
+              <div
+                className={
+                  "hover:cursor-pointer border border-primary100 text-primary100 rounded-[5px] h-[36px] w-[76px] flex justify-center items-center"
+                }
+              >
+                <p className={"text-sm/4 font-inter font-normal"}>Cancel</p>
               </div>
+            </Link>
+            <div
+              onClick={() => handleExternalSubmit()}
+              className={
+                "hover:cursor-pointer border bg-primary100 border-primary100 text-white rounded-[5px] h-[36px] w-[79px] gap-1.5 flex justify-center items-center"
+              }
+            >
+              <CheckIconSvg size={16} />
+              <p className={"text-sm/4 font-inter font-normal"}>Save</p>
             </div>
-          </Sticky>
+          </div>
         </div>
-        <div className="col-span-1 md:col-span-3 flex flex-col">
-          <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
-            <div className="border-b border-black p-4 font-semibold mb-5">
-              Akun Agent - {newuser.fullname}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4">
-              <div className="p-3 col-span-1 md:col-span-1">
+        <div
+          className={"grid grid-cols-1 md:grid-cols-3 md:space-x-5 px-6 pt-5"}
+        >
+          <div className={"col-span-1"}>
+            <div className={"flex items-center gap-5"}>
+              {newuser.profile_image ? (
+                <img
+                  src={newuser.profile_image}
+                  alt="avatar"
+                  style={{ width: 120, height: 120 }}
+                />
+              ) : (
+                <div
+                  className={
+                    "w-[120px] h-[120px] flex justify-center items-center shadow-desktopCard rounded-[15px]"
+                  }
+                >
+                  <UserPicturUploadIcon />
+                </div>
+              )}
+
+              <div className={"flex flex-col gap-2.5 justify-center"}>
+                <p
+                  className={"font-inter font-medium text-xs/5 text-[#4D4D4D]"}
+                >
+                  Account Picture <span className={"text-[#BF4A40]"}>*</span>
+                </p>
                 <Upload
                   name="profile_image"
-                  listType="picture-card"
+                  // listType="picture-card"
                   className="profileImage"
                   showUploadList={false}
                   beforeUpload={beforeUploadProfileImage}
                   onChange={onChangeProfileImage}
                 >
-                  {newuser.profile_image ? (
-                    <img
-                      src={newuser.profile_image}
-                      alt="avatar"
-                      style={{ width: "100%" }}
-                    />
-                  ) : (
-                    uploadButton
-                  )}
-                </Upload>
-              </div>
-              <div className="p-3 col-span-1 md:col-span-3">
-                <Form
-                  name="agentForm"
-                  layout="vertical"
-                  form={instanceForm}
-                  className="createAgentsForm"
-                  onFinish={handleCreateAgents}
-                >
-                  <Form.Item label="Company" name="company_id">
-                    <Select
-                      showSearch
-                      allowClear
-                      placeholder="Pilih company"
-                      value={newuser?.company_id}
-                      options={datacompanylist.map((company) => ({
-                        label: company.name,
-                        value: company.id,
-                      }))}
-                      filterOption={(input, option) => {
-                        return (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase());
-                      }}
-                      onChange={(value) => {
-                        setNewuser({ ...newuser, company_id: value });
-                      }}
-                      disabled={!isAllowedToGetCompanyClients}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Nama Lengkap"
-                    required
-                    name="fullname"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Nama Lengkap wajib diisi",
-                      },
-                    ]}
+                  <Button
+                    className="btn-sm btn font-semibold px-4 flex gap-1.5 border
+                           hover:text-white bg-white border-[#4D4D4D]
+                          hover:bg-primary75 hover:border-primary75  
+                          focus:border-primary75 focus:text-primary100 "
                   >
-                    <Input
-                      value={newuser.fullname}
-                      name={`fullname`}
-                      onChange={onChangeCreateAgents}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Email"
-                    required
-                    name="email"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Email wajib diisi",
-                      },
-                      {
-                        pattern:
-                          /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
-                        message: "Email belum diisi dengan benar",
-                      },
-                    ]}
-                  >
-                    <Input
-                      value={newuser.email}
-                      name={`email`}
-                      onChange={onChangeCreateAgents}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Posisi"
-                    required
-                    name="position"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Posisi wajib diisi",
-                      },
-                    ]}
-                  >
-                    <Input
-                      value={newuser.position}
-                      name={`position`}
-                      onChange={onChangeCreateAgents}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="No. Handphone"
-                    name="phone_number"
-                    rules={[
-                      {
-                        required: true,
-                        message: "No.Handphone wajib diisi",
-                      },
-                      {
-                        pattern: /(\-)|(^\d*$)/,
-                        message: "No. Handphone harus berisi angka",
-                      },
-                    ]}
-                  >
-                    <Input
-                      value={newuser.phone_number}
-                      name={`phone_number`}
-                      onChange={onChangeCreateAgents}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="NIP"
-                    name="nip"
-                    rules={[
-                      {
-                        required: true,
-                        message: "NIP wajib diisi",
-                      },
-                      {
-                        pattern: /^[0-9]*$/,
-                        message: "NIP harus berisi angka",
-                      },
-                    ]}
-                  >
-                    <Input
-                      value={newuser.nip}
-                      name="nip"
-                      onChange={onChangeCreateAgents}
-                    />
-                  </Form.Item>
-
-                  <Form.Item label="Form Aktivitas" name="attendance_form_ids">
-                    <Select
-                      showSearch
-                      allowClear
-                      placeholder="Pilih form aktivitas"
-                      filterOption={false}
-                      onSearch={(value) => setFormAktivitasValue(value)}
-                      onChange={(value) => {
-                        if (value === undefined || value === "") {
-                          setFormAktivitasValue("");
-                          return;
-                        }
-
-                        setNewuser((prev) => ({
-                          ...prev,
-                          attendance_form_ids: [value],
-                        }));
-                      }}
-                    >
-                      {formAktivitasData?.map(({ id, name }) => (
-                        <Select.Option key={id} value={id}>
-                          {name}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                  <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Password wajib diisi",
-                      },
-                      {
-                        pattern: /([A-z0-9]{8})/,
-                        message: "Password minimal 8 karakter",
-                      },
-                    ]}
-                  >
-                    <Input.Password
-                      value={newuser.password}
-                      name={`password`}
-                      onChange={onChangeCreateAgents}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Konfirmasi Password"
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Confirm Password wajib diisi",
-                      },
-                      {
-                        pattern: /([A-z0-9]{8})/,
-                        message: "Confirm Password minimal 8 karakter",
-                      },
-                    ]}
-                  >
-                    <>
-                      <Input.Password
-                        value={newuser.confirm_password}
-                        name={`confirm_password`}
-                        onChange={onChangeCreateAgents}
-                      />
-                      {newuser.password !== newuser.confirm_password && (
-                        <p className=" text-red-500 mb-0">
-                          Confirm Password harus sesuai dengan password
-                        </p>
-                      )}
-                    </>
-                  </Form.Item>
-                  <Form.Item label="Role" name="role">
-                    <Select
-                      mode="multiple"
-                      showSearch
-                      disabled={!isAllowedToGetRolesList}
-                      onChange={(value) => {
-                        setNewuser({ ...newuser, role_ids: value });
-                      }}
-                      /*defaultValue={idrole}*/
-                      style={{ width: `100%` }}
-                      options={dataroles.map((doc) => ({
-                        label: doc.name,
-                        value: doc.id,
-                      }))}
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        option?.label
-                          ?.toLowerCase()
-                          .includes(input.toLowerCase())
+                    <UploadIconSvg size={16} color={"#4D4D4D"} />
+                    <p
+                      className={
+                        "text-sm/4 font-roboto font-medium text-[#4D4D4D]"
                       }
-                    />
-                  </Form.Item>
-                </Form>
+                    >
+                      Upload File
+                    </p>
+                  </Button>
+                </Upload>
               </div>
             </div>
           </div>
+          <Form
+            name="agentForm"
+            layout="vertical"
+            form={instanceForm}
+            className="createAgentsForm col-span-2"
+            onFinish={handleCreateAgents}
+          >
+            <div className={"grid grid-cols-2 space-x-5"}>
+              <Form.Item
+                className={"col-span-1"}
+                label="Company"
+                name="company_id"
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  className={"w-full"}
+                  placeholder="Select company"
+                  value={newuser?.company_id}
+                  options={datacompanylist.map((company) => ({
+                    label: company.name,
+                    value: company.id,
+                  }))}
+                  filterOption={(input, option) => {
+                    return (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase());
+                  }}
+                  onChange={(value) => {
+                    setNewuser({ ...newuser, company_id: value });
+                  }}
+                  disabled={!isAllowedToGetCompanyClients}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Full Name"
+                className={"col-span-1"}
+                required
+                name="fullname"
+                rules={[
+                  {
+                    required: true,
+                    message: "Nama Lengkap wajib diisi",
+                  },
+                ]}
+              >
+                <Input
+                  value={newuser.fullname}
+                  name={`fullname`}
+                  placeholder="input name"
+                  onChange={onChangeCreateAgents}
+                />
+              </Form.Item>
+            </div>
+            <div className={"grid grid-cols-2 space-x-5"}>
+              <Form.Item
+                label="Email"
+                className={"col-span-1"}
+                required
+                name="email"
+                rules={[
+                  {
+                    required: true,
+                    message: "Email wajib diisi",
+                  },
+                  {
+                    pattern:
+                      /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                    message: "Email belum diisi dengan benar",
+                  },
+                ]}
+              >
+                <Input
+                  value={newuser.email}
+                  name={`email`}
+                  onChange={onChangeCreateAgents}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Position"
+                className="col-span-1"
+                required
+                name="position"
+                rules={[
+                  {
+                    required: true,
+                    message: "Position must be filled",
+                  },
+                ]}
+              >
+                <Input
+                  value={newuser.position}
+                  name={`position`}
+                  onChange={onChangeCreateAgents}
+                />
+              </Form.Item>
+            </div>
+            <div className={"grid grid-cols-2 space-x-5"}>
+              <Form.Item
+                label="Phone Number"
+                name="phone_number"
+                rules={[
+                  {
+                    required: true,
+                    message: "Phone Number must be filled",
+                  },
+                  {
+                    pattern: /(\-)|(^\d*$)/,
+                    message: "Phone Number must number",
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="input phone bumber"
+                  value={newuser.phone_number}
+                  name={`phone_number`}
+                  onChange={onChangeCreateAgents}
+                />
+              </Form.Item>
+              <Form.Item
+                label="NIP"
+                name="nip"
+                rules={[
+                  {
+                    required: true,
+                    message: "NIP must be filled",
+                  },
+                  {
+                    pattern: /^[0-9]*$/,
+                    message: "NIP must be number",
+                  },
+                ]}
+              >
+                <Input
+                  value={newuser.nip}
+                  placeholder="input nip"
+                  name="nip"
+                  onChange={onChangeCreateAgents}
+                />
+              </Form.Item>
+            </div>
+            <div className={"grid grid-cols-2 space-x-5"}>
+              <Form.Item label="Activity Form" name="attendance_form_ids">
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Select Activity form"
+                  filterOption={false}
+                  onSearch={(value) => setFormAktivitasValue(value)}
+                  onChange={(value) => {
+                    if (value === undefined || value === "") {
+                      setFormAktivitasValue("");
+                      return;
+                    }
+
+                    setNewuser((prev) => ({
+                      ...prev,
+                      attendance_form_ids: [value],
+                    }));
+                  }}
+                >
+                  {formAktivitasData?.map(({ id, name }) => (
+                    <Select.Option key={id} value={id}>
+                      {name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item label="Account Role" name="role">
+                <Select
+                  mode="multiple"
+                  placeholder={"Select Account Role"}
+                  showSearch
+                  disabled={!isAllowedToGetRolesList}
+                  onChange={(value) => {
+                    setNewuser({ ...newuser, role_ids: value });
+                  }}
+                  /*defaultValue={idrole}*/
+                  style={{ width: `100%` }}
+                  options={dataroles.map((doc) => ({
+                    label: doc.name,
+                    value: doc.id,
+                  }))}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option?.label?.toLowerCase().includes(input.toLowerCase())
+                  }
+                />
+              </Form.Item>
+            </div>
+            <div className={"grid grid-cols-2 space-x-5"}>
+              <Form.Item
+                label="Account Password"
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: "Password must be filled",
+                  },
+                  {
+                    pattern: /([A-z0-9]{8})/,
+                    message: "Password minimum 8 character",
+                  },
+                ]}
+              >
+                <Input.Password
+                  value={newuser.password}
+                  name={`password`}
+                  onChange={onChangeCreateAgents}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Confirm Account Password"
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: "Confirm Account must be filled",
+                  },
+                  {
+                    pattern: /([A-z0-9]{8})/,
+                    message: "Confirm Account minimum 8 character",
+                  },
+                ]}
+              >
+                <>
+                  <Input.Password
+                    value={newuser.confirm_password}
+                    name={`confirm_password`}
+                    onChange={onChangeCreateAgents}
+                  />
+                  {newuser.password !== newuser.confirm_password && (
+                    <p className=" text-red-500 mb-0">
+                      Confirm Password must be same with password
+                    </p>
+                  )}
+                </>
+              </Form.Item>
+            </div>
+          </Form>
         </div>
       </div>
       <ModalAccept

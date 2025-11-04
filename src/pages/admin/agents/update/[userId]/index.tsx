@@ -1,11 +1,20 @@
 import { EditOutlined, LoadingOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Select, TreeSelect, notification } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Select,
+  TreeSelect,
+  Upload,
+  notification,
+} from "antd";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import Sticky from "wil-react-sticky";
 
 import { AccessControl } from "components/features/AccessControl";
+import { ArrowLeftIconSvg, CheckIconSvg, UploadIconSvg } from "components/icon";
 import { ModalAccept } from "components/modal/modalConfirmation";
 
 import { useAccessControl } from "contexts/access-control";
@@ -27,6 +36,8 @@ import {
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
 import { AgentService } from "apis/user";
+
+import UserPicturUploadIcon from "assets/vectors/user-picture-upload.svg";
 
 import Layout from "../../../../../components/layout-dashboard-management";
 import st from "../../../../../components/layout-dashboard-management.module.css";
@@ -138,16 +149,22 @@ function AgentUpdate({
 
     instanceForm.setFieldValue(e.target.name, e.target.value);
   };
-  const onChangeEditFoto = async (e) => {
-    setLoadingfoto(true);
-    const blobFile = e.target.files[0];
-    const base64Data = await getBase64(blobFile);
 
-    setdataupdate({
-      ...dataupdate,
-      profile_image: base64Data,
-      profile_image_file: blobFile,
-    });
+  const onChangeEditFoto = async (info) => {
+    if (info.file.status === "uploading") {
+      setLoadingfoto(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      const blobFile = info.file.originFileObj;
+      const base64Data = await getBase64(blobFile);
+
+      setdataupdate({
+        ...dataupdate,
+        profile_image: base64Data,
+        profile_image_file: blobFile,
+      });
+    }
     setLoadingfoto(false);
   };
   const handleSubmitEditAccount = () => {
@@ -313,275 +330,300 @@ function AgentUpdate({
       dataDetailAccount={dataupdate}
       st={st}
     >
-      <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-        <div className="col-span-1 md:col-span-4">
-          <Sticky containerSelectorFocus="#formAgentsWrapper">
-            <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-              <h1 className="font-semibold py-2">Ubah Profil Agent</h1>
-              <div className="flex space-x-2">
-                <Button
-                  disabled={preloading}
-                  onClick={() => {
-                    rt.back();
-                  }}
-                  type="default"
-                >
-                  Batal
-                </Button>
-                {
-                  <Button
-                    disabled={preloading || !isAllowedToUpdateAgent}
-                    type="primary"
-                    loading={loadingupdate}
-                    onClick={() => setModalConfirm(true)}
-                  >
-                    Simpan
-                  </Button>
-                }
+      <div className="w-full bg-white rounded-[10px] border border-neutrals70 shadow-desktopCard">
+        <Sticky containerSelectorFocus="#formAgentsWrapper">
+          <div
+            className={
+              "px-5 bg-white py-5 border-b flex justify-between items-center"
+            }
+          >
+            <div className={"flex gap-3"}>
+              <div className={"hover:cursor-pointer"} onClick={() => rt.back()}>
+                <ArrowLeftIconSvg color={"#808080"} size={20} />
               </div>
+
+              <p
+                className={"text-[16px]/6 font-bold font-inter text-[#424242]"}
+              >
+                Edit Account
+              </p>
             </div>
-          </Sticky>
-        </div>
-        <div
-          className=" col-span-1 md:col-span-3 flex flex-col"
-          id="formAgentsWrapper"
-        >
-          <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-5">
-            <div className="border-b border-black p-4 font-semibold mb-5 flex">
-              <div className=" mr-3 md:mr-5 pt-1">
-                Ubah Profil Agent - {dataupdate.fullname}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4">
-              <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
-                <img
-                  src={dataupdate.profile_image}
-                  alt="imageProfile"
-                  className=" object-cover w-32 h-32 rounded-full mb-4"
-                />
-                {
-                  <label
-                    className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3"
-                    onClick={(e) => {
-                      if (!isAllowedToUpdateAgent) {
-                        permissionWarningNotification(
-                          "Memperbarui",
-                          "Detail Agent"
-                        );
-                        e.stopPropagation();
-                      }
-                    }}
-                  >
-                    <AccessControl hasPermission={AGENT_UPDATE}>
-                      <input
-                        type="file"
-                        style={{ display: `none` }}
-                        name="profile_image"
-                        onChange={onChangeEditFoto}
-                      />
-                    </AccessControl>
-                    {loadingfoto ? (
-                      <LoadingOutlined />
-                    ) : (
-                      <EditOutlined style={{ fontSize: `1.2rem` }} />
-                    )}
-                    Ganti Foto
-                  </label>
+            <div className={"flex flex-row gap-3"}>
+              <div
+                onClick={() => {
+                  rt.back();
+                }}
+                className={
+                  "hover:cursor-pointer border border-primary100 text-primary100 rounded-[5px] h-[36px] w-[76px] flex justify-center items-center"
                 }
+              >
+                <p className={"text-sm/4 font-inter font-normal"}>Cancel</p>
               </div>
-              {preloading ? null : (
-                <div className="p-3 col-span-1 md:col-span-3">
-                  <Form
-                    name="agentForm"
-                    layout="vertical"
-                    initialValues={dataupdate}
-                    form={instanceForm}
-                    onFinish={handleSubmitEditAccount}
-                  >
-                    <Form.Item label="Company" name="company_id">
-                      <Select
-                        showSearch
-                        allowClear
-                        placeholder="Pilih company"
-                        value={dataupdate?.company_id}
-                        options={dataCompanyList.map((company) => ({
-                          label: company.name,
-                          value: company.id,
-                        }))}
-                        filterOption={(input, option) => {
-                          return (option?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase());
-                        }}
-                        onChange={(value) => {
-                          setdataupdate({ ...dataupdate, company_id: value });
-                        }}
-                        disabled={!isAllowedToGetCompanyClients}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Nama Lengkap"
-                      required
-                      name="fullname"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Nama Lengkap wajib diisi",
-                        },
-                      ]}
-                    >
-                      <Input
-                        value={dataupdate.fullname}
-                        onChange={onChangeEditAgents}
-                        name="fullname"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Email"
-                      required
-                      name="email"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Email wajib diisi",
-                        },
-                        {
-                          pattern:
-                            /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
-                          message: "Email belum diisi dengan benar",
-                        },
-                      ]}
-                    >
-                      <Input
-                        disabled
-                        value={dataupdate.email}
-                        name={`email`}
-                        onChange={onChangeEditAgents}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Posisi"
-                      required
-                      name="position"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Posisi wajib diisi",
-                        },
-                      ]}
-                    >
-                      <Input
-                        value={dataupdate.position}
-                        name={`position`}
-                        onChange={onChangeEditAgents}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="No. Handphone"
-                      required
-                      name="phone_number"
-                      rules={[
-                        {
-                          required: true,
-                          message: "No. Handphone wajib diisi",
-                        },
-                        {
-                          pattern: /(\-)|(^\d*$)/,
-                          message: "No. Handphone harus berisi angka",
-                        },
-                      ]}
-                    >
-                      <Input
-                        value={dataupdate.phone_number}
-                        onChange={onChangeEditAgents}
-                        name="phone_number"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="NIP"
-                      name="nip"
-                      rules={[
-                        {
-                          required: true,
-                          message: "NIP wajib diisi",
-                        },
-                        {
-                          pattern: /^[0-9]*$/,
-                          message: "NIP harus berisi angka",
-                        },
-                      ]}
-                    >
-                      <Input
-                        value={dataupdate.nip}
-                        name="nip"
-                        onChange={onChangeEditAgents}
-                      />
-                    </Form.Item>
-
-                    {/* Form Aktivitas */}
-                    <Form.Item
-                      label="Form Aktivitas"
-                      name="attendance_form_ids"
-                    >
-                      <Select
-                        showSearch
-                        allowClear
-                        placeholder="Pilih form aktivitas"
-                        filterOption={false}
-                        onSearch={(value) => setFormAktivitasValue(value)}
-                        onChange={(value) => {
-                          if (!value) {
-                            setdataupdate((prev) => ({
-                              ...prev,
-                              attendance_form_ids: [],
-                            }));
-                            setFormAktivitasValue("");
-                          }
-
-                          setdataupdate((prev) => ({
-                            ...prev,
-                            attendance_form_ids: [value],
-                          }));
-                        }}
-                        value={dataupdate?.attendance_form_ids}
-                      >
-                        {formAktivitasData?.map(({ id, name }) => (
-                          <Select.Option key={id} value={id}>
-                            {name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-
-                    <h1 className="text-sm">Role:</h1>
-                    {
-                      <Select
-                        mode="multiple"
-                        showSearch
-                        disabled={!isAllowedToGetRolesList}
-                        placeholder="Pilih Role"
-                        onChange={(value) => {
-                          onChangeRole(value);
-                        }}
-                        defaultValue={defaultroles}
-                        style={{ width: `100%` }}
-                        options={dataroles.data.map((doc) => ({
-                          label: doc.name,
-                          value: doc.id,
-                        }))}
-                        optionFilterProp="children"
-                        filterOption={(input, option) =>
-                          option?.label
-                            ?.toLowerCase()
-                            .includes(input.toLowerCase())
-                        }
-                      />
-                    }
-                  </Form>
-                </div>
-              )}
+              <div
+                onClick={() => setModalConfirm(true)}
+                className={
+                  "hover:cursor-pointer border bg-primary100 border-primary100 text-white rounded-[5px] h-[36px] w-[79px] gap-1.5 flex justify-center items-center"
+                }
+              >
+                <CheckIconSvg size={16} />
+                <p className={"text-sm/4 font-inter font-normal"}>Save</p>
+              </div>
             </div>
           </div>
+        </Sticky>
+        <div
+          className={"grid grid-cols-1 md:grid-cols-3 md:space-x-5 px-6 pt-5"}
+        >
+          <div className={"col-span-1"}>
+            <div className={"flex items-center gap-5"}>
+              {dataupdate.profile_image ? (
+                <img
+                  src={dataupdate.profile_image}
+                  alt="avatar"
+                  style={{ width: 120, height: 120 }}
+                />
+              ) : (
+                <div
+                  className={
+                    "w-[120px] h-[120px] flex justify-center items-center shadow-desktopCard rounded-[15px]"
+                  }
+                >
+                  <UserPicturUploadIcon />
+                </div>
+              )}
+
+              <div className={"flex flex-col gap-2.5 justify-center"}>
+                <p
+                  className={"font-inter font-medium text-xs/5 text-[#4D4D4D]"}
+                >
+                  Account Picture <span className={"text-[#BF4A40]"}>*</span>
+                </p>
+                <Upload
+                  name="profile_image"
+                  // listType="picture-card"
+                  className="profileImage"
+                  showUploadList={false}
+                  // beforeUpload={beforeUploadProfileImage}
+                  onChange={onChangeEditFoto}
+                >
+                  <Button
+                    className="btn-sm btn font-semibold px-4 flex gap-1.5 border
+                           hover:text-white bg-white border-[#4D4D4D]
+                          hover:bg-primary75 hover:border-primary75  
+                          focus:border-primary75 focus:text-primary100 "
+                  >
+                    <UploadIconSvg size={16} color={"#4D4D4D"} />
+                    <p
+                      className={
+                        "text-sm/4 font-roboto font-medium text-[#4D4D4D]"
+                      }
+                    >
+                      Upload File
+                    </p>
+                  </Button>
+                </Upload>
+              </div>
+            </div>
+          </div>
+          <Form
+            name="agentForm"
+            layout="vertical"
+            initialValues={dataupdate}
+            form={instanceForm}
+            className={"col-span-2"}
+            onFinish={handleSubmitEditAccount}
+          >
+            <div className={"grid grid-cols-2 space-x-5"}>
+              <Form.Item
+                className={"col-span-1"}
+                label="Company"
+                name="company_id"
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Select company"
+                  value={dataupdate?.company_id}
+                  options={dataCompanyList.map((company) => ({
+                    label: company.name,
+                    value: company.id,
+                  }))}
+                  filterOption={(input, option) => {
+                    return (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase());
+                  }}
+                  onChange={(value) => {
+                    setdataupdate({ ...dataupdate, company_id: value });
+                  }}
+                  disabled={!isAllowedToGetCompanyClients}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Full Name"
+                className={"col-span-1"}
+                required
+                name="fullname"
+                rules={[
+                  {
+                    required: true,
+                    message: "Full Name must be filled",
+                  },
+                ]}
+              >
+                <Input
+                  value={dataupdate.fullname}
+                  onChange={onChangeEditAgents}
+                  name="fullname"
+                />
+              </Form.Item>
+            </div>
+            <div className={"grid grid-cols-2 space-x-5"}>
+              <Form.Item
+                label="Email"
+                className={"col-span-1"}
+                required
+                name="email"
+                rules={[
+                  {
+                    required: true,
+                    message: "Email wajib diisi",
+                  },
+                  {
+                    pattern:
+                      /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                    message: "Email belum diisi dengan benar",
+                  },
+                ]}
+              >
+                <Input
+                  disabled
+                  value={dataupdate.email}
+                  name={`email`}
+                  onChange={onChangeEditAgents}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Position"
+                className={"col-span-1"}
+                required
+                name="position"
+                rules={[
+                  {
+                    required: true,
+                    message: "Position must be filled",
+                  },
+                ]}
+              >
+                <Input
+                  value={dataupdate.position}
+                  name={`position`}
+                  onChange={onChangeEditAgents}
+                />
+              </Form.Item>
+            </div>
+            <div className={"grid grid-cols-2 space-x-5"}>
+              <Form.Item
+                label="Phone Number"
+                className={"col-span-1"}
+                required
+                name="phone_number"
+                rules={[
+                  {
+                    required: true,
+                    message: "Phone Number must be filled",
+                  },
+                  {
+                    pattern: /(\-)|(^\d*$)/,
+                    message: "Phone number must number",
+                  },
+                ]}
+              >
+                <Input
+                  value={dataupdate.phone_number}
+                  onChange={onChangeEditAgents}
+                  name="phone_number"
+                />
+              </Form.Item>
+              <Form.Item
+                label="NIP"
+                className={"col-span-1"}
+                name="nip"
+                rules={[
+                  {
+                    required: true,
+                    message: "NIP must be filled",
+                  },
+                  {
+                    pattern: /^[0-9]*$/,
+                    message: "NIP must number",
+                  },
+                ]}
+              >
+                <Input
+                  value={dataupdate.nip}
+                  name="nip"
+                  onChange={onChangeEditAgents}
+                />
+              </Form.Item>
+            </div>
+            <div className={"grid grid-cols-2 space-x-5"}>
+              <Form.Item label="Activity Form" name="attendance_form_ids">
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Select Activity Form"
+                  filterOption={false}
+                  onSearch={(value) => setFormAktivitasValue(value)}
+                  onChange={(value) => {
+                    if (!value) {
+                      setdataupdate((prev) => ({
+                        ...prev,
+                        attendance_form_ids: [],
+                      }));
+                      setFormAktivitasValue("");
+                    }
+
+                    setdataupdate((prev) => ({
+                      ...prev,
+                      attendance_form_ids: [value],
+                    }));
+                  }}
+                  value={dataupdate?.attendance_form_ids}
+                >
+                  {formAktivitasData?.map(({ id, name }) => (
+                    <Select.Option key={id} value={id}>
+                      {name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <Form.Item label="Account Role" name="role">
+                {
+                  <Select
+                    mode="multiple"
+                    showSearch
+                    disabled={!isAllowedToGetRolesList}
+                    placeholder="Select Role"
+                    onChange={(value) => {
+                      onChangeRole(value);
+                    }}
+                    defaultValue={defaultroles}
+                    style={{ width: `100%` }}
+                    options={dataroles.data.map((doc) => ({
+                      label: doc.name,
+                      value: doc.id,
+                    }))}
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option?.label?.toLowerCase().includes(input.toLowerCase())
+                    }
+                  />
+                }
+              </Form.Item>
+            </div>
+          </Form>
         </div>
       </div>
       <ModalAccept
