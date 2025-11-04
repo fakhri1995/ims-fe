@@ -229,7 +229,7 @@ const EmployeeProfileForm = ({
           </div>
         </div>
       </Form.Item>
-      <p className={"text-lg/6 text-[#424242] font-inter font-bold my-5"}>
+      <p className={"text-lg/6 text-[#424242] font-inter font-bold my-4"}>
         Personal Information
       </p>
 

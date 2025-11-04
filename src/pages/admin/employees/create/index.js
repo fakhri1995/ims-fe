@@ -854,7 +854,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           </div>
         )}
         {currentTab == "2" && (
-          <div className="px-6">
+          <div className="">
             {" "}
             <EmployeeContractForm
               initProps={initProps}

@@ -18,27 +18,27 @@ import { CircleCheckIconSvg, SquarePlusIconSvg, XIconSvg } from "../../icon";
 
 export const defaultSalaryVar = [
   {
-    title: "BPJS KS (5% Perusahaan)",
+    title: "BPJS KS (5% Company)",
     attrName: "bpjs_ks",
     percent: 5,
   },
   {
-    title: "BPJS TK-JHT (5,7% Perusahaan)",
+    title: "BPJS TK-JHT (5,7% Company)",
     attrName: "bpjs_tk_jht",
     percent: 5.7,
   },
   {
-    title: "BPJS TK-JKK (0,24% Perusahaan)",
+    title: "BPJS TK-JKK (0,24% Company)",
     attrName: "bpjs_tk_jkk",
     percent: 0.24,
   },
   {
-    title: "BPJS TK-JKM (0,3% Perusahaan)",
+    title: "BPJS TK-JKM (0,3% Company)",
     attrName: "bpjs_tk_jkm",
     percent: 0.3,
   },
   {
-    title: "BPJS TK-JP (3% Perusahaan)",
+    title: "BPJS TK-JP (3% Company)",
     attrName: "bpjs_tk_jp",
     percent: 3,
   },

@@ -16,6 +16,12 @@ import { AGENTS_GET, AGENT_ADD, COMPANY_CLIENTS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 import { generateStaticAssetUrl } from "lib/helper";
 
+import {
+  UserIconSvg,
+  UserPlusIconSvg,
+  UserXIconSvg,
+  UsersIconSvg,
+} from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard-management";
 import st from "../../../components/layout-dashboard-management.module.css";
 import { createKeyPressHandler } from "../../../lib/helper";
@@ -305,32 +311,24 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
       originPath={originPath}
       st={st}
     >
-      <>
-        <div className="h-20 w-full grid grid-cols-1 md:grid-cols-3 border-gray-400 md:border-t md:border-b bg-white mb-5 p-4">
-          <div className=" col-span-1 md:col-span-2 flex items-center mb-2 md:mb-0">
-            <div className="font-semibold text-base w-auto">Agents</div>
+      <div className="rounded-[8px] border border-neutrals70 shadow-desktopCard bg-white">
+        <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between px-4 py-3 border-b">
+          <h4 className="text-[16px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
+            Agent List
+          </h4>
+          <div
+            className={
+              "hover:cursor-pointer w-[121px] h-[32px] rounded-[5px] flex justify-center items-center gap-3 bg-primary100"
+            }
+            onClick={() => {
+              rt.push("/admin/agents/create");
+            }}
+          >
+            <UserPlusIconSvg />
+            <p className={"text-white"}>Add Agent</p>
           </div>
-          {
-            // [109].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-            <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-              <Button
-                size="large"
-                type="primary"
-                disabled={!isAllowedToAddAganet}
-                onClick={() => {
-                  rt.push("/admin/agents/create");
-                }}
-              >
-                Tambah
-              </Button>
-              {/* <Link
-                href={{
-                  pathname: "/admin/agents/create/",
-                }}>
-              </Link> */}
-            </div>
-          }
         </div>
+
         {
           // [108].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
           <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
@@ -449,7 +447,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
             </div>
           </div>
         }
-      </>
+      </div>
     </Layout>
   );
 }

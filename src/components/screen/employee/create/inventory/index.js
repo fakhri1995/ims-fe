@@ -153,7 +153,7 @@ const EmployeeInventoryForm = ({
           onChange={(e) => setIsOwn(e.target.checked)}
           className="mb-6"
         >
-          Memiliki inventaris & piranti
+          This Employee has Inventory & Equipment
         </Checkbox>
       </Tooltip>
 
