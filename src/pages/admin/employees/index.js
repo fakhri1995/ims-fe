@@ -49,6 +49,7 @@ import { ChartDoughnut } from "../../../components/chart/chartCustom";
 import { SearchIconSvg, UserPlusIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard-management";
 import st from "../../../components/layout-dashboard-management.module.css";
+import ModalConnectAccount from "../../../components/modal/employee/modalConnectAccount";
 import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { TableCustomEmployeeList } from "../../../components/table/tableCustom";
 import { createKeyPressHandler, momentFormatDate } from "../../../lib/helper";
@@ -475,32 +476,14 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Tanggal Bergabung",
-      dataIndex: "join_at",
-      render: (text, record, index) => {
-        return {
-          children: <>{momentFormatDate(text || null, "-", "DD MMM YYYY")}</>,
-        };
-      },
-    },
-    {
-      title: "Nama",
+      title: "Name",
       dataIndex: "name",
       sorter: isAllowedToGetEmployees
         ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
         : false,
     },
     {
-      title: "NIP",
-      dataIndex: "nip",
-      render: (text, record, index) => {
-        return {
-          children: <>{text || "-"}</>,
-        };
-      },
-    },
-    {
-      title: "Penempatan",
+      title: "Company",
       dataIndex: ["contract", "placement"],
       render: (text, record, index) => {
         return {
@@ -508,8 +491,28 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         };
       },
     },
+    // {
+    //   title: "Tanggal Bergabung",
+    //   dataIndex: "join_at",
+    //   render: (text, record, index) => {
+    //     return {
+    //       children: <>{momentFormatDate(text || null, "-", "DD MMM YYYY")}</>,
+    //     };
+    //   },
+    // },
+
     {
-      title: "Posisi",
+      title: "Email",
+      dataIndex: "email_office",
+      render: (text, record, index) => {
+        return {
+          children: <>{text || "-"}</>,
+        };
+      },
+    },
+
+    {
+      title: "Role",
       dataIndex: ["contract", "role", "name"],
       render: (text, record, index) => {
         return {
@@ -517,17 +520,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         };
       },
     },
+
     {
-      title: "Status Kontrak",
-      dataIndex: ["contract", "contract_status", "name"],
-      render: (text, record, index) => {
-        return {
-          children: <>{text || "-"}</>,
-        };
-      },
-    },
-    {
-      title: "No. Telepon",
+      title: "Phone Number",
       dataIndex: "phone_number",
       render: (text) => {
         return {
@@ -536,36 +531,45 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Sisa Hari Kerja",
-      dataIndex: "contract_end_countdown",
+      title: "Status",
+      dataIndex: ["contract", "contract_status", "name"],
       render: (text, record, index) => {
         return {
-          children: (
-            <p
-              className={
-                record?.contract?.contract_end_countdown <= 60
-                  ? "text-danger"
-                  : "text-black"
-              }
-            >
-              {!record?.contract?.contract_end_countdown
-                ? "-"
-                : record?.contract?.contract_end_countdown < 0
-                ? 0
-                : record?.contract?.contract_end_countdown}{" "}
-              hari
-            </p>
-          ),
+          children: <>{text || "-"}</>,
         };
       },
-      sorter: isAllowedToGetEmployees
-        ? (a, b) =>
-            a.contract?.contract_end_countdown >
-            b.contract?.contract_end_countdown
-        : false,
     },
+    // {
+    //   title: "Sisa Hari Kerja",
+    //   dataIndex: "contract_end_countdown",
+    //   render: (text, record, index) => {
+    //     return {
+    //       children: (
+    //         <p
+    //           className={
+    //             record?.contract?.contract_end_countdown <= 60
+    //               ? "text-danger"
+    //               : "text-black"
+    //           }
+    //         >
+    //           {!record?.contract?.contract_end_countdown
+    //             ? "-"
+    //             : record?.contract?.contract_end_countdown < 0
+    //             ? 0
+    //             : record?.contract?.contract_end_countdown}{" "}
+    //           hari
+    //         </p>
+    //       ),
+    //     };
+    //   },
+    //   sorter: isAllowedToGetEmployees
+    //     ? (a, b) =>
+    //         a.contract?.contract_end_countdown >
+    //         b.contract?.contract_end_countdown
+    //     : false,
+    // },
     {
-      title: "Aksi",
+      title: "Action",
       key: "button_action",
       render: (text, record) => {
         return {
@@ -633,7 +637,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 " id="mainWrapper">
+      <div className="" id="mainWrapper">
         <div
           className="relative mb-5 col-span-3"
           onMouseMove={(e) => {
@@ -724,45 +728,35 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         </div>
 
         {/* Table Karyawan */}
-        <div className="md:col-span-3 flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <h4 className="mig-heading--4 ">Daftar Karyawan</h4>
+        <div className="rounded-[8px] border border-neutrals70 shadow-desktopCard bg-white">
+          <div className="flex items-center justify-between mb-4 py-3 px-4 border-b">
+            <h4 className="text-[16px] leading-6 text-mono30 font-bold mb-2 md:mb-0">
+              Employee List
+            </h4>
             <div
               className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 
               items-end md:items-center"
             >
-              <div className="flex flex-row items-center space-x-2 text-primary100">
-                <Switch
-                  checked={queryParams.is_employee_active}
-                  onClick={handleSwitchActiveEmployee}
-                />
-                {queryParams.is_employee_active ? (
-                  <p>Karyawan Aktif</p>
-                ) : (
-                  <p>Karyawan Tidak Aktif</p>
-                )}
-              </div>
-              <ButtonSys
-                type={"primary"}
+              <div
                 onClick={onAddEmployeeButtonClicked}
-                disabled={!isAllowedToAddEmployee}
+                className="hover:cursor-pointer bg-primary100 rounded-[5px] flex flex-row items-center gap-1.5 px-4 py-2"
               >
-                <div className="flex flex-row items-center space-x-2">
-                  <UserPlusIconSvg size={16} color="#FFFFFF" />
-                  <p className="whitespace-nowrap">Tambah Karyawan</p>
-                </div>
-              </ButtonSys>
+                <UserPlusIconSvg size={16} color="#FFFFFF" />
+                <p className="text-white text-sm/4 font-medium font-roboto">
+                  Add Employee
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Start: Search criteria */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:flex lg:flex-row justify-between w-full items-center mb-4">
+          <div className="flex flex-row justify-between gap-3 items-center mb-4 px-4">
             {/* Search by keyword (kata kunci) */}
-            <div className="lg:w-4/12">
+            <div className="w-1/5">
               <Input
                 defaultValue={searchingFilterEmployees}
                 style={{ width: `100%` }}
-                placeholder="Kata Kunci.."
+                placeholder="Search Employee"
                 allowClear
                 onChange={(e) => {
                   setQueryParams({ page: 1 });
@@ -773,14 +767,14 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by company (dropdown) */}
-            <div className="lg:w-2/12">
+            <div className="w-1/5">
               <Select
                 allowClear
                 showSearch
                 defaultValue={queryParams.placements}
                 name={`placement`}
                 disabled={!isAllowedToGetCompanyClients}
-                placeholder="Semua Penempatan"
+                placeholder="Select Company"
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   setQueryParams({ placements: value, page: 1 });
@@ -805,14 +799,14 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by position (dropdown) */}
-            <div className="lg:w-2/12">
+            <div className="w-1/5">
               <Select
                 allowClear
                 showSearch
                 defaultValue={queryParams.role_ids}
                 name={`role`}
                 disabled={!isAllowedToGetRoleList}
-                placeholder="Semua Posisi"
+                placeholder="Select Position"
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   setQueryParams({ role_ids: value, page: 1 });
@@ -834,13 +828,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by contract status (dropdown) */}
-            <div className="lg:w-2/12">
+            <div className="w-1/5">
               <Select
                 allowClear
                 name={`status`}
                 defaultValue={queryParams.contract_status_ids}
                 disabled={!isAllowedToGetRoleTypeList}
-                placeholder="Semua Status Kontrak"
+                placeholder="Select contract status"
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   const stringStatusIds = value?.toString();
@@ -860,22 +854,20 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               </Select>
             </div>
 
-            <div className="md:col-span-2">
-              <ButtonSys
-                type={`primary`}
-                onClick={onFilterEmployees}
-                disabled={!isAllowedToGetEmployees}
-                fullWidth={true}
-              >
-                <div className="flex space-x-2.5 items-center">
-                  <SearchIconSvg size={15} color={`#ffffff`} />
-                  <p>Cari</p>
-                </div>
-              </ButtonSys>
+            <div className="flex flex-row items-center space-x-2 text-primary100 w-1/5">
+              <Switch
+                checked={queryParams.is_employee_active}
+                onClick={handleSwitchActiveEmployee}
+              />
+              {queryParams.is_employee_active ? (
+                <p>Active Employees</p>
+              ) : (
+                <p>Nonactive Employees</p>
+              )}
             </div>
           </div>
           {/* End: Search criteria */}
-          <div>
+          <div className={"px-4"}>
             <TableCustomEmployeeList
               rt={rt}
               dataSource={dataEmployees?.data}
@@ -888,6 +880,8 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
         </div>
       </div>
+
+      {/* <ModalConnectAccount visible={true}/> */}
 
       {/* Modal Hapus Karyawan */}
       <AccessControl hasPermission={EMPLOYEE_DELETE}>
