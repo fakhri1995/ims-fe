@@ -1,5 +1,5 @@
-import { PlusCircleOutlined } from "@ant-design/icons";
-import { Form, Input, Modal, Select } from "antd";
+import { LoadingOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { Form, Input, Modal, Select, notification } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import React, { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
@@ -7,19 +7,31 @@ import "react-quill/dist/quill.snow.css";
 import ButtonSys from "../../button";
 import { LinkIconSvg, PlusIconSvg } from "../../icon";
 
-const ModalConnectAccount = ({ visible, onvisible, initProps }) => {
+const ModalConnectAccount = ({
+  visible,
+  onvisible,
+  initProps,
+  dataEmployee,
+  getData,
+}) => {
   const [instanceForm] = useForm();
-  const [connectForm] = useForm();
+  const [connectForm] = Form.useForm();
   const [activeTab, setActiveTab] = useState("1");
   const [dataRoles, setDataRoles] = useState([]);
+  const [dataAgentList, setDataAgentList] = useState([]);
   const [formAktivitasData, setFormAktivitasData] = useState([]);
-  const userData = [
-    { id: 1, name: "Bagus Pratama", role: "user" },
-    { id: 2, name: "Siti Aisyah", role: "admin" },
-    { id: 3, name: "Raka Wijaya", role: "moderator" },
-    { id: 4, name: "Dewi Anindya", role: "user" },
-    { id: 5, name: "I Made Santoso", role: "user" },
-  ];
+  const [errors, setErrors] = useState({});
+  const [errorEmail, setErrorEmail] = useState(false);
+  const [emailConnect, setEmailConnect] = useState(null);
+  const [loadingConnect, setLoadingConnect] = useState(false);
+  const [loadingAddAccount, setLoadingAddAccount] = useState(false);
+  const [newUser, setNewUser] = useState({
+    email: "",
+    role_ids: [],
+    password: "",
+    confirm_password: "",
+    attendance_form_ids: [],
+  });
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
       method: `GET`,
@@ -42,30 +54,157 @@ const ModalConnectAccount = ({ visible, onvisible, initProps }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("isi datanya ", res2);
         setFormAktivitasData(res2.data.data);
       });
   }, []);
 
-  const handleAddAccount = () => {
-    instanceForm
-      .validateFields()
-      .then(() => {
-        sendDataAccount();
-      })
-      .catch(() => {
-        // form validation failed
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentEmployeeList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataAgentList(res2.data);
       });
+  }, []);
+
+  const onChangeCreateAgents = (e) => {
+    var val = e.target.value;
+    if (e.target.name === "role") {
+      val = parseInt(e.target.value);
+    }
+    setNewUser((prev) => ({
+      ...prev,
+      [e.target.name]: val,
+    }));
+  };
+
+  const handleAddAccount = async () => {
+    const values = await instanceForm.validateFields();
+    sendDataAccount();
   };
 
   const sendDataAccount = () => {
-    console.log("");
+    /*
+     fullname: "",
+    email: "",
+    role_ids: [],
+    phone_number: "",
+    nip: 0,
+    profile_image: "",
+    profile_image_file: null,
+    company_id: 1,
+    password: "",
+    confirm_password: "",
+    position: "",
+    attendance_form_ids: [], 
+    */
+    setLoadingAddAccount(true);
+    let payload = {
+      employee_id: dataEmployee.id,
+      fullname: dataEmployee.name,
+      email: newUser.email,
+      role_ids: newUser.role_ids,
+      attendance_form_ids: newUser.attendance_form_ids,
+      password: newUser.password,
+      confirm_password: newUser.confirm_password,
+      company_id: 1,
+      nip: dataEmployee.nip,
+      position: dataEmployee.role_name,
+      phone_number: dataEmployee.phone_number,
+    };
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addConnectAgent`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: `Add Account & Connect Employee Data Success.`,
+            duration: 3,
+          });
+          getData();
+          onvisible();
+        } else {
+          notification.error({
+            message: `Add Account & Connect Employee Data Failed. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Add Account & Connect Employee Data Failed. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingAddAccount(false));
+  };
+
+  const handleConnect = async () => {
+    try {
+      // ✅ validate semua field dulu
+      if (emailConnect) {
+        sendDataConnect();
+      } else {
+        setErrorEmail(true);
+      }
+      // kirim ke backend, misalnya pakai fetch/axios
+      // await axios.post('/api/connect-account', values);
+    } catch (error) {}
+  };
+
+  const sendDataConnect = () => {
+    setLoadingConnect(true);
+    let payload = {
+      id: dataEmployee.id,
+      user_id: emailConnect,
+    };
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/connectAgent`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: `Connect Employee Data Success.`,
+            duration: 3,
+          });
+          getData();
+          onvisible();
+        } else {
+          notification.error({
+            message: `Gagal menambahkan kontrak karyawan. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan kontrak karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingConnect(false));
   };
 
   return (
     <Modal
       open={visible}
-      // onCancel={onClose}
+      onCancel={onvisible}
       className="modalCore"
       title={
         <div className={"flex justify-center"}>
@@ -131,7 +270,7 @@ const ModalConnectAccount = ({ visible, onvisible, initProps }) => {
               <Input
                 placeholder="Input Email"
                 name={`email`}
-                //   onChange={onChangeCreateAgents}
+                onChange={onChangeCreateAgents}
               />
             </Form.Item>
             <Form.Item
@@ -149,10 +288,10 @@ const ModalConnectAccount = ({ visible, onvisible, initProps }) => {
               ]}
             >
               <Input.Password
-                // value={newuser.password}
+                value={newUser.password}
                 name={`password`}
                 placeholder="input password"
-                // onChange={onChangeCreateAgents}
+                onChange={onChangeCreateAgents}
               />
             </Form.Item>
             <Form.Item
@@ -171,15 +310,16 @@ const ModalConnectAccount = ({ visible, onvisible, initProps }) => {
             >
               <>
                 <Input.Password
-                  //   value={newuser.confirm_password}
                   placeholder="Input Confirm Password"
+                  value={newUser.confirm_password}
                   name={`confirm_password`}
+                  onChange={onChangeCreateAgents}
                 />
-                {/* {newuser.password !== newuser.confirm_password && (
-                                                      <p className=" text-red-500 mb-0">
-                                                        Confirm Password must be same with password
-                                                      </p>
-                                                    )} */}
+                {newUser.password !== newUser.confirm_password && (
+                  <p className=" text-red-500 mb-0">
+                    Confirm Password must be same with password
+                  </p>
+                )}
               </>
             </Form.Item>
             <Form.Item label="Activity Form" name="attendance_form_ids">
@@ -189,17 +329,17 @@ const ModalConnectAccount = ({ visible, onvisible, initProps }) => {
                 placeholder="Select Activity form"
                 filterOption={false}
                 // onSearch={(value) => setFormAktivitasValue(value)}
-                // onChange={(value) => {
-                //   if (value === undefined || value === "") {
-                //     setFormAktivitasValue("");
-                //     return;
-                //   }
+                onChange={(value) => {
+                  // if (value === undefined || value === "") {
+                  //   setFormAktivitasValue("");
+                  //   return;
+                  // }
 
-                //   setNewuser((prev) => ({
-                //     ...prev,
-                //     attendance_form_ids: [value],
-                //   }));
-                // }}
+                  setNewUser((prev) => ({
+                    ...prev,
+                    attendance_form_ids: [value],
+                  }));
+                }}
               >
                 {formAktivitasData?.map(({ id, name }) => (
                   <Select.Option key={id} value={id}>
@@ -214,9 +354,9 @@ const ModalConnectAccount = ({ visible, onvisible, initProps }) => {
                 placeholder={"Select Account Role"}
                 showSearch
                 // disabled={!isAllowedToGetRolesList}
-                // onChange={(value) => {
-                //   setNewuser({ ...newuser, role_ids: value });
-                // }}
+                onChange={(value) => {
+                  setNewUser({ ...newUser, role_ids: value });
+                }}
                 /*defaultValue={idrole}*/
                 style={{ width: `100%` }}
                 options={dataRoles.map((doc) => ({
@@ -235,7 +375,11 @@ const ModalConnectAccount = ({ visible, onvisible, initProps }) => {
                 "hover:cursor-pointer mt-4 rounded-[5px] bg-primary100 py-2.5 flex justify-center items-center gap-1.5"
               }
             >
-              <PlusCircleOutlined style={{ color: "white", fontSize: 16 }} />
+              {loadingAddAccount ? (
+                <LoadingOutlined color="white" />
+              ) : (
+                <PlusCircleOutlined style={{ color: "white", fontSize: 16 }} />
+              )}
               <p className={"text-white text-sm/4 font-roboto font-medium"}>
                 Add Account
               </p>
@@ -252,25 +396,47 @@ const ModalConnectAccount = ({ visible, onvisible, initProps }) => {
                   required: true,
                   message: "Email wajib diisi",
                 },
-                {
-                  pattern:
-                    /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
-                  message: "Email belum diisi dengan benar",
-                },
               ]}
             >
-              <Input
-                placeholder="Input Email"
-                name={`email`}
-                //   onChange={onChangeCreateAgents}
-              />
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select Email"
+                filterOption={false}
+                // onSearch={(value) => setFormAktivitasValue(value)}
+                onChange={(value) => {
+                  if (value === undefined || value === "") {
+                    setEmailConnect("");
+                    setErrorEmail(true);
+                    return;
+                  }
+                  setErrorEmail(false);
+                  setEmailConnect(value);
+                }}
+              >
+                {dataAgentList?.map(({ id, email }) => (
+                  <Select.Option key={id} value={id}>
+                    {email}
+                  </Select.Option>
+                ))}
+              </Select>
+              {errorEmail && (
+                <p className="text-red-500 text-xs mt-1">
+                  Email must be filled
+                </p>
+              )}
             </Form.Item>
             <div
+              onClick={() => handleConnect()}
               className={
                 "hover:cursor-pointer mt-[170px] rounded-[5px] bg-primary100 py-2.5 flex justify-center items-center gap-1.5"
               }
             >
-              <LinkIconSvg style={{ color: "white", fontSize: 16 }} />
+              {loadingConnect ? (
+                <LoadingOutlined color={"white"} />
+              ) : (
+                <LinkIconSvg style={{ color: "white", fontSize: 16 }} />
+              )}
               <p className={"text-white text-sm/4 font-roboto font-medium"}>
                 Connect Account
               </p>

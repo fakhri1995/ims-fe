@@ -46,7 +46,11 @@ import { permissionWarningNotification } from "lib/helper";
 import { EmployeeService } from "../../../apis/employee";
 import ButtonSys from "../../../components/button";
 import { ChartDoughnut } from "../../../components/chart/chartCustom";
-import { SearchIconSvg, UserPlusIconSvg } from "../../../components/icon";
+import {
+  LinkIconSvg,
+  SearchIconSvg,
+  UserPlusIconSvg,
+} from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard-management";
 import st from "../../../components/layout-dashboard-management.module.css";
 import ModalConnectAccount from "../../../components/modal/employee/modalConnectAccount";
@@ -115,6 +119,8 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     contract_status_ids: withDefault(NumberParam, undefined),
     is_employee_active: withDefault(NumberParam, 1),
   });
+  const [dataSelected, setDataSelected] = useState(null);
+  const [showModalConnect, setShowModalConnect] = useState(false);
 
   const rt = useRouter();
   // Breadcrumb url
@@ -481,93 +487,118 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       sorter: isAllowedToGetEmployees
         ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
         : false,
+      render: (text, record, index) => {
+        return {
+          children: (
+            <>
+              <p className={"text-[#4D4D4D] text-sm/6 font-inter font-normal"}>
+                {text || "-"}
+              </p>
+              <p className={"text-[#808080] text-xs/5 font-inter font-medium"}>
+                {record.nip || "-"}
+              </p>
+            </>
+          ),
+        };
+      },
     },
     {
-      title: "Company",
+      title: "Position/Placement",
       dataIndex: ["contract", "placement"],
       render: (text, record, index) => {
         return {
-          children: <>{text || "-"}</>,
+          children: (
+            <>
+              <p className={"text-[#4D4D4D] text-sm/6 font-inter font-normal"}>
+                {text || "-"}
+              </p>
+              <p className={"text-[#808080] text-xs/5 font-inter font-medium"}>
+                {record.role_name || "-"}
+              </p>
+            </>
+          ),
         };
       },
     },
-    // {
-    //   title: "Tanggal Bergabung",
-    //   dataIndex: "join_at",
-    //   render: (text, record, index) => {
-    //     return {
-    //       children: <>{momentFormatDate(text || null, "-", "DD MMM YYYY")}</>,
-    //     };
-    //   },
-    // },
+    {
+      title: "Join Date",
+      dataIndex: "join_at",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <>
+              <p className={"text-[#4D4D4D] text-sm/6 font-inter font-normal"}>
+                {momentFormatDate(text || null, "-", "DD MMM YYYY")}
+              </p>
+            </>
+          ),
+        };
+      },
+    },
 
     {
-      title: "Email",
+      title: "Contact",
       dataIndex: "email_office",
       render: (text, record, index) => {
         return {
-          children: <>{text || "-"}</>,
+          children: (
+            <>
+              <p className={"text-[#4D4D4D] text-sm/6 font-inter font-normal"}>
+                {text || "-"}
+              </p>
+              <p className={"text-[#808080] text-xs/5 font-inter font-medium"}>
+                {record?.phone_number || "-"}
+              </p>
+            </>
+          ),
         };
       },
     },
 
     {
-      title: "Role",
-      dataIndex: ["contract", "role", "name"],
-      render: (text, record, index) => {
-        return {
-          children: <>{text || "-"}</>,
-        };
-      },
-    },
-
-    {
-      title: "Phone Number",
-      dataIndex: "phone_number",
-      render: (text) => {
-        return {
-          children: <>{text || "-"}</>,
-        };
-      },
-    },
-    {
-      title: "Status",
+      title: "Contract Status",
       dataIndex: ["contract", "contract_status", "name"],
       render: (text, record, index) => {
         return {
-          children: <>{text || "-"}</>,
+          children: (
+            <div className={"bg-[#F3F3F3] rounded-[5px] py-0.5 px-3 max-w-max"}>
+              <p className={"text-[#4D4D4D] text-xs/5 font-inter font-medium"}>
+                {text || "-"}
+              </p>
+            </div>
+          ),
         };
       },
     },
-    // {
-    //   title: "Sisa Hari Kerja",
-    //   dataIndex: "contract_end_countdown",
-    //   render: (text, record, index) => {
-    //     return {
-    //       children: (
-    //         <p
-    //           className={
-    //             record?.contract?.contract_end_countdown <= 60
-    //               ? "text-danger"
-    //               : "text-black"
-    //           }
-    //         >
-    //           {!record?.contract?.contract_end_countdown
-    //             ? "-"
-    //             : record?.contract?.contract_end_countdown < 0
-    //             ? 0
-    //             : record?.contract?.contract_end_countdown}{" "}
-    //           hari
-    //         </p>
-    //       ),
-    //     };
-    //   },
-    //   sorter: isAllowedToGetEmployees
-    //     ? (a, b) =>
-    //         a.contract?.contract_end_countdown >
-    //         b.contract?.contract_end_countdown
-    //     : false,
-    // },
+    {
+      title: "Workdays Left",
+      dataIndex: "contract_end_countdown",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <p
+              className={
+                record?.contract?.contract_end_countdown <= 60
+                  ? "text-danger"
+                  : "text-black"
+              }
+            >
+              {!record?.contract?.contract_end_countdown
+                ? "-"
+                : record?.contract?.contract_end_countdown < 0
+                ? 0
+                : record?.contract?.contract_end_countdown}{" "}
+              days
+            </p>
+          ),
+        };
+      },
+      sorter: isAllowedToGetEmployees
+        ? (a, b) =>
+            a.contract?.contract_end_countdown >
+            b.contract?.contract_end_countdown
+        : false,
+    },
     {
       title: "Action",
       key: "button_action",
@@ -576,7 +607,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <>
               {record.is_posted ? (
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-row space-x-2">
                   <Button
                     type={"primary"}
                     disabled={!isAllowedToUpdateEmployeeContract}
@@ -587,6 +618,19 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                     icon={<EditOutlined />}
                     className="bg-primary100 border-primary100 hover:bg-primary75 hover:border-primary75 focus:bg-primary75 focus:border-primary75"
                   />
+                  {record.user_id == null && (
+                    <Button
+                      type={"primary"}
+                      disabled={!isAllowedToUpdateEmployeeContract}
+                      // onClick={()=>handleConnectAccount(record)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleConnectAccount(record);
+                      }}
+                      icon={<LinkIconSvg />}
+                      className="bg-primary100 border-primary100 hover:bg-primary75 hover:border-primary75 focus:bg-primary75 focus:border-primary75"
+                    />
+                  )}
                 </div>
               ) : (
                 <div className="flex space-x-2">
@@ -627,6 +671,16 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
   ];
+
+  const handleConnectAccount = (record) => {
+    setDataSelected(record);
+    setShowModalConnect(true);
+  };
+
+  const handleCloseModalConnect = () => {
+    setDataSelected(null);
+    setShowModalConnect(false);
+  };
 
   return (
     <Layout
@@ -821,7 +875,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               >
                 {dataRoleList?.map((role) => (
                   <Select.Option key={role.id} value={role.id}>
-                    {role.name}
+                    {role.role}
                   </Select.Option>
                 ))}
               </Select>
@@ -881,7 +935,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         </div>
       </div>
 
-      <ModalConnectAccount initProps={initProps} visible={true} />
+      <ModalConnectAccount
+        getData={refetchEmployees}
+        dataEmployee={dataSelected}
+        initProps={initProps}
+        visible={showModalConnect}
+        onvisible={handleCloseModalConnect}
+      />
 
       {/* Modal Hapus Karyawan */}
       <AccessControl hasPermission={EMPLOYEE_DELETE}>
