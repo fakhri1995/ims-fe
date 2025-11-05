@@ -881,7 +881,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         </div>
       </div>
 
-      {/* <ModalConnectAccount visible={true}/> */}
+      <ModalConnectAccount initProps={initProps} visible={true} />
 
       {/* Modal Hapus Karyawan */}
       <AccessControl hasPermission={EMPLOYEE_DELETE}>

@@ -593,7 +593,7 @@ const EmployeeContractForm = ({
                   <>
                     {dataPositionList?.map((option) => (
                       <Select.Option key={option.id} value={option.id}>
-                        {option.name}
+                        {option.role}
                       </Select.Option>
                     ))}
                   </>
