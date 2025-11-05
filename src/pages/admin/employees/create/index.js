@@ -660,51 +660,80 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="shadow-lg rounded-md bg-white p-3 md:py-7 md:px-4">
-        <div className="grid grid-cols-1">
-          <div className="flex flex-row items-center justify-between mb-4">
-            <h3 className="mig-heading--3">Tambah Karyawan</h3>
-            <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 items-end md:items-center">
-              {loadingUpdate ? (
-                <Spin spinning={loadingUpdate} />
-              ) : (
-                <div
-                  className={`transition duration-700 ease-in-out ${
-                    showSuccessIcon ? "opacity-1" : "opacity-0"
-                  }`}
-                >
-                  <CheckIconSvg color={"#35763B"} size={32} />
-                </div>
-              )}
+      <div className="lg:col-span-3 flex flex-col rounded-[10px] border border-neutrals70 shadow-desktopCard bg-white mb-6 py-5">
+        <div className="flex flex-row items-center justify-between mb-4  px-6 ">
+          <div className={"flex flex-col gap-1.5"}>
+            <h5 className={"text-[#424242] text-lg/6 font-bold font-inter"}>
+              Add New Employee
+            </h5>
+            <p className={"text-sm/6 font-inter font-regular text-[#757575]"}>
+              Please fill the required field
+            </p>
+          </div>
+          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 items-end md:items-center">
+            {loadingUpdate ? (
+              <Spin spinning={loadingUpdate} />
+            ) : (
+              <div
+                className={`transition duration-700 ease-in-out ${
+                  showSuccessIcon ? "opacity-1" : "opacity-0"
+                }`}
+              >
+                <CheckIconSvg color={"#35763B"} size={32} />
+              </div>
+            )}
 
-              {currentTab == "1" ? (
-                <ButtonSys
-                  type={"default"}
-                  color={"danger"}
-                  className="flex flex-row"
-                  disabled={!isAllowedToDeleteEmployee}
+            {currentTab == "1" ? (
+              <div
+                onClick={() => {
+                  handleCancelAddEmployee();
+                }}
+                className={
+                  "hover:cursor-pointer border border-primary100 rounded-[5px] w-[76px] h-[36px] flex justify-center items-center"
+                }
+              >
+                <p
+                  className={"text-[#808080] text-sm/4 font-roboto font-medium"}
+                >
+                  Cancel
+                </p>
+              </div>
+            ) : (
+              <div className={"flex gap-4"}>
+                <div
                   onClick={() => {
                     handleCancelAddEmployee();
                   }}
+                  className={
+                    "hover:cursor-pointer h-9 w-[76px] flex justify-center items-center"
+                  }
                 >
-                  <CloseOutlined />
-                  <p className="ml-2">Batalkan</p>
-                </ButtonSys>
-              ) : (
-                <ButtonSys
-                  type={"default"}
-                  className="flex flex-row"
+                  <p
+                    className={
+                      "text-[#808080] text-sm/4 font-roboto font-medium"
+                    }
+                  >
+                    Cancel
+                  </p>
+                </div>
+                <div
+                  className={
+                    "flex flex-row justify-center items-center rounded-[5px] hover:cursor-pointer border border-primary100 w-[110px] h-[36px]"
+                  }
                   onClick={() => {
                     handleAutoSaveOnTabChange();
                     let numTab = Number(currentTab);
                     currentTab > 1 && setCurrentTab(String(numTab - 1));
                   }}
                 >
-                  <LeftOutlined />
-                  <p className="ml-2">Kembali</p>
-                </ButtonSys>
-              )}
-              {/* <ButtonSys
+                  <LeftOutlined style={{ color: "#35763B" }} />
+                  <p className="ml-2 font-medium font-roboto text-sm/4 text-primary100">
+                    Previous
+                  </p>
+                </div>
+              </div>
+            )}
+            {/* <ButtonSys
               type={"default"}
               className="flex flex-row"
               onClick={() => {
@@ -716,81 +745,87 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               <ClipboardListIconSvg size={18} color={`#35763B`} />
               <p className="ml-2">Simpan Draft</p>
             </ButtonSys> */}
-              {currentTab == "3" ? (
-                <Tooltip
-                  title={
-                    disablePublish && (
-                      <div>
-                        <p>Field berikut wajib diisi:</p>
-                        <ol>
-                          {requiredFields
-                            .filter((f) => !f.data)
-                            .map((f) => (
-                              <li key={f.name}>{f.name}</li>
-                            ))}
-                        </ol>
-                      </div>
-                    )
-                  }
-                  placement="bottom"
-                >
-                  <button
-                    onClick={() => {
-                      debouncedSaveInventory.cancel();
+            <p className={"text-[#757575] text-[16px] font-inter font-normal"}>
+              Step {currentTab} of 4
+            </p>
+            {currentTab == "3" ? (
+              <Tooltip
+                title={
+                  disablePublish && (
+                    <div>
+                      <p>Field berikut wajib diisi:</p>
+                      <ol>
+                        {requiredFields
+                          .filter((f) => !f.data)
+                          .map((f) => (
+                            <li key={f.name}>{f.name}</li>
+                          ))}
+                      </ol>
+                    </div>
+                  )
+                }
+                placement="bottom"
+              >
+                <button
+                  onClick={() => {
+                    debouncedSaveInventory.cancel();
 
-                      handleSaveProfile(1, dataEmployee);
-                      dataEmployee.contracts.length !== 0 &&
-                        handleSaveContract(dataContract);
-                      dataEmployee.inventories.length !== 0 &&
-                        handleSaveInventory(inventoryList[0]);
-                    }}
-                    disabled={disablePublish}
-                    className={`btn btn-sm px-6 border  text-white
+                    handleSaveProfile(1, dataEmployee);
+                    dataEmployee.contracts.length !== 0 &&
+                      handleSaveContract(dataContract);
+                    dataEmployee.inventories.length !== 0 &&
+                      handleSaveInventory(inventoryList[0]);
+                  }}
+                  disabled={disablePublish}
+                  className={`btn btn-sm px-6 border  text-white
                       ${
                         disablePublish
                           ? ` bg-disabled border-disabled`
                           : ` bg-primary100 hover:bg-primary75 border-primary100 hover:border-primary75 `
                       }`}
-                    style={{
-                      backgroundColor: disablePublish && "transparent",
-                      display: "flex",
-                      fontWeight: 600,
-                    }}
-                  >
-                    <div className="flex flex-row flex-nowrap items-center">
-                      <CheckIconSvg size={18} color={`white`} />
-                      <p className="ml-2">Simpan Karyawan</p>
-                    </div>
-                  </button>
-                </Tooltip>
-              ) : (
-                <ButtonSys
-                  type={"primary"}
-                  onClick={() => {
-                    let numTab = Number(currentTab);
-                    currentTab < 3 && setCurrentTab(String(numTab + 1));
-
-                    // add employee contract if there's no contract yet
-                    if (!dataEmployee.contracts?.length) {
-                      handleAddEmployeeContract();
-                    } else {
-                      handleAutoSaveOnTabChange();
-                    }
+                  style={{
+                    backgroundColor: disablePublish && "transparent",
+                    display: "flex",
+                    fontWeight: 600,
                   }}
-                  disabled={loadingUpdate}
                 >
                   <div className="flex flex-row flex-nowrap items-center">
-                    <p className="mr-2">Selanjutnya</p>
-                    <RightOutlined />
+                    <CheckIconSvg size={18} color={`white`} />
+                    <p className="ml-2">Simpan Karyawan</p>
                   </div>
-                </ButtonSys>
-              )}
-            </div>
+                </button>
+              </Tooltip>
+            ) : (
+              <div
+                onClick={() => {
+                  let numTab = Number(currentTab);
+                  currentTab < 3 && setCurrentTab(String(numTab + 1));
+
+                  // add employee contract if there's no contract yet
+                  if (!dataEmployee.contracts?.length) {
+                    handleAddEmployeeContract();
+                  } else {
+                    handleAutoSaveOnTabChange();
+                  }
+                }}
+                className={
+                  "hover:cursor-pointer rounded-[5px] bg-primary100 flex justify-center items-center gap-1.5 px-4 py-2.5"
+                }
+              >
+                <p className="text-white text-sm/4 font-roboto font-medium">
+                  Next
+                </p>
+                <RightOutlined style={{ color: "white" }} />
+              </div>
+            )}
           </div>
+        </div>
+        <div className={"border-b px-6 mb-3"}>
           <Tabs
             defaultActiveKey="1"
-            tabBarGutter={60}
-            className="px-1"
+            // tabBarG  utter={60}
+            className="headerTab"
+            // className="px-1"
             activeKey={currentTab}
             onTabClick={(key) => {
               setCurrentTab(key);
@@ -802,44 +837,54 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               }
             }}
           >
-            <Tabs.TabPane tab="Profil Karyawan" key="1">
-              <EmployeeProfileForm
-                initProps={initProps}
-                dataEmployee={dataEmployee}
-                setDataEmployee={setDataEmployee}
-                debouncedApiCall={debouncedSaveProfile}
-                handleFormChange={handleFormChange}
-              />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="Kontrak Karyawan" key="2">
-              <EmployeeContractForm
-                initProps={initProps}
-                dataContract={dataContract}
-                setDataContract={setDataContract}
-                debouncedApiCall={debouncedSaveContract}
-                employeeId={employeeId}
-                contractId={dataContract?.id || dataEmployee?.contract?.id}
-                currentTab={currentTab}
-                prevpath={prevpath}
-                refreshContract={refreshContract}
-                handleFormChange={handleFormChange}
-              />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="Inventaris & Piranti" key="3">
-              <EmployeeInventoryForm
-                initProps={initProps}
-                inventoryList={inventoryList}
-                setInventoryList={setInventoryList}
-                employeeId={employeeId}
-                debouncedApiCall={debouncedSaveInventory}
-                refresh={refresh}
-                setRefresh={setRefresh}
-                handleSaveInventory={handleSaveInventory}
-                handleFormChange={handleFormChange}
-              />
-            </Tabs.TabPane>
+            <Tabs.TabPane tab="Profil Karyawan" key="1"></Tabs.TabPane>
+            <Tabs.TabPane tab="Kontrak Karyawan" key="2"></Tabs.TabPane>
+            <Tabs.TabPane tab="Inventaris & Piranti" key="3"></Tabs.TabPane>
           </Tabs>
         </div>
+        {currentTab == "1" && (
+          <div className={"px-6"}>
+            <EmployeeProfileForm
+              initProps={initProps}
+              dataEmployee={dataEmployee}
+              setDataEmployee={setDataEmployee}
+              debouncedApiCall={debouncedSaveProfile}
+              handleFormChange={handleFormChange}
+            />
+          </div>
+        )}
+        {currentTab == "2" && (
+          <div className="">
+            {" "}
+            <EmployeeContractForm
+              initProps={initProps}
+              dataContract={dataContract}
+              setDataContract={setDataContract}
+              debouncedApiCall={debouncedSaveContract}
+              employeeId={employeeId}
+              contractId={dataContract?.id || dataEmployee?.contract?.id}
+              currentTab={currentTab}
+              prevpath={prevpath}
+              refreshContract={refreshContract}
+              handleFormChange={handleFormChange}
+            />
+          </div>
+        )}
+        {currentTab == "3" && (
+          <div className={"px-6"}>
+            <EmployeeInventoryForm
+              initProps={initProps}
+              inventoryList={inventoryList}
+              setInventoryList={setInventoryList}
+              employeeId={employeeId}
+              debouncedApiCall={debouncedSaveInventory}
+              refresh={refresh}
+              setRefresh={setRefresh}
+              handleSaveInventory={handleSaveInventory}
+              handleFormChange={handleFormChange}
+            />
+          </div>
+        )}
       </div>
     </LayoutDashboard>
   );

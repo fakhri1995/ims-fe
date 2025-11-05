@@ -1,5 +1,20 @@
-import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Modal, Switch, Table, Tabs, notification } from "antd";
+import {
+  LoadingOutlined,
+  PlusCircleOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { color } from "@chakra-ui/react";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Spin,
+  Switch,
+  Table,
+  Tabs,
+  notification,
+} from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -23,7 +38,18 @@ import {
   permissionWarningNotification,
 } from "lib/helper";
 
+import UserPicturUploadIcon from "assets/vectors/user-picture-upload.svg";
+
 import ButtonSys from "../../../../../components/button";
+import {
+  ArrowLeftIconSvg,
+  CheckIconSvg,
+  DeleteTablerIconSvg,
+  EditIconSvg,
+  EditTablerIconSvg,
+  LeftIconSvg,
+  PlusIconSvg,
+} from "../../../../../components/icon";
 import Layout from "../../../../../components/layout-dashboard-management";
 import st from "../../../../../components/layout-dashboard-management.module.css";
 import httpcookie from "cookie";
@@ -107,32 +133,34 @@ const Relationship = ({ userid, initProps }) => {
 
   return (
     <div className="flex flex-col">
-      <div className="border-b flex justify-between p-5 mb-8">
-        <h1 className="font-bold text-xl my-auto">Relationship</h1>
-      </div>
-      <div className="flex mb-5">
-        {praloadingrel ? null : (
-          <div className=" w-full mr-1 grid grid-cols-12">
-            <div className="col-span-11 mr-1">
-              <Input
-                style={{ width: `100%`, marginRight: `0.5rem` }}
-                placeholder="Cari Nama Item"
-                onChange={(e) => onChangeSearch(e)}
-                allowClear
-              ></Input>
+      <p className={"text-[16px]/6 text-[#424242] font-inter font-bold mb-5"}>
+        Relationship
+      </p>
+      {datatable.length > 0 && (
+        <div className="flex mb-5">
+          {praloadingrel ? null : (
+            <div className=" w-full mr-1 grid grid-cols-12">
+              <div className="col-span-11 mr-1">
+                <Input
+                  style={{ width: `100%`, marginRight: `0.5rem` }}
+                  placeholder="Cari Nama Item"
+                  onChange={(e) => onChangeSearch(e)}
+                  allowClear
+                ></Input>
+              </div>
+              <div className=" col-span-1">
+                <Button
+                  type="primary"
+                  style={{ width: `100%` }}
+                  onClick={onFinalClick}
+                >
+                  <SearchOutlined />
+                </Button>
+              </div>
             </div>
-            <div className=" col-span-1">
-              <Button
-                type="primary"
-                style={{ width: `100%` }}
-                onClick={onFinalClick}
-              >
-                <SearchOutlined />
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
       <Table
         loading={praloadingrel}
         pagination={{ pageSize: 9 }}
@@ -165,9 +193,14 @@ function AgentDetail({
   const isAllowedToUpdatePassword = hasPermission(AGENT_PASSWORD_UPDATE);
   const isAllowedToUpdateAgent = hasPermission(AGENT_UPDATE);
   const isAllowedToAddEmployee = hasPermission(EMPLOYEE_ADD);
-
+  const [instanceForm] = Form.useForm();
+  const [loadingubahpass, setloadingubahpass] = useState(false);
   const rt = useRouter();
-
+  const [dataPassword, setDataPassword] = useState({
+    current_password: "",
+    new_password: "",
+    confirm_new_password: "",
+  });
   const tok = initProps;
   const { TabPane } = Tabs;
 
@@ -185,6 +218,7 @@ function AgentDetail({
   });
   //data email
   const [dataemail, setdataemail] = useState("");
+  const [sideActive, setSideActive] = useState("1");
   //data roles
   const [namarolearr, setnamarolearr] = useState([]);
   const [patharr, setpatharr] = useState([]);
@@ -263,6 +297,7 @@ function AgentDetail({
         }
       });
   };
+
   const handleDeleteAgent = () => {
     setloadinghapus(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteAgent`, {
@@ -389,6 +424,61 @@ function AgentDetail({
       });
   }, [ubahstatus, isAllowedToGetAgentDetail]);
 
+  const onChangeCreatePassword = (e) => {
+    var val = e.target.value;
+    console.log("e target ", e.target.name);
+    setDataPassword((prev) => ({
+      ...prev,
+      [e.target.name]: val,
+    }));
+  };
+
+  const handleChangePassword = async () => {
+    try {
+      const values = await instanceForm.validateFields();
+      if (values) {
+        console.log("isi values ", values);
+        // setModalConfirm(true)
+        sendPassword(values);
+        // Kirim ke API
+      }
+    } catch (errorInfo) {
+      console.log("❌ Form invalid:", errorInfo);
+    }
+  };
+
+  const sendPassword = async (values) => {
+    setloadingubahpass(true);
+    const datapass = {
+      id: Number(userid),
+      new_password: values.new_password,
+    };
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeAgentPassword`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(datapass),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setloadingubahpass(false);
+        if (res2.success) {
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+          setSideActive("1");
+        } else if (!res2.success) {
+          notification["error"]({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      });
+  };
+
   return (
     <Layout
       tok={tok}
@@ -398,301 +488,496 @@ function AgentDetail({
       dataDetailAccount={data1}
       st={st}
     >
-      <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
-        <div className="col-span-1 md:col-span-4">
-          <Sticky containerSelectorFocus="#formAgentsWrapper">
-            <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-              <h1 className="font-semibold py-2">Detail Profil Agent</h1>
-              <div className="flex items-end space-x-0 space-y-2 md:space-y-0 md:space-x-2 md:flex-row flex-col">
-                <Button type="default" onClick={() => rt.back()}>
-                  Kembali
-                </Button>
-                <ButtonSys
-                  type={"primary"}
-                  onClick={onAddEmployeeButtonClicked}
-                  disabled={!isAllowedToAddEmployee}
-                >
-                  Tambah Karyawan
-                </ButtonSys>
-                {
-                  // [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                  <Button
-                    disabled={praloading || !isAllowedToUpdateAgent}
-                    type="primary"
-                    onClick={() => {
-                      rt.push(`/admin/agents/update/${data1.id}`);
-                    }}
-                  >
-                    Ubah Profil
-                  </Button>
-                  // <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Save</Button>
-                }
-                {
-                  // [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                  <div className=" h-auto">
-                    <Button
-                      disabled={praloading || !isAllowedToUpdatePassword}
-                      type="primary"
-                      onClick={() => {
-                        rt.push(
-                          `/admin/agents/password/${data1.id}?name=${data1.name}`
-                        );
-                      }}
-                    >
-                      Ubah Password
-                    </Button>
-                  </div>
-                }
-                {
-                  <div className=" h-auto">
-                    <Button
-                      disabled={!isAllowedToDeleteAgent}
-                      type="danger"
-                      onClick={() => {
-                        setvisiblehapus(true);
-                      }}
-                    >
-                      Hapus
-                    </Button>
-                  </div>
-                }
+      <div className="w-full bg-white rounded-[10px] border border-neutrals70 shadow-desktopCard">
+        <Sticky containerSelectorFocus="#formAgentsWrapper">
+          <div
+            className={
+              "px-5 bg-white py-5 border-b flex justify-between items-center"
+            }
+          >
+            <div className={"flex gap-3"}>
+              <div className={"hover:cursor-pointer"} onClick={() => rt.back()}>
+                <ArrowLeftIconSvg color={"#808080"} size={20} />
               </div>
+
+              <p
+                className={"text-[16px]/6 font-bold font-inter text-[#424242]"}
+              >
+                {data1.name}
+              </p>
             </div>
-          </Sticky>
-        </div>
-
-        <div
-          className=" col-span-1 md:col-span-4 flex flex-col"
-          id="formAgentsWrapper"
-        >
-          <div className=" hidden md:block">
-            <Tabs tabPosition={`left`} defaultActiveKey={"overview"}>
-              <TabPane tab="Overview" key={`overview`}>
-                <div className="shadow-lg flex flex-col rounded-md w-11/12 h-auto p-4 mb-5">
-                  <div className="border-b border-black p-4 font-semibold mb-5 flex">
-                    <div className=" mr-3 md:mr-5 pt-1">{data1.name}</div>
-                    {
-                      // [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                      <div className="pt-1">
-                        {isenabled ? (
-                          <Switch
-                            disabled={praloading || !isAllowedToAgentActivation}
-                            checked={true}
-                            onChange={() => {
-                              setVisible(true);
-                            }}
-                            checkedChildren={"AKTIF"}
-                          ></Switch>
-                        ) : (
-                          <Switch
-                            disabled={praloading || !isAllowedToAgentActivation}
-                            checked={false}
-                            onChange={() => {
-                              setVisiblenon(true);
-                            }}
-                            unCheckedChildren={"NON-AKTIF"}
-                          ></Switch>
-                        )}
-                      </div>
-                    }
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-4">
-                    <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
+            {sideActive == "2" ? (
+              <div className={"flex flex-row gap-3"}>
+                <div
+                  onClick={() => setSideActive("1")}
+                  className={
+                    "hover:cursor-pointer border border-primary100 text-primary100 rounded-[5px] h-[36px] w-[76px] flex justify-center items-center"
+                  }
+                >
+                  <p className={"text-sm/4 font-inter font-normal"}>Cancel</p>
+                </div>
+                <div
+                  onClick={() => !loadingubahpass && handleChangePassword()}
+                  className={
+                    "hover:cursor-pointer border bg-primary100 border-primary100 text-white rounded-[5px] h-[36px] w-[146px] gap-1.5 flex justify-center items-center"
+                  }
+                >
+                  {loadingubahpass ? (
+                    <LoadingOutlined />
+                  ) : (
+                    <CheckIconSvg size={16} />
+                  )}
+                  <p className={"text-sm/4 font-inter font-normal"}>
+                    Save Password
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className={"flex gap-3"}>
+                <div
+                  onClick={() => {
+                    setvisiblehapus(true);
+                  }}
+                  className={
+                    "hover:cursor-pointer flex justify-center gap-3 items-center w-[137px] h-[36px] border border-[#BF4A40] text-[#BF4A40] rounded-[5px]"
+                  }
+                >
+                  {loadinghapus ? (
+                    <LoadingOutlined />
+                  ) : (
+                    <DeleteTablerIconSvg size={16} />
+                  )}
+                  <p className={"font-roboto font-medium text-sm/4"}>
+                    Delete Agent
+                  </p>
+                </div>
+                <div
+                  onClick={() => {
+                    rt.push(`/admin/agents/update/${data1.id}`);
+                  }}
+                  className={
+                    "hover:cursor-pointer flex justify-center gap-3 items-center w-[114px] h-[36px] bg-primary100 rounded-[5px]"
+                  }
+                >
+                  <EditTablerIconSvg size={16} color={"white"} />
+                  <p className={"text-white font-roboto font-medium text-sm/4"}>
+                    Edit Agent
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </Sticky>
+        <div className={"flex"}>
+          <div className={"w-1/5 border-r p-5 flex flex-col gap-3"}>
+            <div
+              onClick={() => sideActive != "1" && setSideActive("1")}
+              className={`${
+                sideActive == "1"
+                  ? "bg-[#EBF8FD] py-2 px-3 rounded-[100px] max-w-fit"
+                  : null
+              } hover:cursor-pointer`}
+            >
+              <p
+                className={`${
+                  sideActive == "1"
+                    ? "text-[#03A0E3] font-bold"
+                    : "text-[#4D4D4D] font-medium ml-3"
+                } font-inter text-xs/5`}
+              >
+                Overview
+              </p>
+            </div>
+            <div
+              onClick={() => sideActive != "2" && setSideActive("2")}
+              className={`${
+                sideActive == "2"
+                  ? "bg-[#EBF8FD] py-2 px-3 rounded-[100px] max-w-fit"
+                  : null
+              } hover:cursor-pointer`}
+            >
+              <p
+                className={`${
+                  sideActive == "2"
+                    ? "text-[#03A0E3] font-bold"
+                    : "text-[#4D4D4D] font-medium ml-3"
+                } font-inter text-xs/5`}
+              >
+                Change Password
+              </p>
+            </div>
+            <div
+              onClick={() => sideActive != "3" && setSideActive("3")}
+              className={`${
+                sideActive == "3"
+                  ? "bg-[#EBF8FD] py-2 px-3 rounded-[100px] max-w-fit"
+                  : null
+              } hover:cursor-pointer`}
+            >
+              <p
+                className={`${
+                  sideActive == "3"
+                    ? "text-[#03A0E3] font-bold"
+                    : "text-[#4D4D4D] font-medium ml-3"
+                } font-inter text-xs/5`}
+              >
+                Relationship
+              </p>
+            </div>
+          </div>
+          <div className={"w-4/5 p-5"}>
+            {sideActive == "1" && (
+              <>
+                <div
+                  className={
+                    "flex justify-between items-center border border-[#E6E6E6] p-5 rounded-[12px]"
+                  }
+                >
+                  <div className={"flex gap-5"}>
+                    {data1.profile_image ? (
                       <img
                         src={data1.profile_image}
                         alt="imageProfile"
-                        className=" object-cover w-32 h-32 rounded-full mb-4"
+                        className=" object-cover w-[74px] h-[74px] rounded-full"
                       />
-                    </div>
-                    <div className="p-3 col-span-1 md:col-span-3">
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {data1.name}
-                        </h1>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">
-                          No. Handphone:
-                        </h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {data1.phone_number}
-                        </h1>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">NIP:</h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {data1.nip}
-                        </h1>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Posisi:</h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {data1.position}
-                        </h1>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Role:</h1>
-                        <div className=" flex flex-wrap items-center gap-2 ">
-                          {namarolearr.map((doc, idx) => (
-                            <div
-                              key={doc.id}
-                              className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100"
-                            >
-                              {doc.name}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Company:</h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {origincomp}
-                        </h1>
-                      </div>
+                    ) : (
+                      <UserPicturUploadIcon />
+                    )}
 
-                      {/* Form Aktivitas */}
-                      {data1.attendance_forms.length > 0 && (
-                        <div className="col-span-1 flex flex-col mb-5">
-                          <h1 className="font-semibold text-sm">
-                            Form Aktivitas:
-                          </h1>
-                          <h1>
-                            {data1.attendance_forms.map((attendanceForm) => (
-                              <React.Fragment key={attendanceForm.id}>
-                                {attendanceForm.name} <br />
-                              </React.Fragment>
-                            ))}
-                          </h1>
-                        </div>
-                      )}
+                    <div className={"flex flex-col gap-[5px]"}>
+                      <p
+                        className={
+                          "text-sm/6 font-bold font-inter text-[#4D4D4D]"
+                        }
+                      >
+                        {data1.name}
+                      </p>
+                      <p
+                        className={
+                          "text-xs/5 font-medium font-inter text-[#808080]"
+                        }
+                      >
+                        {data1.position}
+                      </p>
+                      <p
+                        className={
+                          "text-xs/5 font-medium font-inter text-[#808080]"
+                        }
+                      >
+                        {origincomp}
+                      </p>
                     </div>
                   </div>
+                  <div
+                    onClick={onAddEmployeeButtonClicked}
+                    className={"hover:cursor-pointer flex gap-1.5 py-2.5 px-3"}
+                  >
+                    <PlusCircleOutlined
+                      style={{ fontSize: 16, color: "#03A0E3" }}
+                      size={16}
+                      color={"#03A0E3"}
+                    />
+                    <p
+                      className={
+                        "text-[#03A0E3] text-sm/4 font-roboto font-medium"
+                      }
+                    >
+                      Add to Employee
+                    </p>
+                  </div>
                 </div>
-              </TabPane>
-              <TabPane tab="Relationship" key={`relationship`}>
-                <Relationship userid={userid} initProps={initProps} />
-              </TabPane>
-            </Tabs>
-          </div>
-          <div className=" block md:hidden">
-            <Tabs tabPosition={`top`} defaultActiveKey={"overview"}>
-              <TabPane tab="Overview" key={`overview`}>
-                <div className="shadow-lg flex flex-col rounded-md w-11/12 h-auto p-4 mb-5">
-                  <div className="border-b border-black p-4 font-semibold mb-5 flex">
-                    <div className=" mr-3 md:mr-5 pt-1">{data1.name}</div>
-                    {
-                      // [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                      <div className="pt-1">
-                        {isenabled ? (
-                          <Switch
-                            disabled={praloading}
-                            checked={true}
-                            onChange={() => {
-                              setVisible(true);
-                            }}
-                            checkedChildren={"AKTIF"}
-                          ></Switch>
-                        ) : (
-                          <Switch
-                            disabled={praloading}
-                            checked={false}
-                            onChange={() => {
-                              setVisiblenon(true);
-                            }}
-                            unCheckedChildren={"NON-AKTIF"}
-                          ></Switch>
-                        )}
-                      </div>
+                <div
+                  className={"border border-[#E6E6E6] p-5 rounded-[12px] mt-5"}
+                >
+                  <p
+                    className={
+                      "text-[16px]/6 text-[#424242] font-inter font-bold"
                     }
+                  >
+                    Informasi Akun
+                  </p>
+                  <div className="mt-5">
+                    {isenabled ? (
+                      <div className={"flex flex-row gap-2.5"}>
+                        <Switch
+                          style={{ width: 32 }}
+                          disabled={praloading}
+                          checked={true}
+                          onChange={() => {
+                            setVisible(true);
+                          }}
+                          // checkedChildren={"AKTIF"}
+                        />
+                        <p
+                          className={
+                            "text-[#4D4D4D] font-normal font-inter text-sm/6"
+                          }
+                        >
+                          Agent Active
+                        </p>
+                      </div>
+                    ) : (
+                      <div className={"flex flex-row gap-2.5"}>
+                        <Switch
+                          disabled={praloading}
+                          checked={false}
+                          onChange={() => {
+                            setVisiblenon(true);
+                          }}
+                          // unCheckedChildren={"NON-AKTIF"}
+                        />
+                        <p
+                          className={
+                            "text-[#4D4D4D] font-normal font-inter text-sm/6"
+                          }
+                        >
+                          Agent Non Active
+                        </p>
+                      </div>
+                    )}
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-4">
-                    <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
-                      <img
-                        src={data1.profile_image}
-                        alt="imageProfile"
-                        className=" object-cover w-32 h-32 rounded-full mb-4"
-                      />
+                  <div className={"grid grid-cols-2 space-x-3 mt-5"}>
+                    <div className={"col-span-1"}>
+                      <p
+                        className={
+                          "text-xs/5 font-normal font-inter text-[#808080]"
+                        }
+                      >
+                        Full Name
+                      </p>
+                      <p
+                        className={
+                          "text-sm/6 text-[#4D4D4D] font-normal font-inter"
+                        }
+                      >
+                        {data1.name}
+                      </p>
                     </div>
-                    <div className="p-3 col-span-1 md:col-span-3">
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {data1.name}
-                        </h1>
+                    <div className={"col-span-1"}>
+                      <p
+                        className={
+                          "text-xs/5 font-normal font-inter text-[#808080]"
+                        }
+                      >
+                        Company
+                      </p>
+                      <p
+                        className={
+                          "text-sm/6 text-[#4D4D4D] font-normal font-inter"
+                        }
+                      >
+                        {origincomp}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={"grid grid-cols-2 space-x-3 mt-5"}>
+                    <div className={"col-span-1"}>
+                      <p
+                        className={
+                          "text-xs/5 font-normal font-inter text-[#808080]"
+                        }
+                      >
+                        Email
+                      </p>
+                      <p
+                        className={
+                          "text-sm/6 text-[#4D4D4D] font-normal font-inter"
+                        }
+                      >
+                        {dataemail}
+                      </p>
+                    </div>
+                    <div className={"col-span-1"}>
+                      <p
+                        className={
+                          "text-xs/5 font-normal font-inter text-[#808080]"
+                        }
+                      >
+                        Position
+                      </p>
+                      <p
+                        className={
+                          "text-sm/6 text-[#4D4D4D] font-normal font-inter"
+                        }
+                      >
+                        {data1.position}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={"grid grid-cols-2 space-x-3 mt-5"}>
+                    <div className={"col-span-1"}>
+                      <p
+                        className={
+                          "text-xs/5 font-normal font-inter text-[#808080]"
+                        }
+                      >
+                        Phone Number
+                      </p>
+                      <p
+                        className={
+                          "text-sm/6 text-[#4D4D4D] font-normal font-inter"
+                        }
+                      >
+                        {data1.phone_number}
+                      </p>
+                    </div>
+                    <div className={"col-span-1"}>
+                      <p
+                        className={
+                          "text-xs/5 font-normal font-inter text-[#808080]"
+                        }
+                      >
+                        NIP
+                      </p>
+                      <p
+                        className={
+                          "text-sm/6 text-[#4D4D4D] font-normal font-inter"
+                        }
+                      >
+                        {data1.nip}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={"grid grid-cols-2 space-x-3 mt-5"}>
+                    <div className={"col-span-1"}>
+                      <p
+                        className={
+                          "text-xs/5 font-normal font-inter text-[#808080]"
+                        }
+                      >
+                        Activity Form
+                      </p>
+                      <div className=" flex flex-wrap items-center gap-2 ">
+                        {data1.attendance_forms.map((doc, idx) => (
+                          <div
+                            key={doc.id}
+                            className={
+                              "text-[#35763B] text-xs/[18px] font-inter font-bold bg-[#35763B1A] py-1 px-3 rounded-[5px]"
+                            }
+                          >
+                            {doc.name}
+                          </div>
+                        ))}
                       </div>
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="text-sm font-semibold">Email:</h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {dataemail}
-                        </h1>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">
-                          No. Handphone:
-                        </h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {data1.phone_number}
-                        </h1>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">NIP:</h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {data1.nip}
-                        </h1>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Posisi:</h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {data1.position}
-                        </h1>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Role:</h1>
-                        <div className=" flex items-center">
-                          {namarolearr.map((doc, idx) => (
-                            <div
-                              key={doc.id}
-                              className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100 mr-2"
-                            >
-                              {doc.name}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Company:</h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {origincomp}
-                        </h1>
-                      </div>
+                    </div>
+                    <div className={"col-span-1"}>
+                      <p
+                        className={
+                          "text-xs/5 font-normal font-inter text-[#808080]"
+                        }
+                      >
+                        Account Role
+                      </p>
 
-                      {/* Form Aktivitas */}
-                      {/* {data1.attendance_forms.length > 0 && ( */}
-                      {data1.attendance_forms.length > 0 && (
-                        <div className="col-span-1 flex flex-col mb-5">
-                          <h1 className="font-semibold text-sm">
-                            Form Aktivitasi:
-                          </h1>
-                          <h1>
-                            {data1.attendance_forms.map((attendanceForm) => (
-                              <React.Fragment key={attendanceForm.id}>
-                                {attendanceForm.name} <br />
-                              </React.Fragment>
-                            ))}
-                          </h1>
-                        </div>
-                      )}
+                      <div className=" flex flex-wrap items-center gap-2 ">
+                        {namarolearr.map((doc, idx) => (
+                          <div
+                            key={doc.id}
+                            className={
+                              "text-[#35763B] text-xs/[18px] font-inter font-bold bg-[#35763B1A] py-1 px-3 rounded-[5px]"
+                            }
+                          >
+                            {doc.name}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </TabPane>
-              <TabPane tab="Relationship" key={`relationship`}>
-                <Relationship userid={userid} initProps={initProps} />
-              </TabPane>
-            </Tabs>
-          </div>
+              </>
+            )}
+            {sideActive == "2" && (
+              <div>
+                <p
+                  className={
+                    "text-[16px]/6 text-[#424242] font-inter font-bold mb-4"
+                  }
+                >
+                  Change Password
+                </p>
+                <Form
+                  form={instanceForm}
+                  layout="vertical"
+                  name="agentForm"
+                  className="updateAgentsForm col-span-2"
+                  onValuesChange={(changedValues, allValues) => {
+                    console.log("allvalues ", allValues);
+                    setDataPassword(allValues);
+                  }}
+                >
+                  <Form.Item
+                    label="Current Password"
+                    name="current_password"
+                    className="w-1/2"
+                    rules={[
+                      { required: true, message: "Password must be filled" },
+                      {
+                        pattern: /^.{8,}$/,
+                        message: "Password minimum 8 characters",
+                      },
+                    ]}
+                  >
+                    <Input.Password />
+                  </Form.Item>
 
+                  <Form.Item
+                    label="New Password"
+                    name="new_password"
+                    className="w-1/2"
+                    rules={[
+                      {
+                        required: true,
+                        message: "New Password must be filled",
+                      },
+                      {
+                        pattern: /^.{8,}$/,
+                        message: "New Password minimum 8 characters",
+                      },
+                    ]}
+                  >
+                    <Input.Password />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Confirm New Password"
+                    name="confirm_new_password"
+                    className="w-1/2"
+                    dependencies={["new_password"]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Confirm New Password must be filled",
+                      },
+                      {
+                        pattern: /^.{8,}$/,
+                        message: "Confirm New Password minimum 8 characters",
+                      },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (
+                            !value ||
+                            getFieldValue("new_password") === value
+                          ) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error(
+                              "Confirm password must match new password"
+                            )
+                          );
+                        },
+                      }),
+                    ]}
+                  >
+                    <Input.Password />
+                  </Form.Item>
+                </Form>
+              </div>
+            )}
+            {sideActive == "3" && (
+              <Relationship userid={userid} initProps={initProps} />
+            )}
+          </div>
           <AccessControl hasPermission={AGENT_STATUS}>
             <Modal
               title="Konfirmasi untuk menon-aktifkan akun"

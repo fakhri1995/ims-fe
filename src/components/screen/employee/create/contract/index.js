@@ -44,7 +44,7 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
-import { PaperclipIconSvg } from "../../../../icon";
+import { PaperclipIconSvg, UploadIconSvg } from "../../../../icon";
 import { ModalAddCompany, ModalAddRole } from "../../../../modal/modalCustom";
 import ModalSalaryVarAdd, {
   defaultSalaryVar,
@@ -441,523 +441,377 @@ const EmployeeContractForm = ({
       layout="vertical"
       form={instanceForm}
       onValuesChange={handleFormChange && handleFormChange}
-      className="md:grid md:grid-cols-2 md:gap-x-8"
     >
-      <h5 className="mig-heading--5 col-span-2 mb-3">INFORMASI UMUM</h5>
-      <Form.Item
-        label="Status Karyawan"
-        name={"is_employee_active"}
-        rules={[
-          {
-            required: true,
-            message: "Status karyawan wajib diisi",
-          },
-        ]}
-        className="col-span-2"
-      >
-        <div className="flex flex-row space-x-4">
-          <Switch
-            checked={Number(dataContract?.is_employee_active)}
-            onChange={(checked) => {
-              setDataContract({
-                ...dataContract,
-                is_employee_active: Number(checked),
-              });
-
-              // use for auto save in "Tambah Karyawan"
-              if (debouncedApiCall) {
-                debouncedApiCall({
-                  ...dataContract,
-                  is_employee_active: Number(checked),
-                });
-              }
-            }}
-          />
-          {Number(dataContract?.is_employee_active) ? (
-            <p>Aktif</p>
-          ) : (
-            <p>Tidak Aktif</p>
-          )}
-        </div>
-      </Form.Item>
-      <Form.Item
-        label="Nama Kontrak"
-        name={"contract_name"}
-        className="col-span-2"
-      >
-        <div>
-          <Input
-            value={dataContract?.contract_name}
-            name={"contract_name"}
-            onChange={onChangeInput}
-            placeholder="Masukkan nama kontrak"
-          />
-        </div>
-      </Form.Item>
-      <div className="flex items-center space-x-2">
-        <Form.Item
-          label="Posisi"
-          name={"role_id"}
-          rules={[
-            {
-              required: true,
-              message: "Posisi wajib diisi",
-            },
-          ]}
-          className="w-full"
-        >
-          <>
-            <Select
-              value={dataContract?.role_id && Number(dataContract?.role_id)}
-              onChange={(value) => onChangeSelect(value, "role_id")}
-              placeholder="Pilih posisi"
-            >
-              <>
-                {dataPositionList?.map((option) => (
-                  <Select.Option key={option.id} value={option.id}>
-                    {option.name}
-                  </Select.Option>
-                ))}
-              </>
-            </Select>
-          </>
-        </Form.Item>
-        <Button
-          onClick={() => setModalAddRole(true)}
-          disabled={!isAllowedToAddRole}
-          className="px-4 py-2 whitespace-nowrap border-0 bg-transparent text-primary100 shadow-none hover:text-primary75 focus:text-primary100"
-        >
-          Tambah Posisi
-        </Button>
-      </div>
-      <Form.Item
-        label="Status Kontrak"
-        name={"contract_status_id"}
-        rules={[
-          {
-            required: true,
-            message: "Status kontrak wajib diisi",
-          },
-        ]}
-      >
-        <>
-          <Select
-            value={
-              dataContract?.contract_status_id &&
-              Number(dataContract?.contract_status_id)
-            }
-            onChange={(value) => onChangeSelect(value, "contract_status_id")}
-            placeholder="Pilih status kontrak"
-          >
-            <>
-              {dataRoleTypeList?.map((option) => (
-                <Select.Option key={option.id} value={option.id}>
-                  {option.name}
-                </Select.Option>
-              ))}
-            </>
-          </Select>
-        </>
-      </Form.Item>
-      <Form.Item
-        label="Dokumen Kontrak"
-        name={"contract_file"}
-        className="col-span-2 w-full"
-        rules={[
-          {
-            required: true,
-            message: "Dokumen kontrak wajib diisi",
-          },
-        ]}
-      >
-        <div className="relative">
-          <em className="text-mono50 mr-10">Unggah File PDF (Maksimal 5 MB)</em>
-          <ButtonSys
-            type={`defaultInput`}
-            // beforeUpload={beforeUploadDocument}
-            onChangeGambar={onUploadChange}
-            inputAccept=".pdf"
-            disabled={uploadDocumentLoading}
-          >
-            {uploadDocumentLoading ? (
-              <LoadingOutlined style={{ marginRight: `0.5rem` }} />
-            ) : (
-              <div className="mr-2">
-                <UploadOutlined />
-              </div>
-            )}
-            Unggah File
-          </ButtonSys>
-        </div>
-      </Form.Item>
-      <div className="grid grid-cols-1 col-span-2 items-center space-y-2 mb-4">
-        {dataContract?.contract_files?.map((doc, idx) => (
-          <div
-            key={idx}
-            className="grid grid-cols-12 gap-2 items-center p-2 border border-[#d9d9d9]"
-          >
-            <PaperclipIconSvg />
-            {doc?.link ? (
-              <a
-                className="col-span-10"
-                href={generateStaticAssetUrl(doc?.link)}
-                target="_blank"
-              >
-                {getFileName(doc?.link)}
-              </a>
-            ) : (
-              <p className="col-span-10">{doc?.name}</p>
-            )}
-            <div
-              className="text-right cursor-pointer  "
-              onClick={() => {
-                var tempFiles = [...dataContract?.contract_files];
-                tempFiles.splice(idx, 1);
-
-                setDataContract((prev) => ({
-                  ...prev,
-                  contract_files: tempFiles,
-                }));
-
-                setRemovedFileIds((prev) => [...prev, doc?.id || 0]);
-                handleFormChange && handleFormChange();
-              }}
-            >
-              <DeleteOutlined className="text-[#00000045] hover:text-[#00000080] m-2 p-2" />
-            </div>
-          </div>
-        ))}
-      </div>
-      <Form.Item
-        label="Referensi PKWT"
-        name={"pkwt_reference"}
-        className="col-span-2"
-      >
-        <div>
-          <Input
-            value={dataContract?.pkwt_reference}
-            name={"pkwt_reference"}
-            onChange={onChangeInput}
-            placeholder="Masukkan PKWT"
-          />
-        </div>
-      </Form.Item>
-      <Form.Item
-        label="Awal Kontrak"
-        name={"contract_start_at"}
-        rules={[
-          {
-            required: true,
-            message: "Awal kontrak wajib diisi",
-          },
-        ]}
-      >
-        <>
-          <DatePicker
-            name="contract_start_at"
-            placeholder="Pilih tanggal awal kontrak"
-            className="w-full"
-            value={
-              moment(dataContract?.contract_start_at).isValid()
-                ? moment(dataContract?.contract_start_at)
-                : null
-            }
-            format={"YYYY-MM-DD"}
-            onChange={(value, datestring) => {
-              onChangeDatePicker(datestring, "contract_start_at");
-            }}
-          />
-        </>
-      </Form.Item>
-      <Form.Item
-        label="Akhir Kontrak"
-        name={"contract_end_at"}
-        rules={[
-          {
-            // required: true,
-            message: "Akhir kontrak wajib diisi",
-          },
-        ]}
-      >
-        <>
-          <DatePicker
-            name="contract_end_at"
-            placeholder="Pilih tanggal akhir kontrak"
-            className="w-full"
-            value={
-              moment(dataContract?.contract_end_at).isValid()
-                ? moment(dataContract?.contract_end_at)
-                : null
-            }
-            onChange={(value, datestring) => {
-              onChangeDatePicker(datestring, "contract_end_at");
-            }}
-          />
-        </>
-      </Form.Item>
-      <div className="flex items-center space-x-2">
-        <Form.Item
-          label="Penempatan"
-          name={"placement"}
-          rules={[
-            {
-              required: true,
-              message: "Penempatan wajib diisi",
-            },
-          ]}
-          className="w-full"
-        >
-          <>
-            <Select
-              value={dataContract?.placement}
-              onChange={(value) => onChangeSelect(value, "placement")}
-              placeholder="Pilih penempatan"
-            >
-              {dataCompanyList?.map((option) => (
-                <Select.Option key={option.id} value={option.name}>
-                  {option.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </>
-        </Form.Item>
-        <Button
-          onClick={() => setModalAddCompany(true)}
-          className=" px-4 py-2 whitespace-nowrap border-0 bg-transparent text-primary100 shadow-none hover:text-primary75 focus:text-primary100"
-        >
-          Tambah Penempatan
-        </Button>
-      </div>
-      <Form.Item label="Kantor Baru" name={"new_office"}>
-        <div>
-          <Input
-            value={dataContract?.new_office}
-            name={"new_office"}
-            onChange={onChangeInput}
-            placeholder="Masukkan kantor baru"
-          />
-        </div>
-      </Form.Item>
-      <Form.Item
-        label="Tanggal Resign"
-        name={"resign_at"}
-        rules={
-          prevpath === "inactivate" && [
-            {
-              required: true,
-              message: "Akhir kontrak wajib diisi",
-            },
-          ]
-        }
-      >
-        <>
-          <DatePicker
-            name="resign_at"
-            placeholder="Pilih tanggal resign"
-            className="w-full"
-            value={
-              moment(dataContract?.resign_at).isValid()
-                ? moment(dataContract?.resign_at)
-                : null
-            }
-            onChange={(value, datestring) => {
-              onChangeDatePicker(datestring, "resign_at");
-            }}
-          />
-        </>
-      </Form.Item>
-      <div></div>
-
-      <div className="flex flex-col space-y-3">
-        <p className="mig-heading--5">BENEFIT PENERIMAAN</p>
-        <Form.Item
-          label="Gaji Pokok"
-          name={"gaji_pokok"}
-          rules={[
-            {
-              required: true,
-              message: "Gaji pokok wajib diisi",
-            },
-          ]}
-        >
-          <div>
-            <CurrencyFormat
-              customInput={Input}
-              placeholder={"Masukkan gaji pokok"}
-              value={dataContract?.gaji_pokok || 0}
-              thousandSeparator={"."}
-              decimalSeparator={","}
-              prefix={"Rp"}
-              allowNegative={false}
-              onValueChange={(values) => {
-                const { formattedValue, value, floatValue } = values;
-                setDataContract((prev) => ({
-                  ...prev,
-                  gaji_pokok: floatValue || 0,
-                }));
-
-                if (debouncedApiCall) {
-                  debouncedApiCall({
-                    ...dataContract,
-                    gaji_pokok: floatValue || 0,
-                  });
-                }
-
-                handleFormChange && handleFormChange();
-              }}
-              renderText={(value) => <p>{value}</p>}
-            />
-          </div>
-        </Form.Item>
-
-        {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
-              if toggle is checked in Modal Tambah Variabel Gaji */}
-        {Boolean(dataContract?.show_all_benefit) && (
-          <>
-            {defaultSalaryVar
-              ?.filter(
-                (v) =>
-                  dataContract[v.attrName] !== null &&
-                  v.attrName !== "pph21" &&
-                  dataContract[v.attrName] !== false
-              )
-              ?.map((item) => (
-                <Form.Item
-                  key={item.attrName}
-                  label={item.title}
-                  name={item.attrName}
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  <div>
-                    <CustomCurrencyInput
-                      fieldLabel={item.attrName}
-                      fieldName={item.attrName}
-                      setDataForm={setDataContract}
-                      value={countBPJSValue(item.percent)}
-                      disabled
-                    />
-                  </div>
-                </Form.Item>
-              ))}
-
-            {dataContract?.pph21 !== null && dataContract?.pph21 !== false && (
-              <Form.Item
-                label="PPh 21"
-                name={"pph21"}
-                rules={[
-                  {
-                    required: true,
-                    message: "PPh 21 wajib diisi",
-                  },
-                ]}
-              >
-                <>
-                  <CurrencyFormat
-                    customInput={Input}
-                    placeholder={"Masukkan PPh 21"}
-                    value={Number(dataContract?.pph21 || 0)}
-                    thousandSeparator={"."}
-                    decimalSeparator={","}
-                    prefix={"Rp"}
-                    allowNegative={false}
-                    disabled={true}
-                    renderText={(value) => <p>{value}</p>}
-                  />
-                </>
-              </Form.Item>
-            )}
-          </>
-        )}
-
-        {dataContract?.salaries
-          ?.filter((variable) => variable?.column?.type === 1)
-          ?.map((variable) => (
-            <Form.Item
-              key={variable.employee_salary_column_id}
-              label={variable?.column?.name}
-              name={formatVariableName(variable?.column?.name)}
-              rules={[
-                {
-                  required: variable?.column?.required,
-                  message: `${variable?.column?.name} wajib diisi`,
-                },
-              ]}
-            >
-              <div className="flex flex-row items-center space-x-2">
-                <CustomCurrencyInput
-                  fieldLabel={`${variable.column?.name?.toLowerCase()}`}
-                  dataForm={dataContract}
-                  setDataForm={setDataContract}
-                  value={
-                    dataContract?.salaries?.find(
-                      (benefit) =>
-                        benefit?.employee_salary_column_id ===
-                        variable.column?.id
-                    )?.value
-                  }
-                  dataColumn={variable.column}
-                  payslipId={dataContract?.id}
-                />
-              </div>
-            </Form.Item>
-          ))}
-      </div>
-
-      <div className="flex flex-col space-y-3 mt-5 md:mt-0">
-        <p className="mig-heading--5">BENEFIT PENGURANGAN</p>
-
-        {/* Default "Pengurangan" salary variable field (BPJS) */}
-        {defaultSalaryVar
-          ?.filter(
-            (v) =>
-              dataContract[v.attrName] !== null &&
-              v.attrName !== "pph21" &&
-              dataContract[v.attrName] !== false
-          )
-          ?.map((item) => (
-            <Form.Item
-              key={item.attrName}
-              label={item.title}
-              name={item.attrName}
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <div>
-                <CustomCurrencyInput
-                  fieldLabel={item.attrName}
-                  fieldName={item.attrName}
-                  setDataForm={setDataContract}
-                  value={countBPJSValue(item.percent)}
-                  disabled
-                />
-              </div>
-            </Form.Item>
-          ))}
-
-        {/* Pph 21 field */}
-        {dataContract?.pph21 !== null && dataContract?.pph21 !== false && (
+      <div className={"px-6"}>
+        <p className={"text-lg/6 text-[#424242] font-inter font-bold my-4"}>
+          General Information
+        </p>
+        <div className="md:grid md:grid-cols-2 md:gap-x-8">
           <Form.Item
-            label="PPh 21"
-            name={"pph21"}
+            label="Employee Status"
+            name={"is_employee_active"}
             rules={[
               {
                 required: true,
-                message: "PPh 21 wajib diisi",
+                message: "Status karyawan wajib diisi",
+              },
+            ]}
+            className="col-span-2"
+          >
+            <div className="flex flex-row space-x-4">
+              <Switch
+                checked={Number(dataContract?.is_employee_active)}
+                onChange={(checked) => {
+                  setDataContract({
+                    ...dataContract,
+                    is_employee_active: Number(checked),
+                  });
+
+                  // use for auto save in "Tambah Karyawan"
+                  if (debouncedApiCall) {
+                    debouncedApiCall({
+                      ...dataContract,
+                      is_employee_active: Number(checked),
+                    });
+                  }
+                }}
+              />
+              {Number(dataContract?.is_employee_active) ? (
+                <p>Aktif</p>
+              ) : (
+                <p>Tidak Aktif</p>
+              )}
+            </div>
+          </Form.Item>
+          <Form.Item
+            label="Contract Document"
+            name={"contract_file"}
+            className="col-span-2 w-full"
+            rules={[
+              {
+                required: true,
+                message: "Contract Document must be filled",
+              },
+            ]}
+          >
+            <div className="">
+              <ButtonSys
+                type={`defaultInput`}
+                // beforeUpload={beforeUploadDocument}
+                onChangeGambar={onUploadChange}
+                inputAccept=".pdf"
+                disabled={uploadDocumentLoading}
+              >
+                {uploadDocumentLoading ? (
+                  <LoadingOutlined style={{ marginRight: `0.5rem` }} />
+                ) : (
+                  <div className="mr-2">
+                    <UploadIconSvg size={16} color={"#4D4D4D"} />
+                  </div>
+                )}
+                <p
+                  className={"text-sm/4 font-roboto font-medium text-[#4D4D4D]"}
+                >
+                  Upload File
+                </p>
+              </ButtonSys>
+              <p className="text-[#808080] mr-10 font-inter font-semibold mt-4">
+                Upload Files (Maximum 5 MB)
+              </p>
+            </div>
+          </Form.Item>
+          <div className="grid grid-cols-1 col-span-2 items-center space-y-2 mb-4">
+            {dataContract?.contract_files?.map((doc, idx) => (
+              <div
+                key={idx}
+                className="grid grid-cols-12 gap-2 items-center p-2 border border-[#d9d9d9]"
+              >
+                <PaperclipIconSvg />
+                {doc?.link ? (
+                  <a
+                    className="col-span-10"
+                    href={generateStaticAssetUrl(doc?.link)}
+                    target="_blank"
+                  >
+                    {getFileName(doc?.link)}
+                  </a>
+                ) : (
+                  <p className="col-span-10">{doc?.name}</p>
+                )}
+                <div
+                  className="text-right cursor-pointer  "
+                  onClick={() => {
+                    var tempFiles = [...dataContract?.contract_files];
+                    tempFiles.splice(idx, 1);
+
+                    setDataContract((prev) => ({
+                      ...prev,
+                      contract_files: tempFiles,
+                    }));
+
+                    setRemovedFileIds((prev) => [...prev, doc?.id || 0]);
+                    handleFormChange && handleFormChange();
+                  }}
+                >
+                  <DeleteOutlined className="text-[#00000045] hover:text-[#00000080] m-2 p-2" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <Form.Item
+            label="Contract Name"
+            name={"contract_name"}
+            className="col-span-1"
+          >
+            <div>
+              <Input
+                value={dataContract?.contract_name}
+                name={"contract_name"}
+                onChange={onChangeInput}
+                placeholder="Input contract name"
+              />
+            </div>
+          </Form.Item>
+          <div className="flex items-center space-x-2">
+            <Form.Item
+              label="Position"
+              name={"role_id"}
+              rules={[
+                {
+                  required: true,
+                  message: "Position must be filled",
+                },
+              ]}
+              className="w-full"
+            >
+              <>
+                <Select
+                  value={dataContract?.role_id && Number(dataContract?.role_id)}
+                  onChange={(value) => onChangeSelect(value, "role_id")}
+                  placeholder="Select position"
+                >
+                  <>
+                    {dataPositionList?.map((option) => (
+                      <Select.Option key={option.id} value={option.id}>
+                        {option.role}
+                      </Select.Option>
+                    ))}
+                  </>
+                </Select>
+              </>
+            </Form.Item>
+            <Button
+              onClick={() => setModalAddRole(true)}
+              disabled={!isAllowedToAddRole}
+              className="px-4 py-2 whitespace-nowrap border-0 bg-transparent text-primary100 shadow-none hover:text-primary75 focus:text-primary100"
+            >
+              Add Position
+            </Button>
+          </div>
+          <Form.Item
+            label="Contract Status"
+            name={"contract_status_id"}
+            className="col-span-1"
+            rules={[
+              {
+                required: true,
+                message: "Contract status must be filled",
               },
             ]}
           >
             <>
+              <Select
+                value={
+                  dataContract?.contract_status_id &&
+                  Number(dataContract?.contract_status_id)
+                }
+                onChange={(value) =>
+                  onChangeSelect(value, "contract_status_id")
+                }
+                placeholder="Select contract status"
+              >
+                <>
+                  {dataRoleTypeList?.map((option) => (
+                    <Select.Option key={option.id} value={option.id}>
+                      {option.name}
+                    </Select.Option>
+                  ))}
+                </>
+              </Select>
+            </>
+          </Form.Item>
+
+          <Form.Item
+            label="PKWT Reference"
+            name={"pkwt_reference"}
+            className="col-span-1"
+          >
+            <div>
+              <Input
+                value={dataContract?.pkwt_reference}
+                name={"pkwt_reference"}
+                onChange={onChangeInput}
+                placeholder="Input PKWT"
+              />
+            </div>
+          </Form.Item>
+        </div>
+        <div className={"md:grid md:grid-cols-3 md:gap-x-8"}>
+          <Form.Item
+            label="Start Contract"
+            name={"contract_start_at"}
+            rules={[
+              {
+                required: true,
+                message: "Start Contract must be filled",
+              },
+            ]}
+          >
+            <>
+              <DatePicker
+                name="contract_start_at"
+                placeholder="Select start contract"
+                className="w-full"
+                value={
+                  moment(dataContract?.contract_start_at).isValid()
+                    ? moment(dataContract?.contract_start_at)
+                    : null
+                }
+                format={"YYYY-MM-DD"}
+                onChange={(value, datestring) => {
+                  onChangeDatePicker(datestring, "contract_start_at");
+                }}
+              />
+            </>
+          </Form.Item>
+          <Form.Item
+            label="End Contract"
+            name={"contract_end_at"}
+            rules={[
+              {
+                // required: true,
+                message: "End contract must be filled",
+              },
+            ]}
+          >
+            <>
+              <DatePicker
+                name="contract_end_at"
+                placeholder="Select end contract"
+                className="w-full"
+                value={
+                  moment(dataContract?.contract_end_at).isValid()
+                    ? moment(dataContract?.contract_end_at)
+                    : null
+                }
+                onChange={(value, datestring) => {
+                  onChangeDatePicker(datestring, "contract_end_at");
+                }}
+              />
+            </>
+          </Form.Item>
+          <div className="flex items-center space-x-2">
+            <Form.Item
+              label="Placement"
+              name={"placement"}
+              rules={[
+                {
+                  required: true,
+                  message: "Placement must be filled",
+                },
+              ]}
+              className="w-full"
+            >
+              <>
+                <Select
+                  value={dataContract?.placement}
+                  onChange={(value) => onChangeSelect(value, "placement")}
+                  placeholder="Select placement"
+                >
+                  {dataCompanyList?.map((option) => (
+                    <Select.Option key={option.id} value={option.name}>
+                      {option.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </>
+            </Form.Item>
+            <Button
+              onClick={() => setModalAddCompany(true)}
+              className=" px-4 py-2 whitespace-nowrap border-0 bg-transparent text-primary100 shadow-none hover:text-primary75 focus:text-primary100"
+            >
+              Add Placement
+            </Button>
+          </div>
+        </div>
+        <div className={"md:grid md:grid-cols-2 md:gap-x-8"}>
+          <Form.Item
+            label="New Office"
+            name={"new_office"}
+            className={"col-span-1"}
+          >
+            <div>
+              <Input
+                value={dataContract?.new_office}
+                name={"new_office"}
+                onChange={onChangeInput}
+                placeholder="Input new office"
+              />
+            </div>
+          </Form.Item>
+          <Form.Item
+            label="Resign Date"
+            name={"resign_at"}
+            className={"col-span-1"}
+            rules={
+              prevpath === "inactivate" && [
+                {
+                  required: true,
+                  message: "Resign date must be filled",
+                },
+              ]
+            }
+          >
+            <>
+              <DatePicker
+                name="resign_at"
+                placeholder="Select resign date"
+                className="w-full"
+                value={
+                  moment(dataContract?.resign_at).isValid()
+                    ? moment(dataContract?.resign_at)
+                    : null
+                }
+                onChange={(value, datestring) => {
+                  onChangeDatePicker(datestring, "resign_at");
+                }}
+              />
+            </>
+          </Form.Item>
+        </div>
+        <div></div>
+      </div>
+      <div className={"border-b mb-4"}></div>
+      <div className={"md:grid md:grid-cols-2 md:gap-x-8 px-6"}>
+        <div className="flex flex-col space-y-3">
+          <p className={"text-[#4D4D4D] font-inter font-medium text-sm/6"}>
+            PENERIMAAN
+          </p>
+          <Form.Item
+            label="Salary"
+            name={"gaji_pokok"}
+            rules={[
+              {
+                required: true,
+                message: "Salary must be filled",
+              },
+            ]}
+          >
+            <div>
               <CurrencyFormat
                 customInput={Input}
-                placeholder={"Masukkan PPh 21"}
-                value={Number(dataContract?.pph21 || 0)}
+                placeholder={"Input salary"}
+                value={dataContract?.gaji_pokok || 0}
                 thousandSeparator={"."}
                 decimalSeparator={","}
                 prefix={"Rp"}
@@ -966,21 +820,90 @@ const EmployeeContractForm = ({
                   const { formattedValue, value, floatValue } = values;
                   setDataContract((prev) => ({
                     ...prev,
-                    pph21: Number(floatValue) || 0,
+                    gaji_pokok: floatValue || 0,
                   }));
+
+                  if (debouncedApiCall) {
+                    debouncedApiCall({
+                      ...dataContract,
+                      gaji_pokok: floatValue || 0,
+                    });
+                  }
+
                   handleFormChange && handleFormChange();
                 }}
                 renderText={(value) => <p>{value}</p>}
               />
-            </>
+            </div>
           </Form.Item>
-        )}
 
-        {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
-        {dataContract?.salaries
-          ?.filter((variable) => variable?.column?.type === 2)
-          ?.map((variable) => {
-            return (
+          {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
+              if toggle is checked in Modal Tambah Variabel Gaji */}
+          {Boolean(dataContract?.show_all_benefit) && (
+            <>
+              {defaultSalaryVar
+                ?.filter(
+                  (v) =>
+                    dataContract[v.attrName] !== null &&
+                    v.attrName !== "pph21" &&
+                    dataContract[v.attrName] !== false
+                )
+                ?.map((item) => (
+                  <Form.Item
+                    key={item.attrName}
+                    label={item.title}
+                    name={item.attrName}
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <div>
+                      <CustomCurrencyInput
+                        fieldLabel={item.attrName}
+                        fieldName={item.attrName}
+                        setDataForm={setDataContract}
+                        value={countBPJSValue(item.percent)}
+                        disabled
+                      />
+                    </div>
+                  </Form.Item>
+                ))}
+
+              {dataContract?.pph21 !== null &&
+                dataContract?.pph21 !== false && (
+                  <Form.Item
+                    label="PPh 21"
+                    name={"pph21"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "PPh 21 wajib diisi",
+                      },
+                    ]}
+                  >
+                    <>
+                      <CurrencyFormat
+                        customInput={Input}
+                        placeholder={"Masukkan PPh 21"}
+                        value={Number(dataContract?.pph21 || 0)}
+                        thousandSeparator={"."}
+                        decimalSeparator={","}
+                        prefix={"Rp"}
+                        allowNegative={false}
+                        disabled={true}
+                        renderText={(value) => <p>{value}</p>}
+                      />
+                    </>
+                  </Form.Item>
+                )}
+            </>
+          )}
+
+          {dataContract?.salaries
+            ?.filter((variable) => variable?.column?.type === 1)
+            ?.map((variable) => (
               <Form.Item
                 key={variable.employee_salary_column_id}
                 label={variable?.column?.name}
@@ -992,16 +915,16 @@ const EmployeeContractForm = ({
                   },
                 ]}
               >
-                <div>
+                <div className="flex flex-row items-center space-x-2">
                   <CustomCurrencyInput
-                    fieldLabel={`${variable?.name?.toLowerCase()}`}
+                    fieldLabel={`${variable.column?.name?.toLowerCase()}`}
                     dataForm={dataContract}
                     setDataForm={setDataContract}
                     value={
                       dataContract?.salaries?.find(
                         (benefit) =>
                           benefit?.employee_salary_column_id ===
-                          variable?.column?.id
+                          variable.column?.id
                       )?.value
                     }
                     dataColumn={variable.column}
@@ -1009,8 +932,116 @@ const EmployeeContractForm = ({
                   />
                 </div>
               </Form.Item>
-            );
-          })}
+            ))}
+        </div>
+
+        <div className="flex flex-col space-y-3 mt-5 md:mt-0">
+          <p className={"text-[#4D4D4D] font-inter font-medium text-sm/6"}>
+            PENGURANGAN
+          </p>
+
+          {/* Default "Pengurangan" salary variable field (BPJS) */}
+          {defaultSalaryVar
+            ?.filter(
+              (v) =>
+                dataContract[v.attrName] !== null &&
+                v.attrName !== "pph21" &&
+                dataContract[v.attrName] !== false
+            )
+            ?.map((item) => (
+              <Form.Item
+                key={item.attrName}
+                label={item.title}
+                name={item.attrName}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <div>
+                  <CustomCurrencyInput
+                    fieldLabel={item.attrName}
+                    fieldName={item.attrName}
+                    setDataForm={setDataContract}
+                    value={countBPJSValue(item.percent)}
+                    disabled
+                  />
+                </div>
+              </Form.Item>
+            ))}
+
+          {/* Pph 21 field */}
+          {dataContract?.pph21 !== null && dataContract?.pph21 !== false && (
+            <Form.Item
+              label="PPh 21"
+              name={"pph21"}
+              rules={[
+                {
+                  required: true,
+                  message: "PPh 21 wajib diisi",
+                },
+              ]}
+            >
+              <>
+                <CurrencyFormat
+                  customInput={Input}
+                  placeholder={"Masukkan PPh 21"}
+                  value={Number(dataContract?.pph21 || 0)}
+                  thousandSeparator={"."}
+                  decimalSeparator={","}
+                  prefix={"Rp"}
+                  allowNegative={false}
+                  onValueChange={(values) => {
+                    const { formattedValue, value, floatValue } = values;
+                    setDataContract((prev) => ({
+                      ...prev,
+                      pph21: Number(floatValue) || 0,
+                    }));
+                    handleFormChange && handleFormChange();
+                  }}
+                  renderText={(value) => <p>{value}</p>}
+                />
+              </>
+            </Form.Item>
+          )}
+
+          {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
+          {dataContract?.salaries
+            ?.filter((variable) => variable?.column?.type === 2)
+            ?.map((variable) => {
+              return (
+                <Form.Item
+                  key={variable.employee_salary_column_id}
+                  label={variable?.column?.name}
+                  name={formatVariableName(variable?.column?.name)}
+                  rules={[
+                    {
+                      required: variable?.column?.required,
+                      message: `${variable?.column?.name} wajib diisi`,
+                    },
+                  ]}
+                >
+                  <div>
+                    <CustomCurrencyInput
+                      fieldLabel={`${variable?.name?.toLowerCase()}`}
+                      dataForm={dataContract}
+                      setDataForm={setDataContract}
+                      value={
+                        dataContract?.salaries?.find(
+                          (benefit) =>
+                            benefit?.employee_salary_column_id ===
+                            variable?.column?.id
+                        )?.value
+                      }
+                      dataColumn={variable.column}
+                      payslipId={dataContract?.id}
+                    />
+                  </div>
+                </Form.Item>
+              );
+            })}
+        </div>
       </div>
       <div className="col-span-2 mt-3">
         <ButtonSys
