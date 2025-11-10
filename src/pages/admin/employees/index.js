@@ -618,7 +618,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                     icon={<EditOutlined />}
                     className="bg-primary100 border-primary100 hover:bg-primary75 hover:border-primary75 focus:bg-primary75 focus:border-primary75"
                   />
-                  {record.user_id == null && (
+                  {(record.user_id == null || record.user_id === 0) && (
                     <Button
                       type={"primary"}
                       disabled={!isAllowedToUpdateEmployeeContract}
