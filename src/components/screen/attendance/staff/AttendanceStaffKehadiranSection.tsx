@@ -1,4 +1,4 @@
-import { ConfigProvider, Table, Tag } from "antd";
+import { ConfigProvider, Table } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
 import { useRouter } from "next/router";
@@ -53,11 +53,8 @@ export const AttendanceStaffKehadiranSection: FC<
       enabled: isAllowedToGetKehadiranData,
       select: (response) =>
         response.data.data.user_attendances.map((datum) => {
-          // console.log('isi datum ',datum)
           return {
             ...datum,
-            attendance_code_name: datum?.attendance_code?.name || "-",
-            attendance_code_color: datum?.attendance_code?.color || "-",
             geo_loc_check_in: datum.geo_loc_check_in || "-",
             geo_loc_check_out: datum.geo_loc_check_out || "-",
             is_wfo: datum.is_wfo === 1 ? "WFO" : "WFH",
@@ -164,36 +161,6 @@ export const AttendanceStaffKehadiranSection: FC<
         align: "center",
         width: 120,
       },
-      {
-        title: "Code",
-        dataIndex: "attendance_code_name",
-        // sorter: (a, b) => (b.is_wfo < a.is_wfo ? -1 : 1),
-        align: "center",
-        render: (_, datum) => {
-          return {
-            children:
-              datum.attendance_code_name != "-" ? (
-                <Tag
-                  color={`${datum.attendance_code_color}1A`}
-                  style={{
-                    color: `${datum.attendance_code_color}`, // ungu tua untuk teks
-                    borderRadius: "20px",
-                    fontWeight: 600,
-                    border: "none",
-                    padding: "2px 10px",
-                  }}
-                >
-                  <p className={`text-[${datum.attendance_code_color}]`}>
-                    {datum?.attendance_code_name || ""}
-                  </p>
-                </Tag>
-              ) : (
-                <p>-</p>
-              ),
-          };
-        },
-        width: 120,
-      },
     ];
   }, [pageSize, currentPage]);
 
@@ -261,6 +228,4 @@ interface IModifiedDataKehadiran
   geo_loc_check_in: string;
   geo_loc_check_out: string;
   is_wfo: string;
-  attendance_code_name: string;
-  attendance_code_color: string;
 }

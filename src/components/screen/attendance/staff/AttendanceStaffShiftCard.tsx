@@ -17,21 +17,13 @@ import { AttendanceScheduleService } from "apis/attendance";
  */
 export interface IAttendanceStaffShiftCard {
   userId: number;
-  attendance_code_color: string;
-  attendance_code_name: string;
-  status_verification: string;
 }
 
 /**
  * Component AttendanceStaffShiftCard
  */
 export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
-  ({
-    userId,
-    attendance_code_color,
-    attendance_code_name,
-    status_verification,
-  }) => {
+  ({ userId }) => {
     const { hasPermission, isPending: isAccessControlPending } =
       useAccessControl();
     if (isAccessControlPending) {
@@ -78,44 +70,20 @@ export const AttendanceStaffShiftCard: FC<IAttendanceStaffShiftCard> = memo(
     return (
       <div className="mig-platform flex flex-col">
         <h4 className="mig-body--bold mb-3">Work Schedule</h4>
-        {}
+
         {currentScheduleQueries?.map((schedule, idx) => {
           return (
             <React.Fragment key={idx}>
               {idx === 0 ? (
-                <div
-                  style={{
-                    backgroundColor:
-                      status_verification === "Approved"
-                        ? attendance_code_color + "1A"
-                        : undefined,
-                  }}
-                  className={`flex flex-col justify-center items-center p-2 ${
-                    status_verification == "Approved" ? "" : "bg-mono120"
-                  } rounded-md mb-3`}
-                >
+                <div className="flex flex-col justify-center items-center p-2 bg-mono120 rounded-md mb-3">
                   <p className="mig-caption--medium text-neutrals90">Today</p>
                   {/* <p className="mig-caption--medium text-xs text-mono50">
                     {schedule?.data?.data?.shift?.title}
                   </p> */}
-                  {status_verification == "Approved" ? (
-                    <h4
-                      style={{
-                        color:
-                          status_verification === "Approved"
-                            ? attendance_code_color
-                            : undefined,
-                      }}
-                      className="mig-heading--4"
-                    >
-                      {attendance_code_name}
-                    </h4>
-                  ) : (
-                    <h4 className="mig-heading--4">
-                      {schedule?.data?.data?.shift?.start_at?.slice(0, 5)} -{" "}
-                      {schedule?.data?.data?.shift?.end_at?.slice(0, 5)}
-                    </h4>
-                  )}
+                  <h4 className="mig-heading--4">
+                    {schedule?.data?.data?.shift?.start_at?.slice(0, 5)} -{" "}
+                    {schedule?.data?.data?.shift?.end_at?.slice(0, 5)}
+                  </h4>
                 </div>
               ) : (
                 <div className="flex justify-between gap-2 items-center mb-2">

@@ -298,20 +298,27 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
-          {hasPermission(SIDEBAR_WORKDAY) && (
+          {/* {hasPermission(SIDEBAR_WORKDAY) && (
             <Menu.Item key="workdayschedule" className="text-mono50">
               <Link href="/company/workdayschedule" legacyBehavior>
                 <p>Workday Schedule</p>
               </Link>
             </Menu.Item>
-          )}
-          {hasPermission(SIDEBAR_WORKDAY) && (
+          )} */}
+          {/* {hasPermission(SIDEBAR_WORKDAY) && (
             <Menu.Item key="chargecodes" className="text-mono50">
               <Link href="/company/chargecode" legacyBehavior>
                 <p>Company Code</p>
               </Link>
             </Menu.Item>
-          )}
+          )} */}
+          {/* {hasPermission(SIDEBAR_WORKDAY) && (
+            <Menu.Item key="serviceagreement" className="text-mono50">
+              <Link href="/company/serviceagreement" legacyBehavior>
+                <p>Service Agreement</p>
+              </Link>
+            </Menu.Item>
+          )} */}
         </SubMenu>
       )}
 
@@ -406,13 +413,13 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               </Link>
             </Menu.Item>
           )}
-          {hasPermission(SIDEBAR_ATTENDANCE_VERIFICATION) && (
+          {/* {hasPermission(SIDEBAR_ATTENDANCE_VERIFICATION) && (
             <Menu.Item key="attendance/verification" className="text-mono50">
               <Link href="/attendance/verification" legacyBehavior>
                 <p>Verification</p>
               </Link>
             </Menu.Item>
-          )}
+          )} */}
           {/* {hasPermission(EMPLOYEE_LEAVE_QUOTAS_GET) && (
             <Menu.Item key="attendance/report" className="text-mono50">
               <Link href="/attendance/report" legacyBehavior>
