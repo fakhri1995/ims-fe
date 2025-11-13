@@ -47,22 +47,16 @@ export const AttendanceStaffCheckInDrawer: FC<
   const [placementDisable, setPlacementDisable] = useState(true);
   const [placement, setPlacement] = useState(null);
   const { position, isPermissionBlocked } = useGeolocationAPI();
-  const [attendanceCodeId, setAttendanceCodeId] = useState(null);
-  const [dataListAttendanceCode, setDataListAttendanceCode] = useState([]);
-  const [perluVerifikasi, setPerluVerifikasi] = useState(null);
+  const [dataListCompany, setDataListCompany] = useState(null);
+
   /** Field: Lokasi saat ini */
   const { data: locationDisplayName, isLoading: locationDisplayNameLoading } =
     useNominatimReverseGeocode(position);
 
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
-  const [uploadSupportingFileLoading, setUploadSupportingFileLoading] =
-    useState(false);
+
   /** Uploaded file object. Wrapped as RcFile. Used as payload. */
   const [uploadedEvidencePicture, setUploadedEvidencePicture] = useState<
-    RcFile | Blob | File
-  >(null);
-
-  const [uploadedSupportingFile, setUploadedSupportingFile] = useState<
     RcFile | Blob | File
   >(null);
 
@@ -75,12 +69,10 @@ export const AttendanceStaffCheckInDrawer: FC<
     useState("");
 
   const [fileList, setFileList] = useState<UploadFile<RcFile>[]>([]);
-  const [supportingfileList, setSupportingFileList] = useState<
-    UploadFile<RcFile>[]
-  >([]);
   const onUploadChange = useCallback(
     ({ file }: UploadChangeParam<UploadFile<RcFile>>) => {
       setUploadPictureLoading(file.status === "uploading");
+
       if (file.status !== "removed") {
         setFileList([file]);
       }
@@ -88,40 +80,7 @@ export const AttendanceStaffCheckInDrawer: FC<
     []
   );
 
-  const onUploadSupportFileChange = useCallback(
-    ({ file }: UploadChangeParam<UploadFile<RcFile>>) => {
-      setUploadSupportingFileLoading(file.status === "uploading");
-      if (file.status !== "removed") {
-        setSupportingFileList([file]);
-      }
-    },
-    []
-  );
-
   const [isWebcamModalShown, setIsWebcamModalShown] = useState(false);
-  const attendanceCodeList = [
-    {
-      id: 1,
-      name: "Present",
-    },
-    {
-      id: 2,
-      name: "Overtime",
-    },
-    {
-      id: 3,
-      name: "Unpaid Leave",
-    },
-    {
-      id: 4,
-      name: "Paid Leave",
-    },
-  ];
-  interface MyOptionType {
-    value: string | number;
-    label: string;
-    perlu_verifikasi?: boolean;
-  }
 
   /**
    * Validating uploaded file before finally attached to the paylaod.
@@ -130,9 +89,9 @@ export const AttendanceStaffCheckInDrawer: FC<
    * - File type should satisfy ["image/png", "image/jpeg"]
    */
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
   // useEffect(() => {
   //   if (attendeeStatus == "checkin") {
   //     setPlacementDisable(false);
@@ -141,22 +100,21 @@ export const AttendanceStaffCheckInDrawer: FC<
   //   }
   // }, [attendeeStatus]);
 
-  const fetchData = async () => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCodesUser`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(token),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2?.data?.attendance_codes.length > 0) {
-          setDataListAttendanceCode(res2.data.attendance_codes);
-        } else {
-          setDataListAttendanceCode([]);
-        }
-      });
-  };
+  // const fetchData = async () => {
+  //   fetch(
+  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocationsSubCompany?company_id=${idCompany}`,
+  //     {
+  //       method: `GET`,
+  //       headers: {
+  //         Authorization: JSON.parse(token),
+  //       },
+  //     }
+  //   )
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setDataListCompany(res2.data);
+  //     });
+  // };
   const beforeUploadEvidencePicture = useCallback<
     Pick<UploadProps, "beforeUpload">["beforeUpload"]
   >((uploadedFile) => {
@@ -183,31 +141,6 @@ export const AttendanceStaffCheckInDrawer: FC<
     setUploadedEvidencePicture(null);
   }, []);
 
-  const beforeUploadSupportingFile = useCallback<
-    Pick<UploadProps, "beforeUpload">["beforeUpload"]
-  >((uploadedFile) => {
-    // const allowedFileTypes = ["image/png", "image/jpeg"];
-    // if (!allowedFileTypes.includes(uploadedFile.type)) {
-    //   return Upload.LIST_IGNORE;
-    // }
-    const fileSizeInMb = Number.parseFloat(
-      (uploadedFile.size / 1024 / 1024).toFixed(4)
-    );
-    if (fileSizeInMb > 5) {
-      notificationError({
-        message: "File size exceeds the requirement limit!",
-      });
-      return Upload.LIST_IGNORE;
-    }
-
-    setUploadedSupportingFile(uploadedFile);
-  }, []);
-
-  const onRemoveSupportingFile = useCallback(() => {
-    setSupportingFileList([]);
-    setUploadedSupportingFile(null);
-  }, []);
-
   const onPreviewEvidencePicture = useCallback(async () => {
     const previewImageData = (await getBase64(
       uploadedEvidencePicture
@@ -224,60 +157,46 @@ export const AttendanceStaffCheckInDrawer: FC<
       subcompany: number;
     }) => {
       // console.log("upload evidence picture ", uploadedEvidencePicture);
-      let payload;
-      if (perluVerifikasi) {
-        payload = {
-          attendance_code_id: attendanceCodeId,
-          support_file: uploadedSupportingFile,
-          geo_loc: locationDisplayName || "",
-          lat: position?.coords.latitude.toString(),
-          long: position?.coords.longitude.toString(),
-          wfo: value?.work_from === "WFO" ? 1 : 0,
-          company_id: value?.subcompany,
-        };
-      } else {
-        payload = {
-          attendance_code_id: attendanceCodeId,
+      toggleCheckInCheckOut(
+        {
           evidence: uploadedEvidencePicture,
           geo_loc: locationDisplayName || "",
           lat: position?.coords.latitude.toString(),
           long: position?.coords.longitude.toString(),
           wfo: value?.work_from === "WFO" ? 1 : 0,
           company_id: value?.subcompany,
-        };
-      }
-      toggleCheckInCheckOut(payload, {
-        onSuccess: (response) => {
-          if (response.data.success) {
-            setUploadedEvidencePicture(null);
-            setPreviewEvidencePictureData("");
-            setFileList([]);
-            setUploadedSupportingFile(null);
-            setSupportingFileList([]);
-
-            form.resetFields();
-            onClose();
-
-            notificationSuccess({ message: response.data.message });
-          } else {
-            notificationWarning({
-              message: response.data.message,
-              duration: 2,
-            });
-          }
         },
-        onError: (error: AxiosError<any, any>) => {
-          const errorMessage = error.response.data.message;
-          const actualErrorMessage =
-            "errorInfo" in errorMessage
-              ? errorMessage["errorInfo"].pop()
-              : errorMessage;
+        {
+          onSuccess: (response) => {
+            if (response.data.success) {
+              setUploadedEvidencePicture(null);
+              setPreviewEvidencePictureData("");
+              setFileList([]);
 
-          notificationError({ message: actualErrorMessage });
-        },
-      });
+              form.resetFields();
+              onClose();
+
+              notificationSuccess({ message: response.data.message });
+            } else {
+              notificationWarning({
+                message: response.data.message,
+                duration: 2,
+              });
+            }
+          },
+          onError: (error: AxiosError<any, any>) => {
+            const errorMessage = error.response.data.message;
+            const actualErrorMessage =
+              "errorInfo" in errorMessage
+                ? errorMessage["errorInfo"].pop()
+                : errorMessage;
+
+            notificationError({ message: actualErrorMessage });
+          },
+        }
+      );
     },
-    [uploadedEvidencePicture, uploadedSupportingFile]
+    [uploadedEvidencePicture]
   );
 
   const onWebcamModalFinished = useCallback((result: string) => {
@@ -367,12 +286,10 @@ export const AttendanceStaffCheckInDrawer: FC<
         onClose={onClose}
         onClick={() => form.submit()}
         disabled={
-          perluVerifikasi
-            ? uploadSupportingFileLoading ||
-              // uploadedEvidencePicture === null ||
-              uploadedSupportingFile === null ||
-              checkInOutLoading
-            : uploadedEvidencePicture === null || checkInOutLoading
+          uploadPictureLoading ||
+          uploadedEvidencePicture === null ||
+          checkInOutLoading
+          // placementDisable
         }
       >
         <div className="space-y-6">
@@ -406,76 +323,6 @@ export const AttendanceStaffCheckInDrawer: FC<
                 </div>
 
                 {/* Kerja Dari: hanya tampilkan ketika Check In */}
-                {attendeeStatus === "checkout" && (
-                  <Form.Item
-                    label="Select Attendance Code"
-                    name={"attendance_code_name"}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Attendance Code is required",
-                      },
-                    ]}
-                    className="w-full"
-                  >
-                    <div>
-                      <Select
-                        showSearch
-                        optionFilterProp="children"
-                        placeholder="Select Attendance Code"
-                        // loading={loadingGetCompany}
-                        style={{ width: `100%` }}
-                        // value={item?.name}
-                        onChange={(value, option) => {
-                          const opt = option as unknown as MyOptionType;
-                          setPerluVerifikasi(
-                            opt?.perlu_verifikasi ? true : false
-                          );
-                          form.setFieldsValue({ attendance_code_name: value });
-                          setAttendanceCodeId(value);
-                        }}
-                      >
-                        {dataListAttendanceCode?.map((code) => (
-                          <Select.Option
-                            perlu_verifikasi={code.perlu_verifikasi}
-                            key={code.id}
-                            value={code.id}
-                          >
-                            {code.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </div>
-                  </Form.Item>
-                )}
-
-                {attendeeStatus === "checkout" && perluVerifikasi && (
-                  <Form.Item
-                    name="supporting_file"
-                    label={"Supporting File"}
-                    required
-                  >
-                    <Upload
-                      capture
-                      // listType="picture"
-                      name="supporting_file"
-                      // accept="image/png, image/jpeg,"
-                      maxCount={1}
-                      beforeUpload={beforeUploadSupportingFile}
-                      onRemove={onRemoveSupportingFile}
-                      // onPreview={onPreviewEvidencePicture}
-                      disabled={uploadSupportingFileLoading}
-                      fileList={supportingfileList}
-                      onChange={onUploadSupportFileChange}
-                    >
-                      <Button className="mig-button mig-button--outlined-primary">
-                        <UploadOutlined />
-                        Upload File
-                      </Button>
-                    </Upload>
-                  </Form.Item>
-                )}
-
                 {attendeeStatus === "checkout" && (
                   <Form.Item
                     name="work_from"
@@ -512,33 +359,32 @@ export const AttendanceStaffCheckInDrawer: FC<
                 )} */}
 
                 {/* Bukti Kehadran */}
-                {perluVerifikasi != null && perluVerifikasi == false && (
-                  <Form.Item
-                    name="evidence_image"
-                    label={evidencePictureLabel}
-                    required
-                  >
-                    <div className="flex flex-col">
-                      <div className="relative">
-                        {/* Gunakan camera */}
-                        <div className="flex items-center">
-                          <Button
-                            className="mig-button mig-button--outlined-primary self-start"
-                            onClick={() => {
-                              setIsWebcamModalShown(true);
-                            }}
-                          >
-                            <CameraOutlined />
-                            Take Photo
-                          </Button>
+                <Form.Item
+                  name="evidence_image"
+                  label={evidencePictureLabel}
+                  required
+                >
+                  <div className="flex flex-col">
+                    <div className="relative">
+                      {/* Gunakan camera */}
+                      <div className="flex items-center">
+                        <Button
+                          className="mig-button mig-button--outlined-primary self-start"
+                          onClick={() => {
+                            setIsWebcamModalShown(true);
+                          }}
+                        >
+                          <CameraOutlined />
+                          Take Photo
+                        </Button>
 
-                          {/* <span className="mig-caption--medium text-mono50">
+                        {/* <span className="mig-caption--medium text-mono50">
                           or
                         </span> */}
-                        </div>
+                      </div>
 
-                        {/* Upload from file */}
-                        {/* <Upload
+                      {/* Upload from file */}
+                      {/* <Upload
                         capture
                         listType="picture"
                         name="file"
@@ -556,20 +402,13 @@ export const AttendanceStaffCheckInDrawer: FC<
                           Upload Photo
                         </Button>
                       </Upload> */}
-                      </div>
-
-                      <em className="text-mono50 mt-2">
-                        Upload JPEG File (Max. 5 MB)
-                      </em>
                     </div>
-                    {previewEvidencePictureData && (
-                      <img
-                        alt="Preview Evidence Picture"
-                        src={previewEvidencePictureData}
-                      />
-                    )}
-                  </Form.Item>
-                )}
+
+                    <em className="text-mono50 mt-2">
+                      Upload JPEG File (Max. 5 MB)
+                    </em>
+                  </div>
+                </Form.Item>
               </Form>
             </>
           )}

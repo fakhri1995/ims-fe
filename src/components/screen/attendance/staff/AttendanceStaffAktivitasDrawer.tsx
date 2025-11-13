@@ -69,8 +69,7 @@ export interface IAttendanceStaffAktivitasDrawer {
    * Arg ini diperlukan untuk `action === "update"`.
    */
   activityFormId?: number;
-  chargeCodeIdData?: number;
-  token: string;
+
   visible: boolean;
   onClose: () => void;
 }
@@ -80,14 +79,7 @@ export interface IAttendanceStaffAktivitasDrawer {
  */
 export const AttendanceStaffAktivitasDrawer: FC<
   IAttendanceStaffAktivitasDrawer
-> = ({
-  action = "create",
-  visible,
-  token,
-  onClose,
-  activityFormId,
-  chargeCodeIdData,
-}) => {
+> = ({ action = "create", visible, onClose, activityFormId }) => {
   const [form] = Form.useForm();
   const axiosClient = useAxiosClient();
   const { todayActivities, findTodayActivity } =
@@ -96,9 +88,9 @@ export const AttendanceStaffAktivitasDrawer: FC<
   const isAllowedToAddActivity = hasPermission(ATTENDANCE_ACTIVITY_ADD);
   const isAllowedToUpdateActivity = hasPermission(ATTENDANCE_ACTIVITY_UPDATE);
   const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
-  const [dataListChargeCode, setDataListChargeCode] = useState([]);
+
   const [isWebcamModalShown, setIsWebcamModalShown] = useState(false);
-  const [chargeCodeId, setChargeCodeId] = useState(null);
+
   const {
     addMutation: {
       mutate: addAttendanceActivity,
@@ -159,24 +151,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
     notificationSuccess({ message: response.data.message });
   }, []);
-  const attendanceCodeList = [
-    {
-      id: 1,
-      name: "Present",
-    },
-    {
-      id: 2,
-      name: "Overtime",
-    },
-    {
-      id: 3,
-      name: "Unpaid Leave",
-    },
-    {
-      id: 4,
-      name: "Paid Leave",
-    },
-  ];
+
   const onMutationFailed = useCallback((error: AxiosError<any, any>) => {
     notificationError({ message: error.response.data.message });
   }, []);
@@ -186,8 +161,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
       if (!userAttendanceForm) {
         return;
       }
-      console.log("charge code ", chargeCodeId);
-      console.log("charge code ", formValues);
+
       // format payload to needed form in FormData
       let allDetailObject = {};
       let formValuesArr = Object.entries(formValues);
@@ -211,7 +185,6 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
         const payload = {
           attendance_form_id: userAttendanceForm.id,
-          charge_code_id: formValues.charge_code_id,
           ...allDetailObject,
         };
 
@@ -229,7 +202,6 @@ export const AttendanceStaffAktivitasDrawer: FC<
 
         const payload = {
           id: activityFormId,
-          charge_code_id: formValues.charge_code_id,
           ...allDetailObject,
         };
 
@@ -255,38 +227,6 @@ export const AttendanceStaffAktivitasDrawer: FC<
       form.resetFields();
     }
   }, [visible]);
-
-  useEffect(() => {
-    /** Always clean up the form fields on close */
-    // setChargeCodeId(chargeCodeIdData)
-    if (chargeCodeIdData) {
-      setChargeCodeId(chargeCodeIdData);
-      form.setFieldsValue({ charge_code_id: chargeCodeIdData });
-    }
-  }, []);
-
-  useEffect(() => {
-    /** Always clean up the form fields on close */
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCodesUser`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(token),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        // console.log('hasilnya ',res2?.data?.attendance_codes)
-        if (res2?.data?.charge_codes.length > 0) {
-          setDataListChargeCode(res2.data.charge_codes);
-        } else {
-          setDataListChargeCode([]);
-        }
-      });
-  };
 
   // display available data in drawer update
   useEffect(() => {
@@ -343,39 +283,6 @@ export const AttendanceStaffAktivitasDrawer: FC<
                 required: "This field is required!",
               }}
             >
-              <Form.Item
-                label="Select Project"
-                name={"charge_code_id"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Project is required",
-                  },
-                ]}
-                className="w-full"
-              >
-                <div>
-                  <Select
-                    showSearch
-                    optionFilterProp="children"
-                    placeholder="Select Project"
-                    // loading={loadingGetCompany}
-                    style={{ width: `100%` }}
-                    // defaultValue={1}
-                    value={chargeCodeId}
-                    onChange={(value) => {
-                      form.setFieldsValue({ charge_code_id: value });
-                      setChargeCodeId(value);
-                    }}
-                  >
-                    {dataListChargeCode?.map((code) => (
-                      <Select.Option key={code.id} value={code.id}>
-                        {code.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              </Form.Item>
               {userAttendanceForm.details.map(
                 ({ name, description, type, key, list, required }) => {
                   return (
