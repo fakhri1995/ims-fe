@@ -1,5 +1,3 @@
-import { StringGradients } from "antd/es/progress/progress";
-
 import type {
   HttpRequestWithDataSucceedResponse,
   ProfileImageAttribute,
@@ -69,7 +67,6 @@ export interface UserAttendance {
   evidence: Evidence[];
   is_wfo: number;
   is_late: boolean;
-  attendance_code: AttendanceCode;
 }
 
 export interface GeolocationCheckInOut {
@@ -105,7 +102,6 @@ export interface ISetAttendanceTogglePayload<T extends File> {
   geo_loc: string | null;
   evidence: T;
   wfo: 1 | 0;
-  attendance_code_id: number;
   company_id: number;
 }
 
@@ -242,7 +238,6 @@ export interface UserAttendanceDetailData {
   is_wfo: number;
   checked_out_by_system: number;
   evidence: Evidence[];
-  attendance_code: AttendanceCode;
 }
 
 export interface AttendanceActivity {
@@ -252,18 +247,11 @@ export interface AttendanceActivity {
   details: AttendanceActivityDetail[];
   updated_at: string;
   attendance_form: AttendanceForm;
-  charge_code: ChargeCode;
 }
 
 export interface AttendanceForm {
   id: number;
   details: AttendanceFormDetail[];
-}
-
-export interface ChargeCode {
-  id: number;
-  name: string;
-  color: string;
 }
 
 export interface AttendanceFormDetail {
@@ -283,9 +271,4 @@ export interface AttendanceActivityDetail {
 export interface Evidence {
   link: string;
   description: "check_in_evidence" | "check_out_evidence";
-}
-
-export interface AttendanceCode {
-  name: string;
-  color: string;
 }
