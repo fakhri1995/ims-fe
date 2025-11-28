@@ -14,6 +14,7 @@ import {
   ListcheckIconSvg,
 } from "../../../icon";
 import { H1, H2, Label, Text } from "../../../typography";
+import clsx from "clsx";
 
 const CardSoon = ({ loadinguserlasttwo, userlasttwo }) => {
   const rt = useRouter();
